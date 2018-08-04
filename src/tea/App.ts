@@ -1,0 +1,225 @@
+import * as Tea from "./Tea";
+
+export class App {
+	canvas: HTMLCanvasElement;
+	gl: WebGLRenderingContext;
+	capabilities: Tea.GLCapabilities;
+	parameters: Tea.GLParameters;
+	currentScene: Tea.Scene;
+	isStarted: boolean;
+
+	protected animationFrameHandle: number = 0;
+
+	constructor(id: string) {
+		this.canvas = document.getElementById(id) as HTMLCanvasElement;
+		this.canvas.addEventListener("webglcontextcreationerror", this.onContextCreationError);
+		this.canvas.addEventListener("webglcontextlost", this.onContextLost);
+		this.canvas.addEventListener("webglcontextrestored", this.onContextRestored);
+		this.init();
+
+		//this.context.getExtension('WEBGL_lose_context').loseContext();
+
+		this.parameters = new Tea.GLParameters(this.gl);
+		//this.clear();
+	}
+
+	bench(): void {
+		const count = 50000;
+		let start = 0;
+		let gl = this.gl;
+
+		this.test3();
+		this.test1();
+		
+
+		start = performance.now();
+		for (let i = 0; i < count; i++) {
+			let t = gl.createTexture();
+			gl.deleteTexture(t);
+		}
+		console.log("test 2", performance.now() - start);
+
+
+	}
+
+	test1(): void {
+		const count = 50000;
+		let start = 0;
+		start = performance.now();
+		for (let i = 0; i < count; i++) {
+			let t = this.gl.createTexture();
+			this.gl.deleteTexture(t);
+		}
+		console.log("test 1", performance.now() - start);
+	}
+
+	test3(): void {
+		const count = 50000;
+		let start = 0;
+		start = performance.now();
+		for (let i = 0; i < count; i++) {
+			let t = this.createTexture2();
+			this.deleteTexture2(t);
+		}
+		console.log("test 3", performance.now() - start);
+	}
+
+	createTexture2(): WebGLTexture {
+		let gl = this.gl;
+		return gl.createTexture();
+	}
+	deleteTexture2(t: WebGLTexture): void {
+		let gl = this.gl;
+		gl.deleteTexture(t);
+	}
+
+	get width(): number {
+		return this.canvas.width;
+	}
+	set width(value: number) {
+		this.canvas.width = value;
+		this.gl.viewport(0, 0, this.width, this.height);
+	}
+
+	get height(): number {
+		return this.canvas.height;
+	}
+	set height(value: number) {
+		this.canvas.height = value;
+		this.gl.viewport(0, 0, this.width, this.height);
+	}
+
+	get drawingBufferWidth(): number {
+		return this.gl.drawingBufferWidth;
+	}
+
+	get drawingBufferHeight(): number {
+		return this.gl.drawingBufferHeight;
+	}
+
+	get aspectRatio(): number {
+		return this.width / this.height;
+	}
+
+	get contextAttributes(): WebGLContextAttributes {
+		return this.gl.getContextAttributes();
+	}
+
+	createScene(): Tea.Scene {
+		const scene = new Tea.Scene(this);
+		return scene;
+	}
+
+	createDefaultShader(): Tea.Shader {
+		const shader = new Tea.Shader(this);
+		shader.attach(
+			Tea.Shader.defaultVertexShaderSource,
+			Tea.Shader.defaultFragmentShaderSource
+		);
+		return shader;
+	}
+
+	createShader(vs: string, fs: string): Tea.Shader {
+		const shader = new Tea.Shader(this);
+		shader.attach(vs, fs);
+		return shader;
+	}
+
+	createRenderer(mesh: Tea.Mesh, shader: Tea.Shader): Tea.Renderer {
+		const renderer = new Tea.Renderer(this);
+		renderer.mesh = mesh;
+		renderer.shader = shader;
+		return renderer;
+	}
+
+	createTexture(image: HTMLImageElement): Tea.Texture {
+		const texture = new Tea.Texture(this);
+		texture.image = image;
+		return texture;
+	}
+
+	setScene(scene: Tea.Scene): void {
+		this.currentScene = scene;
+	}
+
+	drawArrays(): void {
+		const gl = this.gl;
+		gl.drawArrays(gl.TRIANGLES, 0, 3);
+		gl.flush();
+	}
+
+	start(): void {
+		if (this.isStarted === true) {
+			return;
+		}
+		this.isStarted = true;
+		this.animationFrameHandle = requestAnimationFrame(this.update);
+	}
+
+	stop(): void {
+		if (this.isStarted === false) {
+			return;
+		}
+		this.isStarted = false;
+		cancelAnimationFrame(this.animationFrameHandle);
+	}
+
+	createPlain(): Tea.Object3D {
+		const object3d = new Tea.Object3D();
+		const shader = this.createDefaultShader();
+		const mesh = Tea.Primitives.createPlainMesh();
+		const renderer = this.createRenderer(mesh, shader);
+		//this.renderer.wireframe = true;
+		object3d.name = "Plain";
+		object3d.renderer = renderer;
+		return object3d;
+	}
+
+	createCube(): Tea.Object3D {
+		const object3d = new Tea.Object3D();
+		const shader = this.createDefaultShader();
+		const mesh = Tea.Primitives.createCubeMesh();
+		const renderer = this.createRenderer(mesh, shader);
+		//this.renderer.wireframe = true;
+		object3d.name = "Cube";
+		object3d.renderer = renderer;
+		return object3d;
+	}
+
+	protected init(): void {
+		this.gl = this.getWebGLContext();
+		const gl = this.gl;
+		gl.clearColor(0.0, 0.0, 0.0, 1.0);
+		gl.clearDepth(1.0);
+
+		gl.enable(gl.CULL_FACE);
+		gl.cullFace(gl.BACK);
+	}
+
+	protected getWebGLContext(): WebGLRenderingContext {
+		if (this.canvas == null) {
+			return;
+		}
+		return this.canvas.getContext("webgl") as WebGLRenderingContext;
+	}
+
+	protected update = (time: number): void => {
+		if (this.currentScene != null) {
+			this.currentScene.update(time);
+		}
+		this.animationFrameHandle = requestAnimationFrame(this.update);
+	}
+
+
+	protected onContextCreationError = (event: WebGLContextEvent) => {
+		console.error("webglcontextcreationerror", event);
+	}
+
+	protected onContextLost = (event: WebGLContextEvent) => {
+		console.error("webglcontextlost", event);
+	}
+
+	protected onContextRestored = (event: WebGLContextEvent) => {
+		console.warn("webglcontextrestored", event);
+	}
+}
