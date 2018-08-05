@@ -1,6 +1,6 @@
 export class Vector3 extends Array<number> {
 	constructor(x: number = 0, y: number = 0, z: number = 0) {
-		super();
+		super(3);
 		this.x = x;
 		this.y = y;
 		this.z = z;
@@ -162,7 +162,13 @@ export class Vector3 extends Array<number> {
 	}
 
 	toString(): string {
-		return JSON.stringify(this);
+		const t = new Array(3);
+		for (let i = 0; i < 3; i++) {
+			t[i] = this[i].toFixed(5);
+		}
+		return (
+			"[x: " + t[0] + ", y: " + t[1] + ", z: " + t[2] + "]"
+		);
 	}
 
 	add(value: Vector3): Vector3 {

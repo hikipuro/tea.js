@@ -103,15 +103,15 @@ export class Shader {
 
 	uniform1i(name: string, value: number): void {
 		const gl = this.app.gl;
-		const location = this.getUniformLocation(name);
 		gl.useProgram(this.program);
+		const location = this.getUniformLocation(name);
 		gl.uniform1i(location, value);
 	}
 
 	uniformMatrix4fv(name: string, value: Float32Array | ArrayLike<number>): void {
 		const gl = this.app.gl;
-		const location = this.getUniformLocation(name);
 		gl.useProgram(this.program);
+		const location = this.getUniformLocation(name);
 		gl.uniformMatrix4fv(location, false, value);
 	}
 

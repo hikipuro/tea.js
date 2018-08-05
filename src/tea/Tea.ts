@@ -1,4 +1,5 @@
 import { Matrix4 } from "./math/Matrix4";
+import { Vector2 } from "./math/Vector2";
 import { Vector3 } from "./math/Vector3";
 import { Vector4 } from "./math/Vector4";
 
@@ -24,6 +25,7 @@ import { Texture } from "./object/Texture";
 
 export {
 	Matrix4,
+	Vector2,
 	Vector3,
 	Vector4,
 

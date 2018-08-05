@@ -2,7 +2,7 @@ import { Vector3 } from "./Vector3";
 
 export class Vector4 extends Array<number> {
 	constructor(x: number = 0, y: number = 0, z: number = 0, w: number = 0) {
-		super();
+		super(4);
 		this.x = x;
 		this.y = y;
 		this.z = z;
@@ -82,7 +82,14 @@ export class Vector4 extends Array<number> {
 	}
 
 	toString(): string {
-		return JSON.stringify(this);
+		const t = new Array(4);
+		for (let i = 0; i < 4; i++) {
+			t[i] = this[i].toFixed(5);
+		}
+		return (
+			"[x: " + t[0] + ", y: " + t[1] + ", " +
+			 "z: " + t[2] + ", w: " + t[3] + "]"
+		);
 	}
 
 	toVector3(): Vector3 {

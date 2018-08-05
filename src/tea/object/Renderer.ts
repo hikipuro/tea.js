@@ -40,6 +40,14 @@ export class Renderer {
 		if (this.isRenderable === false) {
 			return;
 		}
+
+		const gl = this.app.gl;
+		const height = this.app.height;
+		//gl.enable(gl.SCISSOR_TEST);
+		//gl.scissor(0, 0, 400, height * 0.9);
+		//gl.viewport(0, -height * 0.1, 400, height);
+		//console.log("this.height", this.app.height);
+
 		this.setUniforms();
 		this.setTexture(this.shader.texture);
 		this.setVertexBuffer(this.mesh);
@@ -58,10 +66,10 @@ export class Renderer {
 
 	protected setUniforms(): void {
 		let model = Tea.Matrix4.identity;
-		//model = model.mul(Tea.Matrix4.rotate(this.object3d.rotation.clone()));
 		model = model.mul(Tea.Matrix4.translate(this.object3d.position));
-		model = model.mul(Tea.Matrix4.rotateYXZ(this.object3d.rotation));
-		//console.log(mMatrix);
+		model = model.mul(Tea.Matrix4.rotateZXY(this.object3d.rotation));
+		model = model.mul(Tea.Matrix4.scale(this.object3d.scale));
+
 		const mvpMatrix = this.camera.mvpMatrix(model);
 		this.shader.uniformMatrix4fv("mvpMatrix", mvpMatrix);
 	}
@@ -109,6 +117,13 @@ export class Renderer {
 			const count = this.mesh.triangles.length;
 			gl.drawElements(gl.LINE_LOOP, count, gl.UNSIGNED_SHORT, 0);
 			return;
+		}
+
+		const scale = this.object3d.scale;
+		if (scale.x * scale.y * scale.z < 0) {
+			gl.frontFace(gl.CW);
+		} else {
+			gl.frontFace(gl.CCW);
 		}
 
 		const count = this.mesh.triangles.length;

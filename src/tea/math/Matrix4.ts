@@ -1,5 +1,6 @@
 import * as Tea from "../Tea";
 import { Vector3 } from "./Vector3";
+import { Vector4 } from "./Vector4";
 
 export class Matrix4 extends Array<number> {
 	constructor() {
@@ -28,10 +29,10 @@ export class Matrix4 extends Array<number> {
 	static translate(vector: Vector3): Matrix4;
 	static translate(x: number, y: number, z: number): Matrix4;
 	static translate(x: Vector3 | number, y: number = 0, z: number = 0): Matrix4 {
-		const m = Matrix4.identity;
 		if (x == null) {
 			return null;
 		}
+		const m = Matrix4.identity;
 		if (x instanceof Vector3) {
 			m[12] = x.x;
 			m[13] = x.y;
@@ -44,14 +45,22 @@ export class Matrix4 extends Array<number> {
 		return m;
 	}
 
-	static scale(vector: Vector3): Matrix4 {
-		const m = Matrix4.identity;
-		if (vector == null) {
-			return m;
+	static scale(vector: Vector3): Matrix4;
+	static scale(x: number, y: number, z: number): Matrix4;
+	static scale(x: Vector3 | number, y: number = 0, z: number = 0): Matrix4 {
+		if (x == null) {
+			return null;
 		}
-		m[1]  = vector.x;
-		m[5]  = vector.y;
-		m[10] = vector.z;
+		const m = Matrix4.identity;
+		if (x instanceof Vector3) {
+			m[0]  = x.x;
+			m[5]  = x.y;
+			m[10] = x.z;
+		} else {
+			m[1]  = x;
+			m[5]  = y;
+			m[10] = z;
+		}
 		return m;
 	}
 
@@ -99,17 +108,25 @@ export class Matrix4 extends Array<number> {
 		return m;
 	}
 
-	static rotateZYX(vector: Vector3): Matrix4 {
+	static rotateXYZ(vector: Vector3): Matrix4 {
 		let m = Matrix4.identity;
 		if (vector == null) {
 			return m;
 		}
-		const x = vector.x;
-		const y = vector.y;
-		const z = vector.z;
-		m = m.mul(Matrix4.rotateZ(z));
-		m = m.mul(Matrix4.rotateY(y));
-		m = m.mul(Matrix4.rotateX(x));
+		m = m.mul(Matrix4.rotateZ(vector.z));
+		m = m.mul(Matrix4.rotateY(vector.y));
+		m = m.mul(Matrix4.rotateX(vector.x));
+		return m;
+	}
+
+	static rotateXZY(vector: Vector3): Matrix4 {
+		let m = Matrix4.identity;
+		if (vector == null) {
+			return m;
+		}
+		m = m.mul(Matrix4.rotateY(vector.y));
+		m = m.mul(Matrix4.rotateZ(vector.z));
+		m = m.mul(Matrix4.rotateX(vector.x));
 		return m;
 	}
 
@@ -118,24 +135,55 @@ export class Matrix4 extends Array<number> {
 		if (vector == null) {
 			return m;
 		}
-		const x = vector.x;
-		const y = vector.y;
-		const z = vector.z;
-		m = m.mul(Matrix4.rotateY(y));
-		m = m.mul(Matrix4.rotateX(x));
-		m = m.mul(Matrix4.rotateZ(z));
+		m = m.mul(Matrix4.rotateZ(vector.z));
+		m = m.mul(Matrix4.rotateX(vector.x));
+		m = m.mul(Matrix4.rotateY(vector.y));
 		return m;
 	}
 
-	static perspective(fovY: number, aspect: number, near: number, far: number): Matrix4 {
+	static rotateYZX(vector: Vector3): Matrix4 {
+		let m = Matrix4.identity;
+		if (vector == null) {
+			return m;
+		}
+		m = m.mul(Matrix4.rotateX(vector.x));
+		m = m.mul(Matrix4.rotateZ(vector.z));
+		m = m.mul(Matrix4.rotateY(vector.y));
+		return m;
+	}
+
+	static rotateZXY(vector: Vector3): Matrix4 {
+		let m = Matrix4.identity;
+		if (vector == null) {
+			return m;
+		}
+		m = m.mul(Matrix4.rotateY(vector.y));
+		m = m.mul(Matrix4.rotateX(vector.x));
+		m = m.mul(Matrix4.rotateZ(vector.z));
+		return m;
+	}
+
+	static rotateZYX(vector: Vector3): Matrix4 {
+		let m = Matrix4.identity;
+		if (vector == null) {
+			return m;
+		}
+		m = m.mul(Matrix4.rotateX(vector.x));
+		m = m.mul(Matrix4.rotateY(vector.y));
+		m = m.mul(Matrix4.rotateZ(vector.z));
+		return m;
+	}
+
+	static perspective(fov: number, aspect: number, zNear: number, zFar: number): Matrix4 {
 		const m = new Matrix4();
-		const zoomY = 1 / Math.tan(Tea.radians(fovY) / 2);
+		fov = Tea.radians(fov);
+		const zoomY = 1 / Math.tan(fov / 2);
 		const zoomX = zoomY / aspect;
 		m[0] = zoomX;
 		m[5] = zoomY;
-		m[10] = -(far + near) / (far - near);
+		m[10] = -(zFar + zNear) / (zFar - zNear);
 		m[11] = -1;
-		m[14] = -2 * far * (near / (far - near));
+		m[14] = -2 * zFar * (zNear / (zFar - zNear));
 		return m;
 	}
 
@@ -147,6 +195,25 @@ export class Matrix4 extends Array<number> {
 		m[10] = -2 / (far - near);
 		m[14] = -(far + near) / (far - near);
 		m[15] = 1;
+		return m;
+	}
+
+	static lookAt(from: Vector3, to: Vector3, up: Vector3): Matrix4 {
+		if (from == null || to == null || up == null) {
+			return null;
+		}
+		let zaxis = to.sub(from).normalized;//from.sub(to).normalized;
+		let xaxis = Vector3.cross(up, zaxis).normalized;
+		let yaxis = Vector3.cross(zaxis, xaxis).normalized;
+		//zaxis = zaxis.mul(-1);
+		const m = Matrix4.identity;
+		m[0] = xaxis.x; m[1] = yaxis.x; m[2]  = zaxis.x;
+		m[4] = xaxis.y; m[5] = yaxis.y; m[6]  = zaxis.y;
+		m[8] = xaxis.z; m[9] = yaxis.z; m[10] = zaxis.z;
+		m[3] = from.x;
+		m[7] = from.y;
+		m[11] = from.z;
+		m.mul(Matrix4.translate(from.mul(-1)));
 		return m;
 	}
 
@@ -227,7 +294,7 @@ export class Matrix4 extends Array<number> {
 		m[0] =  (m22 * m33 * m44) + (m23 * m34 * m42) + (m24 * m32 * m43) -
 				(m22 * m34 * m43) - (m23 * m32 * m44) - (m24 * m33 * m42);
 		m[1] =  (m12 * m34 * m43) + (m13 * m32 * m44) + (m14 * m33 * m42) -
-				(m12 * m33 * m44) - (m23 * m34 * m42) - (m14 * m32 * m43);
+				(m12 * m33 * m44) - (m13 * m34 * m42) - (m14 * m32 * m43);
 		m[2] =  (m12 * m23 * m44) + (m13 * m24 * m42) + (m14 * m22 * m43) -
 				(m12 * m24 * m43) - (m13 * m22 * m44) - (m14 * m23 * m42);
 		m[3] =  (m12 * m24 * m33) + (m13 * m22 * m34) + (m14 * m23 * m32) -
@@ -257,7 +324,7 @@ export class Matrix4 extends Array<number> {
 				(m11 * m33 * m42) - (m12 * m31 * m43) - (m13 * m32 * m41);
 		m[14] = (m11 * m23 * m42) + (m12 * m21 * m43) + (m13 * m22 * m41) -
 				(m11 * m22 * m43) - (m12 * m23 * m41) - (m13 * m21 * m42);
-		m[15] = (m11 * m22 * m44) + (m12 * m23 * m31) + (m13 * m21 * m32) -
+		m[15] = (m11 * m22 * m33) + (m12 * m23 * m31) + (m13 * m21 * m32) -
 				(m11 * m23 * m32) - (m12 * m21 * m33) - (m13 * m22 * m31);
 		return m;
 	}
@@ -282,6 +349,31 @@ export class Matrix4 extends Array<number> {
 		return m;
 	}
 
+	getColumn(index: number): Vector4 {
+		if (index < 0 || index > 3) {
+			return null;
+		}
+		index *= 4;
+		return new Vector4(
+			this[index + 0],
+			this[index + 1],
+			this[index + 2],
+			this[index + 3]
+		);
+	}
+
+	getRow(index: number): Vector4 {
+		if (index < 0 || index > 3) {
+			return null;
+		}
+		return new Vector4(
+			this[index + 0],
+			this[index + 4],
+			this[index + 8],
+			this[index + 12]
+		);
+	}
+
 	set(m00: number, m01: number, m02: number, m03: number,
 		m10: number, m11: number, m12: number, m13: number,
 		m20: number, m21: number, m22: number, m23: number,
@@ -294,83 +386,82 @@ export class Matrix4 extends Array<number> {
 		t[12] = m03; t[13] = m13; t[14] = m23; t[15] = m33;
 	}
 
-	mul(matrix: Matrix4): Matrix4 {
-		if (matrix == null) {
-			return null;
+	setColumn(index: number, vector: Vector4): Vector4 {
+		if (index < 0 || index > 3 || vector == null) {
+			return;
 		}
-		const m = new Matrix4();
-		const l00 = this[0],    l10 = this[1],    l20 = this[2],    l30 = this[3];
-		const l01 = this[4],    l11 = this[5],    l21 = this[6],    l31 = this[7];
-		const l02 = this[8],    l12 = this[9],    l22 = this[10],   l32 = this[11];
-		const l03 = this[12],   l13 = this[13],   l23 = this[14],   l33 = this[15];
-		
-		const r00 = matrix[0],  r10 = matrix[1],  r20 = matrix[2],  r30 = matrix[3];
-		const r01 = matrix[4],  r11 = matrix[5],  r21 = matrix[6],  r31 = matrix[7];
-		const r02 = matrix[8],  r12 = matrix[9],  r22 = matrix[10], r32 = matrix[11];
-		const r03 = matrix[12], r13 = matrix[13], r23 = matrix[14], r33 = matrix[15];
-
-		m[0]  = l00 * r00 + l01 * r10 + l02 * r20 + l03 * r30;
-		m[1]  = l10 * r00 + l11 * r10 + l12 * r20 + l13 * r30;
-		m[2]  = l20 * r00 + l21 * r10 + l22 * r20 + l23 * r30;
-		m[3]  = l30 * r00 + l31 * r10 + l32 * r20 + l33 * r30;
-
-		m[4]  = l00 * r01 + l01 * r11 + l02 * r21 + l03 * r31;
-		m[5]  = l10 * r01 + l11 * r11 + l12 * r21 + l13 * r31;
-		m[6]  = l20 * r01 + l21 * r11 + l22 * r21 + l23 * r31;
-		m[7]  = l30 * r01 + l31 * r11 + l32 * r21 + l33 * r31;
-
-		m[8]  = l00 * r02 + l01 * r12 + l02 * r22 + l03 * r32;
-		m[9]  = l10 * r02 + l11 * r12 + l12 * r22 + l13 * r32;
-		m[10] = l20 * r02 + l21 * r12 + l22 * r22 + l23 * r32;
-		m[11] = l30 * r02 + l31 * r12 + l32 * r22 + l33 * r32;
-
-		m[12] = l00 * r03 + l01 * r13 + l02 * r23 + l03 * r33;
-		m[13] = l10 * r03 + l11 * r13 + l12 * r23 + l13 * r33;
-		m[14] = l20 * r03 + l21 * r13 + l22 * r23 + l23 * r33;
-		m[15] = l30 * r03 + l31 * r13 + l32 * r23 + l33 * r33;
-		return m;
+		index *= 4;
+		this[index + 0] = vector.x;
+		this[index + 1] = vector.y;
+		this[index + 2] = vector.z;
+		this[index + 3] = vector.w;
 	}
 
-	lookAt(eye, center, up): Matrix4 {
-		const result = new Matrix4();
-		var eyeX    = eye[0],    eyeY    = eye[1],    eyeZ    = eye[2],
-			upX     = up[0],     upY     = up[1],     upZ     = up[2],
-			centerX = center[0], centerY = center[1], centerZ = center[2];
-		if(eyeX == centerX && eyeY == centerY && eyeZ == centerZ){return Matrix4.identity;}
-		var x0, x1, x2, y0, y1, y2, z0, z1, z2, l;
-		z0 = eyeX - center[0]; z1 = eyeY - center[1]; z2 = eyeZ - center[2];
-		l = 1 / Math.sqrt(z0 * z0 + z1 * z1 + z2 * z2);
-		z0 *= l; z1 *= l; z2 *= l;
-		x0 = upY * z2 - upZ * z1;
-		x1 = upZ * z0 - upX * z2;
-		x2 = upX * z1 - upY * z0;
-		l = Math.sqrt(x0 * x0 + x1 * x1 + x2 * x2);
-		if(!l){
-			x0 = 0; x1 = 0; x2 = 0;
-		} else {
-			l = 1 / l;
-			x0 *= l; x1 *= l; x2 *= l;
+	setRow(index: number, vector: Vector4): Vector4 {
+		if (index < 0 || index > 3 || vector == null) {
+			return;
 		}
-		y0 = z1 * x2 - z2 * x1; y1 = z2 * x0 - z0 * x2; y2 = z0 * x1 - z1 * x0;
-		l = Math.sqrt(y0 * y0 + y1 * y1 + y2 * y2);
-		if(!l){
-			y0 = 0; y1 = 0; y2 = 0;
-		} else {
-			l = 1 / l;
-			y0 *= l; y1 *= l; y2 *= l;
+		this[index + 0] = vector.x;
+		this[index + 4] = vector.y;
+		this[index + 8] = vector.z;
+		this[index + 12] = vector.w;
+	}
+
+	mul(vector: Vector4): Vector4;
+	mul(matrix: Matrix4): Matrix4;
+	mul(value: Vector4 | Matrix4): Matrix4 | Vector4 {
+		if (value == null) {
+			return null;
 		}
-		result[0] = x0; result[1] = y0; result[2]  = z0; result[3]  = 0;
-		result[4] = x1; result[5] = y1; result[6]  = z1; result[7]  = 0;
-		result[8] = x2; result[9] = y2; result[10] = z2; result[11] = 0;
-		result[12] = -(x0 * eyeX + x1 * eyeY + x2 * eyeZ);
-		result[13] = -(y0 * eyeX + y1 * eyeY + y2 * eyeZ);
-		result[14] = -(z0 * eyeX + z1 * eyeY + z2 * eyeZ);
-		result[15] = 1;
-		return result;
+		if (value instanceof Matrix4) {
+			const m = new Matrix4();
+			const l00 = this[0],   l10 = this[1],   l20 = this[2],   l30 = this[3];
+			const l01 = this[4],   l11 = this[5],   l21 = this[6],   l31 = this[7];
+			const l02 = this[8],   l12 = this[9],   l22 = this[10],  l32 = this[11];
+			const l03 = this[12],  l13 = this[13],  l23 = this[14],  l33 = this[15];
+			
+			const r00 = value[0],  r10 = value[1],  r20 = value[2],  r30 = value[3];
+			const r01 = value[4],  r11 = value[5],  r21 = value[6],  r31 = value[7];
+			const r02 = value[8],  r12 = value[9],  r22 = value[10], r32 = value[11];
+			const r03 = value[12], r13 = value[13], r23 = value[14], r33 = value[15];
+	
+			m[0]  = l00 * r00 + l01 * r10 + l02 * r20 + l03 * r30;
+			m[1]  = l10 * r00 + l11 * r10 + l12 * r20 + l13 * r30;
+			m[2]  = l20 * r00 + l21 * r10 + l22 * r20 + l23 * r30;
+			m[3]  = l30 * r00 + l31 * r10 + l32 * r20 + l33 * r30;
+	
+			m[4]  = l00 * r01 + l01 * r11 + l02 * r21 + l03 * r31;
+			m[5]  = l10 * r01 + l11 * r11 + l12 * r21 + l13 * r31;
+			m[6]  = l20 * r01 + l21 * r11 + l22 * r21 + l23 * r31;
+			m[7]  = l30 * r01 + l31 * r11 + l32 * r21 + l33 * r31;
+	
+			m[8]  = l00 * r02 + l01 * r12 + l02 * r22 + l03 * r32;
+			m[9]  = l10 * r02 + l11 * r12 + l12 * r22 + l13 * r32;
+			m[10] = l20 * r02 + l21 * r12 + l22 * r22 + l23 * r32;
+			m[11] = l30 * r02 + l31 * r12 + l32 * r22 + l33 * r32;
+	
+			m[12] = l00 * r03 + l01 * r13 + l02 * r23 + l03 * r33;
+			m[13] = l10 * r03 + l11 * r13 + l12 * r23 + l13 * r33;
+			m[14] = l20 * r03 + l21 * r13 + l22 * r23 + l23 * r33;
+			m[15] = l30 * r03 + l31 * r13 + l32 * r23 + l33 * r33;
+			return m;
+		} else {
+			const t = this;
+			const v = value;
+			return new Vector4(
+				t[0] * v.x + t[4] * v.y + t[8] * v.z + t[12] * v.w,
+				t[1] * v.x + t[5] * v.y + t[9] * v.z + t[13] * v.w,
+				t[2] * v.x + t[6] * v.y + t[10] * v.z + t[14] * v.w,
+				t[3] * v.x + t[7] * v.y + t[11] * v.z + t[15] * v.w
+			);
+		}
 	}
 
 	toString(): string {
-		const t = this;
+		const t = new Array(16);
+		for (let i = 0; i < 16; i++) {
+			t[i] = this[i].toFixed(5);
+		}
 		return (
 			"[\n" +
 			"\t" + t[0] + ", " + t[4] + ", " + t[8] + ", " + t[12] + ",\n" +

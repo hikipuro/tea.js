@@ -23,30 +23,32 @@ export class Camera extends Object3D {
 	}
 	
 	get vpMatrix(): Tea.Matrix4 {
-		const rotation = this.rotation.clone().mul(-1);
-		const position = this.position.clone().mul(-1);
-		let view = Tea.Matrix4.identity;
-		view = view.mul(Tea.Matrix4.rotateZYX(rotation));
-		view = view.mul(Tea.Matrix4.translate(position));
+		let view = Tea.Matrix4.translate(this.position);
+		view = view.mul(Tea.Matrix4.rotateZXY(this.rotation));
+		view = view.inverse;
 
-		let projection = Tea.Matrix4.identity;
+		let projection: Tea.Matrix4;
 		if (this.orthographic) {
 			projection = projection.mul(Tea.Matrix4.ortho(
-				this.orthographicSize, this.aspect, this.nearClipPlane, this.farClipPlane
+				this.orthographicSize,
+				this.aspect,
+				this.nearClipPlane,
+				this.farClipPlane
 			));
 		} else {
-			projection = projection.mul(Tea.Matrix4.perspective(
-				this.fieldOfView, this.aspect, this.nearClipPlane, this.farClipPlane
-			));
+			projection = Tea.Matrix4.perspective(
+				this.fieldOfView,
+				this.aspect,
+				this.nearClipPlane,
+				this.farClipPlane
+			);
 		}
 		
-		let vp = projection.clone();
-		vp = vp.mul(view);
-		return vp;
+		return projection.mul(view);
 	}
 
-	mvpMatrix(mMatrix: Tea.Matrix4): Tea.Matrix4 {
-		return this.vpMatrix.mul(mMatrix);
+	mvpMatrix(model: Tea.Matrix4): Tea.Matrix4 {
+		return this.vpMatrix.mul(model);
 	}
 
 	/*

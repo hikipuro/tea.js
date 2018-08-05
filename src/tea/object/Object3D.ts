@@ -4,6 +4,7 @@ export class Object3D {
 	name: string;
 	position: Tea.Vector3;
 	rotation: Tea.Vector3;
+	scale: Tea.Vector3;
 	scripts: Array<Tea.Script>;
 	protected _renderer: Tea.Renderer;
 
@@ -11,6 +12,7 @@ export class Object3D {
 		this.name = "";
 		this.position = Tea.Vector3.zero;
 		this.rotation = Tea.Vector3.zero;
+		this.scale = Tea.Vector3.one;
 		this.scripts = [];
 	}
 
