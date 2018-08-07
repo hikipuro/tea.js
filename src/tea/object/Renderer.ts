@@ -9,7 +9,9 @@ export class Renderer {
 
 	vertexBuffer: WebGLBuffer;
 	indexBuffer: WebGLBuffer;
+	normalBuffer: WebGLBuffer;
 	uvBuffer: WebGLBuffer;
+	colorBuffer: WebGLBuffer;
 
 	wireframe: boolean = false;
 
@@ -18,6 +20,9 @@ export class Renderer {
 		const gl = this.app.gl;
 		this.vertexBuffer = gl.createBuffer();
 		this.indexBuffer = gl.createBuffer();
+		this.normalBuffer = gl.createBuffer();
+		this.uvBuffer = gl.createBuffer();
+		this.colorBuffer = gl.createBuffer();
 	}
 
 	remove(): void {
@@ -30,9 +35,17 @@ export class Renderer {
 			gl.deleteBuffer(this.indexBuffer);
 			this.indexBuffer = null;
 		}
+		if (this.normalBuffer != null) {
+			gl.deleteBuffer(this.normalBuffer);
+			this.normalBuffer = null;
+		}
 		if (this.uvBuffer != null) {
 			gl.deleteBuffer(this.uvBuffer);
 			this.uvBuffer = null;
+		}
+		if (this.colorBuffer != null) {
+			gl.deleteBuffer(this.colorBuffer);
+			this.colorBuffer = null;
 		}
 	}
 
@@ -48,11 +61,11 @@ export class Renderer {
 		//gl.viewport(0, -height * 0.1, 400, height);
 		//console.log("this.height", this.app.height);
 
-		this.setUniforms();
+		this.setUniforms(this.mesh);
 		this.setTexture(this.shader.texture);
 		this.setVertexBuffer(this.mesh);
 		this.setIndexBuffer(this.mesh);
-		this.draw();
+		this.draw(this.mesh);
 	}
 
 	protected get isRenderable(): boolean {
@@ -64,14 +77,26 @@ export class Renderer {
 		);
 	}
 
-	protected setUniforms(): void {
-		let model = Tea.Matrix4.identity;
-		model = model.mul(Tea.Matrix4.translate(this.object3d.position));
-		model = model.mul(Tea.Matrix4.rotateZXY(this.object3d.rotation));
-		model = model.mul(Tea.Matrix4.scale(this.object3d.scale));
-
+	protected setUniforms(mesh: Tea.Mesh): void {
+		let model = this.createModelMatrix();
 		const mvpMatrix = this.camera.mvpMatrix(model);
 		this.shader.uniformMatrix4fv("mvpMatrix", mvpMatrix);
+		this.shader.uniformMatrix4fv("invMatrix", mvpMatrix.inverse);
+		this.shader.uniform3fv("lightDirection", [-0.5, 0.5, 0.5]);
+		this.shader.uniform4fv("ambientColor", [0.1, 0.1, 0.1, 1.0]);
+		if (mesh.hasColors) {
+			this.shader.uniform1i("useColor", 1);
+		} else {
+			this.shader.uniform1i("useColor", 0);
+		}
+	}
+
+	protected createModelMatrix(): Tea.Matrix4 {
+		let m = Tea.Matrix4.identity;
+		m = m.mul(Tea.Matrix4.translate(this.object3d.position));
+		m = m.mul(Tea.Matrix4.rotateZXY(this.object3d.rotation));
+		m = m.mul(Tea.Matrix4.scale(this.object3d.scale));
+		return m;
 	}
 
 	protected setTexture(texture: Tea.Texture): void {
@@ -82,40 +107,61 @@ export class Renderer {
 
 	protected setVertexBuffer(mesh: Tea.Mesh): void {
 		const gl = this.app.gl;
-		gl.bindBuffer(gl.ARRAY_BUFFER, this.vertexBuffer);
-		gl.bufferData(gl.ARRAY_BUFFER, mesh.vertices, gl.STATIC_DRAW);
+		const target = gl.ARRAY_BUFFER;
+		gl.bindBuffer(target, this.vertexBuffer);
+		gl.bufferData(target, mesh.vertices, gl.STATIC_DRAW);
 		this.shader.setAttribute("position", 3);
 
-		if (mesh.uv != null && mesh.uv.length > 0) {
-			if (this.uvBuffer == null) {
-				this.uvBuffer = gl.createBuffer();
-			}
-			gl.bindBuffer(gl.ARRAY_BUFFER, this.uvBuffer);
-			gl.bufferData(gl.ARRAY_BUFFER, mesh.uv, gl.STATIC_DRAW);
-			this.shader.setAttribute("texCoord", 2);
+		if (mesh.hasNormals) {
+			gl.bindBuffer(target, this.normalBuffer);
+			gl.bufferData(target, mesh.normals, gl.STATIC_DRAW);
+			this.shader.setAttribute("normal", 3);
+		} else {
+			this.shader.disableVertexAttrib("normal");
 		}
+
+		if (mesh.hasUVs) {
+			gl.bindBuffer(target, this.uvBuffer);
+			gl.bufferData(target, mesh.uv, gl.STATIC_DRAW);
+			this.shader.setAttribute("texCoord", 2);
+		} else {
+			this.shader.disableVertexAttrib("texCoord");
+		}
+
+		if (mesh.hasColors) {
+			gl.bindBuffer(target, this.colorBuffer);
+			gl.bufferData(target, mesh.colors, gl.STATIC_DRAW);
+			this.shader.setAttribute("color", 4);
+		} else {
+			//gl.bindBuffer(target, this.colorBuffer);
+			this.shader.disableVertexAttrib("color");
+		}
+		gl.bindBuffer(target, null);
 	}
 
 	protected setIndexBuffer(mesh: Tea.Mesh): void {
 		const gl = this.app.gl;
-		gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this.indexBuffer);
-		gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, mesh.triangles, gl.STATIC_DRAW);
+		const target = gl.ELEMENT_ARRAY_BUFFER;
+		if (mesh.hasTriangles) {
+			gl.bindBuffer(target, this.indexBuffer);
+			gl.bufferData(target, mesh.triangles, gl.STATIC_DRAW);
+		} else {
+			gl.bindBuffer(target, null);
+		}
 	}
 
-	protected draw(): void {
+	protected draw(mesh: Tea.Mesh): void {
 		const gl = this.app.gl;
-		if (this.mesh.triangles == null || this.mesh.triangles.length <= 0) {
+		if (mesh.hasTriangles === false) {
 			const count = this.mesh.vertices.length / 3;
+			if (this.wireframe) {
+				gl.drawArrays(gl.LINE_LOOP, 0, count);
+				return;
+			}
 			//gl.drawArrays(gl.POINTS, 0, count);
 			//gl.drawArrays(gl.LINE_LOOP, 0, count);
 			gl.drawArrays(gl.TRIANGLES, 0, count);
 			//gl.drawArrays(gl.TRIANGLE_STRIP, 0, count);
-			return;
-		}
-
-		if (this.wireframe) {
-			const count = this.mesh.triangles.length;
-			gl.drawElements(gl.LINE_LOOP, count, gl.UNSIGNED_SHORT, 0);
 			return;
 		}
 
@@ -124,6 +170,12 @@ export class Renderer {
 			gl.frontFace(gl.CW);
 		} else {
 			gl.frontFace(gl.CCW);
+		}
+
+		if (this.wireframe) {
+			const count = this.mesh.triangles.length;
+			gl.drawElements(gl.LINE_STRIP, count, gl.UNSIGNED_SHORT, 0);
+			return;
 		}
 
 		const count = this.mesh.triangles.length;

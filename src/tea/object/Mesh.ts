@@ -39,11 +39,32 @@ export class Mesh {
 		return count;
 	}
 
+	get hasTriangles(): boolean {
+		return this.triangles != null
+			&& this.triangles.length > 0;
+	}
+
+	get hasNormals(): boolean {
+		return this.normals != null
+			&& this.normals.length > 0;
+	}
+
+	get hasColors(): boolean {
+		return this.colors != null
+			&& this.colors.length > 0;
+	}
+
+	get hasUVs(): boolean {
+		return this.uv != null
+			&& this.uv.length > 0;
+	}
+
 	clear(): void {
 		this.vertices = new Float32Array([]);
 		this.triangles = new Uint16Array([]);
 		this.normals = new Float32Array([]);
 		this.uv = new Float32Array([]);
+		this.colors = new Float32Array([]);
 		this.bounds = new Tea.Bounds();
 	}
 
@@ -63,12 +84,28 @@ export class Mesh {
 		this.triangles = new Uint16Array(array);
 	}
 
+	setNormals(array: Array<number>): void {
+		if (array == null) {
+			this.normals = new Float32Array([]);
+			return;
+		}
+		this.normals = new Float32Array(array);
+	}
+
 	setUVs(array: Array<number>): void {
 		if (array == null) {
 			this.uv = new Float32Array([]);
 			return;
 		}
 		this.uv = new Float32Array(array);
+	}
+
+	setColors(array: Array<number>): void {
+		if (array == null) {
+			this.colors = new Float32Array([]);
+			return;
+		}
+		this.colors = new Float32Array(array);
 	}
 
 	scale(value: number): void {

@@ -164,10 +164,10 @@ export class App {
 		cancelAnimationFrame(this.animationFrameHandle);
 	}
 
-	createPlain(): Tea.Object3D {
+	createQuad(): Tea.Object3D {
 		const object3d = new Tea.Object3D();
 		const shader = this.createDefaultShader();
-		const mesh = Tea.Primitives.createPlainMesh();
+		const mesh = Tea.Primitives.createQuadMesh();
 		const renderer = this.createRenderer(mesh, shader);
 		//this.renderer.wireframe = true;
 		object3d.name = "Plain";
@@ -186,11 +186,58 @@ export class App {
 		return object3d;
 	}
 
+	createSphere(): Tea.Object3D {
+		const object3d = new Tea.Object3D();
+		const shader = this.createDefaultShader();
+		const mesh = Tea.Primitives.createSphereMesh(10, 10);
+		const renderer = this.createRenderer(mesh, shader);
+		//renderer.wireframe = true;
+		object3d.name = "Sphere";
+		object3d.renderer = renderer;
+		return object3d;
+	}
+
+	createCylinder(): Tea.Object3D {
+		const object3d = new Tea.Object3D();
+		const shader = this.createDefaultShader();
+		const mesh = Tea.Primitives.createCylinderMesh(20);
+		const renderer = this.createRenderer(mesh, shader);
+		//renderer.wireframe = true;
+		object3d.name = "Cylinder";
+		object3d.renderer = renderer;
+		return object3d;
+	}
+
+	createPlane(): Tea.Object3D {
+		const object3d = new Tea.Object3D();
+		const shader = this.createDefaultShader();
+		const mesh = Tea.Primitives.createPlaneMesh(10);
+		const renderer = this.createRenderer(mesh, shader);
+		//renderer.wireframe = true;
+		object3d.name = "Plane";
+		object3d.renderer = renderer;
+		return object3d;
+	}
+
+	createCapsule(): Tea.Object3D {
+		const object3d = new Tea.Object3D();
+		const shader = this.createDefaultShader();
+		const mesh = Tea.Primitives.createCapsuleMesh(10, 10);
+		const renderer = this.createRenderer(mesh, shader);
+		//renderer.wireframe = true;
+		object3d.name = "Capsule";
+		object3d.renderer = renderer;
+		return object3d;
+	}
+
 	protected init(): void {
 		this.gl = this.getWebGLContext();
 		const gl = this.gl;
 		gl.clearColor(0.0, 0.0, 0.0, 1.0);
 		gl.clearDepth(1.0);
+
+		gl.enable(gl.DEPTH_TEST);
+		gl.depthFunc(gl.LEQUAL);
 
 		gl.enable(gl.CULL_FACE);
 		gl.cullFace(gl.BACK);

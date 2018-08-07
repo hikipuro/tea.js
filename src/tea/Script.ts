@@ -14,6 +14,13 @@ export class Script {
 		this.object3d.position = value;
 	}
 
+	get rotation(): Tea.Vector3 {
+		return this.object3d.rotation;
+	}
+	set rotation(value: Tea.Vector3) {
+		this.object3d.rotation = value;
+	}
+
 	start(): void {
 
 	}
