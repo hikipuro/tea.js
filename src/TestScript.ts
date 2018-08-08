@@ -1,4 +1,5 @@
 import * as Tea from "./tea/Tea";
+import { Keyboard } from "./tea/Keyboard";
 
 export class TestScript extends Tea.Script {
 	count: number = 0;
@@ -16,5 +17,19 @@ export class TestScript extends Tea.Script {
 
 		//this.rotation.x = Tea.radians(this.count / 3);
 		this.rotation.y = Tea.radians(this.count / 3);
+
+		const keyboard = this.app.keyboard;
+		//console.log(keyboard.isDown(Keyboard.Keys.ArrowLeft));
+		if (keyboard.isDown(Keyboard.Codes.Space)) {
+			console.log("down");
+		}
+		if (keyboard.isUp(Keyboard.Codes.Space)) {
+			console.log("up");
+		}
+		if (keyboard.isHeld(Keyboard.Codes.Space)) {
+			console.log("held");
+		}
+
+		//console.log(this.app.keyboard._keys);
 	}
 }

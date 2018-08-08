@@ -79,7 +79,7 @@ export class Renderer {
 
 	protected setUniforms(mesh: Tea.Mesh): void {
 		let model = this.createModelMatrix();
-		const mvpMatrix = this.camera.mvpMatrix(model);
+		const mvpMatrix = this.camera.mvpMatrix(this.app.width, this.app.height, model);
 		this.shader.uniformMatrix4fv("mvpMatrix", mvpMatrix);
 		this.shader.uniformMatrix4fv("invMatrix", mvpMatrix.inverse);
 		this.shader.uniform3fv("lightDirection", [-0.5, 0.5, 0.5]);

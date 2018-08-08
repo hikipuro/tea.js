@@ -2,14 +2,16 @@ import * as Tea from "../Tea";
 
 export class Object3D {
 	name: string;
+	app: Tea.App;
 	position: Tea.Vector3;
 	rotation: Tea.Vector3;
 	scale: Tea.Vector3;
 	scripts: Array<Tea.Script>;
 	protected _renderer: Tea.Renderer;
 
-	constructor() {
+	constructor(app: Tea.App) {
 		this.name = "";
+		this.app = app;
 		this.position = Tea.Vector3.zero;
 		this.rotation = Tea.Vector3.zero;
 		this.scale = Tea.Vector3.one;
@@ -32,6 +34,10 @@ export class Object3D {
 	}
 
 	addScript(script: Tea.Script): void {
+		if (script == null) {
+			return;
+		}
+		script.app = this.app;
 		script.object3d = this;
 		this.scripts.push(script);
 	}

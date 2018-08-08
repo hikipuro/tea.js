@@ -1,7 +1,9 @@
 import * as Tea from "./Tea";
+import { Keyboard } from "./Keyboard";
 
 export class App {
 	canvas: HTMLCanvasElement;
+	keyboard: Keyboard;
 	gl: WebGLRenderingContext;
 	capabilities: Tea.GLCapabilities;
 	parameters: Tea.GLParameters;
@@ -23,62 +25,12 @@ export class App {
 		//this.clear();
 	}
 
-	bench(): void {
-		const count = 50000;
-		let start = 0;
-		let gl = this.gl;
-
-		this.test3();
-		this.test1();
-		
-
-		start = performance.now();
-		for (let i = 0; i < count; i++) {
-			let t = gl.createTexture();
-			gl.deleteTexture(t);
-		}
-		console.log("test 2", performance.now() - start);
-
-
-	}
-
-	test1(): void {
-		const count = 50000;
-		let start = 0;
-		start = performance.now();
-		for (let i = 0; i < count; i++) {
-			let t = this.gl.createTexture();
-			this.gl.deleteTexture(t);
-		}
-		console.log("test 1", performance.now() - start);
-	}
-
-	test3(): void {
-		const count = 50000;
-		let start = 0;
-		start = performance.now();
-		for (let i = 0; i < count; i++) {
-			let t = this.createTexture2();
-			this.deleteTexture2(t);
-		}
-		console.log("test 3", performance.now() - start);
-	}
-
-	createTexture2(): WebGLTexture {
-		let gl = this.gl;
-		return gl.createTexture();
-	}
-	deleteTexture2(t: WebGLTexture): void {
-		let gl = this.gl;
-		gl.deleteTexture(t);
-	}
-
 	get width(): number {
 		return this.canvas.width;
 	}
 	set width(value: number) {
 		this.canvas.width = value;
-		this.gl.viewport(0, 0, this.width, this.height);
+		this.onResize();
 	}
 
 	get height(): number {
@@ -86,7 +38,7 @@ export class App {
 	}
 	set height(value: number) {
 		this.canvas.height = value;
-		this.gl.viewport(0, 0, this.width, this.height);
+		this.onResize();
 	}
 
 	get drawingBufferWidth(): number {
@@ -165,7 +117,7 @@ export class App {
 	}
 
 	createQuad(): Tea.Object3D {
-		const object3d = new Tea.Object3D();
+		const object3d = new Tea.Object3D(this);
 		const shader = this.createDefaultShader();
 		const mesh = Tea.Primitives.createQuadMesh();
 		const renderer = this.createRenderer(mesh, shader);
@@ -176,7 +128,7 @@ export class App {
 	}
 
 	createCube(): Tea.Object3D {
-		const object3d = new Tea.Object3D();
+		const object3d = new Tea.Object3D(this);
 		const shader = this.createDefaultShader();
 		const mesh = Tea.Primitives.createCubeMesh();
 		const renderer = this.createRenderer(mesh, shader);
@@ -187,7 +139,7 @@ export class App {
 	}
 
 	createSphere(): Tea.Object3D {
-		const object3d = new Tea.Object3D();
+		const object3d = new Tea.Object3D(this);
 		const shader = this.createDefaultShader();
 		const mesh = Tea.Primitives.createSphereMesh(10, 10);
 		const renderer = this.createRenderer(mesh, shader);
@@ -198,7 +150,7 @@ export class App {
 	}
 
 	createCylinder(): Tea.Object3D {
-		const object3d = new Tea.Object3D();
+		const object3d = new Tea.Object3D(this);
 		const shader = this.createDefaultShader();
 		const mesh = Tea.Primitives.createCylinderMesh(20);
 		const renderer = this.createRenderer(mesh, shader);
@@ -209,7 +161,7 @@ export class App {
 	}
 
 	createPlane(): Tea.Object3D {
-		const object3d = new Tea.Object3D();
+		const object3d = new Tea.Object3D(this);
 		const shader = this.createDefaultShader();
 		const mesh = Tea.Primitives.createPlaneMesh(10);
 		const renderer = this.createRenderer(mesh, shader);
@@ -220,7 +172,7 @@ export class App {
 	}
 
 	createCapsule(): Tea.Object3D {
-		const object3d = new Tea.Object3D();
+		const object3d = new Tea.Object3D(this);
 		const shader = this.createDefaultShader();
 		const mesh = Tea.Primitives.createCapsuleMesh(10, 10);
 		const renderer = this.createRenderer(mesh, shader);
@@ -241,6 +193,11 @@ export class App {
 
 		gl.enable(gl.CULL_FACE);
 		gl.cullFace(gl.BACK);
+
+		gl.enable(gl.SCISSOR_TEST);
+		gl.scissor(0, 0, this.width, this.height);
+
+		this.keyboard = new Keyboard(document.body);
 	}
 
 	protected getWebGLContext(): WebGLRenderingContext {
@@ -252,9 +209,58 @@ export class App {
 
 	protected update = (time: number): void => {
 		if (this.currentScene != null) {
-			this.currentScene.update(time);
+			this.updateScene(time);
 		}
 		this.animationFrameHandle = requestAnimationFrame(this.update);
+	}
+
+	protected updateScene(time: number): void {
+		this.setViewport();
+		this.currentScene.update(time);
+		this.keyboard.update();
+	}
+
+	protected setViewport(): void {
+		const gl = this.gl;
+
+		const camera = this.currentScene.camera;
+		const rect = camera.rect.clone();
+		if (rect.x < 0) {
+			rect.width += rect.x;
+			rect.x = 0;
+		}
+		if (rect.y < 0) {
+			rect.height += rect.y;
+			rect.y = 0;
+		}
+		if (rect.xMax > 1) {
+			rect.width = 1 - rect.x;
+		}
+		if (rect.yMax > 1) {
+			rect.height = 1 - rect.y;
+		}
+
+		const width = this.width;
+		const height = this.height;
+
+		gl.viewport(
+			(rect.x + (rect.xMax - 1) + (1 - rect.height)) * width * 0.5,
+			(rect.y * 2) * height * 0.5,
+			rect.height * width,
+			rect.height * height
+		);
+		gl.scissor(
+			rect.x * width,
+			rect.y * height,
+			rect.width * width,
+			rect.height * height
+		);
+	}
+
+	protected onResize() {
+		//const gl = this.gl;
+		//gl.viewport(100 / 2, 0, this.width, this.height);
+		//gl.scissor(100, 0, this.width, this.height);
 	}
 
 

@@ -1,6 +1,7 @@
 import * as Tea from "./Tea";
 
 export class Script {
+	app: Tea.App;
 	object3d: Tea.Object3D;
 
 	constructor() {

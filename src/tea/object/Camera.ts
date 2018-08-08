@@ -1,5 +1,6 @@
 import * as Tea from "../Tea";
 import { Object3D } from "./Object3D";
+import { Rect } from "../math/Rect";
 
 export class Camera extends Object3D {
 	fieldOfView: number;
@@ -9,9 +10,10 @@ export class Camera extends Object3D {
 	backgroundColor: Tea.Color;
 	orthographic: boolean;
 	orthographicSize: number;
+	rect: Rect;
 
 	constructor() {
-		super();
+		super(null);
 		this.position = new Tea.Vector3(0, 1, 10);
 		this.fieldOfView = 60;
 		this.nearClipPlane = 0.3;
@@ -20,9 +22,11 @@ export class Camera extends Object3D {
 		this.backgroundColor = Tea.Color.background;
 		this.orthographic = false;
 		this.orthographicSize = 5;
+		this.rect = new Rect(0, 0, 1, 1);
 	}
 	
-	get vpMatrix(): Tea.Matrix4 {
+	vpMatrix(width: number, height: number): Tea.Matrix4 {
+		const aspect = width / height;
 		let view = Tea.Matrix4.translate(this.position);
 		view = view.mul(Tea.Matrix4.rotateZXY(this.rotation));
 		view = view.inverse;
@@ -31,14 +35,14 @@ export class Camera extends Object3D {
 		if (this.orthographic) {
 			projection = projection.mul(Tea.Matrix4.ortho(
 				this.orthographicSize,
-				this.aspect,
+				aspect,
 				this.nearClipPlane,
 				this.farClipPlane
 			));
 		} else {
 			projection = Tea.Matrix4.perspective(
 				this.fieldOfView,
-				this.aspect,
+				aspect,
 				this.nearClipPlane,
 				this.farClipPlane
 			);
@@ -47,8 +51,8 @@ export class Camera extends Object3D {
 		return projection.mul(view);
 	}
 
-	mvpMatrix(model: Tea.Matrix4): Tea.Matrix4 {
-		return this.vpMatrix.mul(model);
+	mvpMatrix(width: number, height: number, model: Tea.Matrix4): Tea.Matrix4 {
+		return this.vpMatrix(width, height).mul(model);
 	}
 
 	/*

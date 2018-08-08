@@ -108,6 +108,13 @@ export class Rect extends Array<number> {
 		this.height = height;
 	}
 
+	clone(): Rect {
+		return new Rect(
+			this.x, this.y,
+			this.width, this.height
+		);
+	}
+
 	equals(value: Rect): boolean {
 		if (value == null) {
 			return false;
