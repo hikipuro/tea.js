@@ -1,9 +1,11 @@
 import * as Tea from "./Tea";
 import { Keyboard } from "./Keyboard";
+import { Mouse } from "./Mouse";
 
 export class App {
 	canvas: HTMLCanvasElement;
 	keyboard: Keyboard;
+	mouse: Mouse;
 	gl: WebGLRenderingContext;
 	capabilities: Tea.GLCapabilities;
 	parameters: Tea.GLParameters;
@@ -198,6 +200,7 @@ export class App {
 		gl.scissor(0, 0, this.width, this.height);
 
 		this.keyboard = new Keyboard(document.body);
+		this.mouse = new Mouse(this, this.canvas);
 	}
 
 	protected getWebGLContext(): WebGLRenderingContext {
@@ -218,6 +221,7 @@ export class App {
 		this.setViewport();
 		this.currentScene.update(time);
 		this.keyboard.update();
+		this.mouse.update();
 	}
 
 	protected setViewport(): void {

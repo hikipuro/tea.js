@@ -3,6 +3,7 @@ import { Keyboard } from "./tea/Keyboard";
 
 export class TestScript extends Tea.Script {
 	count: number = 0;
+	speedY: number = 0;
 
 	start(): void {
 		console.log("TestScript.start");
@@ -16,7 +17,7 @@ export class TestScript extends Tea.Script {
 		//console.log(this.count, this.position);
 
 		//this.rotation.x = Tea.radians(this.count / 3);
-		this.rotation.y = Tea.radians(this.count / 3);
+		this.rotation.y += Tea.radians(this.speedY * 2);
 
 		const keyboard = this.app.keyboard;
 		//console.log(keyboard.isDown(Keyboard.Keys.ArrowLeft));
@@ -28,6 +29,21 @@ export class TestScript extends Tea.Script {
 		}
 		if (keyboard.isHeld(Keyboard.Codes.Space)) {
 			console.log("held");
+		}
+
+		const mouse = this.app.mouse;
+		if (mouse.isMoved) {
+			this.speedY = mouse.x / this.app.width;
+			//console.log(this.speedY);
+			//console.log(mouse.x, mouse.y, mouse.prevX, mouse.prevY);
+			this.position.x = -0.5 + mouse.x / this.app.width;
+			this.position.y = 0.5 + mouse.y / this.app.height;
+		}
+		if (mouse.isDown(0)) {
+			console.log("mouse down");
+		}
+		if (mouse.isUp(0)) {
+			console.log("mouse up");
 		}
 
 		//console.log(this.app.keyboard._keys);
