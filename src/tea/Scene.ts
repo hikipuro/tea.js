@@ -27,7 +27,7 @@ export class Scene {
 		this.children.push(object3d);
 	}
 
-	update(time: number): void {
+	update(): void {
 		this.clear();
 
 		if (this._firstTime) {

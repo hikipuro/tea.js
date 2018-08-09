@@ -101,16 +101,14 @@ export class Vector4 extends Array<number> {
 		);
 	}
 
-	toVector3(): Vector3 {
+	toVector3(useW: boolean = false): Vector3 {
 		const vector3 = new Vector3(this.x, this.y, this.z);
-		/*
-		if (this.w != 0) {
+		if (useW && this.w != 0) {
 			const w = 1 / this.w;
 			vector3.x *= w;
 			vector3.y *= w;
 			vector3.x *= w;
 		}
-		*/
 		return vector3;
 	}
 

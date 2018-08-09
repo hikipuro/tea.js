@@ -9,6 +9,7 @@ export class Mouse {
 	prevButtons: Array<boolean>;
 	protected _app: Tea.App;
 	protected _element: HTMLElement;
+	protected _lastMoveTime: number = 0;
 
 	constructor(app: Tea.App, element: HTMLElement) {
 		this._app = app;
@@ -83,7 +84,12 @@ export class Mouse {
 	}
 
 	protected onMouseMove = (e: MouseEvent): void => {
-		e.stopPropagation();
+		//e.stopPropagation();
+		const now = Tea.now();
+		if (now <= this._lastMoveTime + 16) {
+			return;
+		}
+		this._lastMoveTime = now;
 		this.x = e.offsetX;
 		this.y = this._app.height - (e.offsetY + 1);
 	}

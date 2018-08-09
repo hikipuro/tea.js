@@ -2,6 +2,7 @@ import { Matrix4 } from "./math/Matrix4";
 import { Vector2 } from "./math/Vector2";
 import { Vector3 } from "./math/Vector3";
 import { Vector4 } from "./math/Vector4";
+import { Rect } from "./math/Rect";
 
 import { Color } from "./util/Color";
 import { File } from "./util/File";
@@ -28,6 +29,7 @@ export {
 	Vector2,
 	Vector3,
 	Vector4,
+	Rect,
 
 	Color,
 	File,

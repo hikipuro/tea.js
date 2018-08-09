@@ -4,15 +4,10 @@ import { Mouse } from "./Mouse";
 
 export class App {
 	canvas: HTMLCanvasElement;
-	keyboard: Keyboard;
-	mouse: Mouse;
 	gl: WebGLRenderingContext;
 	capabilities: Tea.GLCapabilities;
 	parameters: Tea.GLParameters;
-	currentScene: Tea.Scene;
-	isStarted: boolean;
-
-	protected animationFrameHandle: number = 0;
+	protected _renderer: AppRenderer;
 
 	constructor(id: string) {
 		this.canvas = document.getElementById(id) as HTMLCanvasElement;
@@ -24,6 +19,7 @@ export class App {
 		//this.context.getExtension('WEBGL_lose_context').loseContext();
 
 		this.parameters = new Tea.GLParameters(this.gl);
+		this._renderer = new AppRenderer(this);
 		//this.clear();
 	}
 
@@ -57,6 +53,22 @@ export class App {
 
 	get contextAttributes(): WebGLContextAttributes {
 		return this.gl.getContextAttributes();
+	}
+
+	get isStarted(): boolean {
+		return this._renderer.isStarted;
+	}
+
+	get currentScene(): Tea.Scene {
+		return this._renderer.currentScene;
+	}
+	
+	get keyboard(): Keyboard {
+		return this._renderer.keyboard;
+	}
+
+	get mouse(): Mouse {
+		return this._renderer.mouse;
 	}
 
 	createScene(): Tea.Scene {
@@ -93,7 +105,7 @@ export class App {
 	}
 
 	setScene(scene: Tea.Scene): void {
-		this.currentScene = scene;
+		this._renderer.currentScene = scene;
 	}
 
 	drawArrays(): void {
@@ -103,19 +115,11 @@ export class App {
 	}
 
 	start(): void {
-		if (this.isStarted === true) {
-			return;
-		}
-		this.isStarted = true;
-		this.animationFrameHandle = requestAnimationFrame(this.update);
+		this._renderer.start();
 	}
 
 	stop(): void {
-		if (this.isStarted === false) {
-			return;
-		}
-		this.isStarted = false;
-		cancelAnimationFrame(this.animationFrameHandle);
+		this._renderer.stop();
 	}
 
 	createQuad(): Tea.Object3D {
@@ -198,9 +202,6 @@ export class App {
 
 		gl.enable(gl.SCISSOR_TEST);
 		gl.scissor(0, 0, this.width, this.height);
-
-		this.keyboard = new Keyboard(document.body);
-		this.mouse = new Mouse(this, this.canvas);
 	}
 
 	protected getWebGLContext(): WebGLRenderingContext {
@@ -208,57 +209,6 @@ export class App {
 			return;
 		}
 		return this.canvas.getContext("webgl") as WebGLRenderingContext;
-	}
-
-	protected update = (time: number): void => {
-		if (this.currentScene != null) {
-			this.updateScene(time);
-		}
-		this.animationFrameHandle = requestAnimationFrame(this.update);
-	}
-
-	protected updateScene(time: number): void {
-		this.setViewport();
-		this.currentScene.update(time);
-		this.keyboard.update();
-		this.mouse.update();
-	}
-
-	protected setViewport(): void {
-		const gl = this.gl;
-
-		const camera = this.currentScene.camera;
-		const rect = camera.rect.clone();
-		if (rect.x < 0) {
-			rect.width += rect.x;
-			rect.x = 0;
-		}
-		if (rect.y < 0) {
-			rect.height += rect.y;
-			rect.y = 0;
-		}
-		if (rect.xMax > 1) {
-			rect.width = 1 - rect.x;
-		}
-		if (rect.yMax > 1) {
-			rect.height = 1 - rect.y;
-		}
-
-		const width = this.width;
-		const height = this.height;
-
-		gl.viewport(
-			(rect.x + (rect.xMax - 1) + (1 - rect.height)) * width * 0.5,
-			(rect.y * 2) * height * 0.5,
-			rect.height * width,
-			rect.height * height
-		);
-		gl.scissor(
-			rect.x * width,
-			rect.y * height,
-			rect.width * width,
-			rect.height * height
-		);
 	}
 
 	protected onResize() {
@@ -278,5 +228,116 @@ export class App {
 
 	protected onContextRestored = (event: WebGLContextEvent) => {
 		console.warn("webglcontextrestored", event);
+	}
+}
+
+class AppRenderer {
+	app: App;
+	isStarted: boolean;
+	isPaused: boolean;
+	currentScene: Tea.Scene;
+	keyboard: Keyboard;
+	mouse: Mouse;
+	protected _handle: number;
+	protected _prevRect: Tea.Rect;
+
+	constructor(app: App) {
+		this.app = app;
+		this.isStarted = false;
+		this.isPaused = false;
+		this.keyboard = new Keyboard(document.body);
+		this.mouse = new Mouse(app, this.app.canvas);
+		this._handle = 0;
+		this._prevRect = new Tea.Rect();
+
+		window.addEventListener("blur", () => {
+			if (this.isStarted && this.isPaused === false) {
+				cancelAnimationFrame(this._handle);
+				this._handle = 0;
+			}
+			this.isPaused = true;
+		});
+		window.addEventListener("focus", () => {
+			if (this.isStarted && this.isPaused) {
+				this._handle = requestAnimationFrame(this.update);
+			}
+			this.isPaused = false;
+		});
+	}
+
+	start(): void {
+		if (this.isStarted === true) {
+			return;
+		}
+		this.isStarted = true;
+		if (this.isPaused === false) {
+			this._handle = requestAnimationFrame(this.update);
+		}
+	}
+
+	stop(): void {
+		if (this.isStarted === false) {
+			return;
+		}
+		this.isStarted = false;
+		if (this.isPaused === false) {
+			cancelAnimationFrame(this._handle);
+			this._handle = 0;
+		}
+	}
+
+	protected update = (time: number): void => {
+		if (this.currentScene != null) {
+			this.updateScene();
+		}
+		this._handle = requestAnimationFrame(this.update);
+	}
+
+	protected updateScene(): void {
+		this.setViewport();
+		this.currentScene.update();
+		this.keyboard.update();
+		this.mouse.update();
+	}
+
+	protected setViewport(): void {
+		const gl = this.app.gl;
+		const camera = this.currentScene.camera;
+
+		if (this._prevRect.equals(camera.rect)) {
+			return;
+		}
+
+		const rect = camera.rect.clone();
+		if (rect.x < 0) {
+			rect.width += rect.x;
+			rect.x = 0;
+		}
+		if (rect.y < 0) {
+			rect.height += rect.y;
+			rect.y = 0;
+		}
+		if (rect.xMax > 1) {
+			rect.width = 1 - rect.x;
+		}
+		if (rect.yMax > 1) {
+			rect.height = 1 - rect.y;
+		}
+
+		const width = this.app.width;
+		const height = this.app.height;
+
+		gl.viewport(
+			(rect.x + (rect.xMax - 1) + (1 - rect.height)) * width * 0.5,
+			(rect.y * 2) * height * 0.5,
+			rect.height * width,
+			rect.height * height
+		);
+		gl.scissor(
+			rect.x * width,
+			rect.y * height,
+			rect.width * width,
+			rect.height * height
+		);
 	}
 }

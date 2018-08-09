@@ -4,7 +4,7 @@ export class Renderer {
 	app: Tea.App;
 	object3d: Tea.Object3D;
 	shader: Tea.Shader;
-	mesh: Tea.Mesh;
+	protected _mesh: Tea.Mesh;
 	camera: Tea.Camera;
 
 	vertexBuffer: WebGLBuffer;
@@ -23,6 +23,14 @@ export class Renderer {
 		this.normalBuffer = gl.createBuffer();
 		this.uvBuffer = gl.createBuffer();
 		this.colorBuffer = gl.createBuffer();
+	}
+
+	get mesh(): Tea.Mesh {
+		return this._mesh;
+	}
+	set mesh(value: Tea.Mesh) {
+		this._mesh = value;
+		this.setMeshDate(value);
 	}
 
 	remove(): void {
@@ -77,6 +85,36 @@ export class Renderer {
 		);
 	}
 
+	protected setMeshDate(mesh: Tea.Mesh): void {
+		const gl = this.app.gl;
+		let target = gl.ARRAY_BUFFER;
+		gl.bindBuffer(target, this.vertexBuffer);
+		gl.bufferData(target, mesh.vertices, gl.STATIC_DRAW);
+
+		if (mesh.hasNormals) {
+			gl.bindBuffer(target, this.normalBuffer);
+			gl.bufferData(target, mesh.normals, gl.STATIC_DRAW);
+		}
+
+		if (mesh.hasUVs) {
+			gl.bindBuffer(target, this.uvBuffer);
+			gl.bufferData(target, mesh.uv, gl.STATIC_DRAW);
+		}
+
+		if (mesh.hasColors) {
+			gl.bindBuffer(target, this.colorBuffer);
+			gl.bufferData(target, mesh.colors, gl.STATIC_DRAW);
+		}
+		gl.bindBuffer(target, null);
+
+		if (mesh.hasTriangles) {
+			target = gl.ELEMENT_ARRAY_BUFFER;
+			gl.bindBuffer(target, this.indexBuffer);
+			gl.bufferData(target, mesh.triangles, gl.STATIC_DRAW);
+			gl.bindBuffer(target, null);
+		}
+	}
+
 	protected setUniforms(mesh: Tea.Mesh): void {
 		let model = this.createModelMatrix();
 		let view = this.camera.cameraToWorldMatrix;
@@ -122,12 +160,12 @@ export class Renderer {
 		const gl = this.app.gl;
 		const target = gl.ARRAY_BUFFER;
 		gl.bindBuffer(target, this.vertexBuffer);
-		gl.bufferData(target, mesh.vertices, gl.STATIC_DRAW);
+		//gl.bufferData(target, mesh.vertices, gl.STATIC_DRAW);
 		this.shader.setAttribute("position", 3);
 
 		if (mesh.hasNormals) {
 			gl.bindBuffer(target, this.normalBuffer);
-			gl.bufferData(target, mesh.normals, gl.STATIC_DRAW);
+			//gl.bufferData(target, mesh.normals, gl.STATIC_DRAW);
 			this.shader.setAttribute("normal", 3);
 		} else {
 			this.shader.disableVertexAttrib("normal");
@@ -135,7 +173,7 @@ export class Renderer {
 
 		if (mesh.hasUVs) {
 			gl.bindBuffer(target, this.uvBuffer);
-			gl.bufferData(target, mesh.uv, gl.STATIC_DRAW);
+			//gl.bufferData(target, mesh.uv, gl.STATIC_DRAW);
 			this.shader.setAttribute("texCoord", 2);
 		} else {
 			this.shader.disableVertexAttrib("texCoord");
@@ -157,7 +195,7 @@ export class Renderer {
 		const target = gl.ELEMENT_ARRAY_BUFFER;
 		if (mesh.hasTriangles) {
 			gl.bindBuffer(target, this.indexBuffer);
-			gl.bufferData(target, mesh.triangles, gl.STATIC_DRAW);
+			//gl.bufferData(target, mesh.triangles, gl.STATIC_DRAW);
 		} else {
 			gl.bindBuffer(target, null);
 		}
