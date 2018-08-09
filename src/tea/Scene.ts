@@ -9,7 +9,7 @@ export class Scene {
 
 	constructor(app: Tea.App) {
 		this.app = app;
-		this.camera = new Tea.Camera();
+		this.camera = new Tea.Camera(app);
 		this._children = [];
 		this._firstTime = true;
 	}
@@ -22,6 +22,7 @@ export class Scene {
 		if (object3d == null) {
 			return;
 		}
+		object3d.scene = this;
 		object3d.renderer.camera = this.camera;
 		this.children.push(object3d);
 	}

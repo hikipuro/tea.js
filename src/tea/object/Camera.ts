@@ -12,8 +12,8 @@ export class Camera extends Object3D {
 	orthographicSize: number;
 	rect: Rect;
 
-	constructor() {
-		super(null);
+	constructor(app: Tea.App) {
+		super(app);
 		this.position = new Tea.Vector3(0, 1, 10);
 		this.fieldOfView = 60;
 		this.nearClipPlane = 0.3;
@@ -24,13 +24,23 @@ export class Camera extends Object3D {
 		this.orthographicSize = 5;
 		this.rect = new Rect(0, 0, 1, 1);
 	}
-	
-	vpMatrix(width: number, height: number): Tea.Matrix4 {
-		const aspect = width / height;
+
+	get cameraToWorldMatrix(): Tea.Matrix4 {
 		let view = Tea.Matrix4.translate(this.position);
 		view = view.mul(Tea.Matrix4.rotateZXY(this.rotation));
 		view = view.inverse;
+		return view;
+	}
 
+	get worldToCameraMatrix(): Tea.Matrix4 {
+		let view = Tea.Matrix4.translate(this.position);
+		view = view.mul(Tea.Matrix4.rotateZXY(this.rotation));
+		//view = view.inverse;
+		return view;
+	}
+
+	get projectionMatrix(): Tea.Matrix4 {
+		const aspect = this.app.width / this.app.height;
 		let projection: Tea.Matrix4;
 		if (this.orthographic) {
 			projection = projection.mul(Tea.Matrix4.ortho(
@@ -47,12 +57,44 @@ export class Camera extends Object3D {
 				this.farClipPlane
 			);
 		}
-		
-		return projection.mul(view);
+		return projection;
 	}
 
-	mvpMatrix(width: number, height: number, model: Tea.Matrix4): Tea.Matrix4 {
-		return this.vpMatrix(width, height).mul(model);
+	screenToWorldPoint(position: Tea.Vector3): Tea.Vector3 {
+		if (position == null) {
+			return Tea.Vector3.zero;
+		}
+
+		const p = this.screenToViewport(position);
+		p.z = 1;
+		const far = this.unproject(p);
+		let ray = far.sub(this.position).normalized;
+
+		let rotation = new Tea.Vector3(0, 0, -1);
+		rotation.rotateX(this.rotation.x);
+		rotation.rotateY(this.rotation.y);
+		rotation.rotateZ(this.rotation.z);
+		let d = Tea.Vector3.dot(ray, rotation.normalized);
+		
+		return this.position.add(ray.mul(position.z / d));
+	}
+
+	screenToViewport(screen: Tea.Vector3): Tea.Vector3 {
+		const viewport = screen.clone();
+		viewport.x = 2 * viewport.x / this.app.width - 1;
+		viewport.y = 2 * viewport.y / this.app.height - 1;
+		return viewport;
+	}
+
+	unproject(viewport: Tea.Vector3): Tea.Vector3 {
+		const view = this.cameraToWorldMatrix;
+		const projection = this.projectionMatrix;
+		let vp = projection.mul(view);
+		vp = vp.inverse;
+
+		let result = viewport.clone();
+		result.applyMatrix4(vp);
+		return result;
 	}
 
 	/*

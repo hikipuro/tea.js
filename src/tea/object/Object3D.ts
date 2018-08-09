@@ -3,6 +3,7 @@ import * as Tea from "../Tea";
 export class Object3D {
 	name: string;
 	app: Tea.App;
+	scene: Tea.Scene;
 	position: Tea.Vector3;
 	rotation: Tea.Vector3;
 	scale: Tea.Vector3;

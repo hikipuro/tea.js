@@ -79,11 +79,24 @@ export class Renderer {
 
 	protected setUniforms(mesh: Tea.Mesh): void {
 		let model = this.createModelMatrix();
-		const mvpMatrix = this.camera.mvpMatrix(this.app.width, this.app.height, model);
+		let view = this.camera.cameraToWorldMatrix;
+		let proj = this.camera.projectionMatrix;
+
+		const mvpMatrix = proj.mul(view).mul(model);
+		const invMatrix = mvpMatrix.inverse;
 		this.shader.uniformMatrix4fv("mvpMatrix", mvpMatrix);
-		this.shader.uniformMatrix4fv("invMatrix", mvpMatrix.inverse);
-		this.shader.uniform3fv("lightDirection", [-0.5, 0.5, 0.5]);
-		this.shader.uniform4fv("ambientColor", [0.1, 0.1, 0.1, 1.0]);
+		this.shader.uniformMatrix4fv("invMatrix", invMatrix);
+		//console.log(mvpMatrix.mul(invMatrix).toString());
+
+		let light = new Tea.Vector3(0.5, 0.5, -0.5);
+		//light.x = 0.5;
+		//light.x = Tea.radians(light.x);
+		//light.y = Tea.radians(light.y);
+		//light.z = Tea.radians(light.z);
+		//light = light.normalized;
+
+		this.shader.uniform3fv("lightDirection", light);
+		this.shader.uniform4fv("ambientColor", [0.2, 0.2, 0.2, 0.0]);
 		if (mesh.hasColors) {
 			this.shader.uniform1i("useColor", 1);
 		} else {

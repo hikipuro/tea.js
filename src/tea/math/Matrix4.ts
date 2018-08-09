@@ -177,14 +177,29 @@ export class Matrix4 extends Array<number> {
 	static perspective(fov: number, aspect: number, zNear: number, zFar: number): Matrix4 {
 		const m = new Matrix4();
 		fov = Tea.radians(fov);
+		const top = Math.tan(fov / 2) * zNear;
+		const bottom = -top;
+		const right = top * aspect;
+		const left = -top * aspect;
+		m[0] = 2 * zNear / (right - left);
+		m[5] = 2 * zNear / (top - bottom);
+		m[8] = (right + left) / (right - left);
+		m[9] = (top + bottom) / (top - bottom);
+		m[10] = -(zFar + zNear) / (zFar - zNear);
+		m[11] = -1;
+		m[14] = -(2 * zFar * zNear) / (zFar - zNear);
+		return m;
+
+		/*
 		const zoomY = 1 / Math.tan(fov / 2);
 		const zoomX = zoomY / aspect;
 		m[0] = zoomX;
 		m[5] = zoomY;
 		m[10] = -(zFar + zNear) / (zFar - zNear);
 		m[11] = -1;
-		m[14] = -2 * zFar * (zNear / (zFar - zNear));
+		m[14] = -(2 * zFar * zNear) / (zFar - zNear);
 		return m;
+		*/
 	}
 
 	static ortho(size: number, aspect: number, near: number, far: number): Matrix4 {
@@ -285,6 +300,7 @@ export class Matrix4 extends Array<number> {
 	}
 
 	get inverse(): Matrix4 {
+		/*
 		const m = new Matrix4();
 		const m11 = this[0], m21 = this[4], m31 = this[8],  m41 = this[12];
 		const m12 = this[1], m22 = this[5], m32 = this[9],  m42 = this[13];
@@ -327,6 +343,37 @@ export class Matrix4 extends Array<number> {
 		m[15] = (m11 * m22 * m33) + (m12 * m23 * m31) + (m13 * m21 * m32) -
 				(m11 * m23 * m32) - (m12 * m21 * m33) - (m13 * m22 * m31);
 		return m;
+		*/
+
+		var dest = new Matrix4();
+		var a = this[0],  b = this[1],  c = this[2],  d = this[3],
+			e = this[4],  f = this[5],  g = this[6],  h = this[7],
+			i = this[8],  j = this[9],  k = this[10], l = this[11],
+			m = this[12], n = this[13], o = this[14], p = this[15],
+			q = a * f - b * e, r = a * g - c * e,
+			s = a * h - d * e, t = b * g - c * f,
+			u = b * h - d * f, v = c * h - d * g,
+			w = i * n - j * m, x = i * o - k * m,
+			y = i * p - l * m, z = j * o - k * n,
+			A = j * p - l * n, B = k * p - l * o,
+			ivd = 1 / (q * B - r * A + s * z + t * y - u * x + v * w);
+		dest[0]  = ( f * B - g * A + h * z) * ivd;
+		dest[1]  = (-b * B + c * A - d * z) * ivd;
+		dest[2]  = ( n * v - o * u + p * t) * ivd;
+		dest[3]  = (-j * v + k * u - l * t) * ivd;
+		dest[4]  = (-e * B + g * y - h * x) * ivd;
+		dest[5]  = ( a * B - c * y + d * x) * ivd;
+		dest[6]  = (-m * v + o * s - p * r) * ivd;
+		dest[7]  = ( i * v - k * s + l * r) * ivd;
+		dest[8]  = ( e * A - f * y + h * w) * ivd;
+		dest[9]  = (-a * A + b * y - d * w) * ivd;
+		dest[10] = ( m * u - n * s + p * q) * ivd;
+		dest[11] = (-i * u + j * s - l * q) * ivd;
+		dest[12] = (-e * z + f * x - g * w) * ivd;
+		dest[13] = ( a * z - b * x + c * w) * ivd;
+		dest[14] = (-m * t + n * r - o * q) * ivd;
+		dest[15] = ( i * t - j * r + k * q) * ivd;
+		return dest;
 	}
 
 	equals(matrix: Matrix4): boolean {

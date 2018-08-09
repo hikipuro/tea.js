@@ -1,12 +1,21 @@
 import { Vector3 } from "./Vector3";
 
 export class Vector4 extends Array<number> {
-	constructor(x: number = 0, y: number = 0, z: number = 0, w: number = 0) {
+	constructor(x: number, y: number, z: number, w: number);
+	constructor(vector3: Vector3, w: number);
+	constructor(x: number | Vector3 = 0, y: number = 0, z: number = 0, w: number = 0) {
 		super(4);
-		this.x = x;
-		this.y = y;
-		this.z = z;
-		this.w = w;
+		if (x instanceof Vector3) {
+			this.x = x.x;
+			this.y = x.y;
+			this.z = x.z;
+			this.w = y;
+		} else {
+			this.x = x;
+			this.y = y;
+			this.z = z;
+			this.w = w;
+		}
 	}
 
 	static get zero(): Vector4 {
@@ -93,7 +102,16 @@ export class Vector4 extends Array<number> {
 	}
 
 	toVector3(): Vector3 {
-		return new Vector3(this.x, this.y, this.z);
+		const vector3 = new Vector3(this.x, this.y, this.z);
+		/*
+		if (this.w != 0) {
+			const w = 1 / this.w;
+			vector3.x *= w;
+			vector3.y *= w;
+			vector3.x *= w;
+		}
+		*/
+		return vector3;
 	}
 
 	add(value: Vector4): Vector4 {

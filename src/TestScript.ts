@@ -36,8 +36,12 @@ export class TestScript extends Tea.Script {
 			this.speedY = mouse.x / this.app.width;
 			//console.log(this.speedY);
 			//console.log(mouse.x, mouse.y, mouse.prevX, mouse.prevY);
-			this.position.x = -0.5 + mouse.x / this.app.width;
-			this.position.y = 0.5 + mouse.y / this.app.height;
+			//this.position.x = -0.5 + mouse.x / this.app.width;
+			//this.position.y = 0.5 + mouse.y / this.app.height;
+			let p = new Tea.Vector3(mouse.x, mouse.y, 10);
+			p = this.object3d.scene.camera.screenToWorldPoint(p);
+			this.position = p;
+			//console.log(p.toString());
 		}
 		if (mouse.isDown(0)) {
 			console.log("mouse down");

@@ -1,3 +1,5 @@
+import { Matrix4 } from "./Matrix4";
+
 export class Vector3 extends Array<number> {
 	constructor(x: number = 0, y: number = 0, z: number = 0) {
 		super(3);
@@ -225,5 +227,24 @@ export class Vector3 extends Array<number> {
 		const cos = Math.cos(radian);
 		this.x = cos * x + -sin * y;
 		this.y = sin * x + cos * y;
+	}
+
+	applyMatrix4(matrix: Matrix4): void {
+		const tx = this.x;
+		const ty = this.y;
+		const tz = this.z;
+
+		const x = matrix[0] * tx + matrix[4] * ty + matrix[8]  * tz + matrix[12];
+		const y = matrix[1] * tx + matrix[5] * ty + matrix[9]  * tz + matrix[13];
+		const z = matrix[2] * tx + matrix[6] * ty + matrix[10] * tz + matrix[14];
+		let   w = matrix[3] * tx + matrix[7] * ty + matrix[11] * tz + matrix[15];
+	
+		if ( w !== 0 ) {
+			w = 1 / w;
+		}
+	
+		this.x = x * w;
+		this.y = y * w;
+		this.z = z * w;
 	}
 }
