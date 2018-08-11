@@ -104,15 +104,15 @@ export class Main {
 		const quad = this.app.createQuad();
 		//cube2.name = "cube2";
 		//plain.position.z = 5;
-		quad.position.x = -3;
+		//quad.position.x = -3;
 		//plain.rotation.x = -Tea.radians(50);
 		//plain.rotation.y = -Tea.radians(20);
 		//plain.rotation.z = Tea.radians(60);
-		quad.scale.x = -2;
-		quad.scale.y = -2;
+		quad.scale.x = 2;
+		quad.scale.y = 2;
 		//plain.addScript(script);
 		scene.appendChild(quad);
-		this.plain = quad;
+		//this.plain = quad;
 
 		const cylinder = this.app.createCylinder();
 		//cylinder.renderer.wireframe = true;
@@ -135,6 +135,17 @@ export class Main {
 		capsule.addScript(script);
 		scene.appendChild(capsule);
 
+		const lineRenderer = this.app.createLineRenderer();
+		const lines = this.app.createObject3D();
+		lines.renderer = lineRenderer;
+		lineRenderer.add(0, 0, 0);
+		lineRenderer.add(2, 1, 0);
+		lineRenderer.add(-2, 1, 3);
+		lineRenderer.add(-3, 5, 0);
+		lineRenderer.add(0, 0, 7);
+		lineRenderer.color = new Tea.Color(1, 0, 0, 1);
+		scene.appendChild(lines);
+
 		this.app.start();
 
 		Tea.File.readImage("../models/google.jpg", (image) => {
@@ -150,7 +161,7 @@ export class Main {
 		Tea.File.readImage("../models/earth.jpg", (image) => {
 			//document.body.appendChild(image);
 			const texture = this.app.createTexture(image);
-			sphere.renderer.shader.texture = texture;
+			//sphere.renderer.shader.texture = texture;
 			//capsule.renderer.shader.texture = texture;
 		});
 
@@ -203,9 +214,9 @@ export class Main {
 			const shader = this.app.createShader(vs, fs);
 			shader.texture = this.texture;
 
-			this.renderer = this.app.createRenderer(mesh, shader);
+			this.renderer = this.app.createMeshRenderer(mesh, shader);
 			//this.renderer.wireframe = true;
-			this.renderer.camera = this.camera;
+			//this.renderer.camera = this.camera;
 
 			//console.log(Matrix4.identity);
 			//let rr = new Vector3(0, 1, 3);
@@ -238,7 +249,7 @@ export class Main {
 		//this.WebGL.setMesh(this.mesh);
 		//this.shader.setAttribute("position", 3);
 
-		this.renderer.render();
+		//this.renderer.render();
 
 		requestAnimationFrame(this.render);
 	}

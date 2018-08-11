@@ -5,7 +5,6 @@ export class Script {
 	object3d: Tea.Object3D;
 
 	constructor() {
-
 	}
 
 	get position(): Tea.Vector3 {
@@ -23,10 +22,8 @@ export class Script {
 	}
 
 	start(): void {
-
 	}
 
 	update(): void {
-
 	}
 }

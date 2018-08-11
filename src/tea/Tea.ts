@@ -19,6 +19,8 @@ import { Object3D } from "./object/Object3D";
 import { ObjReader } from "./ObjReader";
 import { Primitives } from "./Primitives";
 import { Renderer } from "./object/Renderer";
+import { LineRenderer } from "./object/LineRenderer";
+import { MeshRenderer } from "./object/MeshRenderer";
 import { Scene } from "./Scene";
 import { Script } from "./Script";
 import { Shader } from "./object/Shader";
@@ -46,6 +48,8 @@ export {
 	ObjReader,
 	Primitives,
 	Renderer,
+	LineRenderer,
+	MeshRenderer,
 	Scene,
 	Script,
 	Shader,

@@ -13,18 +13,24 @@ export class ObjReader {
 			const params = text.split(/\s+/);
 			switch (params[0]) {
 				case "v":
-					this.pushArray(vertices, this.parseVertex(params));
+					this.pushArray(
+						vertices,
+						this.parseVertex(params)
+					);
 					break;
 				case "f":
-					this.pushArray(triangles, this.parseIndex(params));
+					this.pushArray(
+						triangles,
+						this.parseIndex(params)
+					);
 					break;
 			}
 		});
 		//console.log("vertices", vertices.length / 3);
 		//console.log("indices", indices.length / 3);
 		const mesh = new Mesh();
-		mesh.vertices = new Float32Array(vertices);
-		mesh.triangles = new Uint16Array(triangles);
+		mesh.setVertices(vertices);
+		mesh.setTriangles(triangles);
 		return mesh;
 	}
 

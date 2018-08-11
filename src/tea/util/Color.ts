@@ -21,6 +21,18 @@ export class Color extends Array<number> {
 		return new Color(1, 1, 1, 1);
 	}
 
+	static get red(): Color {
+		return new Color(1, 0, 0, 1);
+	}
+
+	static get green(): Color {
+		return new Color(0, 1, 0, 1);
+	}
+
+	static get blue(): Color {
+		return new Color(0, 0, 1, 1);
+	}
+
 	get r(): number {
 		return this[0];
 	}
@@ -47,5 +59,14 @@ export class Color extends Array<number> {
 	}
 	set a(value: number) {
 		this[3] = Tea.clamp(value, 0, 1);
+	}
+
+	clone(): Color {
+		return new Color(
+			this.r,
+			this.g,
+			this.b,
+			this.a
+		);
 	}
 }

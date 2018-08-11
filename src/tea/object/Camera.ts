@@ -6,11 +6,14 @@ export class Camera extends Object3D {
 	fieldOfView: number;
 	nearClipPlane: number;
 	farClipPlane: number;
-	aspect: number;
 	backgroundColor: Tea.Color;
 	orthographic: boolean;
 	orthographicSize: number;
 	rect: Rect;
+
+	protected _cameraToWorldMatrix: Tea.Matrix4;
+	protected _worldToCameraMatrix: Tea.Matrix4;
+	protected _projectionMatrix: Tea.Matrix4;
 
 	constructor(app: Tea.App) {
 		super(app);
@@ -18,7 +21,6 @@ export class Camera extends Object3D {
 		this.fieldOfView = 60;
 		this.nearClipPlane = 0.3;
 		this.farClipPlane = 1000;
-		this.aspect = 1;
 		this.backgroundColor = Tea.Color.background;
 		this.orthographic = false;
 		this.orthographicSize = 5;
@@ -26,29 +28,34 @@ export class Camera extends Object3D {
 	}
 
 	get cameraToWorldMatrix(): Tea.Matrix4 {
-		let view = Tea.Matrix4.translate(this.position);
-		view = view.mul(Tea.Matrix4.rotateZXY(this.rotation));
-		view = view.inverse;
-		return view;
+		return this._cameraToWorldMatrix;
 	}
 
 	get worldToCameraMatrix(): Tea.Matrix4 {
-		let view = Tea.Matrix4.translate(this.position);
-		view = view.mul(Tea.Matrix4.rotateZXY(this.rotation));
-		//view = view.inverse;
-		return view;
+		return this._worldToCameraMatrix;
 	}
 
 	get projectionMatrix(): Tea.Matrix4 {
+		return this._projectionMatrix;
+	}
+
+	update(): void {
+		let view = Tea.Matrix4.translate(this.position);
+		view = view.mul(Tea.Matrix4.rotateZXY(this.rotation));
+		this._worldToCameraMatrix = view;
+
+		view = view.inverse;
+		this._cameraToWorldMatrix = view;
+
 		const aspect = this.app.width / this.app.height;
 		let projection: Tea.Matrix4;
 		if (this.orthographic) {
-			projection = projection.mul(Tea.Matrix4.ortho(
+			projection = Tea.Matrix4.ortho(
 				this.orthographicSize,
 				aspect,
 				this.nearClipPlane,
 				this.farClipPlane
-			));
+			);
 		} else {
 			projection = Tea.Matrix4.perspective(
 				this.fieldOfView,
@@ -57,7 +64,9 @@ export class Camera extends Object3D {
 				this.farClipPlane
 			);
 		}
-		return projection;
+		this._projectionMatrix = projection;
+
+		this.clear();
 	}
 
 	screenToWorldPoint(position: Tea.Vector3): Tea.Vector3 {
@@ -103,4 +112,17 @@ export class Camera extends Object3D {
 		this.vMatrix = this.vMatrix.lookAt(eye, [0, 0, 0], [0, 1, 0]);
 	}
 	*/
+
+	protected clear(): void {
+		const gl = this.app.gl;
+		const color = this.backgroundColor;
+		gl.clearColor(color.r, color.g, color.b, color.a);
+		gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+		// STENCIL_BUFFER_BIT
+	}
+
+	protected flush(): void {
+		const gl = this.app.gl;
+		gl.flush();
+	}
 }

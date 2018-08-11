@@ -43,6 +43,22 @@ const defaultFragmentShaderSource = `
 	}
 `;
 
+const lineVertexShaderSource = `
+	attribute vec3 position;
+	uniform mat4 mvpMatrix;
+	void main() {
+		gl_Position = mvpMatrix * vec4(position, 1.0);
+	}
+`;
+
+const lineFragmentShaderSource = `
+	precision mediump float;
+	uniform vec4 color;
+	void main() {
+		gl_FragColor = color;
+	}
+`;
+
 export class Shader {
 	app: Tea.App;
 	program: WebGLProgram;
@@ -72,6 +88,14 @@ export class Shader {
 
 	static get defaultFragmentShaderSource(): string {
 		return defaultFragmentShaderSource;
+	}
+
+	static get lineVertexShaderSource(): string {
+		return lineVertexShaderSource;
+	}
+
+	static get lineFragmentShaderSource(): string {
+		return lineFragmentShaderSource;
 	}
 
 	get texture(): Tea.Texture {

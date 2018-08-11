@@ -1,8 +1,9 @@
 import * as Tea from "../Tea";
 
 export class Object3D {
-	name: string;
 	app: Tea.App;
+	name: string;
+	enabled: boolean;
 	scene: Tea.Scene;
 	position: Tea.Vector3;
 	rotation: Tea.Vector3;
@@ -12,6 +13,7 @@ export class Object3D {
 
 	constructor(app: Tea.App) {
 		this.name = "";
+		this.enabled = true;
 		this.app = app;
 		this.position = Tea.Vector3.zero;
 		this.rotation = Tea.Vector3.zero;
@@ -54,9 +56,6 @@ export class Object3D {
 		this.forEachScript((script) => {
 			script.update();
 		});
-		if (this.renderer != null) {
-			this.renderer.render();
-		}
 	}
 
 	protected forEachScript(callback: (script: Tea.Script) => void): void {

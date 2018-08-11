@@ -1,24 +1,24 @@
 import * as Tea from "../Tea";
 
 export class Mesh {
-	vertices: Float32Array;
-	triangles: Uint16Array;
-	normals: Float32Array;
-	uv: Float32Array;
-	colors: Float32Array;
+	vertices: Array<Tea.Vector3>;
+	triangles: Array<Tea.Vector3>;
+	normals: Array<Tea.Vector3>;
+	uv: Array<Tea.Vector2>;
+	colors: Array<Tea.Color>;
 
 	bounds: Tea.Bounds;
+	isModified: boolean;
 
 	constructor() {
 		this.clear();
 	}
 
 	get vertexCount(): number {
-		const vertices = this.vertices;
-		if (vertices == null) {
+		if (this.vertices == null) {
 			return 0;
 		}
-		return Math.floor(vertices.length / 3);
+		return this.vertices.length;
 	}
 
 	get vertexBufferCount(): number {
@@ -60,71 +60,102 @@ export class Mesh {
 	}
 
 	clear(): void {
-		this.vertices = new Float32Array([]);
-		this.triangles = new Uint16Array([]);
-		this.normals = new Float32Array([]);
-		this.uv = new Float32Array([]);
-		this.colors = new Float32Array([]);
+		this.vertices = [];
+		this.triangles = [];
+		this.normals = [];
+		this.uv = [];
+		this.colors = [];
 		this.bounds = new Tea.Bounds();
+		this.isModified = true;
 	}
 
 	setVertices(array: Array<number>): void {
-		if (array == null) {
-			this.vertices = new Float32Array([]);
-			return;
-		}
-		this.vertices = new Float32Array(array);
+		this.vertices = this.convertToVec3Array(array);
 	}
 
 	setTriangles(array: Array<number>): void {
-		if (array == null) {
-			this.triangles = new Uint16Array([]);
-			return;
-		}
-		this.triangles = new Uint16Array(array);
+		this.triangles = this.convertToVec3Array(array);
 	}
 
 	setNormals(array: Array<number>): void {
-		if (array == null) {
-			this.normals = new Float32Array([]);
-			return;
-		}
-		this.normals = new Float32Array(array);
+		this.normals = this.convertToVec3Array(array);
 	}
 
 	setUVs(array: Array<number>): void {
-		if (array == null) {
-			this.uv = new Float32Array([]);
-			return;
-		}
-		this.uv = new Float32Array(array);
+		this.uv = this.convertToVec2Array(array);
 	}
 
 	setColors(array: Array<number>): void {
-		if (array == null) {
-			this.colors = new Float32Array([]);
-			return;
-		}
-		this.colors = new Float32Array(array);
+		this.colors = this.convertToColorArray(array);
+	}
+
+	uploadMeshData(): void {
+		this.isModified = true;
 	}
 
 	scale(value: number): void {
 		const vertices = this.vertices;
 		const length = vertices.length;
 		for (let i = 0; i < length; i++) {
-			vertices[i] *= value;
+			vertices[i].mul(value);
 		}
 	}
 
 	rotateX(radian: number): void {
+		const sin = Math.sin(radian);
+		const cos = Math.cos(radian);
 		const vertices = this.vertices;
-		for (let i = 0; i < vertices.length; i += 3) {
-			const y = vertices[i + 1];
-			const z = vertices[i + 2];
-			const sin = Math.sin(radian);
-			const cos = Math.cos(radian);
-			vertices[i + 1] = cos * y + -sin * z;
-			vertices[i + 2] = sin * y + cos * z;
+		const length = vertices.length;
+		for (let i = 0; i < length; i++) {
+			const y = vertices[i].y;
+			const z = vertices[i].z;
+			vertices[i].y = cos * y + -sin * z;
+			vertices[i].z = sin * y + cos * z;
 		}
+	}
+
+	protected convertToVec2Array(array: Array<number>): Array<Tea.Vector2> {
+		if (array == null || array.length <= 0) {
+			return [];
+		}
+		const a = [];
+		const length = Math.floor(array.length / 2) * 2;
+		for (let i = 0; i < length; i += 2) {
+			const item = new Tea.Vector2(
+				array[i], array[i + 1]
+			);
+			a.push(item);
+		}
+		return a;
+	}
+
+	protected convertToVec3Array(array: Array<number>): Array<Tea.Vector3> {
+		if (array == null || array.length <= 0) {
+			return [];
+		}
+		const a = [];
+		const length = Math.floor(array.length / 3) * 3;
+		for (let i = 0; i < length; i += 3) {
+			const item = new Tea.Vector3(
+				array[i], array[i + 1], array[i + 2]
+			);
+			a.push(item);
+		}
+		return a;
+	}
+
+	protected convertToColorArray(array: Array<number>): Array<Tea.Color> {
+		if (array == null || array.length <= 0) {
+			return [];
+		}
+		const a = [];
+		const length = Math.floor(array.length / 4) * 4;
+		for (let i = 0; i < length; i += 4) {
+			const item = new Tea.Color(
+				array[i], array[i + 1], array[i + 2], array[i + 3]
+			);
+			a.push(item);
+		}
+		return a;
 	}
 }
