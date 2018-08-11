@@ -12,28 +12,6 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 </script>
 
-<script id="vs" type="x-shader/x-vertex">
-attribute vec3 position;
-attribute vec2 texCoord;
-uniform mat4 mvpMatrix;
-varying vec2 vTexCoord;
-
-void main() {
-	vTexCoord = texCoord;
-	gl_Position = mvpMatrix * vec4(position, 1.0);
-}
-</script>
-
-<script id="fs" type="x-shader/x-fragment">
-precision mediump float;
-uniform sampler2D texture;
-varying vec2 vTexCoord;
-void main() {
-	gl_FragColor = texture2D(texture, vTexCoord);
-	//gl_FragColor = vec4(1.0, 1.0, 1.0, 1.0);
-}
-</script>
-
 </head>
 <body>
 <canvas id="canvas"></canvas>
