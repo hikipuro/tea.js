@@ -69,4 +69,53 @@ export class Color extends Array<number> {
 			this.a
 		);
 	}
+
+	static fromRGBA(r: number, g: number, b: number, a: number): Color {
+		return new Color(r, g, b, a);
+	}
+
+	static fromHSB(h: number, s: number, b: number): Color {
+		h = Tea.clamp(h, 0, 1);
+		s = Tea.clamp(s, 0, 1);
+		b = Tea.clamp(b, 0, 1);
+
+		let cr = b;
+		let cg = b;
+		let cb = b;
+
+		if (s > 0) {
+			h *= 6;
+			let i = Math.floor(h);
+			let f = h - i;
+			switch (i) {
+				default:
+				case 0:
+					cg *= 1 - s * (1 - f);
+					cb *= 1 - s;
+					break;
+				case 1:
+					cr *= 1 - s * f;
+					cb *= 1 - s;
+					break;
+				case 2:
+					cr *= 1 - s;
+					cb *= 1 - s * (1 - f);
+					break;
+				case 3:
+					cr *= 1 - s;
+					cg *= 1 - s * f;
+					break;
+				case 4:
+					cr *= 1 - s * (1 - f);
+					cg *= 1 - s;
+					break;
+				case 5:
+					cg *= 1 - s;
+					cb *= 1 - s * f;
+					break;
+			}
+		}
+
+		return Color.fromRGBA(cr, cg, cb, 1);
+	}
 }
