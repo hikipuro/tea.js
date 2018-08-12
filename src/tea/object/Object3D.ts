@@ -58,6 +58,19 @@ export class Object3D {
 		this.children.push(object3d);
 	}
 
+	getChild(index: number): Object3D {
+		return this.children[index];
+	}
+
+	detachChildren(): void {
+		const children = this.children;
+		const length = children.length;
+		for (let i = 0; i < length; i++) {
+			children[i].parent = null;
+		}
+		this.children = [];
+	}
+
 	addScript(script: Tea.Script): void {
 		if (script == null) {
 			return;
