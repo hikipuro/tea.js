@@ -15,6 +15,7 @@ import { Bounds } from "./object/Bounds";
 import { Camera } from "./object/Camera";
 import { DaeReader } from "./DaeReader";
 import { GLCapabilities } from "./GLCapabilities";
+import { GLExtensions } from "./GLExtensions";
 import { GLParameters } from "./GLParameters";
 import { Mesh } from "./object/Mesh";
 import { Object3D } from "./object/Object3D";
@@ -47,6 +48,7 @@ export {
 	Camera,
 	DaeReader,
 	GLCapabilities,
+	GLExtensions,
 	GLParameters,
 	Mesh,
 	Object3D,

@@ -57,6 +57,10 @@ export class App {
 		return this.gl.getContextAttributes();
 	}
 
+	get supportedExtensions(): Array<string> {
+		return this.gl.getSupportedExtensions();
+	}
+
 	get isStarted(): boolean {
 		return this._renderer.isStarted;
 	}
@@ -71,6 +75,11 @@ export class App {
 
 	get mouse(): Mouse {
 		return this._renderer.mouse;
+	}
+
+	isExtensionSupported(name: Tea.GLExtensions | string): boolean {
+		const extensions = this.supportedExtensions;
+		return extensions.indexOf(name) >= 0;
 	}
 
 	createObject3D(): Tea.Object3D {
