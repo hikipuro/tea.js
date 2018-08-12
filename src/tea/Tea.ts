@@ -19,6 +19,7 @@ import { GLExtensions } from "./GLExtensions";
 import { GLParameters } from "./GLParameters";
 import { Mesh } from "./object/Mesh";
 import { Object3D } from "./object/Object3D";
+import { Ray } from "./object/Ray";
 import { ObjReader } from "./ObjReader";
 import { Primitives } from "./Primitives";
 import { Renderer } from "./object/Renderer";
@@ -52,6 +53,7 @@ export {
 	GLParameters,
 	Mesh,
 	Object3D,
+	Ray,
 	ObjReader,
 	Primitives,
 	Renderer,
