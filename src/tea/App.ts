@@ -224,12 +224,18 @@ export class App {
 		if (this.canvas == null) {
 			return;
 		}
-		return this.canvas.getContext(
-			"webgl", {
-				alpha: false,
-				antialias: false
-			}
+		const attribute: WebGLContextAttributes = {
+			antialias: false
+		};
+		let context = this.canvas.getContext(
+			"webgl", attribute
 		) as WebGLRenderingContext;
+		if (context == null) {
+			context = this.canvas.getContext(
+				"experimental-webgl", attribute
+			) as WebGLRenderingContext;
+		}
+		return context;
 	}
 
 	protected onResize() {
