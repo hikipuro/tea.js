@@ -56,7 +56,7 @@ export class LineRenderer extends Renderer {
 	}
 
 	protected setUniforms(camera: Tea.Camera): void {
-		let model = this.createModelMatrix();
+		let model = this.localToWorldMatrix;
 		let view = camera.cameraToWorldMatrix;
 		let proj = camera.projectionMatrix;
 
@@ -84,14 +84,6 @@ export class LineRenderer extends Renderer {
 		const count = this.points.length;
 		//gl.frontFace(gl.CW);
 		gl.drawArrays(gl.LINE_STRIP, 0, count);
-	}
-
-	protected createModelMatrix(): Tea.Matrix4 {
-		let m = Tea.Matrix4.identity;
-		m = m.mul(Tea.Matrix4.translate(this.object3d.position));
-		m = m.mul(Tea.Matrix4.rotateZXY(this.object3d.rotation));
-		m = m.mul(Tea.Matrix4.scale(this.object3d.scale));
-		return m;
 	}
 
 	protected unroll(array: Array<any>): Array<number> {

@@ -134,7 +134,7 @@ export class MeshRenderer extends Renderer {
 	}
 
 	protected setUniforms(camera: Tea.Camera, mesh: Tea.Mesh): void {
-		let model = this.createModelMatrix();
+		let model = this.localToWorldMatrix;
 		let view = camera.cameraToWorldMatrix;
 		let proj = camera.projectionMatrix;
 
@@ -159,14 +159,6 @@ export class MeshRenderer extends Renderer {
 		} else {
 			this.shader.uniform1i("useColor", 0);
 		}
-	}
-
-	protected createModelMatrix(): Tea.Matrix4 {
-		let m = Tea.Matrix4.identity;
-		m = m.mul(Tea.Matrix4.translate(this.object3d.position));
-		m = m.mul(Tea.Matrix4.rotateZXY(this.object3d.rotation));
-		m = m.mul(Tea.Matrix4.scale(this.object3d.scale));
-		return m;
 	}
 
 	protected setTexture(texture: Tea.Texture): void {
