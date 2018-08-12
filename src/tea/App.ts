@@ -7,6 +7,7 @@ export class App {
 	gl: WebGLRenderingContext;
 	capabilities: Tea.GLCapabilities;
 	parameters: Tea.GLParameters;
+	readonly cursor: Tea.Cursor;
 	protected _renderer: AppRenderer;
 
 	constructor(id: string) {
@@ -19,6 +20,7 @@ export class App {
 		//this.context.getExtension('WEBGL_lose_context').loseContext();
 
 		this.parameters = new Tea.GLParameters(this.gl);
+		this.cursor = new Tea.Cursor(this);
 		this._renderer = new AppRenderer(this);
 		//this.clear();
 	}

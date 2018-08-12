@@ -6,6 +6,7 @@ import { Rect } from "./math/Rect";
 
 import { ArrayUtil } from "./util/ArrayUtil";
 import { Color } from "./util/Color";
+import { Cursor, CursorType } from "./util/Cursor";
 import { File } from "./util/File";
 import { Screen } from "./util/Screen";
 
@@ -36,6 +37,8 @@ export {
 
 	ArrayUtil,
 	Color,
+	Cursor,
+	CursorType,
 	File,
 	Screen,
 
