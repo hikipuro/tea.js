@@ -3,10 +3,7 @@ import * as Tea from "../Tea";
 export class Color extends Array<number> {
 	constructor(r: number = 0, g: number = 0, b: number = 0, a: number = 0) {
 		super();
-		this.r = r;
-		this.g = g;
-		this.b = b;
-		this.a = a;
+		this.set(r, g, b, a);
 	}
 
 	static get background(): Color {
@@ -59,6 +56,13 @@ export class Color extends Array<number> {
 	}
 	set a(value: number) {
 		this[3] = Tea.clamp(value, 0, 1);
+	}
+
+	set(r: number, g: number, b: number, a: number): void {
+		this.r = r;
+		this.g = g;
+		this.b = b;
+		this.a = a;
 	}
 
 	clone(): Color {
