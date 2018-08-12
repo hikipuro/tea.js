@@ -122,4 +122,28 @@ export class Color extends Array<number> {
 
 		return Color.fromRGBA(cr, cg, cb, 1);
 	}
+
+	static fromRGBA32(color: number): Color {
+		const bytes = new Uint8Array(4);
+		const dataView = new DataView(bytes.buffer);
+		dataView.setUint32(0, color);
+		return new Color(
+			bytes[0] / 255,
+			bytes[1] / 255,
+			bytes[2] / 255,
+			bytes[3] / 255
+		);
+	}
+
+	static fromRGB24(color: number): Color {
+		const bytes = new Uint8Array(4);
+		const dataView = new DataView(bytes.buffer);
+		dataView.setUint32(0, color);
+		return new Color(
+			bytes[1] / 255,
+			bytes[2] / 255,
+			bytes[3] / 255,
+			1
+		);
+	}
 }
