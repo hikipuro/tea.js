@@ -74,8 +74,32 @@ export class Color extends Array<number> {
 		);
 	}
 
+	toCssColor(): string {
+		if (this.a == 1) {
+			let r = Math.floor(this.r * 255).toString(16);
+			let g = Math.floor(this.g * 255).toString(16);
+			let b = Math.floor(this.b * 255).toString(16);
+			r = r.toUpperCase();
+			g = g.toUpperCase();
+			b = b.toUpperCase();
+			return "#" +
+				("00" + r).substr(-2) +
+				("00" + g).substr(-2) +
+				("00" + b).substr(-2);
+		}
+		return "rgba(" + 
+			(this.r * 255).toFixed(0) + ", " +
+			(this.g * 255).toFixed(0) + ", " +
+			(this.b * 255).toFixed(0) + ", " +
+			this.a.toFixed(2) + ")";
+	}
+
 	static fromRGBA(r: number, g: number, b: number, a: number): Color {
 		return new Color(r, g, b, a);
+	}
+
+	static fromRGB(r: number, g: number, b: number): Color {
+		return new Color(r, g, b, 1);
 	}
 
 	static fromHSB(h: number, s: number, b: number): Color {
