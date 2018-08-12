@@ -1,6 +1,7 @@
 import * as Electron from "electron";
 import * as Tea from "./tea/Tea";
 import { TestScript } from "./TestScript";
+import { TestScript2 } from "./TestScript2";
 import { Rect } from "./tea/math/Rect";
 
 export class Main {
@@ -137,14 +138,17 @@ export class Main {
 
 		const lineRenderer = this.app.createLineRenderer();
 		const lines = this.app.createObject3D();
+		lines.position.x = 3;
 		lines.renderer = lineRenderer;
 		lineRenderer.add(0, 0, 0);
 		lineRenderer.add(2, 1, 0);
 		lineRenderer.add(-2, 1, 3);
 		lineRenderer.add(-3, 5, 0);
 		lineRenderer.add(0, 0, 7);
-		lineRenderer.color = new Tea.Color(1, 0, 0, 1);
-		scene.appendChild(lines);
+		//lineRenderer.color = new Tea.Color(1, 0, 0, 1);
+		lines.addScript(new TestScript2());
+		capsule.appendChild(lines);
+		//scene.appendChild(lines);
 
 		this.app.start();
 

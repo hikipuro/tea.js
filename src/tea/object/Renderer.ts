@@ -8,11 +8,8 @@ export class Renderer {
 	}
 
 	get localToWorldMatrix(): Tea.Matrix4 {
-		let m = Tea.Matrix4.identity;
-		m = m.mul(Tea.Matrix4.translate(this.object3d.position));
-		m = m.mul(Tea.Matrix4.rotateZXY(this.object3d.rotation));
-		m = m.mul(Tea.Matrix4.scale(this.object3d.scale));
-		return m;
+		const object3d = this.object3d;
+		return object3d.localToWorldMatrix;
 	}
 
 	render(camera: Tea.Camera): void {

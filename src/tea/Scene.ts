@@ -36,14 +36,7 @@ export class Scene {
 		const children = this.children;
 		const length = this.children.length;
 		for (let i = 0; i < length; i++) {
-			const child = children[i];
-			if (child.enabled === false) {
-				continue;
-			}
-			child.update();
-			if (child.renderer != null) {
-				child.renderer.render(this.camera);
-			}
+			this.updateObject3D(children[i]);
 		}
 	}
 
@@ -52,6 +45,23 @@ export class Scene {
 		const length = this.children.length;
 		for (let i = 0; i < length; i++) {
 			children[i].start();
+		}
+	}
+
+	protected updateObject3D(object3d: Tea.Object3D): void {
+		if (object3d == null || object3d.enabled === false) {
+			return;
+		}
+		object3d.update();
+		if (object3d.renderer != null) {
+			object3d.renderer.render(this.camera);
+		}
+		if (object3d.children.length > 0) {
+			const children = object3d.children;
+			const length = children.length;
+			for (let i = 0; i < length; i++) {
+				this.updateObject3D(children[i]);
+			}
 		}
 	}
 }

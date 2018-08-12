@@ -9,6 +9,8 @@ export class Object3D {
 	rotation: Tea.Vector3;
 	scale: Tea.Vector3;
 	scripts: Array<Tea.Script>;
+	parent: Object3D;
+	children: Array<Object3D>;
 	protected _renderer: Tea.Renderer;
 
 	constructor(app: Tea.App) {
@@ -19,6 +21,7 @@ export class Object3D {
 		this.rotation = Tea.Vector3.zero;
 		this.scale = Tea.Vector3.one;
 		this.scripts = [];
+		this.children = [];
 	}
 
 	get renderer(): Tea.Renderer {
@@ -32,8 +35,27 @@ export class Object3D {
 		this._renderer = value;
 	}
 
+	get localToWorldMatrix(): Tea.Matrix4 {
+		let m = Tea.Matrix4.identity;
+		if (this.parent != null) {
+			m = m.mul(this.parent.localToWorldMatrix);
+		}
+		m = m.mul(Tea.Matrix4.translate(this.position));
+		m = m.mul(Tea.Matrix4.rotateZXY(this.rotation));
+		m = m.mul(Tea.Matrix4.scale(this.scale));
+		return m;
+	}
+
 	toString(): string {
 		return JSON.stringify(this);
+	}
+
+	appendChild(object3d: Tea.Object3D): void {
+		if (object3d == null) {
+			return;
+		}
+		object3d.parent = this;
+		this.children.push(object3d);
 	}
 
 	addScript(script: Tea.Script): void {
