@@ -114,6 +114,46 @@ export class Mesh {
 		}
 	}
 
+	calculateBounds(): void {
+		const positions = this.vertices;
+		if (positions == null || positions.length <= 0) {
+			return null;
+		}
+		const min = new Tea.Vector3();
+		const max = new Tea.Vector3();
+		const length = positions.length;
+		for (let i = 0; i < length; i++) {
+			const position = positions[i];
+			if (position == null) {
+				continue;
+			}
+			if (position.x < min.x) {
+				min.x = position.x;
+			}
+			if (position.y < min.y) {
+				min.y = position.y;
+			}
+			if (position.z < min.z) {
+				min.z = position.z;
+			}
+			if (position.x > max.x) {
+				max.x = position.x;
+			}
+			if (position.y > max.y) {
+				max.y = position.y;
+			}
+			if (position.z > max.z) {
+				max.z = position.z;
+			}
+		}
+		const size = max.sub(min);
+		const extents = size.div(2);
+		const bounds = new Tea.Bounds();
+		bounds.extents = extents;
+		bounds.center = min.add(extents);
+		this.bounds = bounds;
+	}
+
 	protected convertToVec2Array(array: Array<number>): Array<Tea.Vector2> {
 		if (array == null || array.length <= 0) {
 			return [];

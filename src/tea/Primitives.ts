@@ -39,6 +39,7 @@ export class Primitives {
 		mesh.setNormals(normals);
 		mesh.setUVs(uv);
 		//mesh.setColors(colors);
+		mesh.calculateBounds();
 		return mesh;
 	}
 
@@ -164,6 +165,7 @@ export class Primitives {
 		mesh.setTriangles(triangles);
 		mesh.setNormals(normals);
 		mesh.setUVs(uv);
+		mesh.calculateBounds();
 		return mesh;
 	}
 
@@ -219,6 +221,7 @@ export class Primitives {
 		mesh.setNormals(normals);
 		mesh.setUVs(uv);
 		//mesh.setColors(colors);
+		mesh.calculateBounds();
 		return mesh;
 	}
 
@@ -291,6 +294,7 @@ export class Primitives {
 		mesh.setNormals(normals);
 		mesh.setUVs(uv);
 		//mesh.setColors(colors);
+		mesh.calculateBounds();
 		return mesh;
 	}
 
@@ -325,6 +329,7 @@ export class Primitives {
 		mesh.setNormals(normals);
 		mesh.setUVs(uv);
 		//mesh.setColors(colors);
+		mesh.calculateBounds();
 		return mesh;
 	}
 
@@ -418,6 +423,7 @@ export class Primitives {
 		mesh.setNormals(normals);
 		mesh.setUVs(uv);
 		//mesh.setColors(colors);
+		mesh.calculateBounds();
 		return mesh;
 	}
 }

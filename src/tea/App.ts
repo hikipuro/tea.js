@@ -154,8 +154,7 @@ export class App {
 		const shader = this.createDefaultShader();
 		const mesh = Tea.Primitives.createQuadMesh();
 		const renderer = this.createMeshRenderer(mesh, shader);
-		//this.renderer.wireframe = true;
-		object3d.name = "Plain";
+		object3d.name = "Quad";
 		object3d.renderer = renderer;
 		return object3d;
 	}
@@ -165,7 +164,6 @@ export class App {
 		const shader = this.createDefaultShader();
 		const mesh = Tea.Primitives.createCubeMesh();
 		const renderer = this.createMeshRenderer(mesh, shader);
-		//this.renderer.wireframe = true;
 		object3d.name = "Cube";
 		object3d.renderer = renderer;
 		return object3d;
@@ -176,7 +174,6 @@ export class App {
 		const shader = this.createDefaultShader();
 		const mesh = Tea.Primitives.createSphereMesh(10, 10);
 		const renderer = this.createMeshRenderer(mesh, shader);
-		//renderer.wireframe = true;
 		object3d.name = "Sphere";
 		object3d.renderer = renderer;
 		return object3d;
@@ -187,7 +184,6 @@ export class App {
 		const shader = this.createDefaultShader();
 		const mesh = Tea.Primitives.createCylinderMesh(20);
 		const renderer = this.createMeshRenderer(mesh, shader);
-		//renderer.wireframe = true;
 		object3d.name = "Cylinder";
 		object3d.renderer = renderer;
 		return object3d;
@@ -198,7 +194,6 @@ export class App {
 		const shader = this.createDefaultShader();
 		const mesh = Tea.Primitives.createPlaneMesh(10);
 		const renderer = this.createMeshRenderer(mesh, shader);
-		//renderer.wireframe = true;
 		object3d.name = "Plane";
 		object3d.renderer = renderer;
 		return object3d;
@@ -209,7 +204,6 @@ export class App {
 		const shader = this.createDefaultShader();
 		const mesh = Tea.Primitives.createCapsuleMesh(10, 10);
 		const renderer = this.createMeshRenderer(mesh, shader);
-		//renderer.wireframe = true;
 		object3d.name = "Capsule";
 		object3d.renderer = renderer;
 		return object3d;
