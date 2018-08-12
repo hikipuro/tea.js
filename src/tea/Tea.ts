@@ -4,6 +4,7 @@ import { Vector3 } from "./math/Vector3";
 import { Vector4 } from "./math/Vector4";
 import { Rect } from "./math/Rect";
 
+import { ArrayUtil } from "./util/ArrayUtil";
 import { Color } from "./util/Color";
 import { File } from "./util/File";
 import { Screen } from "./util/Screen";
@@ -33,6 +34,7 @@ export {
 	Vector4,
 	Rect,
 
+	ArrayUtil,
 	Color,
 	File,
 	Screen,

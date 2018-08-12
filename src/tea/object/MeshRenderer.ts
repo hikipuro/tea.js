@@ -97,25 +97,25 @@ export class MeshRenderer extends Renderer {
 		gl.useProgram(this.shader.program);
 		let target = gl.ARRAY_BUFFER;
 
-		const vertices = new Float32Array(this.unroll(mesh.vertices));
+		const vertices = new Float32Array(Tea.ArrayUtil.unroll(mesh.vertices));
 		this._vertexCount = vertices.length;
 		gl.bindBuffer(target, this.vertexBuffer);
 		gl.bufferData(target, vertices, gl.STATIC_DRAW);
 
 		if (mesh.hasNormals) {
-			const normals = new Float32Array(this.unroll(mesh.normals));
+			const normals = new Float32Array(Tea.ArrayUtil.unroll(mesh.normals));
 			gl.bindBuffer(target, this.normalBuffer);
 			gl.bufferData(target, normals, gl.STATIC_DRAW);
 		}
 
 		if (mesh.hasUVs) {
-			const uv = new Float32Array(this.unroll(mesh.uv));
+			const uv = new Float32Array(Tea.ArrayUtil.unroll(mesh.uv));
 			gl.bindBuffer(target, this.uvBuffer);
 			gl.bufferData(target, uv, gl.STATIC_DRAW);
 		}
 
 		if (mesh.hasColors) {
-			const colors = new Float32Array(this.unroll(mesh.colors));
+			const colors = new Float32Array(Tea.ArrayUtil.unroll(mesh.colors));
 			gl.bindBuffer(target, this.colorBuffer);
 			gl.bufferData(target, colors, gl.STATIC_DRAW);
 		}
@@ -123,7 +123,7 @@ export class MeshRenderer extends Renderer {
 
 		if (mesh.hasTriangles) {
 			target = gl.ELEMENT_ARRAY_BUFFER;
-			const triangles = new Uint16Array(this.unroll(mesh.triangles));
+			const triangles = new Uint16Array(Tea.ArrayUtil.unroll(mesh.triangles));
 			this._triangleCount = triangles.length;
 			gl.bindBuffer(target, this.indexBuffer);
 			gl.bufferData(target, triangles, gl.STATIC_DRAW);
@@ -236,18 +236,5 @@ export class MeshRenderer extends Renderer {
 
 		const count = this._triangleCount;
 		gl.drawElements(gl.TRIANGLES, count, gl.UNSIGNED_SHORT, 0);
-	}
-
-	protected unroll(array: Array<any>): Array<number> {
-		if (array == null || array.length <= 0) {
-			return [];
-		}
-		const length = array.length;
-		const a = [];
-		for (let i = 0; i < length; i++) {
-			const item = array[i];
-			a.push.apply(a, item);
-		}
-		return a;
 	}
 }

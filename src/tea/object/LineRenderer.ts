@@ -69,7 +69,7 @@ export class LineRenderer extends Renderer {
 		const gl = this.app.gl;
 		let target = gl.ARRAY_BUFFER;
 
-		const vertices = new Float32Array(this.unroll(this.points));
+		const vertices = new Float32Array(Tea.ArrayUtil.unroll(this.points));
 		gl.bindBuffer(target, this.vertexBuffer);
 		gl.bufferData(target, vertices, gl.STATIC_DRAW);
 		this.shader.setAttribute("position", 3);
@@ -84,18 +84,5 @@ export class LineRenderer extends Renderer {
 		const count = this.points.length;
 		//gl.frontFace(gl.CW);
 		gl.drawArrays(gl.LINE_STRIP, 0, count);
-	}
-
-	protected unroll(array: Array<any>): Array<number> {
-		if (array == null || array.length <= 0) {
-			return [];
-		}
-		const length = array.length;
-		const a = [];
-		for (let i = 0; i < length; i++) {
-			const item = array[i];
-			a.push.apply(a, item);
-		}
-		return a;
 	}
 }
