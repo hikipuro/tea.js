@@ -25,6 +25,11 @@ export class Camera extends Object3D {
 		this.orthographic = false;
 		this.orthographicSize = 5;
 		this.rect = new Rect(0, 0, 1, 1);
+		this.update();
+	}
+
+	get aspect(): number {
+		return this.app.width / this.app.height;
 	}
 
 	get cameraToWorldMatrix(): Tea.Matrix4 {
@@ -47,19 +52,18 @@ export class Camera extends Object3D {
 		view = view.inverse;
 		this._cameraToWorldMatrix = view;
 
-		const aspect = this.app.width / this.app.height;
 		let projection: Tea.Matrix4;
 		if (this.orthographic) {
 			projection = Tea.Matrix4.ortho(
 				this.orthographicSize,
-				aspect,
+				this.aspect,
 				this.nearClipPlane,
 				this.farClipPlane
 			);
 		} else {
 			projection = Tea.Matrix4.perspective(
 				this.fieldOfView,
-				aspect,
+				this.aspect,
 				this.nearClipPlane,
 				this.farClipPlane
 			);
@@ -74,7 +78,7 @@ export class Camera extends Object3D {
 			return Tea.Vector3.zero;
 		}
 
-		const p = this.screenToViewport(position);
+		const p = this.screenToViewportPoint(position);
 		p.z = 1;
 		const far = this.unproject(p);
 		let ray = far.sub(this.position).normalized;
@@ -88,11 +92,30 @@ export class Camera extends Object3D {
 		return this.position.add(ray.mul(position.z / d));
 	}
 
-	screenToViewport(screen: Tea.Vector3): Tea.Vector3 {
-		const viewport = screen.clone();
+	screenToViewportPoint(position: Tea.Vector3): Tea.Vector3 {
+		const viewport = position.clone();
 		viewport.x = 2 * viewport.x / this.app.width - 1;
 		viewport.y = 2 * viewport.y / this.app.height - 1;
 		return viewport;
+	}
+
+	viewportToScreenPoint(position: Tea.Vector3): Tea.Vector3 {
+		const screen = position.clone();
+		screen.x = (screen.x + 1) * this.app.width / 2;
+		screen.y = (screen.y + 1) * this.app.height / 2;
+		return screen;
+	}
+
+	screenPointToRay(position: Tea.Vector3): Tea.Ray {
+		const p = position.clone();
+		p.z = this.nearClipPlane;
+		const near = this.screenToWorldPoint(p);
+		p.z = this.farClipPlane;
+		const far = this.screenToWorldPoint(p);
+		return new Tea.Ray(
+			near,
+			far.sub(near).normalized
+		);
 	}
 
 	unproject(viewport: Tea.Vector3): Tea.Vector3 {
