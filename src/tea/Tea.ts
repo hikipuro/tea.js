@@ -71,6 +71,10 @@ export {
 	Texture
 }
 
+export const Epsilon = 1.192093E-07;
+export const Deg2Rad = Math.PI / 180;
+export const Rad2Deg = 180 / Math.PI;
+
 /**
  * degrees to radians.
  * @export
@@ -102,6 +106,35 @@ export function degrees(radians: number): number {
 export function clamp(value: number, min: number, max: number): number {
 	value = Math.max(value, min);
 	return Math.min(value, max);
+}
+
+export function clamp01(value: number): number {
+	value = Math.max(value, 0);
+	return Math.min(value, 1);
+}
+
+export function lerp(a: number, b: number, t: number): number {
+	t = clamp01(t);
+	return a + (b - a) * t;
+}
+
+export function lerpUnclamped(a: number, b: number, t: number): number {
+	return a + (b - a) * t;
+}
+
+export function inverseLerp(a: number, b: number, value: number): number {
+	return (value - a) / (b - a);
+}
+
+export function pingPong(t: number, length: number): number {
+	const d = Math.floor(t / length) % 2;
+	return length * d + (t % length) * (-d * 2 + 1);
+}
+
+export function smoothStep(from: number, to: number, t: number): number {
+	t = from + (to - from) * t;
+	const x = clamp01((t - from) / (to - from));
+	return x * x * (3 - 2 * x) * (to - from) + from;
 }
 
 /**
