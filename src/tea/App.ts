@@ -360,9 +360,9 @@ class AppRenderer {
 		const height = this.app.height;
 
 		gl.viewport(
-			(rect.x + (rect.xMax - 1) + (1 - rect.height)) * width * 0.5,
-			(rect.y * 2) * height * 0.5,
-			rect.height * width,
+			rect.x * width,
+			rect.y * height,
+			rect.width * width,
 			rect.height * height
 		);
 		gl.scissor(

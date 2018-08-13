@@ -29,7 +29,10 @@ export class Camera extends Object3D {
 	}
 
 	get aspect(): number {
-		return this.app.width / this.app.height;
+		const rect = this.getViewportRect();
+		const width = this.app.width;
+		const height = this.app.height;
+		return (width * rect.width) / (height * rect.height);
 	}
 
 	get cameraToWorldMatrix(): Tea.Matrix4 {
@@ -87,8 +90,11 @@ export class Camera extends Object3D {
 
 	screenToViewportPoint(position: Tea.Vector3): Tea.Vector3 {
 		const viewport = position.clone();
+		const rect = this.getViewportRect();
 		viewport.x = viewport.x / this.app.width;
+		viewport.x = (viewport.x - rect.x) / rect.width;
 		viewport.y = viewport.y / this.app.height;
+		viewport.y = (viewport.y - rect.y) / rect.height;
 		return viewport;
 	}
 
@@ -97,6 +103,8 @@ export class Camera extends Object3D {
 			return Tea.Vector3.zero;
 		}
 		const p = this.screenToViewportPoint(position);
+		//const rect = this.getViewportRect();
+		//p.y = p.y - 0.5;
 		return this.viewportToWorldPoint(p);
 	}
 
@@ -157,6 +165,25 @@ export class Camera extends Object3D {
 		this.vMatrix = this.vMatrix.lookAt(eye, [0, 0, 0], [0, 1, 0]);
 	}
 	*/
+
+	protected getViewportRect(): Rect {
+		const rect = this.rect.clone();
+		if (rect.x < 0) {
+			rect.width += rect.x;
+			rect.x = 0;
+		}
+		if (rect.y < 0) {
+			rect.height += rect.y;
+			rect.y = 0;
+		}
+		if (rect.xMax > 1) {
+			rect.width = 1 - rect.x;
+		}
+		if (rect.yMax > 1) {
+			rect.height = 1 - rect.y;
+		}
+		return rect;
+	}
 
 	protected clear(): void {
 		const gl = this.app.gl;
