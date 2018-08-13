@@ -53,8 +53,9 @@ export class Scene {
 			return;
 		}
 		object3d.update();
-		if (object3d.renderer != null) {
-			object3d.renderer.render(this.camera);
+		const renderer = object3d.getComponent(Tea.Renderer);
+		if (renderer != null) {
+			renderer.render(this.camera);
 		}
 		if (object3d.children.length > 0) {
 			const children = object3d.children;

@@ -1,10 +1,12 @@
 import * as Tea from "../Tea";
+import { Component } from "./Component";
 
-export class Renderer {
+export class Renderer extends Component {
 	object3d: Tea.Object3D;
 	shader: Tea.Shader;
 
-	constructor() {
+	constructor(app: Tea.App) {
+		super(app);
 	}
 
 	get localToWorldMatrix(): Tea.Matrix4 {

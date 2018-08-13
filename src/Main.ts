@@ -57,20 +57,25 @@ export class Main {
 		//scene.camera.fov = 25;
 		//scene.camera.fov = 20;
 		//scene.camera.orthographic = true;
-		//scene.camera.rotation.x = -Tea.radians(20);
 		//scene.camera.nearClipPlane = 2;
-		//scene.camera.rotation.y = -Tea.radians(10);
-		//scene.camera.rotation.z = Tea.radians(10);
+		scene.camera.rotation.x = -Tea.radians(20);
+		scene.camera.rotation.y = -Tea.radians(10);
+		scene.camera.rotation.z = Tea.radians(10);
 		//cene.camera.fieldOfView = 16;
 		//scene.camera.rotation.z = Tea.radians(20);
 		//scene.camera.position.x = 2;
 		//scene.camera.position.z = 13;
 		//scene.camera.fieldOfView = 30;
-		//.camera.rect.x = 0.3;
+		//scene.camera.rect.x = 0.2;
 		//scene.camera.rect.width = 0.5;
 		//scene.camera.rect.y = 0.2;
-		//scene.camera.rect.height = 0.7;
+		//scene.camera.rect.height = 0.6;
 		this.app.setScene(scene);
+
+		setTimeout(() => {
+			console.log("ray", scene.camera.screenPointToRay(new Tea.Vector3(100, 100)).toString());
+			console.log("ray2", scene.camera.viewportPointToRay(new Tea.Vector3(0.5, 0.5)).toString());
+		}, 100);
 
 		//console.log("camera", scene.camera.cameraToWorldMatrix.toString());
 		//console.log("camera", scene.camera.worldToCameraMatrix.toString());
@@ -136,10 +141,13 @@ export class Main {
 		capsule.addScript(script);
 		scene.appendChild(capsule);
 
-		const lineRenderer = this.app.createLineRenderer();
+		capsule.addComponent(Tea.Camera);
+		//capsule.addComponent(Tea.MeshRenderer);
+		console.log("component", capsule.getComponent(Tea.Camera));
+
 		const lines = this.app.createObject3D();
+		const lineRenderer = lines.addComponent(Tea.LineRenderer);
 		lines.position.x = 3;
-		lines.renderer = lineRenderer;
 		lineRenderer.add(0, 0, 0);
 		lineRenderer.add(2, 1, 0);
 		lineRenderer.add(-2, 1, 3);
@@ -150,16 +158,31 @@ export class Main {
 		capsule.appendChild(lines);
 		//scene.appendChild(lines);
 
+		let ray = new Tea.Ray(new Tea.Vector3(0, 1, 0), new Tea.Vector3(0.2, 0.3, 0.4));
+		console.log("test", ray.direction, ray.getPoint(6.5), ray.getPoint(-6.5));
+
 		this.app.start();
 
 		Tea.File.readImage("../models/google.jpg", (image) => {
 			//document.body.appendChild(image);
 			const texture = this.app.createTexture(image);
+			/*
 			cube.renderer.shader.texture = texture;
 			quad.renderer.shader.texture = texture;
 			cylinder.renderer.shader.texture = texture;
 			plane.renderer.shader.texture = texture;
 			capsule.renderer.shader.texture = texture;
+			*/
+			let r = cube.getComponent(Tea.Renderer);
+			r.shader.texture = texture;
+			r = quad.getComponent(Tea.Renderer);
+			r.shader.texture = texture;
+			r = cylinder.getComponent(Tea.Renderer);
+			r.shader.texture = texture;
+			r = plane.getComponent(Tea.Renderer);
+			r.shader.texture = texture;
+			r = capsule.getComponent(Tea.Renderer);
+			r.shader.texture = texture;
 		});
 
 		Tea.File.readImage("../models/earth.jpg", (image) => {

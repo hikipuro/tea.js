@@ -13,6 +13,8 @@ import { Screen } from "./util/Screen";
 import { App } from "./App";
 import { Bounds } from "./object/Bounds";
 import { Camera } from "./object/Camera";
+import { Collider } from "./object/Collider";
+import { Component } from "./object/Component";
 import { DaeReader } from "./DaeReader";
 import { GLCapabilities } from "./GLCapabilities";
 import { GLExtensions } from "./GLExtensions";
@@ -20,6 +22,7 @@ import { GLParameters } from "./GLParameters";
 import { Mesh } from "./object/Mesh";
 import { Object3D } from "./object/Object3D";
 import { Ray } from "./object/Ray";
+import { RaycastHit } from "./object/RaycastHit";
 import { ObjReader } from "./ObjReader";
 import { Primitives } from "./Primitives";
 import { Renderer } from "./object/Renderer";
@@ -47,6 +50,8 @@ export {
 	App,
 	Bounds,
 	Camera,
+	Collider,
+	Component,
 	DaeReader,
 	GLCapabilities,
 	GLExtensions,
@@ -54,6 +59,7 @@ export {
 	Mesh,
 	Object3D,
 	Ray,
+	RaycastHit,
 	ObjReader,
 	Primitives,
 	Renderer,

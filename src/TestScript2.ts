@@ -8,7 +8,8 @@ export class TestScript2 extends Tea.Script {
 		//console.log("update");
 		this.count++;
 
-		let r = this.object3d.renderer as Tea.LineRenderer;
-		r.color = Tea.Color.fromHSB(this.count % 360 / 360, 1, 1);
+		const renderer = this.object3d.getComponent(Tea.LineRenderer);
+		//let r = renderer as Tea.LineRenderer;
+		renderer.color = Tea.Color.fromHSB(this.count % 360 / 360, 1, 1);
 	}
 }

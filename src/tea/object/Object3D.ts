@@ -11,7 +11,7 @@ export class Object3D {
 	scripts: Array<Tea.Script>;
 	parent: Object3D;
 	children: Array<Object3D>;
-	protected _renderer: Tea.Renderer;
+	protected _components: Array<Tea.Component>;
 
 	constructor(app: Tea.App) {
 		this.name = "";
@@ -22,17 +22,7 @@ export class Object3D {
 		this.scale = Tea.Vector3.one;
 		this.scripts = [];
 		this.children = [];
-	}
-
-	get renderer(): Tea.Renderer {
-		return this._renderer;
-	}
-	set renderer(value: Tea.Renderer) {
-		if (this._renderer != null) {
-			this._renderer.object3d = null;
-		}
-		value.object3d = this;
-		this._renderer = value;
+		this._components = [];
 	}
 
 	get localToWorldMatrix(): Tea.Matrix4 {
@@ -48,6 +38,28 @@ export class Object3D {
 
 	toString(): string {
 		return JSON.stringify(this);
+	}
+
+	addComponent<T extends Tea.Component>(component: new (app: Tea.App) => T): T {
+		if (component == null) {
+			return;
+		}
+		const c = new component(this.app);
+		c.object3d = this;
+		this._components.push(c);
+		return c;
+	}
+
+	getComponent<T extends Tea.Component>(component: {new (app: Tea.App): T}): T {
+		const components = this._components;
+		const length = components.length;
+		for (let i = 0; i < length; i++) {
+			const c = components[i];
+			if (c instanceof component) {
+				return c as T;
+			}
+		}
+		return null;
 	}
 
 	appendChild(object3d: Tea.Object3D): void {

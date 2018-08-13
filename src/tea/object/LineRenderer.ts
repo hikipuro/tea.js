@@ -2,18 +2,23 @@ import * as Tea from "../Tea";
 import { Renderer } from "./Renderer";
 
 export class LineRenderer extends Renderer {
-	app: Tea.App;
 	points: Array<Tea.Vector3>;
 	color: Tea.Color;
 	vertexBuffer: WebGLBuffer;
 
 	constructor(app: Tea.App) {
-		super();
-		this.app = app;
+		super(app);
 		this.points = [];
 		this.color = Tea.Color.white;
 		const gl = this.app.gl;
 		this.vertexBuffer = gl.createBuffer();
+
+		const shader = new Tea.Shader(this.app);
+		shader.attach(
+			Tea.Shader.lineVertexShaderSource,
+			Tea.Shader.lineFragmentShaderSource
+		);
+		this.shader = shader;
 	}
 
 	add(x: number, y: number, z: number): void;

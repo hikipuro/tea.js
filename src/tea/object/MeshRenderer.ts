@@ -2,7 +2,6 @@ import * as Tea from "../Tea";
 import { Renderer } from "./Renderer";
 
 export class MeshRenderer extends Renderer {
-	app: Tea.App;
 	protected _mesh: Tea.Mesh;
 
 	vertexBuffer: WebGLBuffer;
@@ -16,7 +15,7 @@ export class MeshRenderer extends Renderer {
 	protected _triangleCount: number = 0;
 
 	constructor(app: Tea.App) {
-		super();
+		super(app);
 		this.app = app;
 		this.createBuffers();
 	}

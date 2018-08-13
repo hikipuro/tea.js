@@ -1,15 +1,17 @@
 import * as Tea from "../Tea";
-import { Object3D } from "./Object3D";
-import { Rect } from "../math/Rect";
+import { Component } from "./Component";
 
-export class Camera extends Object3D {
+export class Camera extends Component {
+	position: Tea.Vector3;
+	rotation: Tea.Vector3;
+
 	fieldOfView: number;
 	nearClipPlane: number;
 	farClipPlane: number;
 	backgroundColor: Tea.Color;
 	orthographic: boolean;
 	orthographicSize: number;
-	rect: Rect;
+	rect: Tea.Rect;
 
 	protected _cameraToWorldMatrix: Tea.Matrix4;
 	protected _worldToCameraMatrix: Tea.Matrix4;
@@ -18,13 +20,14 @@ export class Camera extends Object3D {
 	constructor(app: Tea.App) {
 		super(app);
 		this.position = new Tea.Vector3(0, 1, 10);
+		this.rotation = Tea.Vector3.zero;
 		this.fieldOfView = 60;
 		this.nearClipPlane = 0.3;
 		this.farClipPlane = 1000;
 		this.backgroundColor = Tea.Color.background;
 		this.orthographic = false;
 		this.orthographicSize = 5;
-		this.rect = new Rect(0, 0, 1, 1);
+		this.rect = new Tea.Rect(0, 0, 1, 1);
 		this.update();
 	}
 
@@ -166,7 +169,7 @@ export class Camera extends Object3D {
 	}
 	*/
 
-	protected getViewportRect(): Rect {
+	protected getViewportRect(): Tea.Rect {
 		const rect = this.rect.clone();
 		if (rect.x < 0) {
 			rect.width += rect.x;
