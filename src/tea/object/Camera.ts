@@ -73,12 +73,58 @@ export class Camera extends Object3D {
 		this.clear();
 	}
 
+	screenPointToRay(position: Tea.Vector3): Tea.Ray {
+		const p = position.clone();
+		p.z = this.nearClipPlane;
+		const near = this.screenToWorldPoint(p);
+		p.z = this.farClipPlane;
+		const far = this.screenToWorldPoint(p);
+		return new Tea.Ray(
+			near,
+			far.sub(near).normalized
+		);
+	}
+
+	screenToViewportPoint(position: Tea.Vector3): Tea.Vector3 {
+		const viewport = position.clone();
+		viewport.x = viewport.x / this.app.width;
+		viewport.y = viewport.y / this.app.height;
+		return viewport;
+	}
+
 	screenToWorldPoint(position: Tea.Vector3): Tea.Vector3 {
 		if (position == null) {
 			return Tea.Vector3.zero;
 		}
-
 		const p = this.screenToViewportPoint(position);
+		return this.viewportToWorldPoint(p);
+	}
+
+	viewportPointToRay(position: Tea.Vector3): Tea.Ray {
+		const p = position.clone();
+		p.z = this.nearClipPlane;
+		const near = this.viewportToWorldPoint(p);
+		p.z = this.farClipPlane;
+		const far = this.viewportToWorldPoint(p);
+		return new Tea.Ray(
+			near,
+			far.sub(near).normalized
+		);
+	}
+
+	viewportToScreenPoint(position: Tea.Vector3): Tea.Vector3 {
+		const screen = position.clone();
+		screen.x = screen.x * this.app.width;
+		screen.y = screen.y * this.app.height;
+		return screen;
+	}
+
+	viewportToWorldPoint(position: Tea.Vector3): Tea.Vector3 {
+		if (position == null) {
+			return Tea.Vector3.zero;
+		}
+
+		const p = position.clone();
 		p.z = 1;
 		const far = this.unproject(p);
 		let ray = far.sub(this.position).normalized;
@@ -92,41 +138,17 @@ export class Camera extends Object3D {
 		return this.position.add(ray.mul(position.z / d));
 	}
 
-	screenToViewportPoint(position: Tea.Vector3): Tea.Vector3 {
-		const viewport = position.clone();
-		viewport.x = 2 * viewport.x / this.app.width - 1;
-		viewport.y = 2 * viewport.y / this.app.height - 1;
-		return viewport;
-	}
-
-	viewportToScreenPoint(position: Tea.Vector3): Tea.Vector3 {
-		const screen = position.clone();
-		screen.x = (screen.x + 1) * this.app.width / 2;
-		screen.y = (screen.y + 1) * this.app.height / 2;
-		return screen;
-	}
-
-	screenPointToRay(position: Tea.Vector3): Tea.Ray {
-		const p = position.clone();
-		p.z = this.nearClipPlane;
-		const near = this.screenToWorldPoint(p);
-		p.z = this.farClipPlane;
-		const far = this.screenToWorldPoint(p);
-		return new Tea.Ray(
-			near,
-			far.sub(near).normalized
-		);
-	}
-
 	unproject(viewport: Tea.Vector3): Tea.Vector3 {
 		const view = this.cameraToWorldMatrix;
 		const projection = this.projectionMatrix;
 		let vp = projection.mul(view);
 		vp = vp.inverse;
 
-		let result = viewport.clone();
-		result.applyMatrix4(vp);
-		return result;
+		let world = viewport.clone();
+		world.x = world.x * 2 - 1;
+		world.y = world.y * 2 - 1;
+		world.applyMatrix4(vp);
+		return world;
 	}
 
 	/*
