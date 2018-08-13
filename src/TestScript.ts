@@ -1,5 +1,4 @@
 import * as Tea from "./tea/Tea";
-import { Keyboard } from "./tea/Keyboard";
 
 export class TestScript extends Tea.Script {
 	count: number = 0;
@@ -10,6 +9,7 @@ export class TestScript extends Tea.Script {
 	}
 
 	update(): void {
+		//console.log(this.object3d.name);
 		//console.log("update");
 		this.count++;
 		//this.position.x = Math.cos(Tea.radians(this.count)) * 5;
@@ -17,17 +17,17 @@ export class TestScript extends Tea.Script {
 		//console.log(this.count, this.position);
 
 		//this.rotation.x = Tea.radians(this.count / 3);
-		this.rotation.y += Tea.radians(this.speedY * 2);
+		this.rotation.y += Tea.radians(3);// Tea.radians(this.speedY * 2);
 
 		const keyboard = this.app.keyboard;
 		//console.log(keyboard.isDown(Keyboard.Keys.ArrowLeft));
-		if (keyboard.isDown(Keyboard.Codes.Space)) {
+		if (keyboard.isDown(Tea.Keyboard.Codes.Space)) {
 			console.log("down");
 		}
-		if (keyboard.isUp(Keyboard.Codes.Space)) {
+		if (keyboard.isUp(Tea.Keyboard.Codes.Space)) {
 			console.log("up");
 		}
-		if (keyboard.isHeld(Keyboard.Codes.Space)) {
+		if (keyboard.isHeld(Tea.Keyboard.Codes.Space)) {
 			console.log("held");
 		}
 
@@ -45,6 +45,9 @@ export class TestScript extends Tea.Script {
 		}
 		if (mouse.isDown(0)) {
 			console.log("mouse down");
+			let p2 = new Tea.Vector3(mouse.x, mouse.y, 10);
+			const p = this.object3d.scene.camera.screenToViewportPoint(p2);
+			console.log(p);
 		}
 		if (mouse.isUp(0)) {
 			console.log("mouse up");
