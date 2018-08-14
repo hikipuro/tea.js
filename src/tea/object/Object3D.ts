@@ -53,7 +53,7 @@ export class Object3D {
 	getComponent<T extends Tea.Component>(component: {new (app: Tea.App): T}): T {
 		const components = this._components;
 		const length = components.length;
-		for (let i = 0; i < length; i++) {
+		for (var i = 0; i < length; i++) {
 			const c = components[i];
 			if (c instanceof component) {
 				return c as T;
@@ -77,7 +77,7 @@ export class Object3D {
 	detachChildren(): void {
 		const children = this.children;
 		const length = children.length;
-		for (let i = 0; i < length; i++) {
+		for (var i = 0; i < length; i++) {
 			children[i].parent = null;
 		}
 		this.children = [];
@@ -111,7 +111,7 @@ export class Object3D {
 		}
 		const scripts = this.scripts;
 		const length = scripts.length;
-		for (let i = 0; i < length; i++) {
+		for (var i = 0; i < length; i++) {
 			callback(scripts[i]);
 		}
 	}

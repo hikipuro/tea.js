@@ -96,7 +96,7 @@ export class Mesh {
 	scale(value: number): void {
 		const vertices = this.vertices;
 		const length = vertices.length;
-		for (let i = 0; i < length; i++) {
+		for (var i = 0; i < length; i++) {
 			vertices[i].mul(value);
 		}
 	}
@@ -106,7 +106,7 @@ export class Mesh {
 		const cos = Math.cos(radian);
 		const vertices = this.vertices;
 		const length = vertices.length;
-		for (let i = 0; i < length; i++) {
+		for (var i = 0; i < length; i++) {
 			const y = vertices[i].y;
 			const z = vertices[i].z;
 			vertices[i].y = cos * y + -sin * z;
@@ -122,7 +122,7 @@ export class Mesh {
 		const min = new Tea.Vector3();
 		const max = new Tea.Vector3();
 		const length = positions.length;
-		for (let i = 0; i < length; i++) {
+		for (var i = 0; i < length; i++) {
 			const position = positions[i];
 			if (position == null) {
 				continue;
@@ -160,7 +160,7 @@ export class Mesh {
 		}
 		const a = [];
 		const length = Math.floor(array.length / 2) * 2;
-		for (let i = 0; i < length; i += 2) {
+		for (var i = 0; i < length; i += 2) {
 			const item = new Tea.Vector2(
 				array[i], array[i + 1]
 			);
@@ -175,7 +175,7 @@ export class Mesh {
 		}
 		const a = [];
 		const length = Math.floor(array.length / 3) * 3;
-		for (let i = 0; i < length; i += 3) {
+		for (var i = 0; i < length; i += 3) {
 			const item = new Tea.Vector3(
 				array[i], array[i + 1], array[i + 2]
 			);
@@ -190,7 +190,7 @@ export class Mesh {
 		}
 		const a = [];
 		const length = Math.floor(array.length / 4) * 4;
-		for (let i = 0; i < length; i += 4) {
+		for (var i = 0; i < length; i += 4) {
 			const item = new Tea.Color(
 				array[i], array[i + 1], array[i + 2], array[i + 3]
 			);

@@ -49,7 +49,7 @@ export class Vector2 extends Array<number> {
 
 	toString(): string {
 		const t = new Array(2);
-		for (let i = 0; i < 2; i++) {
+		for (var i = 0; i < 2; i++) {
 			t[i] = this[i].toFixed(5);
 		}
 		return (

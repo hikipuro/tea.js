@@ -20,7 +20,7 @@ export class Matrix4 extends Array<number> {
 
 	static fromArray(array: Array<number>, offset: number = 0): Matrix4 {
 		const m = new Matrix4();
-		for (let i = 0; i < 16; i++) {
+		for (var i = 0; i < 16; i++) {
 			m[i] = array[i + offset];
 		}
 		return m;
@@ -380,7 +380,7 @@ export class Matrix4 extends Array<number> {
 		if (matrix == null) {
 			return false;
 		}
-		for (let i = 0; i < 16; i++) {
+		for (var i = 0; i < 16; i++) {
 			if (this[i] != matrix[i]) {
 				return false;
 			}
@@ -390,7 +390,7 @@ export class Matrix4 extends Array<number> {
 
 	clone(): Matrix4 {
 		const m = new Matrix4();
-		for (let i = 0; i < 16; i++) {
+		for (var i = 0; i < 16; i++) {
 			m[i] = this[i];
 		}
 		return m;
@@ -506,7 +506,7 @@ export class Matrix4 extends Array<number> {
 
 	toString(): string {
 		const t = new Array(16);
-		for (let i = 0; i < 16; i++) {
+		for (var i = 0; i < 16; i++) {
 			t[i] = this[i].toFixed(5);
 		}
 		return (

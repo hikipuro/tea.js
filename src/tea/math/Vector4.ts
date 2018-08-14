@@ -92,7 +92,7 @@ export class Vector4 extends Array<number> {
 
 	toString(): string {
 		const t = new Array(4);
-		for (let i = 0; i < 4; i++) {
+		for (var i = 0; i < 4; i++) {
 			t[i] = this[i].toFixed(5);
 		}
 		return (

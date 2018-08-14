@@ -165,7 +165,7 @@ export class Vector3 extends Array<number> {
 
 	toString(): string {
 		const t = new Array(3);
-		for (let i = 0; i < 3; i++) {
+		for (var i = 0; i < 3; i++) {
 			t[i] = this[i].toFixed(5);
 		}
 		return (

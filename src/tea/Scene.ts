@@ -35,7 +35,7 @@ export class Scene {
 
 		const children = this.children;
 		const length = this.children.length;
-		for (let i = 0; i < length; i++) {
+		for (var i = 0; i < length; i++) {
 			this.updateObject3D(children[i]);
 		}
 	}
@@ -43,7 +43,7 @@ export class Scene {
 	protected start(): void {
 		const children = this.children;
 		const length = this.children.length;
-		for (let i = 0; i < length; i++) {
+		for (var i = 0; i < length; i++) {
 			children[i].start();
 		}
 	}
@@ -60,7 +60,7 @@ export class Scene {
 		if (object3d.children.length > 0) {
 			const children = object3d.children;
 			const length = children.length;
-			for (let i = 0; i < length; i++) {
+			for (var i = 0; i < length; i++) {
 				this.updateObject3D(children[i]);
 			}
 		}

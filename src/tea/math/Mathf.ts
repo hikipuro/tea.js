@@ -58,7 +58,7 @@ export class Mathf {
 	}
 
 	static closestPowerOfTwo(value: number): number {
-		for (let i = 1; i < 65; i++) {
+		for (var i = 1; i < 65; i++) {
 			const v = Math.pow(i, 2);
 			if (v > value) {
 				return v;

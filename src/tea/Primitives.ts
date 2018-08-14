@@ -180,10 +180,10 @@ export class Primitives {
 		let lengthX = hLines + 1;
 		let lengthY = vLines + 1;
 
-		for (let y = 0; y <= lengthY; y++) {
+		for (var y = 0; y <= lengthY; y++) {
 			const vy = cos(pi * y / lengthY) * 0.5;
 			const sy = sin(pi * y / lengthY) * 0.5;
-			for (let x = 0; x < lengthX; x++) {
+			for (var x = 0; x < lengthX; x++) {
 				const vx = cos(pi * x / lengthX) * sy;
 				const vz = sin(pi * x / lengthX) * sy;
 				vertices.push(vx, vy, vz);
@@ -194,7 +194,7 @@ export class Primitives {
 				console.log(vy.toFixed(3), sy.toFixed(3), (-vy + 0.5).toFixed(3));
 				//console.log(vx.toFixed(3), vy.toFixed(3), vz.toFixed(3));
 			}
-			for (let x = 0; x <= lengthX; x++) {
+			for (var x = 0; x <= lengthX; x++) {
 				const vx = cos(pi + pi * x / lengthX) * sy;
 				const vz = sin(pi + pi * x / lengthX) * sy;
 				vertices.push(vx, vy, vz);
@@ -207,9 +207,9 @@ export class Primitives {
 		}
 		//console.log("vertices.length", vertices.length);
 		lengthX = lengthX * 2 + 1;
-		for (let y = 0; y < lengthY; y++) {
+		for (var y = 0; y < lengthY; y++) {
 			const ny = (y + 1) * lengthX;
-			for (let x = 0; x < lengthX - 1; x++) {
+			for (var x = 0; x < lengthX - 1; x++) {
 				const nx = x + y * lengthX;
 				triangles.push(nx, nx + 1, ny + x);
 				triangles.push(ny + x, nx + 1, ny + x + 1);
@@ -237,14 +237,14 @@ export class Primitives {
 		vertices.push(0, 1, 0);
 		normals.push(0, 1, 0);
 		uv.push(0.5, 0.5);
-		for (let i = 0; i <= lines; i++) {
+		for (var i = 0; i <= lines; i++) {
 			const vx = cos(2 * pi * i / lines) * 0.5;
 			const vz = sin(2 * pi * i / lines) * 0.5;
 			vertices.push(vx, 1, vz);
 			normals.push(0, 1, 0);
 			uv.push(-vx + 0.5, -vz + 0.5);
 		}
-		for (let i = 1; i <= lines; i++) {
+		for (var i = 1; i <= lines; i++) {
 			triangles.push(i, 0, i + 1);
 		}
 
@@ -252,19 +252,19 @@ export class Primitives {
 		vertices.push(0, -1, 0);
 		normals.push(0, -1, 0);
 		uv.push(0.5, 0.5);
-		for (let i = 0; i <= lines; i++) {
+		for (var i = 0; i <= lines; i++) {
 			const vx = cos(2 * pi * i / lines) * 0.5;
 			const vz = sin(2 * pi * i / lines) * 0.5;
 			vertices.push(vx, -1, vz);
 			normals.push(0, -1, 0);
 			uv.push(vx + 0.5, -vz + 0.5);
 		}
-		for (let i = 1; i <= lines; i++) {
+		for (var i = 1; i <= lines; i++) {
 			triangles.push(st, st + i, st + i + 1);
 		}
 
 		st = vertices.length / 3;
-		for (let i = 0; i <= lines; i++) {
+		for (var i = 0; i <= lines; i++) {
 			const vx = cos(2 * pi * i / lines) * 0.5;
 			const vz = sin(2 * pi * i / lines) * 0.5;
 			vertices.push(vx, -1, vz);
@@ -278,7 +278,7 @@ export class Primitives {
 			uv.push(ux, 1);
 			uv.push(ux, 0);
 		}
-		for (let i = 0; i < lines * 2; i += 2) {
+		for (var i = 0; i < lines * 2; i += 2) {
 			const n = st + i;
 			triangles.push(n, n + 1, n + 2);
 			triangles.push(n + 1, n + 3, n + 2);
@@ -305,9 +305,9 @@ export class Primitives {
 		const uv = [];
 
 		const halfSize = size / 2;
-		for (let z = 0; z <= size; z++) {
+		for (var z = 0; z <= size; z++) {
 			const vz = z - halfSize;
-			for (let x = 0; x <= size; x++) {
+			for (var x = 0; x <= size; x++) {
 				const vx = x - halfSize;
 				vertices.push(vx, 0, vz);
 				normals.push(0, 1, 0);
@@ -315,8 +315,8 @@ export class Primitives {
 			}
 		}
 
-		for (let z = 0; z < size; z++) {
-			for (let x = 0; x < size; x++) {
+		for (var z = 0; z < size; z++) {
+			for (var x = 0; x < size; x++) {
 				const i = x + (size + 1) * z;
 				triangles.push(i + 1, i, i + size + 1);
 				triangles.push(i + 1, i + size + 1, i + size + 2);
@@ -344,10 +344,10 @@ export class Primitives {
 		let lengthX = hLines;
 		let lengthY = vLines * 2;
 
-		for (let y = 0; y <= vLines; y++) {
+		for (var y = 0; y <= vLines; y++) {
 			const vy = cos(pi * y / lengthY) * 0.5 + 0.5;
 			const sy = sin(pi * y / lengthY) * 0.5;
-			for (let x = 0; x <= lengthX * 2; x++) {
+			for (var x = 0; x <= lengthX * 2; x++) {
 				const vx = cos(pi * x / lengthX) * sy;
 				const vz = sin(pi * x / lengthX) * sy;
 				vertices.push(vx, vy, vz);
@@ -359,9 +359,9 @@ export class Primitives {
 		}
 
 		lengthX = lengthX * 2 + 1;
-		for (let y = 0; y < vLines; y++) {
+		for (var y = 0; y < vLines; y++) {
 			const ny = (y + 1) * lengthX;
-			for (let x = 0; x < lengthX - 1; x++) {
+			for (var x = 0; x < lengthX - 1; x++) {
 				const nx = x + y * lengthX;
 				triangles.push(nx, nx + 1, ny + x);
 				triangles.push(ny + x, nx + 1, ny + x + 1);
@@ -370,10 +370,10 @@ export class Primitives {
 
 		lengthX = hLines;
 		let st = vertices.length / 3;
-		for (let y = 0; y <= vLines; y++) {
+		for (var y = 0; y <= vLines; y++) {
 			const vy = -cos(pi * y / lengthY) * 0.5 - 0.5;
 			const sy = sin(pi * y / lengthY) * 0.5;
-			for (let x = 0; x <= lengthX * 2; x++) {
+			for (var x = 0; x <= lengthX * 2; x++) {
 				const vx = cos(pi * x / lengthX) * sy;
 				const vz = sin(pi * x / lengthX) * sy;
 				vertices.push(vx, vy, vz);
@@ -385,9 +385,9 @@ export class Primitives {
 		}
 
 		lengthX = lengthX * 2 + 1;
-		for (let y = 0; y < vLines; y++) {
+		for (var y = 0; y < vLines; y++) {
 			const ny = st + (y + 1) * lengthX;
-			for (let x = 0; x < lengthX - 1; x++) {
+			for (var x = 0; x < lengthX - 1; x++) {
 				const nx = st + x + y * lengthX;
 				triangles.push(nx + 1, nx, ny + x);
 				triangles.push(nx + 1, ny + x, ny + x + 1);
@@ -396,7 +396,7 @@ export class Primitives {
 
 		st = vertices.length / 3;
 		lengthX = hLines * 2;
-		for (let i = 0; i <= lengthX; i++) {
+		for (var i = 0; i <= lengthX; i++) {
 			const vx = cos(2 * pi * i / lengthX) * 0.5;
 			const vz = sin(2 * pi * i / lengthX) * 0.5;
 			vertices.push(vx, -0.5, vz);
@@ -409,7 +409,7 @@ export class Primitives {
 			uv.push(-i / lengthX, 0.75);
 			uv.push(-i / lengthX, 0.25);
 		}
-		for (let i = 0; i < lengthX * 2; i += 2) {
+		for (var i = 0; i < lengthX * 2; i += 2) {
 			const n = st + i;
 			triangles.push(n, n + 1, n + 2);
 			triangles.push(n + 1, n + 3, n + 2);

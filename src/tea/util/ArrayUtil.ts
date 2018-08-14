@@ -6,7 +6,7 @@ export class ArrayUtil {
 		}
 		const length = array.length;
 		const a = [];
-		for (let i = 0; i < length; i++) {
+		for (var i = 0; i < length; i++) {
 			const item = array[i];
 			a.push.apply(a, item);
 		}

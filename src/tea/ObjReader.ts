@@ -37,7 +37,7 @@ export class ObjReader {
 	protected static forEachLine(data: string, callback: ForEachLineCallback): void {
 		const lines = data.split(/\r?\n/);
 		const length = lines.length;
-		for (let i = 0; i < length; i++) {
+		for (var i = 0; i < length; i++) {
 			callback(lines[i], i);
 		}
 	}
@@ -59,7 +59,7 @@ export class ObjReader {
 
 	protected static parseIndex(params: Array<string>): Array<number> {
 		const list = [];
-		for (let i = 1; i < params.length; i++) {
+		for (var i = 1; i < params.length; i++) {
 			if (params[i] == "") {
 				continue;
 			}
