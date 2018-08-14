@@ -25,14 +25,15 @@ export class Object3D {
 		this._components = [];
 	}
 
-	get localToWorldMatrix(): Tea.Matrix4 {
-		let m = Tea.Matrix4.identity;
+	get localToWorldMatrix(): Tea.Matrix4x4 {
+		let m = Tea.Matrix4x4.identity;
 		if (this.parent != null) {
 			m = m.mul(this.parent.localToWorldMatrix);
 		}
-		m = m.mul(Tea.Matrix4.translate(this.position));
-		m = m.mul(Tea.Matrix4.rotateZXY(this.rotation));
-		m = m.mul(Tea.Matrix4.scale(this.scale));
+		m = m.mul(Tea.Matrix4x4.translate(this.position));
+		m = m.mul(Tea.Matrix4x4.rotateZXY(this.rotation));
+		m = m.mul(Tea.Matrix4x4.scale(this.scale));
+		m.convertToLH();
 		return m;
 	}
 

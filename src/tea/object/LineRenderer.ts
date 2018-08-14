@@ -61,11 +61,10 @@ export class LineRenderer extends Renderer {
 	}
 
 	protected setUniforms(camera: Tea.Camera): void {
-		let model = this.localToWorldMatrix;
-		let view = camera.cameraToWorldMatrix;
-		let proj = camera.projectionMatrix;
-
-		const mvpMatrix = proj.mul(view).mul(model);
+		var model = this.localToWorldMatrix;
+		var view = camera.worldToCameraMatrix;
+		var proj = camera.projectionMatrix;
+		var mvpMatrix = proj.mul(view).mul(model);
 		this.shader.uniformMatrix4fv("mvpMatrix", mvpMatrix);
 		this.shader.uniform4fv("color", this.color);
 	}

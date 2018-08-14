@@ -13,13 +13,13 @@ export class Camera extends Component {
 	orthographicSize: number;
 	rect: Tea.Rect;
 
-	protected _cameraToWorldMatrix: Tea.Matrix4;
-	protected _worldToCameraMatrix: Tea.Matrix4;
-	protected _projectionMatrix: Tea.Matrix4;
+	protected _cameraToWorldMatrix: Tea.Matrix4x4;
+	protected _worldToCameraMatrix: Tea.Matrix4x4;
+	protected _projectionMatrix: Tea.Matrix4x4;
 
 	constructor(app: Tea.App) {
 		super(app);
-		this.position = new Tea.Vector3(0, 1, 10);
+		this.position = new Tea.Vector3(0, 1, -10);
 		this.rotation = Tea.Vector3.zero;
 		this.fieldOfView = 60;
 		this.nearClipPlane = 0.3;
@@ -38,36 +38,37 @@ export class Camera extends Component {
 		return (width * rect.width) / (height * rect.height);
 	}
 
-	get cameraToWorldMatrix(): Tea.Matrix4 {
+	get cameraToWorldMatrix(): Tea.Matrix4x4 {
 		return this._cameraToWorldMatrix;
 	}
 
-	get worldToCameraMatrix(): Tea.Matrix4 {
+	get worldToCameraMatrix(): Tea.Matrix4x4 {
 		return this._worldToCameraMatrix;
 	}
 
-	get projectionMatrix(): Tea.Matrix4 {
+	get projectionMatrix(): Tea.Matrix4x4 {
 		return this._projectionMatrix;
 	}
 
 	update(): void {
-		let view = Tea.Matrix4.translate(this.position);
-		view = view.mul(Tea.Matrix4.rotateZXY(this.rotation));
-		this._worldToCameraMatrix = view;
-
-		view = view.inverse;
+		let view = Tea.Matrix4x4.translate(this.position);
+		view = view.mul(Tea.Matrix4x4.rotateZXY(this.rotation));
+		view.convertToLH();
 		this._cameraToWorldMatrix = view;
 
-		let projection: Tea.Matrix4;
+		view = view.inverse;
+		this._worldToCameraMatrix = view;
+
+		let projection: Tea.Matrix4x4;
 		if (this.orthographic) {
-			projection = Tea.Matrix4.ortho(
+			projection = Tea.Matrix4x4.ortho(
 				this.orthographicSize,
 				this.aspect,
 				this.nearClipPlane,
 				this.farClipPlane
 			);
 		} else {
-			projection = Tea.Matrix4.perspective(
+			projection = Tea.Matrix4x4.perspective(
 				this.fieldOfView,
 				this.aspect,
 				this.nearClipPlane,
@@ -140,7 +141,7 @@ export class Camera extends Component {
 		const far = this.unproject(p);
 		let ray = far.sub(this.position).normalized;
 
-		let rotation = new Tea.Vector3(0, 0, -1);
+		let rotation = new Tea.Vector3(0, 0, 1);
 		rotation.rotateX(this.rotation.x);
 		rotation.rotateY(this.rotation.y);
 		rotation.rotateZ(this.rotation.z);
@@ -150,7 +151,7 @@ export class Camera extends Component {
 	}
 
 	unproject(viewport: Tea.Vector3): Tea.Vector3 {
-		const view = this.cameraToWorldMatrix;
+		const view = this.worldToCameraMatrix;
 		const projection = this.projectionMatrix;
 		let vp = projection.mul(view);
 		vp = vp.inverse;

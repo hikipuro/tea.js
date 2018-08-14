@@ -77,6 +77,10 @@ export class App {
 		return this._renderer.mouse;
 	}
 
+	get frames(): number {
+		return this._renderer.frames;
+	}
+
 	isExtensionSupported(name: Tea.GLExtensions | string): boolean {
 		const extensions = this.supportedExtensions;
 		return extensions.indexOf(name) >= 0;
@@ -276,6 +280,7 @@ class AppRenderer {
 	currentScene: Tea.Scene;
 	keyboard: Keyboard;
 	mouse: Mouse;
+	frames: number;
 	protected _handle: number;
 	protected _prevRect: Tea.Rect;
 
@@ -285,6 +290,7 @@ class AppRenderer {
 		this.isPaused = false;
 		this.keyboard = new Keyboard(document.body);
 		this.mouse = new Mouse(app, this.app.canvas);
+		this.frames = 0;
 		this._handle = 0;
 		this._prevRect = new Tea.Rect();
 
@@ -325,6 +331,7 @@ class AppRenderer {
 	}
 
 	protected update = (time: number): void => {
+		this.frames++;
 		if (this.currentScene != null) {
 			this.updateScene();
 		}

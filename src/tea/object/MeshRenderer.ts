@@ -133,23 +133,26 @@ export class MeshRenderer extends Renderer {
 	}
 
 	protected setUniforms(camera: Tea.Camera, mesh: Tea.Mesh): void {
-		let model = this.localToWorldMatrix;
-		let view = camera.cameraToWorldMatrix;
-		let proj = camera.projectionMatrix;
+		var model = this.localToWorldMatrix;
+		var view = camera.worldToCameraMatrix;
+		var proj = camera.projectionMatrix;
 
-		const mvpMatrix = proj.mul(view).mul(model);
+		var mvpMatrix = proj.mul(view).mul(model);
 		this.shader.uniformMatrix4fv("mvpMatrix", mvpMatrix);
 
 		const invMatrix = mvpMatrix.inverse;
 		this.shader.uniformMatrix4fv("invMatrix", invMatrix);
 		//console.log(mvpMatrix.mul(invMatrix).toString());
 
-		let light = new Tea.Vector3(0.5, 0.5, -0.5);
+		let light = new Tea.Vector3(0, 0, -1);
+		light.rotateX(Tea.radians(30));
+		//light.rotateX(Tea.radians(this.app.frames/2));
+		light.rotateY(Tea.radians(90));
 		//light.x = 0.5;
 		//light.x = Tea.radians(light.x);
 		//light.y = Tea.radians(light.y);
 		//light.z = Tea.radians(light.z);
-		//light = light.normalized;
+		light = light.normalized;
 
 		this.shader.uniform3fv("lightDirection", light);
 		this.shader.uniform4fv("ambientColor", [0.2, 0.2, 0.2, 0.0]);

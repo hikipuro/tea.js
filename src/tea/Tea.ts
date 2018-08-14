@@ -1,5 +1,6 @@
 import { Mathf } from "./math/Mathf";
 import { Matrix4 } from "./math/Matrix4";
+import { Matrix4x4 } from "./math/Matrix4x4";
 import { Vector2 } from "./math/Vector2";
 import { Vector3 } from "./math/Vector3";
 import { Vector4 } from "./math/Vector4";
@@ -39,7 +40,8 @@ import { Script } from "./Script";
 
 export {
 	Mathf,
-	Matrix4,
+	//Matrix4,
+	Matrix4x4,
 	Vector2,
 	Vector3,
 	Vector4,
@@ -125,14 +127,13 @@ if (performance != null) {
 	now = function (): number {
 		return navigationStart + performance.now();
 	}
-} else {
 }
 export { now };
 
 export function benchmark(func: Function, iteration: number = 1): number {
-	const start = performance.now();
+	const start = now();
 	for (var i = 0; i < iteration; i++) {
 		func();
 	}
-	return performance.now() - start;
+	return now() - start;
 }

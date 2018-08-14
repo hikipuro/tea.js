@@ -14,12 +14,13 @@ const defaultVertexShaderSource = `
 	varying vec4 vDiffuse;
 
 	void main() {
-		vec3 invLight = normalize(invMatrix * vec4(lightDirection, 0.0)).xyz;
-		float diffuse = clamp(dot(normal, invLight), 0.0, 1.0);
+		vec3 mvpNormal = normalize(mvpMatrix * vec4(normal, 0.0)).xyz;
+		float diffuse = clamp(dot(mvpNormal, lightDirection), 0.0, 1.0);
 		//float diffuse = dot(normal, invLight);
 		vTexCoord = texCoord;
 		vColor = color;
 		vDiffuse = vec4(vec3(diffuse), 1.0) + ambientColor;
+		//vDiffuse = vec4(vec3(diffuse), 1.0);
 		gl_Position = mvpMatrix * vec4(position, 1.0);
 	}
 `;

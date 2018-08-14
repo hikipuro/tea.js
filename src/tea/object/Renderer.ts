@@ -9,7 +9,7 @@ export class Renderer extends Component {
 		super(app);
 	}
 
-	get localToWorldMatrix(): Tea.Matrix4 {
+	get localToWorldMatrix(): Tea.Matrix4x4 {
 		const object3d = this.object3d;
 		return object3d.localToWorldMatrix;
 	}

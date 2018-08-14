@@ -1,4 +1,5 @@
 import { Matrix4 } from "./Matrix4";
+import { Matrix4x4 } from "./Matrix4x4";
 
 export class Vector3 extends Array<number> {
 	constructor(x: number = 0, y: number = 0, z: number = 0) {
@@ -229,7 +230,7 @@ export class Vector3 extends Array<number> {
 		this.y = sin * x + cos * y;
 	}
 
-	applyMatrix4(matrix: Matrix4): void {
+	applyMatrix4(matrix: Matrix4x4): void {
 		const tx = this.x;
 		const ty = this.y;
 		const tz = this.z;

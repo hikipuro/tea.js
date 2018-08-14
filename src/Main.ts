@@ -1,8 +1,7 @@
-import * as Electron from "electron";
 import * as Tea from "./tea/Tea";
 import { TestScript } from "./TestScript";
 import { TestScript2 } from "./TestScript2";
-import { Rect } from "./tea/math/Rect";
+import { Matrix4x4 } from "./tea/math/Matrix4x4";
 
 export class Main {
 	app: Tea.App;
@@ -36,11 +35,74 @@ export class Main {
 		console.log("params", this.app.parameters);
 		console.log("contextAttributes", this.app.contextAttributes);
 
-		console.log("rect", (new Rect(10, 10, 100, 100).toString()));
+		console.log("rect", (new Tea.Rect(10, 10, 100, 100).toString()));
+
+		/*
+		setTimeout(() => {
+			let obj = [];
+			for (let i = 0; i < 100000; i++) {
+				obj[i] = i;
+			}
+			const count = 200;
+			const test1 = Tea.benchmark(() => {
+				let total = 0;
+				for (let i = 0; i < obj.length; i++) {
+					total += obj[i];
+				}
+				//console.log("total", total);
+			}, count);
+			const test2 = Tea.benchmark(() => {
+				let total: number = 0;
+				const l: number = obj.length;
+				for (var i = 0; i < l; i++) {
+					total += obj[i];
+				}
+				//console.log("total", total);
+			}, count);
+			console.log("test1", test1);
+			console.log("test2", test2);
+		}, 1000);
+		//*/
+
+		setTimeout(() => {
+			var m = new Matrix4x4();
+			var m2 = new Matrix4x4();
+			for (let i = 0; i < 16; i++) {
+				var v = Math.random();
+				m[i] = v;
+				m2[i] = v;
+			}
+			const loop = 100;
+			const count = 200;
+			const test2 = Tea.benchmark(() => {
+				for (var i = 0; i < loop; i++) {
+					//m2.mul2(m2);
+				}
+			}, count);
+			const test1 = Tea.benchmark(() => {
+				for (var i = 0; i < loop; i++) {
+					m.mul(m);
+				}
+			}, count);
+			console.log("test1", test1);
+			console.log("test2", test2, m2.toString());
+		}, 1000);
+		//*/
+
+		let mm3 = Matrix4x4.identity;
+		//mm3[1] = 2;
+		//mm3 = mm3.mul(Matrix4x4.translate(1,2,3));
+		//mm3 = mm3.mul(Matrix4x4.rotateZXY(
+		//	new Tea.Vector3(Tea.radians(10), Tea.radians(20), Tea.radians(30))
+		//));
+		mm3 = Tea.Matrix4x4.perspective(60, 1, 0.3, 1000);
+		console.log("mm34", mm3.toString(), mm3);
+		console.log("mm34", mm3.m10);
 
 		//console.log("perspective");
 		//console.log(Tea.Matrix4.perspective(60, 1, 0.3, 1000).toString());
 
+		/*
 		const mm = Tea.Matrix4.lookAt(new Tea.Vector3(10, 20, 30), new Tea.Vector3(3,2,1), Tea.Vector3.up);
 		console.log("matrix",mm.toString());
 		console.log(mm.inverse.toString());
@@ -50,6 +112,7 @@ export class Main {
 		const mmm = new Tea.Matrix4();
 		mmm.setColumn(0, new Tea.Vector4(1, 2, 3, 4));
 		console.log(mm.mul(Tea.Vector4.one));
+		*/
 
 		const scene = this.app.createScene();
 		//scene.camera.far = 10;
@@ -58,13 +121,13 @@ export class Main {
 		//scene.camera.fov = 20;
 		//scene.camera.orthographic = true;
 		//scene.camera.nearClipPlane = 2;
-		scene.camera.rotation.x = -Tea.radians(20);
-		scene.camera.rotation.y = -Tea.radians(10);
-		scene.camera.rotation.z = Tea.radians(10);
+		//scene.camera.rotation.x = Tea.radians(20);
+		//scene.camera.rotation.y = Tea.radians(20);
+		//scene.camera.rotation.z = Tea.radians(20);
 		//cene.camera.fieldOfView = 16;
 		//scene.camera.rotation.z = Tea.radians(20);
 		//scene.camera.position.x = 2;
-		//scene.camera.position.z = 13;
+		//scene.camera.position.z = -15;
 		//scene.camera.fieldOfView = 30;
 		//scene.camera.rect.x = 0.2;
 		//scene.camera.rect.width = 0.5;
@@ -87,13 +150,13 @@ export class Main {
 		cube.name = "cube";
 		cube.position.x = 2;
 		cube.position.y = 2;
-		cube.position.z = 2;
+		cube.position.z = -5;
 		//cube.scale.x = -1 / 2;
 		//cube.scale.y = -1;
 		//cube.scale.z = -1;
-		//cube.rotation.y = Tea.radians(-40);
-		//cube.addScript(script);
-		//scene.appendChild(cube);
+		cube.rotation.y = Tea.radians(20);
+		cube.addScript(new TestScript());
+		scene.appendChild(cube);
 
 		const cube2 = this.app.createCube();
 		cube2.name = "cube2";
@@ -122,24 +185,31 @@ export class Main {
 
 		const cylinder = this.app.createCylinder();
 		//cylinder.renderer.wireframe = true;
-		cylinder.rotation.x = Tea.radians(30);
+		//cylinder.rotation.x = Tea.radians(30);
 		//cylinder.addScript(script);
-		scene.appendChild(cylinder);
+		//scene.appendChild(cylinder);
 
+		//const plane = this.app.createQuad();
 		const plane = this.app.createPlane();
 		//plane.renderer.wireframe = true;
 		//plane.position.z = -9;
 		//plane.rotation.x = Tea.radians(90);
 		//plane.addScript(script);
+		//plane.scale.x = 10;
+		//plane.scale.y = 10;
+		//plane.rotation.x = Tea.radians(90);
 		scene.appendChild(plane);
 
 		const capsule = this.app.createCapsule();
 		//capsule.renderer.wireframe = true;
-		//capsule.position.y = 1;
-		//capsule.position.z = 7;
+		capsule.position.x = 2;
+		capsule.position.y = 2;
+		capsule.position.z = 2;
 		//capsule.rotation.x = Tea.radians(90);
 		capsule.addScript(script);
 		scene.appendChild(capsule);
+
+		//console.log("capsule", capsule.localToWorldMatrix.toString());
 
 		capsule.addComponent(Tea.Camera);
 		//capsule.addComponent(Tea.MeshRenderer);
@@ -147,7 +217,7 @@ export class Main {
 
 		const lines = this.app.createObject3D();
 		const lineRenderer = lines.addComponent(Tea.LineRenderer);
-		lines.position.x = 3;
+		//lines.position.x = 3;
 		lineRenderer.add(0, 0, 0);
 		lineRenderer.add(2, 1, 0);
 		lineRenderer.add(-2, 1, 3);
@@ -161,6 +231,7 @@ export class Main {
 		let ray = new Tea.Ray(new Tea.Vector3(0, 1, 0), new Tea.Vector3(0.2, 0.3, 0.4));
 		console.log("test", ray.direction, ray.getPoint(6.5), ray.getPoint(-6.5));
 
+		///*
 		this.app.start();
 
 		Tea.File.readImage("../models/google.jpg", (image) => {
@@ -191,6 +262,7 @@ export class Main {
 			//sphere.renderer.shader.texture = texture;
 			//capsule.renderer.shader.texture = texture;
 		});
+		//*/
 
 		//setTimeout(() => {
 			//this.app.stop();

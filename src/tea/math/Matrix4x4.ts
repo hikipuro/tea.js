@@ -2,37 +2,37 @@ import * as Tea from "../Tea";
 import { Vector3 } from "./Vector3";
 import { Vector4 } from "./Vector4";
 
-export class Matrix4 extends Array<number> {
+export class Matrix4x4 extends Array<number> {
 	constructor() {
 		super(16);
 		this.fill(0);
 	}
 
-	static get zero(): Matrix4 {
-		return new Matrix4();
+	static get zero(): Matrix4x4 {
+		return new Matrix4x4();
 	}
 
-	static get identity(): Matrix4 {
-		const m = new Matrix4();
+	static get identity(): Matrix4x4 {
+		const m = new Matrix4x4();
 		m[0] = m[5] = m[10] = m[15] = 1;
 		return m;
 	}
 
-	static fromArray(array: Array<number>, offset: number = 0): Matrix4 {
-		const m = new Matrix4();
+	static fromArray(array: Array<number>, offset: number = 0): Matrix4x4 {
+		const m = new Matrix4x4();
 		for (var i = 0; i < 16; i++) {
 			m[i] = array[i + offset];
 		}
 		return m;
 	}
 
-	static translate(vector: Vector3): Matrix4;
-	static translate(x: number, y: number, z: number): Matrix4;
-	static translate(x: Vector3 | number, y: number = 0, z: number = 0): Matrix4 {
+	static translate(vector: Vector3): Matrix4x4;
+	static translate(x: number, y: number, z: number): Matrix4x4;
+	static translate(x: Vector3 | number, y: number = 0, z: number = 0): Matrix4x4 {
 		if (x == null) {
 			return null;
 		}
-		const m = Matrix4.identity;
+		const m = Matrix4x4.identity;
 		if (x instanceof Vector3) {
 			m[12] = x.x;
 			m[13] = x.y;
@@ -45,13 +45,13 @@ export class Matrix4 extends Array<number> {
 		return m;
 	}
 
-	static scale(vector: Vector3): Matrix4;
-	static scale(x: number, y: number, z: number): Matrix4;
-	static scale(x: Vector3 | number, y: number = 0, z: number = 0): Matrix4 {
+	static scale(vector: Vector3): Matrix4x4;
+	static scale(x: number, y: number, z: number): Matrix4x4;
+	static scale(x: Vector3 | number, y: number = 0, z: number = 0): Matrix4x4 {
 		if (x == null) {
 			return null;
 		}
-		const m = Matrix4.identity;
+		const m = Matrix4x4.identity;
 		if (x instanceof Vector3) {
 			m[0]  = x.x;
 			m[5]  = x.y;
@@ -64,8 +64,8 @@ export class Matrix4 extends Array<number> {
 		return m;
 	}
 
-	static shear(vector: Vector3): Matrix4 {
-		const m = Matrix4.identity;
+	static shear(vector: Vector3): Matrix4x4 {
+		const m = Matrix4x4.identity;
 		if (vector == null) {
 			return m;
 		}
@@ -75,8 +75,8 @@ export class Matrix4 extends Array<number> {
 		return m;
 	}
 
-	static rotateX(radians: number): Matrix4 {
-		const m = Matrix4.identity;
+	static rotateX(radians: number): Matrix4x4 {
+		const m = Matrix4x4.identity;
 		const sin = Math.sin(radians);
 		const cos = Math.cos(radians);
 		m[5] = cos;
@@ -86,8 +86,8 @@ export class Matrix4 extends Array<number> {
 		return m;
 	}
 
-	static rotateY(radians: number): Matrix4 {
-		const m = Matrix4.identity;
+	static rotateY(radians: number): Matrix4x4 {
+		const m = Matrix4x4.identity;
 		const sin = Math.sin(radians);
 		const cos = Math.cos(radians);
 		m[0] = cos;
@@ -97,8 +97,8 @@ export class Matrix4 extends Array<number> {
 		return m;
 	}
 
-	static rotateZ(radians: number): Matrix4 {
-		const m = Matrix4.identity;
+	static rotateZ(radians: number): Matrix4x4 {
+		const m = Matrix4x4.identity;
 		const sin = Math.sin(radians);
 		const cos = Math.cos(radians);
 		m[0] = cos;
@@ -108,74 +108,19 @@ export class Matrix4 extends Array<number> {
 		return m;
 	}
 
-	static rotateXYZ(vector: Vector3): Matrix4 {
-		let m = Matrix4.identity;
+	static rotateZXY(vector: Vector3): Matrix4x4 {
+		let m = Matrix4x4.identity;
 		if (vector == null) {
 			return m;
 		}
-		m = m.mul(Matrix4.rotateZ(vector.z));
-		m = m.mul(Matrix4.rotateY(vector.y));
-		m = m.mul(Matrix4.rotateX(vector.x));
+		m = m.mul(Matrix4x4.rotateY(vector.y));
+		m = m.mul(Matrix4x4.rotateX(vector.x));
+		m = m.mul(Matrix4x4.rotateZ(vector.z));
 		return m;
 	}
 
-	static rotateXZY(vector: Vector3): Matrix4 {
-		let m = Matrix4.identity;
-		if (vector == null) {
-			return m;
-		}
-		m = m.mul(Matrix4.rotateY(vector.y));
-		m = m.mul(Matrix4.rotateZ(vector.z));
-		m = m.mul(Matrix4.rotateX(vector.x));
-		return m;
-	}
-
-	static rotateYXZ(vector: Vector3): Matrix4 {
-		let m = Matrix4.identity;
-		if (vector == null) {
-			return m;
-		}
-		m = m.mul(Matrix4.rotateZ(vector.z));
-		m = m.mul(Matrix4.rotateX(vector.x));
-		m = m.mul(Matrix4.rotateY(vector.y));
-		return m;
-	}
-
-	static rotateYZX(vector: Vector3): Matrix4 {
-		let m = Matrix4.identity;
-		if (vector == null) {
-			return m;
-		}
-		m = m.mul(Matrix4.rotateX(vector.x));
-		m = m.mul(Matrix4.rotateZ(vector.z));
-		m = m.mul(Matrix4.rotateY(vector.y));
-		return m;
-	}
-
-	static rotateZXY(vector: Vector3): Matrix4 {
-		let m = Matrix4.identity;
-		if (vector == null) {
-			return m;
-		}
-		m = m.mul(Matrix4.rotateY(vector.y));
-		m = m.mul(Matrix4.rotateX(vector.x));
-		m = m.mul(Matrix4.rotateZ(vector.z));
-		return m;
-	}
-
-	static rotateZYX(vector: Vector3): Matrix4 {
-		let m = Matrix4.identity;
-		if (vector == null) {
-			return m;
-		}
-		m = m.mul(Matrix4.rotateX(vector.x));
-		m = m.mul(Matrix4.rotateY(vector.y));
-		m = m.mul(Matrix4.rotateZ(vector.z));
-		return m;
-	}
-
-	static perspective(fov: number, aspect: number, zNear: number, zFar: number): Matrix4 {
-		const m = new Matrix4();
+	static perspective(fov: number, aspect: number, zNear: number, zFar: number): Matrix4x4 {
+		const m = new Matrix4x4();
 		fov = Tea.radians(fov);
 		const top = Math.tan(fov / 2) * zNear;
 		const bottom = -top;
@@ -189,46 +134,16 @@ export class Matrix4 extends Array<number> {
 		m[11] = -1;
 		m[14] = -(2 * zFar * zNear) / (zFar - zNear);
 		return m;
-
-		/*
-		const zoomY = 1 / Math.tan(fov / 2);
-		const zoomX = zoomY / aspect;
-		m[0] = zoomX;
-		m[5] = zoomY;
-		m[10] = -(zFar + zNear) / (zFar - zNear);
-		m[11] = -1;
-		m[14] = -(2 * zFar * zNear) / (zFar - zNear);
-		return m;
-		*/
 	}
 
-	static ortho(size: number, aspect: number, near: number, far: number): Matrix4 {
-		const m = new Matrix4();
+	static ortho(size: number, aspect: number, near: number, far: number): Matrix4x4 {
+		const m = new Matrix4x4();
 		//size *= 2;
 		m[0] = 1 / (size * aspect);
 		m[5] = 1 / size;
 		m[10] = -2 / (far - near);
 		m[14] = -(far + near) / (far - near);
 		m[15] = 1;
-		return m;
-	}
-
-	static lookAt(from: Vector3, to: Vector3, up: Vector3): Matrix4 {
-		if (from == null || to == null || up == null) {
-			return null;
-		}
-		let zaxis = to.sub(from).normalized;//from.sub(to).normalized;
-		let xaxis = Vector3.cross(up, zaxis).normalized;
-		let yaxis = Vector3.cross(zaxis, xaxis).normalized;
-		//zaxis = zaxis.mul(-1);
-		const m = Matrix4.identity;
-		m[0] = xaxis.x; m[1] = yaxis.x; m[2]  = zaxis.x;
-		m[4] = xaxis.y; m[5] = yaxis.y; m[6]  = zaxis.y;
-		m[8] = xaxis.z; m[9] = yaxis.z; m[10] = zaxis.z;
-		m[3] = from.x;
-		m[7] = from.y;
-		m[11] = from.z;
-		m.mul(Matrix4.translate(from.mul(-1)));
 		return m;
 	}
 
@@ -269,16 +184,16 @@ export class Matrix4 extends Array<number> {
 	set m33(value: number)	{ this[15] = value; }
 
 	get isIdentity(): boolean {
-		return this.equals(Matrix4.identity);
+		return this.equals(Matrix4x4.identity);
 	}
 
-	get transpose(): Matrix4 {
-		const m = new Matrix4();
+	get transpose(): Matrix4x4 {
+		const m = this.clone();
 		const t = this;
-		m[0]  = t[0]; m[1]  = t[4]; m[2]  = t[8];  m[3]  = t[12]; 
-		m[4]  = t[1]; m[5]  = t[5]; m[6]  = t[9];  m[7]  = t[13];
-		m[8]  = t[2]; m[9]  = t[6]; m[10] = t[10]; m[11] = t[14];
-		m[12] = t[3]; m[13] = t[7]; m[14] = t[11]; m[15] = t[15];
+		m[1]  = t[4]; m[2]  = t[8]; m[3]  = t[12]; 
+		m[4]  = t[1]; m[6]  = t[9]; m[7]  = t[13];
+		m[8]  = t[2]; m[9]  = t[6]; m[11] = t[14];
+		m[12] = t[3]; m[13] = t[7]; m[14] = t[11];
 		return m;
 	}
 
@@ -299,9 +214,9 @@ export class Matrix4 extends Array<number> {
 		);
 	}
 
-	get inverse(): Matrix4 {
+	get inverse(): Matrix4x4 {
 		/*
-		const m = new Matrix4();
+		const m = new Matrix4x4();
 		const m11 = this[0], m21 = this[4], m31 = this[8],  m41 = this[12];
 		const m12 = this[1], m22 = this[5], m32 = this[9],  m42 = this[13];
 		const m13 = this[2], m23 = this[6], m33 = this[10], m43 = this[14];
@@ -343,9 +258,10 @@ export class Matrix4 extends Array<number> {
 		m[15] = (m11 * m22 * m33) + (m12 * m23 * m31) + (m13 * m21 * m32) -
 				(m11 * m23 * m32) - (m12 * m21 * m33) - (m13 * m22 * m31);
 		return m;
-		*/
+		//*/
 
-		var dest = new Matrix4();
+		///*
+		var dest = new Matrix4x4();
 		var a = this[0],  b = this[1],  c = this[2],  d = this[3],
 			e = this[4],  f = this[5],  g = this[6],  h = this[7],
 			i = this[8],  j = this[9],  k = this[10], l = this[11],
@@ -374,9 +290,10 @@ export class Matrix4 extends Array<number> {
 		dest[14] = (-m * t + n * r - o * q) * ivd;
 		dest[15] = ( i * t - j * r + k * q) * ivd;
 		return dest;
+		//*/
 	}
 
-	equals(matrix: Matrix4): boolean {
+	equals(matrix: Matrix4x4): boolean {
 		if (matrix == null) {
 			return false;
 		}
@@ -388,89 +305,31 @@ export class Matrix4 extends Array<number> {
 		return true;
 	}
 
-	clone(): Matrix4 {
-		const m = new Matrix4();
+	clone(): Matrix4x4 {
+		const m = new Matrix4x4();
 		for (var i = 0; i < 16; i++) {
 			m[i] = this[i];
 		}
 		return m;
 	}
 
-	getColumn(index: number): Vector4 {
-		if (index < 0 || index > 3) {
-			return null;
-		}
-		index *= 4;
-		return new Vector4(
-			this[index + 0],
-			this[index + 1],
-			this[index + 2],
-			this[index + 3]
-		);
-	}
-
-	getRow(index: number): Vector4 {
-		if (index < 0 || index > 3) {
-			return null;
-		}
-		return new Vector4(
-			this[index + 0],
-			this[index + 4],
-			this[index + 8],
-			this[index + 12]
-		);
-	}
-
-	set(m00: number, m01: number, m02: number, m03: number,
-		m10: number, m11: number, m12: number, m13: number,
-		m20: number, m21: number, m22: number, m23: number,
-		m30: number, m31: number, m32: number, m33: number)
-	{
-		const t = this;
-		t[0]  = m00; t[1]  = m10; t[2]  = m20; t[3]  = m30;
-		t[4]  = m01; t[5]  = m11; t[6]  = m21; t[7]  = m31;
-		t[8]  = m02; t[9]  = m12; t[10] = m22; t[11] = m32;
-		t[12] = m03; t[13] = m13; t[14] = m23; t[15] = m33;
-	}
-
-	setColumn(index: number, vector: Vector4): Vector4 {
-		if (index < 0 || index > 3 || vector == null) {
-			return;
-		}
-		index *= 4;
-		this[index + 0] = vector.x;
-		this[index + 1] = vector.y;
-		this[index + 2] = vector.z;
-		this[index + 3] = vector.w;
-	}
-
-	setRow(index: number, vector: Vector4): Vector4 {
-		if (index < 0 || index > 3 || vector == null) {
-			return;
-		}
-		this[index + 0] = vector.x;
-		this[index + 4] = vector.y;
-		this[index + 8] = vector.z;
-		this[index + 12] = vector.w;
-	}
-
 	mul(vector: Vector4): Vector4;
-	mul(matrix: Matrix4): Matrix4;
-	mul(value: Vector4 | Matrix4): Matrix4 | Vector4 {
+	mul(matrix: Matrix4x4): Matrix4x4;
+	mul(value: Vector4 | Matrix4x4): Matrix4x4 | Vector4 {
 		if (value == null) {
 			return null;
 		}
-		if (value instanceof Matrix4) {
-			const m = new Matrix4();
-			const l00 = this[0],   l10 = this[1],   l20 = this[2],   l30 = this[3];
-			const l01 = this[4],   l11 = this[5],   l21 = this[6],   l31 = this[7];
-			const l02 = this[8],   l12 = this[9],   l22 = this[10],  l32 = this[11];
-			const l03 = this[12],  l13 = this[13],  l23 = this[14],  l33 = this[15];
+		if (value instanceof Matrix4x4) {
+			var m = new Matrix4x4();
+			var l00 = this[0],   l10 = this[1],   l20 = this[2],   l30 = this[3];
+			var l01 = this[4],   l11 = this[5],   l21 = this[6],   l31 = this[7];
+			var l02 = this[8],   l12 = this[9],   l22 = this[10],  l32 = this[11];
+			var l03 = this[12],  l13 = this[13],  l23 = this[14],  l33 = this[15];
 			
-			const r00 = value[0],  r10 = value[1],  r20 = value[2],  r30 = value[3];
-			const r01 = value[4],  r11 = value[5],  r21 = value[6],  r31 = value[7];
-			const r02 = value[8],  r12 = value[9],  r22 = value[10], r32 = value[11];
-			const r03 = value[12], r13 = value[13], r23 = value[14], r33 = value[15];
+			var r00 = value[0],  r10 = value[1],  r20 = value[2],  r30 = value[3];
+			var r01 = value[4],  r11 = value[5],  r21 = value[6],  r31 = value[7];
+			var r02 = value[8],  r12 = value[9],  r22 = value[10], r32 = value[11];
+			var r03 = value[12], r13 = value[13], r23 = value[14], r33 = value[15];
 	
 			m[0]  = l00 * r00 + l01 * r10 + l02 * r20 + l03 * r30;
 			m[1]  = l10 * r00 + l11 * r10 + l12 * r20 + l13 * r30;
@@ -502,6 +361,13 @@ export class Matrix4 extends Array<number> {
 				t[3] * v.x + t[7] * v.y + t[11] * v.z + t[15] * v.w
 			);
 		}
+	}
+
+	convertToLH(): void {
+		this[8]  *= -1;
+		this[9]  *= -1;
+		this[10] *= -1;
+		this[11] *= -1;
 	}
 
 	toString(): string {
