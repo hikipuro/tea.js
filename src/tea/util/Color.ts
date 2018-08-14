@@ -34,28 +34,28 @@ export class Color extends Array<number> {
 		return this[0];
 	}
 	set r(value: number) {
-		this[0] = Tea.clamp(value, 0, 1);
+		this[0] = Tea.Mathf.clamp01(value);
 	}
 
 	get g(): number {
 		return this[1];
 	}
 	set g(value: number) {
-		this[1] = Tea.clamp(value, 0, 1);
+		this[1] = Tea.Mathf.clamp01(value);
 	}
 
 	get b(): number {
 		return this[2];
 	}
 	set b(value: number) {
-		this[2] = Tea.clamp(value, 0, 1);
+		this[2] = Tea.Mathf.clamp01(value);
 	}
 
 	get a(): number {
 		return this[3];
 	}
 	set a(value: number) {
-		this[3] = Tea.clamp(value, 0, 1);
+		this[3] = Tea.Mathf.clamp01(value);
 	}
 
 	set(r: number, g: number, b: number, a: number): void {
@@ -103,9 +103,9 @@ export class Color extends Array<number> {
 	}
 
 	static fromHSB(h: number, s: number, b: number): Color {
-		h = Tea.clamp(h, 0, 1);
-		s = Tea.clamp(s, 0, 1);
-		b = Tea.clamp(b, 0, 1);
+		h = Tea.Mathf.clamp01(h);
+		s = Tea.Mathf.clamp01(s);
+		b = Tea.Mathf.clamp01(b);
 
 		let cr = b;
 		let cg = b;
