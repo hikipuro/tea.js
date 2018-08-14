@@ -128,3 +128,11 @@ if (performance != null) {
 } else {
 }
 export { now };
+
+export function benchmark(func: Function, iteration: number = 1): number {
+	const start = performance.now();
+	for (var i = 0; i < iteration; i++) {
+		func();
+	}
+	return performance.now() - start;
+}
