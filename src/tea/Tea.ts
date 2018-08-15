@@ -10,6 +10,7 @@ import { ArrayUtil } from "./util/ArrayUtil";
 import { Color } from "./util/Color";
 import { Cursor, CursorType } from "./util/Cursor";
 import { File } from "./util/File";
+import { MatrixChecker } from "./util/MatrixChecker";
 import { Screen } from "./util/Screen";
 
 import { Bounds } from "./object/Bounds";
@@ -52,6 +53,7 @@ export {
 	Cursor,
 	CursorType,
 	File,
+	MatrixChecker,
 	Screen,
 
 	App,

@@ -51,8 +51,10 @@ export class Camera extends Component {
 	}
 
 	update(): void {
-		let view = Tea.Matrix4x4.translate(this.position);
-		view = view.mul(Tea.Matrix4x4.rotateZXY(this.rotation));
+		var view = Tea.Matrix4x4.tr(
+			this.position,
+			this.rotation
+		);
 		view.convertToLH();
 		this._cameraToWorldMatrix = view;
 

@@ -119,6 +119,84 @@ export class Matrix4x4 extends Array<number> {
 		return m;
 	}
 
+	static rotate(vector: Vector3): Matrix4x4 {
+		var m = new Matrix4x4();
+		if (vector == null) {
+			return m;
+		}
+		var sx = Math.sin(vector.x);
+		var cx = Math.cos(vector.x);
+		var sy = Math.sin(vector.y);
+		var cy = Math.cos(vector.y);
+		var sz = Math.sin(vector.z);
+		var cz = Math.cos(vector.z);
+		m[0] = cy * cz + sy * sx * sz;
+		m[1] = cx * sz;
+		m[2] = -sy * cz + cy * sx * sz;
+		m[4] = cy * -sz + sy * sx * cz;
+		m[5] = cx * cz;
+		m[6] = -sy * -sz + cy * sx * cz;
+		m[8] = sy * cx;
+		m[9] = -sx;
+		m[10] = cy * cx;
+		m[15] = 1;
+		return m;
+	}
+
+	static trs(position: Vector3, rotation: Vector3, scale: Vector3): Matrix4x4 {
+		var m = new Matrix4x4();
+		if (position == null || rotation == null || scale == null) {
+			return m;
+		}
+		var sx = Math.sin(rotation.x);
+		var cx = Math.cos(rotation.x);
+		var sy = Math.sin(rotation.y);
+		var cy = Math.cos(rotation.y);
+		var sz = Math.sin(rotation.z);
+		var cz = Math.cos(rotation.z);
+		m[0] = cy * cz + sy * sx * sz * scale.x;
+		m[1] = cx * sz * scale.x;
+		m[2] = -sy * cz + cy * sx * sz * scale.x;
+		m[4] = cy * -sz + sy * sx * cz * scale.y;
+		m[5] = cx * cz * scale.y;
+		m[6] = -sy * -sz + cy * sx * cz * scale.y;
+		m[8] = sy * cx * scale.z;
+		m[9] = -sx * scale.z;
+		m[10] = cy * cx * scale.z;
+		m[12] = position.x;
+		m[13] = position.y;
+		m[14] = position.z;
+		m[15] = 1;
+		return m;
+	}
+
+	static tr(position: Vector3, rotation: Vector3): Matrix4x4 {
+		var m = new Matrix4x4();
+		if (position == null || rotation == null) {
+			return m;
+		}
+		var sx = Math.sin(rotation.x);
+		var cx = Math.cos(rotation.x);
+		var sy = Math.sin(rotation.y);
+		var cy = Math.cos(rotation.y);
+		var sz = Math.sin(rotation.z);
+		var cz = Math.cos(rotation.z);
+		m[0] = cy * cz + sy * sx * sz;
+		m[1] = cx * sz;
+		m[2] = -sy * cz + cy * sx * sz;
+		m[4] = cy * -sz + sy * sx * cz;
+		m[5] = cx * cz;
+		m[6] = -sy * -sz + cy * sx * cz;
+		m[8] = sy * cx;
+		m[9] = -sx;
+		m[10] = cy * cx;
+		m[12] = position.x;
+		m[13] = position.y;
+		m[14] = position.z;
+		m[15] = 1;
+		return m;
+	}
+
 	static perspective(fov: number, aspect: number, zNear: number, zFar: number): Matrix4x4 {
 		const m = new Matrix4x4();
 		fov = Tea.radians(fov);
