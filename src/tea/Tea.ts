@@ -124,7 +124,7 @@ export function getElementText(id: string): string {
 let now = function (): number {
 	return Date.now();
 }
-if (performance != null) {
+if (window.performance != null && window.performance.timing != null) {
 	const navigationStart = performance.timing.navigationStart;
 	now = function (): number {
 		return navigationStart + performance.now();

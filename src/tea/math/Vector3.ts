@@ -1,5 +1,4 @@
-import { Matrix4 } from "./Matrix4";
-import { Matrix4x4 } from "./Matrix4x4";
+import * as Tea from "../Tea";
 
 export class Vector3 extends Array<number> {
 	constructor(x: number = 0, y: number = 0, z: number = 0) {
@@ -66,10 +65,10 @@ export class Vector3 extends Array<number> {
 	}
 
 	static moveTowards(current: Vector3, target: Vector3, maxDistanceDelta: number): Vector3 {
-		const vector3 = current.clone();
-		let diff = current.sub(target);
-		const magnitude = diff.magnitude;
-		const ratio = Math.min(magnitude, maxDistanceDelta) / magnitude;
+		var vector3 = current.clone();
+		var diff = current.sub(target);
+		var magnitude = diff.magnitude;
+		var ratio = Math.min(magnitude, maxDistanceDelta) / magnitude;
 		diff = diff.mul(ratio);
 		return vector3.sub(diff);
 	}
@@ -87,9 +86,9 @@ export class Vector3 extends Array<number> {
 	}
 
 	static angle(a: Vector3, b: Vector3): number {
-		const ma = a.magnitude;
-		const mb = b.magnitude;
-		const cos = this.dot(a, b) / (ma * mb);
+		var ma = a.magnitude;
+		var mb = b.magnitude;
+		var cos = this.dot(a, b) / (ma * mb);
 		return Math.acos(cos);
 	}
 
@@ -131,18 +130,18 @@ export class Vector3 extends Array<number> {
 	}
 
 	get magnitude(): number {
-		const x = this.x, y = this.y, z = this.z;
+		var x = this.x, y = this.y, z = this.z;
 		return Math.sqrt(x * x + y * y + z * z);
 	}
 
 	get normalized(): Vector3 {
-		const x = this.x, y = this.y, z = this.z;
-		const m = 1 / this.magnitude;
+		var x = this.x, y = this.y, z = this.z;
+		var m = 1 / this.magnitude;
 		return new Vector3(x * m, y * m, z * m);
 	}
 
 	clone(): Vector3 {
-		const vector3 = new Vector3();
+		var vector3 = new Vector3();
 		vector3.x = this.x;
 		vector3.y = this.y;
 		vector3.z = this.z;
@@ -162,6 +161,15 @@ export class Vector3 extends Array<number> {
 		return this.x === value.x
 			&& this.y === value.y
 			&& this.z === value.z;
+	}
+
+	approxEquals(value: Vector3): boolean {
+		if (value == null) {
+			return false;
+		}
+		return Tea.Mathf.approximately(this.x, value.x)
+			&& Tea.Mathf.approximately(this.y, value.y)
+			&& Tea.Mathf.approximately(this.z, value.z);
 	}
 
 	toString(): string {
@@ -206,7 +214,32 @@ export class Vector3 extends Array<number> {
 		);
 	}
 
-	dot(value: Vector3): Vector3 {
+	dot(value: Vector3): number {
+		return this.x * value.x +
+			this.y * value.y +
+			this.z * value.z;
+	}
+
+	cross(value: Vector3): Vector3 {
+		return new Vector3(
+			this.y * value.z - this.z * value.y,
+			this.z * value.x - this.x * value.z,
+			this.x * value.y - this.y * value.x
+		);
+	}
+
+	angle(value: Vector3): number {
+		const ma = this.magnitude;
+		const mb = value.magnitude;
+		const cos = this.dot(value) / (ma * mb);
+		return Math.acos(cos);
+	}
+
+	distance(value: Vector3): number {
+		return this.sub(value).magnitude;
+	}
+
+	scale(value: Vector3): Vector3 {
 		return new Vector3(
 			this.x * value.x,
 			this.y * value.y,
@@ -249,7 +282,44 @@ export class Vector3 extends Array<number> {
 		this.y = sin(vector.z) * x + cos(vector.z) * y;
 	}
 
-	applyMatrix4(matrix: Matrix4x4): void {
+	applyAdd(value: Vector3): void {
+		this.x += value.x;
+		this.y += value.y;
+		this.z += value.z;
+	}
+
+	applySub(value: Vector3): void {
+		this.x -= value.x;
+		this.y -= value.y;
+		this.z -= value.z;
+	}
+
+	applyMul(value: number): void {
+		this.x *= value;
+		this.y *= value;
+		this.z *= value;
+	}
+
+	applyDiv(value: number): void {
+		this.x /= value;
+		this.y /= value;
+		this.z /= value;
+	}
+
+	applyCross(value: Vector3): void {
+		var x = this.x, y = this.y, z = this.z;
+		this.x = y * value.z - z * value.y;
+		this.y = z * value.x - x * value.z;
+		this.z = x * value.y - y * value.x;
+	}
+
+	applyScale(value: Vector3): void {
+		this.x *= value.x;
+		this.y *= value.y;
+		this.z *= value.z;
+	}
+
+	applyMatrix4(matrix: Tea.Matrix4x4): void {
 		const tx = this.x;
 		const ty = this.y;
 		const tz = this.z;

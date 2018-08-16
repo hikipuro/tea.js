@@ -1,5 +1,3 @@
-import * as Tea from "../Tea";
-
 export class Mathf {
 	static readonly Epsilon = 1.192093E-07;
 	static readonly Deg2Rad = Math.PI / 180;
@@ -17,7 +15,7 @@ export class Mathf {
 	}
 
 	static approximately(a: number, b: number): boolean {
-		return a - this.Epsilon < b && b < a + this.Epsilon;
+		return Math.abs(a - b) < this.Epsilon;
 	}
 
 	static asin(f: number): number {
