@@ -206,6 +206,14 @@ export class Vector3 extends Array<number> {
 		);
 	}
 
+	dot(value: Vector3): Vector3 {
+		return new Vector3(
+			this.x * value.x,
+			this.y * value.y,
+			this.z * value.z
+		);
+	}
+
 	rotateX(radian: number): void {
 		const y = this.y, z = this.z;
 		const sin = Math.sin(radian);
@@ -228,6 +236,17 @@ export class Vector3 extends Array<number> {
 		const cos = Math.cos(radian);
 		this.x = cos * x + -sin * y;
 		this.y = sin * x + cos * y;
+	}
+
+	rotate(vector: Vector3): void {
+		var x = this.x, y = this.y, z = this.z;
+		var sin = Math.sin, cos = Math.cos;
+		y = cos(vector.x) * y + -sin(vector.x) * z;
+		z = sin(vector.x) * y + cos(vector.x) * z;
+		x = cos(vector.y) * x + sin(vector.y) * z;
+		this.z = -sin(vector.y) * x + cos(vector.y) * z;
+		this.x = cos(vector.z) * x + -sin(vector.z) * y;
+		this.y = sin(vector.z) * x + cos(vector.z) * y;
 	}
 
 	applyMatrix4(matrix: Matrix4x4): void {

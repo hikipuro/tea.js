@@ -61,7 +61,7 @@ export class Camera extends Component {
 		view = view.inverse;
 		this._worldToCameraMatrix = view;
 
-		let projection: Tea.Matrix4x4;
+		var projection: Tea.Matrix4x4;
 		if (this.orthographic) {
 			var h = this.orthographicSize;
 			var w = h * this.aspect;
@@ -110,8 +110,6 @@ export class Camera extends Component {
 			return Tea.Vector3.zero;
 		}
 		const p = this.screenToViewportPoint(position);
-		//const rect = this.getViewportRect();
-		//p.y = p.y - 0.5;
 		return this.viewportToWorldPoint(p);
 	}
 
@@ -139,27 +137,36 @@ export class Camera extends Component {
 			return Tea.Vector3.zero;
 		}
 
-		const p = position.clone();
-		p.z = 1;
-		const far = this.unproject(p);
-		let ray = far.sub(this.position).normalized;
+		if (this.orthographic) {
+			var p = position.clone();
+			p.z = -1;
+			var near = this.unproject(p);
+			p.z = 1;
+			var far = this.unproject(p);
+			var direction = far.sub(near).normalized;
+			var z = (position.z - this.nearClipPlane);
+			return near.add(direction.mul(z));
+		}
 
-		let rotation = new Tea.Vector3(0, 0, 1);
-		rotation.rotateX(this.rotation.x);
-		rotation.rotateY(this.rotation.y);
-		rotation.rotateZ(this.rotation.z);
-		let d = Tea.Vector3.dot(ray, rotation.normalized);
-		
+		var p = position.clone();
+		p.z = 1;
+		var far = this.unproject(p);
+		var ray = far.sub(this.position).normalized;
+
+		var direction = new Tea.Vector3(0, 0, 1);
+		direction.rotate(this.rotation);
+		var d = Tea.Vector3.dot(ray, direction.normalized);
+
 		return this.position.add(ray.mul(position.z / d));
 	}
 
 	unproject(viewport: Tea.Vector3): Tea.Vector3 {
-		const view = this.worldToCameraMatrix;
-		const projection = this.projectionMatrix;
-		let vp = projection.mul(view);
+		var view = this.worldToCameraMatrix;
+		var projection = this.projectionMatrix;
+		var vp = projection.mul(view);
 		vp = vp.inverse;
 
-		let world = viewport.clone();
+		var world = viewport.clone();
 		world.x = world.x * 2 - 1;
 		world.y = world.y * 2 - 1;
 		world.applyMatrix4(vp);
