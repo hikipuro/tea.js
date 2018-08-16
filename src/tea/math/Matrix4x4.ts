@@ -154,12 +154,12 @@ export class Matrix4x4 extends Array<number> {
 		var cy = Math.cos(rotation.y);
 		var sz = Math.sin(rotation.z);
 		var cz = Math.cos(rotation.z);
-		m[0] = cy * cz + sy * sx * sz * scale.x;
+		m[0] = (cy * cz + sy * sx * sz) * scale.x;
 		m[1] = cx * sz * scale.x;
-		m[2] = -sy * cz + cy * sx * sz * scale.x;
-		m[4] = cy * -sz + sy * sx * cz * scale.y;
+		m[2] = (-sy * cz + cy * sx * sz) * scale.x;
+		m[4] = (cy * -sz + sy * sx * cz) * scale.y;
 		m[5] = cx * cz * scale.y;
-		m[6] = -sy * -sz + cy * sx * cz * scale.y;
+		m[6] = (-sy * -sz + cy * sx * cz) * scale.y;
 		m[8] = sy * cx * scale.z;
 		m[9] = -sx * scale.z;
 		m[10] = cy * cx * scale.z;
@@ -214,13 +214,15 @@ export class Matrix4x4 extends Array<number> {
 		return m;
 	}
 
-	static ortho(size: number, aspect: number, near: number, far: number): Matrix4x4 {
-		const m = new Matrix4x4();
-		//size *= 2;
-		m[0] = 1 / (size * aspect);
-		m[5] = 1 / size;
-		m[10] = -2 / (far - near);
-		m[14] = -(far + near) / (far - near);
+	static ortho(left: number, right: number, bottom: number, top: number, zNear: number, zFar: number): Matrix4x4 {
+		var dz = zFar - zNear;
+		var m = new Matrix4x4();
+		m[0] = 2 / (right - left);
+		m[5] = 2 / (top - bottom);
+		m[10] = -2 / dz;
+		m[12] = -(right + left) / (right - left);
+		m[13] = -(top + bottom) / (top - bottom);
+		m[14] = -(zFar + zNear) / dz;
 		m[15] = 1;
 		return m;
 	}
@@ -441,7 +443,7 @@ export class Matrix4x4 extends Array<number> {
 		}
 	}
 
-	convertToLH(): void {
+	toggleHand(): void {
 		this[8]  *= -1;
 		this[9]  *= -1;
 		this[10] *= -1;

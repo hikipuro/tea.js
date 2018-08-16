@@ -13,17 +13,25 @@ export class MatrixChecker extends Array<any> {
 
 	static translate(): MatrixChecker {
 		var m = MatrixChecker.identity;
-		m[12] = "tx";
-		m[13] = "ty";
-		m[14] = "tz";
+		m[12] = "translate(x)";
+		m[13] = "translate(y)";
+		m[14] = "translate(z)";
 		return m;
 	}
 
 	static scale(): MatrixChecker {
 		var m = MatrixChecker.identity;
-		m[0]  = "sx";
-		m[5]  = "sy";
-		m[10] = "sz";
+		m[0]  = "scale(x)";
+		m[5]  = "scale(y)";
+		m[10] = "scale(z)";
+		return m;
+	}
+
+	static shear(): MatrixChecker {
+		const m = MatrixChecker.identity;
+		m[1] = m[2] = "shear(x)";
+		m[4] = m[6] = "shear(y)";
+		m[8] = m[9] = "shear(z)";
 		return m;
 	}
 

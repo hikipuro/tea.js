@@ -55,7 +55,7 @@ export class Camera extends Component {
 			this.position,
 			this.rotation
 		);
-		view.convertToLH();
+		view.toggleHand();
 		this._cameraToWorldMatrix = view;
 
 		view = view.inverse;
@@ -63,9 +63,10 @@ export class Camera extends Component {
 
 		let projection: Tea.Matrix4x4;
 		if (this.orthographic) {
+			var h = this.orthographicSize;
+			var w = h * this.aspect;
 			projection = Tea.Matrix4x4.ortho(
-				this.orthographicSize,
-				this.aspect,
+				-w, w, -h, h,
 				this.nearClipPlane,
 				this.farClipPlane
 			);

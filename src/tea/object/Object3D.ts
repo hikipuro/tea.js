@@ -33,6 +33,7 @@ export class Object3D {
 				this.rotation,
 				this.scale
 			));
+			m.toggleHand();
 			return m;
 		}
 		var m = Tea.Matrix4x4.trs(
@@ -40,7 +41,7 @@ export class Object3D {
 			this.rotation,
 			this.scale
 		);
-		m.convertToLH();
+		m.toggleHand();
 		return m;
 	}
 
