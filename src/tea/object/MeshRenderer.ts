@@ -145,9 +145,9 @@ export class MeshRenderer extends Renderer {
 		//console.log(mvpMatrix.mul(invMatrix).toString());
 
 		let light = new Tea.Vector3(0, 0, -1);
-		light.rotateX(Tea.radians(30));
+		light.rotateX$(Tea.radians(30));
 		//light.rotateX(Tea.radians(this.app.frames/2));
-		light.rotateY(Tea.radians(90));
+		light.rotateY$(Tea.radians(90));
 		//light.x = 0.5;
 		//light.x = Tea.radians(light.x);
 		//light.y = Tea.radians(light.y);

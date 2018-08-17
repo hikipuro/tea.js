@@ -65,12 +65,11 @@ export class Vector3 extends Array<number> {
 	}
 
 	static moveTowards(current: Vector3, target: Vector3, maxDistanceDelta: number): Vector3 {
-		var vector3 = current.clone();
 		var diff = current.sub(target);
 		var magnitude = diff.magnitude;
 		var ratio = Math.min(magnitude, maxDistanceDelta) / magnitude;
 		diff = diff.mul(ratio);
-		return vector3.sub(diff);
+		return current.sub(diff);
 	}
 
 	static dot(a: Vector3, b: Vector3): number {
@@ -88,7 +87,7 @@ export class Vector3 extends Array<number> {
 	static angle(a: Vector3, b: Vector3): number {
 		var ma = a.magnitude;
 		var mb = b.magnitude;
-		var cos = this.dot(a, b) / (ma * mb);
+		var cos = a.dot(b) / (ma * mb);
 		return Math.acos(cos);
 	}
 
@@ -135,17 +134,30 @@ export class Vector3 extends Array<number> {
 	}
 
 	get normalized(): Vector3 {
-		var x = this.x, y = this.y, z = this.z;
-		var m = 1 / this.magnitude;
-		return new Vector3(x * m, y * m, z * m);
+		var magnitude = this.magnitude;
+		if (Tea.Mathf.approximately(magnitude, 0)) {
+			return new Vector3();
+		}
+		var m = 1 / magnitude;
+		return new Vector3(
+			this.x * m,
+			this.y * m,
+			this.z * m
+		);
 	}
 
 	clone(): Vector3 {
-		var vector3 = new Vector3();
-		vector3.x = this.x;
-		vector3.y = this.y;
-		vector3.z = this.z;
-		return vector3;
+		return new Vector3(
+			this.x,
+			this.y,
+			this.z
+		);
+	}
+
+	copy(value: Vector3): void {
+		this.x = value.x;
+		this.y = value.y;
+		this.z = value.z;
 	}
 
 	set(x: number, y: number, z: number): void {
@@ -182,20 +194,66 @@ export class Vector3 extends Array<number> {
 		);
 	}
 
-	add(value: Vector3): Vector3 {
+	add(value: number): Vector3;
+	add(value: Vector3): Vector3;
+	add(value: number | Vector3): Vector3 {
+		if (value instanceof Vector3) {
+			return new Vector3(
+				this.x + value.x,
+				this.y + value.y,
+				this.z + value.z
+			);
+		}
 		return new Vector3(
-			this.x + value.x,
-			this.y + value.y,
-			this.z + value.z
+			this.x + value,
+			this.y + value,
+			this.z + value
 		);
 	}
 
-	sub(value: Vector3): Vector3 {
+	add$(value: number): void;
+	add$(value: Vector3): void;
+	add$(value: number | Vector3): void {
+		if (value instanceof Vector3) {
+			this.x += value.x;
+			this.y += value.y;
+			this.z += value.z;
+			return;
+		}
+		this.x += value;
+		this.y += value;
+		this.z += value;
+	}
+
+	sub(value: number): Vector3;
+	sub(value: Vector3): Vector3;
+	sub(value: number | Vector3): Vector3 {
+		if (value instanceof Vector3) {
+			return new Vector3(
+				this.x - value.x,
+				this.y - value.y,
+				this.z - value.z
+			);
+		}
 		return new Vector3(
-			this.x - value.x,
-			this.y - value.y,
-			this.z - value.z
+			this.x - value,
+			this.y - value,
+			this.z - value
 		);
+	}
+
+	sub$(value: number): void;
+	sub$(value: Vector3): void;
+	sub$(value: number | Vector3): void {
+		if (value instanceof Vector3) {
+			this.x -= value.x;
+			this.y -= value.y;
+			this.z -= value.z;
+			return;
+		}
+		this.x -= value;
+		this.y -= value;
+		this.z -= value;
 	}
 
 	mul(value: number): Vector3 {
@@ -206,12 +264,24 @@ export class Vector3 extends Array<number> {
 		);
 	}
 
+	mul$(value: number): void {
+		this.x *= value;
+		this.y *= value;
+		this.z *= value;
+	}
+
 	div(value: number): Vector3 {
 		return new Vector3(
 			this.x / value,
 			this.y / value,
 			this.z / value
 		);
+	}
+
+	div$(value: number): void {
+		this.x /= value;
+		this.y /= value;
+		this.z /= value;
 	}
 
 	dot(value: Vector3): number {
@@ -221,17 +291,25 @@ export class Vector3 extends Array<number> {
 	}
 
 	cross(value: Vector3): Vector3 {
+		var x = this.x, y = this.y, z = this.z;
 		return new Vector3(
-			this.y * value.z - this.z * value.y,
-			this.z * value.x - this.x * value.z,
-			this.x * value.y - this.y * value.x
+			y * value.z - z * value.y,
+			z * value.x - x * value.z,
+			x * value.y - y * value.x
 		);
 	}
 
+	cross$(value: Vector3): void {
+		var x = this.x, y = this.y, z = this.z;
+		this.x = y * value.z - z * value.y;
+		this.y = z * value.x - x * value.z;
+		this.z = x * value.y - y * value.x;
+	}
+
 	angle(value: Vector3): number {
-		const ma = this.magnitude;
-		const mb = value.magnitude;
-		const cos = this.dot(value) / (ma * mb);
+		var ma = this.magnitude;
+		var mb = value.magnitude;
+		var cos = this.dot(value) / (ma * mb);
 		return Math.acos(cos);
 	}
 
@@ -247,31 +325,83 @@ export class Vector3 extends Array<number> {
 		);
 	}
 
-	rotateX(radian: number): void {
-		const y = this.y, z = this.z;
-		const sin = Math.sin(radian);
-		const cos = Math.cos(radian);
+	scale$(value: Vector3): void {
+		this.x *= value.x;
+		this.y *= value.y;
+		this.z *= value.z;
+	}
+
+	rotateX(radian: number): Vector3 {
+		var y = this.y, z = this.z;
+		var sin = Math.sin(radian);
+		var cos = Math.cos(radian);
+		return new Vector3(
+			this.x,
+			cos * y + -sin * z,
+			sin * y + cos * z
+		);
+	}
+
+	rotateX$(radian: number): void {
+		var y = this.y, z = this.z;
+		var sin = Math.sin(radian);
+		var cos = Math.cos(radian);
 		this.y = cos * y + -sin * z;
 		this.z = sin * y + cos * z;
 	}
 
-	rotateY(radian: number): void {
-		const x = this.x, z = this.z;
-		const sin = Math.sin(radian);
-		const cos = Math.cos(radian);
+	rotateY(radian: number): Vector3 {
+		var x = this.x, z = this.z;
+		var sin = Math.sin(radian);
+		var cos = Math.cos(radian);
+		return new Vector3(
+			cos * x + sin * z,
+			this.y,
+			-sin * x + cos * z
+		);
+	}
+
+	rotateY$(radian: number): void {
+		var x = this.x, z = this.z;
+		var sin = Math.sin(radian);
+		var cos = Math.cos(radian);
 		this.x = cos * x + sin * z;
 		this.z = -sin * x + cos * z;
 	}
 
-	rotateZ(radian: number): void {
-		const x = this.x, y = this.y;
-		const sin = Math.sin(radian);
-		const cos = Math.cos(radian);
+	rotateZ(radian: number): Vector3 {
+		var x = this.x, y = this.y;
+		var sin = Math.sin(radian);
+		var cos = Math.cos(radian);
+		return new Vector3(
+			cos * x + -sin * y,
+			sin * x + cos * y,
+			this.z
+		);
+	}
+
+	rotateZ$(radian: number): void {
+		var x = this.x, y = this.y;
+		var sin = Math.sin(radian);
+		var cos = Math.cos(radian);
 		this.x = cos * x + -sin * y;
 		this.y = sin * x + cos * y;
 	}
 
-	rotate(vector: Vector3): void {
+	rotate(vector: Vector3): Vector3 {
+		var x = this.x, y = this.y, z = this.z;
+		var sin = Math.sin, cos = Math.cos;
+		y = cos(vector.x) * y + -sin(vector.x) * z;
+		z = sin(vector.x) * y + cos(vector.x) * z;
+		x = cos(vector.y) * x + sin(vector.y) * z;
+		return new Vector3(
+			cos(vector.z) * x + -sin(vector.z) * y,
+			sin(vector.z) * x + cos(vector.z) * y,
+			-sin(vector.y) * x + cos(vector.y) * z
+		);
+	}
+
+	rotate$(vector: Vector3): void {
 		var x = this.x, y = this.y, z = this.z;
 		var sin = Math.sin, cos = Math.cos;
 		y = cos(vector.x) * y + -sin(vector.x) * z;
@@ -280,43 +410,6 @@ export class Vector3 extends Array<number> {
 		this.z = -sin(vector.y) * x + cos(vector.y) * z;
 		this.x = cos(vector.z) * x + -sin(vector.z) * y;
 		this.y = sin(vector.z) * x + cos(vector.z) * y;
-	}
-
-	applyAdd(value: Vector3): void {
-		this.x += value.x;
-		this.y += value.y;
-		this.z += value.z;
-	}
-
-	applySub(value: Vector3): void {
-		this.x -= value.x;
-		this.y -= value.y;
-		this.z -= value.z;
-	}
-
-	applyMul(value: number): void {
-		this.x *= value;
-		this.y *= value;
-		this.z *= value;
-	}
-
-	applyDiv(value: number): void {
-		this.x /= value;
-		this.y /= value;
-		this.z /= value;
-	}
-
-	applyCross(value: Vector3): void {
-		var x = this.x, y = this.y, z = this.z;
-		this.x = y * value.z - z * value.y;
-		this.y = z * value.x - x * value.z;
-		this.z = x * value.y - y * value.x;
-	}
-
-	applyScale(value: Vector3): void {
-		this.x *= value.x;
-		this.y *= value.y;
-		this.z *= value.z;
 	}
 
 	applyMatrix4(matrix: Tea.Matrix4x4): void {

@@ -154,7 +154,7 @@ export class Camera extends Component {
 		var ray = far.sub(this.position).normalized;
 
 		var direction = new Tea.Vector3(0, 0, 1);
-		direction.rotate(this.rotation);
+		direction.rotate$(this.rotation);
 		var d = Tea.Vector3.dot(ray, direction.normalized);
 
 		return this.position.add(ray.mul(position.z / d));
