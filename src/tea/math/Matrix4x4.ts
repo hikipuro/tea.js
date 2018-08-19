@@ -119,50 +119,92 @@ export class Matrix4x4 extends Array<number> {
 		return m;
 	}
 
-	static rotate(vector: Vector3): Matrix4x4 {
+	static rotate(vector: Vector3): Matrix4x4;
+	static rotate(quaternion: Tea.Quaternion): Matrix4x4;
+	static rotate(value: Vector3 | Tea.Quaternion): Matrix4x4 {
 		var m = new Matrix4x4();
-		if (vector == null) {
+		if (value == null) {
 			return m;
 		}
-		var sx = Math.sin(vector.x);
-		var cx = Math.cos(vector.x);
-		var sy = Math.sin(vector.y);
-		var cy = Math.cos(vector.y);
-		var sz = Math.sin(vector.z);
-		var cz = Math.cos(vector.z);
-		m[0] = cy * cz + sy * sx * sz;
-		m[1] = cx * sz;
-		m[2] = -sy * cz + cy * sx * sz;
-		m[4] = cy * -sz + sy * sx * cz;
-		m[5] = cx * cz;
-		m[6] = -sy * -sz + cy * sx * cz;
-		m[8] = sy * cx;
-		m[9] = -sx;
-		m[10] = cy * cx;
+		if (value instanceof Vector3) {
+			var sx = Math.sin(value.x);
+			var cx = Math.cos(value.x);
+			var sy = Math.sin(value.y);
+			var cy = Math.cos(value.y);
+			var sz = Math.sin(value.z);
+			var cz = Math.cos(value.z);
+			m[0] = cy * cz + sy * sx * sz;
+			m[1] = cx * sz;
+			m[2] = -sy * cz + cy * sx * sz;
+			m[4] = cy * -sz + sy * sx * cz;
+			m[5] = cx * cz;
+			m[6] = -sy * -sz + cy * sx * cz;
+			m[8] = sy * cx;
+			m[9] = -sx;
+			m[10] = cy * cx;
+			m[15] = 1;
+			return m;
+		}
+		var x = value.x, y = value.y, z = value.z, w = value.w;
+		var xx = x * x, yy = y * y, zz = z * z;
+		var xy = x * y, xz = x * z, xw = x * w;
+		var yz = y * z, yw = y * w, zw = z * w;
+		m[0] = 1 - 2 * (yy + zz);
+		m[1] = 2 * (xy + zw);
+		m[2] = 2 * (xz - yw);
+		m[4] = 2 * (xy - zw);
+		m[5] = 1 - 2 * (xx + zz);
+		m[6] = 2 * (yz + xw);
+		m[8] = 2 * (xz + yw);
+		m[9] = 2 * (yz - xw);
+		m[10] = 1 - 2 * (xx + yy);
 		m[15] = 1;
 		return m;
 	}
 
-	static trs(position: Vector3, rotation: Vector3, scale: Vector3): Matrix4x4 {
+	static trs(position: Vector3, rotation: Vector3, scale: Vector3): Matrix4x4;
+	static trs(position: Vector3, rotation: Tea.Quaternion, scale: Vector3): Matrix4x4;
+	static trs(position: Vector3, rotation: Vector3 | Tea.Quaternion, scale: Vector3): Matrix4x4 {
 		var m = new Matrix4x4();
 		if (position == null || rotation == null || scale == null) {
 			return m;
 		}
-		var sx = Math.sin(rotation.x);
-		var cx = Math.cos(rotation.x);
-		var sy = Math.sin(rotation.y);
-		var cy = Math.cos(rotation.y);
-		var sz = Math.sin(rotation.z);
-		var cz = Math.cos(rotation.z);
-		m[0] = (cy * cz + sy * sx * sz) * scale.x;
-		m[1] = cx * sz * scale.x;
-		m[2] = (-sy * cz + cy * sx * sz) * scale.x;
-		m[4] = (cy * -sz + sy * sx * cz) * scale.y;
-		m[5] = cx * cz * scale.y;
-		m[6] = (-sy * -sz + cy * sx * cz) * scale.y;
-		m[8] = sy * cx * scale.z;
-		m[9] = -sx * scale.z;
-		m[10] = cy * cx * scale.z;
+		if (rotation instanceof Vector3) {
+			var sx = Math.sin(rotation.x);
+			var cx = Math.cos(rotation.x);
+			var sy = Math.sin(rotation.y);
+			var cy = Math.cos(rotation.y);
+			var sz = Math.sin(rotation.z);
+			var cz = Math.cos(rotation.z);
+			m[0] = (cy * cz + sy * sx * sz) * scale.x;
+			m[1] = cx * sz * scale.x;
+			m[2] = (-sy * cz + cy * sx * sz) * scale.x;
+			m[4] = (cy * -sz + sy * sx * cz) * scale.y;
+			m[5] = cx * cz * scale.y;
+			m[6] = (-sy * -sz + cy * sx * cz) * scale.y;
+			m[8] = sy * cx * scale.z;
+			m[9] = -sx * scale.z;
+			m[10] = cy * cx * scale.z;
+			m[12] = position.x;
+			m[13] = position.y;
+			m[14] = position.z;
+			m[15] = 1;
+			return m;
+		}
+
+		var x = rotation.x, y = rotation.y, z = rotation.z, w = rotation.w;
+		var xx = x * x, yy = y * y, zz = z * z;
+		var xy = x * y, xz = x * z, xw = x * w;
+		var yz = y * z, yw = y * w, zw = z * w;
+		m[0] = (1 - 2 * (yy + zz)) * scale.x;
+		m[1] = (2 * (xy + zw)) * scale.x;
+		m[2] = (2 * (xz - yw)) * scale.x;
+		m[4] = (2 * (xy - zw)) * scale.y;
+		m[5] = (1 - 2 * (xx + zz)) * scale.y;
+		m[6] = (2 * (yz + xw)) * scale.y;
+		m[8] = (2 * (xz + yw)) * scale.z;
+		m[9] = (2 * (yz - xw)) * scale.z;
+		m[10] = (1 - 2 * (xx + yy)) * scale.z;
 		m[12] = position.x;
 		m[13] = position.y;
 		m[14] = position.z;

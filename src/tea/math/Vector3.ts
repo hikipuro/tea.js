@@ -73,26 +73,19 @@ export class Vector3 extends Array<number> {
 	}
 
 	static dot(a: Vector3, b: Vector3): number {
-		return a.x * b.x + a.y * b.y + a.z * b.z;
+		return a.dot(b);
 	}
 
 	static cross(a: Vector3, b: Vector3): Vector3 {
-		return new Vector3(
-			a.y * b.z - a.z * b.y,
-			a.z * b.x - a.x * b.z,
-			a.x * b.y - a.y * b.x
-		);
+		return a.cross(b);
 	}
 
 	static angle(a: Vector3, b: Vector3): number {
-		var ma = a.magnitude;
-		var mb = b.magnitude;
-		var cos = a.dot(b) / (ma * mb);
-		return Math.acos(cos);
+		return a.angle(b);
 	}
 
 	static distance(a: Vector3, b: Vector3): number {
-		return a.sub(b).magnitude;
+		return a.distance(b);
 	}
 
 	static normalize(value: Vector3): Vector3 {
@@ -100,11 +93,7 @@ export class Vector3 extends Array<number> {
 	}
 
 	static scale(a: Vector3, b: Vector3): Vector3 {
-		return new Vector3(
-			a.x * b.x,
-			a.y * b.y,
-			a.z * b.z
-		);
+		return a.scale(b);
 	}
 
 	get x(): number {
@@ -131,6 +120,11 @@ export class Vector3 extends Array<number> {
 	get magnitude(): number {
 		var x = this.x, y = this.y, z = this.z;
 		return Math.sqrt(x * x + y * y + z * z);
+	}
+
+	get sqrMagnitude(): number {
+		var x = this.x, y = this.y, z = this.z;
+		return x * x + y * y + z * z;
 	}
 
 	get normalized(): Vector3 {
@@ -192,6 +186,85 @@ export class Vector3 extends Array<number> {
 		return (
 			"[x: " + t[0] + ", y: " + t[1] + ", z: " + t[2] + "]"
 		);
+	}
+
+	isParallel(value: Vector3): boolean {
+		var m = this.cross(value).magnitude;
+		return Tea.Mathf.approximately(m, 0);
+	}
+
+	angle(value: Vector3): number {
+		var ma = this.magnitude;
+		var mb = value.magnitude;
+		var cos = this.dot(value) / (ma * mb);
+		return Math.acos(cos);
+	}
+
+	distance(value: Vector3): number {
+		return this.sub(value).magnitude;
+	}
+
+	clampMagnitude(maxLength: number): Vector3 {
+		var m = maxLength / this.magnitude;
+		return new Vector3(
+			this.x * m,
+			this.y * m,
+			this.z * m
+		);
+	}
+
+	lerp(value: Vector3, t: number): Vector3 {
+		return new Vector3(
+			Tea.Mathf.lerp(this.x, value.x, t),
+			Tea.Mathf.lerp(this.y, value.y, t),
+			Tea.Mathf.lerp(this.z, value.z, t)
+		);
+	}
+
+	lerpUnclamped(value: Vector3, t: number): Vector3 {
+		return new Vector3(
+			Tea.Mathf.lerpUnclamped(this.x, value.x, t),
+			Tea.Mathf.lerpUnclamped(this.y, value.y, t),
+			Tea.Mathf.lerpUnclamped(this.z, value.z, t)
+		);
+	}
+
+	orthoNormalize(): void {
+	}
+
+	project(onNormal: Vector3): Vector3 {
+		return Vector3.zero;
+	}
+
+	projectOnPlane(planeNormal: Vector3): Vector3 {
+		return Vector3.zero;
+	}
+
+	reflect(): void {
+	}
+
+	rotateTowards(): void {
+	}
+
+	signedAngle(): void {
+	}
+
+	slerp(value: Vector3, t: number): Vector3 {
+		var a = this.angle(value);
+		a = Tea.Mathf.lerp(0, a, t);
+		var m = this.magnitude - value.magnitude;
+		m = Tea.Mathf.lerp(0, m, t);
+		return new Vector3(
+			this.x,
+			this.y,
+			this.z
+		);
+	}
+
+	slerpUnclamped(): void {
+	}
+
+	smoothDamp(): void {
 	}
 
 	add(value: number): Vector3;
@@ -304,17 +377,6 @@ export class Vector3 extends Array<number> {
 		this.x = y * value.z - z * value.y;
 		this.y = z * value.x - x * value.z;
 		this.z = x * value.y - y * value.x;
-	}
-
-	angle(value: Vector3): number {
-		var ma = this.magnitude;
-		var mb = value.magnitude;
-		var cos = this.dot(value) / (ma * mb);
-		return Math.acos(cos);
-	}
-
-	distance(value: Vector3): number {
-		return this.sub(value).magnitude;
 	}
 
 	scale(value: Vector3): Vector3 {

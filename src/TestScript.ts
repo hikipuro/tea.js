@@ -17,7 +17,7 @@ export class TestScript extends Tea.Script {
 		//console.log(this.count, this.position);
 
 		//this.rotation.x = Tea.radians(this.count / 3);
-		this.rotation.y += Tea.radians(3);// Tea.radians(this.speedY * 2);
+		this.rotation = this.rotation.mul(Tea.Quaternion.euler(0, 3, 0));// Tea.radians(this.speedY * 2);
 
 		const keyboard = this.app.keyboard;
 		//console.log(keyboard.isDown(Keyboard.Keys.ArrowLeft));
@@ -41,7 +41,7 @@ export class TestScript extends Tea.Script {
 			let p = new Tea.Vector3(mouse.x, mouse.y, 10);
 			p = this.object3d.scene.camera.screenToWorldPoint(p);
 			this.position = p;
-			//console.log(p.toString());
+			console.log(p.toString());
 		}
 		if (mouse.isDown(0)) {
 			console.log("mouse down");

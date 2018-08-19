@@ -1,11 +1,14 @@
 import * as Tea from "../Tea";
+import { Component } from "./Component";
 
-export class Collider {
-	constructor() {
-
+export class Collider extends Component {
+	bounds: Tea.Bounds;
+	
+	constructor(app: Tea.App) {
+		super(app);
 	}
 
-	raycast(ray: Tea.Ray, hitInfo, maxDistance: number): boolean {
+	raycast(ray: Tea.Ray, hitInfo: Tea.RaycastHit, maxDistance: number): boolean {
 		return false;
 	}
 }

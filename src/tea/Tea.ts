@@ -1,10 +1,15 @@
+import { Line } from "./math/Line";
+import { LineSegment } from "./math/LineSegment";
 import { Mathf } from "./math/Mathf";
 import { Matrix4 } from "./math/Matrix4";
 import { Matrix4x4 } from "./math/Matrix4x4";
+import { Plane } from "./math/Plane";
+import { Polygon } from "./math/Polygon";
+import { Quaternion } from "./math/Quaternion";
+import { Rect } from "./math/Rect";
 import { Vector2 } from "./math/Vector2";
 import { Vector3 } from "./math/Vector3";
 import { Vector4 } from "./math/Vector4";
-import { Rect } from "./math/Rect";
 
 import { ArrayUtil } from "./util/ArrayUtil";
 import { Color } from "./util/Color";
@@ -26,6 +31,7 @@ import { LineRenderer } from "./object/LineRenderer";
 import { MeshRenderer } from "./object/MeshRenderer";
 import { Shader } from "./object/Shader";
 import { Texture } from "./object/Texture";
+import { Transform } from "./object/Transform";
 
 import { App } from "./App";
 import { DaeReader } from "./DaeReader";
@@ -40,13 +46,18 @@ import { Scene } from "./Scene";
 import { Script } from "./Script";
 
 export {
+	Line,
+	LineSegment,
 	Mathf,
 	//Matrix4,
 	Matrix4x4,
+	Plane,
+	Polygon,
+	Quaternion,
+	Rect,
 	Vector2,
 	Vector3,
 	Vector4,
-	Rect,
 
 	ArrayUtil,
 	Color,
@@ -79,7 +90,8 @@ export {
 	Scene,
 	Script,
 	Shader,
-	Texture
+	Texture,
+	Transform
 }
 
 

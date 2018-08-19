@@ -5,8 +5,9 @@ export class Object3D {
 	name: string;
 	enabled: boolean;
 	scene: Tea.Scene;
+	transform: Tea.Transform;
 	position: Tea.Vector3;
-	rotation: Tea.Vector3;
+	rotation: Tea.Quaternion;
 	scale: Tea.Vector3;
 	scripts: Array<Tea.Script>;
 	parent: Object3D;
@@ -18,7 +19,7 @@ export class Object3D {
 		this.enabled = true;
 		this.app = app;
 		this.position = Tea.Vector3.zero;
-		this.rotation = Tea.Vector3.zero;
+		this.rotation = Tea.Quaternion.identity;
 		this.scale = Tea.Vector3.one;
 		this.scripts = [];
 		this.children = [];

@@ -208,6 +208,8 @@ describe("Vector3", () => {
 			let angle = Math.acos(dot / (ma * mb));
 			try {
 				assert(c === angle);
+				assert(angle >= 0);
+				assert(angle <= Math.PI);
 			} catch (e) {
 				/*
 				console.error("a", a.toString());
@@ -222,6 +224,26 @@ describe("Vector3", () => {
 		let b = new Vector3(2, 2, 0);
 		let c = Vector3.angle(a, b);
 		assert(Tea.Mathf.approximately(c, Math.PI / 4));
+		a = new Vector3(1, 0, 0);
+		b = new Vector3(1, 0, 0);
+		c = Vector3.angle(a, b);
+		assert(Tea.Mathf.approximately(c, 0));
+		a = new Vector3(1, 0, 0);
+		b = new Vector3(0, 1, 0);
+		c = Vector3.angle(a, b);
+		assert(Tea.Mathf.approximately(c, Math.PI / 2));
+		a = new Vector3(1, 0, 0);
+		b = new Vector3(-1, 0, 0);
+		c = Vector3.angle(a, b);
+		assert(Tea.Mathf.approximately(c, Math.PI));
+		a = new Vector3(1, 0, 0);
+		b = new Vector3(0, -1, 0);
+		c = Vector3.angle(a, b);
+		assert(Tea.Mathf.approximately(c, Math.PI / 2));
+		a = new Vector3(1, 0, 0);
+		b = new Vector3(1, -Tea.Mathf.Epsilon, 0);
+		c = Vector3.angle(a, b);
+		assert(Math.floor(c) === 0);
 	});
 
 	it("static distance()", () => {
