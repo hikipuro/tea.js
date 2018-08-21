@@ -19,6 +19,7 @@ import { File } from "./util/File";
 import { FontStyle } from "./util/FontStyle";
 import { MatrixChecker } from "./util/MatrixChecker";
 import { Screen } from "./util/Screen";
+import { Space } from "./util/Space";
 import { TextAlignment } from "./util/TextAlignment";
 import { TextAnchor } from "./util/TextAnchor";
 import { Time } from "./util/Time";
@@ -74,6 +75,7 @@ export {
 	FontStyle,
 	MatrixChecker,
 	Screen,
+	Space,
 	TextAlignment,
 	TextAnchor,
 	Time,

@@ -71,6 +71,25 @@ export class Quaternion extends Array<number> {
 		//*/
 	}
 
+	static fromToRotation(fromDirection: Tea.Vector3, toDirection: Tea.Vector3): Quaternion {
+		fromDirection = fromDirection.normalized;
+		toDirection = toDirection.normalized;
+		var n = Tea.Vector3.cross(fromDirection, toDirection);
+		var d = Tea.Vector3.dot(fromDirection, toDirection);
+		return new Quaternion(n.x, n.y, n.z, d + 1).normalized;
+	}
+
+	static lookRotation(forward: Tea.Vector3, upwards: Tea.Vector3 = Tea.Vector3.up): Quaternion {
+		Tea.Vector3.orthoNormalize(forward, upwards);
+		var right = upwards.cross(forward);
+		var w = Math.sqrt(1 + right.x + upwards.y + forward.z) * 0.5;
+		var w4 = 1 / (4 * w);
+		var x = (upwards.z - forward.y) * w4;
+		var y = (forward.x - right.z) * w4;
+		var z = (right.y - upwards.x) * w4;
+		return new Quaternion(x, y, z, w);
+	}
+
 	get x(): number {
 		return this[0];
 	}
@@ -220,8 +239,14 @@ export class Quaternion extends Array<number> {
 		}
 		if (value instanceof Tea.Vector3) {
 			//*
+			if (this.x === 0
+				&& this.y === 0
+				&& this.z === 0
+				&& this.w === 0) {
+				return value;
+			}
 			var conjugate = this.conjugated;
-			var angles = this.mul(new Quaternion(value.x, value.y, value.z,0));
+			var angles = this.mul(new Quaternion(value.x, value.y, value.z, 0));
 			angles = angles.mul(conjugate);
 			return new Tea.Vector3(angles.x, angles.y, angles.z);
 			//*/

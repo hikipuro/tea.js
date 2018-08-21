@@ -3,7 +3,7 @@ import { Component } from "./Component";
 
 export class Camera extends Component {
 	position: Tea.Vector3;
-	rotation: Tea.Vector3;
+	rotation: Tea.Quaternion;
 
 	fieldOfView: number;
 	nearClipPlane: number;
@@ -20,7 +20,7 @@ export class Camera extends Component {
 	constructor(app: Tea.App) {
 		super(app);
 		this.position = new Tea.Vector3(0, 1, -10);
-		this.rotation = Tea.Vector3.zero;
+		this.rotation = new Tea.Quaternion();
 		this.fieldOfView = 60;
 		this.nearClipPlane = 0.3;
 		this.farClipPlane = 1000;
@@ -154,7 +154,8 @@ export class Camera extends Component {
 		var ray = far.sub(this.position).normalized;
 
 		var direction = new Tea.Vector3(0, 0, 1);
-		direction.rotate$(this.rotation);
+		//direction.rotate$(this.rotation.eulerAngles.mul(Tea.Mathf.Deg2Rad));
+		direction = this.rotation.mul(direction);
 		var d = Tea.Vector3.dot(ray, direction.normalized);
 
 		return this.position.add(ray.mul(position.z / d));

@@ -96,6 +96,14 @@ export class Vector3 extends Array<number> {
 		return a.scale(b);
 	}
 
+	static orthoNormalize(normal: Vector3, tangent: Vector3): void {
+		var e1 = normal.mul(1 / normal.magnitude);
+		var f2 = tangent.sub(e1.mul(tangent.dot(e1)));
+		var e2 = f2.mul(1 / f2.magnitude);
+		normal.set(e1.x, e1.y, e1.z);
+		tangent.set(e2.x, e2.y, e2.z);
+	}
+
 	get x(): number {
 		return this[0];
 	}
@@ -227,9 +235,6 @@ export class Vector3 extends Array<number> {
 			Tea.Mathf.lerpUnclamped(this.y, value.y, t),
 			Tea.Mathf.lerpUnclamped(this.z, value.z, t)
 		);
-	}
-
-	orthoNormalize(): void {
 	}
 
 	project(onNormal: Vector3): Vector3 {

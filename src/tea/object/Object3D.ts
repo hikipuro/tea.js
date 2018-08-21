@@ -15,15 +15,23 @@ export class Object3D {
 	protected _components: Array<Tea.Component>;
 
 	constructor(app: Tea.App) {
+		this.app = app;
 		this.name = "";
 		this.enabled = true;
-		this.app = app;
 		this.position = Tea.Vector3.zero;
 		this.rotation = Tea.Quaternion.identity;
 		this.scale = Tea.Vector3.one;
 		this.scripts = [];
 		this.children = [];
 		this._components = [];
+	}
+
+	get childCount(): number {
+		return this.children.length;
+	}
+
+	get eulerAngles(): Tea.Vector3 {
+		return this.rotation.eulerAngles;
 	}
 
 	get localToWorldMatrix(): Tea.Matrix4x4 {
@@ -155,8 +163,14 @@ export class Object3D {
 		return object3d;
 	}
 
-	translate(x: number, y: number, z: number): void {
-		this.position.add(new Tea.Vector3(x, y, z));
+	translate(translation: Tea.Vector3): void;
+	translate(x: number, y: number, z: number): void;
+	translate(a: number | Tea.Vector3, b: number = 0, c: number = 0): void {
+		if (a instanceof Tea.Vector3) {
+			this.position.add(a);
+			return;
+		}
+		this.position.add(new Tea.Vector3(a, b, c));
 	}
 
 	rotate(eulerAngles: Tea.Vector3): void;
@@ -174,8 +188,22 @@ export class Object3D {
 	rotateAround(point: Tea.Vector3, axis: Tea.Vector3, angle: number): void {
 		var q = Tea.Quaternion.euler(axis.normalized.mul(angle));
 		var p = this.position.sub(point);
-		this.rotation.mul$(q);
+		this.rotation = q.mul(this.rotation);
 		this.position = point.add(q.mul(p));
+	}
+
+	lookAt(worldPosition: Tea.Vector3, worldUp?: Tea.Vector3): void;
+	lookAt(target: Object3D, worldUp?: Tea.Vector3): void;
+	lookAt(target: Object3D | Tea.Vector3, worldUp: Tea.Vector3 = Tea.Vector3.up): void {
+		if (target instanceof Tea.Vector3) {
+			var d = target.sub(this.position);
+			var q = Tea.Quaternion.lookRotation(d, worldUp);
+			this.rotation = q;
+			return;
+		}
+		var d = target.position.sub(this.position);
+		var q = Tea.Quaternion.lookRotation(d, worldUp);
+		this.rotation = q;
 	}
 
 	addScript(script: Tea.Script): void {
