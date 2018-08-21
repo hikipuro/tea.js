@@ -56,13 +56,8 @@ export class Mathf {
 	}
 
 	static closestPowerOfTwo(value: number): number {
-		for (var i = 1; i < 65; i++) {
-			const v = Math.pow(i, 2);
-			if (v > value) {
-				return v;
-			}
-		}
-		return 0;
+		var shift = Math.floor(Math.log2(value));
+		return 1 << (shift + 1);
 	}
 
 	//static correlatedColorTemperatureToRGB(kelvin: number): Tea.Color {

@@ -219,6 +219,23 @@ export class App {
 		return object3d;
 	}
 
+	createTextMesh(): Tea.Object3D {
+		const object3d = new Tea.Object3D(this);
+		//const shader = this.createDefaultShader();
+		const shader = new Tea.Shader(this);
+		shader.attach(
+			Tea.Shader.textVertexShaderSource,
+			Tea.Shader.textFragmentShaderSource
+		);
+		const mesh = new Tea.TextMesh(this);
+		const renderer = object3d.addComponent(Tea.MeshRenderer);
+		renderer.shader = shader;
+		renderer.mesh = mesh;
+		shader.texture = mesh.texture;
+		object3d.name = "TextMesh";
+		return object3d;
+	}
+
 	protected init(): void {
 		this.gl = this.getWebGLContext();
 		const gl = this.gl;

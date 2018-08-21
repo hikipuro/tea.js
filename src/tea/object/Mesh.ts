@@ -1,4 +1,5 @@
 import * as Tea from "../Tea";
+import { Component } from "./Component";
 
 export class Mesh {
 	vertices: Array<Tea.Vector3>;

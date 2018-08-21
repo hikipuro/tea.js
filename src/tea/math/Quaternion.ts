@@ -13,10 +13,22 @@ export class Quaternion extends Array<number> {
 		return new Quaternion(0, 0, 0, 1);
 	}
 
-	static euler(x: number, y: number, z: number): Quaternion {
-		x = Tea.radians(x * 0.5);
-		y = Tea.radians(y * 0.5);
-		z = Tea.radians(z * 0.5);
+	static euler(x: number, y: number, z: number): Quaternion;
+	static euler(eulerAngles: Tea.Vector3): Quaternion;
+	static euler(a: number | Tea.Vector3, b: number = 0, c: number = 0): Quaternion {
+		var x: number = 0;
+		var y: number = 0;
+		var z: number = 0;
+
+		if (a instanceof Tea.Vector3) {
+			x = Tea.radians(a.x * 0.5);
+			y = Tea.radians(a.y * 0.5);
+			z = Tea.radians(a.z * 0.5);
+		} else {
+			x = Tea.radians(a * 0.5);
+			y = Tea.radians(b * 0.5);
+			z = Tea.radians(c * 0.5);
+		}
 
 		//*
 		var sin = Math.sin, cos = Math.cos;
@@ -229,6 +241,20 @@ export class Quaternion extends Array<number> {
 			this.z * value,
 			this.w * value
 		);
+	}
+
+	mul$(value: Quaternion): void {
+		if (value == null) {
+			return;
+		}
+		if (value instanceof Quaternion) {
+			var ax = this.x, ay = this.y, az = this.z, aw = this.w;
+			var bx = value.x, by = value.y, bz = value.z, bw = value.w;
+			this.x = aw * bx + bw * ax + ay * bz - by * az;
+			this.y = aw * by + bw * ay + az * bx - bz * ax;
+			this.z = aw * bz + bw * az + ax * by - bx * ay;
+			this.w = aw * bw - ax * bx - ay * by - az * bz;
+		}
 	}
 
 	dot(value: Quaternion): number {

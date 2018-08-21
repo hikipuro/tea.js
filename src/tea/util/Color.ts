@@ -14,20 +14,40 @@ export class Color extends Array<number> {
 		return new Color(0, 0, 0, 1);
 	}
 
-	static get white(): Color {
-		return new Color(1, 1, 1, 1);
+	static get blue(): Color {
+		return new Color(0, 0, 1, 1);
 	}
 
-	static get red(): Color {
-		return new Color(1, 0, 0, 1);
+	static get clear(): Color {
+		return new Color(0, 0, 0, 0);
+	}
+
+	static get cyan(): Color {
+		return new Color(0, 1, 1, 1);
+	}
+
+	static get gray(): Color {
+		return new Color(0.5, 0.5, 0.5, 1);
 	}
 
 	static get green(): Color {
 		return new Color(0, 1, 0, 1);
 	}
 
-	static get blue(): Color {
-		return new Color(0, 0, 1, 1);
+	static get magenta(): Color {
+		return new Color(1, 0, 1, 1);
+	}
+
+	static get red(): Color {
+		return new Color(1, 0, 0, 1);
+	}
+
+	static get white(): Color {
+		return new Color(1, 1, 1, 1);
+	}
+
+	static get yellow(): Color {
+		return new Color(1, 0.92, 0.016, 1);
 	}
 
 	get r(): number {
@@ -58,11 +78,43 @@ export class Color extends Array<number> {
 		this[3] = Tea.Mathf.clamp01(value);
 	}
 
+	get gamma(): Color {
+		var f = 1 / 2.2;
+		return new Color(
+			Math.pow(this.r, f),
+			Math.pow(this.g, f),
+			Math.pow(this.b, f),
+			this.a
+		);
+	}
+
+	get grayscale(): number {
+		var r = this.r, g = this.g, b = this.b;
+		if (r === g && g === b) {
+			return r;
+		}
+		return 0.2989 * r + 0.5870 * g + 0.1140 * b;
+	}
+
+	get maxColorComponent(): number {
+		return Math.max(this.r, this.g, this.b);
+	}
+
 	set(r: number, g: number, b: number, a: number): void {
 		this.r = r;
 		this.g = g;
 		this.b = b;
 		this.a = a;
+	}
+
+	equals(value: Color): boolean {
+		if (value == null) {
+			return false;
+		}
+		return this.r === value.r
+			&& this.g === value.g
+			&& this.b === value.b
+			&& this.a === value.a;
 	}
 
 	clone(): Color {
@@ -102,49 +154,45 @@ export class Color extends Array<number> {
 		return new Color(r, g, b, 1);
 	}
 
-	static fromHSB(h: number, s: number, b: number): Color {
+	static fromHSV(h: number, s: number, v: number): Color {
 		h = Tea.Mathf.clamp01(h);
 		s = Tea.Mathf.clamp01(s);
-		b = Tea.Mathf.clamp01(b);
-
-		let cr = b;
-		let cg = b;
-		let cb = b;
+		v = Tea.Mathf.clamp01(v);
+		var r = v, g = v, b = v;
 
 		if (s > 0) {
 			h *= 6;
-			let i = Math.floor(h);
-			let f = h - i;
+			var i = Math.floor(h);
+			var f = h - i;
 			switch (i) {
 				default:
 				case 0:
-					cg *= 1 - s * (1 - f);
-					cb *= 1 - s;
+					g *= 1 - s * (1 - f);
+					b *= 1 - s;
 					break;
 				case 1:
-					cr *= 1 - s * f;
-					cb *= 1 - s;
+					r *= 1 - s * f;
+					b *= 1 - s;
 					break;
 				case 2:
-					cr *= 1 - s;
-					cb *= 1 - s * (1 - f);
+					r *= 1 - s;
+					b *= 1 - s * (1 - f);
 					break;
 				case 3:
-					cr *= 1 - s;
-					cg *= 1 - s * f;
+					r *= 1 - s;
+					g *= 1 - s * f;
 					break;
 				case 4:
-					cr *= 1 - s * (1 - f);
-					cg *= 1 - s;
+					r *= 1 - s * (1 - f);
+					g *= 1 - s;
 					break;
 				case 5:
-					cg *= 1 - s;
-					cb *= 1 - s * f;
+					g *= 1 - s;
+					b *= 1 - s * f;
 					break;
 			}
 		}
-
-		return Color.fromRGBA(cr, cg, cb, 1);
+		return Color.fromRGBA(r, g, b, 1);
 	}
 
 	static fromRGBA32(color: number): Color {

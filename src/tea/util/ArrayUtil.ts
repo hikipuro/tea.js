@@ -12,4 +12,17 @@ export class ArrayUtil {
 		}
 		return a;
 	}
+
+	static each<T>(array: ArrayLike<T>, callback: (index: number, value: T) => boolean | void): void {
+		if (array == null) {
+			return;
+		}
+		var length = array.length;
+		for (var i = 0; i < length; i++) {
+			var item = array[i];
+			if (callback(i, item) === false) {
+				break;
+			}
+		}
+	}
 }

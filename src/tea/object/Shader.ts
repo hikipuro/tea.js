@@ -60,6 +60,30 @@ const lineFragmentShaderSource = `
 	}
 `;
 
+const textVertexShaderSource = `
+	attribute vec3 position;
+	attribute vec2 texCoord;
+	uniform mat4 mvpMatrix;
+	varying vec2 vTexCoord;
+	void main() {
+		vTexCoord = texCoord;
+		gl_Position = mvpMatrix * vec4(position, 1.0);
+	}
+`;
+
+const textFragmentShaderSource = `
+	precision mediump float;
+	uniform sampler2D texture;
+	varying vec2 vTexCoord;
+	void main() {
+		vec4 color = texture2D(texture, vTexCoord);
+		if (color.a < 0.1) {
+			discard;
+		}
+		gl_FragColor = color;
+	}
+`;
+
 export class Shader {
 	app: Tea.App;
 	program: WebGLProgram;
@@ -97,6 +121,14 @@ export class Shader {
 
 	static get lineFragmentShaderSource(): string {
 		return lineFragmentShaderSource;
+	}
+
+	static get textVertexShaderSource(): string {
+		return textVertexShaderSource;
+	}
+
+	static get textFragmentShaderSource(): string {
+		return textFragmentShaderSource;
 	}
 
 	get texture(): Tea.Texture {
@@ -143,6 +175,9 @@ export class Shader {
 	setAttribute(name: string, size: number): void {
 		const gl = this.app.gl;
 		const location = this.getAttribLocation(name);
+		if (location < 0) {
+			return;
+		}
 		gl.enableVertexAttribArray(location);
 		gl.vertexAttribPointer(location, size, gl.FLOAT, false, 0, 0);
 	}

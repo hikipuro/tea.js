@@ -15,6 +15,7 @@ import { ArrayUtil } from "./util/ArrayUtil";
 import { Color } from "./util/Color";
 import { Cursor, CursorType } from "./util/Cursor";
 import { File } from "./util/File";
+import { FontStyle } from "./util/FontStyle";
 import { MatrixChecker } from "./util/MatrixChecker";
 import { Screen } from "./util/Screen";
 
@@ -30,6 +31,7 @@ import { Renderer } from "./object/Renderer";
 import { LineRenderer } from "./object/LineRenderer";
 import { MeshRenderer } from "./object/MeshRenderer";
 import { Shader } from "./object/Shader";
+import { TextMesh } from "./object/TextMesh";
 import { Texture } from "./object/Texture";
 import { Transform } from "./object/Transform";
 
@@ -64,6 +66,7 @@ export {
 	Cursor,
 	CursorType,
 	File,
+	FontStyle,
 	MatrixChecker,
 	Screen,
 
@@ -90,6 +93,7 @@ export {
 	Scene,
 	Script,
 	Shader,
+	TextMesh,
 	Texture,
 	Transform
 }

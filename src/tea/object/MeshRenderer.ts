@@ -235,6 +235,19 @@ export class MeshRenderer extends Renderer {
 			gl.drawElements(gl.LINE_STRIP, count, gl.UNSIGNED_SHORT, 0);
 			return;
 		}
+		
+		if (this._mesh instanceof Tea.TextMesh) {
+			//gl.disable(gl.DEPTH_TEST);
+			gl.enable(gl.BLEND);
+			//gl.blendEquation(gl.FUNC_ADD);
+			gl.blendFuncSeparate(
+				gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA,
+				gl.ONE, gl.ONE
+			);
+		} else {
+			//gl.enable(gl.DEPTH_TEST);
+			gl.disable(gl.BLEND);
+		}
 
 		const count = this._triangleCount;
 		gl.drawElements(gl.TRIANGLES, count, gl.UNSIGNED_SHORT, 0);
