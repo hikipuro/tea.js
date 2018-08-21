@@ -26,8 +26,9 @@ export class EventDispatcher {
 		return this._maxListeners;
 	}
 
-	setMaxListeners(n: number): void {
+	setMaxListeners(n: number): EventDispatcher {
 		this._maxListeners = n;
+		return this;
 	}
 
 	on(eventName: string, listener: EventListener): EventDispatcher {
@@ -62,12 +63,15 @@ export class EventDispatcher {
 		return this;
 	}
 
-	emit(eventName: string, ...args: any[]): void {
+	emit(eventName: string, ...args: any[]): boolean {
 		if (this.hasName(eventName) === false) {
-			return;
+			return false;
+		}
+		var listeners = this._listeners[eventName];
+		if (listeners.length <= 0) {
+			return false;
 		}
 		var methods: Array<EventListener> = [];
-		var listeners = this._listeners[eventName];
 		for (var i = listeners.length - 1; i >= 0; i--) {
 			var item = listeners[i];
 			methods.push(item.listener);
@@ -75,10 +79,14 @@ export class EventDispatcher {
 				listeners.splice(i, 1);
 			}
 		}
+		if (listeners.length <= 0) {
+			delete this._listeners[eventName];
+		}
 		for (var i = methods.length - 1; i >= 0; i--) {
 			var listener = methods[i];
 			listener.apply(listener, args);
 		}
+		return true;
 	}
 
 	off(eventName: string, listener: EventListener): EventDispatcher {
@@ -91,6 +99,9 @@ export class EventDispatcher {
 			if (item.listener === listener) {
 				listeners.splice(i, 1);
 			}
+		}
+		if (listeners.length <= 0) {
+			delete this._listeners[eventName];
 		}
 		return this;
 	}
@@ -139,7 +150,7 @@ export class EventDispatcher {
 		if (this.hasName(eventName) === false) {
 			return this;
 		}
-		this._listeners[eventName] = [];
+		delete this._listeners[eventName];
 		return this;
 	}
 
