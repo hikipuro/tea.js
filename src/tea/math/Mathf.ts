@@ -57,7 +57,7 @@ export class Mathf {
 
 	static closestPowerOfTwo(value: number): number {
 		var shift = Math.floor(Math.log2(value));
-		return 1 << (shift + 1);
+		return 2 << shift;
 	}
 
 	//static correlatedColorTemperatureToRGB(kelvin: number): Tea.Color {

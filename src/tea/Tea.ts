@@ -14,10 +14,14 @@ import { Vector4 } from "./math/Vector4";
 import { ArrayUtil } from "./util/ArrayUtil";
 import { Color } from "./util/Color";
 import { Cursor, CursorType } from "./util/Cursor";
+import { EventDispatcher } from "./util/EventDispatcher";
 import { File } from "./util/File";
 import { FontStyle } from "./util/FontStyle";
 import { MatrixChecker } from "./util/MatrixChecker";
 import { Screen } from "./util/Screen";
+import { TextAlignment } from "./util/TextAlignment";
+import { TextAnchor } from "./util/TextAnchor";
+import { Time } from "./util/Time";
 
 import { Bounds } from "./object/Bounds";
 import { Camera } from "./object/Camera";
@@ -65,10 +69,14 @@ export {
 	Color,
 	Cursor,
 	CursorType,
+	EventDispatcher,
 	File,
 	FontStyle,
 	MatrixChecker,
 	Screen,
+	TextAlignment,
+	TextAnchor,
+	Time,
 
 	App,
 	Bounds,

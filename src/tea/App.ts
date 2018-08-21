@@ -77,8 +77,8 @@ export class App {
 		return this._renderer.mouse;
 	}
 
-	get frames(): number {
-		return this._renderer.frames;
+	get time(): Tea.Time {
+		return this._renderer.time;
 	}
 
 	isExtensionSupported(name: Tea.GLExtensions | string): boolean {
@@ -297,7 +297,7 @@ class AppRenderer {
 	currentScene: Tea.Scene;
 	keyboard: Keyboard;
 	mouse: Mouse;
-	frames: number;
+	time: Tea.Time;
 	protected _handle: number;
 	protected _prevRect: Tea.Rect;
 
@@ -307,7 +307,7 @@ class AppRenderer {
 		this.isPaused = false;
 		this.keyboard = new Keyboard(document.body);
 		this.mouse = new Mouse(app, this.app.canvas);
-		this.frames = 0;
+		this.time = new Tea.Time();
 		this._handle = 0;
 		this._prevRect = new Tea.Rect();
 
@@ -331,6 +331,7 @@ class AppRenderer {
 			return;
 		}
 		this.isStarted = true;
+		this.time.start();
 		if (this.isPaused === false) {
 			this._handle = requestAnimationFrame(this.update);
 		}
@@ -348,7 +349,7 @@ class AppRenderer {
 	}
 
 	protected update = (time: number): void => {
-		this.frames++;
+		this.time.update();
 		if (this.currentScene != null) {
 			this.updateScene();
 		}
