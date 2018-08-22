@@ -141,6 +141,10 @@ export class Shader {
 		this._texture = value;
 	}
 
+	propertyToID(name: string): number {
+		return this.getAttribLocation(name);
+	}
+
 	remove(): void {
 		const gl = this.app.gl;
 		if (this.program != null) {
