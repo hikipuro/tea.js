@@ -1,6 +1,7 @@
 import * as Tea from "./tea/Tea";
 import { TestScript } from "./TestScript";
 import { TestScript2 } from "./TestScript2";
+import { Rotate } from "./Rotate";
 import { Matrix4x4 } from "./tea/math/Matrix4x4";
 
 export class Main {
@@ -30,6 +31,11 @@ export class Main {
 		//this.app.canvas.style.background = "#000";
 		this.app.width = 400;
 		this.app.height = 400;
+
+		window.addEventListener("resize", () => {
+			this.app.canvas.width = document.body.clientWidth;
+			this.app.canvas.height = document.body.clientHeight;
+		});
 
 		console.log("aspectRatio", this.app.aspectRatio);
 		console.log("params", this.app.parameters);
@@ -114,17 +120,88 @@ export class Main {
 		console.log(mm.mul(Tea.Vector4.one));
 		*/
 
+		var l = new Tea.LineSegment();
+		l.point.x = 1;
+		l.point.y = 1;
+		l.direction.x = 2;
+		l.direction.y = 2;
+		console.log("containsPoint", l.closestPoint(new Tea.Vector3(1, 4.5, 0)));
+		//console.log("checker", v.dot());
+
+		var t0 = new Tea.Vector3(1);
+		var t1 = new Tea.Vector3(0, -1);
+		var t2 = new Tea.Vector3(-1, -1);
+		var p0 = new Tea.Vector3(0, -0.51, 0);
+
+		var c0 = t1.sub(t0).cross(p0.sub(t1)).normalized;
+		var c1 = t2.sub(t1).cross(p0.sub(t2)).normalized;
+		var c2 = t0.sub(t2).cross(p0.sub(t0)).normalized;
+		console.log("cross", c0.toString(), c1.toString(), c2.toString());
+
+		var po = new Tea.Polygon();
+		po.addPoint(1, 0, 0);
+		po.addPoint(0, -1, 0);
+		po.addPoint(-1, 0, 0);
+		console.log("cross2", po.containsPoint(0.9, -0.01, 0));
+
+		var l1 = new Tea.Line();
+		l1.point.y = 1;
+		l1.direction.x = 1;
+		var l2 = new Tea.Line();
+		l2.point.z = 0;
+		l2.direction.z = 1;
+		l2.direction.y = 1;
+		console.log("distance", l1.distance(l2));
+
+		//var q = new Tea.Quaternion(0.5, 0.5, -0.5, 0.5);
+		var q = Tea.Quaternion.euler(89, -20, 60);
+		console.log("Quaternion 1", Tea.Quaternion.euler(90, 0, 0));
+		console.log("Quaternion 1", Tea.Quaternion.euler(90, 90, 0));
+		console.log("Quaternion 1", Tea.Quaternion.euler(90, 90, 30));
+		console.log("Quaternion 2", q.toString());
+		console.log("Quaternion 3", q.eulerAngles);
+		console.log("Quaternion 4", q.mul(new Tea.Vector3(2,0,4)));
+		console.log("color", new Tea.Color(0.4, 0.4, 0.4).grayscale);
+
+		var text = new Tea.TextMesh(this.app);
+		document.body.appendChild(text.canvas);
+		text.lineSpacing = 1;
+		//text.fontStyle = Tea.FontStyle.Normal;
+		//text.text = "aa\r\nBBB\ncc";
+		text.fontSize = 30;
+		text.text = "Hello world\nTest";
+		//text.color = Tea.Color.red;
+		//text.color.r = 1;
+		text.update();
+		//text.text = "test";
+		/*
+		var image = text.getImageData();
+		for (var y = 0; y < image.height; y++) {
+			for (var x = 0; x < image.width; x++) {
+				var index = (y * image.width + x) * 4;
+				var r = image.data[index];
+				var g = image.data[index + 1];
+				var bb = image.data[index + 2];
+				var a = image.data[index + 3];
+				console.log("image data", `${x}, ${y}`, r, g, bb, a);
+			}
+		}
+		//*/
+		//return;
+
+
 		const scene = this.app.createScene();
 		//scene.camera.far = 10;
 		//scene.camera.position.y = 2;
 		//scene.camera.fov = 25;
 		//scene.camera.fov = 20;
+		//scene.camera.nearClipPlane = 2;
 		//scene.camera.orthographic = true;
 		//scene.camera.nearClipPlane = 2;
 		//scene.camera.rotation.x = Tea.radians(20);
 		//scene.camera.rotation.y = Tea.radians(20);
 		//scene.camera.rotation.z = Tea.radians(20);
-		//cene.camera.fieldOfView = 16;
+		//scene.camera.fieldOfView = 30;
 		//scene.camera.rotation.z = Tea.radians(20);
 		//scene.camera.position.x = 2;
 		//scene.camera.position.z = -15;
@@ -133,12 +210,15 @@ export class Main {
 		//scene.camera.rect.width = 0.5;
 		//scene.camera.rect.y = 0.2;
 		//scene.camera.rect.height = 0.6;
+		//scene.camera.position.set(0, 10, 0);
+		//scene.camera.rotation = Tea.Quaternion.euler(90,0,0);
 		this.app.setScene(scene);
 
 		setTimeout(() => {
 			console.log("ray", scene.camera.screenPointToRay(new Tea.Vector3(100, 100)).toString());
 			console.log("ray2", scene.camera.viewportPointToRay(new Tea.Vector3(0.5, 0.5)).toString());
 		}, 100);
+
 
 		//console.log("camera", scene.camera.cameraToWorldMatrix.toString());
 		//console.log("camera", scene.camera.worldToCameraMatrix.toString());
@@ -151,11 +231,12 @@ export class Main {
 		cube.position.x = 2;
 		cube.position.y = 2;
 		cube.position.z = -5;
-		//cube.scale.x = -1 / 2;
+		cube.scale.x = 2;
 		//cube.scale.y = -1;
 		//cube.scale.z = -1;
-		cube.rotation.y = Tea.radians(20);
-		cube.addScript(new TestScript());
+		cube.rotation = Tea.Quaternion.euler(0, 0, 90);
+		//cube.rotation.y = Tea.radians(20);
+		//cube.addScript(new Rotate());
 		scene.appendChild(cube);
 
 		const cube2 = this.app.createCube();
@@ -173,13 +254,14 @@ export class Main {
 		const quad = this.app.createQuad();
 		//cube2.name = "cube2";
 		//plain.position.z = 5;
-		//quad.position.x = -3;
+		quad.position.y = 1;
 		//plain.rotation.x = -Tea.radians(50);
 		//plain.rotation.y = -Tea.radians(20);
 		//plain.rotation.z = Tea.radians(60);
 		quad.scale.x = 2;
 		quad.scale.y = 2;
 		//plain.addScript(script);
+		quad.addScript(new Rotate());
 		scene.appendChild(quad);
 		//this.plain = quad;
 
@@ -205,6 +287,7 @@ export class Main {
 		capsule.position.x = 2;
 		capsule.position.y = 2;
 		capsule.position.z = 2;
+		//capsule.scale.x = 2;
 		//capsule.rotation.x = Tea.radians(90);
 		capsule.addScript(script);
 		scene.appendChild(capsule);
@@ -228,8 +311,58 @@ export class Main {
 		capsule.appendChild(lines);
 		//scene.appendChild(lines);
 
+
+		var textmesh = this.app.createTextMesh();
+		var r = textmesh.getComponent(Tea.MeshRenderer);
+		(r.mesh as Tea.TextMesh).fontSize = 40;
+		//(r.mesh as Tea.TextMesh).color = Tea.Color.red;
+		//(r.mesh as Tea.TextMesh).color = Tea.Color.black;
+		(r.mesh as Tea.TextMesh).text = "Hello world\naあいうえお";
+		textmesh.scale.x = 3.1;
+		textmesh.scale.y = 1.5;
+		textmesh.position.z = -6;
+		//scene.appendChild(textmesh);
+
+		var e = new Tea.EventDispatcher();
+		e.setMaxListeners(0);
+		var handler = (a) => {
+			console.log("on event", a);
+		};
+		e.on("event", handler);
+		e.once("event", (a) => {
+			console.log("once event", a);
+		});
+		//e.removeListener("event", handler);
+		e.emit("event2", "bbb", 2);
+		//e.emit("event", "aaa", 2);
+		e.emit("event", "bbb", 2);
+		console.log("names", e.eventNames());
+		console.log("count", e.listenerCount("event"));
+		console.log("count", e.listenerCount(""));
+		console.log("count", e.listenerCount("1"));
+		console.log("count", e.listeners("1"));
+		console.log("count", e.listeners("event"));
+
 		let ray = new Tea.Ray(new Tea.Vector3(0, 1, 0), new Tea.Vector3(0.2, 0.3, 0.4));
 		console.log("test", ray.direction, ray.getPoint(6.5), ray.getPoint(-6.5));
+
+		let mt = Tea.MatrixChecker.translate();
+		let mx = Tea.MatrixChecker.rotateX();
+		let my = Tea.MatrixChecker.rotateY();
+		let mz = Tea.MatrixChecker.rotateZ();
+		let ms = Tea.MatrixChecker.scale();
+		console.log("checker", mt.mul(my).mul(mx).mul(mz).mul(ms).toString());
+		console.log("ortho", Matrix4x4.ortho(5, 400, 10, 100, 0.3, 1000).toString());
+
+		console.log("lookRotation", Tea.Quaternion.lookRotation(Tea.Vector3.up));
+		console.log("lookRotation", Tea.Quaternion.lookRotation(Tea.Vector3.forward));
+		console.log("lookRotation", Tea.Quaternion.lookRotation(Tea.Vector3.forward, Tea.Vector3.right.mul(2)));
+		console.log("lookRotation", Tea.Quaternion.lookRotation(Tea.Vector3.forward, new Tea.Vector3(1,2)));
+
+		var n = new Tea.Vector3(1,1,1);
+		var t = new Tea.Vector3(0,-1,1);
+		Tea.Vector3.orthoNormalize(n, t);
+		console.log("ortho", n, t);
 
 		///*
 		this.app.start();
@@ -237,6 +370,7 @@ export class Main {
 		Tea.File.readImage("../models/google.jpg", (image) => {
 			//document.body.appendChild(image);
 			const texture = this.app.createTexture(image);
+			//texture.filterMode = Tea.FilterMode.Bilinear;
 			/*
 			cube.renderer.shader.texture = texture;
 			quad.renderer.shader.texture = texture;
@@ -245,15 +379,15 @@ export class Main {
 			capsule.renderer.shader.texture = texture;
 			*/
 			let r = cube.getComponent(Tea.Renderer);
-			r.shader.texture = texture;
+			//r.material.mainTexture = texture;
 			r = quad.getComponent(Tea.Renderer);
-			r.shader.texture = texture;
+			//r.material.mainTexture = texture;
 			r = cylinder.getComponent(Tea.Renderer);
-			r.shader.texture = texture;
+			r.material.mainTexture = texture;
 			r = plane.getComponent(Tea.Renderer);
-			r.shader.texture = texture;
+			r.material.mainTexture = texture;
 			r = capsule.getComponent(Tea.Renderer);
-			r.shader.texture = texture;
+			r.material.mainTexture = texture;
 		});
 
 		Tea.File.readImage("../models/earth.jpg", (image) => {
@@ -294,62 +428,5 @@ export class Main {
 		const v3 = new Tea.Vector3(-2, -3, -4);
 		console.log(v3.magnitude);
 		*/
-	}
-
-	start() {
-		//Tea.File.readText("untitled.obj", (data) => {
-		Tea.File.readText("teapot/teapot.obj", (data) => {
-			//console.log(f);
-			//const mesh = Tea.ObjReader.read(data);
-			//const mesh = Tea.Primitives.createPlainMesh();
-			const mesh = Tea.Primitives.createCubeMesh();
-			//mesh.scale(1 / 50);
-			//mesh.scale(2);
-			//mesh.position.set(0.5, 0, 0);
-			//mesh.rotateX(Tea.radians(-25));
-
-			const vs = Tea.getElementText("vs");
-			const fs = Tea.getElementText("fs");
-			const shader = this.app.createShader(vs, fs);
-			shader.texture = this.texture;
-
-			this.renderer = this.app.createMeshRenderer(mesh, shader);
-			//this.renderer.wireframe = true;
-			//this.renderer.camera = this.camera;
-
-			//console.log(Matrix4.identity);
-			//let rr = new Vector3(0, 1, 3);
-			//console.log(rr.toString(), rr.magnitude, Vector3.positiveInfinity.magnitude);
-
-			this.render();
-		});
-	}
-
-	render = (): void => {
-		console.log("render");
-		this.count++;
-
-		let rr = new Tea.Vector3(0, 1, 3);
-		//rr = Tea.Vector3.moveTowards(rr, new Tea.Vector3(0, 1, 1), Math.sin(Tea.radians(this.count)) * 10);
-		rr.rotateY(Tea.radians(this.count));
-
-		//let position = new Tea.Vector3(0, 1, -10);
-		//this.camera.position = Tea.Vector3.moveTowards(position, new Tea.Vector3(0, 1, -2), Math.sin(Tea.radians(this.count)) * 10);
-
-		//this.camera.lookAt(rr);
-
-		//this.camera.vMatrix = Matrix4.identity;
-		//this.camera.vMatrix = this.camera.vMatrix.lookAt(rr, [0, 0, 0], [0, 1, 0]);
-
-		// 各行列を掛け合わせ座標変換行列を完成させる
-		//mvpMatrix = mvpMatrix.mul(pMatrix);
-		//mvpMatrix = mvpMatrix.mul(vMatrix);
-
-		//this.WebGL.setMesh(this.mesh);
-		//this.shader.setAttribute("position", 3);
-
-		//this.renderer.render();
-
-		requestAnimationFrame(this.render);
 	}
 }

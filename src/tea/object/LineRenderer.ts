@@ -3,22 +3,20 @@ import { Renderer } from "./Renderer";
 
 export class LineRenderer extends Renderer {
 	points: Array<Tea.Vector3>;
-	color: Tea.Color;
 	vertexBuffer: WebGLBuffer;
 
 	constructor(app: Tea.App) {
 		super(app);
 		this.points = [];
-		this.color = Tea.Color.white;
-		const gl = this.app.gl;
+		var gl = this.app.gl;
 		this.vertexBuffer = gl.createBuffer();
 
-		const shader = new Tea.Shader(this.app);
+		var shader = new Tea.Shader(this.app);
 		shader.attach(
 			Tea.Shader.lineVertexShaderSource,
 			Tea.Shader.lineFragmentShaderSource
 		);
-		this.shader = shader;
+		this.material.shader = shader;
 	}
 
 	add(x: number, y: number, z: number): void;
@@ -42,13 +40,13 @@ export class LineRenderer extends Renderer {
 	}
 
 	render(camera: Tea.Camera): void {
-		if (camera == null) {
+		if (this.enabled === false || camera == null) {
 			return;
 		}
 		if (this.isRenderable === false) {
 			return;
 		}
-		this.setUniforms(camera);
+		super.render(camera);
 		this.setLineData();
 		this.draw();
 	}
@@ -56,36 +54,25 @@ export class LineRenderer extends Renderer {
 	protected get isRenderable(): boolean {
 		return (
 			this.object3d != null &&
-			this.shader != null
+			this.material != null &&
+			this.material.shader != null
 		);
 	}
 
-	protected setUniforms(camera: Tea.Camera): void {
-		var model = this.localToWorldMatrix;
-		var view = camera.worldToCameraMatrix;
-		var proj = camera.projectionMatrix;
-		var mvpMatrix = proj.mul(view).mul(model);
-		this.shader.uniformMatrix4fv("mvpMatrix", mvpMatrix);
-		this.shader.uniform4fv("color", this.color);
-	}
-
 	protected setLineData(): void {
-		const gl = this.app.gl;
-		let target = gl.ARRAY_BUFFER;
+		var gl = this.app.gl;
+		var target = gl.ARRAY_BUFFER;
 
-		const vertices = new Float32Array(Tea.ArrayUtil.unroll(this.points));
+		var vertices = new Float32Array(Tea.ArrayUtil.unroll(this.points));
 		gl.bindBuffer(target, this.vertexBuffer);
-		gl.bufferData(target, vertices, gl.STATIC_DRAW);
-		this.shader.setAttribute("position", 3);
-
-		gl.bindBuffer(target, null);
-		target = gl.ELEMENT_ARRAY_BUFFER;
+		gl.bufferData(target, vertices, gl.DYNAMIC_DRAW);
+		this.setAttribute("tea_Vertex", 3);
 		gl.bindBuffer(target, null);
 	}
 
 	protected draw(): void {
-		const gl = this.app.gl;
-		const count = this.points.length;
+		var gl = this.app.gl;
+		var count = this.points.length;
 		//gl.frontFace(gl.CW);
 		gl.drawArrays(gl.LINE_STRIP, 0, count);
 	}

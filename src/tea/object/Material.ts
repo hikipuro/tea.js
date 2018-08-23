@@ -1,6 +1,6 @@
 import * as Tea from "../Tea";
 
-enum UniformType {
+export enum UniformType {
 	Int,
 	Float,
 	Vector2,
@@ -37,13 +37,23 @@ class UniformItem {
 
 export class Material {
 	shader: Tea.Shader;
+	renderQueue: number;
 	protected _uniforms: {[key: string]: UniformItem};
 	protected _textures: {[key: string]: Tea.Texture};
 
-	constructor() {
-		this.color = Tea.Color.white;
+	constructor(app: Tea.App) {
+		this.renderQueue = 0;
 		this._uniforms = {};
 		this._textures = {};
+		this.color = Tea.Color.white;
+		this.mainTexture = Tea.Texture.getEmpty(app);
+		this.mainTextureOffset = new Tea.Vector2();
+		this.mainTextureScale = new Tea.Vector2(1, 1);
+	}
+
+	static getDefault(app: Tea.App): Material {
+		var material = new Material(app);
+		return material;
 	}
 
 	get color(): Tea.Color {
@@ -74,6 +84,7 @@ export class Material {
 		this.setTextureScale("_MainTex", value);
 	}
 
+	/*
 	get shaderKeywords(): Array<string> {
 		return [];
 	}
@@ -89,6 +100,7 @@ export class Material {
 	enableKeyword(keyword: string): void {
 
 	}
+	*/
 
 	hasProperty(name: string): boolean {
 		return this._uniforms.hasOwnProperty(name);
@@ -116,7 +128,7 @@ export class Material {
 		this.setValue(name, type, value);
 	}
 
-	getFloat(name: string): number {
+	getFloat(name: string): number | null {
 		var type = UniformType.Float;
 		var value = this.getValue(name, type);
 		return value as number;
@@ -138,7 +150,7 @@ export class Material {
 		this.setValue(name, type, value);
 	}
 
-	getInt(name: string): number {
+	getInt(name: string): number | null {
 		var type = UniformType.Int;
 		var value = this.getValue(name, type);
 		return value as number;
@@ -180,23 +192,27 @@ export class Material {
 	}
 
 	getTextureOffset(name: string): Tea.Vector2 {
+		name = this.textureOffsetName(name);
 		var type = UniformType.Vector2;
 		var value = this.getValue(name, type);
 		return value as Tea.Vector2;
 	}
 
 	setTextureOffset(name: string, value: Tea.Vector2): void {
+		name = this.textureOffsetName(name);
 		var type = UniformType.Vector2;
 		this.setValue(name, type, value);
 	}
 
 	getTextureScale(name: string): Tea.Vector2 {
+		name = this.textureScaleName(name);
 		var type = UniformType.Vector2;
 		var value = this.getValue(name, type);
 		return value as Tea.Vector2;
 	}
 
 	setTextureScale(name: string, value: Tea.Vector2): void {
+		name = this.textureScaleName(name);
 		var type = UniformType.Vector2;
 		this.setValue(name, type, value);
 	}
@@ -223,7 +239,20 @@ export class Material {
 		this.setValue(name, type, value);
 	}
 
+	eachProperty(callback: (name: string, item: UniformItem) => boolean | void): void {
+		var uniforms = this._uniforms;
+		var keys = Object.keys(uniforms);
+		for (var key of keys) {
+			if (callback(key, uniforms[key]) === true) {
+				break;
+			}
+		}
+	}
+
 	protected getValue(name: string, type: UniformType): UniformValue {
+		if (name == null || name === "") {
+			return null;
+		}
 		if (this.isValidType(name, type) === false) {
 			return null;
 		}
@@ -232,6 +261,9 @@ export class Material {
 	}
 
 	protected setValue(name: string, type: UniformType, value: UniformValue): void {
+		if (name == null || name === "") {
+			return;
+		}
 		var item = new UniformItem(type, value);
 		this._uniforms[name] = item;
 	}
@@ -242,5 +274,19 @@ export class Material {
 			return false;
 		}
 		return item.type === type;
+	}
+
+	protected textureOffsetName(name: string): string {
+		if (name == null || name === "") {
+			return "";
+		}
+		return "uv" + name;
+	}
+
+	protected textureScaleName(name: string): string {
+		if (name == null || name === "") {
+			return "";
+		}
+		return name + "_ST";
 	}
 }

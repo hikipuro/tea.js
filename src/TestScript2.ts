@@ -10,6 +10,6 @@ export class TestScript2 extends Tea.Script {
 
 		const renderer = this.object3d.getComponent(Tea.LineRenderer);
 		//let r = renderer as Tea.LineRenderer;
-		renderer.color = Tea.Color.fromHSV(this.count % 360 / 360, 1, 1);
+		renderer.material.color = Tea.Color.fromHSV(this.count % 360 / 360, 1, 1);
 	}
 }

@@ -15,11 +15,117 @@ export class Texture {
 	};
 
 	protected _image: TextureImage;
+	protected _filterMode: Tea.FilterMode;
+	protected _wrapMode: Tea.TextureWrapMode;
+	protected _updateCount: number;
 
 	constructor(app: Tea.App) {
 		this.app = app;
+		this._filterMode = Tea.FilterMode.Point;
+		this._wrapMode = Tea.TextureWrapMode.Repeat;
+		this._updateCount = 0;
 		const gl = this.app.gl;
 		this.webgl.texture = gl.createTexture();
+	}
+
+	static getEmpty(app: Tea.App): Texture {
+		var texture = new Tea.Texture(app);
+		var array = new Uint8ClampedArray([255, 255, 255, 255]);
+		var imageData = new ImageData(array, 1, 1);
+		texture.image = imageData;
+		return texture;
+	}
+
+	get texture(): WebGLTexture {
+		return this.webgl.texture;
+	}
+
+	get width(): number {
+		if (this._image == null) {
+			return 0;
+		}
+		return this._image.width;
+	}
+
+	get height(): number {
+		if (this._image == null) {
+			return 0;
+		}
+		return this._image.height;
+	}
+
+	get dimension(): Tea.TextureDimension {
+		return Tea.TextureDimension.Tex2D;
+	}
+
+	get filterMode(): Tea.FilterMode {
+		return this._filterMode;
+	}
+	set filterMode(value: Tea.FilterMode) {
+		this._filterMode = value;
+		this.bind();
+		var param = this.convertFilterMode(value);
+		var gl = this.app.gl;
+		gl.texParameteri(
+			gl.TEXTURE_2D,
+			gl.TEXTURE_MAG_FILTER,
+			param
+		);
+		gl.texParameteri(
+			gl.TEXTURE_2D,
+			gl.TEXTURE_MIN_FILTER,
+			param
+		);
+		this.unbind();
+	}
+
+	get wrapMode(): Tea.TextureWrapMode {
+		return this._wrapMode;
+	}
+	set wrapMode(value: Tea.TextureWrapMode) {
+		this._wrapMode = value;
+		this.bind();
+		var param = this.convertWrapMode(value);
+		var gl = this.app.gl;
+		gl.texParameteri(
+			gl.TEXTURE_2D,
+			gl.TEXTURE_WRAP_S,
+			param
+		);
+		gl.texParameteri(
+			gl.TEXTURE_2D,
+			gl.TEXTURE_WRAP_T,
+			param
+		);
+		this.unbind();
+	}
+
+	set wrapModeU(value: Tea.TextureWrapMode) {
+		this.bind();
+		var param = this.convertWrapMode(value);
+		var gl = this.app.gl;
+		gl.texParameteri(
+			gl.TEXTURE_2D,
+			gl.TEXTURE_WRAP_S,
+			param
+		);
+		this.unbind();
+	}
+
+	set wrapModeV(value: Tea.TextureWrapMode) {
+		this.bind();
+		var param = this.convertWrapMode(value);
+		var gl = this.app.gl;
+		gl.texParameteri(
+			gl.TEXTURE_2D,
+			gl.TEXTURE_WRAP_T,
+			param
+		);
+		this.unbind();
+	}
+
+	get updateCount(): number {
+		return this._updateCount;
 	}
 
 	isGLTexture(texture: WebGLTexture): boolean {
@@ -40,28 +146,60 @@ export class Texture {
 	}
 
 	set image(image: TextureImage) {
-		const gl = this.app.gl;
 		this._image = image;
-		gl.bindTexture(gl.TEXTURE_2D, this.webgl.texture);
-		//gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
-		//gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
+		this.bind();
+		var gl = this.app.gl;
 		gl.texImage2D(
 			gl.TEXTURE_2D, 0,
 			gl.RGBA, gl.RGBA,
 			gl.UNSIGNED_BYTE,
 			image
 		);
-		gl.generateMipmap(gl.TEXTURE_2D);
-		gl.bindTexture(gl.TEXTURE_2D, null);
+		if (Tea.Mathf.isPowerOf2(image.width, image.height)) {
+			gl.generateMipmap(gl.TEXTURE_2D);
+		}
+		this.filterMode = this._filterMode;
+		this.wrapMode = this._wrapMode;
+		this.unbind();
+		this._updateCount++;
 	}
 
-	bind(): void {
-		const gl = this.app.gl;
+	protected generateMipmap(): void {
+		var gl = this.app.gl;
+		gl.generateMipmap(gl.TEXTURE_2D);
+	}
+
+	protected bind(): void {
+		var gl = this.app.gl;
 		gl.bindTexture(gl.TEXTURE_2D, this.webgl.texture);
 	}
 
-	generateMipmap(): void {
-		const gl = this.app.gl;
-		gl.generateMipmap(gl.TEXTURE_2D);
+	protected unbind(): void {
+		var gl = this.app.gl;
+		gl.bindTexture(gl.TEXTURE_2D, null);
+	}
+
+	protected convertFilterMode(mode: Tea.FilterMode): number {
+		var gl = this.app.gl;
+		switch (mode) {
+			case Tea.FilterMode.Point:
+				return gl.LINEAR;
+			case Tea.FilterMode.Bilinear:
+				return gl.NEAREST;
+		}
+		return gl.LINEAR;
+	}
+
+	protected convertWrapMode(mode: Tea.TextureWrapMode): number {
+		var gl = this.app.gl;
+		switch (mode) {
+			case Tea.TextureWrapMode.Repeat:
+				return gl.REPEAT;
+			case Tea.TextureWrapMode.Clamp:
+				return gl.CLAMP_TO_EDGE;
+			case Tea.TextureWrapMode.Mirror:
+				return gl.MIRRORED_REPEAT;
+		}
+		return gl.REPEAT;
 	}
 }

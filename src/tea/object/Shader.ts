@@ -1,12 +1,12 @@
 import * as Tea from "../Tea";
 
 const defaultVertexShaderSource = `
-	attribute vec3 position;
+	attribute vec4 vertex;
 	attribute vec3 normal;
-	attribute vec2 texCoord;
+	attribute vec2 texcoord;
 	attribute vec4 color;
-	uniform mat4 mvpMatrix;
-	uniform mat4 invMatrix;
+	uniform mat4 TEA_MATRIX_MVP;
+	//uniform mat4 invMatrix;
 	uniform vec3 lightDirection;
 	uniform vec4 ambientColor;
 	varying vec2 vTexCoord;
@@ -14,49 +14,52 @@ const defaultVertexShaderSource = `
 	varying vec4 vDiffuse;
 
 	void main() {
-		vec3 mvpNormal = normalize(mvpMatrix * vec4(normal, 0.0)).xyz;
+		vec3 mvpNormal = normalize(TEA_MATRIX_MVP * vec4(normal, 0.0)).xyz;
 		float diffuse = clamp(dot(mvpNormal, lightDirection), 0.0, 1.0);
 		//float diffuse = dot(normal, invLight);
-		vTexCoord = texCoord;
+		vTexCoord = texcoord;
 		vColor = color;
 		vDiffuse = vec4(vec3(diffuse), 1.0) + ambientColor;
 		//vDiffuse = vec4(vec3(diffuse), 1.0);
-		gl_Position = mvpMatrix * vec4(position, 1.0);
+		gl_Position = TEA_MATRIX_MVP * vertex;
 	}
 `;
 
 const defaultFragmentShaderSource = `
 	precision mediump float;
-	uniform sampler2D texture;
+	uniform vec4 _Color;
+	uniform sampler2D _MainTex;
+	uniform vec2 uv_MainTex;
+	uniform vec2 _MainTex_ST;
 	uniform bool useColor;
 	varying vec2 vTexCoord;
 	varying vec4 vColor;
 	varying vec4 vDiffuse;
 
 	void main() {
-		vec4 tex = texture2D(texture, vTexCoord);
+		vec4 tex = texture2D(_MainTex, (uv_MainTex + vTexCoord) / _MainTex_ST);
 		if (useColor) {
-			gl_FragColor = tex * vDiffuse * vColor;
+			gl_FragColor = tex * _Color * vDiffuse * vColor;
 		} else {
-			gl_FragColor = tex * vDiffuse;
+			gl_FragColor = tex * _Color * vDiffuse;
 		}
 		//gl_FragColor = vec4(1.0, 1.0, 1.0, 1.0);
 	}
 `;
 
 const lineVertexShaderSource = `
-	attribute vec3 position;
-	uniform mat4 mvpMatrix;
+	attribute vec4 tea_Vertex;
+	uniform mat4 TEA_MATRIX_MVP;
 	void main() {
-		gl_Position = mvpMatrix * vec4(position, 1.0);
+		gl_Position = TEA_MATRIX_MVP * tea_Vertex;
 	}
 `;
 
 const lineFragmentShaderSource = `
 	precision mediump float;
-	uniform vec4 color;
+	uniform vec4 _Color;
 	void main() {
-		gl_FragColor = color;
+		gl_FragColor = _Color;
 	}
 `;
 
@@ -90,21 +93,12 @@ export class Shader {
 	vertexShader: WebGLShader;
 	fragmentShader: WebGLShader;
 
-	protected locationsCache: object;
-	protected emptyTexture: Tea.Texture;
-	protected _texture: Tea.Texture;
-
 	constructor(app: Tea.App) {
 		this.app = app;
 		const gl = this.app.gl;
 		this.program = gl.createProgram();
 		this.vertexShader = gl.createShader(gl.VERTEX_SHADER);
 		this.fragmentShader = gl.createShader(gl.FRAGMENT_SHADER);
-
-		this.locationsCache = {};
-		this.emptyTexture = new Tea.Texture(app);
-		const imageData = new ImageData(1, 1);
-		this.emptyTexture.image = imageData;
 	}
 
 	static get defaultVertexShaderSource(): string {
@@ -131,22 +125,14 @@ export class Shader {
 		return textFragmentShaderSource;
 	}
 
-	get texture(): Tea.Texture {
-		if (this._texture == null) {
-			return this.emptyTexture;
-		}
-		return this._texture;
-	}
-	set texture(value: Tea.Texture) {
-		this._texture = value;
-	}
-
 	propertyToID(name: string): number {
-		return this.getAttribLocation(name);
+		var gl = this.app.gl;
+		var location = gl.getUniformLocation(this.program, name);
+		return location as number;
 	}
 
 	remove(): void {
-		const gl = this.app.gl;
+		var gl = this.app.gl;
 		if (this.program != null) {
 			gl.detachShader(this.program, this.vertexShader);
 			gl.detachShader(this.program, this.vertexShader);
@@ -161,11 +147,6 @@ export class Shader {
 			gl.deleteShader(this.fragmentShader);
 			this.fragmentShader = null;
 		}
-		if (this.emptyTexture != null) {
-			this.emptyTexture.remove();
-			this.emptyTexture = null;
-		}
-		this.locationsCache = {};
 	}
 
 	attach(vsSource: string, fsSource: string): void {
@@ -174,84 +155,6 @@ export class Shader {
 		this.compile(this.fragmentShader, fsSource);
 		this.link(this.program, this.vertexShader, this.fragmentShader);
 		gl.useProgram(this.program);
-	}
-
-	setAttribute(name: string, size: number): void {
-		const gl = this.app.gl;
-		const location = this.getAttribLocation(name);
-		if (location < 0) {
-			return;
-		}
-		gl.enableVertexAttribArray(location);
-		gl.vertexAttribPointer(location, size, gl.FLOAT, false, 0, 0);
-	}
-
-	disableVertexAttrib(name: string): void {
-		const gl = this.app.gl;
-		const location = this.getAttribLocation(name);
-		//console.log("location", location);
-		if (0 <= location) {
-			gl.disableVertexAttribArray(location);
-		}
-	}
-
-	uniform1i(name: string, value: number): void {
-		const gl = this.app.gl;
-		gl.useProgram(this.program);
-		const location = this.getUniformLocation(name);
-		gl.uniform1i(location, value);
-	}
-
-	uniform1f(name: string, value: number): void {
-		const gl = this.app.gl;
-		gl.useProgram(this.program);
-		const location = this.getUniformLocation(name);
-		gl.uniform1f(location, value);
-	}
-
-	uniform3fv(name: string, value: Float32Array | ArrayLike<number>): void {
-		const gl = this.app.gl;
-		gl.useProgram(this.program);
-		const location = this.getUniformLocation(name);
-		gl.uniform3fv(location, value);
-	}
-
-	uniform4fv(name: string, value: Float32Array | ArrayLike<number>): void {
-		const gl = this.app.gl;
-		gl.useProgram(this.program);
-		const location = this.getUniformLocation(name);
-		gl.uniform4fv(location, value);
-	}
-
-	uniformMatrix4fv(name: string, value: Float32Array | ArrayLike<number>): void {
-		const gl = this.app.gl;
-		gl.useProgram(this.program);
-		const location = this.getUniformLocation(name);
-		gl.uniformMatrix4fv(location, false, value);
-	}
-
-	protected getAttribLocation(name: string): number {
-		const gl = this.app.gl;
-		let location = null;
-		if (this.locationsCache[name]) {
-			location = this.locationsCache[name];
-		} else {
-			location = gl.getAttribLocation(this.program, name);
-			this.locationsCache[name] = location;
-		}
-		return location;
-	}
-
-	protected getUniformLocation(name: string): WebGLUniformLocation {
-		const gl = this.app.gl;
-		let location = null;
-		if (this.locationsCache[name]) {
-			location = this.locationsCache[name];
-		} else {
-			location = gl.getUniformLocation(this.program, name);
-			this.locationsCache[name] = location;
-		}
-		return location;
 	}
 
 	protected compile(shader: WebGLShader, source: string): void {

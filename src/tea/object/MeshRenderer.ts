@@ -32,15 +32,19 @@ export class MeshRenderer extends Renderer {
 	}
 
 	render(camera: Tea.Camera): void {
-		if (camera == null) {
+		if (this.enabled === false || camera == null) {
 			return;
 		}
 		if (this.isRenderable === false) {
 			return;
 		}
-		this.setUniforms(camera, this.mesh);
+		super.render(camera);
+		if (this.mesh.hasColors) {
+			this._uniforms.uniform1i("useColor", 1);
+		} else {
+			this._uniforms.uniform1i("useColor", 0);
+		}
 		this.setMeshData(this.mesh);
-		this.setTexture(this.shader.texture);
 		this.setVertexBuffer(this.mesh);
 		this.setIndexBuffer(this.mesh);
 		this.draw(this.mesh);
@@ -49,7 +53,8 @@ export class MeshRenderer extends Renderer {
 	protected get isRenderable(): boolean {
 		return (
 			this.object3d != null &&
-			this.shader != null &&
+			this.material != null &&
+			this.material.shader != null &&
 			this.mesh != null
 		);
 	}
@@ -93,7 +98,7 @@ export class MeshRenderer extends Renderer {
 		}
 
 		const gl = this.app.gl;
-		gl.useProgram(this.shader.program);
+		gl.useProgram(this.material.shader.program);
 		let target = gl.ARRAY_BUFFER;
 
 		const vertices = new Float32Array(Tea.ArrayUtil.unroll(mesh.vertices));
@@ -132,68 +137,31 @@ export class MeshRenderer extends Renderer {
 		mesh.isModified = false;
 	}
 
-	protected setUniforms(camera: Tea.Camera, mesh: Tea.Mesh): void {
-		var model = this.localToWorldMatrix;
-		var view = camera.worldToCameraMatrix;
-		var proj = camera.projectionMatrix;
-
-		var mvpMatrix = proj.mul(view).mul(model);
-		this.shader.uniformMatrix4fv("mvpMatrix", mvpMatrix);
-
-		const invMatrix = mvpMatrix.inverse;
-		this.shader.uniformMatrix4fv("invMatrix", invMatrix);
-		//console.log(mvpMatrix.mul(invMatrix).toString());
-
-		let light = new Tea.Vector3(0, 0, -1);
-		light.rotateX$(Tea.radians(30));
-		//light.rotateX(Tea.radians(this.app.frames/2));
-		light.rotateY$(Tea.radians(90));
-		//light.x = 0.5;
-		//light.x = Tea.radians(light.x);
-		//light.y = Tea.radians(light.y);
-		//light.z = Tea.radians(light.z);
-		light = light.normalized;
-
-		this.shader.uniform3fv("lightDirection", light);
-		this.shader.uniform4fv("ambientColor", [0.2, 0.2, 0.2, 0.0]);
-		if (mesh.hasColors) {
-			this.shader.uniform1i("useColor", 1);
-		} else {
-			this.shader.uniform1i("useColor", 0);
-		}
-	}
-
-	protected setTexture(texture: Tea.Texture): void {
-		const gl = this.app.gl;
-		gl.bindTexture(gl.TEXTURE_2D, texture.webgl.texture);
-		this.shader.uniform1i("texture", 0);
-	}
-
 	protected setVertexBuffer(mesh: Tea.Mesh): void {
-		const gl = this.app.gl;
-		const target = gl.ARRAY_BUFFER;
+		var gl = this.app.gl;
+		var target = gl.ARRAY_BUFFER;
 		gl.bindBuffer(target, this.vertexBuffer);
-		this.shader.setAttribute("position", 3);
+		this.setAttribute("vertex", 3);
 
 		gl.bindBuffer(target, this.normalBuffer);
 		if (mesh.hasNormals) {
-			this.shader.setAttribute("normal", 3);
+			this.setAttribute("normal", 3);
 		} else {
-			this.shader.disableVertexAttrib("normal");
+			this.disableVertexAttrib("normal");
 		}
 
 		gl.bindBuffer(target, this.uvBuffer);
 		if (mesh.hasUVs) {
-			this.shader.setAttribute("texCoord", 2);
+			this.setAttribute("texcoord", 2);
 		} else {
-			this.shader.disableVertexAttrib("texCoord");
+			this.disableVertexAttrib("texcoord");
 		}
 
 		gl.bindBuffer(target, this.colorBuffer);
 		if (mesh.hasColors) {
-			this.shader.setAttribute("color", 4);
+			this.setAttribute("color", 4);
 		} else {
-			this.shader.disableVertexAttrib("color");
+			this.disableVertexAttrib("color");
 		}
 		gl.bindBuffer(target, null);
 	}

@@ -16,12 +16,15 @@ import { Color } from "./util/Color";
 import { Cursor, CursorType } from "./util/Cursor";
 import { EventDispatcher } from "./util/EventDispatcher";
 import { File } from "./util/File";
+import { FilterMode } from "./util/FilterMode";
 import { FontStyle } from "./util/FontStyle";
 import { MatrixChecker } from "./util/MatrixChecker";
 import { Screen } from "./util/Screen";
 import { Space } from "./util/Space";
 import { TextAlignment } from "./util/TextAlignment";
 import { TextAnchor } from "./util/TextAnchor";
+import { TextureDimension } from "./util/TextureDimension";
+import { TextureWrapMode } from "./util/TextureWrapMode";
 import { Time } from "./util/Time";
 
 import { Bounds } from "./object/Bounds";
@@ -34,6 +37,7 @@ import { Ray } from "./object/Ray";
 import { RaycastHit } from "./object/RaycastHit";
 import { Renderer } from "./object/Renderer";
 import { LineRenderer } from "./object/LineRenderer";
+import { Material, UniformType } from "./object/Material";
 import { MeshRenderer } from "./object/MeshRenderer";
 import { Shader } from "./object/Shader";
 import { TextMesh } from "./object/TextMesh";
@@ -72,12 +76,15 @@ export {
 	CursorType,
 	EventDispatcher,
 	File,
+	FilterMode,
 	FontStyle,
 	MatrixChecker,
 	Screen,
 	Space,
 	TextAlignment,
 	TextAnchor,
+	TextureDimension,
+	TextureWrapMode,
 	Time,
 
 	App,
@@ -99,6 +106,8 @@ export {
 	Primitives,
 	Renderer,
 	LineRenderer,
+	Material,
+	UniformType,
 	MeshRenderer,
 	Scene,
 	Script,

@@ -4,10 +4,10 @@ export class ArrayUtil {
 		if (array == null || array.length <= 0) {
 			return [];
 		}
-		const length = array.length;
-		const a = [];
+		var length = array.length;
+		var a = [];
 		for (var i = 0; i < length; i++) {
-			const item = array[i];
+			var item = array[i];
 			a.push.apply(a, item);
 		}
 		return a;

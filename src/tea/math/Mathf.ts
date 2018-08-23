@@ -181,4 +181,14 @@ export class Mathf {
 	static tan(f: number): number {
 		return Math.tan(f);
 	}
+
+	static isPowerOf2(x: number, y: number): boolean;
+	static isPowerOf2(value: number): boolean;
+	static isPowerOf2(a: number, b?: number): boolean {
+		var r = (a & (a - 1)) === 0
+		if (b == null) {
+			return r;
+		}
+		return r && (b & (b - 1)) === 0;
+	}
 }

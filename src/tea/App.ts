@@ -114,7 +114,7 @@ export class App {
 	createMeshRenderer(mesh: Tea.Mesh, shader: Tea.Shader): Tea.MeshRenderer {
 		const renderer = new Tea.MeshRenderer(this);
 		renderer.mesh = mesh;
-		renderer.shader = shader;
+		renderer.material.shader = shader;
 		return renderer;
 	}
 
@@ -125,7 +125,7 @@ export class App {
 			Tea.Shader.lineVertexShaderSource,
 			Tea.Shader.lineFragmentShaderSource
 		);
-		renderer.shader = shader;
+		renderer.material.shader = shader;
 		return renderer;
 	}
 
@@ -158,7 +158,7 @@ export class App {
 		const shader = this.createDefaultShader();
 		const mesh = Tea.Primitives.createQuadMesh();
 		const renderer = object3d.addComponent(Tea.MeshRenderer);
-		renderer.shader = shader;
+		renderer.material.shader = shader;
 		renderer.mesh = mesh;
 		object3d.name = "Quad";
 		return object3d;
@@ -169,7 +169,7 @@ export class App {
 		const shader = this.createDefaultShader();
 		const mesh = Tea.Primitives.createCubeMesh();
 		const renderer = object3d.addComponent(Tea.MeshRenderer);
-		renderer.shader = shader;
+		renderer.material.shader = shader;
 		renderer.mesh = mesh;
 		object3d.name = "Cube";
 		return object3d;
@@ -180,7 +180,7 @@ export class App {
 		const shader = this.createDefaultShader();
 		const mesh = Tea.Primitives.createSphereMesh(10, 10);
 		const renderer = object3d.addComponent(Tea.MeshRenderer);
-		renderer.shader = shader;
+		renderer.material.shader = shader;
 		renderer.mesh = mesh;
 		object3d.name = "Sphere";
 		return object3d;
@@ -191,7 +191,7 @@ export class App {
 		const shader = this.createDefaultShader();
 		const mesh = Tea.Primitives.createCylinderMesh(20);
 		const renderer = object3d.addComponent(Tea.MeshRenderer);
-		renderer.shader = shader;
+		renderer.material.shader = shader;
 		renderer.mesh = mesh;
 		object3d.name = "Cylinder";
 		return object3d;
@@ -202,7 +202,7 @@ export class App {
 		const shader = this.createDefaultShader();
 		const mesh = Tea.Primitives.createPlaneMesh(10);
 		const renderer = object3d.addComponent(Tea.MeshRenderer);
-		renderer.shader = shader;
+		renderer.material.shader = shader;
 		renderer.mesh = mesh;
 		object3d.name = "Plane";
 		return object3d;
@@ -213,7 +213,7 @@ export class App {
 		const shader = this.createDefaultShader();
 		const mesh = Tea.Primitives.createCapsuleMesh(10, 10);
 		const renderer = object3d.addComponent(Tea.MeshRenderer);
-		renderer.shader = shader;
+		renderer.material.shader = shader;
 		renderer.mesh = mesh;
 		object3d.name = "Capsule";
 		return object3d;
@@ -229,9 +229,9 @@ export class App {
 		);
 		const mesh = new Tea.TextMesh(this);
 		const renderer = object3d.addComponent(Tea.MeshRenderer);
-		renderer.shader = shader;
+		renderer.material.mainTexture = mesh.texture;
+		renderer.material.shader = shader;
 		renderer.mesh = mesh;
-		shader.texture = mesh.texture;
 		object3d.name = "TextMesh";
 		return object3d;
 	}
