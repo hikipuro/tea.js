@@ -292,39 +292,55 @@ export class Matrix4x4 extends Array<number> {
 		return m;
 	}
 
+	/** m00 == this[0] */
 	get m00(): number		{ return this[0]; }
 	set m00(value: number)	{ this[0] = value; }
+	/** m10 == this[1] */
 	get m10(): number		{ return this[1]; }
 	set m10(value: number)	{ this[1] = value; }
+	/** m20 == this[2] */
 	get m20(): number		{ return this[2]; }
 	set m20(value: number)	{ this[2] = value; }
+	/** m30 == this[3] */
 	get m30(): number		{ return this[3]; }
 	set m30(value: number)	{ this[3] = value; }
 
+	/** m01 == this[4] */
 	get m01(): number		{ return this[4]; }
 	set m01(value: number)	{ this[4] = value; }
+	/** m11 == this[5] */
 	get m11(): number		{ return this[5]; }
 	set m11(value: number)	{ this[5] = value; }
+	/** m21 == this[6] */
 	get m21(): number		{ return this[6]; }
 	set m21(value: number)	{ this[6] = value; }
+	/** m31 == this[7] */
 	get m31(): number		{ return this[7]; }
 	set m31(value: number)	{ this[7] = value; }
 	
+	/** m02 == this[8] */
 	get m02(): number		{ return this[8]; }
 	set m02(value: number)	{ this[8] = value; }
+	/** m12 == this[9] */
 	get m12(): number		{ return this[9]; }
 	set m12(value: number)	{ this[9] = value; }
+	/** m22 == this[10] */
 	get m22(): number		{ return this[10]; }
 	set m22(value: number)	{ this[10] = value; }
+	/** m32 == this[11] */
 	get m32(): number		{ return this[11]; }
 	set m32(value: number)	{ this[11] = value; }
 
+	/** m03 == this[12] */
 	get m03(): number		{ return this[12]; }
 	set m03(value: number)	{ this[12] = value; }
+	/** m13 == this[13] */
 	get m13(): number		{ return this[13]; }
 	set m13(value: number)	{ this[13] = value; }
+	/** m23 == this[14] */
 	get m23(): number		{ return this[14]; }
 	set m23(value: number)	{ this[14] = value; }
+	/** m33 == this[15] */
 	get m33(): number		{ return this[15]; }
 	set m33(value: number)	{ this[15] = value; }
 
@@ -438,6 +454,14 @@ export class Matrix4x4 extends Array<number> {
 		//*/
 	}
 
+	getValue(row: number, column: number): number {
+		return this[row + column * 4];
+	}
+
+	setValue(row: number, column: number, value: number): void {
+		this[row + column * 4] = value;
+	}
+
 	equals(matrix: Matrix4x4): boolean {
 		if (matrix == null) {
 			return false;
@@ -513,6 +537,50 @@ export class Matrix4x4 extends Array<number> {
 		this[9]  *= -1;
 		this[10] *= -1;
 		this[11] *= -1;
+	}
+
+	toQuaternion(): Tea.Quaternion {
+		var trace = this[0] + this[5] + this[10];
+		if (trace > 0) {
+			var s = Math.sqrt(trace + 1);
+			var t = 0.5 / s;
+			return new Tea.Quaternion(
+				(this.m21 - this.m12) * t,
+				(this.m02 - this.m20) * t,
+				(this.m10 - this.m01) * t,
+				s * 0.5
+			);
+		}
+
+		var i = 0;
+		if (this.m11 > this.m00) {
+			i = 1;
+		}
+		if (this.m22 > this.getValue(i, i)) {
+			i = 2;
+		}
+
+		var next = [1, 2, 0];
+		var j = next[i];
+		var k = next[j];
+
+		var s = Math.sqrt(
+			this.getValue(i, i) -
+			this.getValue(j, j) -
+			this.getValue(k, k) + 1
+		);
+
+		var t = s;
+		if (s != 0) {
+			t = 0.5 / s;
+		}
+
+		var q = new Tea.Quaternion();
+		q[i] = s * 0.5;
+		q[j] = (this.getValue(j, i) + this.getValue(i, j)) * t;
+		q[k] = (this.getValue(k, i) + this.getValue(i, k)) * t;
+		q[3] = (this.getValue(k, j) - this.getValue(j, k)) * t;
+		return q;
 	}
 
 	toString(): string {

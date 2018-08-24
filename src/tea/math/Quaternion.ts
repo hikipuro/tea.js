@@ -80,16 +80,25 @@ export class Quaternion extends Array<number> {
 	}
 
 	static lookRotation(forward: Tea.Vector3, upwards: Tea.Vector3 = Tea.Vector3.up): Quaternion {
-		Tea.Vector3.orthoNormalize(forward, upwards);
-		var right = upwards.cross(forward);
-		var w = Math.sqrt(1 + right.x + upwards.y + forward.z) * 0.5;
-		var w4 = 1 / (4 * w);
-		var x = (upwards.z - forward.y) * w4;
-		var y = (forward.x - right.z) * w4;
-		var z = (right.y - upwards.x) * w4;
+		var f = forward.clone();
+		var u = upwards.clone();
+		Tea.Vector3.orthoNormalize(f, u);
+		var right = u.cross(f);
+		var w = Math.sqrt(1 + right.x + u.y + f.z) * 0.5;
+		if (isNaN(w)) {
+			w = 0;
+		}
+		var w4 = 0;
+		if (w != 0) {
+			w4 = 1 / (4 * w);
+		}
+		var x = (u.z - f.y) * w4;
+		var y = (f.x - right.z) * w4;
+		var z = (right.y - u.x) * w4;
 		return new Quaternion(x, y, z, w);
 	}
 
+	/** x == this[0] */
 	get x(): number {
 		return this[0];
 	}
@@ -97,6 +106,7 @@ export class Quaternion extends Array<number> {
 		this[0] = value;
 	}
 
+	/** y == this[1] */
 	get y(): number {
 		return this[1];
 	}
@@ -104,6 +114,7 @@ export class Quaternion extends Array<number> {
 		this[1] = value;
 	}
 
+	/** z == this[2] */
 	get z(): number {
 		return this[2];
 	}
@@ -111,6 +122,7 @@ export class Quaternion extends Array<number> {
 		this[2] = value;
 	}
 
+	/** w == this[3] */
 	get w(): number {
 		return this[3];
 	}
@@ -287,5 +299,41 @@ export class Quaternion extends Array<number> {
 			this.y * value.y +
 			this.z * value.z +
 			this.w * value.w;
+	}
+
+	lerp(q: Quaternion, t: number): Quaternion {
+		t = Tea.Mathf.clamp01(t);
+		return this.lerpUnclamped(q, t);
+	}
+
+	lerpUnclamped(q: Quaternion, t: number): Quaternion {
+		var u = 1 - t;
+		var q = new Quaternion(
+			this.x * u + q.x * t,
+			this.y * u + q.y * t,
+			this.z * u + q.z * t,
+			this.w * u + q.w * t
+		);
+		return q.normalized;
+	}
+
+	slerp(q: Quaternion, t: number): Quaternion {
+		t = Tea.Mathf.clamp01(t);
+		return this.slerpUnclamped(q, t);
+	}
+
+	slerpUnclamped(q: Quaternion, t: number): Quaternion {
+		var a = Math.acos(this.dot(q));
+		var u = 1 - t;
+		var sa = Math.sin(a);
+		var w1 = Math.sin(t * a) / sa;
+		var w2 = Math.sin(u * a) / sa;
+		var q = new Quaternion(
+			this.x * w2 + q.x * w1,
+			this.y * w2 + q.y * w1,
+			this.z * w2 + q.z * w1,
+			this.w * w2 + q.w * w1
+		);
+		return q.normalized;
 	}
 }
