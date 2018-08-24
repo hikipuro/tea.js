@@ -104,6 +104,7 @@ export class Vector3 extends Array<number> {
 		tangent.set(e2.x, e2.y, e2.z);
 	}
 
+	/** x == this[0] */
 	get x(): number {
 		return this[0];
 	}
@@ -111,6 +112,7 @@ export class Vector3 extends Array<number> {
 		this[0] = value;
 	}
 
+	/** y == this[1] */
 	get y(): number {
 		return this[1];
 	}
@@ -118,6 +120,7 @@ export class Vector3 extends Array<number> {
 		this[1] = value;
 	}
 
+	/** z == this[2] */
 	get z(): number {
 		return this[2];
 	}

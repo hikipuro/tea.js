@@ -532,6 +532,36 @@ export class Matrix4x4 extends Array<number> {
 		}
 	}
 
+	mul$(value: Matrix4x4): void {
+		if (value == null) {
+			return null;
+		}
+		var l00 = this[0],   l10 = this[1],   l20 = this[2],   l30 = this[3];
+		var l01 = this[4],   l11 = this[5],   l21 = this[6],   l31 = this[7];
+		var l02 = this[8],   l12 = this[9],   l22 = this[10],  l32 = this[11];
+		var l03 = this[12],  l13 = this[13],  l23 = this[14],  l33 = this[15];
+		var r00 = value[0],  r10 = value[1],  r20 = value[2],  r30 = value[3];
+		var r01 = value[4],  r11 = value[5],  r21 = value[6],  r31 = value[7];
+		var r02 = value[8],  r12 = value[9],  r22 = value[10], r32 = value[11];
+		var r03 = value[12], r13 = value[13], r23 = value[14], r33 = value[15];
+		this[0]  = l00 * r00 + l01 * r10 + l02 * r20 + l03 * r30;
+		this[1]  = l10 * r00 + l11 * r10 + l12 * r20 + l13 * r30;
+		this[2]  = l20 * r00 + l21 * r10 + l22 * r20 + l23 * r30;
+		this[3]  = l30 * r00 + l31 * r10 + l32 * r20 + l33 * r30;
+		this[4]  = l00 * r01 + l01 * r11 + l02 * r21 + l03 * r31;
+		this[5]  = l10 * r01 + l11 * r11 + l12 * r21 + l13 * r31;
+		this[6]  = l20 * r01 + l21 * r11 + l22 * r21 + l23 * r31;
+		this[7]  = l30 * r01 + l31 * r11 + l32 * r21 + l33 * r31;
+		this[8]  = l00 * r02 + l01 * r12 + l02 * r22 + l03 * r32;
+		this[9]  = l10 * r02 + l11 * r12 + l12 * r22 + l13 * r32;
+		this[10] = l20 * r02 + l21 * r12 + l22 * r22 + l23 * r32;
+		this[11] = l30 * r02 + l31 * r12 + l32 * r22 + l33 * r32;
+		this[12] = l00 * r03 + l01 * r13 + l02 * r23 + l03 * r33;
+		this[13] = l10 * r03 + l11 * r13 + l12 * r23 + l13 * r33;
+		this[14] = l20 * r03 + l21 * r13 + l22 * r23 + l23 * r33;
+		this[15] = l30 * r03 + l31 * r13 + l32 * r23 + l33 * r33;
+	}
+
 	toggleHand(): void {
 		this[8]  *= -1;
 		this[9]  *= -1;

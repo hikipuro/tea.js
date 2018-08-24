@@ -36,14 +36,16 @@ export class Object3D {
 
 	get localToWorldMatrix(): Tea.Matrix4x4 {
 		if (this.parent != null) {
-			var m = this.parent.localToWorldMatrix;
-			m = m.mul(Tea.Matrix4x4.trs(
+			var m1 = this.parent.localToWorldMatrix;
+			m1.toggleHand();
+			var m2 = Tea.Matrix4x4.trs(
 				this.position,
 				this.rotation,
 				this.scale
-			));
-			m.toggleHand();
-			return m;
+			);
+			m1.mul$(m2);
+			m1.toggleHand();
+			return m1;
 		}
 		var m = Tea.Matrix4x4.trs(
 			this.position,

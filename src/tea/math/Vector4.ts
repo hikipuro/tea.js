@@ -34,6 +34,7 @@ export class Vector4 extends Array<number> {
 		return new Vector4(-Infinity, -Infinity, -Infinity, -Infinity);
 	}
 
+	/** x == this[0] */
 	get x(): number {
 		return this[0];
 	}
@@ -41,6 +42,7 @@ export class Vector4 extends Array<number> {
 		this[0] = value;
 	}
 
+	/** y == this[1] */
 	get y(): number {
 		return this[1];
 	}
@@ -48,6 +50,7 @@ export class Vector4 extends Array<number> {
 		this[1] = value;
 	}
 
+	/** z == this[2] */
 	get z(): number {
 		return this[2];
 	}
@@ -55,6 +58,7 @@ export class Vector4 extends Array<number> {
 		this[2] = value;
 	}
 
+	/** w == this[3] */
 	get w(): number {
 		return this[3];
 	}

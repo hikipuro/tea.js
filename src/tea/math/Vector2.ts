@@ -13,6 +13,7 @@ export class Vector2 extends Array<number> {
 		return new Vector2(1, 1);
 	}
 
+	/** x == this[0] */
 	get x(): number {
 		return this[0];
 	}
@@ -20,6 +21,7 @@ export class Vector2 extends Array<number> {
 		this[0] = value;
 	}
 
+	/** y == this[1] */
 	get y(): number {
 		return this[1];
 	}

@@ -84,9 +84,10 @@ export class Quaternion extends Array<number> {
 		var u = upwards.clone();
 		Tea.Vector3.orthoNormalize(f, u);
 		var right = u.cross(f);
-		var w = Math.sqrt(1 + right.x + u.y + f.z) * 0.5;
-		if (isNaN(w)) {
-			w = 0;
+		var w = 0;
+		var pw = 1 + right.x + u.y + f.z;
+		if (pw >= 0) {
+			w = Math.sqrt(pw) * 0.5;
 		}
 		var w4 = 0;
 		if (w != 0) {
@@ -150,6 +151,25 @@ export class Quaternion extends Array<number> {
 			Tea.degrees(ay),
 			Tea.degrees(az)
 		);
+	}
+	set eulerAngles(value: Tea.Vector3) {
+		var x = Tea.radians(value.x * 0.5);
+		var y = Tea.radians(value.y * 0.5);
+		var z = Tea.radians(value.z * 0.5);
+
+		var sin = Math.sin, cos = Math.cos;
+		var sx = sin(x), sy = sin(y), sz = sin(z);
+		var cx = cos(x), cy = cos(y), cz = cos(z);
+
+		var ax = cy * sx;
+		var ay = cx * sy;
+		var az = -sx * sy;
+		var aw = cy * cx;
+		
+		this.x = cz * ax + ay * sz;
+		this.y = cz * ay - sz * ax;
+		this.z = aw * sz + cz * az;
+		this.w = aw * cz - az * sz;
 	}
 
 	get magnitude(): number {
