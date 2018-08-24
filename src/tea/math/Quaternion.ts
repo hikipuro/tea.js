@@ -211,6 +211,25 @@ export class Quaternion extends Array<number> {
 			&& this.w === value.w;
 	}
 
+	toMatrix4x4(): Tea.Matrix4x4 {
+		var x = this.x, y = this.y, z = this.z, w = this.w;
+		var xx = x * x, yy = y * y, zz = z * z;
+		var xy = x * y, xz = x * z, yz = y * z;
+		var wx = w * x, wy = w * y, wz = w * z;
+		var m = new Tea.Matrix4x4();
+		m[0] = 1 - 2 * (yy + zz);
+		m[1] = 2 * (xy + wz);
+		m[2] = 2 * (xz - wy);
+		m[4] = 2 * (xy - wz);
+		m[5] = 1 - 2 * (xx + zz);
+		m[6] = 2 * (yz + wx);
+		m[8] = 2 * (xz + wy);
+		m[9] = 2 * (yz - wx);
+		m[10] = 1 - 2 * (xx + yy);
+		m[15] = 1;
+		return m;
+	}
+
 	toString(): string {
 		const t = new Array(4);
 		for (var i = 0; i < 4; i++) {

@@ -50,6 +50,11 @@ export class Object3D {
 			this.rotation,
 			this.scale
 		);
+		/*
+		var m = Tea.Matrix4x4.translate(this.position);
+		m = m.mul(this.rotation.toMatrix4x4());
+		m = m.mul(Tea.Matrix4x4.scale(this.scale));
+		//*/
 		m.toggleHand();
 		return m;
 	}
