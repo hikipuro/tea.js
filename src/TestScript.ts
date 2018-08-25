@@ -17,7 +17,7 @@ export class TestScript extends Tea.Script {
 		//console.log(this.count, this.position);
 
 		//this.rotation.x = Tea.radians(this.count / 3);
-		this.rotation = this.rotation.mul(Tea.Quaternion.euler(0, 3, 0));// Tea.radians(this.speedY * 2);
+		this.localRotation = this.localRotation.mul(Tea.Quaternion.euler(0, 3, 0));// Tea.radians(this.speedY * 2);
 		var r = this.object3d.getComponent(Tea.Renderer);
 		var i = Math.sin(this.count / 40);
 		r.material.mainTextureOffset = new Tea.Vector2(0, i);
@@ -44,7 +44,7 @@ export class TestScript extends Tea.Script {
 			//this.position.y = 0.5 + mouse.y / this.app.height;
 			let p = new Tea.Vector3(mouse.x, mouse.y, 10);
 			p = this.object3d.scene.camera.screenToWorldPoint(p);
-			this.position = p;
+			this.localPosition = p;
 			//console.log(p.toString());
 		}
 		if (mouse.isDown(0)) {

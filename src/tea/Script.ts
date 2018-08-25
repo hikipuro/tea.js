@@ -7,18 +7,18 @@ export class Script {
 	constructor() {
 	}
 
-	get position(): Tea.Vector3 {
-		return this.object3d.position;
+	get localPosition(): Tea.Vector3 {
+		return this.object3d.localPosition;
 	}
-	set position(value: Tea.Vector3) {
-		this.object3d.position = value;
+	set localPosition(value: Tea.Vector3) {
+		this.object3d.localPosition = value;
 	}
 
-	get rotation(): Tea.Quaternion {
-		return this.object3d.rotation;
+	get localRotation(): Tea.Quaternion {
+		return this.object3d.localRotation;
 	}
-	set rotation(value: Tea.Quaternion) {
-		this.object3d.rotation = value;
+	set localRotation(value: Tea.Quaternion) {
+		this.object3d.localRotation = value;
 	}
 
 	start(): void {

@@ -8,19 +8,20 @@ const defaultVertexShaderSource = `
 	uniform mat4 TEA_MATRIX_MVP;
 	//uniform mat4 invMatrix;
 	uniform vec3 lightDirection;
-	uniform vec4 ambientColor;
+	uniform vec3 eyeDirection;
+	uniform vec3 ambientColor;
 	varying vec2 vTexCoord;
 	varying vec4 vColor;
-	varying vec4 vDiffuse;
 
 	void main() {
 		vec3 mvpNormal = normalize(TEA_MATRIX_MVP * vec4(normal, 0.0)).xyz;
-		float diffuse = clamp(dot(mvpNormal, lightDirection), 0.0, 1.0);
-		//float diffuse = dot(normal, invLight);
+		vec3 diffuse = vec3(max(0.0, dot(mvpNormal, lightDirection)));
+		vec3 halfLE = normalize(eyeDirection + lightDirection);
+		vec3 specular = vec3(5.0 * pow(max(0.0, dot(reflect(lightDirection, mvpNormal), eyeDirection)), 5.5));
+		vec4 light = vec4(ambientColor + diffuse + specular, 1.0);
+		//vec4 light = vec4(ambientColor + specular, 1.0);
+		vColor = light;
 		vTexCoord = texcoord;
-		vColor = color;
-		vDiffuse = vec4(vec3(diffuse), 1.0) + ambientColor;
-		//vDiffuse = vec4(vec3(diffuse), 1.0);
 		gl_Position = TEA_MATRIX_MVP * vertex;
 	}
 `;
@@ -34,14 +35,13 @@ const defaultFragmentShaderSource = `
 	uniform bool useColor;
 	varying vec2 vTexCoord;
 	varying vec4 vColor;
-	varying vec4 vDiffuse;
 
 	void main() {
 		vec4 tex = texture2D(_MainTex, (uv_MainTex + vTexCoord) / _MainTex_ST);
 		if (useColor) {
-			gl_FragColor = tex * _Color * vDiffuse * vColor;
+			gl_FragColor = tex * _Color * vColor;
 		} else {
-			gl_FragColor = tex * _Color * vDiffuse;
+			gl_FragColor = tex * vColor;
 		}
 		//gl_FragColor = vec4(1.0, 1.0, 1.0, 1.0);
 	}

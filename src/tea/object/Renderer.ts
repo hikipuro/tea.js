@@ -227,7 +227,9 @@ export class Renderer extends Component {
 		var projection = camera.projectionMatrix;
 
 		var mvMatrix = view.mul(model);
+		//var mvMatrix = model.mul(view);
 		var mvpMatrix = projection.mul(mvMatrix);
+		//var mvpMatrix = mvMatrix.mul(projection);
 		var vpMatrix = projection.mul(view);
 		//var invMatrix = mvpMatrix.inverse;
 
@@ -313,7 +315,8 @@ export class Renderer extends Component {
 		light = light.normalized;
 
 		this._uniforms.uniform3fv("lightDirection", light);
-		this._uniforms.uniform4fv("ambientColor", [0.2, 0.2, 0.2, 0.0]);
+		this._uniforms.uniform3fv("eyeDirection", new Tea.Vector3(0, 0, 10).normalized);
+		this._uniforms.uniform3fv("ambientColor", [0.2, 0.2, 0.2]);
 	}
 
 	protected setTexture(texture: Tea.Texture): void {

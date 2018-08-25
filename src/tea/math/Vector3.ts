@@ -96,12 +96,24 @@ export class Vector3 extends Array<number> {
 		return a.scale(b);
 	}
 
-	static orthoNormalize(normal: Vector3, tangent: Vector3): void {
-		var e1 = normal.mul(1 / normal.magnitude);
+	static orthoNormalize(normal: Vector3, tangent: Vector3): any {
+		var nm = normal.magnitude;
+		var e1 = Tea.Vector3.zero;
+		if (nm != 0) {
+			e1 = normal.mul(1 / nm);
+		}
 		var f2 = tangent.sub(e1.mul(tangent.dot(e1)));
-		var e2 = f2.mul(1 / f2.magnitude);
-		normal.set(e1.x, e1.y, e1.z);
-		tangent.set(e2.x, e2.y, e2.z);
+		var f2m = f2.magnitude;
+		var e2 = Tea.Vector3.zero;
+		if (f2m != 0) {
+			e2 = f2.mul(1 / f2m);
+		}
+		//normal.set(e1.x, e1.y, e1.z);
+		//tangent.set(e2.x, e2.y, e2.z);
+		return {
+			normal: e1,
+			tangent: e2
+		};
 	}
 
 	/** x == this[0] */

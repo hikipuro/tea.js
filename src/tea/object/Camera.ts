@@ -78,6 +78,7 @@ export class Camera extends Component {
 				this.farClipPlane
 			);
 		}
+		//projection.toggleHand();
 		this._projectionMatrix = projection;
 
 		this.clear();

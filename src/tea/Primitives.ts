@@ -191,7 +191,7 @@ export class Primitives {
 				let normal = new Vector3(vx, vy, vz);
 				normal = normal.normalized;
 				normals.push(normal.x, normal.y, normal.z);
-				console.log(vy.toFixed(3), sy.toFixed(3), (-vy + 0.5).toFixed(3));
+				//console.log(vy.toFixed(3), sy.toFixed(3), (-vy + 0.5).toFixed(3));
 				//console.log(vx.toFixed(3), vy.toFixed(3), vz.toFixed(3));
 			}
 			for (var x = 0; x <= lengthX; x++) {
@@ -385,7 +385,6 @@ export class Primitives {
 				normals.push(normal.x, normal.y, normal.z);
 				//uv.push(1 - (x / (lengthX * 2)), 1 - (y / lengthY * 0.5));
 				uv.push(x / (lengthX * 2), 1 - (y / lengthY * 0.5));
-				console.log("uv", 1 - (x / (lengthX * 2)), 1 - (y / lengthY * 0.5));
 			}
 		}
 
@@ -415,7 +414,6 @@ export class Primitives {
 			normals.push(normal.x, normal.y, normal.z);
 			uv.push(i / lengthX, 0.25);
 			uv.push(i / lengthX, 0.75);
-			console.log("uv 2", i / lengthX, 0.25);
 		}
 		for (var i = 0; i < lengthX * 2; i += 2) {
 			const n = st + i;
@@ -425,7 +423,7 @@ export class Primitives {
 			//triangles.push(n + 1, n + 2, n + 3);
 		}
 
-		console.log("capsule vertex", vertices.length / 3);
+		//console.log("capsule vertex", vertices.length / 3);
 
 		const mesh = new Mesh();
 		mesh.setVertices(vertices);

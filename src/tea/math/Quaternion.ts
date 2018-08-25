@@ -80,12 +80,15 @@ export class Quaternion extends Array<number> {
 	}
 
 	static lookRotation(forward: Tea.Vector3, upwards: Tea.Vector3 = Tea.Vector3.up): Quaternion {
-		var f = forward.clone();
-		var u = upwards.clone();
-		Tea.Vector3.orthoNormalize(f, u);
-		var right = u.cross(f);
+		if (forward.approxEquals(upwards)) {
+			return Quaternion.fromToRotation(Tea.Vector3.forward, upwards);
+		}
+		var n = Tea.Vector3.orthoNormalize(forward, upwards);
+		forward = n.normal;
+		upwards = n.tangent;
+		var right = upwards.cross(forward);
 		var w = 0;
-		var pw = 1 + right.x + u.y + f.z;
+		var pw = 1 + (right.x + upwards.y + forward.z);
 		if (pw >= 0) {
 			w = Math.sqrt(pw) * 0.5;
 		}
@@ -93,9 +96,9 @@ export class Quaternion extends Array<number> {
 		if (w != 0) {
 			w4 = 1 / (4 * w);
 		}
-		var x = (u.z - f.y) * w4;
-		var y = (f.x - right.z) * w4;
-		var z = (right.y - u.x) * w4;
+		var x = (upwards.z - forward.y) * w4;
+		var y = (forward.x - right.z) * w4;
+		var z = (right.y - upwards.x) * w4;
 		return new Quaternion(x, y, z, w);
 	}
 
