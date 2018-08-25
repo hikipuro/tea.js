@@ -348,13 +348,14 @@ export class Primitives {
 			const vy = cos(pi * y / lengthY) * 0.5 + 0.5;
 			const sy = sin(pi * y / lengthY) * 0.5;
 			for (var x = 0; x <= lengthX * 2; x++) {
-				const vx = cos(pi * x / lengthX) * sy;
+				const vx = -cos(pi * x / lengthX) * sy;
 				const vz = sin(pi * x / lengthX) * sy;
 				vertices.push(vx, vy, vz);
 				let normal = new Vector3(vx, vy - 0.5, vz);
 				normal = normal.normalized;
 				normals.push(normal.x, normal.y, normal.z);
-				uv.push(1 - (x / (lengthX * 2)), y / lengthY * 0.5);
+				//uv.push(1 - (x / (lengthX * 2)), y / lengthY * 0.5);
+				uv.push(x / (lengthX * 2), y / lengthY * 0.5);
 			}
 		}
 
@@ -363,8 +364,10 @@ export class Primitives {
 			const ny = (y + 1) * lengthX;
 			for (var x = 0; x < lengthX - 1; x++) {
 				const nx = x + y * lengthX;
-				triangles.push(nx, nx + 1, ny + x);
-				triangles.push(ny + x, nx + 1, ny + x + 1);
+				//triangles.push(nx, nx + 1, ny + x);
+				//triangles.push(ny + x, nx + 1, ny + x + 1);
+				triangles.push(nx + 1, nx, ny + x);
+				triangles.push(nx + 1, ny + x, ny + x + 1);
 			}
 		}
 
@@ -374,13 +377,15 @@ export class Primitives {
 			const vy = -cos(pi * y / lengthY) * 0.5 - 0.5;
 			const sy = sin(pi * y / lengthY) * 0.5;
 			for (var x = 0; x <= lengthX * 2; x++) {
-				const vx = cos(pi * x / lengthX) * sy;
+				const vx = -cos(pi * x / lengthX) * sy;
 				const vz = sin(pi * x / lengthX) * sy;
 				vertices.push(vx, vy, vz);
 				let normal = new Vector3(vx, vy + 0.5, vz);
 				normal = normal.normalized;
 				normals.push(normal.x, normal.y, normal.z);
-				uv.push(1 - (x / (lengthX * 2)), 1 - (y / lengthY * 0.5));
+				//uv.push(1 - (x / (lengthX * 2)), 1 - (y / lengthY * 0.5));
+				uv.push(x / (lengthX * 2), 1 - (y / lengthY * 0.5));
+				console.log("uv", 1 - (x / (lengthX * 2)), 1 - (y / lengthY * 0.5));
 			}
 		}
 
@@ -389,30 +394,35 @@ export class Primitives {
 			const ny = st + (y + 1) * lengthX;
 			for (var x = 0; x < lengthX - 1; x++) {
 				const nx = st + x + y * lengthX;
-				triangles.push(nx + 1, nx, ny + x);
-				triangles.push(nx + 1, ny + x, ny + x + 1);
+				//triangles.push(nx + 1, nx, ny + x);
+				//triangles.push(nx + 1, ny + x, ny + x + 1);
+				triangles.push(nx, nx + 1, ny + x);
+				triangles.push(nx + 1, ny + x + 1, ny + x);
 			}
 		}
 
 		st = vertices.length / 3;
 		lengthX = hLines * 2;
 		for (var i = 0; i <= lengthX; i++) {
-			const vx = cos(2 * pi * i / lengthX) * 0.5;
+			const vx = -cos(2 * pi * i / lengthX) * 0.5;
 			const vz = sin(2 * pi * i / lengthX) * 0.5;
-			vertices.push(vx, -0.5, vz);
 			vertices.push(vx, 0.5, vz);
+			vertices.push(vx, -0.5, vz);
 
 			let normal = new Vector3(vx, 0, vz);
 			normal = normal.normalized;
 			normals.push(normal.x, normal.y, normal.z);
 			normals.push(normal.x, normal.y, normal.z);
-			uv.push(-i / lengthX, 0.75);
-			uv.push(-i / lengthX, 0.25);
+			uv.push(i / lengthX, 0.25);
+			uv.push(i / lengthX, 0.75);
+			console.log("uv 2", i / lengthX, 0.25);
 		}
 		for (var i = 0; i < lengthX * 2; i += 2) {
 			const n = st + i;
 			triangles.push(n, n + 1, n + 2);
 			triangles.push(n + 1, n + 3, n + 2);
+			//triangles.push(n + 1, n, n + 2);
+			//triangles.push(n + 1, n + 2, n + 3);
 		}
 
 		console.log("capsule vertex", vertices.length / 3);
