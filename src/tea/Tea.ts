@@ -1,10 +1,12 @@
-import { Line } from "./math/Line";
-import { LineSegment } from "./math/LineSegment";
+import { AABB } from "./collision/AABB";
+import { Line } from "./collision/Line";
+import { LineSegment } from "./collision/LineSegment";
+import { Plane } from "./collision/Plane";
+import { Polygon } from "./collision/Polygon";
+import { Sphere } from "./collision/Sphere";
+
 import { Mathf } from "./math/Mathf";
-import { Matrix4 } from "./math/Matrix4";
 import { Matrix4x4 } from "./math/Matrix4x4";
-import { Plane } from "./math/Plane";
-import { Polygon } from "./math/Polygon";
 import { Quaternion } from "./math/Quaternion";
 import { Rect } from "./math/Rect";
 import { Vector2 } from "./math/Vector2";
@@ -57,13 +59,15 @@ import { Scene } from "./Scene";
 import { Script } from "./Script";
 
 export {
+	AABB,
 	Line,
 	LineSegment,
-	Mathf,
-	//Matrix4,
-	Matrix4x4,
 	Plane,
 	Polygon,
+	Sphere,
+
+	Mathf,
+	Matrix4x4,
 	Quaternion,
 	Rect,
 	Vector2,
