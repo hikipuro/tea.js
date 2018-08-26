@@ -14,11 +14,12 @@ export class Main {
 	public count: number;
 
 	constructor() {
-		console.log("test test");
-		console.log("devicePixelRatio", Tea.Screen.dpi);
-		console.log("width", Tea.Screen.width);
-		console.log("height", Tea.Screen.height);
-		console.log(Tea.Screen.fullscreen);
+		console.log(Tea.App.systemLanguage);
+		console.log(Tea.App.absoluteURL);
+		//console.log("devicePixelRatio", Tea.Screen.dpi);
+		//console.log("width", Tea.Screen.width);
+		//console.log("height", Tea.Screen.height);
+		//console.log(Tea.Screen.fullscreen);
 
 		const b = document.querySelector("#b");
 		b.addEventListener("click", () => {
@@ -37,11 +38,9 @@ export class Main {
 			this.app.canvas.height = document.body.clientHeight;
 		});
 
-		console.log("aspectRatio", this.app.aspectRatio);
-		console.log("params", this.app.parameters);
-		console.log("contextAttributes", this.app.contextAttributes);
-
-		console.log("rect", (new Tea.Rect(10, 10, 100, 100).toString()));
+		//console.log("aspectRatio", this.app.aspectRatio);
+		//console.log("params", this.app.parameters);
+		//console.log("contextAttributes", this.app.contextAttributes);
 
 		/*
 		setTimeout(() => {
@@ -95,16 +94,6 @@ export class Main {
 		}, 1000);
 		//*/
 
-		let mm3 = Matrix4x4.identity;
-		//mm3[1] = 2;
-		//mm3 = mm3.mul(Matrix4x4.translate(1,2,3));
-		//mm3 = mm3.mul(Matrix4x4.rotateZXY(
-		//	new Tea.Vector3(Tea.radians(10), Tea.radians(20), Tea.radians(30))
-		//));
-		mm3 = Tea.Matrix4x4.perspective(60, 1, 0.3, 1000);
-		console.log("mm34", mm3.toString(), mm3);
-		console.log("mm34", mm3.m10);
-
 		//console.log("perspective");
 		//console.log(Tea.Matrix4.perspective(60, 1, 0.3, 1000).toString());
 
@@ -119,49 +108,6 @@ export class Main {
 		mmm.setColumn(0, new Tea.Vector4(1, 2, 3, 4));
 		console.log(mm.mul(Tea.Vector4.one));
 		*/
-
-		var l = new Tea.LineSegment();
-		l.point.x = 1;
-		l.point.y = 1;
-		l.direction.x = 2;
-		l.direction.y = 2;
-		console.log("containsPoint", l.closestPoint(new Tea.Vector3(1, 4.5, 0)));
-		//console.log("checker", v.dot());
-
-		var t0 = new Tea.Vector3(1);
-		var t1 = new Tea.Vector3(0, -1);
-		var t2 = new Tea.Vector3(-1, -1);
-		var p0 = new Tea.Vector3(0, -0.51, 0);
-
-		var c0 = t1.sub(t0).cross(p0.sub(t1)).normalized;
-		var c1 = t2.sub(t1).cross(p0.sub(t2)).normalized;
-		var c2 = t0.sub(t2).cross(p0.sub(t0)).normalized;
-		console.log("cross", c0.toString(), c1.toString(), c2.toString());
-
-		var po = new Tea.Polygon();
-		po.addPoint(1, 0, 0);
-		po.addPoint(0, -1, 0);
-		po.addPoint(-1, 0, 0);
-		console.log("cross2", po.containsPoint(0.9, -0.01, 0));
-
-		var l1 = new Tea.Line();
-		l1.point.y = 1;
-		l1.direction.x = 1;
-		var l2 = new Tea.Line();
-		l2.point.z = 0;
-		l2.direction.z = 1;
-		l2.direction.y = 1;
-		console.log("distance", l1.distance(l2));
-
-		//var q = new Tea.Quaternion(0.5, 0.5, -0.5, 0.5);
-		var q = Tea.Quaternion.euler(89, -20, 60);
-		console.log("Quaternion 1", Tea.Quaternion.euler(90, 0, 0));
-		console.log("Quaternion 1", Tea.Quaternion.euler(90, 90, 0));
-		console.log("Quaternion 1", Tea.Quaternion.euler(90, 90, 30));
-		console.log("Quaternion 2", q.toString());
-		console.log("Quaternion 3", q.eulerAngles);
-		console.log("Quaternion 4", q.mul(new Tea.Vector3(2,0,4)));
-		console.log("color", new Tea.Color(0.4, 0.4, 0.4).grayscale);
 
 		var text = new Tea.TextMesh(this.app);
 		document.body.appendChild(text.canvas);
@@ -226,7 +172,7 @@ export class Main {
 
 		const script = new TestScript();
 
-		const cube = this.app.createCube();
+		const cube = Tea.Object3D.createPrimitive(this.app, Tea.PrimitiveType.Cube);
 		cube.name = "cube";
 		cube.position.x = 2;
 		cube.position.y = 2;
@@ -234,16 +180,16 @@ export class Main {
 		cube.scale.x = 2;
 		//cube.scale.y = -1;
 		//cube.scale.z = -1;
-		cube.rotation = Tea.Quaternion.euler(0, 0, 90);
+		cube.localRotation = Tea.Quaternion.euler(0, 0, 90);
 		//cube.rotation.y = Tea.radians(20);
 		//cube.addScript(new Rotate());
 		scene.appendChild(cube);
 
-		const cube2 = this.app.createCube();
+		const cube2 = Tea.Object3D.createPrimitive(this.app, Tea.PrimitiveType.Cube);
 		cube2.name = "cube2";
 		//scene.appendChild(cube2);
 
-		const sphere = this.app.createSphere();
+		const sphere = Tea.Object3D.createPrimitive(this.app, Tea.PrimitiveType.Sphere);
 		//cube2.name = "cube2";
 		sphere.position.x = 1.6;
 		sphere.position.y = 2;
@@ -251,7 +197,7 @@ export class Main {
 		//sphere.addScript(script);
 		//scene.appendChild(sphere);
 
-		const quad = this.app.createQuad();
+		const quad = Tea.Object3D.createPrimitive(this.app, Tea.PrimitiveType.Quad);
 		//cube2.name = "cube2";
 		//plain.position.z = 5;
 		quad.position.y = 1;
@@ -265,24 +211,27 @@ export class Main {
 		scene.appendChild(quad);
 		//this.plain = quad;
 
-		const cylinder = this.app.createCylinder();
+		const cylinder = Tea.Object3D.createPrimitive(this.app, Tea.PrimitiveType.Cylinder);
 		//cylinder.renderer.wireframe = true;
 		//cylinder.rotation.x = Tea.radians(30);
 		//cylinder.addScript(script);
 		//scene.appendChild(cylinder);
 
 		//const plane = this.app.createQuad();
-		const plane = this.app.createPlane();
+		const plane = Tea.Object3D.createPrimitive(this.app, Tea.PrimitiveType.Plane);
 		//plane.renderer.wireframe = true;
 		//plane.position.z = -9;
-		//plane.rotation.x = Tea.radians(90);
+		plane.rotation.eulerAngles = new Tea.Vector3(-20, 0, 0);
 		//plane.addScript(script);
 		//plane.scale.x = 10;
 		//plane.scale.y = 10;
 		//plane.rotation.x = Tea.radians(90);
+		console.log("plane", plane.forward);
+		console.log("plane", plane.up);
+		console.log("plane", plane.right);
 		scene.appendChild(plane);
 
-		const capsule = this.app.createCapsule();
+		const capsule = Tea.Object3D.createPrimitive(this.app, Tea.PrimitiveType.Capsule);
 		//capsule.renderer.wireframe = true;
 		capsule.position.x = 2;
 		capsule.position.y = 2;
@@ -309,6 +258,7 @@ export class Main {
 		//lineRenderer.color = new Tea.Color(1, 0, 0, 1);
 		lines.addScript(new TestScript2());
 		capsule.appendChild(lines);
+		//console.log("scale", lines.scale);
 		//scene.appendChild(lines);
 
 
@@ -323,25 +273,9 @@ export class Main {
 		textmesh.position.z = -6;
 		//scene.appendChild(textmesh);
 
-		var e = new Tea.EventDispatcher();
-		e.setMaxListeners(0);
-		var handler = (a) => {
-			console.log("on event", a);
-		};
-		e.on("event", handler);
-		e.once("event", (a) => {
-			console.log("once event", a);
-		});
-		//e.removeListener("event", handler);
-		e.emit("event2", "bbb", 2);
-		//e.emit("event", "aaa", 2);
-		e.emit("event", "bbb", 2);
-		console.log("names", e.eventNames());
-		console.log("count", e.listenerCount("event"));
-		console.log("count", e.listenerCount(""));
-		console.log("count", e.listenerCount("1"));
-		console.log("count", e.listeners("1"));
-		console.log("count", e.listeners("event"));
+		var wp = scene.camera.viewportToWorldPoint(new Tea.Vector3(0, 0, 0));
+		//var stats = this.app.createStats();
+		//this.app.canvas.parentElement.appendChild(stats.canvas);
 
 		let ray = new Tea.Ray(new Tea.Vector3(0, 1, 0), new Tea.Vector3(0.2, 0.3, 0.4));
 		console.log("test", ray.direction, ray.getPoint(6.5), ray.getPoint(-6.5));
@@ -354,8 +288,8 @@ export class Main {
 		console.log("checker", mt.mul(my).mul(mx).mul(mz).mul(ms).toString());
 		console.log("ortho", Matrix4x4.ortho(5, 400, 10, 100, 0.3, 1000).toString());
 
+		console.log("lookRotation", Tea.Quaternion.lookRotation(new Tea.Vector3(0.01, 1, 0).normalized));
 		console.log("lookRotation", Tea.Quaternion.lookRotation(Tea.Vector3.up));
-		console.log("lookRotation", Tea.Quaternion.lookRotation(Tea.Vector3.forward));
 		console.log("lookRotation", Tea.Quaternion.lookRotation(Tea.Vector3.forward, Tea.Vector3.right.mul(2)));
 		console.log("lookRotation", Tea.Quaternion.lookRotation(Tea.Vector3.forward, new Tea.Vector3(1,2)));
 
@@ -397,6 +331,20 @@ export class Main {
 			//capsule.renderer.shader.texture = texture;
 		});
 		//*/
+
+		var q1 = Tea.Quaternion.euler(90, 0, 45);
+		var q2 = Tea.Quaternion.euler(45, -80, 50);
+		console.log("Quaternion", q1.lerp(q2, 0.4).toString());
+		console.log("Quaternion", q1.slerp(q2, 0.4).toString());
+		console.log("Quaternion", q1.lerp(q2, 1.5).toString());
+		console.log("Quaternion", q1.lerpUnclamped(q2, 1.5).toString());
+
+		var q3 = Tea.Quaternion.euler(-170, 20, -30);
+		q3.eulerAngles = new Tea.Vector3(45, 45, 45);
+		var m1 = q3.toMatrix4x4();
+		console.log("Quaternion 2", q3.toString());
+		console.log("Quaternion 2", m1.toString());
+		console.log("Quaternion 2", m1.toQuaternion().toString());
 
 		//setTimeout(() => {
 			//this.app.stop();

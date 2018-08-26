@@ -26,6 +26,50 @@ export class Object3D {
 		this._components = [];
 	}
 
+	static createPrimitive(app: Tea.App, type: Tea.PrimitiveType): Object3D {
+		var name: string = "";
+		var mesh: Tea.Mesh = null;
+		switch (type) {
+			case Tea.PrimitiveType.Sphere:
+				name = "Sphere";
+				mesh = Tea.Primitives.createSphereMesh(10, 10);
+				break;
+			case Tea.PrimitiveType.Capsule:
+				name = "Capsule";
+				mesh = Tea.Primitives.createCapsuleMesh(10, 10);
+				break;
+			case Tea.PrimitiveType.Cylinder:
+				name = "Cylinder";
+				mesh = Tea.Primitives.createCylinderMesh(20);
+				break;
+			case Tea.PrimitiveType.Cube:
+				name = "Cube";
+				mesh = Tea.Primitives.createCubeMesh();
+				break;
+			case Tea.PrimitiveType.Plane:
+				name = "Plane";
+				mesh = Tea.Primitives.createPlaneMesh(10);
+				break;
+			case Tea.PrimitiveType.Quad:
+				name = "Quad";
+				mesh = Tea.Primitives.createQuadMesh();
+				break;
+			default:
+				return null;
+		}
+		var object3d = new Tea.Object3D(app);
+		var shader = new Tea.Shader(app);
+		shader.attach(
+			Tea.Shader.defaultVertexShaderSource,
+			Tea.Shader.defaultFragmentShaderSource
+		);
+		var renderer = object3d.addComponent(Tea.MeshRenderer);
+		renderer.material.shader = shader;
+		renderer.mesh = mesh;
+		object3d.name = name;
+		return object3d;
+	}
+
 	get position(): Tea.Vector3 {
 		if (this.parent != null) {
 			var p = this.parent.position;

@@ -21,6 +21,7 @@ import { File } from "./util/File";
 import { FilterMode } from "./util/FilterMode";
 import { FontStyle } from "./util/FontStyle";
 import { MatrixChecker } from "./util/MatrixChecker";
+import { PrimitiveType } from "./util/PrimitiveType";
 import { Screen } from "./util/Screen";
 import { Space } from "./util/Space";
 import { Stats } from "./util/Stats";
@@ -84,6 +85,7 @@ export {
 	FilterMode,
 	FontStyle,
 	MatrixChecker,
+	PrimitiveType,
 	Screen,
 	Space,
 	Stats,
