@@ -19,9 +19,17 @@ export class Matrix4x4 extends Array<number> {
 	}
 
 	static fromArray(array: Array<number>, offset: number = 0): Matrix4x4 {
-		const m = new Matrix4x4();
-		for (var i = 0; i < 16; i++) {
-			m[i] = array[i + offset];
+		var m = new Matrix4x4();
+		if (array == null) {
+			return m;
+		}
+		var length = array.length;
+		for (var i = 0; i < length; i++) {
+			var item = array[i + offset];
+			if (item == null) {
+				continue;
+			}
+			m[i] = item;
 		}
 		return m;
 	}
