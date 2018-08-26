@@ -23,6 +23,7 @@ import { FontStyle } from "./util/FontStyle";
 import { MatrixChecker } from "./util/MatrixChecker";
 import { Screen } from "./util/Screen";
 import { Space } from "./util/Space";
+import { Stats } from "./util/Stats";
 import { TextAlignment } from "./util/TextAlignment";
 import { TextAnchor } from "./util/TextAnchor";
 import { TextureDimension } from "./util/TextureDimension";
@@ -85,6 +86,7 @@ export {
 	MatrixChecker,
 	Screen,
 	Space,
+	Stats,
 	TextAlignment,
 	TextAnchor,
 	TextureDimension,

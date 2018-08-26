@@ -314,6 +314,7 @@ class AppRenderer {
 	keyboard: Keyboard;
 	mouse: Mouse;
 	time: Tea.Time;
+	stats: Tea.Stats;
 	protected _handle: number;
 	protected _prevRect: Tea.Rect;
 
@@ -326,6 +327,7 @@ class AppRenderer {
 		this.time = new Tea.Time();
 		this._handle = 0;
 		this._prevRect = new Tea.Rect();
+		this.createStats();
 
 		window.addEventListener("blur", () => {
 			if (this.isStarted && this.isPaused === false) {
@@ -340,6 +342,9 @@ class AppRenderer {
 			}
 			this.isPaused = false;
 		});
+		window.addEventListener("resize", () => {
+			this.stats.updateSize();
+		});
 	}
 
 	start(): void {
@@ -349,6 +354,7 @@ class AppRenderer {
 		this.isStarted = true;
 		this.time.start();
 		if (this.isPaused === false) {
+			this.stats.updateSize();
 			this._handle = requestAnimationFrame(this.update);
 		}
 	}
@@ -369,6 +375,7 @@ class AppRenderer {
 		if (this.currentScene != null) {
 			this.updateScene();
 		}
+		this.stats.update();
 		this._handle = requestAnimationFrame(this.update);
 	}
 
@@ -418,5 +425,11 @@ class AppRenderer {
 			rect.width * width,
 			rect.height * height
 		);
+	}
+
+	protected createStats(): void {
+		var stats = new Tea.Stats(this.app);
+		document.body.appendChild(stats.canvas);
+		this.stats = stats;
 	}
 }
