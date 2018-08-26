@@ -25,6 +25,22 @@ export class App {
 		//this.clear();
 	}
 
+	static get absoluteURL(): string {
+		return location.href;
+	}
+
+	static get isFocused(): boolean {
+		return document.hasFocus();
+	}
+
+	static get systemLanguage(): string {
+		return navigator.language;
+	}
+
+	static get teaVersion(): string {
+		return "0.1.0";
+	}
+
 	get width(): number {
 		return this.canvas.width;
 	}
