@@ -36,6 +36,7 @@ import { Camera } from "./object/Camera";
 import { Collider } from "./object/Collider";
 import { Component } from "./object/Component";
 import { Mesh } from "./object/Mesh";
+import { MeshFilter } from "./object/MeshFilter";
 import { Object3D } from "./object/Object3D";
 import { Ray } from "./object/Ray";
 import { RaycastHit } from "./object/RaycastHit";
@@ -107,6 +108,7 @@ export {
 	Keyboard,
 	Mouse,
 	Mesh,
+	MeshFilter,
 	Object3D,
 	Ray,
 	RaycastHit,

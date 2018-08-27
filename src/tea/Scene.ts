@@ -5,12 +5,14 @@ export class Scene {
 	camera: Tea.Camera;
 	protected _children: Array<Tea.Object3D>;
 	protected _firstTime: boolean;
+	protected _renderers: Array<Tea.Renderer>;
 
 	constructor(app: Tea.App) {
 		this.app = app;
 		this.camera = new Tea.Camera(app);
 		this._children = [];
 		this._firstTime = true;
+		this._renderers = [];
 	}
 
 	get children(): Array<Tea.Object3D> {
@@ -26,43 +28,50 @@ export class Scene {
 	}
 
 	update(): void {
-		this.camera.update();
+		if (this.camera != null) {
+			this.camera.update();
+		}
 
 		if (this._firstTime) {
 			this._firstTime = false;
 			this.start();
 		}
 
-		const children = this.children;
-		const length = this.children.length;
-		for (var i = 0; i < length; i++) {
-			this.updateObject3D(children[i]);
-		}
+		Tea.ArrayUtil.each(this.children, (i, child) => {
+			this.updateObject3D(child);
+		});
+		var renderers = this._renderers.sort((a, b) => {
+			var renderQueueA = a.material.renderQueue;
+			var renderQueueB = b.material.renderQueue;
+			return renderQueueA - renderQueueB;
+		});
+		Tea.ArrayUtil.each(renderers, (i, renderer) => {
+			renderer.render(this.camera);
+		});
+		this._renderers = [];
 	}
 
 	protected start(): void {
-		const children = this.children;
-		const length = this.children.length;
-		for (var i = 0; i < length; i++) {
-			children[i].start();
-		}
+		Tea.ArrayUtil.each(this.children, (i, child) => {
+			child.start();
+		});
 	}
 
 	protected updateObject3D(object3d: Tea.Object3D): void {
-		if (object3d == null || object3d.enabled === false) {
+		if (object3d == null || object3d.isActive === false) {
 			return;
 		}
 		object3d.update();
-		const renderer = object3d.getComponent(Tea.Renderer);
-		if (renderer != null) {
-			renderer.render(this.camera);
+		var renderer = object3d.getComponent(Tea.Renderer);
+		if (renderer != null && this.camera != null) {
+			if (renderer.material != null) {
+				this._renderers.push(renderer);
+			}
 		}
 		if (object3d.children.length > 0) {
-			const children = object3d.children;
-			const length = children.length;
-			for (var i = 0; i < length; i++) {
-				this.updateObject3D(children[i]);
-			}
+			Tea.ArrayUtil.each(object3d.children, (i, child) => {
+				this.updateObject3D(child);
+			});
 		}
 	}
 }

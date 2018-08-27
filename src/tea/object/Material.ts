@@ -42,7 +42,7 @@ export class Material {
 	protected _textures: {[key: string]: Tea.Texture};
 
 	constructor(app: Tea.App) {
-		this.renderQueue = 0;
+		this.renderQueue = 2000;
 		this._uniforms = {};
 		this._textures = {};
 		this.color = Tea.Color.white;

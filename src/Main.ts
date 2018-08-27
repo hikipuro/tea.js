@@ -109,33 +109,6 @@ export class Main {
 		console.log(mm.mul(Tea.Vector4.one));
 		*/
 
-		var text = new Tea.TextMesh(this.app);
-		document.body.appendChild(text.canvas);
-		text.lineSpacing = 1;
-		//text.fontStyle = Tea.FontStyle.Normal;
-		//text.text = "aa\r\nBBB\ncc";
-		text.fontSize = 30;
-		text.text = "Hello world\nTest";
-		//text.color = Tea.Color.red;
-		//text.color.r = 1;
-		text.update();
-		//text.text = "test";
-		/*
-		var image = text.getImageData();
-		for (var y = 0; y < image.height; y++) {
-			for (var x = 0; x < image.width; x++) {
-				var index = (y * image.width + x) * 4;
-				var r = image.data[index];
-				var g = image.data[index + 1];
-				var bb = image.data[index + 2];
-				var a = image.data[index + 3];
-				console.log("image data", `${x}, ${y}`, r, g, bb, a);
-			}
-		}
-		//*/
-		//return;
-
-
 		const scene = this.app.createScene();
 		//scene.camera.far = 10;
 		//scene.camera.position.y = 2;
@@ -170,7 +143,7 @@ export class Main {
 		//console.log("camera", scene.camera.worldToCameraMatrix.toString());
 		//console.log("camera", scene.camera.projectionMatrix);
 
-		const script = new TestScript();
+		//const script = new TestScript();
 
 		const cube = Tea.Object3D.createPrimitive(this.app, Tea.PrimitiveType.Cube);
 		cube.name = "cube";
@@ -191,9 +164,9 @@ export class Main {
 
 		const sphere = Tea.Object3D.createPrimitive(this.app, Tea.PrimitiveType.Sphere);
 		//cube2.name = "cube2";
-		sphere.position.x = 1.6;
-		sphere.position.y = 2;
-		sphere.position.z = 1.5;
+		//sphere.position.x = 1.6;
+		//sphere.position.y = 2;
+		//sphere.position.z = 1.5;
 		//sphere.addScript(script);
 		//scene.appendChild(sphere);
 
@@ -207,7 +180,7 @@ export class Main {
 		quad.scale.x = 2;
 		quad.scale.y = 2;
 		//plain.addScript(script);
-		quad.addScript(new Rotate());
+		quad.addComponent(Rotate);
 		scene.appendChild(quad);
 		//this.plain = quad;
 
@@ -238,7 +211,7 @@ export class Main {
 		capsule.position.z = 2;
 		//capsule.scale.x = 2;
 		//capsule.rotation.x = Tea.radians(90);
-		capsule.addScript(script);
+		capsule.addComponent(TestScript);
 		scene.appendChild(capsule);
 
 		//console.log("capsule", capsule.localToWorldMatrix.toString());
@@ -256,21 +229,28 @@ export class Main {
 		lineRenderer.add(-3, 5, 0);
 		lineRenderer.add(0, 0, 7);
 		//lineRenderer.color = new Tea.Color(1, 0, 0, 1);
-		lines.addScript(new TestScript2());
+		lines.addComponent(TestScript2);
 		capsule.appendChild(lines);
 		//console.log("scale", lines.scale);
 		//scene.appendChild(lines);
 
 
 		var textmesh = this.app.createTextMesh();
-		var r = textmesh.getComponent(Tea.MeshRenderer);
-		(r.mesh as Tea.TextMesh).fontSize = 40;
-		//(r.mesh as Tea.TextMesh).color = Tea.Color.red;
-		//(r.mesh as Tea.TextMesh).color = Tea.Color.black;
-		(r.mesh as Tea.TextMesh).text = "Hello world\naあいうえお";
-		textmesh.scale.x = 3.1;
-		textmesh.scale.y = 1.5;
-		textmesh.position.z = -6;
+		//var r = textmesh.getComponent(Tea.MeshRenderer);
+		var meshFilter = textmesh.getComponent(Tea.MeshFilter);
+		var mesh = meshFilter.mesh as Tea.TextMesh;
+		mesh.characterSize = 0.3;
+		mesh.fontSize = 40;
+		//mesh.color = Tea.Color.red;
+		//mesh.color = Tea.Color.black;
+		//mesh.font = "Arial";
+		//mesh.text = "Hello world\naあいうえお";
+		mesh.update();
+		//textmesh.scale.x = 3.1;
+		//textmesh.scale.y = 1.5;
+		textmesh.position.y = 1;
+		textmesh.position.z = -5;
+		//document.body.appendChild(mesh.canvas);
 		//scene.appendChild(textmesh);
 
 		var wp = scene.camera.viewportToWorldPoint(new Tea.Vector3(0, 0, 0));
@@ -312,7 +292,9 @@ export class Main {
 			plane.renderer.shader.texture = texture;
 			capsule.renderer.shader.texture = texture;
 			*/
-			let r = cube.getComponent(Tea.Renderer);
+			let r = sphere.getComponent(Tea.Renderer);
+			r.material.mainTexture = texture;
+			r = cube.getComponent(Tea.Renderer);
 			//r.material.mainTexture = texture;
 			r = quad.getComponent(Tea.Renderer);
 			//r.material.mainTexture = texture;

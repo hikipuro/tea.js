@@ -155,16 +155,17 @@ export class Texture {
 			gl.UNSIGNED_BYTE,
 			image
 		);
-		if (Tea.Mathf.isPowerOf2(image.width, image.height)) {
-			gl.generateMipmap(gl.TEXTURE_2D);
-		}
+		this.generateMipmap(image);
 		this.filterMode = this._filterMode;
 		this.wrapMode = this._wrapMode;
 		this.unbind();
 		this._updateCount++;
 	}
 
-	protected generateMipmap(): void {
+	protected generateMipmap(image: TextureImage): void {
+		if (Tea.Mathf.isPowerOf2(image.width, image.height) === false) {
+			return;
+		}
 		var gl = this.app.gl;
 		gl.generateMipmap(gl.TEXTURE_2D);
 	}

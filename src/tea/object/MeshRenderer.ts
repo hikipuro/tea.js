@@ -2,8 +2,6 @@ import * as Tea from "../Tea";
 import { Renderer } from "./Renderer";
 
 export class MeshRenderer extends Renderer {
-	protected _mesh: Tea.Mesh;
-
 	vertexBuffer: WebGLBuffer;
 	indexBuffer: WebGLBuffer;
 	normalBuffer: WebGLBuffer;
@@ -20,13 +18,6 @@ export class MeshRenderer extends Renderer {
 		this.createBuffers();
 	}
 
-	get mesh(): Tea.Mesh {
-		return this._mesh;
-	}
-	set mesh(value: Tea.Mesh) {
-		this._mesh = value;
-	}
-
 	remove(): void {
 		this.deleteBuffers();
 	}
@@ -39,23 +30,24 @@ export class MeshRenderer extends Renderer {
 			return;
 		}
 		super.render(camera);
-		if (this.mesh.hasColors) {
+		var component = this.object3d.getComponent(Tea.MeshFilter);
+		var mesh = component.mesh;
+		if (mesh.hasColors) {
 			this._uniforms.uniform1i("useColor", 1);
 		} else {
 			this._uniforms.uniform1i("useColor", 0);
 		}
-		this.setMeshData(this.mesh);
-		this.setVertexBuffer(this.mesh);
-		this.setIndexBuffer(this.mesh);
-		this.draw(this.mesh);
+		this.setMeshData(mesh);
+		this.setVertexBuffer(mesh);
+		this.setIndexBuffer(mesh);
+		this.draw(mesh);
 	}
 
 	protected get isRenderable(): boolean {
 		return (
 			this.object3d != null &&
 			this.material != null &&
-			this.material.shader != null &&
-			this.mesh != null
+			this.material.shader != null
 		);
 	}
 
@@ -177,9 +169,9 @@ export class MeshRenderer extends Renderer {
 	}
 
 	protected draw(mesh: Tea.Mesh): void {
-		const gl = this.app.gl;
+		var gl = this.app.gl;
 		if (mesh.hasTriangles === false) {
-			const count = this._vertexCount;
+			var count = this._vertexCount;
 			if (this.wireframe) {
 				gl.drawArrays(gl.LINE_LOOP, 0, count);
 				return;
@@ -191,7 +183,7 @@ export class MeshRenderer extends Renderer {
 			return;
 		}
 
-		const scale = this.object3d.scale;
+		var scale = this.object3d.scale;
 		if (scale.x * scale.y * scale.z < 0) {
 			gl.frontFace(gl.CW);
 		} else {
@@ -199,12 +191,12 @@ export class MeshRenderer extends Renderer {
 		}
 
 		if (this.wireframe) {
-			const count = this._triangleCount;
+			var count = this._triangleCount;
 			gl.drawElements(gl.LINE_STRIP, count, gl.UNSIGNED_SHORT, 0);
 			return;
 		}
 		
-		if (this._mesh instanceof Tea.TextMesh) {
+		if (mesh instanceof Tea.TextMesh) {
 			//gl.disable(gl.DEPTH_TEST);
 			gl.enable(gl.BLEND);
 			//gl.blendEquation(gl.FUNC_ADD);
@@ -217,7 +209,7 @@ export class MeshRenderer extends Renderer {
 			gl.disable(gl.BLEND);
 		}
 
-		const count = this._triangleCount;
+		var count = this._triangleCount;
 		gl.drawElements(gl.TRIANGLES, count, gl.UNSIGNED_SHORT, 0);
 	}
 }

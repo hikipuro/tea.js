@@ -64,22 +64,24 @@ const lineFragmentShaderSource = `
 `;
 
 const textVertexShaderSource = `
-	attribute vec3 position;
-	attribute vec2 texCoord;
-	uniform mat4 mvpMatrix;
+	attribute vec3 vertex;
+	attribute vec2 texcoord;
+	uniform mat4 TEA_MATRIX_MVP;
 	varying vec2 vTexCoord;
 	void main() {
-		vTexCoord = texCoord;
-		gl_Position = mvpMatrix * vec4(position, 1.0);
+		vTexCoord = texcoord;
+		gl_Position = TEA_MATRIX_MVP * vec4(vertex, 1.0);
 	}
 `;
 
 const textFragmentShaderSource = `
 	precision mediump float;
-	uniform sampler2D texture;
+	uniform sampler2D _MainTex;
+	uniform vec2 uv_MainTex;
+	uniform vec2 _MainTex_ST;
 	varying vec2 vTexCoord;
 	void main() {
-		vec4 color = texture2D(texture, vTexCoord);
+		vec4 color = texture2D(_MainTex, (uv_MainTex + vTexCoord) / _MainTex_ST);
 		if (color.a < 0.1) {
 			discard;
 		}

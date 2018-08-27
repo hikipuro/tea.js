@@ -3,13 +3,12 @@ import * as Tea from "../Tea";
 export class Object3D {
 	app: Tea.App;
 	name: string;
-	enabled: boolean;
+	isActive: boolean;
 	scene: Tea.Scene;
 	transform: Tea.Transform;
 	localPosition: Tea.Vector3;
 	localRotation: Tea.Quaternion;
 	localScale: Tea.Vector3;
-	scripts: Array<Tea.Script>;
 	parent: Object3D;
 	children: Array<Object3D>;
 	protected _components: Array<Tea.Component>;
@@ -17,11 +16,10 @@ export class Object3D {
 	constructor(app: Tea.App) {
 		this.app = app;
 		this.name = "";
-		this.enabled = true;
+		this.isActive = true;
 		this.localPosition = Tea.Vector3.zero;
 		this.localRotation = Tea.Quaternion.identity;
 		this.localScale = Tea.Vector3.one;
-		this.scripts = [];
 		this.children = [];
 		this._components = [];
 	}
@@ -63,11 +61,20 @@ export class Object3D {
 			Tea.Shader.defaultVertexShaderSource,
 			Tea.Shader.defaultFragmentShaderSource
 		);
+		var meshFilter = object3d.addComponent(Tea.MeshFilter);
+		meshFilter.mesh = mesh;
 		var renderer = object3d.addComponent(Tea.MeshRenderer);
 		renderer.material.shader = shader;
-		renderer.mesh = mesh;
 		object3d.name = name;
 		return object3d;
+	}
+
+	get isActiveInHierarchy(): boolean {
+		if (this.parent != null) {
+			return this.parent.isActiveInHierarchy
+				&& this.isActive;
+		}
+		return this.isActive;
 	}
 
 	get position(): Tea.Vector3 {
@@ -162,28 +169,95 @@ export class Object3D {
 	}
 
 	getComponent<T extends Tea.Component>(component: {new (app: Tea.App): T}): T {
-		var components = this._components;
-		var length = components.length;
-		for (var i = 0; i < length; i++) {
-			const c = components[i];
-			if (c instanceof component) {
-				return c as T;
-			}
-		}
-		return null;
+		return this._components.find((c) => {
+			return c instanceof component;
+		}) as T;
 	}
 
 	getComponents<T extends Tea.Component>(component: {new (app: Tea.App): T}): Array<T> {
 		var array = [];
-		var components = this._components;
-		var length = components.length;
-		for (var i = 0; i < length; i++) {
-			const c = components[i];
+		Tea.ArrayUtil.each(this._components, (i, c) => {
 			if (c instanceof component) {
 				array.push(c);
 			}
-		}
+		});
 		return array;
+	}
+
+	getComponentsInParent<T extends Tea.Component>(
+		component: {new (app: Tea.App): T},
+		includeInactive: boolean = false): Array<T>
+	{
+		var array = [];
+		if (this.parent != null) {
+			if (includeInactive === true || this.parent.isActive === true) {
+				var c = this.parent.getComponentsInParent(
+					component, includeInactive
+				);
+				array.push(c);
+			}
+		}
+		array.push(this.getComponents(component));
+		return array;
+	}
+
+	getComponentsInChildren<T extends Tea.Component>(
+		component: {new (app: Tea.App): T},
+		includeInactive: boolean = false): Array<T>
+	{
+		var array = [];
+		if (this.childCount > 0) {
+			var length = this.children.length;
+			for (var i = 0; i < length; i++) {
+				var child = this.children[i];
+				if (includeInactive === true || child.isActive === true) {
+					var c = child.getComponentsInChildren(
+						component, includeInactive
+					);
+					array.push(c);
+				}
+			}
+		}
+		array.push(this.getComponents(component));
+		return array;
+	}
+
+	sendMessage(methodName: string, args: Array<any> = null): void {
+		if (methodName == null || methodName === "") {
+			return;
+		}
+		if (this.isActive === false) {
+			return;
+		}
+		var scripts = this.getComponents(Tea.Script);
+		Tea.ArrayUtil.each(scripts, (i, script) => {
+			var method = script[methodName];
+			if (method instanceof Function) {
+				method.apply(script, args);
+			}
+		});
+	}
+
+	sendMessageUpwards(methodName: string, args: Array<any> = null): void {
+		if (methodName == null || methodName === "") {
+			return;
+		}
+		if (this.parent != null) {
+			this.parent.sendMessageUpwards(methodName, args);
+		}
+		this.sendMessage(methodName, args);
+	}
+
+	broadcastMessage(methodName: string, args: Array<any> = null): void {
+		if (methodName == null || methodName === "") {
+			return;
+		}
+		if (this.childCount > 0) {
+			Tea.ArrayUtil.each(this.children, (i, child) => {
+				child.broadcastMessage(methodName, args);
+			});
+		}
+		this.sendMessage(methodName, args);
 	}
 
 	appendChild(object3d: Tea.Object3D): void {
@@ -299,23 +373,16 @@ export class Object3D {
 		this.localRotation = q;
 	}
 
-	addScript(script: Tea.Script): void {
-		if (script == null) {
-			return;
-		}
-		script.app = this.app;
-		script.object3d = this;
-		this.scripts.push(script);
-	}
-
 	start(): void {
-		Tea.ArrayUtil.each(this.scripts, (i, script) => {
+		var scripts = this.getComponents(Tea.Script);
+		Tea.ArrayUtil.each(scripts, (i, script) => {
 			script.start();
 		});
 	}
 
 	update(): void {
-		Tea.ArrayUtil.each(this.scripts, (i, script) => {
+		var scripts = this.getComponents(Tea.Script);
+		Tea.ArrayUtil.each(scripts, (i, script) => {
 			script.update();
 		});
 	}

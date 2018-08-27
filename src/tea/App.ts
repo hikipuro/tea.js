@@ -1,6 +1,4 @@
 import * as Tea from "./Tea";
-import { Keyboard } from "./Keyboard";
-import { Mouse } from "./Mouse";
 
 export class App {
 	canvas: HTMLCanvasElement;
@@ -17,12 +15,9 @@ export class App {
 		this.canvas.addEventListener("webglcontextrestored", this.onContextRestored);
 		this.init();
 
-		//this.context.getExtension('WEBGL_lose_context').loseContext();
-
 		this.parameters = new Tea.GLParameters(this.gl);
 		this.cursor = new Tea.Cursor(this);
 		this._renderer = new AppRenderer(this);
-		//this.clear();
 	}
 
 	static get absoluteURL(): string {
@@ -85,11 +80,11 @@ export class App {
 		return this._renderer.currentScene;
 	}
 	
-	get keyboard(): Keyboard {
+	get keyboard(): Tea.Keyboard {
 		return this._renderer.keyboard;
 	}
 
-	get mouse(): Mouse {
+	get mouse(): Tea.Mouse {
 		return this._renderer.mouse;
 	}
 
@@ -98,22 +93,22 @@ export class App {
 	}
 
 	isExtensionSupported(name: Tea.GLExtensions | string): boolean {
-		const extensions = this.supportedExtensions;
+		var extensions = this.supportedExtensions;
 		return extensions.indexOf(name) >= 0;
 	}
 
 	createObject3D(): Tea.Object3D {
-		const object3d = new Tea.Object3D(this);
+		var object3d = new Tea.Object3D(this);
 		return object3d;
 	}
 
 	createScene(): Tea.Scene {
-		const scene = new Tea.Scene(this);
+		var scene = new Tea.Scene(this);
 		return scene;
 	}
 
 	createDefaultShader(): Tea.Shader {
-		const shader = new Tea.Shader(this);
+		var shader = new Tea.Shader(this);
 		shader.attach(
 			Tea.Shader.defaultVertexShaderSource,
 			Tea.Shader.defaultFragmentShaderSource
@@ -122,21 +117,20 @@ export class App {
 	}
 
 	createShader(vs: string, fs: string): Tea.Shader {
-		const shader = new Tea.Shader(this);
+		var shader = new Tea.Shader(this);
 		shader.attach(vs, fs);
 		return shader;
 	}
 
-	createMeshRenderer(mesh: Tea.Mesh, shader: Tea.Shader): Tea.MeshRenderer {
-		const renderer = new Tea.MeshRenderer(this);
-		renderer.mesh = mesh;
+	createMeshRenderer(shader: Tea.Shader): Tea.MeshRenderer {
+		var renderer = new Tea.MeshRenderer(this);
 		renderer.material.shader = shader;
 		return renderer;
 	}
 
 	createLineRenderer(): Tea.LineRenderer {
-		const renderer = new Tea.LineRenderer(this);
-		const shader = new Tea.Shader(this);
+		var renderer = new Tea.LineRenderer(this);
+		var shader = new Tea.Shader(this);
 		shader.attach(
 			Tea.Shader.lineVertexShaderSource,
 			Tea.Shader.lineFragmentShaderSource
@@ -146,7 +140,7 @@ export class App {
 	}
 
 	createTexture(image: HTMLImageElement): Tea.Texture {
-		const texture = new Tea.Texture(this);
+		var texture = new Tea.Texture(this);
 		texture.image = image;
 		return texture;
 	}
@@ -156,7 +150,7 @@ export class App {
 	}
 
 	drawArrays(): void {
-		const gl = this.gl;
+		var gl = this.gl;
 		gl.drawArrays(gl.TRIANGLES, 0, 3);
 		gl.flush();
 	}
@@ -170,25 +164,26 @@ export class App {
 	}
 
 	createTextMesh(): Tea.Object3D {
-		const object3d = new Tea.Object3D(this);
-		//const shader = this.createDefaultShader();
-		const shader = new Tea.Shader(this);
+		var object3d = new Tea.Object3D(this);
+		var shader = new Tea.Shader(this);
 		shader.attach(
 			Tea.Shader.textVertexShaderSource,
 			Tea.Shader.textFragmentShaderSource
 		);
-		const mesh = new Tea.TextMesh(this);
-		const renderer = object3d.addComponent(Tea.MeshRenderer);
+		var mesh = new Tea.TextMesh(this);
+		var meshFilter = object3d.addComponent(Tea.MeshFilter);
+		meshFilter.mesh = mesh;
+		var renderer = object3d.addComponent(Tea.MeshRenderer);
+		renderer.material.renderQueue = 3000;
 		renderer.material.mainTexture = mesh.texture;
 		renderer.material.shader = shader;
-		renderer.mesh = mesh;
 		object3d.name = "TextMesh";
 		return object3d;
 	}
 
 	protected init(): void {
 		this.gl = this.getWebGLContext();
-		const gl = this.gl;
+		var gl = this.gl;
 		gl.clearColor(0.0, 0.0, 0.0, 1.0);
 		gl.clearDepth(1.0);
 
@@ -206,10 +201,10 @@ export class App {
 		if (this.canvas == null) {
 			return;
 		}
-		const attribute: WebGLContextAttributes = {
+		var attribute: WebGLContextAttributes = {
 			antialias: false
 		};
-		let context = this.canvas.getContext(
+		var context = this.canvas.getContext(
 			"webgl", attribute
 		) as WebGLRenderingContext;
 		if (context == null) {
@@ -221,7 +216,7 @@ export class App {
 	}
 
 	protected onResize() {
-		//const gl = this.gl;
+		//var gl = this.gl;
 		//gl.viewport(100 / 2, 0, this.width, this.height);
 		//gl.scissor(100, 0, this.width, this.height);
 	}
@@ -245,8 +240,8 @@ class AppRenderer {
 	isStarted: boolean;
 	isPaused: boolean;
 	currentScene: Tea.Scene;
-	keyboard: Keyboard;
-	mouse: Mouse;
+	keyboard: Tea.Keyboard;
+	mouse: Tea.Mouse;
 	time: Tea.Time;
 	stats: Tea.Stats;
 	protected _handle: number;
@@ -256,8 +251,8 @@ class AppRenderer {
 		this.app = app;
 		this.isStarted = false;
 		this.isPaused = false;
-		this.keyboard = new Keyboard(document.body);
-		this.mouse = new Mouse(app, this.app.canvas);
+		this.keyboard = new Tea.Keyboard(document.body);
+		this.mouse = new Tea.Mouse(app, this.app.canvas);
 		this.time = new Tea.Time();
 		this._handle = 0;
 		this._prevRect = new Tea.Rect();
@@ -321,14 +316,14 @@ class AppRenderer {
 	}
 
 	protected setViewport(): void {
-		const gl = this.app.gl;
-		const camera = this.currentScene.camera;
+		var gl = this.app.gl;
+		var camera = this.currentScene.camera;
 
 		if (this._prevRect.equals(camera.rect)) {
 			return;
 		}
 
-		const rect = camera.rect.clone();
+		var rect = camera.rect.clone();
 		if (rect.x < 0) {
 			rect.width += rect.x;
 			rect.x = 0;
@@ -344,8 +339,8 @@ class AppRenderer {
 			rect.height = 1 - rect.y;
 		}
 
-		const width = this.app.width;
-		const height = this.app.height;
+		var width = this.app.width;
+		var height = this.app.height;
 
 		gl.viewport(
 			rect.x * width,

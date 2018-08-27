@@ -5,6 +5,7 @@ import { Primitives } from "../Primitives";
 
 export class TextMesh extends Mesh {
 	protected static readonly DefaultFontSize: number = 14;
+	characterSize: number;
 	lineSpacing: number;
 	texture: Tea.Texture;
 	protected _color: Tea.Color;
@@ -41,6 +42,7 @@ export class TextMesh extends Mesh {
 		this._fontSize = TextMesh.DefaultFontSize;
 		this._fontStyle = Tea.FontStyle.Normal;
 		this._text = "Text";
+		this.characterSize = 1;
 		this.lineSpacing = 1;
 		this._padding = 1;
 
@@ -168,6 +170,8 @@ export class TextMesh extends Mesh {
 			}
 		}
 
+		var tw = textWidth;
+		var th = textHeight;
 		textWidth = Tea.Mathf.closestPowerOfTwo(textWidth);
 		textHeight = Tea.Mathf.closestPowerOfTwo(textHeight);
 
@@ -182,6 +186,7 @@ export class TextMesh extends Mesh {
 		}
 		if (updateFlag) {
 			this.updateContext();
+			this.udpateVertices(tw, th);
 		} else {
 			this.clearRect();
 		}
@@ -222,5 +227,22 @@ export class TextMesh extends Mesh {
 				break;
 		}
 		context.font = style + size + "px " + font;
+	}
+
+	protected udpateVertices(textWidth: number, textHeight: number): void {
+		var scale = 12 / this.characterSize;
+		var width = this._canvas.width / (2 * scale);
+		var height = this._canvas.height / (2 * scale);
+		var ow = (this._canvas.width - textWidth) / (2 * scale);
+		var oh = (this._canvas.height - textHeight) / (2 * scale);
+		var v0 = this.vertices[0];
+		var v1 = this.vertices[1];
+		var v2 = this.vertices[2];
+		var v3 = this.vertices[3];
+		v0.x = -width + ow; v0.y = -height - oh;
+		v1.x =  width + ow; v1.y = -height - oh;
+		v2.x =  width + ow; v2.y =  height - oh;
+		v3.x = -width + ow; v3.y =  height - oh;
+		this.uploadMeshData();
 	}
 }

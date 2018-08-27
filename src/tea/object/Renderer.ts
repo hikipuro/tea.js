@@ -326,6 +326,6 @@ export class Renderer extends Component {
 			return;
 		}
 		gl.bindTexture(gl.TEXTURE_2D, texture.webgl.texture);
-		//this._uniforms.uniform1i("texture", 0);
+		this._uniforms.uniform1i("_MainTex", 0);
 	}
 }
