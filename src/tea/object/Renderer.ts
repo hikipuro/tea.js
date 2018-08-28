@@ -180,6 +180,7 @@ export class Renderer extends Component {
 		}
 		this._uniforms.program = program;
 		this._uniforms.useProgram();
+		this.setShaderSettings();
 		this.setUniforms(camera);
 		this.setTexture(this.material.mainTexture);
 	}
@@ -213,6 +214,170 @@ export class Renderer extends Component {
 		if (0 <= location) {
 			gl.disableVertexAttribArray(location);
 		}
+	}
+
+	protected setShaderSettings(): void {
+		var gl = this.app.gl;
+		var settings = this.material.shader.settings;
+		if (settings.enableBlend) {
+			gl.enable(gl.BLEND);
+			this.setShaderBlend(settings);
+		} else {
+			gl.disable(gl.BLEND);
+		}
+		if (settings.enableCullFace) {
+			gl.enable(gl.CULL_FACE);
+			var mode = Tea.Shader.getFaceValue(
+				gl, settings.cullFaceMode
+			);
+			gl.cullFace(mode);
+		} else {
+			gl.disable(gl.CULL_FACE);
+		}
+		if (settings.enableDither) {
+			gl.enable(gl.DITHER);
+		} else {
+			gl.disable(gl.DITHER);
+		}
+		if (settings.enableDepthTest) {
+			gl.enable(gl.DEPTH_TEST);
+			var func = Tea.Shader.getTestFuncValue(
+				gl, settings.depthFunc
+			);
+			gl.depthFunc(func);
+		} else {
+			gl.disable(gl.DEPTH_TEST);
+		}
+		if (settings.depthWriteMask) {
+			gl.depthMask(true);
+		} else {
+			gl.depthMask(false);
+		}
+		if (settings.colorWriteMask != null) {
+			var colorWriteMask = settings.colorWriteMask;
+			gl.colorMask(
+				colorWriteMask.red,
+				colorWriteMask.green,
+				colorWriteMask.blue,
+				colorWriteMask.alpha
+			);
+		}
+		//if (settings.enablePolygonOffsetFill) {
+		//	gl.enable(gl.POLYGON_OFFSET_FILL);
+		//} else {
+		//	gl.disable(gl.POLYGON_OFFSET_FILL);
+		//}
+		//if (settings.enableSampleCoverage) {
+		//	gl.enable(gl.SAMPLE_COVERAGE);
+		//} else {
+		//	gl.disable(gl.SAMPLE_COVERAGE);
+		//}
+		//if (settings.enableScissorTest) {
+		//	gl.enable(gl.SCISSOR_TEST);
+		//} else {
+		//	gl.disable(gl.SCISSOR_TEST);
+		//}
+		if (settings.enableStencilTest) {
+			gl.enable(gl.STENCIL_TEST);
+			this.setShaderStencil(settings);
+		} else {
+			gl.disable(gl.STENCIL_TEST);
+		}
+	}
+
+	protected setShaderBlend(settings: Tea.ShaderSettings): void {
+		var gl = this.app.gl;
+		var blend = settings.blend;
+		gl.blendColor(
+			blend.red,
+			blend.green,
+			blend.blue,
+			blend.alpha
+		);
+		var modeRGB = Tea.Shader.getBlendEquationValue(
+			gl, blend.equationRGB
+		);
+		var modeAlpha = Tea.Shader.getBlendEquationValue(
+			gl, blend.equationAlpha
+		);
+		gl.blendEquationSeparate(
+			modeRGB,
+			modeAlpha
+		);
+		var srcRGB = Tea.Shader.getBlendFuncValue(
+			gl, blend.srcRGB
+		);
+		var dstRGB = Tea.Shader.getBlendFuncValue(
+			gl, blend.dstRGB
+		);
+		var srcAlpha = Tea.Shader.getBlendFuncValue(
+			gl, blend.srcAlpha
+		);
+		var dstAlpha = Tea.Shader.getBlendFuncValue(
+			gl, blend.dstAlpha
+		);
+		gl.blendFuncSeparate(
+			srcRGB,
+			dstRGB,
+			srcAlpha,
+			dstAlpha
+		);
+	}
+
+	protected setShaderStencil(settings: Tea.ShaderSettings): void {
+		var gl = this.app.gl;
+		var stencil = settings.stencil;
+		var func = Tea.Shader.getTestFuncValue(
+			gl, stencil.frontFunc
+		);
+		gl.stencilFuncSeparate(
+			gl.FRONT,
+			func,
+			stencil.frontRef,
+			stencil.frontMask
+		);
+		func = Tea.Shader.getTestFuncValue(
+			gl, stencil.backFunc
+		);
+		gl.stencilFuncSeparate(
+			gl.BACK,
+			func,
+			stencil.backRef,
+			stencil.backMask
+		);
+		var fail = Tea.Shader.getStencilOpValue(
+			gl, stencil.frontFail
+		);
+		var zfail = Tea.Shader.getStencilOpValue(
+			gl, stencil.frontZfail
+		);
+		var zpass = Tea.Shader.getStencilOpValue(
+			gl, stencil.frontZpass
+		);
+		gl.stencilOpSeparate(
+			gl.FRONT,
+			fail,
+			zfail,
+			zpass
+		);
+		fail = Tea.Shader.getStencilOpValue(
+			gl, stencil.backFail
+		);
+		zfail = Tea.Shader.getStencilOpValue(
+			gl, stencil.backZfail
+		);
+		zpass = Tea.Shader.getStencilOpValue(
+			gl, stencil.backZpass
+		);
+		gl.stencilOpSeparate(
+			gl.BACK,
+			fail,
+			zfail,
+			zpass
+		);
+		//var stencilMask = settings.stencilMask;
+		//gl.stencilMaskSeparate(gl.FRONT, stencilMask.front);
+		//gl.stencilMaskSeparate(gl.BACK, stencilMask.back);
 	}
 
 	protected setUniforms(camera: Tea.Camera): void {
@@ -326,6 +491,7 @@ export class Renderer extends Component {
 			return;
 		}
 		gl.bindTexture(gl.TEXTURE_2D, texture.webgl.texture);
+		gl.activeTexture(gl.TEXTURE0);
 		this._uniforms.uniform1i("_MainTex", 0);
 	}
 }

@@ -44,10 +44,22 @@ import { Renderer } from "./object/Renderer";
 import { LineRenderer } from "./object/LineRenderer";
 import { Material, UniformType } from "./object/Material";
 import { MeshRenderer } from "./object/MeshRenderer";
-import { Shader } from "./object/Shader";
 import { TextMesh } from "./object/TextMesh";
 import { Texture } from "./object/Texture";
 import { Transform } from "./object/Transform";
+
+import { Shader } from "./shader/Shader";
+import { ShaderBlend } from "./shader/ShaderBlend";
+import { ShaderBlendEquation } from "./shader/ShaderBlendEquation";
+import { ShaderBlendFunc } from "./shader/ShaderBlendFunc";
+import { ShaderColorMask } from "./shader/ShaderColorMask";
+import { ShaderFace } from "./shader/ShaderFace";
+import { ShaderHint } from "./shader/ShaderHint";
+import { ShaderSettings } from "./shader/ShaderSettings";
+import { ShaderStencil } from "./shader/ShaderStencil";
+import { ShaderStencilMask } from "./shader/ShaderStencilMask";
+import { ShaderStencilOp } from "./shader/ShaderStencilOp";
+import { ShaderTestFunc } from "./shader/ShaderTestFunc";
 
 import { App } from "./App";
 import { DaeReader } from "./DaeReader";
@@ -96,35 +108,48 @@ export {
 	TextureWrapMode,
 	Time,
 
-	App,
 	Bounds,
 	Camera,
 	Collider,
 	Component,
+	Mesh,
+	MeshFilter,
+	Object3D,
+	Ray,
+	RaycastHit,
+	Renderer,
+	LineRenderer,
+	Material,
+	UniformType,
+	MeshRenderer,
+	TextMesh,
+	Texture,
+	Transform,
+
+	Shader,
+	ShaderBlend,
+	ShaderBlendEquation,
+	ShaderBlendFunc,
+	ShaderColorMask,
+	ShaderFace,
+	ShaderHint,
+	ShaderSettings,
+	ShaderStencil,
+	ShaderStencilMask,
+	ShaderStencilOp,
+	ShaderTestFunc,
+
+	App,
 	DaeReader,
 	GLCapabilities,
 	GLExtensions,
 	GLParameters,
 	Keyboard,
 	Mouse,
-	Mesh,
-	MeshFilter,
-	Object3D,
-	Ray,
-	RaycastHit,
 	ObjReader,
 	Primitives,
-	Renderer,
-	LineRenderer,
-	Material,
-	UniformType,
-	MeshRenderer,
 	Scene,
 	Script,
-	Shader,
-	TextMesh,
-	Texture,
-	Transform
 }
 
 

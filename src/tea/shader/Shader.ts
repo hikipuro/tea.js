@@ -94,13 +94,131 @@ export class Shader {
 	program: WebGLProgram;
 	vertexShader: WebGLShader;
 	fragmentShader: WebGLShader;
+	settings: Tea.ShaderSettings;
 
 	constructor(app: Tea.App) {
 		this.app = app;
-		const gl = this.app.gl;
+		var gl = this.app.gl;
 		this.program = gl.createProgram();
 		this.vertexShader = gl.createShader(gl.VERTEX_SHADER);
 		this.fragmentShader = gl.createShader(gl.FRAGMENT_SHADER);
+		this.settings = new Tea.ShaderSettings();
+	}
+
+	static getBlendEquationValue(gl: WebGLRenderingContext, value: Tea.ShaderBlendEquation): number {
+		switch (value) {
+			case Tea.ShaderBlendEquation.Add:
+				return gl.FUNC_ADD;
+			case Tea.ShaderBlendEquation.Subtract:
+				return gl.FUNC_SUBTRACT;
+			case Tea.ShaderBlendEquation.ReverseSubtract:
+				return gl.FUNC_REVERSE_SUBTRACT;
+		}
+		return gl.FUNC_ADD;
+	}
+
+	static getBlendFuncValue(gl: WebGLRenderingContext, value: Tea.ShaderBlendFunc): number {
+		switch (value) {
+			case Tea.ShaderBlendFunc.Zero:
+				return gl.ZERO;
+			case Tea.ShaderBlendFunc.One:
+				return gl.ONE;
+			case Tea.ShaderBlendFunc.SrcColor:
+				return gl.SRC_COLOR;
+			case Tea.ShaderBlendFunc.OneMinusSrcColor:
+				return gl.ONE_MINUS_SRC_COLOR;
+			case Tea.ShaderBlendFunc.DstColor:
+				return gl.DST_COLOR;
+			case Tea.ShaderBlendFunc.OneMinusDstColor:
+				return gl.ONE_MINUS_DST_COLOR;
+			case Tea.ShaderBlendFunc.SrcAlpha:
+				return gl.SRC_ALPHA;
+			case Tea.ShaderBlendFunc.OneMinusSrcAlpha:
+				return gl.ONE_MINUS_SRC_ALPHA;
+			case Tea.ShaderBlendFunc.DstAlpha:
+				return gl.DST_ALPHA;
+			case Tea.ShaderBlendFunc.OneMinusDstAlpha:
+				return gl.ONE_MINUS_DST_ALPHA;
+			case Tea.ShaderBlendFunc.ConstantColor:
+				return gl.CONSTANT_COLOR;
+			case Tea.ShaderBlendFunc.OneMinusConstantColor:
+				return gl.ONE_MINUS_CONSTANT_COLOR;
+			case Tea.ShaderBlendFunc.ConstantAlpha:
+				return gl.CONSTANT_ALPHA;
+			case Tea.ShaderBlendFunc.OneMinusConstantAlpha:
+				return gl.ONE_MINUS_CONSTANT_ALPHA;
+			case Tea.ShaderBlendFunc.SrcAlphaSaturate:
+				return gl.SRC_ALPHA_SATURATE;
+		}
+		return gl.ZERO;
+	}
+
+	static getTestFuncValue(gl: WebGLRenderingContext, value: Tea.ShaderTestFunc): number {
+		switch (value) {
+			case Tea.ShaderTestFunc.Never:
+				return gl.NEVER;
+			case Tea.ShaderTestFunc.Less:
+				return gl.LESS;
+			case Tea.ShaderTestFunc.Equal:
+				return gl.EQUAL;
+			case Tea.ShaderTestFunc.LEqual:
+				return gl.LEQUAL;
+			case Tea.ShaderTestFunc.Greater:
+				return gl.GREATER;
+			case Tea.ShaderTestFunc.NotEqual:
+				return gl.NOTEQUAL;
+			case Tea.ShaderTestFunc.GEqual:
+				return gl.GEQUAL;
+			case Tea.ShaderTestFunc.Always:
+				return gl.ALWAYS;
+		}
+		return gl.NEVER;
+	}
+
+	static getFaceValue(gl: WebGLRenderingContext, value: Tea.ShaderFace): number {
+		switch (value) {
+			case Tea.ShaderFace.Front:
+				return gl.FRONT;
+			case Tea.ShaderFace.Back:
+				return gl.BACK;
+			case Tea.ShaderFace.FrontAndBack:
+				return gl.FRONT_AND_BACK;
+		}
+		return gl.BACK;
+	}
+
+	static getHintValue(gl: WebGLRenderingContext, value: Tea.ShaderHint): number {
+		switch (value) {
+			case Tea.ShaderHint.DontCare:
+				return gl.DONT_CARE;
+			case Tea.ShaderHint.Fastest:
+				return gl.FASTEST;
+			case Tea.ShaderHint.Nicest:
+				return gl.NICEST;
+		}
+		return gl.DONT_CARE;
+	}
+
+	static getStencilOpValue(gl: WebGLRenderingContext, value: Tea.ShaderStencilOp): number {
+		switch (value) {
+			case Tea.ShaderStencilOp.Zero:
+				return gl.ZERO;
+			case Tea.ShaderStencilOp.Keep:
+				return gl.KEEP;
+			case Tea.ShaderStencilOp.Replace:
+				return gl.REPLACE;
+			case Tea.ShaderStencilOp.Incr:
+				return gl.INCR;
+			case Tea.ShaderStencilOp.IncrWrap:
+				return gl.INCR_WRAP;
+			case Tea.ShaderStencilOp.Decr:
+				return gl.DECR;
+			case Tea.ShaderStencilOp.DecrWrap:
+				return gl.DECR_WRAP;
+			case Tea.ShaderStencilOp.Invert:
+				return gl.INVERT;
+		}
+		return gl.ZERO;
 	}
 
 	static get defaultVertexShaderSource(): string {
@@ -152,7 +270,7 @@ export class Shader {
 	}
 
 	attach(vsSource: string, fsSource: string): void {
-		const gl = this.app.gl;
+		var gl = this.app.gl;
 		this.compile(this.vertexShader, vsSource);
 		this.compile(this.fragmentShader, fsSource);
 		this.link(this.program, this.vertexShader, this.fragmentShader);
@@ -160,7 +278,7 @@ export class Shader {
 	}
 
 	protected compile(shader: WebGLShader, source: string): void {
-		const gl = this.app.gl;
+		var gl = this.app.gl;
 		gl.shaderSource(shader, source);
 		gl.compileShader(shader);
 		if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
@@ -169,7 +287,7 @@ export class Shader {
 	}
 
 	protected link(program: WebGLProgram, vs: WebGLShader, fs: WebGLShader): void {
-		const gl = this.app.gl;
+		var gl = this.app.gl;
 		gl.attachShader(program, vs);
 		gl.attachShader(program, fs);
 		gl.linkProgram(program);

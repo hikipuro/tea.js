@@ -1,5 +1,4 @@
 import * as Tea from "../Tea";
-import { Component } from "./Component";
 import { Mesh } from "./Mesh";
 import { Primitives } from "../Primitives";
 

@@ -170,6 +170,11 @@ export class App {
 			Tea.Shader.textVertexShaderSource,
 			Tea.Shader.textFragmentShaderSource
 		);
+		shader.settings.enableBlend = true;
+		shader.settings.blend.srcRGB = Tea.ShaderBlendFunc.SrcAlpha;
+		shader.settings.blend.dstRGB = Tea.ShaderBlendFunc.OneMinusSrcAlpha;
+		shader.settings.blend.srcAlpha = Tea.ShaderBlendFunc.One;
+		shader.settings.blend.dstAlpha = Tea.ShaderBlendFunc.One;
 		var mesh = new Tea.TextMesh(this);
 		var meshFilter = object3d.addComponent(Tea.MeshFilter);
 		meshFilter.mesh = mesh;

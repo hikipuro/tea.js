@@ -40,6 +40,7 @@ export class MeshRenderer extends Renderer {
 		this.setMeshData(mesh);
 		this.setVertexBuffer(mesh);
 		this.setIndexBuffer(mesh);
+		this.setFrontFace();
 		this.draw(mesh);
 	}
 
@@ -168,48 +169,39 @@ export class MeshRenderer extends Renderer {
 		}
 	}
 
-	protected draw(mesh: Tea.Mesh): void {
+	protected setFrontFace(): void {
 		var gl = this.app.gl;
-		if (mesh.hasTriangles === false) {
-			var count = this._vertexCount;
-			if (this.wireframe) {
-				gl.drawArrays(gl.LINE_LOOP, 0, count);
-				return;
-			}
-			//gl.drawArrays(gl.POINTS, 0, count);
-			//gl.drawArrays(gl.LINE_LOOP, 0, count);
-			gl.drawArrays(gl.TRIANGLES, 0, count);
-			//gl.drawArrays(gl.TRIANGLE_STRIP, 0, count);
-			return;
-		}
-
 		var scale = this.object3d.scale;
 		if (scale.x * scale.y * scale.z < 0) {
 			gl.frontFace(gl.CW);
 		} else {
 			gl.frontFace(gl.CCW);
 		}
+	}
 
+	protected draw(mesh: Tea.Mesh): void {
 		if (this.wireframe) {
-			var count = this._triangleCount;
-			gl.drawElements(gl.LINE_STRIP, count, gl.UNSIGNED_SHORT, 0);
+			this.drawWireframe(mesh);
 			return;
 		}
-		
-		if (mesh instanceof Tea.TextMesh) {
-			//gl.disable(gl.DEPTH_TEST);
-			gl.enable(gl.BLEND);
-			//gl.blendEquation(gl.FUNC_ADD);
-			gl.blendFuncSeparate(
-				gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA,
-				gl.ONE, gl.ONE
-			);
-		} else {
-			//gl.enable(gl.DEPTH_TEST);
-			gl.disable(gl.BLEND);
+		var gl = this.app.gl;
+		if (mesh.hasTriangles === false) {
+			var count = this._vertexCount;
+			gl.drawArrays(gl.TRIANGLES, 0, count);
+			return;
 		}
-
 		var count = this._triangleCount;
 		gl.drawElements(gl.TRIANGLES, count, gl.UNSIGNED_SHORT, 0);
+	}
+
+	protected drawWireframe(mesh: Tea.Mesh): void {
+		var gl = this.app.gl;
+		if (mesh.hasTriangles === false) {
+			var count = this._vertexCount;
+			gl.drawArrays(gl.LINE_LOOP, 0, count);
+			return;
+		}
+		var count = this._triangleCount;
+		gl.drawElements(gl.LINE_STRIP, count, gl.UNSIGNED_SHORT, 0);
 	}
 }
