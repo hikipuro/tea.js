@@ -46,6 +46,13 @@ export class Scene {
 			return renderQueueA - renderQueueB;
 		});
 		Tea.ArrayUtil.each(renderers, (i, renderer) => {
+			if (this.camera.enableStereo) {
+				this.camera.updateLeft();
+				renderer.render(this.camera);
+				this.camera.updateRight();
+				renderer.render(this.camera);
+				return;
+			}
 			renderer.render(this.camera);
 		});
 		this._renderers = [];

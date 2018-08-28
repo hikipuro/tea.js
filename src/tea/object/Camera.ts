@@ -12,6 +12,8 @@ export class Camera extends Component {
 	orthographic: boolean;
 	orthographicSize: number;
 	rect: Tea.Rect;
+	enableStereo: boolean;
+	stereoDistance: number;
 
 	protected _cameraToWorldMatrix: Tea.Matrix4x4;
 	protected _worldToCameraMatrix: Tea.Matrix4x4;
@@ -29,6 +31,8 @@ export class Camera extends Component {
 		this.orthographic = false;
 		this.orthographicSize = 5;
 		this.rect = new Tea.Rect(0, 0, 1, 1);
+		this.enableStereo = false;
+		this.stereoDistance = 0.1;
 		this._prevRect = new Tea.Rect();
 		this.update();
 	}
@@ -85,6 +89,38 @@ export class Camera extends Component {
 
 		this.setViewport();
 		this.clear();
+	}
+
+	updateLeft(): void {
+		var position = this.position.clone();
+		position.x -= this.stereoDistance;
+
+		var view = Tea.Matrix4x4.tr(
+			position,
+			this.rotation
+		);
+		view.toggleHand();
+		this._cameraToWorldMatrix = view;
+
+		view = view.inverse;
+		this._worldToCameraMatrix = view;
+		this.setViewportLeft();
+	}
+
+	updateRight(): void {
+		var position = this.position.clone();
+		position.x += this.stereoDistance;
+
+		var view = Tea.Matrix4x4.tr(
+			position,
+			this.rotation
+		);
+		view.toggleHand();
+		this._cameraToWorldMatrix = view;
+
+		view = view.inverse;
+		this._worldToCameraMatrix = view;
+		this.setViewportRight();
 	}
 
 	screenPointToRay(position: Tea.Vector3): Tea.Ray {
@@ -226,6 +262,91 @@ export class Camera extends Component {
 		if (rect.yMax > 1) {
 			rect.height = 1 - rect.y;
 		}
+
+		var width = this.app.width;
+		var height = this.app.height;
+
+		gl.viewport(
+			rect.x * width,
+			rect.y * height,
+			rect.width * width,
+			rect.height * height
+		);
+		gl.scissor(
+			rect.x * width,
+			rect.y * height,
+			rect.width * width,
+			rect.height * height
+		);
+	}
+	
+	protected setViewportLeft(): void {
+		var gl = this.app.gl;
+
+		if (this._prevRect.equals(this.rect)) {
+			return;
+		}
+
+		var rect = this.rect.clone();
+		if (rect.x < 0) {
+			rect.width += rect.x;
+			rect.x = 0;
+		}
+		if (rect.y < 0) {
+			rect.height += rect.y;
+			rect.y = 0;
+		}
+		if (rect.xMax > 1) {
+			rect.width = 1 - rect.x;
+		}
+		if (rect.yMax > 1) {
+			rect.height = 1 - rect.y;
+		}
+
+		rect.width /= 2;
+
+		var width = this.app.width;
+		var height = this.app.height;
+
+		gl.viewport(
+			rect.x * width,
+			rect.y * height,
+			rect.width * width,
+			rect.height * height
+		);
+		gl.scissor(
+			rect.x * width,
+			rect.y * height,
+			rect.width * width,
+			rect.height * height
+		);
+	}
+	
+	protected setViewportRight(): void {
+		var gl = this.app.gl;
+
+		if (this._prevRect.equals(this.rect)) {
+			return;
+		}
+
+		var rect = this.rect.clone();
+		if (rect.x < 0) {
+			rect.width += rect.x;
+			rect.x = 0;
+		}
+		if (rect.y < 0) {
+			rect.height += rect.y;
+			rect.y = 0;
+		}
+		if (rect.xMax > 1) {
+			rect.width = 1 - rect.x;
+		}
+		if (rect.yMax > 1) {
+			rect.height = 1 - rect.y;
+		}
+
+		rect.width /= 2;
+		rect.x += rect.width;
 
 		var width = this.app.width;
 		var height = this.app.height;

@@ -47,6 +47,7 @@ export class TestScript extends Tea.Script {
 			this.localPosition = p;
 			//console.log(p.toString());
 		}
+		this.localPosition.z = Math.sin(this.count / 40) * 3.5 - 5;
 		if (mouse.isDown(0)) {
 			console.log("mouse down");
 			let p2 = new Tea.Vector3(mouse.x, mouse.y, 10);
