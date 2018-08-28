@@ -97,6 +97,21 @@ export class App {
 		return extensions.indexOf(name) >= 0;
 	}
 
+	captureScreenshot(callback: (data: ArrayBuffer) => void, type: string = "image/png"): void {
+		if (callback == null) {
+			return;
+		}
+		this._renderer.once("update", () => {
+			var url = this.canvas.toDataURL(type);
+			var data = atob(url.split(",")[1]);
+			var buffer = new Uint8Array(data.length);
+			for (var i = 0; i < data.length; i++) {
+				buffer[i] = data.charCodeAt(i);
+			}
+			callback(buffer.buffer);
+		});
+	}
+
 	createObject3D(): Tea.Object3D {
 		var object3d = new Tea.Object3D(this);
 		return object3d;
@@ -207,7 +222,8 @@ export class App {
 			return;
 		}
 		var attribute: WebGLContextAttributes = {
-			antialias: false
+			antialias: false,
+			//preserveDrawingBuffer: true,
 		};
 		var context = this.canvas.getContext(
 			"webgl", attribute
@@ -240,7 +256,7 @@ export class App {
 	}
 }
 
-class AppRenderer {
+class AppRenderer extends Tea.EventDispatcher {
 	app: App;
 	isStarted: boolean;
 	isPaused: boolean;
@@ -253,6 +269,7 @@ class AppRenderer {
 	protected _prevRect: Tea.Rect;
 
 	constructor(app: App) {
+		super();
 		this.app = app;
 		this.isStarted = false;
 		this.isPaused = false;
@@ -310,6 +327,7 @@ class AppRenderer {
 			this.updateScene();
 		}
 		this.stats.update();
+		this.emit("update");
 		this._handle = requestAnimationFrame(this.update);
 	}
 

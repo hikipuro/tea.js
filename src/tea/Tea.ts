@@ -209,3 +209,17 @@ export function benchmark(func: Function, iteration: number = 1): number {
 	}
 	return now() - start;
 }
+
+export function openDownloadDialog(data: ArrayBuffer, type: string, filename: string): void {
+	if (type == null || type === "" || filename == null || filename === "") {
+		return;
+	}
+	var blob = new Blob([data], {type: type});
+	var url = window.URL.createObjectURL(blob);
+	var link = document.createElement("a");
+	document.body.appendChild(link);
+	link.href = url;
+	link.download = filename;
+	link.click();
+	document.body.removeChild(link);
+}
