@@ -406,6 +406,16 @@ export class Renderer extends Component {
 		this._uniforms.uniformMatrix4fv("TEA_OBJECT_TO_WORLD", model);
 		this._uniforms.uniformMatrix4fv("TEA_WORLD_TO_OBJECT", this.worldToLocalMatrix);
 		//this._uniforms.uniformMatrix4fv("invMatrix", invMatrix);
+
+		if (camera.stereoMode === Tea.CameraStereoMode.LineByLine) {
+			if (camera.isStereoLeft) {
+				this._uniforms.uniform1i("TEA_CAMERA_STEREO", 1);
+			} else {
+				this._uniforms.uniform1i("TEA_CAMERA_STEREO", 2);
+			}
+		} else {
+			this._uniforms.uniform1i("TEA_CAMERA_STEREO", 0);
+		}
 	}
 
 	protected setMaterialUniforms(): void {

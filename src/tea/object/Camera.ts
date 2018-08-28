@@ -14,6 +14,8 @@ export class Camera extends Component {
 	rect: Tea.Rect;
 	enableStereo: boolean;
 	stereoDistance: number;
+	stereoMode: Tea.CameraStereoMode;
+	isStereoLeft: boolean;
 
 	protected _cameraToWorldMatrix: Tea.Matrix4x4;
 	protected _worldToCameraMatrix: Tea.Matrix4x4;
@@ -33,6 +35,8 @@ export class Camera extends Component {
 		this.rect = new Tea.Rect(0, 0, 1, 1);
 		this.enableStereo = false;
 		this.stereoDistance = 0.1;
+		this.stereoMode = Tea.CameraStereoMode.SideBySide;
+		this.isStereoLeft = true;
 		this._prevRect = new Tea.Rect();
 		this.update();
 	}
@@ -105,6 +109,7 @@ export class Camera extends Component {
 		view = view.inverse;
 		this._worldToCameraMatrix = view;
 		this.setViewportLeft();
+		this.isStereoLeft = true;
 	}
 
 	updateRight(): void {
@@ -121,6 +126,7 @@ export class Camera extends Component {
 		view = view.inverse;
 		this._worldToCameraMatrix = view;
 		this.setViewportRight();
+		this.isStereoLeft = false;
 	}
 
 	screenPointToRay(position: Tea.Vector3): Tea.Ray {
@@ -303,7 +309,17 @@ export class Camera extends Component {
 			rect.height = 1 - rect.y;
 		}
 
-		rect.width /= 2;
+		switch (this.stereoMode) {
+			case Tea.CameraStereoMode.SideBySide:
+				rect.width /= 2;
+				break;
+			case Tea.CameraStereoMode.TopAndBottom:
+				rect.height /= 2;
+				rect.y += rect.height;
+				break;
+			case Tea.CameraStereoMode.LineByLine:
+				break;
+		}
 
 		var width = this.app.width;
 		var height = this.app.height;
@@ -345,8 +361,17 @@ export class Camera extends Component {
 			rect.height = 1 - rect.y;
 		}
 
-		rect.width /= 2;
-		rect.x += rect.width;
+		switch (this.stereoMode) {
+			case Tea.CameraStereoMode.SideBySide:
+				rect.width /= 2;
+				rect.x += rect.width;
+				break;
+			case Tea.CameraStereoMode.TopAndBottom:
+				rect.height /= 2;
+				break;
+			case Tea.CameraStereoMode.LineByLine:
+				break;
+		}
 
 		var width = this.app.width;
 		var height = this.app.height;

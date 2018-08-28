@@ -14,6 +14,7 @@ import { Vector3 } from "./math/Vector3";
 import { Vector4 } from "./math/Vector4";
 
 import { ArrayUtil } from "./util/ArrayUtil";
+import { CameraStereoMode } from "./util/CameraStereoMode";
 import { Color } from "./util/Color";
 import { Cursor, CursorType } from "./util/Cursor";
 import { EventDispatcher } from "./util/EventDispatcher";
@@ -90,6 +91,7 @@ export {
 	Vector4,
 
 	ArrayUtil,
+	CameraStereoMode,
 	Color,
 	Cursor,
 	CursorType,

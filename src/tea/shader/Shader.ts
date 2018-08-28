@@ -30,6 +30,7 @@ const defaultFragmentShaderSource = `
 	precision mediump float;
 	uniform vec4 _Color;
 	uniform sampler2D _MainTex;
+	uniform int TEA_CAMERA_STEREO;
 	uniform vec2 uv_MainTex;
 	uniform vec2 _MainTex_ST;
 	uniform bool useColor;
@@ -37,6 +38,12 @@ const defaultFragmentShaderSource = `
 	varying vec4 vColor;
 
 	void main() {
+		if (TEA_CAMERA_STEREO != 0) {
+			float stereoMod = float(TEA_CAMERA_STEREO - 1);
+			if (mod(floor(gl_FragCoord.y), 2.0) == stereoMod) {
+				discard;
+			}
+		}
 		vec4 tex = texture2D(_MainTex, (uv_MainTex + vTexCoord) / _MainTex_ST);
 		if (useColor) {
 			gl_FragColor = tex * _Color * vColor;
@@ -57,8 +64,15 @@ const lineVertexShaderSource = `
 
 const lineFragmentShaderSource = `
 	precision mediump float;
+	uniform int TEA_CAMERA_STEREO;
 	uniform vec4 _Color;
 	void main() {
+		if (TEA_CAMERA_STEREO != 0) {
+			float stereoMod = float(TEA_CAMERA_STEREO - 1);
+			if (mod(floor(gl_FragCoord.y), 2.0) == stereoMod) {
+				discard;
+			}
+		}
 		gl_FragColor = _Color;
 	}
 `;
@@ -77,10 +91,17 @@ const textVertexShaderSource = `
 const textFragmentShaderSource = `
 	precision mediump float;
 	uniform sampler2D _MainTex;
+	uniform int TEA_CAMERA_STEREO;
 	uniform vec2 uv_MainTex;
 	uniform vec2 _MainTex_ST;
 	varying vec2 vTexCoord;
 	void main() {
+		if (TEA_CAMERA_STEREO != 0) {
+			float stereoMod = float(TEA_CAMERA_STEREO - 1);
+			if (mod(floor(gl_FragCoord.y), 2.0) == stereoMod) {
+				discard;
+			}
+		}
 		vec4 color = texture2D(_MainTex, (uv_MainTex + vTexCoord) / _MainTex_ST);
 		if (color.a < 0.1) {
 			discard;
