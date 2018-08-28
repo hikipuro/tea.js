@@ -16,6 +16,7 @@ export class Camera extends Component {
 	protected _cameraToWorldMatrix: Tea.Matrix4x4;
 	protected _worldToCameraMatrix: Tea.Matrix4x4;
 	protected _projectionMatrix: Tea.Matrix4x4;
+	protected _prevRect: Tea.Rect;
 
 	constructor(app: Tea.App) {
 		super(app);
@@ -28,6 +29,7 @@ export class Camera extends Component {
 		this.orthographic = false;
 		this.orthographicSize = 5;
 		this.rect = new Tea.Rect(0, 0, 1, 1);
+		this._prevRect = new Tea.Rect();
 		this.update();
 	}
 
@@ -81,6 +83,7 @@ export class Camera extends Component {
 		//projection.toggleHand();
 		this._projectionMatrix = projection;
 
+		this.setViewport();
 		this.clear();
 	}
 
@@ -199,6 +202,46 @@ export class Camera extends Component {
 			rect.height = 1 - rect.y;
 		}
 		return rect;
+	}
+	
+	protected setViewport(): void {
+		var gl = this.app.gl;
+
+		if (this._prevRect.equals(this.rect)) {
+			return;
+		}
+
+		var rect = this.rect.clone();
+		if (rect.x < 0) {
+			rect.width += rect.x;
+			rect.x = 0;
+		}
+		if (rect.y < 0) {
+			rect.height += rect.y;
+			rect.y = 0;
+		}
+		if (rect.xMax > 1) {
+			rect.width = 1 - rect.x;
+		}
+		if (rect.yMax > 1) {
+			rect.height = 1 - rect.y;
+		}
+
+		var width = this.app.width;
+		var height = this.app.height;
+
+		gl.viewport(
+			rect.x * width,
+			rect.y * height,
+			rect.width * width,
+			rect.height * height
+		);
+		gl.scissor(
+			rect.x * width,
+			rect.y * height,
+			rect.width * width,
+			rect.height * height
+		);
 	}
 
 	protected clear(): void {

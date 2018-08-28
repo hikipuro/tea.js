@@ -266,7 +266,6 @@ class AppRenderer extends Tea.EventDispatcher {
 	time: Tea.Time;
 	stats: Tea.Stats;
 	protected _handle: number;
-	protected _prevRect: Tea.Rect;
 
 	constructor(app: App) {
 		super();
@@ -277,7 +276,6 @@ class AppRenderer extends Tea.EventDispatcher {
 		this.mouse = new Tea.Mouse(app, this.app.canvas);
 		this.time = new Tea.Time();
 		this._handle = 0;
-		this._prevRect = new Tea.Rect();
 		this.createStats();
 
 		window.addEventListener("blur", () => {
@@ -332,51 +330,9 @@ class AppRenderer extends Tea.EventDispatcher {
 	}
 
 	protected updateScene(): void {
-		this.setViewport();
 		this.currentScene.update();
 		this.keyboard.update();
 		this.mouse.update();
-	}
-
-	protected setViewport(): void {
-		var gl = this.app.gl;
-		var camera = this.currentScene.camera;
-
-		if (this._prevRect.equals(camera.rect)) {
-			return;
-		}
-
-		var rect = camera.rect.clone();
-		if (rect.x < 0) {
-			rect.width += rect.x;
-			rect.x = 0;
-		}
-		if (rect.y < 0) {
-			rect.height += rect.y;
-			rect.y = 0;
-		}
-		if (rect.xMax > 1) {
-			rect.width = 1 - rect.x;
-		}
-		if (rect.yMax > 1) {
-			rect.height = 1 - rect.y;
-		}
-
-		var width = this.app.width;
-		var height = this.app.height;
-
-		gl.viewport(
-			rect.x * width,
-			rect.y * height,
-			rect.width * width,
-			rect.height * height
-		);
-		gl.scissor(
-			rect.x * width,
-			rect.y * height,
-			rect.width * width,
-			rect.height * height
-		);
 	}
 
 	protected createStats(): void {
