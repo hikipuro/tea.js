@@ -414,6 +414,8 @@ export class Renderer extends Component {
 					stereoMod--;
 				}
 				this._uniforms.uniform1i("TEA_CAMERA_STEREO", stereoMod);
+			} else {
+				this._uniforms.uniform1i("TEA_CAMERA_STEREO", 0);
 			}
 		} else {
 			this._uniforms.uniform1i("TEA_CAMERA_STEREO", 0);
