@@ -13,6 +13,7 @@ import { Vector2 } from "./math/Vector2";
 import { Vector3 } from "./math/Vector3";
 import { Vector4 } from "./math/Vector4";
 
+import { ArrayBufferUtil } from "./util/ArrayBufferUtil";
 import { ArrayUtil } from "./util/ArrayUtil";
 import { CameraStereoMode } from "./util/CameraStereoMode";
 import { Color } from "./util/Color";
@@ -90,6 +91,7 @@ export {
 	Vector3,
 	Vector4,
 
+	ArrayBufferUtil,
 	ArrayUtil,
 	CameraStereoMode,
 	Color,
@@ -217,11 +219,12 @@ export function openDownloadDialog(data: ArrayBuffer, type: string, filename: st
 		return;
 	}
 	var blob = new Blob([data], {type: type});
-	var url = window.URL.createObjectURL(blob);
+	var url = URL.createObjectURL(blob);
 	var link = document.createElement("a");
 	document.body.appendChild(link);
 	link.href = url;
 	link.download = filename;
 	link.click();
 	document.body.removeChild(link);
+	URL.revokeObjectURL(url);
 }
