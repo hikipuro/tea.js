@@ -6,9 +6,11 @@ export class App {
 	capabilities: Tea.GLCapabilities;
 	parameters: Tea.GLParameters;
 	readonly cursor: Tea.Cursor;
+	protected _canvasAttributes: WebGLContextAttributes;
 	protected _renderer: AppRenderer;
 
-	constructor(id: string) {
+	constructor(id: string, attributes?: WebGLContextAttributes) {
+		this._canvasAttributes = attributes;
 		this.canvas = document.getElementById(id) as HTMLCanvasElement;
 		this.canvas.addEventListener("webglcontextcreationerror", this.onContextCreationError);
 		this.canvas.addEventListener("webglcontextlost", this.onContextLost);
@@ -221,16 +223,14 @@ export class App {
 		if (this.canvas == null) {
 			return;
 		}
-		var attribute: WebGLContextAttributes = {
-			antialias: false,
-			//preserveDrawingBuffer: true,
-		};
 		var context = this.canvas.getContext(
-			"webgl", attribute
+			"webgl",
+			this._canvasAttributes
 		) as WebGLRenderingContext;
 		if (context == null) {
 			context = this.canvas.getContext(
-				"experimental-webgl", attribute
+				"experimental-webgl",
+				this._canvasAttributes
 			) as WebGLRenderingContext;
 		}
 		return context;
