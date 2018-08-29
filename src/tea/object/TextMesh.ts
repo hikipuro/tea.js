@@ -4,6 +4,8 @@ import { Primitives } from "../Primitives";
 
 export class TextMesh extends Mesh {
 	protected static readonly DefaultFontSize: number = 14;
+	alignment: Tea.TextAlignment;
+	anchor: Tea.TextAnchor;
 	characterSize: number;
 	lineSpacing: number;
 	texture: Tea.Texture;
@@ -41,6 +43,8 @@ export class TextMesh extends Mesh {
 		this._fontSize = TextMesh.DefaultFontSize;
 		this._fontStyle = Tea.FontStyle.Normal;
 		this._text = "Text";
+		this.alignment = Tea.TextAlignment.Left;
+		this.anchor = Tea.TextAnchor.MiddleCenter;
 		this.characterSize = 1;
 		this.lineSpacing = 1;
 		this._padding = 1;
@@ -125,9 +129,10 @@ export class TextMesh extends Mesh {
 	}
 
 	protected draw(): void {
-		this.resizeCanvas();
+		var textSize = this.resizeCanvas();
 		this.updateColor();
 
+		var context = this._context;
 		var text = this._text.split(/\r\n|\r|\n/);
 		var fontSize = this._fontSize;
 		if (fontSize <= 0) {
@@ -137,15 +142,23 @@ export class TextMesh extends Mesh {
 		var lineSpacing = this.lineSpacing * 1.2;
 		for (var i = 0; i < text.length; i++) {
 			var line = text[i];
+			var x = padding;
 			var y = padding + (fontSize * i) * lineSpacing;
-			this._context.fillText(
-				line, padding, y
-			);
+			var metrics = context.measureText(line);
+			switch (this.alignment) {
+				case Tea.TextAlignment.Center:
+					x = (textSize.width - metrics.width) / 2;
+					break;
+				case Tea.TextAlignment.Right:
+					x = textSize.width - metrics.width;
+					break;
+			}
+			this._context.fillText(line, x, y);
 		}
 		this.texture.image = this._canvas;
 	}
 
-	protected resizeCanvas(): void {
+	protected resizeCanvas(): any {
 		var context = this._context;
 		var text = this._text.split(/\r\n|\r|\n/);
 		var width = this._canvas.width;
@@ -189,6 +202,10 @@ export class TextMesh extends Mesh {
 		} else {
 			this.clearRect();
 		}
+		return {
+			width: tw,
+			height: th
+		};
 	}
 
 	protected updateContext(): void {
@@ -230,14 +247,45 @@ export class TextMesh extends Mesh {
 
 	protected udpateVertices(textWidth: number, textHeight: number): void {
 		var scale = 12 / this.characterSize;
-		var width = this._canvas.width / (2 * scale);
-		var height = this._canvas.height / (2 * scale);
-		var ow = (this._canvas.width - textWidth) / (2 * scale);
-		var oh = (this._canvas.height - textHeight) / (2 * scale);
+		var scale2 = scale * 2;
+		var width = this._canvas.width / scale2;
+		var height = this._canvas.height / scale2;
+		var ow = (this._canvas.width - textWidth) / scale2;
+		var oh = (this._canvas.height - textHeight) / scale2;
 		var v0 = this.vertices[0];
 		var v1 = this.vertices[1];
 		var v2 = this.vertices[2];
 		var v3 = this.vertices[3];
+		switch (this.anchor) {
+			case Tea.TextAnchor.UpperLeft:
+				ow = width;
+				oh = height;
+				break;
+			case Tea.TextAnchor.UpperCenter:
+				oh = height;
+				break;
+			case Tea.TextAnchor.UpperRight:
+				ow = ow * 2 - width;
+				oh = height;
+				break;
+			case Tea.TextAnchor.MiddleLeft:
+				ow = width;
+				break;
+			case Tea.TextAnchor.MiddleRight:
+				ow = ow * 2 - width;
+				break;
+			case Tea.TextAnchor.LowerLeft:
+				ow = width;
+				oh = oh * 2 - height;
+				break;
+			case Tea.TextAnchor.LowerCenter:
+				oh = oh * 2 - height;
+				break;
+			case Tea.TextAnchor.LowerRight:
+				ow = ow * 2 - width;
+				oh = oh * 2 - height;
+				break;
+		}
 		v0.x = -width + ow; v0.y = -height - oh;
 		v1.x =  width + ow; v1.y = -height - oh;
 		v2.x =  width + ow; v2.y =  height - oh;
