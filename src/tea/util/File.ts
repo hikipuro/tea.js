@@ -1,7 +1,3 @@
-interface FileReadTextCallback {
-	(data: string, path: string): void
-}
-
 interface FileReadImageCallback {
 	(image: HTMLImageElement, path: string): void
 }
@@ -16,7 +12,7 @@ export class File {
 		xhr.open("get", url, true);
 	}
 
-	static readText(url: string, callback: FileReadTextCallback): void {
+	static readText(url: string, callback: (err: any, data: string) => void): void {
 		if (callback == null) {
 			return;
 		}

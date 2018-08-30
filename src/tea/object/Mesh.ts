@@ -1,5 +1,4 @@
 import * as Tea from "../Tea";
-import { Component } from "./Component";
 
 export class Mesh {
 	vertices: Array<Tea.Vector3>;
@@ -98,7 +97,7 @@ export class Mesh {
 		const vertices = this.vertices;
 		const length = vertices.length;
 		for (var i = 0; i < length; i++) {
-			vertices[i].mul(value);
+			vertices[i].mul$(value);
 		}
 	}
 
@@ -153,6 +152,24 @@ export class Mesh {
 		bounds.extents = extents;
 		bounds.center = min.add(extents);
 		this.bounds = bounds;
+	}
+
+	calculateNormals(): void {
+		var vertices = this.vertices;
+		var triangles = this.triangles;
+		var length = triangles.length;
+		var normals: Array<Tea.Vector3> = new Array(length);
+		for (var i = 0; i < length; i++) {
+			var triangle = triangles[i];
+			var v0 = vertices[triangle.x];
+			var v1 = vertices[triangle.y];
+			var v2 = vertices[triangle.z];
+			var n = v1.sub(v0).cross(v2.sub(v1)).normalized;
+			normals[triangle.x] = n;
+			normals[triangle.y] = n;
+			normals[triangle.z] = n;
+		}
+		this.normals = normals;
 	}
 
 	protected convertToVec2Array(array: Array<number>): Array<Tea.Vector2> {

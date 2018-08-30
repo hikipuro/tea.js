@@ -28,7 +28,7 @@ export class Main {
 		});
 
 		this.count = 0;
-		this.app = new Tea.App("canvas");
+		this.app = new Tea.App("canvas", {antialias: false});
 		//this.app.canvas.style.background = "#000";
 		this.app.width = 400;
 		this.app.height = 400;
@@ -240,18 +240,20 @@ export class Main {
 		var meshFilter = textmesh.getComponent(Tea.MeshFilter);
 		var mesh = meshFilter.mesh as Tea.TextMesh;
 		mesh.characterSize = 0.3;
-		mesh.fontSize = 40;
+		mesh.fontSize = 20;
 		//mesh.color = Tea.Color.red;
 		//mesh.color = Tea.Color.black;
 		//mesh.font = "Arial";
-		//mesh.text = "Hello world\naあいうえお";
+		//mesh.alignment = Tea.TextAlignment.Center;
+		//mesh.anchor = Tea.TextAnchor.LowerRight;
+		mesh.text = "Hello world\naあ";
 		mesh.update();
 		//textmesh.scale.x = 3.1;
 		//textmesh.scale.y = 1.5;
 		textmesh.position.y = 1;
-		textmesh.position.z = -5;
+		textmesh.position.z = -6;
 		//document.body.appendChild(mesh.canvas);
-		//scene.appendChild(textmesh);
+		scene.appendChild(textmesh);
 
 		var wp = scene.camera.viewportToWorldPoint(new Tea.Vector3(0, 0, 0));
 		//var stats = this.app.createStats();
@@ -280,6 +282,14 @@ export class Main {
 
 		///*
 		this.app.start();
+
+		this.app.readObjFile("../models/teapot/teapot.obj", (object3d) => {
+			var scale = 0.04;
+			object3d.localScale = new Tea.Vector3(scale, scale, scale);
+			object3d.localPosition.z = -4;
+			object3d.addComponent(Rotate);
+			scene.appendChild(object3d);
+		});
 
 		Tea.File.readImage("../models/google.jpg", (image) => {
 			//document.body.appendChild(image);

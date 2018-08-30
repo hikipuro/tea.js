@@ -9,8 +9,6 @@ export class MeshRenderer extends Renderer {
 	colorBuffer: WebGLBuffer;
 
 	wireframe: boolean = false;
-	protected _vertexCount: number = 0;
-	protected _triangleCount: number = 0;
 
 	constructor(app: Tea.App) {
 		super(app);
@@ -95,7 +93,6 @@ export class MeshRenderer extends Renderer {
 		let target = gl.ARRAY_BUFFER;
 
 		const vertices = new Float32Array(Tea.ArrayUtil.unroll(mesh.vertices));
-		this._vertexCount = vertices.length;
 		gl.bindBuffer(target, this.vertexBuffer);
 		gl.bufferData(target, vertices, gl.STATIC_DRAW);
 
@@ -121,7 +118,6 @@ export class MeshRenderer extends Renderer {
 		if (mesh.hasTriangles) {
 			target = gl.ELEMENT_ARRAY_BUFFER;
 			const triangles = new Uint16Array(Tea.ArrayUtil.unroll(mesh.triangles));
-			this._triangleCount = triangles.length;
 			gl.bindBuffer(target, this.indexBuffer);
 			gl.bufferData(target, triangles, gl.STATIC_DRAW);
 			gl.bindBuffer(target, null);
@@ -186,22 +182,22 @@ export class MeshRenderer extends Renderer {
 		}
 		var gl = this.app.gl;
 		if (mesh.hasTriangles === false) {
-			var count = this._vertexCount;
+			var count = mesh.vertices.length;
 			gl.drawArrays(gl.TRIANGLES, 0, count);
 			return;
 		}
-		var count = this._triangleCount;
+		var count = mesh.triangles.length * 3;
 		gl.drawElements(gl.TRIANGLES, count, gl.UNSIGNED_SHORT, 0);
 	}
 
 	protected drawWireframe(mesh: Tea.Mesh): void {
 		var gl = this.app.gl;
 		if (mesh.hasTriangles === false) {
-			var count = this._vertexCount;
+			var count = mesh.vertices.length;
 			gl.drawArrays(gl.LINE_LOOP, 0, count);
 			return;
 		}
-		var count = this._triangleCount;
+		var count = mesh.triangles.length * 3;
 		gl.drawElements(gl.LINE_STRIP, count, gl.UNSIGNED_SHORT, 0);
 	}
 }

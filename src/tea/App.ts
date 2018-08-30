@@ -203,6 +203,14 @@ export class App {
 		return object3d;
 	}
 
+	readObjFile(url: string, callback: (object3d: Tea.Object3D) => void): void {
+		if (callback == null) {
+			return;
+		}
+		var reader = new Tea.ObjReader(this);
+		reader.readFile(url, callback);
+	}
+
 	protected init(): void {
 		this.gl = this.getWebGLContext();
 		var gl = this.gl;
