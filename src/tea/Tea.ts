@@ -1,167 +1,82 @@
-import { AABB } from "./collision/AABB";
-import { Line } from "./collision/Line";
-import { LineSegment } from "./collision/LineSegment";
-import { Plane } from "./collision/Plane";
-import { Polygon } from "./collision/Polygon";
-import { Sphere } from "./collision/Sphere";
+export { AABB } from "./collision/AABB";
+export { Line } from "./collision/Line";
+export { LineSegment } from "./collision/LineSegment";
+export { Plane } from "./collision/Plane";
+export { Polygon } from "./collision/Polygon";
+export { Sphere } from "./collision/Sphere";
 
-import { ParticleSystem } from "./component/ParticleSystem";
+export { ParticleSystem } from "./component/ParticleSystem";
 
-import { Mathf } from "./math/Mathf";
-import { Matrix4x4 } from "./math/Matrix4x4";
-import { Quaternion } from "./math/Quaternion";
-import { Rect } from "./math/Rect";
-import { Vector2 } from "./math/Vector2";
-import { Vector3 } from "./math/Vector3";
-import { Vector4 } from "./math/Vector4";
+export { Mathf } from "./math/Mathf";
+export { Matrix4x4 } from "./math/Matrix4x4";
+export { Quaternion } from "./math/Quaternion";
+export { Rect } from "./math/Rect";
+export { Vector2 } from "./math/Vector2";
+export { Vector3 } from "./math/Vector3";
+export { Vector4 } from "./math/Vector4";
 
-import { ArrayBufferUtil } from "./util/ArrayBufferUtil";
-import { ArrayUtil } from "./util/ArrayUtil";
-import { CameraStereoMode } from "./util/CameraStereoMode";
-import { Color } from "./util/Color";
-import { Cursor, CursorType } from "./util/Cursor";
-import { EventDispatcher } from "./util/EventDispatcher";
-import { File } from "./util/File";
-import { FilterMode } from "./util/FilterMode";
-import { FontStyle } from "./util/FontStyle";
-import { MatrixChecker } from "./util/MatrixChecker";
-import { PrimitiveType } from "./util/PrimitiveType";
-import { Screen } from "./util/Screen";
-import { Space } from "./util/Space";
-import { Stats } from "./util/Stats";
-import { TextAlignment } from "./util/TextAlignment";
-import { TextAnchor } from "./util/TextAnchor";
-import { TextureDimension } from "./util/TextureDimension";
-import { TextureWrapMode } from "./util/TextureWrapMode";
-import { Time } from "./util/Time";
+export { ArrayBufferUtil } from "./util/ArrayBufferUtil";
+export { ArrayUtil } from "./util/ArrayUtil";
+export { CameraStereoMode } from "./util/CameraStereoMode";
+export { Color } from "./util/Color";
+export { Cursor, CursorType } from "./util/Cursor";
+export { EventDispatcher } from "./util/EventDispatcher";
+export { File } from "./util/File";
+export { FilterMode } from "./util/FilterMode";
+export { FontStyle } from "./util/FontStyle";
+export { MatrixChecker } from "./util/MatrixChecker";
+export { PrimitiveType } from "./util/PrimitiveType";
+export { Screen } from "./util/Screen";
+export { Space } from "./util/Space";
+export { Stats } from "./util/Stats";
+export { TextAlignment } from "./util/TextAlignment";
+export { TextAnchor } from "./util/TextAnchor";
+export { TextureDimension } from "./util/TextureDimension";
+export { TextureWrapMode } from "./util/TextureWrapMode";
+export { Time } from "./util/Time";
 
-import { Bounds } from "./object/Bounds";
-import { Camera } from "./object/Camera";
-import { Collider } from "./object/Collider";
-import { Component } from "./object/Component";
-import { Mesh } from "./object/Mesh";
-import { MeshFilter } from "./object/MeshFilter";
-import { Object3D } from "./object/Object3D";
-import { ParticleSystemRenderer } from "./object/ParticleSystemRenderer";
-import { Ray } from "./object/Ray";
-import { RaycastHit } from "./object/RaycastHit";
-import { Renderer } from "./object/Renderer";
-import { LineRenderer } from "./object/LineRenderer";
-import { Material, UniformType } from "./object/Material";
-import { MeshRenderer } from "./object/MeshRenderer";
-import { TextMesh } from "./object/TextMesh";
-import { Texture } from "./object/Texture";
-import { Transform } from "./object/Transform";
+export { Bounds } from "./object/Bounds";
+export { Camera } from "./object/Camera";
+export { Collider } from "./object/Collider";
+export { Component } from "./object/Component";
+export { Mesh } from "./object/Mesh";
+export { MeshFilter } from "./object/MeshFilter";
+export { Object3D } from "./object/Object3D";
+export { ParticleSystemRenderer } from "./object/ParticleSystemRenderer";
+export { Ray } from "./object/Ray";
+export { RaycastHit } from "./object/RaycastHit";
+export { Renderer } from "./object/Renderer";
+export { LineRenderer } from "./object/LineRenderer";
+export { Material, UniformType } from "./object/Material";
+export { MeshRenderer } from "./object/MeshRenderer";
+export { TextMesh } from "./object/TextMesh";
+export { Texture } from "./object/Texture";
+export { Transform } from "./object/Transform";
 
-import { Shader } from "./shader/Shader";
-import { ShaderBlend } from "./shader/ShaderBlend";
-import { ShaderBlendEquation } from "./shader/ShaderBlendEquation";
-import { ShaderBlendFunc } from "./shader/ShaderBlendFunc";
-import { ShaderColorMask } from "./shader/ShaderColorMask";
-import { ShaderFace } from "./shader/ShaderFace";
-import { ShaderHint } from "./shader/ShaderHint";
-import { ShaderSettings } from "./shader/ShaderSettings";
-import { ShaderStencil } from "./shader/ShaderStencil";
-import { ShaderStencilMask } from "./shader/ShaderStencilMask";
-import { ShaderStencilOp } from "./shader/ShaderStencilOp";
-import { ShaderTestFunc } from "./shader/ShaderTestFunc";
+export { Shader } from "./shader/Shader";
+export { ShaderBlend } from "./shader/ShaderBlend";
+export { ShaderBlendEquation } from "./shader/ShaderBlendEquation";
+export { ShaderBlendFunc } from "./shader/ShaderBlendFunc";
+export { ShaderColorMask } from "./shader/ShaderColorMask";
+export { ShaderFace } from "./shader/ShaderFace";
+export { ShaderHint } from "./shader/ShaderHint";
+export { ShaderSettings } from "./shader/ShaderSettings";
+export { ShaderStencil } from "./shader/ShaderStencil";
+export { ShaderStencilMask } from "./shader/ShaderStencilMask";
+export { ShaderStencilOp } from "./shader/ShaderStencilOp";
+export { ShaderTestFunc } from "./shader/ShaderTestFunc";
 
-import { App } from "./App";
-import { DaeReader } from "./DaeReader";
-import { GLCapabilities } from "./GLCapabilities";
-import { GLExtensions } from "./GLExtensions";
-import { GLParameters } from "./GLParameters";
-import { Keyboard } from "./Keyboard";
-import { Mouse } from "./Mouse";
-import { ObjReader } from "./ObjReader";
-import { Primitives } from "./Primitives";
-import { Scene } from "./Scene";
-import { Script } from "./Script";
-
-export {
-	AABB,
-	Line,
-	LineSegment,
-	Plane,
-	Polygon,
-	Sphere,
-
-	ParticleSystem,
-
-	Mathf,
-	Matrix4x4,
-	Quaternion,
-	Rect,
-	Vector2,
-	Vector3,
-	Vector4,
-
-	ArrayBufferUtil,
-	ArrayUtil,
-	CameraStereoMode,
-	Color,
-	Cursor,
-	CursorType,
-	EventDispatcher,
-	File,
-	FilterMode,
-	FontStyle,
-	MatrixChecker,
-	PrimitiveType,
-	Screen,
-	Space,
-	Stats,
-	TextAlignment,
-	TextAnchor,
-	TextureDimension,
-	TextureWrapMode,
-	Time,
-
-	Bounds,
-	Camera,
-	Collider,
-	Component,
-	Mesh,
-	MeshFilter,
-	Object3D,
-	ParticleSystemRenderer,
-	Ray,
-	RaycastHit,
-	Renderer,
-	LineRenderer,
-	Material,
-	UniformType,
-	MeshRenderer,
-	TextMesh,
-	Texture,
-	Transform,
-
-	Shader,
-	ShaderBlend,
-	ShaderBlendEquation,
-	ShaderBlendFunc,
-	ShaderColorMask,
-	ShaderFace,
-	ShaderHint,
-	ShaderSettings,
-	ShaderStencil,
-	ShaderStencilMask,
-	ShaderStencilOp,
-	ShaderTestFunc,
-
-	App,
-	DaeReader,
-	GLCapabilities,
-	GLExtensions,
-	GLParameters,
-	Keyboard,
-	Mouse,
-	ObjReader,
-	Primitives,
-	Scene,
-	Script,
-}
-
+export { App } from "./App";
+export { DaeReader } from "./DaeReader";
+export { GLCapabilities } from "./GLCapabilities";
+export { GLExtensions } from "./GLExtensions";
+export { GLParameters } from "./GLParameters";
+export { Keyboard } from "./Keyboard";
+export { Mouse } from "./Mouse";
+export { ObjReader } from "./ObjReader";
+export { Primitives } from "./Primitives";
+export { Scene } from "./Scene";
+export { Script } from "./Script";
 
 /**
  * degrees to radians.
