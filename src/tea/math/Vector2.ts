@@ -1,3 +1,5 @@
+import * as Tea from "../Tea";
+
 export class Vector2 extends Array<number> {
 	constructor(x: number = 0, y: number = 0) {
 		super(2);
@@ -47,6 +49,14 @@ export class Vector2 extends Array<number> {
 		}
 		return this.x === value.x
 			&& this.y === value.y;
+	}
+
+	approxEquals(value: Vector2): boolean {
+		if (value == null) {
+			return false;
+		}
+		return Tea.Mathf.approximately(this.x, value.x)
+			&& Tea.Mathf.approximately(this.y, value.y);
 	}
 
 	toString(): string {

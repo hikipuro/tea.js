@@ -155,19 +155,36 @@ export class Mesh {
 	}
 
 	calculateNormals(): void {
+		if (this.hasTriangles === false) {
+			return;
+		}
 		var vertices = this.vertices;
 		var triangles = this.triangles;
-		var length = triangles.length;
+		var length = vertices.length;
 		var normals: Array<Tea.Vector3> = new Array(length);
 		for (var i = 0; i < length; i++) {
+			normals[i] = new Tea.Vector3();
+		}
+		length = triangles.length;
+		for (var i = 0; i < length; i++) {
 			var triangle = triangles[i];
-			var v0 = vertices[triangle.x];
-			var v1 = vertices[triangle.y];
-			var v2 = vertices[triangle.z];
-			var n = v1.sub(v0).cross(v2.sub(v1)).normalized;
-			normals[triangle.x] = n;
-			normals[triangle.y] = n;
-			normals[triangle.z] = n;
+			if (triangle == null) {
+				continue;
+			}
+			var x = triangle.x;
+			var y = triangle.y;
+			var z = triangle.z;
+			var v0 = vertices[x];
+			var v1 = vertices[y];
+			var v2 = vertices[z];
+			var n = v1.sub(v0).cross(v2.sub(v1));
+			normals[x].add$(n);
+			normals[y].add$(n);
+			normals[z].add$(n);
+		}
+		length = normals.length;
+		for (var i = 0; i < length; i++) {
+			normals[i].normalize$();
 		}
 		this.normals = normals;
 	}

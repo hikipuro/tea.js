@@ -22,7 +22,7 @@ export class File {
 	}
 
 	static readImage(url: string, callback: FileReadImageCallback): void {
-		var image  = new Image();
+		var image = new Image();
 		var onLoad = () => {
 			image.removeEventListener("load", onLoad);
 			image.removeEventListener("error", onError);

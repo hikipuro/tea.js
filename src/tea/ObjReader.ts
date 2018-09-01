@@ -306,49 +306,78 @@ export class ObjReader {
 	protected createObject3D(context: ObjReaderContext): Tea.Object3D {
 		//console.log("createObject3D");
 		var obj = context.obj;
+		var objf = obj.f;
+		var vt = obj.vt;
+		var vn = obj.vn;
 		var vertices = obj.v;
 		var triangles: Array<Tea.Vector3> = [];
-		var normals: Array<Tea.Vector3> = [];
-		var uvs: Array<Tea.Vector2> = [];
-		var vt = obj.vt;
+		var normals: Array<Tea.Vector3> = new Array(vertices.length);
+		var uv: Array<Tea.Vector2> = new Array(vertices.length);
 
-		var length = obj.f.length;
+		var dup: Array<number> = new Array(triangles.length);
+		dup.fill(0);
+		//var dupCount = 0;
+		var length = objf.length;
 		for (var i = 0; i < length; i++) {
-			var f = obj.f[i];
+			var f = objf[i];
+			var v0 = f[0].triangle;
+			var v1 = f[1].triangle;
+			var v2 = f[2].triangle;
+			var v3 = null;
+			if (f[3] != null) {
+				v3 = f[3].triangle;
+			}
+
+			if (uv[v0] != null && uv[v0].equals(vt[f[0].uv]) === false) {
+				//dupCount++;
+				vertices.push(vertices[v0]);
+				uv.push(null);
+				normals.push(null);
+				v0 = vertices.length - 1;
+			}
+			if (uv[v1] != null && uv[v1].equals(vt[f[1].uv]) === false) {
+				//dupCount++;
+				vertices.push(vertices[v1]);
+				uv.push(null);
+				normals.push(null);
+				v1 = vertices.length - 1;
+			}
+			if (uv[v2] != null && uv[v2].equals(vt[f[2].uv]) === false) {
+				//dupCount++;
+				vertices.push(vertices[v2]);
+				uv.push(null);
+				normals.push(null);
+				v2 = vertices.length - 1;
+			}
+			if (uv[v3] != null && uv[v3].equals(vt[f[3].uv]) === false) {
+				//dupCount++;
+				vertices.push(vertices[v3]);
+				uv.push(null);
+				normals.push(null);
+				v3 = vertices.length - 1;
+			}
+
 			switch (f.length) {
 				case 3:
-					triangles.push(new Tea.Vector3(
-						f[0].triangle,
-						f[1].triangle,
-						f[2].triangle,
-					));
-					uvs.push(
-						vt[f[0].uv],
-						vt[f[1].uv],
-						vt[f[2].uv]
-					);
+					triangles.push(new Tea.Vector3(v0, v1, v2));
+					uv[v0] = vt[f[0].uv];
+					uv[v1] = vt[f[1].uv];
+					uv[v2] = vt[f[2].uv];
+					normals[v0] = vn[f[0].normal];
+					normals[v1] = vn[f[1].normal];
+					normals[v2] = vn[f[2].normal];
 					break;
 				case 4:
-					triangles.push(new Tea.Vector3(
-						f[0].triangle,
-						f[1].triangle,
-						f[2].triangle,
-					));
-					triangles.push(new Tea.Vector3(
-						f[0].triangle,
-						f[2].triangle,
-						f[3].triangle,
-					));
-					uvs.push(
-						vt[f[0].uv],
-						vt[f[1].uv],
-						vt[f[2].uv]
-					);
-					uvs.push(
-						vt[f[0].uv],
-						vt[f[2].uv],
-						vt[f[3].uv]
-					);
+					triangles.push(new Tea.Vector3(v0, v1, v2));
+					triangles.push(new Tea.Vector3(v0, v2, v3));
+					uv[v0] = vt[f[0].uv];
+					uv[v1] = vt[f[1].uv];
+					uv[v2] = vt[f[2].uv];
+					uv[v3] = vt[f[3].uv];
+					normals[v0] = vn[f[0].normal];
+					normals[v1] = vn[f[1].normal];
+					normals[v2] = vn[f[2].normal];
+					normals[v3] = vn[f[3].normal];
 					break;
 				default:
 					//console.log("5");
@@ -356,14 +385,7 @@ export class ObjReader {
 			}
 		}
 
-		var uv: Array<Tea.Vector2> = new Array(vertices.length);
-		for (var i = 0; i < triangles.length; i++) {
-			var t = triangles[i];
-			var index = i * 3;
-			uv[t.x] = uvs[index];
-			uv[t.y] = uvs[index + 1];
-			uv[t.z] = uvs[index + 2];
-		}
+		//console.log("dup", dupCount);
 		//console.log("vertices", vertices.length);
 		//console.log("triangles", triangles.length);
 		var mesh = new Tea.Mesh();
@@ -371,7 +393,7 @@ export class ObjReader {
 		mesh.triangles = triangles;
 		mesh.normals = normals;
 		mesh.uv = uv;
-		if (normals.length <= 0) {
+		if (vn.length <= 0) {
 			mesh.calculateNormals();
 		}
 		mesh.uploadMeshData();
@@ -384,6 +406,7 @@ export class ObjReader {
 			Tea.Shader.defaultFragmentShaderSource
 		);
 		var renderer = object3d.addComponent(Tea.MeshRenderer);
+		//renderer.wireframe = true;
 		renderer.material.shader = shader;
 		var image = obj.materials[obj.usemtl].map_Kd;
 		var texture = this.app.createTexture(image);
@@ -412,6 +435,7 @@ export class ObjReader {
 		var x = parseFloat(params[1]);
 		var y = parseFloat(params[2]);
 		var z = parseFloat(params[3]);
+		/*
 		var w = parseFloat(params[4]);
 		if (isNaN(w) === false && w != 1) {
 			w = 1 / w;
@@ -419,6 +443,7 @@ export class ObjReader {
 			y *= w;
 			z *= w;
 		}
+		//*/
 		return new Tea.Vector3(x, y, z);
 	}
 
@@ -430,21 +455,12 @@ export class ObjReader {
 				continue;
 			}
 			var param = params[i].split("/");
-			var triangle = parseInt(param[0]);
-			var tex = parseInt(param[1]);
-			var normal = parseInt(param[2]);
-			if (isNaN(triangle)) {
-				triangle = 0;
-			}
-			if (isNaN(tex)) {
-				tex = 0;
-			}
-			if (isNaN(normal)) {
-				normal = 0;
-			}
+			var triangle = this.parseInt(param[0]);
+			var uv = this.parseInt(param[1]);
+			var normal = this.parseInt(param[2]);
 			list.push({
 				triangle: triangle - 1,
-				uv: tex - 1,
+				uv: uv - 1,
 				normal: normal - 1
 			});
 		}
@@ -462,12 +478,22 @@ export class ObjReader {
 	protected parseVT(params: Array<string>): Tea.Vector2 {
 		var x = parseFloat(params[1]);
 		var y = parseFloat(params[2]);
+		/*
 		var w = parseFloat(params[3]);
 		if (isNaN(w) === false && w != 0) {
 			w = 1 / w;
 			x *= w;
 			y *= w;
 		}
-		return new Tea.Vector2(x, y);
+		//*/
+		return new Tea.Vector2(x, 1 - y);
+	}
+
+	protected parseInt(s: string): number {
+		var value = parseInt(s);
+		if (isNaN(value)) {
+			return 0;
+		}
+		return value;
 	}
 }

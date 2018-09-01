@@ -51,7 +51,7 @@ export class MeshRenderer extends Renderer {
 	}
 
 	protected createBuffers(): void {
-		const gl = this.app.gl;
+		var gl = this.app.gl;
 		this.vertexBuffer = gl.createBuffer();
 		this.indexBuffer = gl.createBuffer();
 		this.normalBuffer = gl.createBuffer();
@@ -60,7 +60,7 @@ export class MeshRenderer extends Renderer {
 	}
 
 	protected deleteBuffers(): void {
-		const gl = this.app.gl;
+		var gl = this.app.gl;
 		if (this.vertexBuffer != null) {
 			gl.deleteBuffer(this.vertexBuffer);
 			this.vertexBuffer = null;
@@ -88,28 +88,28 @@ export class MeshRenderer extends Renderer {
 			return;
 		}
 
-		const gl = this.app.gl;
+		var gl = this.app.gl;
 		gl.useProgram(this.material.shader.program);
-		let target = gl.ARRAY_BUFFER;
+		var target = gl.ARRAY_BUFFER;
 
-		const vertices = new Float32Array(Tea.ArrayUtil.unroll(mesh.vertices));
+		var vertices = new Float32Array(Tea.ArrayUtil.unroll(mesh.vertices));
 		gl.bindBuffer(target, this.vertexBuffer);
 		gl.bufferData(target, vertices, gl.STATIC_DRAW);
 
 		if (mesh.hasNormals) {
-			const normals = new Float32Array(Tea.ArrayUtil.unroll(mesh.normals));
+			var normals = new Float32Array(Tea.ArrayUtil.unroll(mesh.normals));
 			gl.bindBuffer(target, this.normalBuffer);
 			gl.bufferData(target, normals, gl.STATIC_DRAW);
 		}
 
 		if (mesh.hasUVs) {
-			const uv = new Float32Array(Tea.ArrayUtil.unroll(mesh.uv));
+			var uv = new Float32Array(Tea.ArrayUtil.unroll(mesh.uv));
 			gl.bindBuffer(target, this.uvBuffer);
 			gl.bufferData(target, uv, gl.STATIC_DRAW);
 		}
 
 		if (mesh.hasColors) {
-			const colors = new Float32Array(Tea.ArrayUtil.unroll(mesh.colors));
+			var colors = new Float32Array(Tea.ArrayUtil.unroll(mesh.colors));
 			gl.bindBuffer(target, this.colorBuffer);
 			gl.bufferData(target, colors, gl.STATIC_DRAW);
 		}
@@ -117,7 +117,7 @@ export class MeshRenderer extends Renderer {
 
 		if (mesh.hasTriangles) {
 			target = gl.ELEMENT_ARRAY_BUFFER;
-			const triangles = new Uint16Array(Tea.ArrayUtil.unroll(mesh.triangles));
+			var triangles = new Uint16Array(Tea.ArrayUtil.unroll(mesh.triangles));
 			gl.bindBuffer(target, this.indexBuffer);
 			gl.bufferData(target, triangles, gl.STATIC_DRAW);
 			gl.bindBuffer(target, null);
@@ -133,21 +133,21 @@ export class MeshRenderer extends Renderer {
 		this.setAttribute("vertex", 3);
 
 		gl.bindBuffer(target, this.normalBuffer);
-		if (mesh.hasNormals) {
+		if (mesh.hasNormals && mesh.hasTriangles) {
 			this.setAttribute("normal", 3);
 		} else {
 			this.disableVertexAttrib("normal");
 		}
 
 		gl.bindBuffer(target, this.uvBuffer);
-		if (mesh.hasUVs) {
+		if (mesh.hasUVs && mesh.hasTriangles) {
 			this.setAttribute("texcoord", 2);
 		} else {
 			this.disableVertexAttrib("texcoord");
 		}
 
 		gl.bindBuffer(target, this.colorBuffer);
-		if (mesh.hasColors) {
+		if (mesh.hasColors && mesh.hasTriangles) {
 			this.setAttribute("color", 4);
 		} else {
 			this.disableVertexAttrib("color");
@@ -156,8 +156,8 @@ export class MeshRenderer extends Renderer {
 	}
 
 	protected setIndexBuffer(mesh: Tea.Mesh): void {
-		const gl = this.app.gl;
-		const target = gl.ELEMENT_ARRAY_BUFFER;
+		var gl = this.app.gl;
+		var target = gl.ELEMENT_ARRAY_BUFFER;
 		if (mesh.hasTriangles) {
 			gl.bindBuffer(target, this.indexBuffer);
 		} else {
@@ -182,8 +182,9 @@ export class MeshRenderer extends Renderer {
 		}
 		var gl = this.app.gl;
 		if (mesh.hasTriangles === false) {
-			var count = mesh.vertices.length;
-			gl.drawArrays(gl.TRIANGLES, 0, count);
+			gl.drawArrays(
+				gl.TRIANGLES, 0, mesh.vertices.length
+			);
 			return;
 		}
 		var count = mesh.triangles.length * 3;
@@ -193,11 +194,12 @@ export class MeshRenderer extends Renderer {
 	protected drawWireframe(mesh: Tea.Mesh): void {
 		var gl = this.app.gl;
 		if (mesh.hasTriangles === false) {
-			var count = mesh.vertices.length;
-			gl.drawArrays(gl.LINE_LOOP, 0, count);
+			gl.drawArrays(
+				gl.LINES, 0, mesh.vertices.length
+			);
 			return;
 		}
 		var count = mesh.triangles.length * 3;
-		gl.drawElements(gl.LINE_STRIP, count, gl.UNSIGNED_SHORT, 0);
+		gl.drawElements(gl.LINES, count, gl.UNSIGNED_SHORT, 0);
 	}
 }

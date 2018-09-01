@@ -304,18 +304,19 @@ export class Vector3 extends Array<number> {
 		);
 	}
 
-	add$(value: number): void;
-	add$(value: Vector3): void;
-	add$(value: number | Vector3): void {
+	add$(value: number): Vector3;
+	add$(value: Vector3): Vector3;
+	add$(value: number | Vector3): Vector3 {
 		if (value instanceof Vector3) {
 			this.x += value.x;
 			this.y += value.y;
 			this.z += value.z;
-			return;
+			return this;
 		}
 		this.x += value;
 		this.y += value;
 		this.z += value;
+		return this;
 	}
 
 	sub(value: number): Vector3;
@@ -335,18 +336,19 @@ export class Vector3 extends Array<number> {
 		);
 	}
 
-	sub$(value: number): void;
-	sub$(value: Vector3): void;
-	sub$(value: number | Vector3): void {
+	sub$(value: number): Vector3;
+	sub$(value: Vector3): Vector3;
+	sub$(value: number | Vector3): Vector3 {
 		if (value instanceof Vector3) {
 			this.x -= value.x;
 			this.y -= value.y;
 			this.z -= value.z;
-			return;
+			return this;
 		}
 		this.x -= value;
 		this.y -= value;
 		this.z -= value;
+		return this;
 	}
 
 	mul(value: number): Vector3 {
@@ -357,10 +359,11 @@ export class Vector3 extends Array<number> {
 		);
 	}
 
-	mul$(value: number): void {
+	mul$(value: number): Vector3 {
 		this.x *= value;
 		this.y *= value;
 		this.z *= value;
+		return this;
 	}
 
 	div(value: number): Vector3 {
@@ -371,10 +374,11 @@ export class Vector3 extends Array<number> {
 		);
 	}
 
-	div$(value: number): void {
+	div$(value: number): Vector3 {
 		this.x /= value;
 		this.y /= value;
 		this.z /= value;
+		return this;
 	}
 
 	dot(value: Vector3): number {
@@ -392,11 +396,12 @@ export class Vector3 extends Array<number> {
 		);
 	}
 
-	cross$(value: Vector3): void {
+	cross$(value: Vector3): Vector3 {
 		var x = this.x, y = this.y, z = this.z;
 		this.x = y * value.z - z * value.y;
 		this.y = z * value.x - x * value.z;
 		this.z = x * value.y - y * value.x;
+		return this;
 	}
 
 	scale(value: Vector3): Vector3 {
@@ -407,10 +412,11 @@ export class Vector3 extends Array<number> {
 		);
 	}
 
-	scale$(value: Vector3): void {
+	scale$(value: Vector3): Vector3 {
 		this.x *= value.x;
 		this.y *= value.y;
 		this.z *= value.z;
+		return this;
 	}
 
 	rotateX(radian: number): Vector3 {
@@ -424,12 +430,13 @@ export class Vector3 extends Array<number> {
 		);
 	}
 
-	rotateX$(radian: number): void {
+	rotateX$(radian: number): Vector3 {
 		var y = this.y, z = this.z;
 		var sin = Math.sin(radian);
 		var cos = Math.cos(radian);
 		this.y = cos * y + -sin * z;
 		this.z = sin * y + cos * z;
+		return this;
 	}
 
 	rotateY(radian: number): Vector3 {
@@ -443,12 +450,13 @@ export class Vector3 extends Array<number> {
 		);
 	}
 
-	rotateY$(radian: number): void {
+	rotateY$(radian: number): Vector3 {
 		var x = this.x, z = this.z;
 		var sin = Math.sin(radian);
 		var cos = Math.cos(radian);
 		this.x = cos * x + sin * z;
 		this.z = -sin * x + cos * z;
+		return this;
 	}
 
 	rotateZ(radian: number): Vector3 {
@@ -462,12 +470,13 @@ export class Vector3 extends Array<number> {
 		);
 	}
 
-	rotateZ$(radian: number): void {
+	rotateZ$(radian: number): Vector3 {
 		var x = this.x, y = this.y;
 		var sin = Math.sin(radian);
 		var cos = Math.cos(radian);
 		this.x = cos * x + -sin * y;
 		this.y = sin * x + cos * y;
+		return this;
 	}
 
 	rotate(vector: Vector3): Vector3 {
@@ -483,7 +492,7 @@ export class Vector3 extends Array<number> {
 		);
 	}
 
-	rotate$(vector: Vector3): void {
+	rotate$(vector: Vector3): Vector3 {
 		var x = this.x, y = this.y, z = this.z;
 		var sin = Math.sin, cos = Math.cos;
 		y = cos(vector.x) * y + -sin(vector.x) * z;
@@ -492,6 +501,22 @@ export class Vector3 extends Array<number> {
 		this.z = -sin(vector.y) * x + cos(vector.y) * z;
 		this.x = cos(vector.z) * x + -sin(vector.z) * y;
 		this.y = sin(vector.z) * x + cos(vector.z) * y;
+		return this;
+	}
+
+	normalize$(): Vector3 {
+		var magnitude = this.magnitude;
+		if (Tea.Mathf.approximately(magnitude, 0)) {
+			this.x = 0;
+			this.y = 0;
+			this.z = 0;
+			return this;
+		}
+		var m = 1 / magnitude;
+		this.x *= m;
+		this.y *= m;
+		this.z *= m;
+		return this;
 	}
 
 	applyMatrix4(matrix: Tea.Matrix4x4): void {
