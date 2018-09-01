@@ -5,6 +5,8 @@ import { Plane } from "./collision/Plane";
 import { Polygon } from "./collision/Polygon";
 import { Sphere } from "./collision/Sphere";
 
+import { ParticleSystem } from "./component/ParticleSystem";
+
 import { Mathf } from "./math/Mathf";
 import { Matrix4x4 } from "./math/Matrix4x4";
 import { Quaternion } from "./math/Quaternion";
@@ -40,6 +42,7 @@ import { Component } from "./object/Component";
 import { Mesh } from "./object/Mesh";
 import { MeshFilter } from "./object/MeshFilter";
 import { Object3D } from "./object/Object3D";
+import { ParticleSystemRenderer } from "./object/ParticleSystemRenderer";
 import { Ray } from "./object/Ray";
 import { RaycastHit } from "./object/RaycastHit";
 import { Renderer } from "./object/Renderer";
@@ -83,6 +86,8 @@ export {
 	Polygon,
 	Sphere,
 
+	ParticleSystem,
+
 	Mathf,
 	Matrix4x4,
 	Quaternion,
@@ -119,6 +124,7 @@ export {
 	Mesh,
 	MeshFilter,
 	Object3D,
+	ParticleSystemRenderer,
 	Ray,
 	RaycastHit,
 	Renderer,

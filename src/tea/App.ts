@@ -162,6 +162,20 @@ export class App {
 		return texture;
 	}
 
+	createParticleSystem(): Tea.Object3D {
+		var object3d = new Tea.Object3D(this);
+		var shader = new Tea.Shader(this);
+		shader.attach(
+			Tea.Shader.particleVertexShaderSource,
+			Tea.Shader.particleFragmentShaderSource
+		);
+		object3d.addComponent(Tea.ParticleSystem);
+		var renderer = object3d.addComponent(Tea.ParticleSystemRenderer);
+		renderer.material.shader = shader;
+		object3d.name = "ParticleSystem";
+		return object3d;
+	}
+
 	setScene(scene: Tea.Scene): void {
 		this._renderer.currentScene = scene;
 	}

@@ -198,14 +198,16 @@ export class Renderer extends Component {
 		return location as number;
 	}
 
-	setAttribute(name: string, size: number): void {
+	setAttribute(name: string, size: number, stride: number = 0, offset: number = 0): void {
 		var gl = this.app.gl;
 		var location = this.getAttribLocation(name);
 		if (location < 0) {
 			return;
 		}
 		gl.enableVertexAttribArray(location);
-		gl.vertexAttribPointer(location, size, gl.FLOAT, false, 0, 0);
+		gl.vertexAttribPointer(
+			location, size, gl.FLOAT, false, stride, offset
+		);
 	}
 
 	disableVertexAttrib(name: string): void {

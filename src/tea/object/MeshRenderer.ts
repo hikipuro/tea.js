@@ -12,7 +12,6 @@ export class MeshRenderer extends Renderer {
 
 	constructor(app: Tea.App) {
 		super(app);
-		this.app = app;
 		this.createBuffers();
 	}
 

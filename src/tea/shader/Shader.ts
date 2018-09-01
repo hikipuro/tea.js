@@ -110,6 +110,35 @@ const textFragmentShaderSource = `
 	}
 `;
 
+const particleVertexShaderSource = `
+	attribute vec3 vertex;
+	attribute vec4 color;
+	attribute float size;
+	uniform mat4 TEA_MATRIX_MVP;
+	//uniform float pointSize;
+	varying vec4 vColor;
+	void main() {
+		vColor = color;
+		gl_Position = TEA_MATRIX_MVP * vec4(vertex, 1.0);
+		gl_PointSize = size;
+	}
+`;
+
+const particleFragmentShaderSource = `
+	precision mediump float;
+	uniform int TEA_CAMERA_STEREO;
+	varying vec4 vColor;
+	void main() {
+		if (TEA_CAMERA_STEREO != 0) {
+			float stereoMod = float(TEA_CAMERA_STEREO - 1);
+			if (mod(floor(gl_FragCoord.y), 2.0) == stereoMod) {
+				discard;
+			}
+		}
+		gl_FragColor = vColor;
+	}
+`;
+
 export class Shader {
 	app: Tea.App;
 	program: WebGLProgram;
@@ -264,6 +293,14 @@ export class Shader {
 
 	static get textFragmentShaderSource(): string {
 		return textFragmentShaderSource;
+	}
+
+	static get particleVertexShaderSource(): string {
+		return particleVertexShaderSource;
+	}
+
+	static get particleFragmentShaderSource(): string {
+		return particleFragmentShaderSource;
 	}
 
 	propertyToID(name: string): number {
