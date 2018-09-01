@@ -35,11 +35,13 @@ class Particle {
 export class ParticleSystem extends Component {
 	particles: Array<Particle>;
 	//pointSize: number;
+	main: ParticleSystem.MainModule;
 
 	constructor(app: Tea.App) {
 		super(app);
 		this.particles = [];
 		//this.pointSize = 10;
+		this.main = new ParticleSystem.MainModule();
 	}
 
 	get particleCount(): number {
@@ -75,8 +77,23 @@ export class ParticleSystem extends Component {
 	}
 
 	emit(count: number): void {
+		var particles = this.particles;
+		var maxParticles = this.main.maxParticles;
+		if (particles.length + count > maxParticles) {
+			count = maxParticles - particles.length;
+		}
 		for (var i = 0; i < count; i++) {
 			this.particles.push(new Particle());
+		}
+	}
+}
+
+export module ParticleSystem {
+	export class MainModule {
+		maxParticles: number;
+
+		constructor() {
+			this.maxParticles = 1000;
 		}
 	}
 }
