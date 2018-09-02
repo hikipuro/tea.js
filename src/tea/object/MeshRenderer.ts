@@ -4,10 +4,6 @@ import { Renderer } from "./Renderer";
 export class MeshRenderer extends Renderer {
 	vertexBuffer: WebGLBuffer;
 	indexBuffer: WebGLBuffer;
-	normalBuffer: WebGLBuffer;
-	uvBuffer: WebGLBuffer;
-	colorBuffer: WebGLBuffer;
-
 	wireframe: boolean = false;
 
 	constructor(app: Tea.App) {
@@ -53,9 +49,6 @@ export class MeshRenderer extends Renderer {
 		var gl = this.app.gl;
 		this.vertexBuffer = gl.createBuffer();
 		this.indexBuffer = gl.createBuffer();
-		this.normalBuffer = gl.createBuffer();
-		this.uvBuffer = gl.createBuffer();
-		this.colorBuffer = gl.createBuffer();
 	}
 
 	protected deleteBuffers(): void {
@@ -68,18 +61,6 @@ export class MeshRenderer extends Renderer {
 			gl.deleteBuffer(this.indexBuffer);
 			this.indexBuffer = null;
 		}
-		if (this.normalBuffer != null) {
-			gl.deleteBuffer(this.normalBuffer);
-			this.normalBuffer = null;
-		}
-		if (this.uvBuffer != null) {
-			gl.deleteBuffer(this.uvBuffer);
-			this.uvBuffer = null;
-		}
-		if (this.colorBuffer != null) {
-			gl.deleteBuffer(this.colorBuffer);
-			this.colorBuffer = null;
-		}
 	}
 
 	protected setMeshData(mesh: Tea.Mesh): void {
@@ -87,31 +68,40 @@ export class MeshRenderer extends Renderer {
 			return;
 		}
 
+		var length = mesh.vertexCount;
+		var data = [];
+		for (var i = 0; i < length; i++) {
+			var vertex = mesh.vertices[i];
+			data.push(vertex.x, vertex.y, vertex.z);
+
+			if (mesh.hasNormals) {
+				var normal = mesh.normals[i];
+				data.push(normal.x, normal.y, normal.z);
+			} else {
+				data.push(0, 0, 0);
+			}
+
+			if (mesh.hasUVs) {
+				var uv = mesh.uv[i];
+				data.push(uv.x, uv.y);
+			} else {
+				data.push(0, 0);
+			}
+
+			if (mesh.hasColors) {
+				var color = mesh.colors[i];
+				data.push(color.r, color.g, color.b, color.a);
+			} else {
+				data.push(0, 0, 0, 0);
+			}
+		}
+
 		var gl = this.app.gl;
 		gl.useProgram(this.material.shader.program);
 		var target = gl.ARRAY_BUFFER;
 
-		var vertices = new Float32Array(Tea.ArrayUtil.unroll(mesh.vertices));
 		gl.bindBuffer(target, this.vertexBuffer);
-		gl.bufferData(target, vertices, gl.STATIC_DRAW);
-
-		if (mesh.hasNormals) {
-			var normals = new Float32Array(Tea.ArrayUtil.unroll(mesh.normals));
-			gl.bindBuffer(target, this.normalBuffer);
-			gl.bufferData(target, normals, gl.STATIC_DRAW);
-		}
-
-		if (mesh.hasUVs) {
-			var uv = new Float32Array(Tea.ArrayUtil.unroll(mesh.uv));
-			gl.bindBuffer(target, this.uvBuffer);
-			gl.bufferData(target, uv, gl.STATIC_DRAW);
-		}
-
-		if (mesh.hasColors) {
-			var colors = new Float32Array(Tea.ArrayUtil.unroll(mesh.colors));
-			gl.bindBuffer(target, this.colorBuffer);
-			gl.bufferData(target, colors, gl.STATIC_DRAW);
-		}
+		gl.bufferData(target, new Float32Array(data), gl.STATIC_DRAW);
 		gl.bindBuffer(target, null);
 
 		if (mesh.hasTriangles) {
@@ -129,26 +119,31 @@ export class MeshRenderer extends Renderer {
 		var gl = this.app.gl;
 		var target = gl.ARRAY_BUFFER;
 		gl.bindBuffer(target, this.vertexBuffer);
-		this.setAttribute("vertex", 3);
 
-		gl.bindBuffer(target, this.normalBuffer);
-		if (mesh.hasNormals && mesh.hasTriangles) {
-			this.setAttribute("normal", 3);
+		var stride = 4 * 12;
+		this.setAttribute("vertex", 3, stride, 0);
+
+		if (mesh.hasTriangles) {
+			if (mesh.hasNormals) {
+				this.setAttribute("normal", 3, stride, 4 * 3);
+			} else {
+				this.disableVertexAttrib("normal");
+			}
+
+			if (mesh.hasUVs) {
+				this.setAttribute("texcoord", 2, stride, 4 * 6);
+			} else {
+				this.disableVertexAttrib("texcoord");
+			}
+
+			if (mesh.hasColors) {
+				this.setAttribute("color", 4, stride, 4 * 8);
+			} else {
+				this.disableVertexAttrib("color");
+			}
 		} else {
 			this.disableVertexAttrib("normal");
-		}
-
-		gl.bindBuffer(target, this.uvBuffer);
-		if (mesh.hasUVs && mesh.hasTriangles) {
-			this.setAttribute("texcoord", 2);
-		} else {
 			this.disableVertexAttrib("texcoord");
-		}
-
-		gl.bindBuffer(target, this.colorBuffer);
-		if (mesh.hasColors && mesh.hasTriangles) {
-			this.setAttribute("color", 4);
-		} else {
 			this.disableVertexAttrib("color");
 		}
 		gl.bindBuffer(target, null);
