@@ -149,6 +149,7 @@ export class Texture {
 		this._image = image;
 		this.bind();
 		var gl = this.app.gl;
+		gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, true);
 		gl.texImage2D(
 			gl.TEXTURE_2D, 0,
 			gl.RGBA, gl.RGBA,
@@ -159,6 +160,7 @@ export class Texture {
 		this.filterMode = this._filterMode;
 		this.wrapMode = this._wrapMode;
 		this.unbind();
+		gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, false);
 		this._updateCount++;
 	}
 

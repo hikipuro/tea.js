@@ -2,16 +2,17 @@ import * as Tea from "./Tea";
 
 export class Scene {
 	app: Tea.App;
-	camera: Tea.Camera;
+	mainCamera: Tea.Camera;
 	protected _children: Array<Tea.Object3D>;
 	protected _firstTime: boolean;
+	protected _cameras: Array<Tea.Camera>;
 	protected _renderers: Array<Tea.Renderer>;
 
 	constructor(app: Tea.App) {
 		this.app = app;
-		this.camera = new Tea.Camera(app);
 		this._children = [];
 		this._firstTime = true;
+		this._cameras = [];
 		this._renderers = [];
 	}
 
@@ -25,13 +26,19 @@ export class Scene {
 		}
 		object3d.scene = this;
 		this.children.push(object3d);
+
+		var cameras = object3d.getComponents(Tea.Camera);
+		if (cameras.length > 0) {
+			if (this.mainCamera == null) {
+				this.mainCamera = cameras[0];
+			}
+			this._cameras.push.apply(
+				this._cameras, cameras
+			);
+		}
 	}
 
 	update(): void {
-		if (this.camera != null) {
-			this.camera.update();
-		}
-
 		if (this._firstTime) {
 			this._firstTime = false;
 			this.start();
@@ -45,15 +52,23 @@ export class Scene {
 			var renderQueueB = b.material.renderQueue;
 			return renderQueueA - renderQueueB;
 		});
-		Tea.ArrayUtil.each(renderers, (i, renderer) => {
-			if (this.camera.enableStereo) {
-				this.camera.updateLeft();
-				renderer.render(this.camera);
-				this.camera.updateRight();
-				renderer.render(this.camera);
-				return;
+		var cameras = this._cameras.sort((a, b) => {
+			var at = a.targetTexture ? 1: 0;
+			var bt = b.targetTexture ? 1: 0;
+			return at - bt;
+		});
+		Tea.ArrayUtil.each(cameras, (_, camera) => {
+			var renderTexture = camera.targetTexture;
+			if (renderTexture != null) {
+				renderTexture.bind();
 			}
-			renderer.render(this.camera);
+			camera.update();
+			Tea.ArrayUtil.each(renderers, (_, renderer) => {
+				this.renderCamera(camera, renderer);
+			});
+			if (renderTexture != null) {
+				renderTexture.unbind();
+			}
 		});
 		this._renderers = [];
 	}
@@ -70,7 +85,7 @@ export class Scene {
 		}
 		object3d.update();
 		var renderer = object3d.getComponent(Tea.Renderer);
-		if (renderer != null && this.camera != null) {
+		if (renderer != null) {
 			if (renderer.material != null) {
 				this._renderers.push(renderer);
 			}
@@ -80,5 +95,22 @@ export class Scene {
 				this.updateObject3D(child);
 			});
 		}
+	}
+
+	protected renderCamera(camera: Tea.Camera, renderer: Tea.Renderer): void {
+		if (camera.enableStereo) {
+			camera.updateLeft();
+			renderer.render(camera);
+			camera.updateRight();
+			renderer.render(camera);
+			return;
+		}
+		var renderTexture = camera.targetTexture;
+		if (renderTexture != null) {
+			if (renderer.material.mainTexture === renderTexture) {
+				return;
+			}
+		}
+		renderer.render(camera);
 	}
 }

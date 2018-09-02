@@ -206,19 +206,17 @@ export class Object3D {
 		includeInactive: boolean = false): Array<T>
 	{
 		var array = [];
-		if (this.childCount > 0) {
-			var length = this.children.length;
-			for (var i = 0; i < length; i++) {
-				var child = this.children[i];
-				if (includeInactive === true || child.isActive === true) {
-					var c = child.getComponentsInChildren(
-						component, includeInactive
-					);
-					array.push(c);
-				}
+		var length = this.children.length;
+		for (var i = 0; i < length; i++) {
+			var child = this.children[i];
+			if (includeInactive === true || child.isActive === true) {
+				var c = child.getComponentsInChildren(
+					component, includeInactive
+				);
+				array.push.apply(array, c);
 			}
 		}
-		array.push(this.getComponents(component));
+		array.push.apply(array, this.getComponents(component));
 		return array;
 	}
 
@@ -381,9 +379,8 @@ export class Object3D {
 	}
 
 	update(): void {
-		var scripts = this.getComponents(Tea.Script);
-		Tea.ArrayUtil.each(scripts, (i, script) => {
-			script.update();
+		Tea.ArrayUtil.each(this._components, (i, component) => {
+			component.update();
 		});
 	}
 }

@@ -56,6 +56,15 @@ export class Mathf {
 	}
 
 	static closestPowerOfTwo(value: number): number {
+		var bits = value;
+		bits = (bits & 0x55555555) + (bits >> 1 & 0x55555555);
+		bits = (bits & 0x33333333) + (bits >> 2 & 0x33333333);
+		bits = (bits & 0x0f0f0f0f) + (bits >> 4 & 0x0f0f0f0f);
+		bits = (bits & 0x00ff00ff) + (bits >> 8 & 0x00ff00ff);
+		bits = (bits & 0x0000ffff) + (bits >>16 & 0x0000ffff);
+		if (bits === 1 && value !== 1) {
+			return value;
+		}
 		var shift = Math.floor(Math.log2(value));
 		return 2 << shift;
 	}

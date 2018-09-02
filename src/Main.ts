@@ -2,7 +2,6 @@ import * as Tea from "./tea/Tea";
 import { TestScript } from "./TestScript";
 import { TestScript2 } from "./TestScript2";
 import { Rotate } from "./Rotate";
-import { Matrix4x4 } from "./tea/math/Matrix4x4";
 
 export class Main {
 	app: Tea.App;
@@ -70,8 +69,8 @@ export class Main {
 		//*/
 
 		setTimeout(() => {
-			var m = new Matrix4x4();
-			var m2 = new Matrix4x4();
+			var m = new Tea.Matrix4x4();
+			var m2 = new Tea.Matrix4x4();
 			for (let i = 0; i < 16; i++) {
 				var v = Math.random();
 				m[i] = v;
@@ -133,9 +132,17 @@ export class Main {
 		//scene.camera.rotation = Tea.Quaternion.euler(90,0,0);
 		this.app.setScene(scene);
 
+		var camera = this.app.createCamera();
+		scene.appendChild(camera);
+
+		var renderTexture = new Tea.RenderTexture(this.app);
+		var camera2 = this.app.createCamera();
+		camera2.getComponent(Tea.Camera).targetTexture = renderTexture;
+		scene.appendChild(camera2);
+
 		setTimeout(() => {
-			console.log("ray", scene.camera.screenPointToRay(new Tea.Vector3(100, 100)).toString());
-			console.log("ray2", scene.camera.viewportPointToRay(new Tea.Vector3(0.5, 0.5)).toString());
+			//console.log("ray", scene.camera.screenPointToRay(new Tea.Vector3(100, 100)).toString());
+			//console.log("ray2", scene.camera.viewportPointToRay(new Tea.Vector3(0.5, 0.5)).toString());
 		}, 100);
 
 
@@ -156,6 +163,7 @@ export class Main {
 		cube.localRotation = Tea.Quaternion.euler(0, 0, 90);
 		//cube.rotation.y = Tea.radians(20);
 		//cube.addScript(new Rotate());
+		//cube.getComponent(Tea.Renderer).material.mainTexture = renderTexture;
 		scene.appendChild(cube);
 
 		const cube2 = Tea.Object3D.createPrimitive(this.app, Tea.PrimitiveType.Cube);
@@ -194,7 +202,7 @@ export class Main {
 		const plane = Tea.Object3D.createPrimitive(this.app, Tea.PrimitiveType.Plane);
 		//plane.renderer.wireframe = true;
 		//plane.position.z = -9;
-		plane.rotation.eulerAngles = new Tea.Vector3(-20, 0, 0);
+		plane.rotation.eulerAngles = new Tea.Vector3(20, 180, 0);
 		//plane.addScript(script);
 		//plane.scale.x = 10;
 		//plane.scale.y = 10;
@@ -202,6 +210,8 @@ export class Main {
 		console.log("plane", plane.forward);
 		console.log("plane", plane.up);
 		console.log("plane", plane.right);
+		plane.getComponent(Tea.Renderer).material.mainTexture = renderTexture;
+		//plane.scale.x = -1;
 		scene.appendChild(plane);
 
 		const capsule = Tea.Object3D.createPrimitive(this.app, Tea.PrimitiveType.Capsule);
@@ -235,6 +245,10 @@ export class Main {
 		//scene.appendChild(lines);
 
 
+		var particles = this.app.createParticleSystem();
+		scene.appendChild(particles);
+
+
 		var textmesh = this.app.createTextMesh();
 		//var r = textmesh.getComponent(Tea.MeshRenderer);
 		var meshFilter = textmesh.getComponent(Tea.MeshFilter);
@@ -255,7 +269,7 @@ export class Main {
 		//document.body.appendChild(mesh.canvas);
 		scene.appendChild(textmesh);
 
-		var wp = scene.camera.viewportToWorldPoint(new Tea.Vector3(0, 0, 0));
+		var wp = camera.getComponent(Tea.Camera).viewportToWorldPoint(new Tea.Vector3(0, 0, 0));
 		//var stats = this.app.createStats();
 		//this.app.canvas.parentElement.appendChild(stats.canvas);
 
@@ -268,7 +282,7 @@ export class Main {
 		let mz = Tea.MatrixChecker.rotateZ();
 		let ms = Tea.MatrixChecker.scale();
 		console.log("checker", mt.mul(my).mul(mx).mul(mz).mul(ms).toString());
-		console.log("ortho", Matrix4x4.ortho(5, 400, 10, 100, 0.3, 1000).toString());
+		//console.log("ortho", Matrix4x4.ortho(5, 400, 10, 100, 0.3, 1000).toString());
 
 		console.log("lookRotation", Tea.Quaternion.lookRotation(new Tea.Vector3(0.01, 1, 0).normalized));
 		console.log("lookRotation", Tea.Quaternion.lookRotation(Tea.Vector3.up));
@@ -288,7 +302,7 @@ export class Main {
 			object3d.localScale = new Tea.Vector3(scale, scale, scale);
 			object3d.localPosition.z = -4;
 			object3d.addComponent(Rotate);
-			scene.appendChild(object3d);
+			//scene.appendChild(object3d);
 		});
 
 		Tea.File.readImage("../models/google.jpg", (image) => {
@@ -311,7 +325,7 @@ export class Main {
 			r = cylinder.getComponent(Tea.Renderer);
 			r.material.mainTexture = texture;
 			r = plane.getComponent(Tea.Renderer);
-			r.material.mainTexture = texture;
+			//r.material.mainTexture = texture;
 			r = capsule.getComponent(Tea.Renderer);
 			r.material.mainTexture = texture;
 		});

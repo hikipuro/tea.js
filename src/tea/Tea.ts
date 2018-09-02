@@ -46,6 +46,7 @@ export * from "./object/ParticleSystemRenderer";
 export * from "./object/Ray";
 export * from "./object/RaycastHit";
 export * from "./object/Renderer";
+export * from "./object/RenderTexture";
 export * from "./object/LineRenderer";
 export * from "./object/Material";
 export * from "./object/MeshRenderer";

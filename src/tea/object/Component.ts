@@ -7,4 +7,7 @@ export class Component {
 	constructor(app: Tea.App) {
 		this.app = app;
 	}
+
+	update(): void {
+	}
 }

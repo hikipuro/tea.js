@@ -12,6 +12,7 @@ export class Camera extends Component {
 	orthographic: boolean;
 	orthographicSize: number;
 	rect: Tea.Rect;
+	targetTexture: Tea.RenderTexture;
 	enableStereo: boolean;
 	stereoDistance: number;
 	stereoMode: Tea.CameraStereoMode;
@@ -91,7 +92,13 @@ export class Camera extends Component {
 		//projection.toggleHand();
 		this._projectionMatrix = projection;
 
-		this.setViewport();
+		if (this.targetTexture != null) {
+			var t = this.targetTexture;
+			this.app.gl.viewport(0, 0, t.width, t.height);
+			this.app.gl.scissor(0, 0, t.width, t.height);
+		} else {
+			this.setViewport();
+		}
 		this.clear();
 	}
 
@@ -391,15 +398,15 @@ export class Camera extends Component {
 	}
 
 	protected clear(): void {
-		const gl = this.app.gl;
-		const color = this.backgroundColor;
+		var gl = this.app.gl;
+		var color = this.backgroundColor;
 		gl.clearColor(color.r, color.g, color.b, color.a);
 		gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 		// STENCIL_BUFFER_BIT
 	}
 
 	protected flush(): void {
-		const gl = this.app.gl;
+		var gl = this.app.gl;
 		gl.flush();
 	}
 }

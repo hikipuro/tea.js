@@ -43,7 +43,7 @@ export class TestScript extends Tea.Script {
 			//this.position.x = -0.5 + mouse.x / this.app.width;
 			//this.position.y = 0.5 + mouse.y / this.app.height;
 			let p = new Tea.Vector3(mouse.x, mouse.y, 10);
-			p = this.object3d.scene.camera.screenToWorldPoint(p);
+			p = this.object3d.scene.mainCamera.screenToWorldPoint(p);
 			this.localPosition = p;
 			//console.log(p.toString());
 		}
@@ -51,7 +51,7 @@ export class TestScript extends Tea.Script {
 		if (mouse.isDown(0)) {
 			console.log("mouse down");
 			let p2 = new Tea.Vector3(mouse.x, mouse.y, 10);
-			const p = this.object3d.scene.camera.screenToViewportPoint(p2);
+			const p = this.object3d.scene.mainCamera.screenToViewportPoint(p2);
 			console.log(p);
 		}
 		if (mouse.isUp(0)) {

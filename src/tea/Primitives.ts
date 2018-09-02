@@ -27,10 +27,10 @@ export class Primitives {
 			vec3(0, 0, 1)
 		];
 		var uv = [
-			vec2(0, 1),
-			vec2(1, 1),
+			vec2(0, 0),
 			vec2(1, 0),
-			vec2(0, 0)
+			vec2(1, 1),
+			vec2(0, 1)
 		];
 		/*
 		const colors = [
@@ -137,35 +137,35 @@ export class Primitives {
 		];
 		var uv = [
 			// front
-			vec2(0, 1),
-			vec2(1, 1),
-			vec2(1, 0),
 			vec2(0, 0),
+			vec2(1, 0),
+			vec2(1, 1),
+			vec2(0, 1),
 			// back
-			vec2(1, 0),
-			vec2(0, 0),
-			vec2(0, 1),
 			vec2(1, 1),
+			vec2(0, 1),
+			vec2(0, 0),
+			vec2(1, 0),
 			// top
-			vec2(0, 1),
-			vec2(1, 1),
-			vec2(1, 0),
 			vec2(0, 0),
+			vec2(1, 0),
+			vec2(1, 1),
+			vec2(0, 1),
 			// bottom
-			vec2(1, 0),
-			vec2(0, 0),
-			vec2(0, 1),
 			vec2(1, 1),
+			vec2(0, 1),
+			vec2(0, 0),
+			vec2(1, 0),
 			// left
-			vec2(1, 0),
-			vec2(0, 0),
-			vec2(0, 1),
 			vec2(1, 1),
+			vec2(0, 1),
+			vec2(0, 0),
+			vec2(1, 0),
 			// right
-			vec2(1, 0),
-			vec2(0, 0),
-			vec2(0, 1),
 			vec2(1, 1),
+			vec2(0, 1),
+			vec2(0, 0),
+			vec2(1, 0),
 		];
 		var mesh = new Tea.Mesh();
 		mesh.vertices = vertices;
@@ -194,7 +194,7 @@ export class Primitives {
 				var vx = cos(pi * x / lengthX) * sy;
 				var vz = sin(pi * x / lengthX) * sy;
 				vertices.push(vec3(vx, vy, vz));
-				uv.push(vec2(-x / (lengthX * 2), y / lengthY));
+				uv.push(vec2(1 - x / (lengthX * 2), 1 - y / lengthY));
 				var normal = vec3(vx, vy, vz);
 				normals.push(normal.normalized);
 				//console.log(vy.toFixed(3), sy.toFixed(3), (-vy + 0.5).toFixed(3));
@@ -204,7 +204,7 @@ export class Primitives {
 				var vx = cos(pi + pi * x / lengthX) * sy;
 				var vz = sin(pi + pi * x / lengthX) * sy;
 				vertices.push(vec3(vx, vy, vz));
-				uv.push(vec2(-(x + lengthX) / (lengthX * 2), y / lengthY));
+				uv.push(vec2(1 - (x + lengthX) / (lengthX * 2), 1 - y / lengthY));
 				var normal = vec3(vx, vy, vz);
 				normals.push(normal.normalized);
 				//console.log(vx.toFixed(3), vy.toFixed(3), vz.toFixed(3));
@@ -246,13 +246,13 @@ export class Primitives {
 			var vz = sin(2 * pi * i / lines) * 0.5;
 			vertices.push(vec3(vx, 1, vz));
 			normals.push(vec3(0, 1, 0));
-			uv.push(vec2(-vx + 0.5, -vz + 0.5));
+			uv.push(vec2(1 - vx - 0.5, vz + 0.5));
 		}
 		for (var i = 1; i <= lines; i++) {
 			triangles.push(vec3(i, 0, i + 1));
 		}
 
-		var st = vertices.length / 3;
+		var st = vertices.length;
 		vertices.push(vec3(0, -1, 0));
 		normals.push(vec3(0, -1, 0));
 		uv.push(vec2(0.5, 0.5));
@@ -261,13 +261,13 @@ export class Primitives {
 			var vz = sin(2 * pi * i / lines) * 0.5;
 			vertices.push(vec3(vx, -1, vz));
 			normals.push(vec3(0, -1, 0));
-			uv.push(vec2(vx + 0.5, -vz + 0.5));
+			uv.push(vec2(vx + 0.5, vz + 0.5));
 		}
 		for (var i = 1; i <= lines; i++) {
 			triangles.push(vec3(st, st + i, st + i + 1));
 		}
 
-		st = vertices.length / 3;
+		st = vertices.length;
 		for (var i = 0; i <= lines; i++) {
 			var vx = cos(2 * pi * i / lines) * 0.5;
 			var vz = sin(2 * pi * i / lines) * 0.5;
@@ -279,8 +279,8 @@ export class Primitives {
 			normals.push(normal);
 			normals.push(normal);
 			var ux = (1 - i / lines) * 2;
-			uv.push(vec2(ux, 1));
 			uv.push(vec2(ux, 0));
+			uv.push(vec2(ux, 1));
 		}
 		for (var i = 0; i < lines * 2; i += 2) {
 			var n = st + i;
@@ -311,7 +311,7 @@ export class Primitives {
 				var vx = x - halfSize;
 				vertices.push(vec3(vx, 0, vz));
 				normals.push(vec3(0, 1, 0));
-				uv.push(vec2(-x / size, -z / size));
+				uv.push(vec2(1 - x / size, z / size));
 			}
 		}
 
@@ -354,7 +354,7 @@ export class Primitives {
 				vertices.push(vec3(vx, vy, vz));
 				var normal = vec3(vx, vy - 0.5, vz);
 				normals.push(normal.normalized);
-				uv.push(vec2(x / (lengthX * 2), y / lengthY * 0.5));
+				uv.push(vec2(x / (lengthX * 2), 1 - y / lengthY * 0.5));
 			}
 		}
 
@@ -382,7 +382,7 @@ export class Primitives {
 				vertices.push(vec3(vx, vy, vz));
 				var normal = vec3(vx, vy + 0.5, vz);
 				normals.push(normal.normalized);
-				uv.push(vec2(x / (lengthX * 2), 1 - (y / lengthY * 0.5)));
+				uv.push(vec2(x / (lengthX * 2), y / lengthY * 0.5));
 			}
 		}
 
@@ -411,8 +411,8 @@ export class Primitives {
 			normals.push(normal);
 			normals.push(normal);
 			var uvx = i / lengthX;
-			uv.push(vec2(uvx, 0.25));
 			uv.push(vec2(uvx, 0.75));
+			uv.push(vec2(uvx, 0.25));
 		}
 		for (var i = 0; i < lengthX * 2; i += 2) {
 			var n0 = st + i;

@@ -124,6 +124,12 @@ export class App {
 		return scene;
 	}
 
+	createCamera(): Tea.Object3D {
+		var object3d = new Tea.Object3D(this);
+		object3d.addComponent(Tea.Camera);
+		return object3d;
+	}
+
 	createDefaultShader(): Tea.Shader {
 		var shader = new Tea.Shader(this);
 		shader.attach(

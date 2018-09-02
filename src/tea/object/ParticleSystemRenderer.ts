@@ -24,7 +24,7 @@ export class ParticleSystemRenderer extends Renderer {
 		if (particleSystem == null) {
 			return;
 		}
-		particleSystem.update();
+		//particleSystem.update();
 		if (particleSystem.particleCount <= 0) {
 			return;
 		}
