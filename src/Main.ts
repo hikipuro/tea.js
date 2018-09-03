@@ -133,11 +133,21 @@ export class Main {
 		this.app.setScene(scene);
 
 		var camera = this.app.createCamera();
+		//camera.localPosition = new Tea.Vector3(0, 4, 0);
+		//camera.localRotation = Tea.Quaternion.euler(90, 0, 0);
 		scene.appendChild(camera);
 
+		/*
 		var renderTexture = new Tea.RenderTexture(this.app);
 		var camera2 = this.app.createCamera();
 		camera2.getComponent(Tea.Camera).targetTexture = renderTexture;
+		scene.appendChild(camera2);
+		*/
+
+		var camera2 = this.app.createLightCamera();
+		camera2.localPosition = new Tea.Vector3(0, 5, 0);
+		camera2.localRotation = Tea.Quaternion.euler(90, 0, 0);
+		//var cam = camera2.getComponent(Tea.LightCamera);
 		scene.appendChild(camera2);
 
 		setTimeout(() => {
@@ -154,10 +164,10 @@ export class Main {
 
 		const cube = Tea.Object3D.createPrimitive(this.app, Tea.PrimitiveType.Cube);
 		cube.name = "cube";
-		cube.position.x = 2;
+		//cube.position.x = 2;
 		cube.position.y = 2;
-		cube.position.z = -5;
-		cube.scale.x = 2;
+		//cube.position.z = -5;
+		//cube.scale.x = 2;
 		//cube.scale.y = -1;
 		//cube.scale.z = -1;
 		cube.localRotation = Tea.Quaternion.euler(0, 0, 90);
@@ -202,7 +212,8 @@ export class Main {
 		const plane = Tea.Object3D.createPrimitive(this.app, Tea.PrimitiveType.Plane);
 		//plane.renderer.wireframe = true;
 		//plane.position.z = -9;
-		plane.rotation.eulerAngles = new Tea.Vector3(20, 180, 0);
+		plane.position.y = -2;
+		//plane.rotation.eulerAngles = new Tea.Vector3(20, 180, 0);
 		//plane.addScript(script);
 		//plane.scale.x = 10;
 		//plane.scale.y = 10;
@@ -210,7 +221,8 @@ export class Main {
 		console.log("plane", plane.forward);
 		console.log("plane", plane.up);
 		console.log("plane", plane.right);
-		plane.getComponent(Tea.Renderer).material.mainTexture = renderTexture;
+		plane.getComponent(Tea.MeshRenderer).receiveShadows = true;
+		//plane.getComponent(Tea.Renderer).material.mainTexture = cam.targetTexture;
 		//plane.scale.x = -1;
 		scene.appendChild(plane);
 
@@ -226,9 +238,9 @@ export class Main {
 
 		//console.log("capsule", capsule.localToWorldMatrix.toString());
 
-		capsule.addComponent(Tea.Camera);
+		//capsule.addComponent(Tea.Camera);
 		//capsule.addComponent(Tea.MeshRenderer);
-		console.log("component", capsule.getComponent(Tea.Camera));
+		//console.log("component", capsule.getComponent(Tea.Camera));
 
 		const lines = this.app.createObject3D();
 		const lineRenderer = lines.addComponent(Tea.LineRenderer);
@@ -246,7 +258,7 @@ export class Main {
 
 
 		var particles = this.app.createParticleSystem();
-		scene.appendChild(particles);
+		//scene.appendChild(particles);
 
 
 		var textmesh = this.app.createTextMesh();
@@ -267,9 +279,9 @@ export class Main {
 		textmesh.position.y = 1;
 		textmesh.position.z = -6;
 		//document.body.appendChild(mesh.canvas);
-		scene.appendChild(textmesh);
+		//scene.appendChild(textmesh);
 
-		var wp = camera.getComponent(Tea.Camera).viewportToWorldPoint(new Tea.Vector3(0, 0, 0));
+		//var wp = camera.getComponent(Tea.Camera).viewportToWorldPoint(new Tea.Vector3(0, 0, 0));
 		//var stats = this.app.createStats();
 		//this.app.canvas.parentElement.appendChild(stats.canvas);
 
@@ -325,7 +337,7 @@ export class Main {
 			r = cylinder.getComponent(Tea.Renderer);
 			r.material.mainTexture = texture;
 			r = plane.getComponent(Tea.Renderer);
-			//r.material.mainTexture = texture;
+			r.material.mainTexture = texture;
 			r = capsule.getComponent(Tea.Renderer);
 			r.material.mainTexture = texture;
 		});

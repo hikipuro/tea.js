@@ -39,6 +39,8 @@ export * from "./object/Bounds";
 export * from "./object/Camera";
 export * from "./object/Collider";
 export * from "./object/Component";
+export * from "./object/Light";
+export * from "./object/LightCamera";
 export * from "./object/Mesh";
 export * from "./object/MeshFilter";
 export * from "./object/Object3D";

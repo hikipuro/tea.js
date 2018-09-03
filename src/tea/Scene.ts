@@ -53,9 +53,9 @@ export class Scene {
 			return renderQueueA - renderQueueB;
 		});
 		var cameras = this._cameras.sort((a, b) => {
-			var at = a.targetTexture ? 1: 0;
-			var bt = b.targetTexture ? 1: 0;
-			return at - bt;
+			var at = a.targetTexture ? 1 : 0;
+			var bt = b.targetTexture ? 1 : 0;
+			return bt - at;
 		});
 		Tea.ArrayUtil.each(cameras, (_, camera) => {
 			var renderTexture = camera.targetTexture;
@@ -98,6 +98,16 @@ export class Scene {
 	}
 
 	protected renderCamera(camera: Tea.Camera, renderer: Tea.Renderer): void {
+		var renderTexture = camera.targetTexture;
+		if (renderTexture != null) {
+			if (renderer.material.mainTexture === renderTexture) {
+				return;
+			}
+		}
+		if (camera instanceof Tea.LightCamera) {
+			this.renderLightCamera(camera, renderer);
+			return;
+		}
 		if (camera.enableStereo) {
 			camera.updateLeft();
 			renderer.render(camera);
@@ -105,12 +115,36 @@ export class Scene {
 			renderer.render(camera);
 			return;
 		}
-		var renderTexture = camera.targetTexture;
-		if (renderTexture != null) {
-			if (renderer.material.mainTexture === renderTexture) {
-				return;
+		renderer.render(camera);
+	}
+
+	protected renderLightCamera(camera: Tea.LightCamera, renderer: Tea.Renderer): void {
+		var shader = renderer.material.shader;
+		renderer.material.shader = camera.shader;
+		renderer.render(camera);
+
+		if (renderer instanceof Tea.MeshRenderer) {
+			if (renderer.receiveShadows) {
+				renderer.material.setTexture("_ShadowTex", camera.targetTexture);
+				//renderer.material.setTextureOffset("_ShadowTex", new Tea.Vector2(0, 0));
+				//renderer.material.setTextureScale("_ShadowTex", new Tea.Vector2(1, 1));
+		
+				var model = renderer.object3d.localToWorldMatrix;
+				var view = camera.worldToCameraMatrix;
+				var projection = camera.projectionMatrix;
+				var tMatrix = Tea.Matrix4x4.identity;
+				tMatrix[0] = tMatrix[5] = 0.4;
+				tMatrix[12] = tMatrix[13] = 0.5;
+				//projection = tMatrix.mul(projection);
+		
+				var mvMatrix = view.mul(model);
+				var vpMatrix = projection.mul(view);
+				var mvpMatrix = projection.mul(mvMatrix);
+				//mvpMatrix = tMatrix.mul(mvpMatrix);
+				renderer.material.setMatrix("_LightCamera", mvpMatrix);
+				renderer.material.setMatrix("tMatrix", tMatrix.mul(vpMatrix));
 			}
 		}
-		renderer.render(camera);
+		renderer.material.shader = shader;
 	}
 }

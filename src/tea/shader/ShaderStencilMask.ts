@@ -3,7 +3,7 @@ export class ShaderStencilMask {
 	back: number;
 
 	constructor() {
-		this.front = 0xFFFFFFFF;
-		this.back = 0xFFFFFFFF;
+		this.front = ~0;
+		this.back = ~0;
 	}
 }

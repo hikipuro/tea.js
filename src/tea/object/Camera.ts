@@ -2,9 +2,6 @@ import * as Tea from "../Tea";
 import { Component } from "./Component";
 
 export class Camera extends Component {
-	position: Tea.Vector3;
-	rotation: Tea.Quaternion;
-
 	fieldOfView: number;
 	nearClipPlane: number;
 	farClipPlane: number;
@@ -25,8 +22,6 @@ export class Camera extends Component {
 
 	constructor(app: Tea.App) {
 		super(app);
-		this.position = new Tea.Vector3(0, 1, -10);
-		this.rotation = new Tea.Quaternion();
 		this.fieldOfView = 60;
 		this.nearClipPlane = 0.3;
 		this.farClipPlane = 1000;
@@ -39,7 +34,7 @@ export class Camera extends Component {
 		this.stereoMode = Tea.CameraStereoMode.SideBySide;
 		this.isStereoLeft = true;
 		this._prevRect = new Tea.Rect();
-		this.update();
+		//this.update();
 	}
 
 	get aspect(): number {
@@ -63,8 +58,8 @@ export class Camera extends Component {
 
 	update(): void {
 		var view = Tea.Matrix4x4.tr(
-			this.position,
-			this.rotation
+			this.object3d.position,
+			this.object3d.rotation
 		);
 		view.toggleHand();
 		this._cameraToWorldMatrix = view;
@@ -103,12 +98,12 @@ export class Camera extends Component {
 	}
 
 	updateLeft(): void {
-		var position = this.position.clone();
+		var position = this.object3d.position.clone();
 		position.x -= this.stereoDistance;
 
 		var view = Tea.Matrix4x4.tr(
 			position,
-			this.rotation
+			this.object3d.rotation
 		);
 		view.toggleHand();
 		this._cameraToWorldMatrix = view;
@@ -120,12 +115,12 @@ export class Camera extends Component {
 	}
 
 	updateRight(): void {
-		var position = this.position.clone();
+		var position = this.object3d.position.clone();
 		position.x += this.stereoDistance;
 
 		var view = Tea.Matrix4x4.tr(
 			position,
-			this.rotation
+			this.object3d.rotation
 		);
 		view.toggleHand();
 		this._cameraToWorldMatrix = view;
@@ -204,14 +199,14 @@ export class Camera extends Component {
 		var p = position.clone();
 		p.z = 1;
 		var far = this.unproject(p);
-		var ray = far.sub(this.position).normalized;
+		var ray = far.sub(this.object3d.position).normalized;
 
 		var direction = new Tea.Vector3(0, 0, 1);
 		//direction.rotate$(this.rotation.eulerAngles.mul(Tea.Mathf.Deg2Rad));
-		direction = this.rotation.mul(direction);
+		direction = this.object3d.rotation.mul(direction);
 		var d = Tea.Vector3.dot(ray, direction.normalized);
 
-		return this.position.add(ray.mul(position.z / d));
+		return this.object3d.position.add(ray.mul(position.z / d));
 	}
 
 	unproject(viewport: Tea.Vector3): Tea.Vector3 {

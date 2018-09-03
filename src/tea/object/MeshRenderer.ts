@@ -2,12 +2,14 @@ import * as Tea from "../Tea";
 import { Renderer } from "./Renderer";
 
 export class MeshRenderer extends Renderer {
+	receiveShadows: boolean;
 	vertexBuffer: WebGLBuffer;
 	indexBuffer: WebGLBuffer;
 	wireframe: boolean = false;
 
 	constructor(app: Tea.App) {
 		super(app);
+		this.receiveShadows = false;
 		this.createBuffers();
 	}
 
@@ -29,6 +31,11 @@ export class MeshRenderer extends Renderer {
 			this._uniforms.uniform1i("useColor", 1);
 		} else {
 			this._uniforms.uniform1i("useColor", 0);
+		}
+		if (this.receiveShadows) {
+			this._uniforms.uniform1i("receiveShadows", 1);
+		} else {
+			this._uniforms.uniform1i("receiveShadows", 0);
 		}
 		this.setMeshData(mesh);
 		this.setVertexBuffer(mesh);
@@ -97,7 +104,6 @@ export class MeshRenderer extends Renderer {
 		}
 
 		var gl = this.app.gl;
-		gl.useProgram(this.material.shader.program);
 		var target = gl.ARRAY_BUFFER;
 
 		gl.bindBuffer(target, this.vertexBuffer);

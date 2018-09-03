@@ -66,7 +66,7 @@ export class LineRenderer extends Renderer {
 		var vertices = new Float32Array(Tea.ArrayUtil.unroll(this.points));
 		gl.bindBuffer(target, this.vertexBuffer);
 		gl.bufferData(target, vertices, gl.DYNAMIC_DRAW);
-		this.setAttribute("tea_Vertex", 3);
+		this.setAttribute("vertex", 3);
 		gl.bindBuffer(target, null);
 	}
 

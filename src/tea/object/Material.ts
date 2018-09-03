@@ -49,6 +49,9 @@ export class Material {
 		this.mainTexture = Tea.Texture.getEmpty(app);
 		this.mainTextureOffset = new Tea.Vector2();
 		this.mainTextureScale = new Tea.Vector2(1, 1);
+		this.setTexture("_ShadowTex", Tea.Texture.getEmpty(app));
+		this.setTextureOffset("_ShadowTex", new Tea.Vector2());
+		this.setTextureScale("_ShadowTex", new Tea.Vector2(1, 1));
 	}
 
 	static getDefault(app: Tea.App): Material {
@@ -82,6 +85,10 @@ export class Material {
 	}
 	set mainTextureScale(value: Tea.Vector2) {
 		this.setTextureScale("_MainTex", value);
+	}
+
+	get textureKeys(): Array<string> {
+		return Object.keys(this._textures);
 	}
 
 	/*

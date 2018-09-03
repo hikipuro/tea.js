@@ -117,6 +117,7 @@ export class App {
 
 	createObject3D(): Tea.Object3D {
 		var object3d = new Tea.Object3D(this);
+		object3d.name = "Empty";
 		return object3d;
 	}
 
@@ -127,7 +128,17 @@ export class App {
 
 	createCamera(): Tea.Object3D {
 		var object3d = new Tea.Object3D(this);
+		object3d.name = "Camera";
+		object3d.localPosition = new Tea.Vector3(0, 1, -10);
 		object3d.addComponent(Tea.Camera);
+		return object3d;
+	}
+
+	createLightCamera(): Tea.Object3D {
+		var object3d = new Tea.Object3D(this);
+		object3d.name = "LightCamera";
+		object3d.localPosition = new Tea.Vector3(0, 1, -10);
+		object3d.addComponent(Tea.LightCamera);
 		return object3d;
 	}
 
@@ -249,6 +260,9 @@ export class App {
 
 		if (this._canvasAttributes.stencil) {
 			gl.clearStencil(0);
+			gl.enable(gl.STENCIL_TEST);
+			//gl.stencilFunc(gl.ALWAYS, 1, ~0);
+			//gl.stencilOp(gl.KEEP, gl.REPLACE, gl.REPLACE);
 		}
 	}
 

@@ -17,10 +17,10 @@ export class ShaderStencil {
 	constructor() {
 		this.frontFunc = Tea.ShaderTestFunc.Never;
 		this.frontRef = 0;
-		this.frontMask = 0xFFFFFFFF;
+		this.frontMask = ~0;
 		this.backFunc = Tea.ShaderTestFunc.Never;
 		this.backRef = 0;
-		this.backMask = 0xFFFFFFFF;
+		this.backMask = ~0;
 		this.frontFail = Tea.ShaderStencilOp.Keep;
 		this.frontZfail = Tea.ShaderStencilOp.Keep;
 		this.frontZpass = Tea.ShaderStencilOp.Keep;
