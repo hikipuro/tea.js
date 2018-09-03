@@ -401,8 +401,11 @@ export class Camera extends Component {
 		var gl = this.app.gl;
 		var color = this.backgroundColor;
 		gl.clearColor(color.r, color.g, color.b, color.a);
-		gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
-		// STENCIL_BUFFER_BIT
+		gl.clear(
+			gl.COLOR_BUFFER_BIT |
+			gl.DEPTH_BUFFER_BIT |
+			gl.STENCIL_BUFFER_BIT
+		);
 	}
 
 	protected flush(): void {

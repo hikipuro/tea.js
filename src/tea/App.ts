@@ -1,6 +1,7 @@
 import * as Tea from "./Tea";
 
 export class App {
+	static useStencil: boolean = true;
 	canvas: HTMLCanvasElement;
 	gl: WebGLRenderingContext;
 	capabilities: Tea.GLCapabilities;
@@ -245,12 +246,22 @@ export class App {
 
 		gl.enable(gl.SCISSOR_TEST);
 		gl.scissor(0, 0, this.width, this.height);
+
+		if (this._canvasAttributes.stencil) {
+			gl.clearStencil(0);
+		}
 	}
 
 	protected getWebGLContext(): WebGLRenderingContext {
 		if (this.canvas == null) {
 			return;
 		}
+		var attributes: WebGLContextAttributes = {
+			stencil: App.useStencil
+		};
+		this._canvasAttributes = Object.assign(
+			attributes, this._canvasAttributes
+		);
 		var context = this.canvas.getContext(
 			"webgl",
 			this._canvasAttributes
