@@ -14,7 +14,8 @@ export class Rotate extends Tea.Script {
 		p = this.object3d.scene.mainCamera.screenToWorldPoint(p);
 		//this.object3d.lookAt(p);
 		//this.object3d.rotate(0, 180, 0);
-		this.object3d.rotate(new Tea.Vector3(1, 2, 0));
+		//this.object3d.rotate(new Tea.Vector3(1, 2, 0));
+		this.object3d.rotate(new Tea.Vector3(0, 3, 0));
 		//console.log(this.object3d.rotation.eulerAngles);
 	}
 }

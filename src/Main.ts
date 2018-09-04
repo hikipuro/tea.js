@@ -69,27 +69,21 @@ export class Main {
 		//*/
 
 		setTimeout(() => {
-			var m = new Tea.Matrix4x4();
-			var m2 = new Tea.Matrix4x4();
-			for (let i = 0; i < 16; i++) {
-				var v = Math.random();
-				m[i] = v;
-				m2[i] = v;
-			}
+			var t = 2;
 			const loop = 100;
 			const count = 200;
 			const test2 = Tea.benchmark(() => {
 				for (var i = 0; i < loop; i++) {
-					//m2.mul2(m2);
+					t = Math.pow(t, 2);
 				}
 			}, count);
 			const test1 = Tea.benchmark(() => {
 				for (var i = 0; i < loop; i++) {
-					m.mul(m);
+					t = t ** 2;
 				}
 			}, count);
 			console.log("test1", test1);
-			console.log("test2", test2, m2.toString());
+			console.log("test2", test2);
 		}, 1000);
 		//*/
 
@@ -163,22 +157,51 @@ export class Main {
 		//const script = new TestScript();
 
 		const cube = Tea.Object3D.createPrimitive(this.app, Tea.PrimitiveType.Cube);
-		cube.name = "cube";
+		//cube.name = "cube";
 		//cube.position.x = 2;
 		cube.position.y = 2;
 		//cube.position.z = -5;
-		//cube.scale.x = 2;
 		//cube.scale.y = -1;
 		//cube.scale.z = -1;
-		cube.localRotation = Tea.Quaternion.euler(0, 0, 90);
+		//cube.localRotation = Tea.Quaternion.euler(45, 0, 0);
 		//cube.rotation.y = Tea.radians(20);
 		//cube.addScript(new Rotate());
 		//cube.getComponent(Tea.Renderer).material.mainTexture = renderTexture;
 		scene.appendChild(cube);
 
 		const cube2 = Tea.Object3D.createPrimitive(this.app, Tea.PrimitiveType.Cube);
-		cube2.name = "cube2";
+		cube2.position.x = 2;
+		cube2.position.y = 2;
+		//cube2.name = "cube2";
 		//scene.appendChild(cube2);
+		cube.appendChild(cube2);
+		//cube2.localPosition = new Tea.Vector3(2, 0, 0);
+		//cube2.rotation = Tea.Quaternion.euler(0,45,0);
+		//cube.scale = new Tea.Vector3(2, 1, 1);
+		//cube2.localPosition = new Tea.Vector3(2, 0, 0);
+		//cube.rotate(45, 0, 0);
+		//cube2.localPosition = new Tea.Vector3(0, 2, 0);
+
+		const cube3 = Tea.Object3D.createPrimitive(this.app, Tea.PrimitiveType.Cube);
+		cube3.position.x = 4;
+		cube3.position.y = 2;
+		cube2.appendChild(cube3);
+
+		//cube2.position = new Tea.Vector3(2, 0, 0);
+		cube.localScale = new Tea.Vector3(2, 1, 1);
+		cube.localRotation = Tea.Quaternion.euler(0, 80, 0);
+		//cube.localPosition.z = 7;
+
+		cube2.position = new Tea.Vector3(2,2,0);
+		//cube3.position = new Tea.Vector3(4,2,0);
+		//cube.addComponent(Rotate);
+		//cube2.addComponent(Rotate);
+		//cube3.addComponent(Rotate);
+		//cube2.localScale = new Tea.Vector3(2, 1, 1);
+
+		console.log("cube2", cube2.localPosition);
+		console.log("cube2", cube2.localScale);
+		console.log("cube3", cube3.localPosition);
 
 		const sphere = Tea.Object3D.createPrimitive(this.app, Tea.PrimitiveType.Sphere);
 		//cube2.name = "cube2";
@@ -212,7 +235,8 @@ export class Main {
 		const plane = Tea.Object3D.createPrimitive(this.app, Tea.PrimitiveType.Plane);
 		//plane.renderer.wireframe = true;
 		//plane.position.z = -9;
-		plane.position.y = -2;
+		//plane.position.y = -2;
+		plane.rotation.eulerAngles = new Tea.Vector3(-20, 0, 0);
 		//plane.rotation.eulerAngles = new Tea.Vector3(20, 180, 0);
 		//plane.addScript(script);
 		//plane.scale.x = 10;
