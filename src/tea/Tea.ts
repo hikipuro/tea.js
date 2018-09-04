@@ -152,3 +152,32 @@ export function openDownloadDialog(data: ArrayBuffer, type: string, filename: st
 	document.body.removeChild(link);
 	URL.revokeObjectURL(url);
 }
+
+
+import { Vector2 } from "./math/Vector2";
+import { Vector3 } from "./math/Vector3";
+import { Vector4 } from "./math/Vector4";
+import { Quaternion } from "./math/Quaternion";
+import { Matrix4x4 } from "./math/Matrix4x4";
+
+export function vec2(x: number = 0, y: number = 0): Vector2 {
+	return new Vector2(x, y);
+}
+export function vec3(x: number = 0, y: number = 0, z: number = 0): Vector3 {
+	return new Vector3(x, y, z);
+}
+export function vec4(x: number = 0, y: number = 0, z: number = 0, w: number = 0): Vector4 {
+	return new Vector4(x, y, z, w);
+}
+export function rot(x: number = 0, y: number = 0, z: number = 0): Quaternion {
+	return Quaternion.euler(x, y, z);
+}
+export function mat4(array: Array<number> = null): Matrix4x4 {
+	if (array == null) {
+		return new Matrix4x4();
+	}
+	return Matrix4x4.fromArray(array);
+}
+export function imat4(): Matrix4x4 {
+	return Matrix4x4.identity;
+}
