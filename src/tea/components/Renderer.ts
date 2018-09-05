@@ -196,6 +196,7 @@ class Uniforms {
 }
 
 export class Renderer extends Component {
+	static drawCallCount: number = 0;
 	enabled: boolean;
 	object3d: Tea.Object3D;
 	material: Tea.Material;

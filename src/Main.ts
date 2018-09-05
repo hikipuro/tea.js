@@ -252,6 +252,8 @@ export class Main {
 		//plane.scale.x = -1;
 		scene.appendChild(plane);
 
+		console.log("bounds", plane.getComponent(Tea.MeshFilter).mesh.bounds);
+
 		const capsule = Tea.Object3D.createPrimitive(this.app, Tea.PrimitiveType.Capsule);
 		//capsule.renderer.wireframe = true;
 		//capsule.position.x = 2;
@@ -389,6 +391,22 @@ export class Main {
 		console.log("Quaternion 2", q3.toString());
 		console.log("Quaternion 2", m1.toString());
 		console.log("Quaternion 2", m1.toQuaternion().toString());
+
+		//var p = new Tea.Plane(Tea.vec3(1,0,0), 0);
+		//var p = new Tea.Plane(Tea.vec3(2,5,-3), 1);
+		//var p = new Tea.Plane(Tea.vec3(2,6,-3), Tea.vec3(0,1,0));
+		var p = new Tea.Plane(Tea.vec3(1, 0, 0), Tea.vec3(0, 1, 0), Tea.vec3(0, -1, 1));
+		//p.setNormalAndPosition(Tea.vec3(2,6,-3), Tea.vec3(0,1,0));
+		//var p = new Tea.Plane(Tea.vec3(0,1,0), 1);
+		//console.log("plane", p.flipped.toString());
+		//p.set3Points(Tea.vec3(1, 0, 0), Tea.vec3(0, 1, 0), Tea.vec3(0, -1, 1));
+		//p.translate(Tea.vec3(2, 0, 0));
+		console.log("plane", p.toString());
+		//console.log("plane", p.distance);
+		console.log("plane", p.closestPointOnPlane(Tea.vec3(1,1,1)));
+		console.log("plane", p.getDistanceToPoint(Tea.vec3(-1,1,1)));
+		console.log("plane", p.getDistanceToPoint(Tea.vec3()));
+		console.log("plane", p.getSide(Tea.vec3(0, 1, 0)));
 
 		//setTimeout(() => {
 			//this.app.stop();

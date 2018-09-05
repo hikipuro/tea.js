@@ -42,7 +42,7 @@ export class TestScript extends Tea.Script {
 			//console.log(mouse.x, mouse.y, mouse.prevX, mouse.prevY);
 			//this.position.x = -0.5 + mouse.x / this.app.width;
 			//this.position.y = 0.5 + mouse.y / this.app.height;
-			let p = new Tea.Vector3(mouse.x, mouse.y, 10);
+			let p = new Tea.Vector3(mouse.x, mouse.y, 3);
 			p = this.object3d.scene.mainCamera.screenToWorldPoint(p);
 			this.localPosition = p;
 			//console.log(p.toString());

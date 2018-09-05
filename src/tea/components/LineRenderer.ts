@@ -75,5 +75,6 @@ export class LineRenderer extends Renderer {
 		var count = this.points.length;
 		//gl.frontFace(gl.CW);
 		gl.drawArrays(gl.LINE_STRIP, 0, count);
+		Renderer.drawCallCount++;
 	}
 }

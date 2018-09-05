@@ -57,13 +57,19 @@ export class Scene {
 			var bt = b.targetTexture ? 1 : 0;
 			return bt - at;
 		});
+
+		Tea.Renderer.drawCallCount = 0;
 		Tea.ArrayUtil.each(cameras, (_, camera) => {
 			var renderTexture = camera.targetTexture;
 			if (renderTexture != null) {
 				renderTexture.bind();
 			}
 			camera.update();
+			var planes = Tea.GeometryUtil.calculateFrustumPlanes(camera);
 			Tea.ArrayUtil.each(renderers, (_, renderer) => {
+				if (this.frustumCulling(renderer, planes)) {
+					return;
+				}
 				this.renderCamera(camera, renderer);
 			});
 			if (renderTexture != null) {
@@ -71,6 +77,7 @@ export class Scene {
 			}
 		});
 		this._renderers = [];
+		//console.log("drawCallCount", Tea.Renderer.drawCallCount);
 	}
 
 	protected start(): void {
@@ -146,5 +153,12 @@ export class Scene {
 			}
 		}
 		renderer.material.shader = shader;
+	}
+
+	protected frustumCulling(renderer: Tea.Renderer, planes: Array<Tea.Plane>): boolean {
+		if (renderer instanceof Tea.MeshRenderer) {
+			return !Tea.GeometryUtil.testPlanesAABB(planes, renderer.bounds);
+		}
+		return false;
 	}
 }

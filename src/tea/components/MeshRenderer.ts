@@ -13,6 +13,21 @@ export class MeshRenderer extends Renderer {
 		this.createBuffers();
 	}
 
+	get bounds(): Tea.Bounds {
+		var component = this.object3d.getComponent(Tea.MeshFilter);
+		if (component == null) {
+			return null;
+		}
+		var mesh = component.mesh;
+		if (mesh == null) {
+			return null;
+		}
+		var bounds = mesh.bounds.clone();
+		bounds.center.add$(this.object3d.position);
+		bounds.extents.scale$(this.object3d.scale);
+		return bounds;
+	}
+
 	remove(): void {
 		this.deleteBuffers();
 	}
@@ -185,10 +200,12 @@ export class MeshRenderer extends Renderer {
 			gl.drawArrays(
 				gl.TRIANGLES, 0, mesh.vertices.length
 			);
+			Renderer.drawCallCount++;
 			return;
 		}
 		var count = mesh.triangles.length * 3;
 		gl.drawElements(gl.TRIANGLES, count, gl.UNSIGNED_SHORT, 0);
+		Renderer.drawCallCount++;
 	}
 
 	protected drawWireframe(mesh: Tea.Mesh): void {
@@ -197,9 +214,11 @@ export class MeshRenderer extends Renderer {
 			gl.drawArrays(
 				gl.LINES, 0, mesh.vertices.length
 			);
+			Renderer.drawCallCount++;
 			return;
 		}
 		var count = mesh.triangles.length * 3;
 		gl.drawElements(gl.LINES, count, gl.UNSIGNED_SHORT, 0);
+		Renderer.drawCallCount++;
 	}
 }

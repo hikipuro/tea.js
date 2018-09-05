@@ -21,6 +21,13 @@ export class Bounds {
 		return this.extents.mul(2);
 	}
 
+	clone(): Bounds {
+		return new Bounds(
+			this.center.clone(),
+			this.extents.mul(2)
+		);
+	}
+
 	contains(point: Tea.Vector3): boolean {
 		if (point == null) {
 			return false;
