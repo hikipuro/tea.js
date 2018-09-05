@@ -1,4 +1,4 @@
-import * as Tea from "./Tea";
+import * as Tea from "../Tea";
 
 function vec2(x: number, y: number): Tea.Vector2 {
 	return new Tea.Vector2(x, y);

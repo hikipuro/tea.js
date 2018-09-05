@@ -2,6 +2,7 @@ import * as Tea from "./tea/Tea";
 import { TestScript } from "./TestScript";
 import { TestScript2 } from "./TestScript2";
 import { Rotate } from "./Rotate";
+import { CameraRotate } from "./CameraRotate";
 
 export class Main {
 	app: Tea.App;
@@ -130,6 +131,7 @@ export class Main {
 		//camera.localPosition = new Tea.Vector3(0, 4, 0);
 		//camera.localRotation = Tea.Quaternion.euler(90, 0, 0);
 		scene.appendChild(camera);
+		camera.addComponent(CameraRotate);
 
 		/*
 		var renderTexture = new Tea.RenderTexture(this.app);
@@ -188,11 +190,11 @@ export class Main {
 		cube2.appendChild(cube3);
 
 		//cube2.position = new Tea.Vector3(2, 0, 0);
-		cube.localScale = new Tea.Vector3(2, 1, 1);
-		cube.localRotation = Tea.Quaternion.euler(0, 80, 0);
+		//cube.localScale = new Tea.Vector3(2, 1, 1);
+		//cube.localRotation = Tea.Quaternion.euler(0, 80, 0);
 		//cube.localPosition.z = 7;
 
-		cube2.position = new Tea.Vector3(2,2,0);
+		//cube2.position = new Tea.Vector3(2,2,0);
 		//cube3.position = new Tea.Vector3(4,2,0);
 		//cube.addComponent(Rotate);
 		//cube2.addComponent(Rotate);
@@ -252,9 +254,9 @@ export class Main {
 
 		const capsule = Tea.Object3D.createPrimitive(this.app, Tea.PrimitiveType.Capsule);
 		//capsule.renderer.wireframe = true;
-		capsule.position.x = 2;
-		capsule.position.y = 2;
-		capsule.position.z = 2;
+		//capsule.position.x = 2;
+		//capsule.position.y = 2;
+		//capsule.position.z = 2;
 		//capsule.scale.x = 2;
 		//capsule.rotation.x = Tea.radians(90);
 		capsule.addComponent(TestScript);

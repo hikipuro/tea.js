@@ -1,6 +1,6 @@
 import * as Tea from "../Tea";
 import { Mesh } from "./Mesh";
-import { Primitives } from "../Primitives";
+import { Primitives } from "./Primitives";
 
 export class TextMesh extends Mesh {
 	protected static readonly DefaultFontSize: number = 14;

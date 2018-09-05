@@ -1,5 +1,5 @@
 import * as Tea from "../Tea";
-import { Component } from "../object/Component";
+import { Component } from "./Component";
 
 class Particle {
 	position: Tea.Vector3;

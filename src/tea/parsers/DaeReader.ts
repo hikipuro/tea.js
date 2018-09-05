@@ -1,4 +1,4 @@
-import * as Tea from "./Tea";
+import * as Tea from "../Tea";
 
 export class DaeReader {
 	static mimeType = "text/xml";

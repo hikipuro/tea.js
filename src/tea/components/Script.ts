@@ -1,5 +1,5 @@
-import * as Tea from "./Tea";
-import { Component } from "./object/Component";
+import * as Tea from "../Tea";
+import { Component } from "./Component";
 
 export class Script extends Component {
 	app: Tea.App;
@@ -9,6 +9,14 @@ export class Script extends Component {
 	constructor(app: Tea.App) {
 		super(app);
 		this.enabled = true;
+	}
+
+	get keyboard(): Tea.Keyboard {
+		return this.app.keyboard;
+	}
+
+	get mouse(): Tea.Mouse {
+		return this.app.mouse;
 	}
 
 	get scene(): Tea.Scene {

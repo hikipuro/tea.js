@@ -1,4 +1,4 @@
-import * as Tea from "./Tea";
+import * as Tea from "../Tea";
 
 class MaterialReaderContext {
 	url: string;

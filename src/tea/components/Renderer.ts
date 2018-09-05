@@ -432,12 +432,17 @@ export class Renderer extends Component {
 		//var mvpMatrix = mvMatrix.mul(projection);
 		var vpMatrix = projection.mul(view);
 		//var invMatrix = mvpMatrix.inverse;
+		//var itmvMatrix = mvMatrix.inverse.transpose;
 
 		this._uniforms.uniformMatrix4fv("TEA_MATRIX_MVP", mvpMatrix);
+		//this._uniforms.uniformMatrix4fv("TEA_MATRIX_I_MVP", invMatrix);
+		//this._uniforms.uniformMatrix4fv("TEA_MATRIX_IT_MV", itmvMatrix);
 		this._uniforms.uniformMatrix4fv("TEA_MATRIX_MV", mvMatrix);
 		this._uniforms.uniformMatrix4fv("TEA_MATRIX_V", view);
+		this._uniforms.uniformMatrix4fv("TEA_MATRIX_I_V", view.inverse);
 		this._uniforms.uniformMatrix4fv("TEA_MATRIX_P", projection);
 		this._uniforms.uniformMatrix4fv("TEA_MATRIX_VP", vpMatrix);
+		//this._uniforms.uniformMatrix4fv("TEA_MATRIX_IT_P", projection);
 		this._uniforms.uniformMatrix4fv("TEA_OBJECT_TO_WORLD", model);
 		this._uniforms.uniformMatrix4fv("TEA_WORLD_TO_OBJECT", this.worldToLocalMatrix);
 		//this._uniforms.uniformMatrix4fv("invMatrix", invMatrix);
@@ -518,10 +523,11 @@ export class Renderer extends Component {
 	}
 
 	protected setLightUniforms(): void {
-		let light = new Tea.Vector3(0, 0, -1);
+		var light = new Tea.Vector3(0, 0, -1);
 		light.rotateX$(Tea.radians(30));
+		light.rotateY$(Tea.radians(60));
 		//light.rotateX(Tea.radians(this.app.frames/2));
-		light.rotateY$(Tea.radians(90));
+		//light.rotateY$(Tea.radians(90));
 		//light.x = 0.5;
 		//light.x = Tea.radians(light.x);
 		//light.y = Tea.radians(light.y);

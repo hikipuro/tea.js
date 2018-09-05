@@ -6,6 +6,10 @@ export module ShaderSources {
 		attribute vec4 color;
 
 		uniform mat4 TEA_MATRIX_MVP;
+		uniform mat4 TEA_MATRIX_MV;
+		uniform mat4 TEA_MATRIX_P;
+		uniform mat4 TEA_MATRIX_V;
+		uniform mat4 TEA_MATRIX_I_V;
 		uniform mat4 TEA_OBJECT_TO_WORLD;
 		uniform mat4 _LightCamera;
 		uniform mat4 tMatrix;
@@ -21,13 +25,25 @@ export module ShaderSources {
 		varying vec4 vShadowTexCoord;
 
 		void main() {
-			vec3 mvpNormal = normalize(TEA_MATRIX_MVP * vec4(normal, 0.0)).xyz;
-			vec3 diffuse = vec3(max(0.0, dot(mvpNormal, lightDirection)));
-			vec3 halfLE = normalize(eyeDirection + lightDirection);
-			vec3 specular = vec3(5.0 * pow(max(0.0, dot(reflect(lightDirection, mvpNormal), eyeDirection)), 5.5));
-			vec4 light = vec4(ambientColor + diffuse + specular, 1.0);
-			//vec4 light = vec4(ambientColor + specular, 1.0);
-			vColor = light;
+			vec3 norm = normalize((TEA_OBJECT_TO_WORLD * vec4(normal, 0.0)).xyz);
+			float diffuse = max(0.0, dot(norm, lightDirection));
+			float attenuation = 1.0;
+			float shininess = 5.0;
+			float specular = 0.0;
+			if (diffuse >= 0.0) {
+				vec3 viewDirection = normalize(
+					vec3(
+						TEA_MATRIX_I_V * vec4(0.0, 0.0, 0.0, 1.0) -
+						TEA_OBJECT_TO_WORLD * vertex
+					)
+				);
+				vec3 ref = reflect(-lightDirection, norm);
+				specular = dot(ref, viewDirection);
+				//specular = dot(ref, eyeDirection);
+				specular = max(0.0, specular);
+				specular = attenuation * pow(specular, shininess);
+			}
+			vColor = vec4(ambientColor + vec3(diffuse) + vec3(specular), 1.0);
 			vTexCoord = texcoord;
 			if (receiveShadows) {
 				vDepth = _LightCamera * vertex;

@@ -5,7 +5,7 @@ export class Object3D {
 	name: string;
 	isActive: boolean;
 	scene: Tea.Scene;
-	transform: Tea.Transform;
+	//transform: Tea.Transform;
 	localPosition: Tea.Vector3;
 	localRotation: Tea.Quaternion;
 	localScale: Tea.Vector3;
