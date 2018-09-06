@@ -5,7 +5,7 @@ export class CameraRotate extends Tea.Script {
 
 	update(): void {
 		this.count++;
-		this.position.set(Math.sin(this.count / 60) * 10, 0, -10);
-		//this.rotateAround(Tea.vec3(2), Tea.Vector3.up, 2);
+		//this.position.set(Math.sin(this.count / 60) * 10, 0, -10);
+		this.rotateAround(Tea.vec3(2), Tea.Vector3.up, 2);
 	}
 }

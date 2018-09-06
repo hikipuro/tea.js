@@ -10,4 +10,11 @@ export class ShaderColorMask {
 		this.blue = true;
 		this.alpha = true;
 	}
+
+	set(value: boolean): void {
+		this.red = value;
+		this.green = value;
+		this.blue = value;
+		this.alpha = value;
+	}
 }

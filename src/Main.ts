@@ -131,7 +131,7 @@ export class Main {
 		//camera.localPosition = new Tea.Vector3(0, 4, 0);
 		//camera.localRotation = Tea.Quaternion.euler(90, 0, 0);
 		scene.appendChild(camera);
-		camera.addComponent(CameraRotate);
+		//camera.addComponent(CameraRotate);
 
 		/*
 		var renderTexture = new Tea.RenderTexture(this.app);
@@ -250,6 +250,13 @@ export class Main {
 		plane.getComponent(Tea.MeshRenderer).receiveShadows = true;
 		//plane.getComponent(Tea.Renderer).material.mainTexture = cam.targetTexture;
 		//plane.scale.x = -1;
+		var ps = plane.getComponent(Tea.Renderer).material.shader;
+		ps.settings.enableStencilTest = true;
+		ps.settings.stencil.func = Tea.ShaderTestFunc.Always;
+		ps.settings.stencil.ref = 1;
+		ps.settings.stencil.fail = Tea.ShaderStencilOp.Keep;
+		ps.settings.stencil.zfail = Tea.ShaderStencilOp.Replace;
+		ps.settings.stencil.zpass = Tea.ShaderStencilOp.Replace;
 		scene.appendChild(plane);
 
 		console.log("bounds", plane.getComponent(Tea.MeshFilter).mesh.bounds);
@@ -261,6 +268,23 @@ export class Main {
 		//capsule.position.z = 2;
 		//capsule.scale.x = 2;
 		//capsule.rotation.x = Tea.radians(90);
+		/*
+		console.log("extension", this.app.isExtensionSupported(Tea.GLExtensions.OES_standard_derivatives));
+		this.app.getExtension(Tea.GLExtensions.OES_standard_derivatives);
+		var s = new Tea.Shader(this.app);
+		s.attach(
+			Tea.Shader.flatVertexShaderSource,
+			Tea.Shader.flatFragmentShaderSource
+		);
+		capsule.getComponent(Tea.Renderer).material.shader = s;
+		*/
+		var cs = capsule.getComponent(Tea.Renderer).material.shader;
+		cs.settings.enableStencilTest = false;
+		cs.settings.stencil.func = Tea.ShaderTestFunc.Equal;
+		cs.settings.stencil.ref = 1;
+		cs.settings.stencil.fail = Tea.ShaderStencilOp.Keep;
+		cs.settings.stencil.zfail = Tea.ShaderStencilOp.Keep;
+		cs.settings.stencil.zpass = Tea.ShaderStencilOp.Keep;
 		capsule.addComponent(TestScript);
 		scene.appendChild(capsule);
 
@@ -343,6 +367,14 @@ export class Main {
 			object3d.localPosition.z = -4;
 			object3d.addComponent(Rotate);
 			//scene.appendChild(object3d);
+		});
+
+		Tea.File.readImage("../models/texture.png", (image) => {
+			const texture = this.app.createTexture(image);
+			let r = plane.getComponent(Tea.Renderer);
+			r.material.setTexture("_NormalTex", texture);
+			r = capsule.getComponent(Tea.Renderer);
+			r.material.setTexture("_NormalTex", texture);
 		});
 
 		Tea.File.readImage("../models/google.jpg", (image) => {

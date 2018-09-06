@@ -419,7 +419,7 @@ export class Renderer extends Component {
 	protected setUniforms(camera: Tea.Camera): void {
 		this.setIntrinsicUniforms(camera);
 		this.setMaterialUniforms();
-		this.setLightUniforms();
+		this.setLightUniforms(camera);
 	}
 
 	protected setIntrinsicUniforms(camera: Tea.Camera): void {
@@ -523,7 +523,7 @@ export class Renderer extends Component {
 		});
 	}
 
-	protected setLightUniforms(): void {
+	protected setLightUniforms(camera: Tea.Camera): void {
 		var light = new Tea.Vector3(0, 0, -1);
 		light.rotateX$(Tea.radians(30));
 		light.rotateY$(Tea.radians(60));
@@ -536,7 +536,7 @@ export class Renderer extends Component {
 		light = light.normalized;
 
 		this._uniforms.uniform3fv("lightDirection", light);
-		this._uniforms.uniform3fv("eyeDirection", new Tea.Vector3(0, 0, 10).normalized);
+		this._uniforms.uniform3fv("eyeDirection", camera.object3d.position);
 		this._uniforms.uniform3fv("ambientColor", [0.2, 0.2, 0.2]);
 	}
 

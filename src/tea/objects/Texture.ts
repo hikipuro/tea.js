@@ -28,9 +28,9 @@ export class Texture {
 		this.webgl.texture = gl.createTexture();
 	}
 
-	static getEmpty(app: Tea.App): Texture {
+	static getEmpty(app: Tea.App, r: number = 1, g: number = 1, b: number = 1, a: number = 1): Texture {
 		var texture = new Tea.Texture(app);
-		var array = new Uint8ClampedArray([255, 255, 255, 255]);
+		var array = new Uint8ClampedArray([255 * r, 255 * g, 255 * b, 255 * a]);
 		var imageData = new ImageData(array, 1, 1);
 		texture.image = imageData;
 		return texture;
