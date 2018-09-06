@@ -119,6 +119,61 @@ export module ShaderSources {
 		}
 	`;
 
+	export const flatVS = `
+		attribute vec4 vertex;
+		attribute vec3 normal;
+		attribute vec2 texcoord;
+		attribute vec4 color;
+
+		uniform mat4 TEA_MATRIX_MVP;
+		uniform vec3 ambientColor;
+
+		varying vec3 vPosition;
+		varying vec2 vTexCoord;
+		varying vec4 vColor;
+
+		void main() {
+			vColor = vec4(ambientColor, 1.0);
+			vTexCoord = texcoord;
+			vec4 v = TEA_MATRIX_MVP * vertex;
+			vPosition = v.xyz;
+			gl_Position = v;
+		}
+	`;
+
+	export const flatFS = `
+		#extension GL_OES_standard_derivatives : enable
+		precision mediump float;
+
+		uniform int TEA_CAMERA_STEREO;
+		uniform sampler2D _MainTex;
+		uniform vec2 uv_MainTex;
+		uniform vec2 _MainTex_ST;
+		uniform vec3 lightDirection;
+
+		varying vec3 vPosition;
+		varying vec2 vTexCoord;
+		varying vec4 vColor;
+
+		void main() {
+			if (TEA_CAMERA_STEREO != 0) {
+				float stereoMod = float(TEA_CAMERA_STEREO - 1);
+				if (mod(floor(gl_FragCoord.y), 2.0) == stereoMod) {
+					discard;
+				}
+			}
+
+			vec3 dx = dFdx(vPosition);
+			vec3 dy = dFdy(vPosition);
+			vec3 n = normalize(cross(dx, dy));
+			float diffuse = max(0.0, dot(n, -lightDirection));
+
+			vec4 tex = texture2D(_MainTex, (uv_MainTex + vTexCoord) / _MainTex_ST);
+			vec4 color = vec4(vColor.xyz + vec3(diffuse), 1.0);
+			gl_FragColor = tex * color;
+		}
+	`;
+
 	export const depthVS = `
 		attribute vec4 vertex;
 		uniform mat4 TEA_MATRIX_MVP;

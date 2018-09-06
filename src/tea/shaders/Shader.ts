@@ -145,6 +145,14 @@ export class Shader {
 		return ShaderSources.defaultFS;
 	}
 
+	static get flatVertexShaderSource(): string {
+		return ShaderSources.flatVS;
+	}
+
+	static get flatFragmentShaderSource(): string {
+		return ShaderSources.flatFS;
+	}
+
 	static get depthVertexShaderSource(): string {
 		return ShaderSources.depthVS;
 	}

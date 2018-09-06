@@ -100,6 +100,15 @@ export class App {
 		return extensions.indexOf(name) >= 0;
 	}
 
+	getExtension(name: Tea.GLExtensions | string): any {
+		var gl = this.gl;
+		var extension = gl.getExtension(name);
+		if (extension == null) {
+			throw "extension not supported: " + name;
+		}
+		return extension;
+	}
+
 	captureScreenshot(callback: (data: ArrayBuffer) => void, type: string = "image/png"): void {
 		if (callback == null) {
 			return;
