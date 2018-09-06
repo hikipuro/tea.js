@@ -95,6 +95,10 @@ export class App {
 		return this._renderer.time;
 	}
 
+	set clearStencil(value: number) {
+		this.gl.clearStencil(value);
+	}
+
 	isExtensionSupported(name: Tea.GLExtensions | string): boolean {
 		var extensions = this.supportedExtensions;
 		return extensions.indexOf(name) >= 0;
@@ -269,9 +273,7 @@ export class App {
 
 		if (this._canvasAttributes.stencil) {
 			gl.clearStencil(0);
-			gl.enable(gl.STENCIL_TEST);
-			//gl.stencilFunc(gl.ALWAYS, 1, ~0);
-			//gl.stencilOp(gl.KEEP, gl.REPLACE, gl.REPLACE);
+			//gl.enable(gl.STENCIL_TEST);
 		}
 	}
 

@@ -28,4 +28,34 @@ export class ShaderStencil {
 		this.backZfail = Tea.ShaderStencilOp.Keep;
 		this.backZpass = Tea.ShaderStencilOp.Keep;
 	}
+
+	set func(value: Tea.ShaderTestFunc) {
+		this.frontFunc = value;
+		this.backFunc = value;
+	}
+
+	set ref(value: number) {
+		this.frontRef = value;
+		this.backRef = value;
+	}
+
+	set mask(value: number) {
+		this.frontMask = value;
+		this.backMask = value;
+	}
+
+	set fail(value: Tea.ShaderStencilOp) {
+		this.frontFail = value;
+		this.backFail = value;
+	}
+
+	set zfail(value: Tea.ShaderStencilOp) {
+		this.frontZfail = value;
+		this.backZfail = value;
+	}
+
+	set zpass(value: Tea.ShaderStencilOp) {
+		this.frontZpass = value;
+		this.backZpass = value;
+	}
 }
