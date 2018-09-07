@@ -6,6 +6,8 @@ export class MeshRenderer extends Renderer {
 	vertexBuffer: WebGLBuffer;
 	indexBuffer: WebGLBuffer;
 	wireframe: boolean = false;
+	protected _mesh: Tea.Mesh;
+	protected _bounds: Tea.Bounds;
 
 	constructor(app: Tea.App) {
 		super(app);
@@ -14,18 +16,22 @@ export class MeshRenderer extends Renderer {
 	}
 
 	get bounds(): Tea.Bounds {
+		return this._bounds;
+	}
+
+	update(): void {
 		var component = this.object3d.getComponent(Tea.MeshFilter);
-		if (component == null) {
-			return null;
+		if (component != null && component.mesh != null) {
+			var mesh = component.mesh;
+			var bounds = mesh.bounds.clone();
+			bounds.center.add$(this.object3d.position);
+			bounds.extents.scale$(this.object3d.scale);
+			this._mesh = mesh;
+			this._bounds = bounds;
+		} else {
+			this._mesh = null;
+			this._bounds = null;
 		}
-		var mesh = component.mesh;
-		if (mesh == null) {
-			return null;
-		}
-		var bounds = mesh.bounds.clone();
-		bounds.center.add$(this.object3d.position);
-		bounds.extents.scale$(this.object3d.scale);
-		return bounds;
 	}
 
 	remove(): void {
@@ -39,9 +45,12 @@ export class MeshRenderer extends Renderer {
 		if (this.isRenderable === false) {
 			return;
 		}
+		if (this._mesh == null) {
+			return;
+		}
 		super.render(camera);
-		var component = this.object3d.getComponent(Tea.MeshFilter);
-		var mesh = component.mesh;
+
+		var mesh = this._mesh;
 		if (mesh.hasColors) {
 			this._uniforms.uniform1i("useColor", 1);
 		} else {
@@ -68,13 +77,13 @@ export class MeshRenderer extends Renderer {
 	}
 
 	protected createBuffers(): void {
-		var gl = this.app.gl;
+		var gl = this.gl;
 		this.vertexBuffer = gl.createBuffer();
 		this.indexBuffer = gl.createBuffer();
 	}
 
 	protected deleteBuffers(): void {
-		var gl = this.app.gl;
+		var gl = this.gl;
 		if (this.vertexBuffer != null) {
 			gl.deleteBuffer(this.vertexBuffer);
 			this.vertexBuffer = null;
@@ -95,30 +104,44 @@ export class MeshRenderer extends Renderer {
 		for (var i = 0; i < length; i++) {
 			var vertex = mesh.vertices[i];
 			data.push(vertex.x, vertex.y, vertex.z);
+			this.enableVertexAttribArray("vertex");
+
+			if (mesh.hasTriangles === false) {
+				this.disableVertexAttrib("normal");
+				this.disableVertexAttrib("texcoord");
+				this.disableVertexAttrib("color");
+				continue;
+			}
 
 			if (mesh.hasNormals) {
 				var normal = mesh.normals[i];
 				data.push(normal.x, normal.y, normal.z);
+				this.enableVertexAttribArray("normal");
 			} else {
-				data.push(0, 0, 0);
+				//data.push(0, 0, 0);
+				this.disableVertexAttrib("normal");
 			}
 
 			if (mesh.hasUVs) {
 				var uv = mesh.uv[i];
 				data.push(uv.x, uv.y);
+				this.enableVertexAttribArray("texcoord");
 			} else {
-				data.push(0, 0);
+				//data.push(0, 0);
+				this.disableVertexAttrib("texcoord");
 			}
 
 			if (mesh.hasColors) {
 				var color = mesh.colors[i];
 				data.push(color.r, color.g, color.b, color.a);
+				this.enableVertexAttribArray("color");
 			} else {
-				data.push(0, 0, 0, 0);
+				//data.push(0, 0, 0, 0);
+				this.disableVertexAttrib("color");
 			}
 		}
 
-		var gl = this.app.gl;
+		var gl = this.gl;
 		var target = gl.ARRAY_BUFFER;
 
 		gl.bindBuffer(target, this.vertexBuffer);
@@ -137,51 +160,51 @@ export class MeshRenderer extends Renderer {
 	}
 
 	protected setVertexBuffer(mesh: Tea.Mesh): void {
-		var gl = this.app.gl;
-		var target = gl.ARRAY_BUFFER;
-		gl.bindBuffer(target, this.vertexBuffer);
+		var gl = this.gl;
+		gl.bindBuffer(gl.ARRAY_BUFFER, this.vertexBuffer);
 
-		var stride = 4 * 12;
-		this.setAttribute("vertex", 3, stride, 0);
+		var stride = 4 * 3;
+		if (mesh.hasNormals) {
+			stride += 4 * 3;
+		}
+		if (mesh.hasUVs) {
+			stride += 4 * 2;
+		}
+		if (mesh.hasColors) {
+			stride += 4 * 4;
+		}
+
+		var offset = 0;
+		this.vertexAttribPointer("vertex", 3, stride, offset);
+		offset += 4 * 3;
 
 		if (mesh.hasTriangles) {
 			if (mesh.hasNormals) {
-				this.setAttribute("normal", 3, stride, 4 * 3);
-			} else {
-				this.disableVertexAttrib("normal");
+				this.vertexAttribPointer("normal", 3, stride, offset);
+				offset += 4 * 3;
 			}
-
 			if (mesh.hasUVs) {
-				this.setAttribute("texcoord", 2, stride, 4 * 6);
-			} else {
-				this.disableVertexAttrib("texcoord");
+				this.vertexAttribPointer("texcoord", 2, stride, offset);
+				offset += 4 * 2;
 			}
-
 			if (mesh.hasColors) {
-				this.setAttribute("color", 4, stride, 4 * 8);
-			} else {
-				this.disableVertexAttrib("color");
+				this.vertexAttribPointer("color", 4, stride, offset);
 			}
-		} else {
-			this.disableVertexAttrib("normal");
-			this.disableVertexAttrib("texcoord");
-			this.disableVertexAttrib("color");
 		}
-		gl.bindBuffer(target, null);
+		gl.bindBuffer(gl.ARRAY_BUFFER, null);
 	}
 
 	protected setIndexBuffer(mesh: Tea.Mesh): void {
-		var gl = this.app.gl;
-		var target = gl.ELEMENT_ARRAY_BUFFER;
+		var gl = this.gl;
 		if (mesh.hasTriangles) {
-			gl.bindBuffer(target, this.indexBuffer);
+			gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this.indexBuffer);
 		} else {
-			gl.bindBuffer(target, null);
+			gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, null);
 		}
 	}
 
 	protected setFrontFace(): void {
-		var gl = this.app.gl;
+		var gl = this.gl;
 		var scale = this.object3d.scale;
 		if (scale.x * scale.y * scale.z < 0) {
 			gl.frontFace(gl.CW);
@@ -195,7 +218,7 @@ export class MeshRenderer extends Renderer {
 			this.drawWireframe(mesh);
 			return;
 		}
-		var gl = this.app.gl;
+		var gl = this.gl;
 		if (mesh.hasTriangles === false) {
 			gl.drawArrays(
 				gl.TRIANGLES, 0, mesh.vertices.length
@@ -209,7 +232,7 @@ export class MeshRenderer extends Renderer {
 	}
 
 	protected drawWireframe(mesh: Tea.Mesh): void {
-		var gl = this.app.gl;
+		var gl = this.gl;
 		if (mesh.hasTriangles === false) {
 			gl.drawArrays(
 				gl.LINES, 0, mesh.vertices.length

@@ -250,13 +250,15 @@ export class Material {
 		this.setValue(name, type, value);
 	}
 
-	eachProperty(callback: (name: string, item: UniformItem) => boolean | void): void {
+	eachProperty(callback: (name: string, item: UniformItem) => void): void {
 		var uniforms = this._uniforms;
 		var keys = Object.keys(uniforms);
 		for (var key of keys) {
-			if (callback(key, uniforms[key]) === true) {
-				break;
+			var item = uniforms[key];
+			if (key == null || key === "" || item == null) {
+				continue;
 			}
+			callback(key, item);
 		}
 	}
 

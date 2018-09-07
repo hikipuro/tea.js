@@ -1,6 +1,38 @@
 import * as Tea from "../Tea";
 import { Component } from "./Component";
 
+class Prev {
+	position: Tea.Vector3;
+	rotation: Tea.Quaternion;
+
+	fieldOfView: number;
+	aspect: number;
+	nearClipPlane: number;
+	farClipPlane: number;
+
+	constructor() {
+		this.position = new Tea.Vector3(0.0001, 0.0002, 0.0003);
+		this.rotation = new Tea.Quaternion(0.0001, 0.0002, 0.0003);
+
+		this.fieldOfView = 0;
+		this.aspect = 0;
+		this.nearClipPlane = 0;
+		this.farClipPlane = 0;
+	}
+
+	isViewChanged(object3d: Tea.Object3D): boolean {
+		return !this.position.equals(object3d.position)
+			|| !this.rotation.equals(object3d.rotation);
+	}
+
+	isPerspectiveChanged(camera: Tea.Camera, aspect: number): boolean {
+		return this.fieldOfView != camera.fieldOfView
+			|| this.aspect != aspect
+			|| this.nearClipPlane != camera.nearClipPlane
+			|| this.farClipPlane != camera.farClipPlane;
+	}
+}
+
 export class Camera extends Component {
 	fieldOfView: number;
 	nearClipPlane: number;
@@ -15,13 +47,18 @@ export class Camera extends Component {
 	stereoMode: Tea.CameraStereoMode;
 	isStereoLeft: boolean;
 
+	protected gl: WebGLRenderingContext;
 	protected _cameraToWorldMatrix: Tea.Matrix4x4;
 	protected _worldToCameraMatrix: Tea.Matrix4x4;
 	protected _projectionMatrix: Tea.Matrix4x4;
-	protected _prevRect: Tea.Rect;
+	protected _vpMatrix: Tea.Matrix4x4;
+	protected _prev: Prev;
+	protected _viewportRect: Tea.Rect;
+	protected static currentBGColor: Tea.Color;
 
 	constructor(app: Tea.App) {
 		super(app);
+		this.gl = app.gl;
 		this.fieldOfView = 60;
 		this.nearClipPlane = 0.3;
 		this.farClipPlane = 1000;
@@ -33,14 +70,17 @@ export class Camera extends Component {
 		this.stereoDistance = 0.1;
 		this.stereoMode = Tea.CameraStereoMode.SideBySide;
 		this.isStereoLeft = true;
-		this._prevRect = new Tea.Rect();
+		this._projectionMatrix = new Tea.Matrix4x4();
+		this._vpMatrix = new Tea.Matrix4x4();
+		this._prev = new Prev();
+		this._viewportRect = new Tea.Rect();
 		//this.update();
 	}
 
 	get aspect(): number {
-		const rect = this.getViewportRect();
-		const width = this.app.width;
-		const height = this.app.height;
+		var rect = this.getViewportRect();
+		var width = this.app.width;
+		var height = this.app.height;
 		return (width * rect.width) / (height * rect.height);
 	}
 
@@ -56,41 +96,57 @@ export class Camera extends Component {
 		return this._projectionMatrix;
 	}
 
+	get vpMatrix(): Tea.Matrix4x4 {
+		return this._vpMatrix;
+	}
+
 	update(): void {
-		var view = Tea.Matrix4x4.tr(
-			this.object3d.position,
-			this.object3d.rotation
-		);
-		view.toggleHand();
-		this._cameraToWorldMatrix = view;
+		if (this._prev.isViewChanged(this.object3d)) {
+			var view = Tea.Matrix4x4.tr(
+				this.object3d.position,
+				this.object3d.rotation
+			);
+			view.toggleHand();
+			this._cameraToWorldMatrix = view;
+	
+			view = view.inverse;
+			this._worldToCameraMatrix = view;
 
-		view = view.inverse;
-		this._worldToCameraMatrix = view;
+			this._prev.position = this.object3d.position.clone();
+			this._prev.rotation = this.object3d.rotation.clone();
+		}
 
-		var projection: Tea.Matrix4x4;
 		if (this.orthographic) {
 			var h = this.orthographicSize;
 			var w = h * this.aspect;
-			projection = Tea.Matrix4x4.ortho(
+			this._projectionMatrix = Tea.Matrix4x4.ortho(
 				-w, w, -h, h,
 				this.nearClipPlane,
 				this.farClipPlane
 			);
 		} else {
-			projection = Tea.Matrix4x4.perspective(
-				this.fieldOfView,
-				this.aspect,
-				this.nearClipPlane,
-				this.farClipPlane
-			);
+			var aspect = this.aspect;
+			if (this._prev.isPerspectiveChanged(this, aspect)) {
+				this._projectionMatrix.perspective(
+					this.fieldOfView,
+					aspect,
+					this.nearClipPlane,
+					this.farClipPlane
+				);
+				this._prev.fieldOfView = this.fieldOfView;
+				this._prev.aspect = aspect;
+				this._prev.nearClipPlane = this.nearClipPlane;
+				this._prev.farClipPlane = this.farClipPlane;
+			}
 		}
-		//projection.toggleHand();
-		this._projectionMatrix = projection;
+		this._vpMatrix = this._projectionMatrix.mul(
+			this._worldToCameraMatrix
+		);
 
 		if (this.targetTexture != null) {
 			var t = this.targetTexture;
-			this.app.gl.viewport(0, 0, t.width, t.height);
-			this.app.gl.scissor(0, 0, t.width, t.height);
+			this.gl.viewport(0, 0, t.width, t.height);
+			this.gl.scissor(0, 0, t.width, t.height);
 		} else {
 			this.setViewport();
 		}
@@ -132,11 +188,11 @@ export class Camera extends Component {
 	}
 
 	screenPointToRay(position: Tea.Vector3): Tea.Ray {
-		const p = position.clone();
+		var p = position.clone();
 		p.z = this.nearClipPlane;
-		const near = this.screenToWorldPoint(p);
+		var near = this.screenToWorldPoint(p);
 		p.z = this.farClipPlane;
-		const far = this.screenToWorldPoint(p);
+		var far = this.screenToWorldPoint(p);
 		return new Tea.Ray(
 			near,
 			far.sub(near).normalized
@@ -144,8 +200,8 @@ export class Camera extends Component {
 	}
 
 	screenToViewportPoint(position: Tea.Vector3): Tea.Vector3 {
-		const viewport = position.clone();
-		const rect = this.getViewportRect();
+		var viewport = position.clone();
+		var rect = this.getViewportRect();
 		viewport.x = viewport.x / this.app.width;
 		viewport.x = (viewport.x - rect.x) / rect.width;
 		viewport.y = viewport.y / this.app.height;
@@ -157,16 +213,16 @@ export class Camera extends Component {
 		if (position == null) {
 			return Tea.Vector3.zero;
 		}
-		const p = this.screenToViewportPoint(position);
+		var p = this.screenToViewportPoint(position);
 		return this.viewportToWorldPoint(p);
 	}
 
 	viewportPointToRay(position: Tea.Vector3): Tea.Ray {
-		const p = position.clone();
+		var p = position.clone();
 		p.z = this.nearClipPlane;
-		const near = this.viewportToWorldPoint(p);
+		var near = this.viewportToWorldPoint(p);
 		p.z = this.farClipPlane;
-		const far = this.viewportToWorldPoint(p);
+		var far = this.viewportToWorldPoint(p);
 		return new Tea.Ray(
 			near,
 			far.sub(near).normalized
@@ -174,7 +230,7 @@ export class Camera extends Component {
 	}
 
 	viewportToScreenPoint(position: Tea.Vector3): Tea.Vector3 {
-		const screen = position.clone();
+		var screen = position.clone();
 		screen.x = screen.x * this.app.width;
 		screen.y = screen.y * this.app.height;
 		return screen;
@@ -230,7 +286,8 @@ export class Camera extends Component {
 	*/
 
 	protected getViewportRect(): Tea.Rect {
-		const rect = this.rect.clone();
+		var rect = this._viewportRect;
+		rect.copy(this.rect);
 		if (rect.x < 0) {
 			rect.width += rect.x;
 			rect.x = 0;
@@ -249,12 +306,7 @@ export class Camera extends Component {
 	}
 	
 	protected setViewport(): void {
-		var gl = this.app.gl;
-
-		if (this._prevRect.equals(this.rect)) {
-			return;
-		}
-
+		var gl = this.gl;
 		var rect = this.rect.clone();
 		if (rect.x < 0) {
 			rect.width += rect.x;
@@ -273,28 +325,17 @@ export class Camera extends Component {
 
 		var width = this.app.width;
 		var height = this.app.height;
+		var x = rect.x * width;
+		var y = rect.y * height;
+		var w = rect.width * width;
+		var h = rect.height * height;
 
-		gl.viewport(
-			rect.x * width,
-			rect.y * height,
-			rect.width * width,
-			rect.height * height
-		);
-		gl.scissor(
-			rect.x * width,
-			rect.y * height,
-			rect.width * width,
-			rect.height * height
-		);
+		gl.viewport(x, y, w, h);
+		gl.scissor(x, y, w, h);
 	}
 	
 	protected setViewportLeft(): void {
-		var gl = this.app.gl;
-
-		if (this._prevRect.equals(this.rect)) {
-			return;
-		}
-
+		var gl = this.gl;
 		var rect = this.rect.clone();
 		if (rect.x < 0) {
 			rect.width += rect.x;
@@ -325,28 +366,17 @@ export class Camera extends Component {
 
 		var width = this.app.width;
 		var height = this.app.height;
+		var x = rect.x * width;
+		var y = rect.y * height;
+		var w = rect.width * width;
+		var h = rect.height * height;
 
-		gl.viewport(
-			rect.x * width,
-			rect.y * height,
-			rect.width * width,
-			rect.height * height
-		);
-		gl.scissor(
-			rect.x * width,
-			rect.y * height,
-			rect.width * width,
-			rect.height * height
-		);
+		gl.viewport(x, y, w, h);
+		gl.scissor(x, y, w, h);
 	}
 	
 	protected setViewportRight(): void {
-		var gl = this.app.gl;
-
-		if (this._prevRect.equals(this.rect)) {
-			return;
-		}
-
+		var gl = this.gl;
 		var rect = this.rect.clone();
 		if (rect.x < 0) {
 			rect.width += rect.x;
@@ -377,25 +407,22 @@ export class Camera extends Component {
 
 		var width = this.app.width;
 		var height = this.app.height;
+		var x = rect.x * width;
+		var y = rect.y * height;
+		var w = rect.width * width;
+		var h = rect.height * height;
 
-		gl.viewport(
-			rect.x * width,
-			rect.y * height,
-			rect.width * width,
-			rect.height * height
-		);
-		gl.scissor(
-			rect.x * width,
-			rect.y * height,
-			rect.width * width,
-			rect.height * height
-		);
+		gl.viewport(x, y, w, h);
+		gl.scissor(x, y, w, h);
 	}
 
 	protected clear(): void {
-		var gl = this.app.gl;
+		var gl = this.gl;
 		var color = this.backgroundColor;
-		gl.clearColor(color.r, color.g, color.b, color.a);
+		if (Camera.currentBGColor !== color) {
+			gl.clearColor(color.r, color.g, color.b, color.a);
+			Camera.currentBGColor = color;
+		}
 		gl.clear(
 			gl.COLOR_BUFFER_BIT |
 			gl.DEPTH_BUFFER_BIT |
@@ -404,7 +431,6 @@ export class Camera extends Component {
 	}
 
 	protected flush(): void {
-		var gl = this.app.gl;
-		gl.flush();
+		this.gl.flush();
 	}
 }

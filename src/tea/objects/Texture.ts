@@ -14,6 +14,7 @@ export class Texture {
 		texture: WebGLTexture
 	};
 
+	protected gl: WebGLRenderingContext;
 	protected _image: TextureImage;
 	protected _filterMode: Tea.FilterMode;
 	protected _wrapMode: Tea.TextureWrapMode;
@@ -21,10 +22,11 @@ export class Texture {
 
 	constructor(app: Tea.App) {
 		this.app = app;
+		this.gl = app.gl;
 		this._filterMode = Tea.FilterMode.Point;
 		this._wrapMode = Tea.TextureWrapMode.Repeat;
 		this._updateCount = 0;
-		const gl = this.app.gl;
+		var gl = this.gl;
 		this.webgl.texture = gl.createTexture();
 	}
 
@@ -65,7 +67,7 @@ export class Texture {
 		this._filterMode = value;
 		this.bind();
 		var param = this.convertFilterMode(value);
-		var gl = this.app.gl;
+		var gl = this.gl;
 		gl.texParameteri(
 			gl.TEXTURE_2D,
 			gl.TEXTURE_MAG_FILTER,
@@ -86,7 +88,7 @@ export class Texture {
 		this._wrapMode = value;
 		this.bind();
 		var param = this.convertWrapMode(value);
-		var gl = this.app.gl;
+		var gl = this.gl;
 		gl.texParameteri(
 			gl.TEXTURE_2D,
 			gl.TEXTURE_WRAP_S,
@@ -103,7 +105,7 @@ export class Texture {
 	set wrapModeU(value: Tea.TextureWrapMode) {
 		this.bind();
 		var param = this.convertWrapMode(value);
-		var gl = this.app.gl;
+		var gl = this.gl;
 		gl.texParameteri(
 			gl.TEXTURE_2D,
 			gl.TEXTURE_WRAP_S,
@@ -115,7 +117,7 @@ export class Texture {
 	set wrapModeV(value: Tea.TextureWrapMode) {
 		this.bind();
 		var param = this.convertWrapMode(value);
-		var gl = this.app.gl;
+		var gl = this.gl;
 		gl.texParameteri(
 			gl.TEXTURE_2D,
 			gl.TEXTURE_WRAP_T,
@@ -129,14 +131,12 @@ export class Texture {
 	}
 
 	isGLTexture(texture: WebGLTexture): boolean {
-		const gl = this.app.gl;
-		return gl.isTexture(texture);
+		return this.gl.isTexture(texture);
 	}
 
 	remove(): void {
-		const gl = this.app.gl;
 		if (this.webgl.texture != null) {
-			gl.deleteTexture(this.webgl.texture);
+			this.gl.deleteTexture(this.webgl.texture);
 			this.webgl.texture = null;
 		}
 	}
@@ -148,7 +148,7 @@ export class Texture {
 	set image(image: TextureImage) {
 		this._image = image;
 		this.bind();
-		var gl = this.app.gl;
+		var gl = this.gl;
 		gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, true);
 		gl.texImage2D(
 			gl.TEXTURE_2D, 0,
@@ -168,22 +168,22 @@ export class Texture {
 		if (Tea.Mathf.isPowerOf2(image.width, image.height) === false) {
 			return;
 		}
-		var gl = this.app.gl;
+		var gl = this.gl;
 		gl.generateMipmap(gl.TEXTURE_2D);
 	}
 
 	protected bind(): void {
-		var gl = this.app.gl;
+		var gl = this.gl;
 		gl.bindTexture(gl.TEXTURE_2D, this.webgl.texture);
 	}
 
 	protected unbind(): void {
-		var gl = this.app.gl;
+		var gl = this.gl;
 		gl.bindTexture(gl.TEXTURE_2D, null);
 	}
 
 	protected convertFilterMode(mode: Tea.FilterMode): number {
-		var gl = this.app.gl;
+		var gl = this.gl;
 		switch (mode) {
 			case Tea.FilterMode.Point:
 				return gl.LINEAR;
@@ -194,7 +194,7 @@ export class Texture {
 	}
 
 	protected convertWrapMode(mode: Tea.TextureWrapMode): number {
-		var gl = this.app.gl;
+		var gl = this.gl;
 		switch (mode) {
 			case Tea.TextureWrapMode.Repeat:
 				return gl.REPEAT;

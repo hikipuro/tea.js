@@ -6,15 +6,15 @@ export class Vector4 extends Array<number> {
 	constructor(x: number | Vector3 = 0, y: number = 0, z: number = 0, w: number = 0) {
 		super(4);
 		if (x instanceof Vector3) {
-			this.x = x.x;
-			this.y = x.y;
-			this.z = x.z;
-			this.w = y;
+			this[0] = x.x;
+			this[1] = x.y;
+			this[2] = x.z;
+			this[3] = y;
 		} else {
-			this.x = x;
-			this.y = y;
-			this.z = z;
-			this.w = w;
+			this[0] = x;
+			this[1] = y;
+			this[2] = z;
+			this[3] = w;
 		}
 	}
 
@@ -67,21 +67,21 @@ export class Vector4 extends Array<number> {
 	}
 
 	get magnitude(): number {
-		const x = this.x, y = this.y, z = this.z, w = this.w;
+		var x = this.x, y = this.y, z = this.z, w = this.w;
 		return Math.sqrt(x * x + y * y + z * z + w * w);
 	}
 
 	get normalized(): Vector4 {
-		const x = this.x, y = this.y, z = this.z, w = this.w;
-		const m = 1 / this.magnitude;
+		var x = this.x, y = this.y, z = this.z, w = this.w;
+		var m = 1 / this.magnitude;
 		return new Vector4(x * m, y * m, z * m, w * m);
 	}
 
 	set(x: number, y: number, z: number, w: number): void {
-		this.x = x;
-		this.y = y;
-		this.z = z;
-		this.w = w;
+		this[0] = x;
+		this[1] = y;
+		this[2] = z;
+		this[3] = w;
 	}
 
 	equals(value: Vector4): boolean {
@@ -95,7 +95,7 @@ export class Vector4 extends Array<number> {
 	}
 
 	toString(): string {
-		const t = new Array(4);
+		var t = new Array(4);
 		for (var i = 0; i < 4; i++) {
 			t[i] = this[i].toFixed(5);
 		}
@@ -106,9 +106,9 @@ export class Vector4 extends Array<number> {
 	}
 
 	toVector3(useW: boolean = false): Vector3 {
-		const vector3 = new Vector3(this.x, this.y, this.z);
+		var vector3 = new Vector3(this.x, this.y, this.z);
 		if (useW && this.w != 0) {
-			const w = 1 / this.w;
+			var w = 1 / this.w;
 			vector3.x *= w;
 			vector3.y *= w;
 			vector3.x *= w;

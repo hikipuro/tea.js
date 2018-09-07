@@ -21,7 +21,7 @@ export class Main {
 		//console.log("height", Tea.Screen.height);
 		//console.log(Tea.Screen.fullscreen);
 
-		const b = document.querySelector("#b");
+		var b = document.querySelector("#b");
 		b.addEventListener("click", () => {
 			console.log("click", Tea.now());
 			//this.app.bench();
@@ -48,17 +48,17 @@ export class Main {
 			for (let i = 0; i < 100000; i++) {
 				obj[i] = i;
 			}
-			const count = 200;
-			const test1 = Tea.benchmark(() => {
+			var count = 200;
+			var test1 = Tea.benchmark(() => {
 				let total = 0;
 				for (let i = 0; i < obj.length; i++) {
 					total += obj[i];
 				}
 				//console.log("total", total);
 			}, count);
-			const test2 = Tea.benchmark(() => {
+			var test2 = Tea.benchmark(() => {
 				let total: number = 0;
-				const l: number = obj.length;
+				var l: number = obj.length;
 				for (var i = 0; i < l; i++) {
 					total += obj[i];
 				}
@@ -71,14 +71,14 @@ export class Main {
 
 		setTimeout(() => {
 			var t = 2;
-			const loop = 100;
-			const count = 200;
-			const test2 = Tea.benchmark(() => {
+			var loop = 100;
+			var count = 200;
+			var test2 = Tea.benchmark(() => {
 				for (var i = 0; i < loop; i++) {
 					t = Math.pow(t, 2);
 				}
 			}, count);
-			const test1 = Tea.benchmark(() => {
+			var test1 = Tea.benchmark(() => {
 				for (var i = 0; i < loop; i++) {
 					t = t ** 2;
 				}
@@ -92,18 +92,18 @@ export class Main {
 		//console.log(Tea.Matrix4.perspective(60, 1, 0.3, 1000).toString());
 
 		/*
-		const mm = Tea.Matrix4.lookAt(new Tea.Vector3(10, 20, 30), new Tea.Vector3(3,2,1), Tea.Vector3.up);
+		var mm = Tea.Matrix4.lookAt(new Tea.Vector3(10, 20, 30), new Tea.Vector3(3,2,1), Tea.Vector3.up);
 		console.log("matrix",mm.toString());
 		console.log(mm.inverse.toString());
 		console.log((mm.mul(mm.inverse).toString()));
 		console.log("v", Tea.Vector2.one.toString());
 
-		const mmm = new Tea.Matrix4();
+		var mmm = new Tea.Matrix4();
 		mmm.setColumn(0, new Tea.Vector4(1, 2, 3, 4));
 		console.log(mm.mul(Tea.Vector4.one));
 		*/
 
-		const scene = this.app.createScene();
+		var scene = this.app.createScene();
 		//scene.camera.far = 10;
 		//scene.camera.position.y = 2;
 		//scene.camera.fov = 25;
@@ -156,9 +156,9 @@ export class Main {
 		//console.log("camera", scene.camera.worldToCameraMatrix.toString());
 		//console.log("camera", scene.camera.projectionMatrix);
 
-		//const script = new TestScript();
+		//var script = new TestScript();
 
-		const cube = Tea.Object3D.createPrimitive(this.app, Tea.PrimitiveType.Cube);
+		var cube = Tea.Object3D.createPrimitive(this.app, Tea.PrimitiveType.Cube);
 		//cube.name = "cube";
 		//cube.position.x = 2;
 		cube.position.y = 2;
@@ -171,7 +171,7 @@ export class Main {
 		//cube.getComponent(Tea.Renderer).material.mainTexture = renderTexture;
 		scene.appendChild(cube);
 
-		const cube2 = Tea.Object3D.createPrimitive(this.app, Tea.PrimitiveType.Cube);
+		var cube2 = Tea.Object3D.createPrimitive(this.app, Tea.PrimitiveType.Cube);
 		cube2.position.x = 2;
 		cube2.position.y = 2;
 		//cube2.name = "cube2";
@@ -184,7 +184,7 @@ export class Main {
 		//cube.rotate(45, 0, 0);
 		//cube2.localPosition = new Tea.Vector3(0, 2, 0);
 
-		const cube3 = Tea.Object3D.createPrimitive(this.app, Tea.PrimitiveType.Cube);
+		var cube3 = Tea.Object3D.createPrimitive(this.app, Tea.PrimitiveType.Cube);
 		cube3.position.x = 4;
 		cube3.position.y = 2;
 		cube2.appendChild(cube3);
@@ -205,7 +205,7 @@ export class Main {
 		console.log("cube2", cube2.localScale);
 		console.log("cube3", cube3.localPosition);
 
-		const sphere = Tea.Object3D.createPrimitive(this.app, Tea.PrimitiveType.Sphere);
+		var sphere = Tea.Object3D.createPrimitive(this.app, Tea.PrimitiveType.Sphere);
 		//cube2.name = "cube2";
 		//sphere.position.x = 1.6;
 		//sphere.position.y = 2;
@@ -213,7 +213,7 @@ export class Main {
 		//sphere.addScript(script);
 		//scene.appendChild(sphere);
 
-		const quad = Tea.Object3D.createPrimitive(this.app, Tea.PrimitiveType.Quad);
+		var quad = Tea.Object3D.createPrimitive(this.app, Tea.PrimitiveType.Quad);
 		//cube2.name = "cube2";
 		//plain.position.z = 5;
 		quad.position.y = 1;
@@ -227,14 +227,14 @@ export class Main {
 		scene.appendChild(quad);
 		//this.plain = quad;
 
-		const cylinder = Tea.Object3D.createPrimitive(this.app, Tea.PrimitiveType.Cylinder);
+		var cylinder = Tea.Object3D.createPrimitive(this.app, Tea.PrimitiveType.Cylinder);
 		//cylinder.renderer.wireframe = true;
 		//cylinder.rotation.x = Tea.radians(30);
 		//cylinder.addScript(script);
 		//scene.appendChild(cylinder);
 
-		//const plane = this.app.createQuad();
-		const plane = Tea.Object3D.createPrimitive(this.app, Tea.PrimitiveType.Plane);
+		//var plane = this.app.createQuad();
+		var plane = Tea.Object3D.createPrimitive(this.app, Tea.PrimitiveType.Plane);
 		//plane.renderer.wireframe = true;
 		//plane.position.z = -9;
 		//plane.position.y = -2;
@@ -261,7 +261,7 @@ export class Main {
 
 		console.log("bounds", plane.getComponent(Tea.MeshFilter).mesh.bounds);
 
-		const capsule = Tea.Object3D.createPrimitive(this.app, Tea.PrimitiveType.Capsule);
+		var capsule = Tea.Object3D.createPrimitive(this.app, Tea.PrimitiveType.Capsule);
 		//capsule.renderer.wireframe = true;
 		//capsule.position.x = 2;
 		//capsule.position.y = 2;
@@ -294,8 +294,8 @@ export class Main {
 		//capsule.addComponent(Tea.MeshRenderer);
 		//console.log("component", capsule.getComponent(Tea.Camera));
 
-		const lines = this.app.createObject3D();
-		const lineRenderer = lines.addComponent(Tea.LineRenderer);
+		var lines = this.app.createObject3D();
+		var lineRenderer = lines.addComponent(Tea.LineRenderer);
 		//lines.position.x = 3;
 		lineRenderer.add(0, 0, 0);
 		lineRenderer.add(2, 1, 0);
@@ -337,14 +337,14 @@ export class Main {
 		//var stats = this.app.createStats();
 		//this.app.canvas.parentElement.appendChild(stats.canvas);
 
-		let ray = new Tea.Ray(new Tea.Vector3(0, 1, 0), new Tea.Vector3(0.2, 0.3, 0.4));
+		var ray = new Tea.Ray(new Tea.Vector3(0, 1, 0), new Tea.Vector3(0.2, 0.3, 0.4));
 		console.log("test", ray.direction, ray.getPoint(6.5), ray.getPoint(-6.5));
 
-		let mt = Tea.MatrixChecker.translate();
-		let mx = Tea.MatrixChecker.rotateX();
-		let my = Tea.MatrixChecker.rotateY();
-		let mz = Tea.MatrixChecker.rotateZ();
-		let ms = Tea.MatrixChecker.scale();
+		var mt = Tea.MatrixChecker.translate();
+		var mx = Tea.MatrixChecker.rotateX();
+		var my = Tea.MatrixChecker.rotateY();
+		var mz = Tea.MatrixChecker.rotateZ();
+		var ms = Tea.MatrixChecker.scale();
 		console.log("checker", mt.mul(my).mul(mx).mul(mz).mul(ms).toString());
 		//console.log("ortho", Matrix4x4.ortho(5, 400, 10, 100, 0.3, 1000).toString());
 
@@ -370,7 +370,7 @@ export class Main {
 		});
 
 		Tea.File.readImage("../models/texture.png", (image) => {
-			const texture = this.app.createTexture(image);
+			var texture = this.app.createTexture(image);
 			let r = plane.getComponent(Tea.Renderer);
 			r.material.setTexture("_NormalTex", texture);
 			r = capsule.getComponent(Tea.Renderer);
@@ -379,7 +379,7 @@ export class Main {
 
 		Tea.File.readImage("../models/google.jpg", (image) => {
 			//document.body.appendChild(image);
-			const texture = this.app.createTexture(image);
+			var texture = this.app.createTexture(image);
 			//texture.filterMode = Tea.FilterMode.Bilinear;
 			/*
 			cube.renderer.shader.texture = texture;
@@ -404,7 +404,7 @@ export class Main {
 
 		Tea.File.readImage("../models/earth.jpg", (image) => {
 			//document.body.appendChild(image);
-			const texture = this.app.createTexture(image);
+			var texture = this.app.createTexture(image);
 			//sphere.renderer.shader.texture = texture;
 			//capsule.renderer.shader.texture = texture;
 		});
@@ -458,16 +458,16 @@ export class Main {
 		//Tea.File.readImage("../teapot/default.png", (image) => {
 		Tea.File.readImage("../models/google.jpg", (image) => {
 			//document.body.appendChild(image);
-			const texture = this.app.createTexture(image);
+			var texture = this.app.createTexture(image);
 			this.texture = texture;
 			this.start();
 		});
 
 		Tea.File.readText("models/cube.dae", (data) => {
-			const mesh = Tea.DaeReader.read(data);
+			var mesh = Tea.DaeReader.read(data);
 		});
 
-		const v3 = new Tea.Vector3(-2, -3, -4);
+		var v3 = new Tea.Vector3(-2, -3, -4);
 		console.log(v3.magnitude);
 		*/
 	}

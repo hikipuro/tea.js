@@ -1,15 +1,16 @@
 import * as Tea from "../Tea";
 
 export class GeometryUtil {
+	protected static _positivePoint: Tea.Vector3 = new Tea.Vector3();
+
 	static calculateFrustumPlanes(camera: Tea.Camera): Array<Tea.Plane> {
 		var planes = new Array(6);
 		var near = camera.nearClipPlane;
 		var far = camera.farClipPlane;
 		var m = camera.projectionMatrix;
-		var object3d = camera.object3d;
-		var rotation = object3d.rotation;
-		var position = object3d.position;
-		var forward = object3d.forward;
+		var rotation = camera.object3d.rotation;
+		var position = camera.object3d.position;
+		var forward = camera.object3d.forward;
 		var m20 = m.m20, m21 = m.m21, m22 = m.m22;
 		var m30 = m.m30, m31 = m.m31, m32 = m.m32;
 		var a, b, c, d;
@@ -30,7 +31,7 @@ export class GeometryUtil {
 			}
 			vec3.set(a, b, c);
 			var normal = vec3.normalize$().mul$(-1);
-			normal = rotation.mul(normal);
+			normal.applyQuaternion(rotation);
 			planes[i] = new Tea.Plane(normal, position);
 		}
 
@@ -40,7 +41,7 @@ export class GeometryUtil {
 		//d = pmat.getValue(3, 3) + pmat.getValue(2, 3);
 		vec3.set(a, b, c);
 		var normal = vec3.normalize$().mul$(-1);
-		normal = rotation.mul(normal);
+		normal.applyQuaternion(rotation);
 		var forwardNear = forward.mul(near);
 		var p = position.add(forwardNear);
 		planes[4] = new Tea.Plane(normal, p);
@@ -51,7 +52,7 @@ export class GeometryUtil {
 		//d = pmat.getValue(3, 3) - pmat.getValue(2, 3);
 		vec3.set(a, b, c);
 		normal = vec3.normalize$().mul$(-1);
-		normal = rotation.mul(normal);
+		normal.applyQuaternion(rotation);
 		p = position.add(forwardNear.add$(forward.mul$(far)));
 		planes[5] = new Tea.Plane(normal, p);
 		return planes;
@@ -79,7 +80,9 @@ export class GeometryUtil {
 	}
 
 	protected static getPositivePoint(bounds: Tea.Bounds, normal: Tea.Vector3): Tea.Vector3 {
-		var result = bounds.min;
+		var result = this._positivePoint;
+		result.copy(bounds.center);
+		result.sub$(bounds.extents);
 		if (normal.x > 0) {
 			result.x += bounds.size.x;
 		}

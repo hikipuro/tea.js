@@ -9,6 +9,8 @@ function vec3(x: number, y: number, z: number): Tea.Vector3 {
 }
 
 export class Primitives {
+	protected static _cubeCache: Tea.Mesh;
+
 	static createQuadMesh(): Tea.Mesh {
 		var vertices = [
 			vec3(-0.5, -0.5, 0),
@@ -33,7 +35,7 @@ export class Primitives {
 			vec2(0, 1)
 		];
 		/*
-		const colors = [
+		var colors = [
 			1, 1, 1, 1,
 			1, 1, 1, 1,
 			1, 1, 1, 1,
@@ -51,6 +53,9 @@ export class Primitives {
 	}
 
 	static createCubeMesh(): Tea.Mesh {
+		if (this._cubeCache != null) {
+			return this._cubeCache.clone();
+		}
 		var vertices = [
 			// front
 			vec3( 0.5,  0.5, 0.5),
@@ -173,6 +178,7 @@ export class Primitives {
 		mesh.normals = normals;
 		mesh.uv = uv;
 		mesh.calculateBounds();
+		this._cubeCache = mesh.clone();
 		return mesh;
 	}
 

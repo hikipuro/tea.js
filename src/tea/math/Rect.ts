@@ -3,10 +3,10 @@ import { Vector2 } from "./Vector2";
 export class Rect extends Array<number> {
 	constructor(x: number = 0, y: number = 0, width: number = 0, height: number = 0) {
 		super(4);
-		this.x = x;
-		this.y = y;
-		this.width = width;
-		this.height = height;
+		this[0] = x;
+		this[1] = y;
+		this[2] = width;
+		this[3] = height;
 	}
 
 	static get zero(): Rect {
@@ -45,7 +45,7 @@ export class Rect extends Array<number> {
 		return this[0];
 	}
 	set xMin(value: number) {
-		const w = this[0] - value;
+		var w = this[0] - value;
 		this[0] = value;
 		this[2] += w;
 	}
@@ -61,7 +61,7 @@ export class Rect extends Array<number> {
 		return this[1];
 	}
 	set yMin(value: number) {
-		const h = this[1] - value;
+		var h = this[1] - value;
 		this[1] = value;
 		this[3] += h;
 	}
@@ -102,16 +102,23 @@ export class Rect extends Array<number> {
 	}
 
 	set(x: number, y: number, width: number, height: number): void {
-		this.x = x;
-		this.y = y;
-		this.width = width;
-		this.height = height;
+		this[0] = x;
+		this[1] = y;
+		this[2] = width;
+		this[3] = height;
+	}
+
+	copy(rect: Rect): void {
+		this[0] = rect[0];
+		this[1] = rect[1];
+		this[2] = rect[2];
+		this[3] = rect[3];
 	}
 
 	clone(): Rect {
 		return new Rect(
-			this.x, this.y,
-			this.width, this.height
+			this[0], this[1],
+			this[2], this[3]
 		);
 	}
 
@@ -126,7 +133,7 @@ export class Rect extends Array<number> {
 	}
 
 	contains(point: Vector2): boolean {
-		const x = point.x, y = point.y;
+		var x = point.x, y = point.y;
 		return (
 			this.x <= x && x <= this.width &&
 			this.y <= y && y <= this.height
@@ -134,7 +141,7 @@ export class Rect extends Array<number> {
 	}
 
 	toString(): string {
-		const t = this;
+		var t = this;
 		return (
 			"[" +
 			"x: " + t.x + ", " +

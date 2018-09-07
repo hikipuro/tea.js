@@ -1,5 +1,57 @@
 import * as Tea from "../Tea";
 
+class Movement {
+	position: Tea.Vector3;
+	rotation: Tea.Quaternion;
+	scale: Tea.Vector3;
+	localToWorldMatrix: Tea.Matrix4x4;
+	worldToLocalMatrix: Tea.Matrix4x4;
+
+	constructor() {
+		this.position = new Tea.Vector3(0.001, 0.002, 0.003);
+		this.rotation = new Tea.Quaternion(0.001, 0.002, 0.003);
+		this.scale = new Tea.Vector3(0.001, 0.002, 0.003);
+		this.localToWorldMatrix = new Tea.Matrix4x4();
+		this.worldToLocalMatrix = new Tea.Matrix4x4();
+	}
+
+	update(object3d: Object3D): void {
+		if (this.isMoved(object3d)) {
+			this.trs();
+		}
+	}
+
+	isMoved(object3d: Object3D): boolean {
+		var p = object3d.position;
+		var r = object3d.rotation;
+		var s = object3d.scale;
+		var b = false;
+		if (!this.position.equals(p)) {
+			b = true;
+			this.position = p.clone();
+		}
+		if (!this.rotation.equals(r)) {
+			b = true;
+			this.rotation = r.clone();
+		}
+		if (!this.scale.equals(s)) {
+			b = true;
+			this.scale = s.clone();
+		}
+		return b;
+	}
+
+	trs(): void {
+		this.localToWorldMatrix = Tea.Matrix4x4.trs(
+			this.position,
+			this.rotation,
+			this.scale
+		);
+		this.localToWorldMatrix.toggleHand();
+		this.worldToLocalMatrix = this.localToWorldMatrix.inverse;
+	}
+}
+
 export class Object3D {
 	app: Tea.App;
 	name: string;
@@ -11,6 +63,7 @@ export class Object3D {
 	localScale: Tea.Vector3;
 	parent: Object3D;
 	children: Array<Object3D>;
+	protected _m: Movement;
 	protected _components: Array<Tea.Component>;
 
 	constructor(app: Tea.App) {
@@ -21,6 +74,7 @@ export class Object3D {
 		this.localRotation = Tea.Quaternion.identity;
 		this.localScale = Tea.Vector3.one;
 		this.children = [];
+		this._m = new Movement();
 		this._components = [];
 	}
 
@@ -84,7 +138,7 @@ export class Object3D {
 			var s = this.parent.scale;
 			var lp = this.localPosition.clone();
 			lp.scale$(s);
-			lp = r.mul(lp);
+			lp.applyQuaternion(r);
 			return lp.add$(p);
 		}
 		return this.localPosition;
@@ -96,7 +150,7 @@ export class Object3D {
 			var r = this.parent.rotation;
 			var s = this.parent.scale.clone();
 			p = value.sub(p);
-			p = r.inversed.mul(p);
+			p.applyQuaternion(r.inversed);
 			this.reverseScale$(s);
 			p.scale$(s);
 			this.localPosition = p;
@@ -161,44 +215,38 @@ export class Object3D {
 	}
 
 	get forward(): Tea.Vector3 {
-		return this.rotation.mul(Tea.Vector3.forward);
+		var f = Tea.Vector3.forward;
+		f.applyQuaternion(this.rotation);
+		return f;
 	}
 
 	get up(): Tea.Vector3 {
-		return this.rotation.mul(Tea.Vector3.up);
+		var u = Tea.Vector3.up;
+		u.applyQuaternion(this.rotation);
+		return u;
 	}
 
 	get right(): Tea.Vector3 {
-		return this.rotation.mul(Tea.Vector3.right);
+		var r = Tea.Vector3.right;
+		r.applyQuaternion(this.rotation);
+		return r;
 	}
 
 	get localToWorldMatrix(): Tea.Matrix4x4 {
+		return this._m.localToWorldMatrix;
 		/*
-		if (this.parent != null) {
-			var m1 = this.parent.localToWorldMatrix;
-			m1.toggleHand();
-			var m2 = Tea.Matrix4x4.trs(
-				this.position,
-				this.rotation,
-				this.scale
-			);
-			m1.mul$(m2);
-			m1.toggleHand();
-			return m1;
-		}
-		*/
 		var m = Tea.Matrix4x4.trs(
 			this.position,
 			this.rotation,
 			this.scale
 		);
-		/*
-		var m = Tea.Matrix4x4.translate(this.position);
-		m = m.mul(this.rotation.toMatrix4x4());
-		m = m.mul(Tea.Matrix4x4.scale(this.scale));
-		//*/
 		m.toggleHand();
 		return m;
+		//*/
+	}
+
+	get worldToLocalMatrix(): Tea.Matrix4x4 {
+		return this._m.worldToLocalMatrix;
 	}
 
 	toString(): string {
@@ -223,11 +271,14 @@ export class Object3D {
 
 	getComponents<T extends Tea.Component>(component: {new (app: Tea.App): T}): Array<T> {
 		var array = [];
-		Tea.ArrayUtil.each(this._components, (i, c) => {
+		var components = this._components;
+		var length = components.length;
+		for (var i = 0; i < length; i++) {
+			var c = components[i];
 			if (c instanceof component) {
 				array.push(c);
 			}
-		});
+		}
 		return array;
 	}
 
@@ -298,7 +349,7 @@ export class Object3D {
 			return;
 		}
 		if (this.childCount > 0) {
-			Tea.ArrayUtil.each(this.children, (i, child) => {
+			this.children.forEach((child) => {
 				child.broadcastMessage(methodName, args);
 			});
 		}
@@ -360,7 +411,7 @@ export class Object3D {
 	}
 
 	detachChildren(): void {
-		Tea.ArrayUtil.each(this.children, (i, child) => {
+		this.children.forEach((child) => {
 			child.parent = null;
 		});
 		this.children = [];
@@ -368,7 +419,7 @@ export class Object3D {
 
 	find(name: string): Object3D {
 		var object3d = null;
-		Tea.ArrayUtil.each(this.children, (i, child) => {
+		this.children.forEach((child) => {
 			if (child.name === name) {
 				object3d = child;
 				return false;
@@ -422,15 +473,19 @@ export class Object3D {
 
 	start(): void {
 		var scripts = this.getComponents(Tea.Script);
-		Tea.ArrayUtil.each(scripts, (i, script) => {
-			script.start();
-		});
+		var length = scripts.length;
+		for (var i = 0; i < length; i++) {
+			scripts[i].start();
+		}
 	}
 
 	update(): void {
-		Tea.ArrayUtil.each(this._components, (i, component) => {
-			component.update();
-		});
+		this._m.update(this);
+		var components = this._components;
+		var length = components.length;
+		for (var i = 0; i < length; i++) {
+			components[i].update();
+		}
 	}
 
 	protected reverseScale$(scale: Tea.Vector3): Tea.Vector3 {

@@ -4,11 +4,11 @@ export class DaeReader {
 	static mimeType = "text/xml";
 
 	static read(data: string): Tea.Mesh {
-		const vertices = [];
-		const indices = [];
+		var vertices = [];
+		var indices = [];
 
-		const parser = new DOMParser();
-		const document = parser.parseFromString(data, DaeReader.mimeType);
+		var parser = new DOMParser();
+		var document = parser.parseFromString(data, DaeReader.mimeType);
 		//console.log(document);
 
 		if (document.getElementsByTagName("parsererror").length) {
@@ -16,15 +16,15 @@ export class DaeReader {
 			return null;
 		}
 
-		//const asset = document.querySelector("asset");
+		//var asset = document.querySelector("asset");
 		//console.log(asset.querySelector("author").textContent);
 
-		const geometries = document.querySelector("library_geometries");
+		var geometries = document.querySelector("library_geometries");
 		console.log(geometries.querySelector("geometry mesh float_array"));
 
 		/*
 		this.forEachLine(data, (text: string, index: number) => {
-			const params = text.split(/\s+/);
+			var params = text.split(/\s+/);
 			switch (params[0]) {
 				case "v":
 					this.pushArray(vertices, this.parseVertex(params));

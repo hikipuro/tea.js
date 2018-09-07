@@ -144,7 +144,7 @@ export class Mathf {
 	//}
 
 	static pingPong(t: number, length: number): number {
-		const d = Math.floor(t / length) % 2;
+		var d = Math.floor(t / length) % 2;
 		return length * d + (t % length) * (-d * 2 + 1);
 	}
 
@@ -179,7 +179,7 @@ export class Mathf {
 
 	static smoothStep(from: number, to: number, t: number): number {
 		t = from + (to - from) * t;
-		const x = this.clamp01((t - from) / (to - from));
+		var x = this.clamp01((t - from) / (to - from));
 		return x * x * (3 - 2 * x) * (to - from) + from;
 	}
 

@@ -32,9 +32,9 @@ export class Bounds {
 		if (point == null) {
 			return false;
 		}
-		const min = this.min;
-		const max = this.max;
-		const x = point.x, y = point.y, z = point.z;
+		var min = this.min;
+		var max = this.max;
+		var x = point.x, y = point.y, z = point.z;
 		return min.x <= x && min.y <= y && min.z <= z
 			&& max.x >= x && max.y >= y && max.z >= z;
 	}

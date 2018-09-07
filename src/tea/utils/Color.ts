@@ -89,7 +89,7 @@ export class Color extends Array<number> {
 	}
 
 	get grayscale(): number {
-		var r = this.r, g = this.g, b = this.b;
+		var r = this[0], g = this[1], b = this[2];
 		if (r === g && g === b) {
 			return r;
 		}
@@ -101,36 +101,36 @@ export class Color extends Array<number> {
 	}
 
 	set(r: number, g: number, b: number, a: number): void {
-		this.r = r;
-		this.g = g;
-		this.b = b;
-		this.a = a;
+		this[0] = r;
+		this[1] = g;
+		this[2] = b;
+		this[3] = a;
 	}
 
 	equals(value: Color): boolean {
 		if (value == null) {
 			return false;
 		}
-		return this.r === value.r
-			&& this.g === value.g
-			&& this.b === value.b
-			&& this.a === value.a;
+		return this[0] === value[0]
+			&& this[1] === value[1]
+			&& this[2] === value[2]
+			&& this[3] === value[3];
 	}
 
 	clone(): Color {
 		return new Color(
-			this.r,
-			this.g,
-			this.b,
-			this.a
+			this[0],
+			this[1],
+			this[2],
+			this[3]
 		);
 	}
 
 	toCssColor(): string {
 		if (this.a == 1) {
-			let r = Math.floor(this.r * 255).toString(16);
-			let g = Math.floor(this.g * 255).toString(16);
-			let b = Math.floor(this.b * 255).toString(16);
+			var r = Math.floor(this.r * 255).toString(16);
+			var g = Math.floor(this.g * 255).toString(16);
+			var b = Math.floor(this.b * 255).toString(16);
 			r = r.toUpperCase();
 			g = g.toUpperCase();
 			b = b.toUpperCase();
@@ -196,8 +196,8 @@ export class Color extends Array<number> {
 	}
 
 	static fromRGBA32(color: number): Color {
-		const bytes = new Uint8Array(4);
-		const dataView = new DataView(bytes.buffer);
+		var bytes = new Uint8Array(4);
+		var dataView = new DataView(bytes.buffer);
 		dataView.setUint32(0, color);
 		return new Color(
 			bytes[0] / 255,
@@ -208,8 +208,8 @@ export class Color extends Array<number> {
 	}
 
 	static fromRGB24(color: number): Color {
-		const bytes = new Uint8Array(4);
-		const dataView = new DataView(bytes.buffer);
+		var bytes = new Uint8Array(4);
+		var dataView = new DataView(bytes.buffer);
 		dataView.setUint32(0, color);
 		return new Color(
 			bytes[1] / 255,

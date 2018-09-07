@@ -8,7 +8,7 @@ export class LineRenderer extends Renderer {
 	constructor(app: Tea.App) {
 		super(app);
 		this.points = [];
-		var gl = this.app.gl;
+		var gl = this.gl;
 		this.vertexBuffer = gl.createBuffer();
 
 		var shader = new Tea.Shader(this.app);
@@ -60,18 +60,19 @@ export class LineRenderer extends Renderer {
 	}
 
 	protected setLineData(): void {
-		var gl = this.app.gl;
+		var gl = this.gl;
 		var target = gl.ARRAY_BUFFER;
 
 		var vertices = new Float32Array(Tea.ArrayUtil.unroll(this.points));
 		gl.bindBuffer(target, this.vertexBuffer);
 		gl.bufferData(target, vertices, gl.DYNAMIC_DRAW);
-		this.setAttribute("vertex", 3);
+		this.enableVertexAttribArray("vertex");
+		this.vertexAttribPointer("vertex", 3);
 		gl.bindBuffer(target, null);
 	}
 
 	protected draw(): void {
-		var gl = this.app.gl;
+		var gl = this.gl;
 		var count = this.points.length;
 		//gl.frontFace(gl.CW);
 		gl.drawArrays(gl.LINE_STRIP, 0, count);

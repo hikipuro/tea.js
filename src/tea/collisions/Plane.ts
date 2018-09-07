@@ -75,9 +75,10 @@ export class Plane {
 	}
 
 	getDistanceToPoint(point: Tea.Vector3): number {
-		var v1 = point.sub(this.point);
-		var n = this.normal;
-		return v1.dot(n);
+		var p = this.normal.clone();
+		p.mul$(this.distance);
+		var v1 = p.add$(point);
+		return v1.dot(this.normal);
 	}
 
 	getSide(point: Tea.Vector3): boolean {

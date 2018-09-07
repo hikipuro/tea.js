@@ -44,9 +44,11 @@ export class Scene {
 			this.start();
 		}
 
-		Tea.ArrayUtil.each(this.children, (i, child) => {
-			this.updateObject3D(child);
-		});
+		var children = this.children;
+		var childCount = children.length;
+		for (var i = 0; i < childCount; i++) {
+			this.updateObject3D(children[i]);
+		}
 		var renderers = this._renderers.sort((a, b) => {
 			var renderQueueA = a.material.renderQueue;
 			var renderQueueB = b.material.renderQueue;
@@ -59,31 +61,37 @@ export class Scene {
 		});
 
 		Tea.Renderer.drawCallCount = 0;
-		Tea.ArrayUtil.each(cameras, (_, camera) => {
+		var cameraCount = cameras.length;
+		for (var n = 0; n < cameraCount; n++) {
+			var camera = cameras[n];
 			var renderTexture = camera.targetTexture;
 			if (renderTexture != null) {
 				renderTexture.bind();
 			}
 			camera.update();
 			var planes = Tea.GeometryUtil.calculateFrustumPlanes(camera);
-			Tea.ArrayUtil.each(renderers, (_, renderer) => {
+			var rendererCount = renderers.length;
+			for (var i = 0; i < rendererCount; i++) {
+				var renderer = renderers[i];
 				if (this.frustumCulling(renderer, planes)) {
-					return;
+					continue;
 				}
 				this.renderCamera(camera, renderer);
-			});
+			}
 			if (renderTexture != null) {
 				renderTexture.unbind();
 			}
-		});
+		}
 		this._renderers = [];
 		//console.log("drawCallCount", Tea.Renderer.drawCallCount);
 	}
 
 	protected start(): void {
-		Tea.ArrayUtil.each(this.children, (i, child) => {
-			child.start();
-		});
+		var children = this.children;
+		var length = children.length;
+		for (var i = 0; i < length; i++) {
+			children[i].start();
+		}
 	}
 
 	protected updateObject3D(object3d: Tea.Object3D): void {
@@ -97,10 +105,10 @@ export class Scene {
 				this._renderers.push(renderer);
 			}
 		}
-		if (object3d.children.length > 0) {
-			Tea.ArrayUtil.each(object3d.children, (i, child) => {
-				this.updateObject3D(child);
-			});
+		var children = object3d.children;
+		var length = children.length;
+		for (var i = 0; i < length; i++) {
+			this.updateObject3D(children[i]);
 		}
 	}
 

@@ -5,7 +5,11 @@ import { Vector4 } from "./Vector4";
 export class Matrix4x4 extends Array<number> {
 	constructor() {
 		super(16);
-		this.fill(0);
+		this[0] = this[1] = this[2] = this[3] = 0;
+		this[4] = this[5] = this[6] = this[7] = 0;
+		this[8] = this[9] = this[10] = this[11] = 0;
+		this[12] = this[13] = this[14] = this[15] = 0;
+		//this.fill(0);
 	}
 
 	static get zero(): Matrix4x4 {
@@ -13,7 +17,7 @@ export class Matrix4x4 extends Array<number> {
 	}
 
 	static get identity(): Matrix4x4 {
-		const m = new Matrix4x4();
+		var m = new Matrix4x4();
 		m[0] = m[5] = m[10] = m[15] = 1;
 		return m;
 	}
@@ -40,7 +44,7 @@ export class Matrix4x4 extends Array<number> {
 		if (x == null) {
 			return null;
 		}
-		const m = Matrix4x4.identity;
+		var m = Matrix4x4.identity;
 		if (x instanceof Vector3) {
 			m[12] = x.x;
 			m[13] = x.y;
@@ -59,7 +63,7 @@ export class Matrix4x4 extends Array<number> {
 		if (x == null) {
 			return null;
 		}
-		const m = Matrix4x4.identity;
+		var m = Matrix4x4.identity;
 		if (x instanceof Vector3) {
 			m[0]  = x.x;
 			m[5]  = x.y;
@@ -73,7 +77,7 @@ export class Matrix4x4 extends Array<number> {
 	}
 
 	static shear(vector: Vector3): Matrix4x4 {
-		const m = Matrix4x4.identity;
+		var m = Matrix4x4.identity;
 		if (vector == null) {
 			return m;
 		}
@@ -84,9 +88,9 @@ export class Matrix4x4 extends Array<number> {
 	}
 
 	static rotateX(radians: number): Matrix4x4 {
-		const m = Matrix4x4.identity;
-		const sin = Math.sin(radians);
-		const cos = Math.cos(radians);
+		var m = Matrix4x4.identity;
+		var sin = Math.sin(radians);
+		var cos = Math.cos(radians);
 		m[5] = cos;
 		m[6] = sin;
 		m[9] = -sin;
@@ -95,9 +99,9 @@ export class Matrix4x4 extends Array<number> {
 	}
 
 	static rotateY(radians: number): Matrix4x4 {
-		const m = Matrix4x4.identity;
-		const sin = Math.sin(radians);
-		const cos = Math.cos(radians);
+		var m = Matrix4x4.identity;
+		var sin = Math.sin(radians);
+		var cos = Math.cos(radians);
 		m[0] = cos;
 		m[2] = -sin;
 		m[8] = sin;
@@ -106,9 +110,9 @@ export class Matrix4x4 extends Array<number> {
 	}
 
 	static rotateZ(radians: number): Matrix4x4 {
-		const m = Matrix4x4.identity;
-		const sin = Math.sin(radians);
-		const cos = Math.cos(radians);
+		var m = Matrix4x4.identity;
+		var sin = Math.sin(radians);
+		var cos = Math.cos(radians);
 		m[0] = cos;
 		m[1] = sin;
 		m[4] = -sin;
@@ -117,7 +121,7 @@ export class Matrix4x4 extends Array<number> {
 	}
 
 	static rotateZXY(vector: Vector3): Matrix4x4 {
-		let m = Matrix4x4.identity;
+		var m = Matrix4x4.identity;
 		if (vector == null) {
 			return m;
 		}
@@ -271,12 +275,12 @@ export class Matrix4x4 extends Array<number> {
 	}
 
 	static perspective(fov: number, aspect: number, zNear: number, zFar: number): Matrix4x4 {
-		const m = new Matrix4x4();
+		var m = new Matrix4x4();
 		fov = Tea.radians(fov);
-		const top = Math.tan(fov / 2) * zNear;
-		const bottom = -top;
-		const right = top * aspect;
-		const left = -top * aspect;
+		var top = Math.tan(fov / 2) * zNear;
+		var bottom = -top;
+		var right = top * aspect;
+		var left = -top * aspect;
 		m[0] = 2 * zNear / (right - left);
 		m[5] = 2 * zNear / (top - bottom);
 		m[8] = (right + left) / (right - left);
@@ -357,8 +361,8 @@ export class Matrix4x4 extends Array<number> {
 	}
 
 	get transpose(): Matrix4x4 {
-		const m = this.clone();
-		const t = this;
+		var m = this.clone();
+		var t = this;
 		m[1]  = t[4]; m[2]  = t[8]; m[3]  = t[12]; 
 		m[4]  = t[1]; m[6]  = t[9]; m[7]  = t[13];
 		m[8]  = t[2]; m[9]  = t[6]; m[11] = t[14];
@@ -367,10 +371,10 @@ export class Matrix4x4 extends Array<number> {
 	}
 
 	get determinant(): number {
-		const m00 = this[0],  m10 = this[1],  m20 = this[2],  m30 = this[3];
-		const m01 = this[4],  m11 = this[5],  m21 = this[6],  m31 = this[7];
-		const m02 = this[8],  m12 = this[9],  m22 = this[10], m32 = this[11];
-		const m03 = this[12], m13 = this[13], m23 = this[14], m33 = this[15];
+		var m00 = this[0],  m10 = this[1],  m20 = this[2],  m30 = this[3];
+		var m01 = this[4],  m11 = this[5],  m21 = this[6],  m31 = this[7];
+		var m02 = this[8],  m12 = this[9],  m22 = this[10], m32 = this[11];
+		var m03 = this[12], m13 = this[13], m23 = this[14], m33 = this[15];
 		return (
 			(m00 * m11 * m22 * m33) + (m00 * m12 * m23 * m31) + (m00 * m13 * m21 * m32) +
 			(m01 * m10 * m23 * m32) + (m01 * m12 * m20 * m33) + (m01 * m13 * m22 * m30) +
@@ -385,11 +389,11 @@ export class Matrix4x4 extends Array<number> {
 
 	get inverse(): Matrix4x4 {
 		/*
-		const m = new Matrix4x4();
-		const m11 = this[0], m21 = this[4], m31 = this[8],  m41 = this[12];
-		const m12 = this[1], m22 = this[5], m32 = this[9],  m42 = this[13];
-		const m13 = this[2], m23 = this[6], m33 = this[10], m43 = this[14];
-		const m14 = this[3], m24 = this[7], m34 = this[11], m44 = this[15];
+		var m = new Matrix4x4();
+		var m11 = this[0], m21 = this[4], m31 = this[8],  m41 = this[12];
+		var m12 = this[1], m22 = this[5], m32 = this[9],  m42 = this[13];
+		var m13 = this[2], m23 = this[6], m33 = this[10], m43 = this[14];
+		var m14 = this[3], m24 = this[7], m34 = this[11], m44 = this[15];
 
 		m[0] =  (m22 * m33 * m44) + (m23 * m34 * m42) + (m24 * m32 * m43) -
 				(m22 * m34 * m43) - (m23 * m32 * m44) - (m24 * m33 * m42);
@@ -483,11 +487,29 @@ export class Matrix4x4 extends Array<number> {
 	}
 
 	clone(): Matrix4x4 {
-		const m = new Matrix4x4();
+		var m = new Matrix4x4();
 		for (var i = 0; i < 16; i++) {
 			m[i] = this[i];
 		}
 		return m;
+	}
+
+	perspective(fov: number, aspect: number, zNear: number, zFar: number): void {
+		fov = Tea.radians(fov);
+		var top = Math.tan(fov / 2) * zNear;
+		var bottom = -top;
+		var right = top * aspect;
+		var left = -top * aspect;
+		this[0] = 2 * zNear / (right - left);
+		this[5] = 2 * zNear / (top - bottom);
+		this[8] = (right + left) / (right - left);
+		this[9] = (top + bottom) / (top - bottom);
+		this[10] = -(zFar + zNear) / (zFar - zNear);
+		this[11] = -1;
+		this[14] = -(2 * zFar * zNear) / (zFar - zNear);
+		this[1] = this[2] = this[3] = this[4] = 0;
+		this[6] = this[7] = this[12] = this[13] = 0;
+		this[15] = 1;
 	}
 
 	mul(vector: Vector4): Vector4;
@@ -529,8 +551,8 @@ export class Matrix4x4 extends Array<number> {
 			m[15] = l30 * r03 + l31 * r13 + l32 * r23 + l33 * r33;
 			return m;
 		} else {
-			const t = this;
-			const v = value;
+			var t = this;
+			var v = value;
 			return new Vector4(
 				t[0] * v.x + t[4] * v.y + t[8] * v.z + t[12] * v.w,
 				t[1] * v.x + t[5] * v.y + t[9] * v.z + t[13] * v.w,
@@ -622,7 +644,7 @@ export class Matrix4x4 extends Array<number> {
 	}
 
 	toString(): string {
-		const t = new Array(16);
+		var t = new Array(16);
 		for (var i = 0; i < 16; i++) {
 			t[i] = this[i].toFixed(5);
 		}

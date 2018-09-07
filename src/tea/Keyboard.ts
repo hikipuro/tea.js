@@ -53,7 +53,10 @@ export class Keyboard {
 	}
 
 	update(): void {
-		this._prevKeys = Object.assign({}, this._keys);
+		for (var key in this._keys) {
+			this._prevKeys[key] = this._keys[key];
+		}
+		//this._prevKeys = Object.assign({}, this._keys);
 	}
 
 	protected addEvents(element: HTMLElement): void {

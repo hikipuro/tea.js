@@ -386,17 +386,13 @@ class AppRenderer extends Tea.EventDispatcher {
 	protected update = (time: number): void => {
 		this.time.update();
 		if (this.currentScene != null) {
-			this.updateScene();
+			this.currentScene.update();
+			this.keyboard.update();
+			this.mouse.update();
 		}
 		this.stats.update();
 		this.emit("update");
 		this._handle = requestAnimationFrame(this.update);
-	}
-
-	protected updateScene(): void {
-		this.currentScene.update();
-		this.keyboard.update();
-		this.mouse.update();
 	}
 
 	protected createStats(): void {

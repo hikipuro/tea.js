@@ -1,12 +1,14 @@
 import * as Tea from "../Tea";
 
 export class Quaternion extends Array<number> {
+	static _tmp: Quaternion = new Quaternion();
+
 	constructor(x: number = 0, y: number = 0, z: number = 0, w: number = 0) {
 		super(4);
-		this.x = x;
-		this.y = y;
-		this.z = z;
-		this.w = w;
+		this[0] = x;
+		this[1] = y;
+		this[2] = z;
+		this[3] = w;
 	}
 
 	static get identity(): Quaternion {
@@ -21,9 +23,9 @@ export class Quaternion extends Array<number> {
 		var z: number = 0;
 
 		if (a instanceof Tea.Vector3) {
-			x = Tea.radians(a.x * 0.5);
-			y = Tea.radians(a.y * 0.5);
-			z = Tea.radians(a.z * 0.5);
+			x = Tea.radians(a[0] * 0.5);
+			y = Tea.radians(a[1] * 0.5);
+			z = Tea.radians(a[2] * 0.5);
 		} else {
 			x = Tea.radians(a * 0.5);
 			y = Tea.radians(b * 0.5);
@@ -135,7 +137,7 @@ export class Quaternion extends Array<number> {
 	}
 
 	get eulerAngles(): Tea.Vector3 {
-		var x = this.x, y = this.y, z = this.z, w = this.w;
+		var x = this[0], y = this[1], z = this[2], w = this[3];
 		var x2 = x * x, y2 = y * y, z2 = z * z, w2 = w * w;
 
 		var t0 = 2 * (x * z + w * y);
@@ -156,9 +158,9 @@ export class Quaternion extends Array<number> {
 		);
 	}
 	set eulerAngles(value: Tea.Vector3) {
-		var x = Tea.radians(value.x * 0.5);
-		var y = Tea.radians(value.y * 0.5);
-		var z = Tea.radians(value.z * 0.5);
+		var x = Tea.radians(value[0] * 0.5);
+		var y = Tea.radians(value[1] * 0.5);
+		var z = Tea.radians(value[2] * 0.5);
 
 		var sin = Math.sin, cos = Math.cos;
 		var sx = sin(x), sy = sin(y), sz = sin(z);
@@ -169,24 +171,24 @@ export class Quaternion extends Array<number> {
 		var az = -sx * sy;
 		var aw = cy * cx;
 		
-		this.x = cz * ax + ay * sz;
-		this.y = cz * ay - sz * ax;
-		this.z = aw * sz + cz * az;
-		this.w = aw * cz - az * sz;
+		this[0] = cz * ax + ay * sz;
+		this[1] = cz * ay - sz * ax;
+		this[2] = aw * sz + cz * az;
+		this[3] = aw * cz - az * sz;
 	}
 
 	get magnitude(): number {
-		var x = this.x, y = this.y, z = this.z, w = this.w;
+		var x = this[0], y = this[1], z = this[2], w = this[3];
 		return Math.sqrt(x * x + y * y + z * z + w * w);
 	}
 
 	get sqrMagnitude(): number {
-		var x = this.x, y = this.y, z = this.z, w = this.w;
+		var x = this[0], y = this[1], z = this[2], w = this[3];
 		return x * x + y * y + z * z + w * w;
 	}
 
 	get normalized(): Quaternion {
-		var x = this.x, y = this.y, z = this.z, w = this.w;
+		var x = this[0], y = this[1], z = this[2], w = this[3];
 		var m = 1 / Math.sqrt(x * x + y * y + z * z + w * w);
 		return new Quaternion(
 			x * m, y * m, z * m, w * m
@@ -195,10 +197,10 @@ export class Quaternion extends Array<number> {
 
 	get conjugated(): Quaternion {
 		return new Quaternion(
-			-this.x,
-			-this.y,
-			-this.z,
-			this.w
+			-this[0],
+			-this[1],
+			-this[2],
+			this[3]
 		);
 	}
 
@@ -210,32 +212,37 @@ export class Quaternion extends Array<number> {
 
 	clone(): Quaternion {
 		return new Quaternion(
-			this.x,
-			this.y,
-			this.z,
-			this.w
+			this[0], this[1],
+			this[2], this[3]
 		);
 	}
 
 	set(x: number, y: number, z: number, w: number): void {
-		this.x = x;
-		this.y = y;
-		this.z = z;
-		this.w = w;
+		this[0] = x;
+		this[1] = y;
+		this[2] = z;
+		this[3] = w;
+	}
+
+	copy(value: Quaternion): void {
+		this[0] = value[0];
+		this[1] = value[1];
+		this[2] = value[2];
+		this[3] = value[3];
 	}
 
 	equals(value: Quaternion): boolean {
 		if (value == null) {
 			return false;
 		}
-		return this.x === value.x
-			&& this.y === value.y
-			&& this.z === value.z
-			&& this.w === value.w;
+		return this[0] === value[0]
+			&& this[1] === value[1]
+			&& this[2] === value[2]
+			&& this[3] === value[3];
 	}
 
 	toMatrix4x4(): Tea.Matrix4x4 {
-		var x = this.x, y = this.y, z = this.z, w = this.w;
+		var x = this[0], y = this[1], z = this[2], w = this[3];
 		var xx = x * x, yy = y * y, zz = z * z;
 		var xy = x * y, xz = x * z, yz = y * z;
 		var wx = w * x, wy = w * y, wz = w * z;
@@ -254,7 +261,7 @@ export class Quaternion extends Array<number> {
 	}
 
 	toString(): string {
-		const t = new Array(4);
+		var t = new Array(4);
 		for (var i = 0; i < 4; i++) {
 			t[i] = this[i].toFixed(5);
 		}
@@ -281,27 +288,29 @@ export class Quaternion extends Array<number> {
 	mul(value: Quaternion): Quaternion;
 	mul(value: Tea.Vector3): Tea.Vector3;
 	mul(value: number | Quaternion | Tea.Vector3): Quaternion | Tea.Vector3 {
-		if (value instanceof Quaternion) {
-			var ax = this.x, ay = this.y, az = this.z, aw = this.w;
-			var bx = value.x, by = value.y, bz = value.z, bw = value.w;
-			return new Quaternion(
-				aw * bx + bw * ax + ay * bz - by * az,
-				aw * by + bw * ay + az * bx - bz * ax,
-				aw * bz + bw * az + ax * by - bx * ay,
-				aw * bw - ax * bx - ay * by - az * bz
-			);
-		}
 		if (value instanceof Tea.Vector3) {
 			//*
-			if (this.x === 0
-				&& this.y === 0
-				&& this.z === 0
-				&& this.w === 0) {
+			if (this[0] === 0
+				&& this[1] === 0
+				&& this[2] === 0
+				&& this[3] === 0) {
 				return value;
 			}
-			var conjugate = this.conjugated;
-			var angles = this.mul(new Quaternion(value.x, value.y, value.z, 0));
-			angles = angles.mul(conjugate);
+			var ax = this[0], ay = this[1], az = this[2], aw = this[3];
+			var bx = value[0], by = value[1], bz = value[2], bw = 0;
+			var angles = Quaternion._tmp;
+			angles.x = aw * bx + ay * bz - by * az;
+			angles.y = aw * by + az * bx - bz * ax;
+			angles.z = aw * bz + ax * by - bx * ay;
+			angles.w = -(ax * bx) - ay * by - az * bz;
+
+			bx = -ax, by = -ay, bz = -az, bw = aw;
+			ax = angles.x, ay = angles.y, az = angles.z, aw = angles.w;
+			angles.x = aw * bx + bw * ax + ay * bz - by * az;
+			angles.y = aw * by + bw * ay + az * bx - bz * ax;
+			angles.z = aw * bz + bw * az + ax * by - bx * ay;
+			angles.w = aw * bw - ax * bx - ay * by - az * bz;
+			
 			return new Tea.Vector3(angles.x, angles.y, angles.z);
 			//*/
 			/*
@@ -314,11 +323,21 @@ export class Quaternion extends Array<number> {
 			);
 			*/
 		}
+		if (value instanceof Quaternion) {
+			var ax = this[0], ay = this[1], az = this[2], aw = this[3];
+			var bx = value[0], by = value[1], bz = value[2], bw = value[3];
+			return new Quaternion(
+				aw * bx + bw * ax + ay * bz - by * az,
+				aw * by + bw * ay + az * bx - bz * ax,
+				aw * bz + bw * az + ax * by - bx * ay,
+				aw * bw - ax * bx - ay * by - az * bz
+			);
+		}
 		return new Quaternion(
-			this.x * value,
-			this.y * value,
-			this.z * value,
-			this.w * value
+			this[0] * value,
+			this[1] * value,
+			this[2] * value,
+			this[3] * value
 		);
 	}
 
@@ -326,14 +345,12 @@ export class Quaternion extends Array<number> {
 		if (value == null) {
 			return;
 		}
-		if (value instanceof Quaternion) {
-			var ax = this.x, ay = this.y, az = this.z, aw = this.w;
-			var bx = value.x, by = value.y, bz = value.z, bw = value.w;
-			this.x = aw * bx + bw * ax + ay * bz - by * az;
-			this.y = aw * by + bw * ay + az * bx - bz * ax;
-			this.z = aw * bz + bw * az + ax * by - bx * ay;
-			this.w = aw * bw - ax * bx - ay * by - az * bz;
-		}
+		var ax = this[0], ay = this[1], az = this[2], aw = this[3];
+		var bx = value[0], by = value[1], bz = value[2], bw = value[3];
+		this[0] = aw * bx + bw * ax + ay * bz - by * az;
+		this[1] = aw * by + bw * ay + az * bx - bz * ax;
+		this[2] = aw * bz + bw * az + ax * by - bx * ay;
+		this[3] = aw * bw - ax * bx - ay * by - az * bz;
 	}
 
 	dot(value: Quaternion): number {

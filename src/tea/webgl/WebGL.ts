@@ -8,6 +8,6 @@ export class WebGL {
 	}
 
 	public init(): void {
-		const gl = this.gl;
+		var gl = this.gl;
 	}
 }

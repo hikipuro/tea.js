@@ -22,10 +22,10 @@ export class Mesh {
 	}
 
 	get vertexBufferCount(): number {
-		let count = 0;
-		const vertices = this.vertices;
-		const normals = this.normals;
-		const uv = this.uv;
+		var count = 0;
+		var vertices = this.vertices;
+		var normals = this.normals;
+		var uv = this.uv;
 
 		if (vertices != null && vertices.length > 0) {
 			count++;
@@ -69,6 +69,28 @@ export class Mesh {
 		this.isModified = true;
 	}
 
+	clone(): Mesh {
+		var mesh = new Mesh();
+		for (var i = 0; i < this.vertices.length; i++) {
+			mesh.vertices.push(this.vertices[i].clone());
+		}
+		for (var i = 0; i < this.triangles.length; i++) {
+			mesh.triangles.push(this.triangles[i].clone());
+		}
+		for (var i = 0; i < this.normals.length; i++) {
+			mesh.normals.push(this.normals[i].clone());
+		}
+		for (var i = 0; i < this.uv.length; i++) {
+			mesh.uv.push(this.uv[i].clone());
+		}
+		for (var i = 0; i < this.colors.length; i++) {
+			mesh.colors.push(this.colors[i].clone());
+		}
+		mesh.bounds = this.bounds.clone();
+		mesh.isModified = true;
+		return mesh;
+	}
+
 	setVertices(array: Array<number>): void {
 		this.vertices = this.convertToVec3Array(array);
 	}
@@ -94,36 +116,36 @@ export class Mesh {
 	}
 
 	scale(value: number): void {
-		const vertices = this.vertices;
-		const length = vertices.length;
+		var vertices = this.vertices;
+		var length = vertices.length;
 		for (var i = 0; i < length; i++) {
 			vertices[i].mul$(value);
 		}
 	}
 
 	rotateX(radian: number): void {
-		const sin = Math.sin(radian);
-		const cos = Math.cos(radian);
-		const vertices = this.vertices;
-		const length = vertices.length;
+		var sin = Math.sin(radian);
+		var cos = Math.cos(radian);
+		var vertices = this.vertices;
+		var length = vertices.length;
 		for (var i = 0; i < length; i++) {
-			const y = vertices[i].y;
-			const z = vertices[i].z;
+			var y = vertices[i].y;
+			var z = vertices[i].z;
 			vertices[i].y = cos * y + -sin * z;
 			vertices[i].z = sin * y + cos * z;
 		}
 	}
 
 	calculateBounds(): void {
-		const positions = this.vertices;
+		var positions = this.vertices;
 		if (positions == null || positions.length <= 0) {
 			return null;
 		}
-		const min = new Tea.Vector3();
-		const max = new Tea.Vector3();
-		const length = positions.length;
+		var min = new Tea.Vector3();
+		var max = new Tea.Vector3();
+		var length = positions.length;
 		for (var i = 0; i < length; i++) {
-			const position = positions[i];
+			var position = positions[i];
 			if (position == null) {
 				continue;
 			}
@@ -146,9 +168,9 @@ export class Mesh {
 				max.z = position.z;
 			}
 		}
-		const size = max.sub(min);
-		const extents = size.div(2);
-		const bounds = new Tea.Bounds();
+		var size = max.sub(min);
+		var extents = size.div(2);
+		var bounds = new Tea.Bounds();
 		bounds.extents = extents;
 		bounds.center = min.add(extents);
 		this.bounds = bounds;
@@ -193,10 +215,10 @@ export class Mesh {
 		if (array == null || array.length <= 0) {
 			return [];
 		}
-		const a = [];
-		const length = Math.floor(array.length / 2) * 2;
+		var a = [];
+		var length = Math.floor(array.length / 2) * 2;
 		for (var i = 0; i < length; i += 2) {
-			const item = new Tea.Vector2(
+			var item = new Tea.Vector2(
 				array[i], array[i + 1]
 			);
 			a.push(item);
@@ -208,10 +230,10 @@ export class Mesh {
 		if (array == null || array.length <= 0) {
 			return [];
 		}
-		const a = [];
-		const length = Math.floor(array.length / 3) * 3;
+		var a = [];
+		var length = Math.floor(array.length / 3) * 3;
 		for (var i = 0; i < length; i += 3) {
-			const item = new Tea.Vector3(
+			var item = new Tea.Vector3(
 				array[i], array[i + 1], array[i + 2]
 			);
 			a.push(item);
@@ -223,10 +245,10 @@ export class Mesh {
 		if (array == null || array.length <= 0) {
 			return [];
 		}
-		const a = [];
-		const length = Math.floor(array.length / 4) * 4;
+		var a = [];
+		var length = Math.floor(array.length / 4) * 4;
 		for (var i = 0; i < length; i += 4) {
-			const item = new Tea.Color(
+			var item = new Tea.Color(
 				array[i], array[i + 1], array[i + 2], array[i + 3]
 			);
 			a.push(item);

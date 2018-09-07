@@ -98,9 +98,9 @@ export class Matrix4 extends Array<number> {
 	}
 
 	static rotateZ(radians: number): Matrix4 {
-		const m = Matrix4.identity;
-		const sin = Math.sin(radians);
-		const cos = Math.cos(radians);
+		var m = Matrix4.identity;
+		var sin = Math.sin(radians);
+		var cos = Math.cos(radians);
 		m[0] = cos;
 		m[1] = sin;
 		m[4] = -sin;
@@ -109,7 +109,7 @@ export class Matrix4 extends Array<number> {
 	}
 
 	static rotateXYZ(vector: Vector3): Matrix4 {
-		let m = Matrix4.identity;
+		var m = Matrix4.identity;
 		if (vector == null) {
 			return m;
 		}
@@ -120,7 +120,7 @@ export class Matrix4 extends Array<number> {
 	}
 
 	static rotateXZY(vector: Vector3): Matrix4 {
-		let m = Matrix4.identity;
+		var m = Matrix4.identity;
 		if (vector == null) {
 			return m;
 		}
@@ -131,7 +131,7 @@ export class Matrix4 extends Array<number> {
 	}
 
 	static rotateYXZ(vector: Vector3): Matrix4 {
-		let m = Matrix4.identity;
+		var m = Matrix4.identity;
 		if (vector == null) {
 			return m;
 		}
@@ -142,7 +142,7 @@ export class Matrix4 extends Array<number> {
 	}
 
 	static rotateYZX(vector: Vector3): Matrix4 {
-		let m = Matrix4.identity;
+		var m = Matrix4.identity;
 		if (vector == null) {
 			return m;
 		}
@@ -153,7 +153,7 @@ export class Matrix4 extends Array<number> {
 	}
 
 	static rotateZXY(vector: Vector3): Matrix4 {
-		let m = Matrix4.identity;
+		var m = Matrix4.identity;
 		if (vector == null) {
 			return m;
 		}
@@ -164,7 +164,7 @@ export class Matrix4 extends Array<number> {
 	}
 
 	static rotateZYX(vector: Vector3): Matrix4 {
-		let m = Matrix4.identity;
+		var m = Matrix4.identity;
 		if (vector == null) {
 			return m;
 		}
@@ -217,11 +217,11 @@ export class Matrix4 extends Array<number> {
 		if (from == null || to == null || up == null) {
 			return null;
 		}
-		let zaxis = to.sub(from).normalized;//from.sub(to).normalized;
-		let xaxis = Vector3.cross(up, zaxis).normalized;
-		let yaxis = Vector3.cross(zaxis, xaxis).normalized;
+		var zaxis = to.sub(from).normalized;//from.sub(to).normalized;
+		var xaxis = Vector3.cross(up, zaxis).normalized;
+		var yaxis = Vector3.cross(zaxis, xaxis).normalized;
 		//zaxis = zaxis.mul(-1);
-		const m = Matrix4.identity;
+		var m = Matrix4.identity;
 		m[0] = xaxis.x; m[1] = yaxis.x; m[2]  = zaxis.x;
 		m[4] = xaxis.y; m[5] = yaxis.y; m[6]  = zaxis.y;
 		m[8] = xaxis.z; m[9] = yaxis.z; m[10] = zaxis.z;

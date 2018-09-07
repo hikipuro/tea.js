@@ -28,7 +28,7 @@ export class MatrixChecker extends Array<any> {
 	}
 
 	static shear(): MatrixChecker {
-		const m = MatrixChecker.identity;
+		var m = MatrixChecker.identity;
 		m[1] = m[2] = "shear(x)";
 		m[4] = m[6] = "shear(y)";
 		m[8] = m[9] = "shear(z)";
@@ -36,7 +36,7 @@ export class MatrixChecker extends Array<any> {
 	}
 
 	static rotateX(name: string = "x"): MatrixChecker {
-		const m = MatrixChecker.identity;
+		var m = MatrixChecker.identity;
 		m[5] = `cos(${name})`;
 		m[6] = `sin(${name})`;
 		m[9] = `-sin(${name})`;
@@ -45,7 +45,7 @@ export class MatrixChecker extends Array<any> {
 	}
 
 	static rotateY(name: string = "y"): MatrixChecker {
-		const m = MatrixChecker.identity;
+		var m = MatrixChecker.identity;
 		m[0] = `cos(${name})`;
 		m[2] = `-sin(${name})`;
 		m[8] = `sin(${name})`;
@@ -54,7 +54,7 @@ export class MatrixChecker extends Array<any> {
 	}
 
 	static rotateZ(name: string = "z"): MatrixChecker {
-		const m = MatrixChecker.identity;
+		var m = MatrixChecker.identity;
 		m[0] = `cos(${name})`;
 		m[1] = `sin(${name})`;
 		m[4] = `-sin(${name})`;
@@ -97,9 +97,9 @@ export class MatrixChecker extends Array<any> {
 	}
 
 	protected ma(...a: any[]): any {
-		let result: any = 0;
+		var result: any = 0;
 		for (var i = 0; i < a.length; i++) {
-			const item = a[i];
+			var item = a[i];
 			if (typeof(item) === "number") {
 				if (item === 0) {
 					continue;
@@ -122,8 +122,8 @@ export class MatrixChecker extends Array<any> {
 	}
 
 	protected mv(a: any, b: any): any {
-		const typeA = typeof(a);
-		const typeB = typeof(b);
+		var typeA = typeof(a);
+		var typeB = typeof(b);
 		if (typeA === "number") {
 			if (typeB === "number" ) {
 				return a * b;
@@ -149,7 +149,7 @@ export class MatrixChecker extends Array<any> {
 	}
 
 	toString(): string {
-		const t = new Array(16);
+		var t = new Array(16);
 		for (var i = 0; i < 16; i++) {
 			if (typeof(this[i]) === "number") {
 				t[i] = this[i].toFixed(5);

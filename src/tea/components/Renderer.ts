@@ -3,195 +3,174 @@ import { Component } from "./Component";
 
 class Uniforms {
 	app: Tea.App;
+	gl: WebGLRenderingContext;
 	shader: Tea.Shader;
 
 	constructor(app: Tea.App) {
 		this.app = app;
+		this.gl = this.app.gl;
 	}
 
 	remove(): void {
 		this.app = null;
+		this.gl = null;
 		this.shader = null;
 	}
 
 	useProgram(): void {
-		var gl = this.app.gl;
-		gl.useProgram(this.shader.program);
+		this.gl.useProgram(this.shader.program);
 	}
 
 	uniform1f(name: string, value: number): void {
-		var gl = this.app.gl;
-		var location = this.getLocation(name);
+		var location = this.shader.propertyToID(name);
 		if (location < 0) {
 			return;
 		}
-		gl.uniform1f(location, value);
+		this.gl.uniform1f(location, value);
 	}
 
 	uniform1fv(name: string, value: Float32Array | ArrayLike<number>): void {
-		var gl = this.app.gl;
-		var location = this.getLocation(name);
+		var location = this.shader.propertyToID(name);
 		if (location < 0) {
 			return;
 		}
-		gl.uniform1fv(location, value);
+		this.gl.uniform1fv(location, value);
 	}
 
 	uniform1i(name: string, value: number): void {
-		var gl = this.app.gl;
-		var location = this.getLocation(name);
+		var location = this.shader.propertyToID(name);
 		if (location < 0) {
 			return;
 		}
-		gl.uniform1i(location, value);
+		this.gl.uniform1i(location, value);
 	}
 
 	uniform1iv(name: string, value: Int32Array | ArrayLike<number>): void {
-		var gl = this.app.gl;
-		var location = this.getLocation(name);
+		var location = this.shader.propertyToID(name);
 		if (location < 0) {
 			return;
 		}
-		gl.uniform1iv(location, value);
+		this.gl.uniform1iv(location, value);
 	}
 
 	uniform2f(name: string, x: number, y: number): void {
-		var gl = this.app.gl;
-		var location = this.getLocation(name);
+		var location = this.shader.propertyToID(name);
 		if (location < 0) {
 			return;
 		}
-		gl.uniform2f(location, x, y);
+		this.gl.uniform2f(location, x, y);
 	}
 
 	uniform2fv(name: string, value: Float32Array | ArrayLike<number>): void {
-		var gl = this.app.gl;
-		var location = this.getLocation(name);
+		var location = this.shader.propertyToID(name);
 		if (location < 0) {
 			return;
 		}
-		gl.uniform2fv(location, value);
+		this.gl.uniform2fv(location, value);
 	}
 
 	uniform2i(name: string, x: number, y: number): void {
-		var gl = this.app.gl;
-		var location = this.getLocation(name);
+		var location = this.shader.propertyToID(name);
 		if (location < 0) {
 			return;
 		}
-		gl.uniform2i(location, x, y);
+		this.gl.uniform2i(location, x, y);
 	}
 
 	uniform2iv(name: string, value: Int32Array | ArrayLike<number>): void {
-		var gl = this.app.gl;
-		var location = this.getLocation(name);
+		var location = this.shader.propertyToID(name);
 		if (location < 0) {
 			return;
 		}
-		gl.uniform2iv(location, value);
+		this.gl.uniform2iv(location, value);
 	}
 
 	uniform3f(name: string, x: number, y: number, z: number): void {
-		var gl = this.app.gl;
-		var location = this.getLocation(name);
+		var location = this.shader.propertyToID(name);
 		if (location < 0) {
 			return;
 		}
-		gl.uniform3f(location, x, y, z);
+		this.gl.uniform3f(location, x, y, z);
 	}
 
 	uniform3fv(name: string, value: Float32Array | ArrayLike<number>): void {
-		var gl = this.app.gl;
-		var location = this.getLocation(name);
+		var location = this.shader.propertyToID(name);
 		if (location < 0) {
 			return;
 		}
-		gl.uniform3fv(location, value);
+		this.gl.uniform3fv(location, value);
 	}
 
 	uniform3i(name: string, x: number, y: number, z: number): void {
-		var gl = this.app.gl;
-		var location = this.getLocation(name);
+		var location = this.shader.propertyToID(name);
 		if (location < 0) {
 			return;
 		}
-		gl.uniform3i(location, x, y, z);
+		this.gl.uniform3i(location, x, y, z);
 	}
 
 	uniform3iv(name: string, value: Int32Array | ArrayLike<number>): void {
-		var gl = this.app.gl;
-		var location = this.getLocation(name);
+		var location = this.shader.propertyToID(name);
 		if (location < 0) {
 			return;
 		}
-		gl.uniform3iv(location, value);
+		this.gl.uniform3iv(location, value);
 	}
 
 	uniform4f(name: string, x: number, y: number, z: number, w: number): void {
-		var gl = this.app.gl;
-		var location = this.getLocation(name);
+		var location = this.shader.propertyToID(name);
 		if (location < 0) {
 			return;
 		}
-		gl.uniform4f(location, x, y, z, w);
+		this.gl.uniform4f(location, x, y, z, w);
 	}
 
 	uniform4fv(name: string, value: Float32Array | ArrayLike<number>): void {
-		var gl = this.app.gl;
-		var location = this.getLocation(name);
+		var location = this.shader.propertyToID(name);
 		if (location < 0) {
 			return;
 		}
-		gl.uniform4fv(location, value);
+		this.gl.uniform4fv(location, value);
 	}
 
 	uniform4i(name: string, x: number, y: number, z: number, w: number): void {
-		var gl = this.app.gl;
-		var location = this.getLocation(name);
+		var location = this.shader.propertyToID(name);
 		if (location < 0) {
 			return;
 		}
-		gl.uniform4i(location, x, y, z, w);
+		this.gl.uniform4i(location, x, y, z, w);
 	}
 
 	uniform4iv(name: string, value: Int32Array | ArrayLike<number>): void {
-		var gl = this.app.gl;
-		var location = this.getLocation(name);
+		var location = this.shader.propertyToID(name);
 		if (location < 0) {
 			return;
 		}
-		gl.uniform3iv(location, value);
+		this.gl.uniform3iv(location, value);
 	}
 
 	uniformMatrix2fv(name: string, value: Float32Array | ArrayLike<number>): void {
-		var gl = this.app.gl;
-		var location = this.getLocation(name);
+		var location = this.shader.propertyToID(name);
 		if (location < 0) {
 			return;
 		}
-		gl.uniformMatrix2fv(location, false, value);
+		this.gl.uniformMatrix2fv(location, false, value);
 	}
 
 	uniformMatrix3fv(name: string, value: Float32Array | ArrayLike<number>): void {
-		var gl = this.app.gl;
-		var location = this.getLocation(name);
+		var location = this.shader.propertyToID(name);
 		if (location < 0) {
 			return;
 		}
-		gl.uniformMatrix3fv(location, false, value);
+		this.gl.uniformMatrix3fv(location, false, value);
 	}
 
 	uniformMatrix4fv(name: string, value: Float32Array | ArrayLike<number>): void {
-		var gl = this.app.gl;
-		var location = this.getLocation(name);
+		var location = this.shader.propertyToID(name);
 		if (location < 0) {
 			return;
 		}
-		gl.uniformMatrix4fv(location, false, value);
-	}
-
-	protected getLocation(name: string): WebGLUniformLocation {
-		return this.shader.propertyToID(name);
+		this.gl.uniformMatrix4fv(location, false, value);
 	}
 }
 
@@ -200,10 +179,12 @@ export class Renderer extends Component {
 	enabled: boolean;
 	object3d: Tea.Object3D;
 	material: Tea.Material;
+	protected gl: WebGLRenderingContext;
 	protected _uniforms: Uniforms;
 
 	constructor(app: Tea.App) {
 		super(app);
+		this.gl = app.gl;
 		this.enabled = true;
 		this.material = Tea.Material.getDefault(app);
 		this._uniforms = new Uniforms(app);
@@ -216,7 +197,7 @@ export class Renderer extends Component {
 
 	get worldToLocalMatrix(): Tea.Matrix4x4 {
 		var object3d = this.object3d;
-		return object3d.localToWorldMatrix.inverse;
+		return object3d.worldToLocalMatrix;
 	}
 
 	render(camera: Tea.Camera): void {
@@ -227,33 +208,40 @@ export class Renderer extends Component {
 		this._uniforms.shader = shader;
 		this._uniforms.useProgram();
 		this.setShaderSettings();
-		this.setUniforms(camera);
+		this.setIntrinsicUniforms(camera);
+		this.setMaterialUniforms();
+		this.setLightUniforms(camera);
 		this.setTextures();
 		//this.setTexture(this.material.mainTexture);
 	}
 
-	setAttribute(name: string, size: number, stride: number = 0, offset: number = 0): void {
-		var gl = this.app.gl;
+	vertexAttribPointer(name: string, size: number, stride: number = 0, offset: number = 0): void {
 		var location = this.material.shader.getAttribLocation(name);
 		if (location < 0) {
 			return;
 		}
-		gl.enableVertexAttribArray(location);
+		var gl = this.gl;
 		gl.vertexAttribPointer(
 			location, size, gl.FLOAT, false, stride, offset
 		);
 	}
 
-	disableVertexAttrib(name: string): void {
-		var gl = this.app.gl;
+	enableVertexAttribArray(name: string): void {
 		var location = this.material.shader.getAttribLocation(name);
 		if (0 <= location) {
-			gl.disableVertexAttribArray(location);
+			this.gl.enableVertexAttribArray(location);
+		}
+	}
+
+	disableVertexAttrib(name: string): void {
+		var location = this.material.shader.getAttribLocation(name);
+		if (0 <= location) {
+			this.gl.disableVertexAttribArray(location);
 		}
 	}
 
 	protected setShaderSettings(): void {
-		var gl = this.app.gl;
+		var gl = this.gl;
 		var settings = this.material.shader.settings;
 		if (settings.enableBlend) {
 			gl.enable(gl.BLEND);
@@ -322,7 +310,7 @@ export class Renderer extends Component {
 	}
 
 	protected setShaderBlend(settings: Tea.ShaderSettings): void {
-		var gl = this.app.gl;
+		var gl = this.gl;
 		var blend = settings.blend;
 		gl.blendColor(
 			blend.red,
@@ -361,7 +349,7 @@ export class Renderer extends Component {
 	}
 
 	protected setShaderStencil(settings: Tea.ShaderSettings): void {
-		var gl = this.app.gl;
+		var gl = this.gl;
 		var stencil = settings.stencil;
 		var func = Tea.Shader.getTestFuncValue(
 			gl, stencil.frontFunc
@@ -416,22 +404,17 @@ export class Renderer extends Component {
 		//gl.stencilMaskSeparate(gl.BACK, stencilMask.back);
 	}
 
-	protected setUniforms(camera: Tea.Camera): void {
-		this.setIntrinsicUniforms(camera);
-		this.setMaterialUniforms();
-		this.setLightUniforms(camera);
-	}
-
 	protected setIntrinsicUniforms(camera: Tea.Camera): void {
-		var model = this.localToWorldMatrix;
+		var model = this.object3d.localToWorldMatrix;
 		var view = camera.worldToCameraMatrix;
+		var inverseView = camera.cameraToWorldMatrix;
 		var projection = camera.projectionMatrix;
 
 		var mvMatrix = view.mul(model);
 		//var mvMatrix = model.mul(view);
 		var mvpMatrix = projection.mul(mvMatrix);
 		//var mvpMatrix = mvMatrix.mul(projection);
-		var vpMatrix = projection.mul(view);
+		var vpMatrix = camera.vpMatrix;
 		//var invMatrix = mvpMatrix.inverse;
 		//var itmvMatrix = mvMatrix.inverse.transpose;
 
@@ -440,7 +423,7 @@ export class Renderer extends Component {
 		//this._uniforms.uniformMatrix4fv("TEA_MATRIX_IT_MV", itmvMatrix);
 		this._uniforms.uniformMatrix4fv("TEA_MATRIX_MV", mvMatrix);
 		this._uniforms.uniformMatrix4fv("TEA_MATRIX_V", view);
-		this._uniforms.uniformMatrix4fv("TEA_MATRIX_I_V", view.inverse);
+		this._uniforms.uniformMatrix4fv("TEA_MATRIX_I_V", inverseView);
 		this._uniforms.uniformMatrix4fv("TEA_MATRIX_P", projection);
 		this._uniforms.uniformMatrix4fv("TEA_MATRIX_VP", vpMatrix);
 		//this._uniforms.uniformMatrix4fv("TEA_MATRIX_IT_P", projection);
@@ -465,9 +448,6 @@ export class Renderer extends Component {
 
 	protected setMaterialUniforms(): void {
 		this.material.eachProperty((name, item) => {
-			if (name == null || name === "" || item == null) {
-				return false;
-			}
 			switch (item.type) {
 				case Tea.UniformType.Int:
 					this._uniforms.uniform1i(
@@ -541,9 +521,10 @@ export class Renderer extends Component {
 	}
 
 	protected setTextures(): void {
-		var gl = this.app.gl;
+		var gl = this.gl;
 		var keys = this.material.textureKeys;
-		for (var i = 0; i < keys.length; i++) {
+		var length = keys.length;
+		for (var i = 0; i < length; i++) {
 			var key = keys[i];
 			var texture = this.material.getTexture(key);
 			gl.activeTexture(gl["TEXTURE" + i]);
@@ -552,7 +533,7 @@ export class Renderer extends Component {
 	}
 
 	protected setTexture(id: number, name: string, texture: Tea.Texture): void {
-		var gl = this.app.gl;
+		var gl = this.gl;
 		if (texture == null) {
 			gl.bindTexture(gl.TEXTURE_2D, null);
 			return;

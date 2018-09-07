@@ -123,11 +123,11 @@ export function getElementText(id: string): string {
  * Date.now()
  * @export
  */
-let now = function (): number {
+var now = function (): number {
 	return Date.now();
 }
 if (window.performance != null && window.performance.timing != null) {
-	const navigationStart = performance.timing.navigationStart;
+	var navigationStart = performance.timing.navigationStart;
 	now = function (): number {
 		return navigationStart + performance.now();
 	}
@@ -135,7 +135,7 @@ if (window.performance != null && window.performance.timing != null) {
 export { now };
 
 export function benchmark(func: Function, iteration: number = 1): number {
-	const start = now();
+	var start = now();
 	for (var i = 0; i < iteration; i++) {
 		func();
 	}

@@ -3,8 +3,8 @@ import * as Tea from "../Tea";
 export class Vector2 extends Array<number> {
 	constructor(x: number = 0, y: number = 0) {
 		super(2);
-		this.x = x;
-		this.y = y;
+		this[0] = x;
+		this[1] = y;
 	}
 
 	static get zero(): Vector2 {
@@ -32,23 +32,23 @@ export class Vector2 extends Array<number> {
 	}
 
 	clone(): Vector2 {
-		const vector2 = new Vector2();
-		vector2.x = this.x;
-		vector2.y = this.y;
+		var vector2 = new Vector2();
+		vector2[0] = this[0];
+		vector2[1] = this[1];
 		return vector2;
 	}
 
 	set(x: number, y: number): void {
-		this.x = x;
-		this.y = y;
+		this[0] = x;
+		this[1] = y;
 	}
 
 	equals(value: Vector2): boolean {
 		if (value == null) {
 			return false;
 		}
-		return this.x === value.x
-			&& this.y === value.y;
+		return this[0] === value[0]
+			&& this[1] === value[1];
 	}
 
 	approxEquals(value: Vector2): boolean {
@@ -60,7 +60,7 @@ export class Vector2 extends Array<number> {
 	}
 
 	toString(): string {
-		const t = new Array(2);
+		var t = new Array(2);
 		for (var i = 0; i < 2; i++) {
 			t[i] = this[i].toFixed(5);
 		}

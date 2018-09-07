@@ -7,14 +7,16 @@ export class Shader {
 	vertexShader: WebGLShader;
 	fragmentShader: WebGLShader;
 	settings: Tea.ShaderSettings;
+	protected gl: WebGLRenderingContext;
 	protected _locationsCache: object;
 	protected _attribLocationsCache: object;
 
 	constructor(app: Tea.App) {
 		this.app = app;
+		this.gl = app.gl;
 		this._locationsCache = {};
 		this._attribLocationsCache = {};
-		var gl = this.app.gl;
+		var gl = this.gl;
 		this.program = gl.createProgram();
 		this.vertexShader = gl.createShader(gl.VERTEX_SHADER);
 		this.fragmentShader = gl.createShader(gl.FRAGMENT_SHADER);
@@ -186,21 +188,29 @@ export class Shader {
 	}
 
 	propertyToID(name: string): number {
-		if (this._locationsCache[name]) {
-			return this._locationsCache[name];
+		var cache = this._locationsCache[name];
+		if (cache !== undefined) {
+			return cache;
 		}
-		var gl = this.app.gl;
+		var gl = this.gl;
 		var location = gl.getUniformLocation(this.program, name);
+		if (location == null) {
+			location = -1;
+		}
 		this._locationsCache[name] = location;
 		return location as number;
 	}
 
 	getAttribLocation(name: string): number {
-		if (this._attribLocationsCache[name]) {
-			return this._attribLocationsCache[name];
+		var cache = this._attribLocationsCache[name];
+		if (cache !== undefined) {
+			return cache;
 		}
-		var gl = this.app.gl;
+		var gl = this.gl;
 		var location = gl.getAttribLocation(this.program, name);
+		if (location == null) {
+			location = -1;
+		}
 		this._attribLocationsCache[name] = location;
 		return location;
 	}
@@ -226,7 +236,7 @@ export class Shader {
 	}
 
 	attach(vsSource: string, fsSource: string): void {
-		//var gl = this.app.gl;
+		//var gl = this.gl;
 		this.compile(this.vertexShader, vsSource);
 		this.compile(this.fragmentShader, fsSource);
 		this.link(this.program, this.vertexShader, this.fragmentShader);
@@ -236,7 +246,7 @@ export class Shader {
 	}
 
 	protected compile(shader: WebGLShader, source: string): void {
-		var gl = this.app.gl;
+		var gl = this.gl;
 		gl.shaderSource(shader, source);
 		gl.compileShader(shader);
 		if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
@@ -245,7 +255,7 @@ export class Shader {
 	}
 
 	protected link(program: WebGLProgram, vs: WebGLShader, fs: WebGLShader): void {
-		var gl = this.app.gl;
+		var gl = this.gl;
 		gl.attachShader(program, vs);
 		gl.attachShader(program, fs);
 		gl.linkProgram(program);

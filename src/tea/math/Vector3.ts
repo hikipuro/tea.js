@@ -3,9 +3,9 @@ import * as Tea from "../Tea";
 export class Vector3 extends Array<number> {
 	constructor(x: number = 0, y: number = 0, z: number = 0) {
 		super(3);
-		this.x = x;
-		this.y = y;
-		this.z = z;
+		this[0] = x;
+		this[1] = y;
+		this[2] = z;
 	}
 
 	static get forward(): Vector3 {
@@ -141,12 +141,12 @@ export class Vector3 extends Array<number> {
 	}
 
 	get magnitude(): number {
-		var x = this.x, y = this.y, z = this.z;
+		var x = this[0], y = this[1], z = this[2];
 		return Math.sqrt(x * x + y * y + z * z);
 	}
 
 	get sqrMagnitude(): number {
-		var x = this.x, y = this.y, z = this.z;
+		var x = this[0], y = this[1], z = this[2];
 		return x * x + y * y + z * z;
 	}
 
@@ -157,52 +157,50 @@ export class Vector3 extends Array<number> {
 		}
 		var m = 1 / magnitude;
 		return new Vector3(
-			this.x * m,
-			this.y * m,
-			this.z * m
+			this[0] * m,
+			this[1] * m,
+			this[2] * m
 		);
 	}
 
 	clone(): Vector3 {
 		return new Vector3(
-			this.x,
-			this.y,
-			this.z
+			this[0], this[1], this[2]
 		);
 	}
 
-	copy(value: Vector3): void {
-		this.x = value.x;
-		this.y = value.y;
-		this.z = value.z;
+	set(x: number, y: number, z: number): void {
+		this[0] = x;
+		this[1] = y;
+		this[2] = z;
 	}
 
-	set(x: number, y: number, z: number): void {
-		this.x = x;
-		this.y = y;
-		this.z = z;
+	copy(value: Vector3): void {
+		this[0] = value[0];
+		this[1] = value[1];
+		this[2] = value[2];
 	}
 
 	equals(value: Vector3): boolean {
 		if (value == null) {
 			return false;
 		}
-		return this.x === value.x
-			&& this.y === value.y
-			&& this.z === value.z;
+		return this[0] === value[0]
+			&& this[1] === value[1]
+			&& this[2] === value[2];
 	}
 
 	approxEquals(value: Vector3): boolean {
 		if (value == null) {
 			return false;
 		}
-		return Tea.Mathf.approximately(this.x, value.x)
-			&& Tea.Mathf.approximately(this.y, value.y)
-			&& Tea.Mathf.approximately(this.z, value.z);
+		return Tea.Mathf.approximately(this[0], value[0])
+			&& Tea.Mathf.approximately(this[1], value[1])
+			&& Tea.Mathf.approximately(this[2], value[2]);
 	}
 
 	toString(): string {
-		const t = new Array(3);
+		var t = new Array(3);
 		for (var i = 0; i < 3; i++) {
 			t[i] = this[i].toFixed(5);
 		}
@@ -292,15 +290,15 @@ export class Vector3 extends Array<number> {
 	add(value: number | Vector3): Vector3 {
 		if (value instanceof Vector3) {
 			return new Vector3(
-				this.x + value.x,
-				this.y + value.y,
-				this.z + value.z
+				this[0] + value[0],
+				this[1] + value[1],
+				this[2] + value[2]
 			);
 		}
 		return new Vector3(
-			this.x + value,
-			this.y + value,
-			this.z + value
+			this[0] + value,
+			this[1] + value,
+			this[2] + value
 		);
 	}
 
@@ -308,14 +306,14 @@ export class Vector3 extends Array<number> {
 	add$(value: Vector3): Vector3;
 	add$(value: number | Vector3): Vector3 {
 		if (value instanceof Vector3) {
-			this.x += value.x;
-			this.y += value.y;
-			this.z += value.z;
+			this[0] += value[0];
+			this[1] += value[1];
+			this[2] += value[2];
 			return this;
 		}
-		this.x += value;
-		this.y += value;
-		this.z += value;
+		this[0] += value;
+		this[1] += value;
+		this[2] += value;
 		return this;
 	}
 
@@ -324,15 +322,15 @@ export class Vector3 extends Array<number> {
 	sub(value: number | Vector3): Vector3 {
 		if (value instanceof Vector3) {
 			return new Vector3(
-				this.x - value.x,
-				this.y - value.y,
-				this.z - value.z
+				this[0] - value[0],
+				this[1] - value[1],
+				this[2] - value[2]
 			);
 		}
 		return new Vector3(
-			this.x - value,
-			this.y - value,
-			this.z - value
+			this[0] - value,
+			this[1] - value,
+			this[2] - value
 		);
 	}
 
@@ -340,102 +338,102 @@ export class Vector3 extends Array<number> {
 	sub$(value: Vector3): Vector3;
 	sub$(value: number | Vector3): Vector3 {
 		if (value instanceof Vector3) {
-			this.x -= value.x;
-			this.y -= value.y;
-			this.z -= value.z;
+			this[0] -= value[0];
+			this[1] -= value[1];
+			this[2] -= value[2];
 			return this;
 		}
-		this.x -= value;
-		this.y -= value;
-		this.z -= value;
+		this[0] -= value;
+		this[1] -= value;
+		this[2] -= value;
 		return this;
 	}
 
 	mul(value: number): Vector3 {
 		return new Vector3(
-			this.x * value,
-			this.y * value,
-			this.z * value
+			this[0] * value,
+			this[1] * value,
+			this[2] * value
 		);
 	}
 
 	mul$(value: number): Vector3 {
-		this.x *= value;
-		this.y *= value;
-		this.z *= value;
+		this[0] *= value;
+		this[1] *= value;
+		this[2] *= value;
 		return this;
 	}
 
 	div(value: number): Vector3 {
 		return new Vector3(
-			this.x / value,
-			this.y / value,
-			this.z / value
+			this[0] / value,
+			this[1] / value,
+			this[2] / value
 		);
 	}
 
 	div$(value: number): Vector3 {
-		this.x /= value;
-		this.y /= value;
-		this.z /= value;
+		this[0] /= value;
+		this[1] /= value;
+		this[2] /= value;
 		return this;
 	}
 
 	dot(value: Vector3): number {
-		return this.x * value.x +
-			this.y * value.y +
-			this.z * value.z;
+		return this[0] * value[0] +
+			this[1] * value[1] +
+			this[2] * value[2];
 	}
 
 	cross(value: Vector3): Vector3 {
-		var x = this.x, y = this.y, z = this.z;
+		var x = this[0], y = this[1], z = this[2];
 		return new Vector3(
-			y * value.z - z * value.y,
-			z * value.x - x * value.z,
-			x * value.y - y * value.x
+			y * value[2] - z * value[1],
+			z * value[0] - x * value[2],
+			x * value[1] - y * value[0]
 		);
 	}
 
 	cross$(value: Vector3): Vector3 {
-		var x = this.x, y = this.y, z = this.z;
-		this.x = y * value.z - z * value.y;
-		this.y = z * value.x - x * value.z;
-		this.z = x * value.y - y * value.x;
+		var x = this[0], y = this[1], z = this[2];
+		this[0] = y * value[2] - z * value[1];
+		this[1] = z * value[0] - x * value[2];
+		this[2] = x * value[1] - y * value[0];
 		return this;
 	}
 
 	scale(value: Vector3): Vector3 {
 		return new Vector3(
-			this.x * value.x,
-			this.y * value.y,
-			this.z * value.z
+			this[0] * value[0],
+			this[1] * value[1],
+			this[2] * value[2]
 		);
 	}
 
 	scale$(value: Vector3): Vector3 {
-		this.x *= value.x;
-		this.y *= value.y;
-		this.z *= value.z;
+		this[0] *= value[0];
+		this[1] *= value[1];
+		this[2] *= value[2];
 		return this;
 	}
 
 	rotateX(radian: number): Vector3 {
-		var y = this.y, z = this.z;
+		var y = this[1], z = this[2];
 		var sin = Math.sin(radian);
 		var cos = Math.cos(radian);
 		return new Vector3(
-			this.x,
+			this[0],
 			cos * y + -sin * z,
 			sin * y + cos * z
 		);
 	}
 
 	rotateX$(radian: number): Vector3 {
-		var y = this.y, z = this.z;
+		var y = this[1], z = this[2];
 		var sin = Math.sin(radian);
 		var cos = Math.cos(radian);
-		this.y = cos * y + -sin * z;
-		this.z = sin * y + cos * z;
+		this[1] = cos * y + -sin * z;
+		this[2] = sin * y + cos * z;
 		return this;
 	}
 
@@ -507,34 +505,56 @@ export class Vector3 extends Array<number> {
 	normalize$(): Vector3 {
 		var magnitude = this.magnitude;
 		if (Tea.Mathf.approximately(magnitude, 0)) {
-			this.x = 0;
-			this.y = 0;
-			this.z = 0;
+			this[0] = 0;
+			this[1] = 0;
+			this[2] = 0;
 			return this;
 		}
 		var m = 1 / magnitude;
-		this.x *= m;
-		this.y *= m;
-		this.z *= m;
+		this[0] *= m;
+		this[1] *= m;
+		this[2] *= m;
 		return this;
 	}
 
-	applyMatrix4(matrix: Tea.Matrix4x4): void {
-		const tx = this.x;
-		const ty = this.y;
-		const tz = this.z;
+	applyQuaternion(q: Tea.Quaternion): void {
+		if (q[0] === 0 && q[1] === 0 && q[2] === 0 && q[3] === 0) {
+			return;
+		}
+		var ax = q[0], ay = q[1], az = q[2], aw = q[3];
+		var bx = this[0], by = this[1], bz = this[2], bw = 0;
+		var angles = Tea.Quaternion._tmp;
+		angles[0] = aw * bx + ay * bz - by * az;
+		angles[1] = aw * by + az * bx - bz * ax;
+		angles[2] = aw * bz + ax * by - bx * ay;
+		angles[3] = -(ax * bx) - ay * by - az * bz;
 
-		const x = matrix[0] * tx + matrix[4] * ty + matrix[8]  * tz + matrix[12];
-		const y = matrix[1] * tx + matrix[5] * ty + matrix[9]  * tz + matrix[13];
-		const z = matrix[2] * tx + matrix[6] * ty + matrix[10] * tz + matrix[14];
-		let   w = matrix[3] * tx + matrix[7] * ty + matrix[11] * tz + matrix[15];
+		bx = -ax, by = -ay, bz = -az, bw = aw;
+		ax = angles[0], ay = angles[1], az = angles[2], aw = angles[3];
+		angles[0] = aw * bx + bw * ax + ay * bz - by * az;
+		angles[1] = aw * by + bw * ay + az * bx - bz * ax;
+		angles[2] = aw * bz + bw * az + ax * by - bx * ay;
+		//angles[3] = aw * bw - ax * bx - ay * by - az * bz;
+		
+		this[0] = angles[0];
+		this[1] = angles[1];
+		this[2] = angles[2];
+	}
+
+	applyMatrix4(matrix: Tea.Matrix4x4): void {
+		var tx = this[0], ty = this[1], tz = this[2];
+
+		var x = matrix[0] * tx + matrix[4] * ty + matrix[8]  * tz + matrix[12];
+		var y = matrix[1] * tx + matrix[5] * ty + matrix[9]  * tz + matrix[13];
+		var z = matrix[2] * tx + matrix[6] * ty + matrix[10] * tz + matrix[14];
+		var w = matrix[3] * tx + matrix[7] * ty + matrix[11] * tz + matrix[15];
 	
 		if ( w !== 0 ) {
 			w = 1 / w;
 		}
 	
-		this.x = x * w;
-		this.y = y * w;
-		this.z = z * w;
+		this[0] = x * w;
+		this[1] = y * w;
+		this[2] = z * w;
 	}
 }

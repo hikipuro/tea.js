@@ -23,7 +23,7 @@ export class TestScript extends Tea.Script {
 		r.material.mainTextureOffset = new Tea.Vector2(0, i);
 		r.material.mainTextureScale = new Tea.Vector2(1 + i / 2, 1 + i / 2);
 
-		const keyboard = this.app.keyboard;
+		var keyboard = this.app.keyboard;
 		//console.log(keyboard.isDown(Keyboard.Keys.ArrowLeft));
 		if (keyboard.isDown(Tea.Keyboard.Codes.Space)) {
 			console.log("down");
@@ -35,14 +35,14 @@ export class TestScript extends Tea.Script {
 			console.log("held");
 		}
 
-		const mouse = this.app.mouse;
+		var mouse = this.app.mouse;
 		if (mouse.isMoved) {
 			this.speedY = mouse.x / this.app.width;
 			//console.log(this.speedY);
 			//console.log(mouse.x, mouse.y, mouse.prevX, mouse.prevY);
 			//this.position.x = -0.5 + mouse.x / this.app.width;
 			//this.position.y = 0.5 + mouse.y / this.app.height;
-			let p = new Tea.Vector3(mouse.x, mouse.y, 3);
+			var p = new Tea.Vector3(mouse.x, mouse.y, 3);
 			p = this.object3d.scene.mainCamera.screenToWorldPoint(p);
 			this.localPosition = p;
 			//console.log(p.toString());
@@ -50,8 +50,8 @@ export class TestScript extends Tea.Script {
 		//this.localPosition.z = Math.sin(this.count / 40) * 3.5 - 5;
 		if (mouse.isDown(0)) {
 			console.log("mouse down");
-			let p2 = new Tea.Vector3(mouse.x, mouse.y, 10);
-			const p = this.object3d.scene.mainCamera.screenToViewportPoint(p2);
+			var p2 = new Tea.Vector3(mouse.x, mouse.y, 10);
+			var p = this.object3d.scene.mainCamera.screenToViewportPoint(p2);
 			console.log(p);
 		}
 		if (mouse.isUp(0)) {

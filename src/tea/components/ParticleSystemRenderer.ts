@@ -43,12 +43,12 @@ export class ParticleSystemRenderer extends Renderer {
 	}
 
 	protected createBuffers(): void {
-		var gl = this.app.gl;
+		var gl = this.gl;
 		this.vertexBuffer = gl.createBuffer();
 	}
 
 	protected deleteBuffers(): void {
-		var gl = this.app.gl;
+		var gl = this.gl;
 		if (this.vertexBuffer != null) {
 			gl.deleteBuffer(this.vertexBuffer);
 			this.vertexBuffer = null;
@@ -56,21 +56,24 @@ export class ParticleSystemRenderer extends Renderer {
 	}
 
 	protected setVertexBuffer(particleSystem: Tea.ParticleSystem): void {
-		var gl = this.app.gl;
+		var gl = this.gl;
 		var target = gl.ARRAY_BUFFER;
 		gl.useProgram(this.material.shader.program);
 		var data = new Float32Array(particleSystem.bufferData);
 		gl.bindBuffer(target, this.vertexBuffer);
 		gl.bufferData(target, data, gl.DYNAMIC_DRAW);
 		var stride = 4 * 8;
-		this.setAttribute("vertex", 3, stride, 0);
-		this.setAttribute("color",  4, stride, 4 * 3);
-		this.setAttribute("size",   1, stride, 4 * 7);
+		this.enableVertexAttribArray("vertex");
+		this.enableVertexAttribArray("color");
+		this.enableVertexAttribArray("size");
+		this.vertexAttribPointer("vertex", 3, stride, 0);
+		this.vertexAttribPointer("color",  4, stride, 4 * 3);
+		this.vertexAttribPointer("size",   1, stride, 4 * 7);
 		gl.bindBuffer(target, null);
 	}
 
 	protected draw(particleSystem: Tea.ParticleSystem): void {
-		var gl = this.app.gl;
+		var gl = this.gl;
 		var count = particleSystem.particleCount;
 		gl.drawArrays(gl.POINTS, 0, count);
 	}

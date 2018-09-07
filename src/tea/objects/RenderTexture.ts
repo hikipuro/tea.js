@@ -31,7 +31,7 @@ export class RenderTexture extends Texture {
 	}
 
 	bind(): void {
-		var gl = this.app.gl;
+		var gl = this.gl;
 		gl.bindFramebuffer(
 			gl.FRAMEBUFFER,
 			this.frameBuffer
@@ -39,7 +39,7 @@ export class RenderTexture extends Texture {
 	}
 
 	unbind(): void {
-		var gl = this.app.gl;
+		var gl = this.gl;
 		gl.bindFramebuffer(
 			gl.FRAMEBUFFER,
 			null
@@ -47,7 +47,7 @@ export class RenderTexture extends Texture {
 	}
 
 	protected createBuffers(): void {
-		var gl = this.app.gl;
+		var gl = this.gl;
 		var width = this._width;
 		var height = this._height;
 		this.webgl.texture = gl.createTexture();
