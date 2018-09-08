@@ -42,4 +42,43 @@ export class Bounds {
 	toString(): string {
 		return JSON.stringify(this);
 	}
+
+	collideRay(ray: Tea.Ray): boolean {
+		var line = new Tea.Line();
+		line.point = ray.origin;
+		line.direction = ray.direction;
+		return this.collideLine(line);
+	}
+
+	collideLine(line: Tea.Line): boolean {
+		var min = this.min, max = this.max;
+		var p = line.point;
+		var d = line.direction;
+		var early = -Number.MAX_VALUE;
+		var late = Number.MAX_VALUE;
+
+		for (var i = 0; i < 3; i++) {
+			if (d[i] === 0) {
+				continue;
+			}
+			var id = 1.0 / d[i];
+			var near = (min[i] - p[i]) * id;
+			var far = (max[i] - p[i]) * id;
+			if (near > far) {
+				var tmp = near;
+				near = far;
+				far = tmp;
+			}
+			if (near > early) {
+				early = near;
+			}
+			if (far < late) {
+				late = far;
+			}
+			if (early > late) {
+				return false;
+			}
+		}
+		return true;
+	}
 }

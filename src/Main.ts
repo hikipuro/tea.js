@@ -3,6 +3,7 @@ import { TestScript } from "./TestScript";
 import { TestScript2 } from "./TestScript2";
 import { Rotate } from "./Rotate";
 import { CameraRotate } from "./CameraRotate";
+import { HitTest } from "./HitTest";
 
 export class Main {
 	app: Tea.App;
@@ -164,7 +165,6 @@ export class Main {
 
 		var cube = Tea.Object3D.createPrimitive(this.app, Tea.PrimitiveType.Cube);
 		//cube.name = "cube";
-		//cube.position.x = 2;
 		cube.position.y = 2;
 		//cube.position.z = -5;
 		//cube.scale.y = -1;
@@ -173,6 +173,7 @@ export class Main {
 		//cube.rotation.y = Tea.radians(20);
 		//cube.addScript(new Rotate());
 		//cube.getComponent(Tea.Renderer).material.mainTexture = renderTexture;
+		cube.addComponent(HitTest);
 		scene.appendChild(cube);
 
 		var cube2 = Tea.Object3D.createPrimitive(this.app, Tea.PrimitiveType.Cube);
@@ -242,8 +243,8 @@ export class Main {
 		//plane.renderer.wireframe = true;
 		//plane.position.z = -9;
 		//plane.position.y = -2;
-		plane.rotation.eulerAngles = new Tea.Vector3(-20, 0, 0);
-		//plane.rotation.eulerAngles = new Tea.Vector3(20, 180, 0);
+		//plane.rotation.eulerAngles = new Tea.Vector3(-20, 0, 0);
+		plane.rotation.eulerAngles = new Tea.Vector3(20, 180, 0);
 		//plane.addScript(script);
 		//plane.scale.x = 10;
 		//plane.scale.y = 10;
@@ -261,6 +262,8 @@ export class Main {
 		ps.settings.stencil.fail = Tea.ShaderStencilOp.Keep;
 		ps.settings.stencil.zfail = Tea.ShaderStencilOp.Replace;
 		ps.settings.stencil.zpass = Tea.ShaderStencilOp.Replace;
+		
+		plane.addComponent(HitTest);
 		scene.appendChild(plane);
 
 		console.log("bounds", plane.getComponent(Tea.MeshFilter).mesh.bounds);
@@ -289,7 +292,7 @@ export class Main {
 		cs.settings.stencil.fail = Tea.ShaderStencilOp.Keep;
 		cs.settings.stencil.zfail = Tea.ShaderStencilOp.Keep;
 		cs.settings.stencil.zpass = Tea.ShaderStencilOp.Keep;
-		capsule.addComponent(TestScript);
+		//capsule.addComponent(TestScript);
 		scene.appendChild(capsule);
 
 		//console.log("capsule", capsule.localToWorldMatrix.toString());

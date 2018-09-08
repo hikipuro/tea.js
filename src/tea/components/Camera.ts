@@ -195,7 +195,7 @@ export class Camera extends Component {
 		var far = this.screenToWorldPoint(p);
 		return new Tea.Ray(
 			near,
-			far.sub(near).normalized
+			far.sub$(near).normalize$()
 		);
 	}
 

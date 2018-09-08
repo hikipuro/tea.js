@@ -25,7 +25,15 @@ export class MeshRenderer extends Renderer {
 			var mesh = component.mesh;
 			var bounds = mesh.bounds.clone();
 			bounds.center.add$(this.object3d.position);
+			
+			var rotation = this.object3d.rotation;
+			bounds.extents.applyQuaternion(rotation);
+			var extents = bounds.extents;
+			extents[0] = Math.abs(extents[0]);
+			extents[1] = Math.abs(extents[1]);
+			extents[2] = Math.abs(extents[2]);
 			bounds.extents.scale$(this.object3d.scale);
+			
 			this._mesh = mesh;
 			this._bounds = bounds;
 		} else {
@@ -51,11 +59,6 @@ export class MeshRenderer extends Renderer {
 		super.render(camera);
 
 		var mesh = this._mesh;
-		if (mesh.hasColors) {
-			this._uniforms.uniform1i("useColor", 1);
-		} else {
-			this._uniforms.uniform1i("useColor", 0);
-		}
 		if (this.receiveShadows) {
 			this._uniforms.uniform1i("receiveShadows", 1);
 		} else {

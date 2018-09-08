@@ -92,7 +92,6 @@ export module ShaderSources {
 		uniform vec2 _ShadowTex_ST;
 		uniform vec2 uv_NormalTex;
 		uniform vec2 _NormalTex_ST;
-		uniform bool useColor;
 		uniform bool receiveShadows;
 
 		varying vec3 vNormal;

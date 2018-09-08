@@ -9,6 +9,14 @@ export class Line {
 		this.direction = new Tea.Vector3();
 	}
 
+	toString(): string {
+		return Tea.StringUtil.format(
+			"{ point: {0}, direction: {1} }",
+			this.point.toString(),
+			this.direction.toString()
+		);
+	}
+
 	distance(line: Line): number {
 		var n = this.direction.cross(line.direction).normalized;
 		if (Tea.Mathf.approximately(n.magnitude, 0)) {
