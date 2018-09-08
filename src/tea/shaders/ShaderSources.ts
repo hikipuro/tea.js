@@ -31,13 +31,15 @@ export module ShaderSources {
 
 		void main() {
 			vec3 norm = normalize((TEA_OBJECT_TO_WORLD * vec4(normal, 0.0)).xyz);
-			/*vec3 viewDirection = normalize(
+			vec3 viewDirection = normalize(
 				vec3(
 					TEA_MATRIX_I_V * vec4(0.0, 0.0, 0.0, 1.0) -
 					TEA_OBJECT_TO_WORLD * vertex
 				)
-			);*/
-			vec3 viewDirection = eyeDirection;
+			);
+			
+			/*
+			//vec3 viewDirection = eyeDirection;
 			float diffuse = max(0.0, dot(norm, lightDirection));
 			float attenuation = 1.0;
 			float shininess = 5.0;
@@ -50,6 +52,8 @@ export module ShaderSources {
 				specular = attenuation * pow(specular, shininess);
 			}
 			vColor = vec4(ambientColor + vec3(diffuse + specular), 1.0);
+			*/
+			vColor = vec4(ambientColor, 1.0);
 			vTexCoord = texcoord;
 
 			vec3 n = norm;
@@ -117,33 +121,28 @@ export module ShaderSources {
 				}
 			}
 
-			vec4 col = vColor;
-			
+			vec4 col;// = vec4(vAmbientColor, vColor.a);
 			vec3 normal = (texture2D(_NormalTex, (uv_NormalTex + vTexCoord) / _NormalTex_ST)).rgb;
-			if (normal != vec3(1.0)) {
+			//if (normal != vec3(1.0)) {
 				normal = 2.0 * normal - 1.0;
-				normal.z *= 1.0 / 0.8;
+				//normal.z *= 1.0 / 0.6;
 				normal = normalize(normal);
 				float diffuse = max(0.0, dot(normal, vLightDirection));
 				float attenuation = 1.0;
 				float shininess = 5.0;
 				float specular = 0.0;
-				if (diffuse >= 0.0) {
+				if (diffuse > 0.0) {
 					vec3 ref = reflect(-vLightDirection, normal);
 					specular = dot(ref, vViewDirection);
 					specular = max(0.0, specular);
 					specular = attenuation * pow(specular, shininess);
 				}
-				col = vec4(vAmbientColor + vec3(diffuse + specular), 1.0);
-			}
+				col = vec4(vAmbientColor + vec3(diffuse + specular), vColor.a);
+			//}
 			
 			vec4 tex = texture2D(_MainTex, (uv_MainTex + vTexCoord) / _MainTex_ST);
 			if (!receiveShadows) {
-				if (useColor) {
-					gl_FragColor = tex * _Color * col;
-				} else {
-					gl_FragColor = tex * col;
-				}
+				gl_FragColor = tex * _Color * col;
 				return;
 			}
 
@@ -156,11 +155,7 @@ export module ShaderSources {
 					depthColor = vec4(0.5, 0.5, 0.5, 1.0);
 				}
 			}
-			if (useColor) {
-				gl_FragColor = tex * _Color * col * depthColor;
-			} else {
-				gl_FragColor = tex * col * depthColor;
-			}
+			gl_FragColor = tex * _Color * col * depthColor;
 			//gl_FragColor = vec4(1.0, 1.0, 1.0, 1.0);
 		}
 	`;

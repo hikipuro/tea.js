@@ -172,6 +172,11 @@ class Uniforms {
 		}
 		this.gl.uniformMatrix4fv(location, false, value);
 	}
+
+	hasName(name: string): boolean {
+		var location = this.shader.propertyToID(name);
+		return location >= 0;
+	}
 }
 
 export class Renderer extends Component {
@@ -405,44 +410,43 @@ export class Renderer extends Component {
 	}
 
 	protected setIntrinsicUniforms(camera: Tea.Camera): void {
+		var u = this._uniforms;
 		var model = this.object3d.localToWorldMatrix;
 		var view = camera.worldToCameraMatrix;
-		var inverseView = camera.cameraToWorldMatrix;
 		var projection = camera.projectionMatrix;
+		var vpMatrix = camera.vpMatrix;
+
+		var inverseModel = this.object3d.worldToLocalMatrix;
+		var inverseView = camera.cameraToWorldMatrix;
+
+		u.uniformMatrix4fv("TEA_MATRIX_V", view);
+		u.uniformMatrix4fv("TEA_MATRIX_I_V", inverseView);
+		u.uniformMatrix4fv("TEA_MATRIX_P", projection);
+		u.uniformMatrix4fv("TEA_OBJECT_TO_WORLD", model);
+		u.uniformMatrix4fv("TEA_WORLD_TO_OBJECT", inverseModel);
+		u.uniformMatrix4fv("TEA_MATRIX_VP", vpMatrix);
 
 		var mvMatrix = view.mul(model);
-		//var mvMatrix = model.mul(view);
+		u.uniformMatrix4fv("TEA_MATRIX_MV", mvMatrix);
+
 		var mvpMatrix = projection.mul(mvMatrix);
-		//var mvpMatrix = mvMatrix.mul(projection);
-		var vpMatrix = camera.vpMatrix;
-		//var invMatrix = mvpMatrix.inverse;
-		//var itmvMatrix = mvMatrix.inverse.transpose;
+		u.uniformMatrix4fv("TEA_MATRIX_MVP", mvpMatrix);
 
-		this._uniforms.uniformMatrix4fv("TEA_MATRIX_MVP", mvpMatrix);
-		//this._uniforms.uniformMatrix4fv("TEA_MATRIX_I_MVP", invMatrix);
-		//this._uniforms.uniformMatrix4fv("TEA_MATRIX_IT_MV", itmvMatrix);
-		this._uniforms.uniformMatrix4fv("TEA_MATRIX_MV", mvMatrix);
-		this._uniforms.uniformMatrix4fv("TEA_MATRIX_V", view);
-		this._uniforms.uniformMatrix4fv("TEA_MATRIX_I_V", inverseView);
-		this._uniforms.uniformMatrix4fv("TEA_MATRIX_P", projection);
-		this._uniforms.uniformMatrix4fv("TEA_MATRIX_VP", vpMatrix);
-		//this._uniforms.uniformMatrix4fv("TEA_MATRIX_IT_P", projection);
-		this._uniforms.uniformMatrix4fv("TEA_OBJECT_TO_WORLD", model);
-		this._uniforms.uniformMatrix4fv("TEA_WORLD_TO_OBJECT", this.worldToLocalMatrix);
-		//this._uniforms.uniformMatrix4fv("invMatrix", invMatrix);
+		//u.uniformMatrix4fv("TEA_MATRIX_I_MVP", invMatrix);
+		//u.uniformMatrix4fv("TEA_MATRIX_IT_MV", itmvMatrix);
+		//u.uniformMatrix4fv("TEA_MATRIX_IT_P", projection);
+		//u.uniformMatrix4fv("invMatrix", invMatrix);
 
-		if (camera.enableStereo) {
+		if (u.hasName("TEA_CAMERA_STEREO") && camera.enableStereo) {
 			if (camera.stereoMode === Tea.CameraStereoMode.LineByLine) {
 				var stereoMod = 2;
 				if (camera.isStereoLeft) {
 					stereoMod--;
 				}
-				this._uniforms.uniform1i("TEA_CAMERA_STEREO", stereoMod);
+				u.uniform1i("TEA_CAMERA_STEREO", stereoMod);
 			} else {
-				this._uniforms.uniform1i("TEA_CAMERA_STEREO", 0);
+				u.uniform1i("TEA_CAMERA_STEREO", 0);
 			}
-		} else {
-			this._uniforms.uniform1i("TEA_CAMERA_STEREO", 0);
 		}
 	}
 
@@ -516,7 +520,7 @@ export class Renderer extends Component {
 		light = light.normalized;
 
 		this._uniforms.uniform3fv("lightDirection", light);
-		this._uniforms.uniform3fv("eyeDirection", camera.object3d.position);
+		//this._uniforms.uniform3fv("eyeDirection", camera.object3d.position);
 		this._uniforms.uniform3fv("ambientColor", [0.2, 0.2, 0.2]);
 	}
 

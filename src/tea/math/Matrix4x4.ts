@@ -3,13 +3,45 @@ import { Vector3 } from "./Vector3";
 import { Vector4 } from "./Vector4";
 
 export class Matrix4x4 extends Array<number> {
-	constructor() {
+	constructor();
+	constructor(column0: Tea.Vector4, column1: Tea.Vector4, column2: Tea.Vector4, column3: Tea.Vector4);
+	constructor(a?: Tea.Vector4, b?: Tea.Vector4, c?: Tea.Vector4, d?: Tea.Vector4) {
 		super(16);
-		this[0] = this[1] = this[2] = this[3] = 0;
-		this[4] = this[5] = this[6] = this[7] = 0;
-		this[8] = this[9] = this[10] = this[11] = 0;
-		this[12] = this[13] = this[14] = this[15] = 0;
-		//this.fill(0);
+		if (a != null) {
+			this[0] = a[0];
+			this[1] = a[1];
+			this[2] = a[2];
+			this[3] = a[3];
+		} else {
+			this[0] = this[1] = this[2] = this[3] = 0;
+		}
+
+		if (b != null) {
+			this[4] = b[0];
+			this[5] = b[1];
+			this[6] = b[2];
+			this[7] = b[3];
+		} else {
+			this[4] = this[5] = this[6] = this[7] = 0;
+		}
+		
+		if (c != null) {
+			this[8] = c[0];
+			this[9] = c[1];
+			this[10] = c[2];
+			this[11] = c[3];
+		} else {
+			this[8] = this[9] = this[10] = this[11] = 0;
+		}
+
+		if (d != null) {
+			this[12] = d[0];
+			this[13] = d[1];
+			this[14] = d[2];
+			this[15] = d[3];
+		} else {
+			this[12] = this[13] = this[14] = this[15] = 0;
+		}
 	}
 
 	static get zero(): Matrix4x4 {
@@ -182,44 +214,44 @@ export class Matrix4x4 extends Array<number> {
 			return m;
 		}
 		if (rotation instanceof Vector3) {
-			var sx = Math.sin(rotation.x);
-			var cx = Math.cos(rotation.x);
-			var sy = Math.sin(rotation.y);
-			var cy = Math.cos(rotation.y);
-			var sz = Math.sin(rotation.z);
-			var cz = Math.cos(rotation.z);
-			m[0] = (cy * cz + sy * sx * sz) * scale.x;
-			m[1] = cx * sz * scale.x;
-			m[2] = (-sy * cz + cy * sx * sz) * scale.x;
-			m[4] = (cy * -sz + sy * sx * cz) * scale.y;
-			m[5] = cx * cz * scale.y;
-			m[6] = (-sy * -sz + cy * sx * cz) * scale.y;
-			m[8] = sy * cx * scale.z;
-			m[9] = -sx * scale.z;
-			m[10] = cy * cx * scale.z;
-			m[12] = position.x;
-			m[13] = position.y;
-			m[14] = position.z;
+			var sx = Math.sin(rotation[0]);
+			var cx = Math.cos(rotation[0]);
+			var sy = Math.sin(rotation[1]);
+			var cy = Math.cos(rotation[1]);
+			var sz = Math.sin(rotation[2]);
+			var cz = Math.cos(rotation[2]);
+			m[0] = (cy * cz + sy * sx * sz) * scale[0];
+			m[1] = cx * sz * scale[0];
+			m[2] = (-sy * cz + cy * sx * sz) * scale[0];
+			m[4] = (cy * -sz + sy * sx * cz) * scale[1];
+			m[5] = cx * cz * scale[1];
+			m[6] = (-sy * -sz + cy * sx * cz) * scale[1];
+			m[8] = sy * cx * scale[2];
+			m[9] = -sx * scale[2];
+			m[10] = cy * cx * scale[2];
+			m[12] = position[0];
+			m[13] = position[1];
+			m[14] = position[2];
 			m[15] = 1;
 			return m;
 		}
 
-		var x = rotation.x, y = rotation.y, z = rotation.z, w = rotation.w;
+		var x = rotation[0], y = rotation[1], z = rotation[2], w = rotation[3];
 		var xx = x * x, yy = y * y, zz = z * z;
 		var xy = x * y, xz = x * z, xw = x * w;
 		var yz = y * z, yw = y * w, zw = z * w;
-		m[0] = (1 - 2 * (yy + zz)) * scale.x;
-		m[1] = (2 * (xy + zw)) * scale.x;
-		m[2] = (2 * (xz - yw)) * scale.x;
-		m[4] = (2 * (xy - zw)) * scale.y;
-		m[5] = (1 - 2 * (xx + zz)) * scale.y;
-		m[6] = (2 * (yz + xw)) * scale.y;
-		m[8] = (2 * (xz + yw)) * scale.z;
-		m[9] = (2 * (yz - xw)) * scale.z;
-		m[10] = (1 - 2 * (xx + yy)) * scale.z;
-		m[12] = position.x;
-		m[13] = position.y;
-		m[14] = position.z;
+		m[0] = (1 - 2 * (yy + zz)) * scale[0];
+		m[1] = (2 * (xy + zw)) * scale[0];
+		m[2] = (2 * (xz - yw)) * scale[0];
+		m[4] = (2 * (xy - zw)) * scale[1];
+		m[5] = (1 - 2 * (xx + zz)) * scale[1];
+		m[6] = (2 * (yz + xw)) * scale[1];
+		m[8] = (2 * (xz + yw)) * scale[2];
+		m[9] = (2 * (yz - xw)) * scale[2];
+		m[10] = (1 - 2 * (xx + yy)) * scale[2];
+		m[12] = position[0];
+		m[13] = position[1];
+		m[14] = position[2];
 		m[15] = 1;
 		return m;
 	}
@@ -232,12 +264,12 @@ export class Matrix4x4 extends Array<number> {
 			return m;
 		}
 		if (rotation instanceof Vector3) {
-			var sx = Math.sin(rotation.x);
-			var cx = Math.cos(rotation.x);
-			var sy = Math.sin(rotation.y);
-			var cy = Math.cos(rotation.y);
-			var sz = Math.sin(rotation.z);
-			var cz = Math.cos(rotation.z);
+			var sx = Math.sin(rotation[0]);
+			var cx = Math.cos(rotation[0]);
+			var sy = Math.sin(rotation[1]);
+			var cy = Math.cos(rotation[1]);
+			var sz = Math.sin(rotation[2]);
+			var cz = Math.cos(rotation[2]);
 			m[0] = cy * cz + sy * sx * sz;
 			m[1] = cx * sz;
 			m[2] = -sy * cz + cy * sx * sz;
@@ -247,14 +279,14 @@ export class Matrix4x4 extends Array<number> {
 			m[8] = sy * cx;
 			m[9] = -sx;
 			m[10] = cy * cx;
-			m[12] = position.x;
-			m[13] = position.y;
-			m[14] = position.z;
+			m[12] = position[0];
+			m[13] = position[1];
+			m[14] = position[2];
 			m[15] = 1;
 			return m;
 		}
 
-		var x = rotation.x, y = rotation.y, z = rotation.z, w = rotation.w;
+		var x = rotation[0], y = rotation[1], z = rotation[2], w = rotation[3];
 		var xx = x * x, yy = y * y, zz = z * z;
 		var xy = x * y, xz = x * z, xw = x * w;
 		var yz = y * z, yw = y * w, zw = z * w;
@@ -267,9 +299,9 @@ export class Matrix4x4 extends Array<number> {
 		m[8] = (2 * (xz + yw));
 		m[9] = (2 * (yz - xw));
 		m[10] = (1 - 2 * (xx + yy));
-		m[12] = position.x;
-		m[13] = position.y;
-		m[14] = position.z;
+		m[12] = position[0];
+		m[13] = position[1];
+		m[14] = position[2];
 		m[15] = 1;
 		return m;
 	}
@@ -301,6 +333,18 @@ export class Matrix4x4 extends Array<number> {
 		m[13] = -(top + bottom) / (top - bottom);
 		m[14] = -(zFar + zNear) / dz;
 		m[15] = 1;
+		return m;
+	}
+
+	static frustum(left: number, right: number, bottom: number, top: number, zNear: number, zFar: number): Matrix4x4 {
+		var m = new Matrix4x4();
+		m[0] = 2 * zNear / (right - left);
+		m[5] = 2 * zNear / (top - bottom);
+		m[8] = (right + left) / (right - left);
+		m[9] = (top + bottom) / (top - bottom);
+		m[10] = -(zFar + zNear) / (zFar - zNear);
+		m[11] = -1;
+		m[14] = -(2 * zFar * zNear) / (zFar - zNear);
 		return m;
 	}
 
@@ -388,52 +432,6 @@ export class Matrix4x4 extends Array<number> {
 	}
 
 	get inverse(): Matrix4x4 {
-		/*
-		var m = new Matrix4x4();
-		var m11 = this[0], m21 = this[4], m31 = this[8],  m41 = this[12];
-		var m12 = this[1], m22 = this[5], m32 = this[9],  m42 = this[13];
-		var m13 = this[2], m23 = this[6], m33 = this[10], m43 = this[14];
-		var m14 = this[3], m24 = this[7], m34 = this[11], m44 = this[15];
-
-		m[0] =  (m22 * m33 * m44) + (m23 * m34 * m42) + (m24 * m32 * m43) -
-				(m22 * m34 * m43) - (m23 * m32 * m44) - (m24 * m33 * m42);
-		m[1] =  (m12 * m34 * m43) + (m13 * m32 * m44) + (m14 * m33 * m42) -
-				(m12 * m33 * m44) - (m13 * m34 * m42) - (m14 * m32 * m43);
-		m[2] =  (m12 * m23 * m44) + (m13 * m24 * m42) + (m14 * m22 * m43) -
-				(m12 * m24 * m43) - (m13 * m22 * m44) - (m14 * m23 * m42);
-		m[3] =  (m12 * m24 * m33) + (m13 * m22 * m34) + (m14 * m23 * m32) -
-				(m12 * m23 * m34) - (m13 * m24 * m32) - (m14 * m22 * m33);
-
-		m[4] =  (m21 * m34 * m43) + (m23 * m31 * m44) + (m24 * m33 * m41) -
-				(m21 * m33 * m44) - (m23 * m34 * m41) - (m24 * m31 * m43);
-		m[5] =  (m11 * m33 * m44) + (m13 * m34 * m41) + (m14 * m31 * m43) -
-				(m11 * m34 * m43) - (m13 * m31 * m44) - (m14 * m33 * m41);
-		m[6] =  (m11 * m24 * m43) + (m13 * m21 * m44) + (m14 * m23 * m41) -
-				(m11 * m23 * m44) - (m13 * m24 * m41) - (m14 * m21 * m43);
-		m[7] =  (m11 * m23 * m34) + (m13 * m24 * m31) + (m14 * m21 * m33) -
-				(m11 * m24 * m33) - (m13 * m21 * m34) - (m14 * m23 * m31);
-
-		m[8] =  (m21 * m32 * m44) + (m22 * m34 * m41) + (m24 * m31 * m42) -
-				(m21 * m34 * m42) - (m22 * m31 * m44) - (m24 * m32 * m41);
-		m[9] =  (m11 * m34 * m42) + (m12 * m31 * m44) + (m14 * m32 * m41) -
-				(m11 * m32 * m44) - (m12 * m34 * m41) - (m14 * m31 * m42);
-		m[10] = (m11 * m22 * m44) + (m12 * m24 * m41) + (m14 * m21 * m42) -
-				(m11 * m24 * m42) - (m12 * m21 * m44) - (m14 * m22 * m41);
-		m[11] = (m11 * m24 * m32) + (m12 * m21 * m34) + (m14 * m22 * m31) -
-				(m11 * m22 * m34) - (m12 * m24 * m31) - (m14 * m21 * m32);
-
-		m[12] = (m21 * m33 * m42) + (m22 * m31 * m43) + (m23 * m32 * m41) -
-				(m21 * m32 * m43) - (m22 * m33 * m41) - (m23 * m31 * m42);
-		m[13] = (m11 * m32 * m43) + (m12 * m33 * m41) + (m13 * m31 * m42) -
-				(m11 * m33 * m42) - (m12 * m31 * m43) - (m13 * m32 * m41);
-		m[14] = (m11 * m23 * m42) + (m12 * m21 * m43) + (m13 * m22 * m41) -
-				(m11 * m22 * m43) - (m12 * m23 * m41) - (m13 * m21 * m42);
-		m[15] = (m11 * m22 * m33) + (m12 * m23 * m31) + (m13 * m21 * m32) -
-				(m11 * m23 * m32) - (m12 * m21 * m33) - (m13 * m22 * m31);
-		return m;
-		//*/
-
-		///*
 		var dest = new Matrix4x4();
 		var a = this[0],  b = this[1],  c = this[2],  d = this[3],
 			e = this[4],  f = this[5],  g = this[6],  h = this[7],
@@ -463,7 +461,10 @@ export class Matrix4x4 extends Array<number> {
 		dest[14] = (-m * t + n * r - o * q) * ivd;
 		dest[15] = ( i * t - j * r + k * q) * ivd;
 		return dest;
-		//*/
+	}
+
+	get rotation(): Tea.Quaternion {
+		return this.toQuaternion();
 	}
 
 	getValue(row: number, column: number): number {
@@ -494,22 +495,126 @@ export class Matrix4x4 extends Array<number> {
 		return m;
 	}
 
+	getColumn(index: number): Tea.Vector4 {
+		if (index < 0 || index > 3) {
+			return null;
+		}
+		var n = index * 4;
+		return new Tea.Vector4(
+			this[n + 0],
+			this[n + 1],
+			this[n + 2],
+			this[n + 3]
+		);
+	}
+
+	setColumn(index: number, column: Tea.Vector4): void {
+		if (index < 0 || index > 3) {
+			return;
+		}
+		var n = index * 4;
+		this[n + 0] = column[0];
+		this[n + 1] = column[1];
+		this[n + 2] = column[2];
+		this[n + 3] = column[3];
+	}
+
+	getRow(index: number): Tea.Vector4 {
+		if (index < 0 || index > 3) {
+			return null;
+		}
+		return new Tea.Vector4(
+			this[index + 0],
+			this[index + 4],
+			this[index + 8],
+			this[index + 12]
+		);
+	}
+
+	setRow(index: number, row: Tea.Vector4): void {
+		if (index < 0 || index > 3) {
+			return;
+		}
+		this[index + 0] = row[0];
+		this[index + 4] = row[1];
+		this[index + 8] = row[2];
+		this[index + 12] = row[3];
+	}
+
+	setTRS(position: Vector3, rotation: Vector3, scale: Vector3): void;
+	setTRS(position: Vector3, rotation: Tea.Quaternion, scale: Vector3): void;
+	setTRS(position: Vector3, rotation: Vector3 | Tea.Quaternion, scale: Vector3): void {
+		if (position == null || rotation == null || scale == null) {
+			return;
+		}
+		if (rotation instanceof Vector3) {
+			var sx = Math.sin(rotation[0]);
+			var cx = Math.cos(rotation[0]);
+			var sy = Math.sin(rotation[1]);
+			var cy = Math.cos(rotation[1]);
+			var sz = Math.sin(rotation[2]);
+			var cz = Math.cos(rotation[2]);
+			this[0] = (cy * cz + sy * sx * sz) * scale[0];
+			this[1] = cx * sz * scale[0];
+			this[2] = (-sy * cz + cy * sx * sz) * scale[0];
+			this[3] = 0;
+			this[4] = (cy * -sz + sy * sx * cz) * scale[1];
+			this[5] = cx * cz * scale[1];
+			this[6] = (-sy * -sz + cy * sx * cz) * scale[1];
+			this[7] = 0;
+			this[8] = sy * cx * scale[2];
+			this[9] = -sx * scale[2];
+			this[10] = cy * cx * scale[2];
+			this[11] = 0;
+			this[12] = position[0];
+			this[13] = position[1];
+			this[14] = position[2];
+			this[15] = 1;
+			return;
+		}
+
+		var x = rotation[0], y = rotation[1], z = rotation[2], w = rotation[3];
+		var xx = x * x, yy = y * y, zz = z * z;
+		var xy = x * y, xz = x * z, xw = x * w;
+		var yz = y * z, yw = y * w, zw = z * w;
+		this[0] = (1 - 2 * (yy + zz)) * scale[0];
+		this[1] = (2 * (xy + zw)) * scale[0];
+		this[2] = (2 * (xz - yw)) * scale[0];
+		this[3] = 0;
+		this[4] = (2 * (xy - zw)) * scale[1];
+		this[5] = (1 - 2 * (xx + zz)) * scale[1];
+		this[6] = (2 * (yz + xw)) * scale[1];
+		this[7] = 0;
+		this[8] = (2 * (xz + yw)) * scale[2];
+		this[9] = (2 * (yz - xw)) * scale[2];
+		this[10] = (1 - 2 * (xx + yy)) * scale[2];
+		this[11] = 0;
+		this[12] = position[0];
+		this[13] = position[1];
+		this[14] = position[2];
+		this[15] = 1;
+	}
+
 	perspective(fov: number, aspect: number, zNear: number, zFar: number): void {
 		fov = Tea.radians(fov);
 		var top = Math.tan(fov / 2) * zNear;
 		var bottom = -top;
 		var right = top * aspect;
 		var left = -top * aspect;
-		this[0] = 2 * zNear / (right - left);
-		this[5] = 2 * zNear / (top - bottom);
-		this[8] = (right + left) / (right - left);
-		this[9] = (top + bottom) / (top - bottom);
-		this[10] = -(zFar + zNear) / (zFar - zNear);
+		var rml = right - left;
+		var tmb = top - bottom;
+		var fmn = zFar - zNear;
+		var zNear2 = 2 * zNear;
+		this[0] = zNear2/ rml;
+		this[5] = zNear2 / tmb;
+		this[8] = (right + left) / rml;
+		this[9] = (top + bottom) / tmb;
+		this[10] = -(zFar + zNear) / fmn;
 		this[11] = -1;
-		this[14] = -(2 * zFar * zNear) / (zFar - zNear);
+		this[14] = -(zNear2 * zFar) / fmn;
 		this[1] = this[2] = this[3] = this[4] = 0;
 		this[6] = this[7] = this[12] = this[13] = 0;
-		this[15] = 1;
+		this[15] = 0;
 	}
 
 	mul(vector: Vector4): Vector4;
@@ -562,9 +667,9 @@ export class Matrix4x4 extends Array<number> {
 		}
 	}
 
-	mul$(value: Matrix4x4): void {
+	mul$(value: Matrix4x4): Matrix4x4 {
 		if (value == null) {
-			return null;
+			return this;
 		}
 		var l00 = this[0],   l10 = this[1],   l20 = this[2],   l30 = this[3];
 		var l01 = this[4],   l11 = this[5],   l21 = this[6],   l31 = this[7];
@@ -590,7 +695,47 @@ export class Matrix4x4 extends Array<number> {
 		this[13] = l10 * r03 + l11 * r13 + l12 * r23 + l13 * r33;
 		this[14] = l20 * r03 + l21 * r13 + l22 * r23 + l23 * r33;
 		this[15] = l30 * r03 + l31 * r13 + l32 * r23 + l33 * r33;
+		return this;
 	}
+
+	multiplyPoint(point: Tea.Vector3): Tea.Vector3 {
+		var tx = point[0], ty = point[1], tz = point[2];
+		var x = this[0] * tx + this[4] * ty + this[8]  * tz + this[12];
+		var y = this[1] * tx + this[5] * ty + this[9]  * tz + this[13];
+		var z = this[2] * tx + this[6] * ty + this[10] * tz + this[14];
+		var w = this[3] * tx + this[7] * ty + this[11] * tz + this[15];
+		if (w !== 0) {
+			w = 1 / w;
+		}
+		return new Tea.Vector3(
+			x * w, y * w, z * w
+		);
+	}
+
+	multiplyPoint3x4(point: Tea.Vector3): Tea.Vector3 {
+		var tx = point[0], ty = point[1], tz = point[2];
+		var x = this[0] * tx + this[4] * ty + this[8]  * tz + this[12];
+		var y = this[1] * tx + this[5] * ty + this[9]  * tz + this[13];
+		var z = this[2] * tx + this[6] * ty + this[10] * tz + this[14];
+		return new Tea.Vector3(
+			x, y, z
+		);
+	}
+
+	multiplyVector(vector: Tea.Vector3): Tea.Vector3 {
+		var tx = vector[0], ty = vector[1], tz = vector[2];
+		var x = this[0] * tx + this[4] * ty + this[8]  * tz;
+		var y = this[1] * tx + this[5] * ty + this[9]  * tz;
+		var z = this[2] * tx + this[6] * ty + this[10] * tz;
+		return new Tea.Vector3(
+			x, y, z
+		);
+	}
+
+	/*
+	transformPlane(plane: Tea.Plane): Tea.Plane {
+	}
+	//*/
 
 	toggleHand(): void {
 		this[8]  *= -1;

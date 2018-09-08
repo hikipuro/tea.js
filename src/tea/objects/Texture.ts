@@ -130,9 +130,11 @@ export class Texture {
 		return this._updateCount;
 	}
 
+	/*
 	isGLTexture(texture: WebGLTexture): boolean {
 		return this.gl.isTexture(texture);
 	}
+	//*/
 
 	remove(): void {
 		if (this.webgl.texture != null) {

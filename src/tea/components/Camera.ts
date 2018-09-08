@@ -255,25 +255,26 @@ export class Camera extends Component {
 		var p = position.clone();
 		p.z = 1;
 		var far = this.unproject(p);
-		var ray = far.sub(this.object3d.position).normalized;
+		var ray = far.sub$(this.object3d.position).normalize$();
 
 		var direction = new Tea.Vector3(0, 0, 1);
 		//direction.rotate$(this.rotation.eulerAngles.mul(Tea.Mathf.Deg2Rad));
-		direction = this.object3d.rotation.mul(direction);
-		var d = Tea.Vector3.dot(ray, direction.normalized);
+		//direction = this.object3d.rotation.mul(direction);
+		direction.applyQuaternion(this.object3d.rotation);
+		var d = Tea.Vector3.dot(ray, direction.normalize$());
 
 		return this.object3d.position.add(ray.mul(position.z / d));
 	}
 
 	unproject(viewport: Tea.Vector3): Tea.Vector3 {
-		var view = this.worldToCameraMatrix;
-		var projection = this.projectionMatrix;
-		var vp = projection.mul(view);
-		vp = vp.inverse;
+		//var view = this.worldToCameraMatrix;
+		//var projection = this.projectionMatrix;
+		//var vp = projection.mul(view);
+		var vp = this._vpMatrix.inverse;
 
 		var world = viewport.clone();
-		world.x = world.x * 2 - 1;
-		world.y = world.y * 2 - 1;
+		world[0] = world[0] * 2 - 1;
+		world[1] = world[1] * 2 - 1;
 		world.applyMatrix4(vp);
 		return world;
 	}

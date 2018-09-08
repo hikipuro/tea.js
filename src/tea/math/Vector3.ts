@@ -1,6 +1,8 @@
 import * as Tea from "../Tea";
 
 export class Vector3 extends Array<number> {
+	protected static _tmp: Vector3 = new Vector3();
+
 	constructor(x: number = 0, y: number = 0, z: number = 0) {
 		super(3);
 		this[0] = x;
@@ -50,17 +52,17 @@ export class Vector3 extends Array<number> {
 
 	static max(a: Vector3, b: Vector3): Vector3 {
 		return new Vector3(
-			Math.max(a.x, b.x),
-			Math.max(a.y, b.y),
-			Math.max(a.z, b.z)
+			Math.max(a[0], b[0]),
+			Math.max(a[1], b[1]),
+			Math.max(a[2], b[2])
 		);
 	}
 
 	static min(a: Vector3, b: Vector3): Vector3 {
 		return new Vector3(
-			Math.min(a.x, b.x),
-			Math.min(a.y, b.y),
-			Math.min(a.z, b.z)
+			Math.min(a[0], b[0]),
+			Math.min(a[1], b[1]),
+			Math.min(a[2], b[2])
 		);
 	}
 
@@ -228,28 +230,29 @@ export class Vector3 extends Array<number> {
 	clampMagnitude(maxLength: number): Vector3 {
 		var m = maxLength / this.magnitude;
 		return new Vector3(
-			this.x * m,
-			this.y * m,
-			this.z * m
+			this[0] * m,
+			this[1] * m,
+			this[2] * m
 		);
 	}
 
 	lerp(value: Vector3, t: number): Vector3 {
 		return new Vector3(
-			Tea.Mathf.lerp(this.x, value.x, t),
-			Tea.Mathf.lerp(this.y, value.y, t),
-			Tea.Mathf.lerp(this.z, value.z, t)
+			Tea.Mathf.lerp(this[0], value[0], t),
+			Tea.Mathf.lerp(this[1], value[1], t),
+			Tea.Mathf.lerp(this[2], value[2], t)
 		);
 	}
 
 	lerpUnclamped(value: Vector3, t: number): Vector3 {
 		return new Vector3(
-			Tea.Mathf.lerpUnclamped(this.x, value.x, t),
-			Tea.Mathf.lerpUnclamped(this.y, value.y, t),
-			Tea.Mathf.lerpUnclamped(this.z, value.z, t)
+			Tea.Mathf.lerpUnclamped(this[0], value[0], t),
+			Tea.Mathf.lerpUnclamped(this[1], value[1], t),
+			Tea.Mathf.lerpUnclamped(this[2], value[2], t)
 		);
 	}
 
+	/*
 	project(onNormal: Vector3): Vector3 {
 		return Vector3.zero;
 	}
@@ -284,6 +287,7 @@ export class Vector3 extends Array<number> {
 
 	smoothDamp(): void {
 	}
+	//*/
 
 	add(value: number): Vector3;
 	add(value: Vector3): Vector3;
@@ -438,67 +442,67 @@ export class Vector3 extends Array<number> {
 	}
 
 	rotateY(radian: number): Vector3 {
-		var x = this.x, z = this.z;
+		var x = this[0], z = this[2];
 		var sin = Math.sin(radian);
 		var cos = Math.cos(radian);
 		return new Vector3(
 			cos * x + sin * z,
-			this.y,
+			this[1],
 			-sin * x + cos * z
 		);
 	}
 
 	rotateY$(radian: number): Vector3 {
-		var x = this.x, z = this.z;
+		var x = this[0], z = this[2];
 		var sin = Math.sin(radian);
 		var cos = Math.cos(radian);
-		this.x = cos * x + sin * z;
-		this.z = -sin * x + cos * z;
+		this[0] = cos * x + sin * z;
+		this[2] = -sin * x + cos * z;
 		return this;
 	}
 
 	rotateZ(radian: number): Vector3 {
-		var x = this.x, y = this.y;
+		var x = this[0], y = this[1];
 		var sin = Math.sin(radian);
 		var cos = Math.cos(radian);
 		return new Vector3(
 			cos * x + -sin * y,
 			sin * x + cos * y,
-			this.z
+			this[2]
 		);
 	}
 
 	rotateZ$(radian: number): Vector3 {
-		var x = this.x, y = this.y;
+		var x = this[0], y = this[1];
 		var sin = Math.sin(radian);
 		var cos = Math.cos(radian);
-		this.x = cos * x + -sin * y;
-		this.y = sin * x + cos * y;
+		this[0] = cos * x + -sin * y;
+		this[1] = sin * x + cos * y;
 		return this;
 	}
 
 	rotate(vector: Vector3): Vector3 {
-		var x = this.x, y = this.y, z = this.z;
+		var x = this[0], y = this[1], z = this[2];
 		var sin = Math.sin, cos = Math.cos;
-		y = cos(vector.x) * y + -sin(vector.x) * z;
-		z = sin(vector.x) * y + cos(vector.x) * z;
-		x = cos(vector.y) * x + sin(vector.y) * z;
+		y = cos(vector[0]) * y + -sin(vector[0]) * z;
+		z = sin(vector[0]) * y + cos(vector[0]) * z;
+		x = cos(vector[1]) * x + sin(vector[1]) * z;
 		return new Vector3(
-			cos(vector.z) * x + -sin(vector.z) * y,
-			sin(vector.z) * x + cos(vector.z) * y,
-			-sin(vector.y) * x + cos(vector.y) * z
+			cos(vector[2]) * x + -sin(vector[2]) * y,
+			sin(vector[2]) * x + cos(vector[2]) * y,
+			-sin(vector[1]) * x + cos(vector[1]) * z
 		);
 	}
 
 	rotate$(vector: Vector3): Vector3 {
-		var x = this.x, y = this.y, z = this.z;
+		var x = this[0], y = this[1], z = this[2];
 		var sin = Math.sin, cos = Math.cos;
-		y = cos(vector.x) * y + -sin(vector.x) * z;
-		z = sin(vector.x) * y + cos(vector.x) * z;
-		x = cos(vector.y) * x + sin(vector.y) * z;
-		this.z = -sin(vector.y) * x + cos(vector.y) * z;
-		this.x = cos(vector.z) * x + -sin(vector.z) * y;
-		this.y = sin(vector.z) * x + cos(vector.z) * y;
+		y = cos(vector[0]) * y + -sin(vector[0]) * z;
+		z = sin(vector[0]) * y + cos(vector[0]) * z;
+		x = cos(vector[1]) * x + sin(vector[1]) * z;
+		this.z = -sin(vector[1]) * x + cos(vector[1]) * z;
+		this.x = cos(vector[2]) * x + -sin(vector[2]) * y;
+		this.y = sin(vector[2]) * x + cos(vector[2]) * y;
 		return this;
 	}
 
@@ -543,16 +547,13 @@ export class Vector3 extends Array<number> {
 
 	applyMatrix4(matrix: Tea.Matrix4x4): void {
 		var tx = this[0], ty = this[1], tz = this[2];
-
 		var x = matrix[0] * tx + matrix[4] * ty + matrix[8]  * tz + matrix[12];
 		var y = matrix[1] * tx + matrix[5] * ty + matrix[9]  * tz + matrix[13];
 		var z = matrix[2] * tx + matrix[6] * ty + matrix[10] * tz + matrix[14];
 		var w = matrix[3] * tx + matrix[7] * ty + matrix[11] * tz + matrix[15];
-	
-		if ( w !== 0 ) {
+		if (w !== 0) {
 			w = 1 / w;
 		}
-	
 		this[0] = x * w;
 		this[1] = y * w;
 		this[2] = z * w;

@@ -28,8 +28,12 @@ export class Main {
 		});
 
 		this.count = 0;
-		this.app = new Tea.App("canvas", {antialias: false});
-		//this.app.canvas.style.background = "#000";
+		this.app = new Tea.App("canvas", {
+			antialias: false,
+			alpha: false,
+			//premultipliedAlpha: false
+		});
+		this.app.canvas.style.background = "#000";
 		this.app.width = 400;
 		this.app.height = 400;
 
@@ -339,24 +343,6 @@ export class Main {
 
 		var ray = new Tea.Ray(new Tea.Vector3(0, 1, 0), new Tea.Vector3(0.2, 0.3, 0.4));
 		console.log("test", ray.direction, ray.getPoint(6.5), ray.getPoint(-6.5));
-
-		var mt = Tea.MatrixChecker.translate();
-		var mx = Tea.MatrixChecker.rotateX();
-		var my = Tea.MatrixChecker.rotateY();
-		var mz = Tea.MatrixChecker.rotateZ();
-		var ms = Tea.MatrixChecker.scale();
-		console.log("checker", mt.mul(my).mul(mx).mul(mz).mul(ms).toString());
-		//console.log("ortho", Matrix4x4.ortho(5, 400, 10, 100, 0.3, 1000).toString());
-
-		console.log("lookRotation", Tea.Quaternion.lookRotation(new Tea.Vector3(0.01, 1, 0).normalized));
-		console.log("lookRotation", Tea.Quaternion.lookRotation(Tea.Vector3.up));
-		console.log("lookRotation", Tea.Quaternion.lookRotation(Tea.Vector3.forward, Tea.Vector3.right.mul(2)));
-		console.log("lookRotation", Tea.Quaternion.lookRotation(Tea.Vector3.forward, new Tea.Vector3(1,2)));
-
-		var n = new Tea.Vector3(1,1,1);
-		var t = new Tea.Vector3(0,-1,1);
-		Tea.Vector3.orthoNormalize(n, t);
-		console.log("ortho", n, t);
 
 		///*
 		this.app.start();
