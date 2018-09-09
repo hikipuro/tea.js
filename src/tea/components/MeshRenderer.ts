@@ -106,7 +106,7 @@ export class MeshRenderer extends Renderer {
 		var data = [];
 		for (var i = 0; i < length; i++) {
 			var vertex = mesh.vertices[i];
-			data.push(vertex.x, vertex.y, vertex.z);
+			data.push(vertex[0], vertex[1], vertex[2]);
 			this.enableVertexAttribArray("vertex");
 
 			if (mesh.hasTriangles === false) {
@@ -118,7 +118,7 @@ export class MeshRenderer extends Renderer {
 
 			if (mesh.hasNormals) {
 				var normal = mesh.normals[i];
-				data.push(normal.x, normal.y, normal.z);
+				data.push(normal[0], normal[1], normal[2]);
 				this.enableVertexAttribArray("normal");
 			} else {
 				//data.push(0, 0, 0);
@@ -127,7 +127,7 @@ export class MeshRenderer extends Renderer {
 
 			if (mesh.hasUVs) {
 				var uv = mesh.uv[i];
-				data.push(uv.x, uv.y);
+				data.push(uv[0], uv[1]);
 				this.enableVertexAttribArray("texcoord");
 			} else {
 				//data.push(0, 0);
@@ -136,7 +136,7 @@ export class MeshRenderer extends Renderer {
 
 			if (mesh.hasColors) {
 				var color = mesh.colors[i];
-				data.push(color.r, color.g, color.b, color.a);
+				data.push(color[0], color[1], color[2], color[3]);
 				this.enableVertexAttribArray("color");
 			} else {
 				//data.push(0, 0, 0, 0);
@@ -209,7 +209,7 @@ export class MeshRenderer extends Renderer {
 	protected setFrontFace(): void {
 		var gl = this.gl;
 		var scale = this.object3d.scale;
-		if (scale.x * scale.y * scale.z < 0) {
+		if (scale[0] * scale[1] * scale[2] < 0) {
 			gl.frontFace(gl.CW);
 		} else {
 			gl.frontFace(gl.CCW);

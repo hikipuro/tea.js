@@ -6,9 +6,9 @@ export class Vector4 extends Array<number> {
 	constructor(x: number | Vector3 = 0, y: number = 0, z: number = 0, w: number = 0) {
 		super(4);
 		if (x instanceof Vector3) {
-			this[0] = x.x;
-			this[1] = x.y;
-			this[2] = x.z;
+			this[0] = x[0];
+			this[1] = x[1];
+			this[2] = x[2];
 			this[3] = y;
 		} else {
 			this[0] = x;
@@ -67,12 +67,12 @@ export class Vector4 extends Array<number> {
 	}
 
 	get magnitude(): number {
-		var x = this.x, y = this.y, z = this.z, w = this.w;
+		var x = this[0], y = this[1], z = this[2], w = this[3];
 		return Math.sqrt(x * x + y * y + z * z + w * w);
 	}
 
 	get normalized(): Vector4 {
-		var x = this.x, y = this.y, z = this.z, w = this.w;
+		var x = this[0], y = this[1], z = this[2], w = this[3];
 		var m = 1 / this.magnitude;
 		return new Vector4(x * m, y * m, z * m, w * m);
 	}
@@ -88,10 +88,10 @@ export class Vector4 extends Array<number> {
 		if (value == null) {
 			return false;
 		}
-		return this.x === value.x
-			&& this.y === value.y
-			&& this.z === value.z
-			&& this.w === value.w;
+		return this[0] === value[0]
+			&& this[1] === value[1]
+			&& this[2] === value[2]
+			&& this[3] === value[3];
 	}
 
 	toString(): string {
@@ -106,49 +106,49 @@ export class Vector4 extends Array<number> {
 	}
 
 	toVector3(useW: boolean = false): Vector3 {
-		var vector3 = new Vector3(this.x, this.y, this.z);
+		var vector3 = new Vector3(this[0], this[1], this[2]);
 		if (useW && this.w != 0) {
-			var w = 1 / this.w;
-			vector3.x *= w;
-			vector3.y *= w;
-			vector3.x *= w;
+			var w = 1 / this[3];
+			vector3[0] *= w;
+			vector3[1] *= w;
+			vector3[2] *= w;
 		}
 		return vector3;
 	}
 
 	add(value: Vector4): Vector4 {
 		return new Vector4(
-			this.x + value.x,
-			this.y + value.y,
-			this.z + value.z,
-			this.w + value.w
+			this[0] + value[0],
+			this[1] + value[1],
+			this[2] + value[2],
+			this[3] + value[3]
 		);
 	}
 
 	sub(value: Vector4): Vector4 {
 		return new Vector4(
-			this.x - value.x,
-			this.y - value.y,
-			this.z - value.z,
-			this.w - value.w
+			this[0] - value[0],
+			this[1] - value[1],
+			this[2] - value[2],
+			this[3] - value[3]
 		);
 	}
 
 	mul(value: number): Vector4 {
 		return new Vector4(
-			this.x * value,
-			this.y * value,
-			this.z * value,
-			this.w * value
+			this[0] * value,
+			this[1] * value,
+			this[2] * value,
+			this[3] * value
 		);
 	}
 
 	div(value: number): Vector4 {
 		return new Vector4(
-			this.x / value,
-			this.y / value,
-			this.z / value,
-			this.w / value
+			this[0] / value,
+			this[1] / value,
+			this[2] / value,
+			this[3] / value
 		);
 	}
 }

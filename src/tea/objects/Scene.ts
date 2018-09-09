@@ -69,11 +69,10 @@ export class Scene {
 				renderTexture.bind();
 			}
 			camera.update();
-			var planes = Tea.GeometryUtil.calculateFrustumPlanes(camera);
 			var rendererCount = renderers.length;
 			for (var i = 0; i < rendererCount; i++) {
 				var renderer = renderers[i];
-				if (this.frustumCulling(renderer, planes)) {
+				if (this.frustumCulling(renderer, camera.frustumPlanes)) {
 					continue;
 				}
 				this.renderCamera(camera, renderer);
@@ -164,6 +163,9 @@ export class Scene {
 	}
 
 	protected frustumCulling(renderer: Tea.Renderer, planes: Array<Tea.Plane>): boolean {
+		if (planes == null) {
+			return false;
+		}
 		if (renderer instanceof Tea.MeshRenderer) {
 			return !Tea.GeometryUtil.testPlanesAABB(planes, renderer.bounds);
 		}

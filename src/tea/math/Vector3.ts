@@ -276,9 +276,9 @@ export class Vector3 extends Array<number> {
 		var m = this.magnitude - value.magnitude;
 		m = Tea.Mathf.lerp(0, m, t);
 		return new Vector3(
-			this.x,
-			this.y,
-			this.z
+			this[0],
+			this[1],
+			this[2]
 		);
 	}
 
@@ -500,9 +500,9 @@ export class Vector3 extends Array<number> {
 		y = cos(vector[0]) * y + -sin(vector[0]) * z;
 		z = sin(vector[0]) * y + cos(vector[0]) * z;
 		x = cos(vector[1]) * x + sin(vector[1]) * z;
-		this.z = -sin(vector[1]) * x + cos(vector[1]) * z;
-		this.x = cos(vector[2]) * x + -sin(vector[2]) * y;
-		this.y = sin(vector[2]) * x + cos(vector[2]) * y;
+		this[2] = -sin(vector[1]) * x + cos(vector[1]) * z;
+		this[0] = cos(vector[2]) * x + -sin(vector[2]) * y;
+		this[1] = sin(vector[2]) * x + cos(vector[2]) * y;
 		return this;
 	}
 

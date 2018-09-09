@@ -46,6 +46,7 @@ export class Camera extends Component {
 	stereoDistance: number;
 	stereoMode: Tea.CameraStereoMode;
 	isStereoLeft: boolean;
+	frustumPlanes: Array<Tea.Plane>;
 
 	protected gl: WebGLRenderingContext;
 	protected _cameraToWorldMatrix: Tea.Matrix4x4;
@@ -70,6 +71,8 @@ export class Camera extends Component {
 		this.stereoDistance = 0.1;
 		this.stereoMode = Tea.CameraStereoMode.SideBySide;
 		this.isStereoLeft = true;
+		this._cameraToWorldMatrix = new Tea.Matrix4x4();
+		this._worldToCameraMatrix = new Tea.Matrix4x4();
 		this._projectionMatrix = new Tea.Matrix4x4();
 		this._vpMatrix = new Tea.Matrix4x4();
 		this._prev = new Prev();
@@ -101,19 +104,22 @@ export class Camera extends Component {
 	}
 
 	update(): void {
+		var isChanged = false;
 		if (this._prev.isViewChanged(this.object3d)) {
-			var view = Tea.Matrix4x4.tr(
+			this._cameraToWorldMatrix.setTR(
 				this.object3d.position,
 				this.object3d.rotation
 			);
-			view.toggleHand();
-			this._cameraToWorldMatrix = view;
+			this._cameraToWorldMatrix.toggleHand();
+			//view.toggleHand();
+			//this._cameraToWorldMatrix = view;
 	
-			view = view.inverse;
-			this._worldToCameraMatrix = view;
+			//view = view.inverse;
+			this._worldToCameraMatrix = this._cameraToWorldMatrix.inverse;
 
-			this._prev.position = this.object3d.position.clone();
-			this._prev.rotation = this.object3d.rotation.clone();
+			this._prev.position.copy(this.object3d.position);
+			this._prev.rotation.copy(this.object3d.rotation);
+			isChanged = true;
 		}
 
 		if (this.orthographic) {
@@ -124,6 +130,7 @@ export class Camera extends Component {
 				this.nearClipPlane,
 				this.farClipPlane
 			);
+			isChanged = true;
 		} else {
 			var aspect = this.aspect;
 			if (this._prev.isPerspectiveChanged(this, aspect)) {
@@ -137,11 +144,16 @@ export class Camera extends Component {
 				this._prev.aspect = aspect;
 				this._prev.nearClipPlane = this.nearClipPlane;
 				this._prev.farClipPlane = this.farClipPlane;
+				isChanged = true;
 			}
 		}
-		this._vpMatrix = this._projectionMatrix.mul(
-			this._worldToCameraMatrix
-		);
+
+		if (isChanged) {
+			this._vpMatrix = this._projectionMatrix.mul(
+				this._worldToCameraMatrix
+			);
+			this.frustumPlanes = Tea.GeometryUtil.calculateFrustumPlanes(this);
+		}
 
 		if (this.targetTexture != null) {
 			var t = this.targetTexture;
@@ -189,9 +201,9 @@ export class Camera extends Component {
 
 	screenPointToRay(position: Tea.Vector3): Tea.Ray {
 		var p = position.clone();
-		p.z = this.nearClipPlane;
+		p[2] = this.nearClipPlane;
 		var near = this.screenToWorldPoint(p);
-		p.z = this.farClipPlane;
+		p[2] = this.farClipPlane;
 		var far = this.screenToWorldPoint(p);
 		return new Tea.Ray(
 			near,
@@ -202,10 +214,10 @@ export class Camera extends Component {
 	screenToViewportPoint(position: Tea.Vector3): Tea.Vector3 {
 		var viewport = position.clone();
 		var rect = this.getViewportRect();
-		viewport.x = viewport.x / this.app.width;
-		viewport.x = (viewport.x - rect.x) / rect.width;
-		viewport.y = viewport.y / this.app.height;
-		viewport.y = (viewport.y - rect.y) / rect.height;
+		viewport[0] = viewport[0] / this.app.width;
+		viewport[0] = (viewport[0] - rect[0]) / rect[2];
+		viewport[1] = viewport[1] / this.app.height;
+		viewport[1] = (viewport[1] - rect[1]) / rect[3];
 		return viewport;
 	}
 
@@ -219,9 +231,9 @@ export class Camera extends Component {
 
 	viewportPointToRay(position: Tea.Vector3): Tea.Ray {
 		var p = position.clone();
-		p.z = this.nearClipPlane;
+		p[2] = this.nearClipPlane;
 		var near = this.viewportToWorldPoint(p);
-		p.z = this.farClipPlane;
+		p[2] = this.farClipPlane;
 		var far = this.viewportToWorldPoint(p);
 		return new Tea.Ray(
 			near,
@@ -231,8 +243,8 @@ export class Camera extends Component {
 
 	viewportToScreenPoint(position: Tea.Vector3): Tea.Vector3 {
 		var screen = position.clone();
-		screen.x = screen.x * this.app.width;
-		screen.y = screen.y * this.app.height;
+		screen[0] = screen[0] * this.app.width;
+		screen[1] = screen[1] * this.app.height;
 		return screen;
 	}
 
@@ -253,7 +265,7 @@ export class Camera extends Component {
 		}
 
 		var p = position.clone();
-		p.z = 1;
+		p[2] = 1;
 		var far = this.unproject(p);
 		var ray = far.sub$(this.object3d.position).normalize$();
 
@@ -263,7 +275,7 @@ export class Camera extends Component {
 		direction.applyQuaternion(this.object3d.rotation);
 		var d = Tea.Vector3.dot(ray, direction.normalize$());
 
-		return this.object3d.position.add(ray.mul(position.z / d));
+		return this.object3d.position.add(ray.mul$(position[2] / d));
 	}
 
 	unproject(viewport: Tea.Vector3): Tea.Vector3 {
@@ -289,47 +301,51 @@ export class Camera extends Component {
 	protected getViewportRect(): Tea.Rect {
 		var rect = this._viewportRect;
 		rect.copy(this.rect);
-		if (rect.x < 0) {
-			rect.width += rect.x;
-			rect.x = 0;
+		if (rect[0] < 0) {
+			rect[2] += rect[0];
+			rect[0] = 0;
 		}
-		if (rect.y < 0) {
-			rect.height += rect.y;
-			rect.y = 0;
+		if (rect[1] < 0) {
+			rect[3] += rect[1];
+			rect[1] = 0;
 		}
-		if (rect.xMax > 1) {
-			rect.width = 1 - rect.x;
+		if (rect[0] + rect[2] > 1) {
+			rect[2] = 1 - rect[0];
 		}
-		if (rect.yMax > 1) {
-			rect.height = 1 - rect.y;
+		if (rect[1] + rect[3] > 1) {
+			rect[3] = 1 - rect[1];
 		}
 		return rect;
 	}
 	
 	protected setViewport(): void {
 		var gl = this.gl;
-		var rect = this.rect.clone();
-		if (rect.x < 0) {
-			rect.width += rect.x;
-			rect.x = 0;
+		var rx = this.rect[0];
+		var ry = this.rect[1];
+		var rw = this.rect[2];
+		var rh = this.rect[3];
+		
+		if (rx < 0) {
+			rw += rx;
+			rx = 0;
 		}
-		if (rect.y < 0) {
-			rect.height += rect.y;
-			rect.y = 0;
+		if (ry < 0) {
+			rh += ry;
+			ry = 0;
 		}
-		if (rect.xMax > 1) {
-			rect.width = 1 - rect.x;
+		if (rx + rw > 1) {
+			rw = 1 - rx;
 		}
-		if (rect.yMax > 1) {
-			rect.height = 1 - rect.y;
+		if (ry + rh > 1) {
+			rh = 1 - ry;
 		}
 
 		var width = this.app.width;
 		var height = this.app.height;
-		var x = rect.x * width;
-		var y = rect.y * height;
-		var w = rect.width * width;
-		var h = rect.height * height;
+		var x = rx * width;
+		var y = ry * height;
+		var w = rw * width;
+		var h = rh * height;
 
 		gl.viewport(x, y, w, h);
 		gl.scissor(x, y, w, h);

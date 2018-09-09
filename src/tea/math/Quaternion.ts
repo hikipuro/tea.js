@@ -78,7 +78,7 @@ export class Quaternion extends Array<number> {
 		toDirection = toDirection.normalized;
 		var n = Tea.Vector3.cross(fromDirection, toDirection);
 		var d = Tea.Vector3.dot(fromDirection, toDirection);
-		return new Quaternion(n.x, n.y, n.z, d + 1).normalized;
+		return new Quaternion(n[0], n[1], n[2], d + 1).normalized;
 	}
 
 	static lookRotation(forward: Tea.Vector3, upwards: Tea.Vector3 = Tea.Vector3.up): Quaternion {
@@ -90,7 +90,7 @@ export class Quaternion extends Array<number> {
 		upwards = n.tangent;
 		var right = upwards.cross(forward);
 		var w = 0;
-		var pw = 1 + (right.x + upwards.y + forward.z);
+		var pw = 1 + (right[0] + upwards[1] + forward[2]);
 		if (pw >= 0) {
 			w = Math.sqrt(pw) * 0.5;
 		}
@@ -98,9 +98,9 @@ export class Quaternion extends Array<number> {
 		if (w != 0) {
 			w4 = 1 / (4 * w);
 		}
-		var x = (upwards.z - forward.y) * w4;
-		var y = (forward.x - right.z) * w4;
-		var z = (right.y - upwards.x) * w4;
+		var x = (upwards[2] - forward[1]) * w4;
+		var y = (forward[0] - right[2]) * w4;
+		var z = (right[1] - upwards[0]) * w4;
 		return new Quaternion(x, y, z, w);
 	}
 
@@ -277,10 +277,10 @@ export class Quaternion extends Array<number> {
 
 	add(value: Quaternion): Quaternion {
 		return new Quaternion(
-			this.x + value.x,
-			this.y + value.y,
-			this.z + value.z,
-			this.w + value.w
+			this[0] + value[0],
+			this[1] + value[1],
+			this[2] + value[2],
+			this[3] + value[3]
 		);
 	}
 
@@ -299,19 +299,19 @@ export class Quaternion extends Array<number> {
 			var ax = this[0], ay = this[1], az = this[2], aw = this[3];
 			var bx = value[0], by = value[1], bz = value[2], bw = 0;
 			var angles = Quaternion._tmp;
-			angles.x = aw * bx + ay * bz - by * az;
-			angles.y = aw * by + az * bx - bz * ax;
-			angles.z = aw * bz + ax * by - bx * ay;
-			angles.w = -(ax * bx) - ay * by - az * bz;
+			angles[0] = aw * bx + ay * bz - by * az;
+			angles[1] = aw * by + az * bx - bz * ax;
+			angles[2] = aw * bz + ax * by - bx * ay;
+			angles[3] = -(ax * bx) - ay * by - az * bz;
 
 			bx = -ax, by = -ay, bz = -az, bw = aw;
-			ax = angles.x, ay = angles.y, az = angles.z, aw = angles.w;
-			angles.x = aw * bx + bw * ax + ay * bz - by * az;
-			angles.y = aw * by + bw * ay + az * bx - bz * ax;
-			angles.z = aw * bz + bw * az + ax * by - bx * ay;
-			angles.w = aw * bw - ax * bx - ay * by - az * bz;
+			ax = angles[0], ay = angles[1], az = angles[2], aw = angles[3];
+			angles[0] = aw * bx + bw * ax + ay * bz - by * az;
+			angles[1] = aw * by + bw * ay + az * bx - bz * ax;
+			angles[2] = aw * bz + bw * az + ax * by - bx * ay;
+			//angles[3] = aw * bw - ax * bx - ay * by - az * bz;
 			
-			return new Tea.Vector3(angles.x, angles.y, angles.z);
+			return new Tea.Vector3(angles[0], angles[1], angles[2]);
 			//*/
 			/*
 			var ax = this.x, ay = this.y, az = this.z, aw = this.w;
@@ -354,10 +354,10 @@ export class Quaternion extends Array<number> {
 	}
 
 	dot(value: Quaternion): number {
-		return this.x * value.x +
-			this.y * value.y +
-			this.z * value.z +
-			this.w * value.w;
+		return this[0] * value[0] +
+			this[1] * value[1] +
+			this[2] * value[2] +
+			this[3] * value[3];
 	}
 
 	lerp(q: Quaternion, t: number): Quaternion {
@@ -368,10 +368,10 @@ export class Quaternion extends Array<number> {
 	lerpUnclamped(q: Quaternion, t: number): Quaternion {
 		var u = 1 - t;
 		var q = new Quaternion(
-			this.x * u + q.x * t,
-			this.y * u + q.y * t,
-			this.z * u + q.z * t,
-			this.w * u + q.w * t
+			this[0] * u + q[0] * t,
+			this[1] * u + q[1] * t,
+			this[2] * u + q[2] * t,
+			this[3] * u + q[3] * t
 		);
 		return q.normalized;
 	}
@@ -388,10 +388,10 @@ export class Quaternion extends Array<number> {
 		var w1 = Math.sin(t * a) / sa;
 		var w2 = Math.sin(u * a) / sa;
 		var q = new Quaternion(
-			this.x * w2 + q.x * w1,
-			this.y * w2 + q.y * w1,
-			this.z * w2 + q.z * w1,
-			this.w * w2 + q.w * w1
+			this[0] * w2 + q[0] * w1,
+			this[1] * w2 + q[1] * w1,
+			this[2] * w2 + q[2] * w1,
+			this[3] * w2 + q[3] * w1
 		);
 		return q.normalized;
 	}

@@ -34,9 +34,9 @@ export class Bounds {
 		}
 		var min = this.min;
 		var max = this.max;
-		var x = point.x, y = point.y, z = point.z;
-		return min.x <= x && min.y <= y && min.z <= z
-			&& max.x >= x && max.y >= y && max.z >= z;
+		var x = point[0], y = point[1], z = point[2];
+		return min[0] <= x && min[1] <= y && min[2] <= z
+			&& max[0] >= x && max[1] >= y && max[2] >= z;
 	}
 
 	toString(): string {

@@ -83,28 +83,28 @@ export class GeometryUtil {
 		var result = this._positivePoint;
 		result.copy(bounds.center);
 		result.sub$(bounds.extents);
-		if (normal.x > 0) {
-			result.x += bounds.size.x;
+		if (normal[0] > 0) {
+			result[0] += bounds.size[0];
 		}
-		if (normal.y > 0) {
-			result.y += bounds.size.y;
+		if (normal[1] > 0) {
+			result[1] += bounds.size[1];
 		}
-		if (normal.z > 0) {
-			result.z += bounds.size.z;
+		if (normal[2] > 0) {
+			result[2] += bounds.size[2];
 		}
 		return result;
 	}
 
 	protected static getNegativePoint(bounds: Tea.Bounds, normal: Tea.Vector3): Tea.Vector3 {
 		var result = bounds.min;
-		if (normal.x < 0) {
-			result.x += bounds.size.x;
+		if (normal[0] < 0) {
+			result[0] += bounds.size[0];
 		}
-		if (normal.y < 0) {
-			result.y += bounds.size.y;
+		if (normal[1] < 0) {
+			result[1] += bounds.size[1];
 		}
-		if (normal.z < 0) {
-			result.z += bounds.size.z;
+		if (normal[2] < 0) {
+			result[2] += bounds.size[2];
 		}
 		return result;
 	}

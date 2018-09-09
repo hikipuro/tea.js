@@ -139,7 +139,7 @@ export class Mesh {
 	calculateBounds(): void {
 		var positions = this.vertices;
 		if (positions == null || positions.length <= 0) {
-			return null;
+			return;
 		}
 		var min = new Tea.Vector3();
 		var max = new Tea.Vector3();
@@ -149,23 +149,23 @@ export class Mesh {
 			if (position == null) {
 				continue;
 			}
-			if (position.x < min.x) {
-				min.x = position.x;
+			if (position[0] < min[0]) {
+				min[0] = position[0];
 			}
-			if (position.y < min.y) {
-				min.y = position.y;
+			if (position[1] < min[1]) {
+				min[1] = position[1];
 			}
-			if (position.z < min.z) {
-				min.z = position.z;
+			if (position[2] < min[2]) {
+				min[2] = position[2];
 			}
-			if (position.x > max.x) {
-				max.x = position.x;
+			if (position[0] > max[0]) {
+				max[0] = position[0];
 			}
-			if (position.y > max.y) {
-				max.y = position.y;
+			if (position[1] > max[1]) {
+				max[1] = position[1];
 			}
-			if (position.z > max.z) {
-				max.z = position.z;
+			if (position[2] > max[2]) {
+				max[2] = position[2];
 			}
 		}
 		var size = max.sub(min);
@@ -193,9 +193,9 @@ export class Mesh {
 			if (triangle == null) {
 				continue;
 			}
-			var x = triangle.x;
-			var y = triangle.y;
-			var z = triangle.z;
+			var x = triangle[0];
+			var y = triangle[1];
+			var z = triangle[2];
 			var v0 = vertices[x];
 			var v1 = vertices[y];
 			var v2 = vertices[z];

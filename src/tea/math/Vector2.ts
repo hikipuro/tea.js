@@ -55,8 +55,8 @@ export class Vector2 extends Array<number> {
 		if (value == null) {
 			return false;
 		}
-		return Tea.Mathf.approximately(this.x, value.x)
-			&& Tea.Mathf.approximately(this.y, value.y);
+		return Tea.Mathf.approximately(this[0], value[0])
+			&& Tea.Mathf.approximately(this[1], value[1]);
 	}
 
 	toString(): string {
@@ -71,29 +71,29 @@ export class Vector2 extends Array<number> {
 
 	add(value: Vector2): Vector2 {
 		return new Vector2(
-			this.x + value.x,
-			this.y + value.y
+			this[0] + value[0],
+			this[1] + value[1]
 		);
 	}
 
 	sub(value: Vector2): Vector2 {
 		return new Vector2(
-			this.x - value.x,
-			this.y - value.y
+			this[0] - value[0],
+			this[1] - value[1]
 		);
 	}
 
 	mul(value: number): Vector2 {
 		return new Vector2(
-			this.x * value,
-			this.y * value
+			this[0] * value,
+			this[1] * value
 		);
 	}
 
 	div(value: number): Vector2 {
 		return new Vector2(
-			this.x / value,
-			this.y / value
+			this[0] / value,
+			this[1] / value
 		);
 	}
 }
