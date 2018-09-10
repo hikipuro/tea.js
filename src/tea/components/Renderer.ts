@@ -185,14 +185,14 @@ export class Renderer extends Component {
 	object3d: Tea.Object3D;
 	material: Tea.Material;
 	protected gl: WebGLRenderingContext;
-	protected _uniforms: Uniforms;
+	//protected _uniforms: Uniforms;
 
 	constructor(app: Tea.App) {
 		super(app);
 		this.gl = app.gl;
 		this.enabled = true;
 		this.material = Tea.Material.getDefault(app);
-		this._uniforms = new Uniforms(app);
+		//this._uniforms = new Uniforms(app);
 	}
 
 	get localToWorldMatrix(): Tea.Matrix4x4 {
@@ -205,17 +205,17 @@ export class Renderer extends Component {
 		return object3d.worldToLocalMatrix;
 	}
 
-	render(camera: Tea.Camera): void {
+	render(camera: Tea.Camera, lights: Array<Tea.Light>): void {
 		var shader = this.material.shader;
 		if (shader == null) {
 			return;
 		}
-		this._uniforms.shader = shader;
-		this._uniforms.useProgram();
+		//this._uniforms.shader = shader;
+		this.gl.useProgram(this.material.shader.program);
 		this.setShaderSettings();
 		this.setIntrinsicUniforms(camera);
 		this.setMaterialUniforms();
-		this.setLightUniforms(camera);
+		this.setLightUniforms(camera, lights);
 		this.setTextures();
 		//this.setTexture(this.material.mainTexture);
 	}
@@ -410,7 +410,10 @@ export class Renderer extends Component {
 	}
 
 	protected setIntrinsicUniforms(camera: Tea.Camera): void {
-		var u = this._uniforms;
+		var gl = this.gl;
+		var shader = this.material.shader;
+
+		//var u = this._uniforms;
 		var model = this.object3d.localToWorldMatrix;
 		var view = camera.worldToCameraMatrix;
 		var projection = camera.projectionMatrix;
@@ -419,95 +422,142 @@ export class Renderer extends Component {
 		var inverseModel = this.object3d.worldToLocalMatrix;
 		var inverseView = camera.cameraToWorldMatrix;
 
+		var location: WebGLUniformLocation = null;
+
+		location = shader.propertyToID("TEA_MATRIX_V");
+		if (location != null) {
+			gl.uniformMatrix4fv(location, false, view);
+		}
+		location = shader.propertyToID("TEA_MATRIX_I_V");
+		if (location != null) {
+			gl.uniformMatrix4fv(location, false, inverseView);
+		}
+		location = shader.propertyToID("TEA_MATRIX_P");
+		if (location != null) {
+			gl.uniformMatrix4fv(location, false, projection);
+		}
+		location = shader.propertyToID("TEA_OBJECT_TO_WORLD");
+		if (location != null) {
+			gl.uniformMatrix4fv(location, false, model);
+		}
+		location = shader.propertyToID("TEA_WORLD_TO_OBJECT");
+		if (location != null) {
+			gl.uniformMatrix4fv(location, false, inverseModel);
+		}
+		location = shader.propertyToID("TEA_MATRIX_VP");
+		if (location != null) {
+			gl.uniformMatrix4fv(location, false, vpMatrix);
+		}
+
+		/*
 		u.uniformMatrix4fv("TEA_MATRIX_V", view);
 		u.uniformMatrix4fv("TEA_MATRIX_I_V", inverseView);
 		u.uniformMatrix4fv("TEA_MATRIX_P", projection);
 		u.uniformMatrix4fv("TEA_OBJECT_TO_WORLD", model);
 		u.uniformMatrix4fv("TEA_WORLD_TO_OBJECT", inverseModel);
 		u.uniformMatrix4fv("TEA_MATRIX_VP", vpMatrix);
+		*/
 
 		var mvMatrix = view.mul(model);
-		u.uniformMatrix4fv("TEA_MATRIX_MV", mvMatrix);
+		location = shader.propertyToID("TEA_MATRIX_MV");
+		if (location != null) {
+			gl.uniformMatrix4fv(location, false, mvMatrix);
+		}
+		//u.uniformMatrix4fv("TEA_MATRIX_MV", mvMatrix);
 
-		var mvpMatrix = projection.mul(mvMatrix);
-		u.uniformMatrix4fv("TEA_MATRIX_MVP", mvpMatrix);
+		location = shader.propertyToID("TEA_MATRIX_MVP");
+		if (location != null) {
+			var mvpMatrix = projection.mul(mvMatrix);
+			gl.uniformMatrix4fv(location, false, mvpMatrix);
+		}
+		//u.uniformMatrix4fv("TEA_MATRIX_MVP", mvpMatrix);
 
 		//u.uniformMatrix4fv("TEA_MATRIX_I_MVP", invMatrix);
 		//u.uniformMatrix4fv("TEA_MATRIX_IT_MV", itmvMatrix);
 		//u.uniformMatrix4fv("TEA_MATRIX_IT_P", projection);
 		//u.uniformMatrix4fv("invMatrix", invMatrix);
 
-		if (u.hasName("TEA_CAMERA_STEREO") && camera.enableStereo) {
+		location = shader.propertyToID("TEA_CAMERA_STEREO");
+		if (location != null && camera.enableStereo) {
 			if (camera.stereoMode === Tea.CameraStereoMode.LineByLine) {
 				var stereoMod = 2;
 				if (camera.isStereoLeft) {
 					stereoMod--;
 				}
-				u.uniform1i("TEA_CAMERA_STEREO", stereoMod);
+				gl.uniform1i(location, stereoMod);
 			} else {
-				u.uniform1i("TEA_CAMERA_STEREO", 0);
+				gl.uniform1i(location, 0);
 			}
 		}
 	}
 
 	protected setMaterialUniforms(): void {
+		var gl = this.gl;
+		var shader = this.material.shader;
 		this.material.eachProperty((name, item) => {
+			var location = shader.propertyToID(name);
+			if (location == null) {
+				return;
+			}
+
 			switch (item.type) {
 				case Tea.UniformType.Int:
-					this._uniforms.uniform1i(
-						name, item.value as number
+					gl.uniform1i(
+						location, item.value as number
 					);
 					break;
 				case Tea.UniformType.Float:
-					this._uniforms.uniform1f(
-						name, item.value as number
+					gl.uniform1f(
+						location, item.value as number
 					);
 					break;
 				case Tea.UniformType.Vector2:
-					this._uniforms.uniform2fv(
-						name, item.value as Tea.Vector2
+					gl.uniform2fv(
+						location, item.value as Tea.Vector2
 					);
 					break;
 				case Tea.UniformType.Vector4:
-					this._uniforms.uniform4fv(
-						name, item.value as Tea.Vector4
+					gl.uniform4fv(
+						location, item.value as Tea.Vector4
 					);
 					break;
 				case Tea.UniformType.Matrix:
-					this._uniforms.uniformMatrix4fv(
-						name, item.value as Tea.Matrix4x4
+					gl.uniformMatrix4fv(
+						location, false, item.value as Tea.Matrix4x4
 					);
 					break;
 				case Tea.UniformType.Color:
-					this._uniforms.uniform4fv(
-						name, item.value as Tea.Color
+					gl.uniform4fv(
+						location, item.value as Tea.Color
 					);
 					break;
 				case Tea.UniformType.FloatArray:
-					this._uniforms.uniform1fv(
-						name, item.value as Array<number>
+					gl.uniform1fv(
+						location, item.value as Array<number>
 					);
 					break;
 				case Tea.UniformType.Vector4Array:
-					this._uniforms.uniform4fv(
-						name, Tea.ArrayUtil.unroll(item.value as Array<Tea.Vector4>)
+					gl.uniform4fv(
+						location, Tea.ArrayUtil.unroll(item.value as Array<Tea.Vector4>)
 					);
 					break;
 				case Tea.UniformType.MatrixArray:
-					this._uniforms.uniformMatrix4fv(
-						name, Tea.ArrayUtil.unroll(item.value as Array<Tea.Matrix4x4>)
+					gl.uniformMatrix4fv(
+						location, false, Tea.ArrayUtil.unroll(item.value as Array<Tea.Matrix4x4>)
 					);
 					break;
 				case Tea.UniformType.ColorArray:
-					this._uniforms.uniform4fv(
-						name, Tea.ArrayUtil.unroll(item.value as Array<Tea.Color>)
+					gl.uniform4fv(
+						location, Tea.ArrayUtil.unroll(item.value as Array<Tea.Color>)
 					);
 					break;
 			}
 		});
 	}
 
-	protected setLightUniforms(camera: Tea.Camera): void {
+	protected setLightUniforms(camera: Tea.Camera, lights: Array<Tea.Light>): void {
+		var gl = this.gl;
+		/*
 		var light = new Tea.Vector3(0, 0, -1);
 		light.rotateX$(Tea.radians(30));
 		light.rotateY$(Tea.radians(60));
@@ -518,10 +568,27 @@ export class Renderer extends Component {
 		//light.y = Tea.radians(light.y);
 		//light.z = Tea.radians(light.z);
 		light = light.normalized;
+		*/
 
-		this._uniforms.uniform3fv("lightDirection", light);
+		var location: WebGLUniformLocation = null;
+
+		var d = new Tea.Vector3(0, 0, -1);
+		var lightCount = Math.min(2, lights.length);
+		for (var i = 0; i < lightCount; i++) {
+			location = this.material.shader.propertyToID("lights[" + i + "].direction");
+			if (location != null) {
+				d.applyQuaternion(lights[i].object3d.rotation);
+				d.normalize$();
+				gl.uniform3fv(location, d);
+			}
+		}
+		location = this.material.shader.propertyToID("ambientColor");
+		if (location != null) {
+			gl.uniform3fv(location, [0.2, 0.2, 0.2]);
+		}
+		//this._uniforms.uniform3fv("lightDirection", light);
 		//this._uniforms.uniform3fv("eyeDirection", camera.object3d.position);
-		this._uniforms.uniform3fv("ambientColor", [0.2, 0.2, 0.2]);
+		//this._uniforms.uniform3fv("ambientColor", [0.2, 0.2, 0.2]);
 	}
 
 	protected setTextures(): void {
@@ -537,12 +604,17 @@ export class Renderer extends Component {
 	}
 
 	protected setTexture(id: number, name: string, texture: Tea.Texture): void {
+		var location = this.material.shader.propertyToID(name);
+		if (location == null) {
+			return;
+		}
 		var gl = this.gl;
 		if (texture == null) {
 			gl.bindTexture(gl.TEXTURE_2D, null);
 			return;
 		}
 		gl.bindTexture(gl.TEXTURE_2D, texture.webgl.texture);
-		this._uniforms.uniform1i(name, id);
+		gl.uniform1i(location, id);
+		//this._uniforms.uniform1i(name, id);
 	}
 }

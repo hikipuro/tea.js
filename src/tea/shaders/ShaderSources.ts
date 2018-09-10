@@ -1,5 +1,9 @@
 export module ShaderSources {
 	export const defaultVS = `
+		struct TLight {
+			vec3 direction;
+		};
+
 		attribute vec4 vertex;
 		attribute vec3 normal;
 		attribute vec2 texcoord;
@@ -14,20 +18,15 @@ export module ShaderSources {
 		uniform mat4 TEA_WORLD_TO_OBJECT;
 		uniform mat4 _LightCamera;
 		uniform mat4 tMatrix;
-		//uniform mat4 invMatrix;
-		uniform vec3 lightDirection;
-		uniform vec3 eyeDirection;
-		uniform vec3 ambientColor;
+		uniform TLight lights[2];
 		uniform bool receiveShadows;
 
 		varying vec3 vNormal;
 		varying vec2 vTexCoord;
-		varying vec4 vColor;
 		varying vec4 vDepth;
 		varying vec4 vShadowTexCoord;
 		varying vec3 vLightDirection;
 		varying vec3 vViewDirection;
-		varying vec3 vAmbientColor;
 
 		void main() {
 			vec3 norm = normalize((TEA_OBJECT_TO_WORLD * vec4(normal, 0.0)).xyz);
@@ -53,7 +52,7 @@ export module ShaderSources {
 			}
 			vColor = vec4(ambientColor + vec3(diffuse + specular), 1.0);
 			*/
-			vColor = vec4(ambientColor, 1.0);
+			//vColor = vec4(ambientColor, 1.0);
 			vTexCoord = texcoord;
 
 			vec3 n = norm;
@@ -63,11 +62,10 @@ export module ShaderSources {
 			vViewDirection.y = dot(b, viewDirection);
 			vViewDirection.z = dot(n, viewDirection);
 			vViewDirection = normalize(vViewDirection);
-			vLightDirection.x = dot(t, lightDirection);
-			vLightDirection.y = dot(b, lightDirection);
-			vLightDirection.z = dot(n, lightDirection);
+			vLightDirection.x = dot(t, lights[0].direction);
+			vLightDirection.y = dot(b, lights[0].direction);
+			vLightDirection.z = dot(n, lights[0].direction);
 			vLightDirection = normalize(vLightDirection);
-			vAmbientColor = ambientColor;
 
 			if (receiveShadows) {
 				vDepth = _LightCamera * vertex;
@@ -93,15 +91,14 @@ export module ShaderSources {
 		uniform vec2 uv_NormalTex;
 		uniform vec2 _NormalTex_ST;
 		uniform bool receiveShadows;
+		uniform vec3 ambientColor;
 
 		varying vec3 vNormal;
 		varying vec2 vTexCoord;
-		varying vec4 vColor;
 		varying vec4 vDepth;
 		varying vec4 vShadowTexCoord;
 		varying vec3 vLightDirection;
 		varying vec3 vViewDirection;
-		varying vec3 vAmbientColor;
 
 		float restDepth(vec4 RGBA) {
 			const float rMask = 1.0;
@@ -120,7 +117,7 @@ export module ShaderSources {
 				}
 			}
 
-			vec4 col;// = vec4(vAmbientColor, vColor.a);
+			vec4 col;// = vec4(ambientColor, vColor.a);
 			vec3 normal = (texture2D(_NormalTex, (uv_NormalTex + vTexCoord) / _NormalTex_ST)).rgb;
 			//if (normal != vec3(1.0)) {
 				normal = 2.0 * normal - 1.0;
@@ -136,7 +133,7 @@ export module ShaderSources {
 					specular = max(0.0, specular);
 					specular = attenuation * pow(specular, shininess);
 				}
-				col = vec4(vAmbientColor + vec3(diffuse + specular), vColor.a);
+				col = vec4(ambientColor + vec3(diffuse + specular), 1.0);
 			//}
 			
 			vec4 tex = texture2D(_MainTex, (uv_MainTex + vTexCoord) / _MainTex_ST);

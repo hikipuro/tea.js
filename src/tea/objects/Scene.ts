@@ -7,6 +7,7 @@ export class Scene {
 	protected _firstTime: boolean;
 	protected _cameras: Array<Tea.Camera>;
 	protected _renderers: Array<Tea.Renderer>;
+	protected _lights: Array<Tea.Light>;
 
 	constructor(app: Tea.App) {
 		this.app = app;
@@ -14,6 +15,7 @@ export class Scene {
 		this._firstTime = true;
 		this._cameras = [];
 		this._renderers = [];
+		this._lights = [];
 	}
 
 	get children(): Array<Tea.Object3D> {
@@ -34,6 +36,13 @@ export class Scene {
 			}
 			this._cameras.push.apply(
 				this._cameras, cameras
+			);
+		}
+
+		var lights = object3d.getComponents(Tea.Light);
+		if (lights.length > 0) {
+			this._lights.push.apply(
+				this._lights, lights
 			);
 		}
 	}
@@ -75,7 +84,7 @@ export class Scene {
 				if (this.frustumCulling(renderer, camera.frustumPlanes)) {
 					continue;
 				}
-				this.renderCamera(camera, renderer);
+				this.renderCamera(camera, this._lights, renderer);
 			}
 			if (renderTexture != null) {
 				renderTexture.unbind();
@@ -111,7 +120,7 @@ export class Scene {
 		}
 	}
 
-	protected renderCamera(camera: Tea.Camera, renderer: Tea.Renderer): void {
+	protected renderCamera(camera: Tea.Camera, lights: Array<Tea.Light>, renderer: Tea.Renderer): void {
 		var renderTexture = camera.targetTexture;
 		if (renderTexture != null) {
 			if (renderer.material.mainTexture === renderTexture) {
@@ -119,23 +128,23 @@ export class Scene {
 			}
 		}
 		if (camera instanceof Tea.LightCamera) {
-			this.renderLightCamera(camera, renderer);
+			this.renderLightCamera(camera, lights, renderer);
 			return;
 		}
 		if (camera.enableStereo) {
 			camera.updateLeft();
-			renderer.render(camera);
+			renderer.render(camera, lights);
 			camera.updateRight();
-			renderer.render(camera);
+			renderer.render(camera, lights);
 			return;
 		}
-		renderer.render(camera);
+		renderer.render(camera, lights);
 	}
 
-	protected renderLightCamera(camera: Tea.LightCamera, renderer: Tea.Renderer): void {
+	protected renderLightCamera(camera: Tea.LightCamera, lights: Array<Tea.Light>, renderer: Tea.Renderer): void {
 		var shader = renderer.material.shader;
 		renderer.material.shader = camera.shader;
-		renderer.render(camera);
+		renderer.render(camera, lights);
 
 		if (renderer instanceof Tea.MeshRenderer) {
 			if (renderer.receiveShadows) {

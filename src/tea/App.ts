@@ -139,6 +139,15 @@ export class App {
 		return scene;
 	}
 
+	createLight(): Tea.Object3D {
+		var object3d = new Tea.Object3D(this);
+		object3d.name = "Light";
+		object3d.localPosition = new Tea.Vector3(0, 10, 0);
+		object3d.localRotation = Tea.Quaternion.euler(50, -30, 0);
+		object3d.addComponent(Tea.Light);
+		return object3d;
+	}
+
 	createCamera(): Tea.Object3D {
 		var object3d = new Tea.Object3D(this);
 		object3d.name = "Camera";

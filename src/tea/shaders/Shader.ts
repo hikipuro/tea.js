@@ -187,18 +187,18 @@ export class Shader {
 		return ShaderSources.particleFS;
 	}
 
-	propertyToID(name: string): number {
+	propertyToID(name: string): WebGLUniformLocation {
 		var cache = this._locationsCache[name];
 		if (cache !== undefined) {
 			return cache;
 		}
 		var gl = this.gl;
 		var location = gl.getUniformLocation(this.program, name);
-		if (location == null) {
-			location = -1;
-		}
+		//if (location == null) {
+		//	location = -1;
+		//}
 		this._locationsCache[name] = location;
-		return location as number;
+		return location;
 	}
 
 	getAttribLocation(name: string): number {

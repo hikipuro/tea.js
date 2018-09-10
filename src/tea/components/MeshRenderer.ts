@@ -46,7 +46,7 @@ export class MeshRenderer extends Renderer {
 		this.deleteBuffers();
 	}
 
-	render(camera: Tea.Camera): void {
+	render(camera: Tea.Camera, lights: Array<Tea.Light>): void {
 		if (this.enabled === false || camera == null) {
 			return;
 		}
@@ -56,13 +56,16 @@ export class MeshRenderer extends Renderer {
 		if (this._mesh == null) {
 			return;
 		}
-		super.render(camera);
+		super.render(camera, lights);
 
 		var mesh = this._mesh;
-		if (this.receiveShadows) {
-			this._uniforms.uniform1i("receiveShadows", 1);
+		var location = this.material.shader.propertyToID("receiveShadows");
+		if (location != null && this.receiveShadows) {
+			this.gl.uniform1i(location, 1);
+			//this._uniforms.uniform1i("receiveShadows", 1);
 		} else {
-			this._uniforms.uniform1i("receiveShadows", 0);
+			this.gl.uniform1i(location, 0);
+			//this._uniforms.uniform1i("receiveShadows", 0);
 		}
 		this.setMeshData(mesh);
 		this.setVertexBuffer(mesh);

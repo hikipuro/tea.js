@@ -13,7 +13,7 @@ export class ParticleSystemRenderer extends Renderer {
 		this.deleteBuffers();
 	}
 
-	render(camera: Tea.Camera): void {
+	render(camera: Tea.Camera, lights: Array<Tea.Light>): void {
 		if (this.enabled === false || camera == null) {
 			return;
 		}
@@ -28,7 +28,7 @@ export class ParticleSystemRenderer extends Renderer {
 		if (particleSystem.particleCount <= 0) {
 			return;
 		}
-		super.render(camera);
+		super.render(camera, lights);
 		//this._uniforms.uniform1f("pointSize", particleSystem.pointSize);
 		this.setVertexBuffer(particleSystem);
 		this.draw(particleSystem);

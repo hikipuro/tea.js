@@ -132,6 +132,10 @@ export class Main {
 		//scene.camera.rotation = Tea.Quaternion.euler(90,0,0);
 		this.app.setScene(scene);
 
+		var light = this.app.createLight();
+		light.localRotation = Tea.Quaternion.euler(30, 60, 0);
+		scene.appendChild(light);
+
 		var camera = this.app.createCamera();
 		//camera.localPosition = new Tea.Vector3(0, 4, 0);
 		//camera.localRotation = Tea.Quaternion.euler(90, 0, 0);

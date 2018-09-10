@@ -20,6 +20,17 @@ export * from "./components/Renderer";
 export * from "./components/Script";
 //export * from "./components/Transform";
 
+export * from "./enums/CameraStereoMode";
+export * from "./enums/FilterMode";
+export * from "./enums/FontStyle";
+export * from "./enums/LightType";
+export * from "./enums/PrimitiveType";
+export * from "./enums/Space";
+export * from "./enums/TextAlignment";
+export * from "./enums/TextAnchor";
+export * from "./enums/TextureDimension";
+export * from "./enums/TextureWrapMode";
+
 export * from "./math/Bounds";
 export * from "./math/Mathf";
 export * from "./math/Matrix4x4";
@@ -31,24 +42,15 @@ export * from "./math/Vector4";
 
 export * from "./utils/ArrayBufferUtil";
 export * from "./utils/ArrayUtil";
-export * from "./utils/CameraStereoMode";
 export * from "./utils/Color";
 export * from "./utils/Cursor";
 export * from "./utils/EventDispatcher";
 export * from "./utils/File";
-export * from "./utils/FilterMode";
-export * from "./utils/FontStyle";
 export * from "./utils/GeometryUtil";
 export * from "./utils/MatrixChecker";
-export * from "./utils/PrimitiveType";
 export * from "./utils/Screen";
-export * from "./utils/Space";
 export * from "./utils/Stats";
 export * from "./utils/StringUtil";
-export * from "./utils/TextAlignment";
-export * from "./utils/TextAnchor";
-export * from "./utils/TextureDimension";
-export * from "./utils/TextureWrapMode";
 export * from "./utils/Time";
 
 export * from "./objects/Mesh";
