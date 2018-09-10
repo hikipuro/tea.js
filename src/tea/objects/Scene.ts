@@ -3,6 +3,7 @@ import * as Tea from "../Tea";
 export class Scene {
 	app: Tea.App;
 	mainCamera: Tea.Camera;
+	renderSettings: Tea.RenderSettings;
 	protected _children: Array<Tea.Object3D>;
 	protected _firstTime: boolean;
 	protected _cameras: Array<Tea.Camera>;
@@ -11,6 +12,7 @@ export class Scene {
 
 	constructor(app: Tea.App) {
 		this.app = app;
+		this.renderSettings = new Tea.RenderSettings();
 		this._children = [];
 		this._firstTime = true;
 		this._cameras = [];
@@ -133,18 +135,18 @@ export class Scene {
 		}
 		if (camera.enableStereo) {
 			camera.updateLeft();
-			renderer.render(camera, lights);
+			renderer.render(camera, lights, this.renderSettings);
 			camera.updateRight();
-			renderer.render(camera, lights);
+			renderer.render(camera, lights, this.renderSettings);
 			return;
 		}
-		renderer.render(camera, lights);
+		renderer.render(camera, lights, this.renderSettings);
 	}
 
 	protected renderLightCamera(camera: Tea.LightCamera, lights: Array<Tea.Light>, renderer: Tea.Renderer): void {
 		var shader = renderer.material.shader;
 		renderer.material.shader = camera.shader;
-		renderer.render(camera, lights);
+		renderer.render(camera, lights, this.renderSettings);
 
 		if (renderer instanceof Tea.MeshRenderer) {
 			if (renderer.receiveShadows) {

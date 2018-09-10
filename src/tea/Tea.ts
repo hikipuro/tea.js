@@ -58,6 +58,7 @@ export * from "./objects/Object3D";
 export * from "./objects/Primitives";
 export * from "./objects/Ray";
 export * from "./objects/RaycastHit";
+export * from "./objects/RenderSettings";
 export * from "./objects/RenderTexture";
 export * from "./objects/Material";
 export * from "./objects/Scene";

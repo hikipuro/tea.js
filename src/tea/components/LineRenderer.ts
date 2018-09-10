@@ -39,14 +39,14 @@ export class LineRenderer extends Renderer {
 		this.points.splice(index, 1);
 	}
 
-	render(camera: Tea.Camera, lights: Array<Tea.Light>): void {
+	render(camera: Tea.Camera, lights: Array<Tea.Light>, renderSettings: Tea.RenderSettings): void {
 		if (this.enabled === false || camera == null) {
 			return;
 		}
 		if (this.isRenderable === false) {
 			return;
 		}
-		super.render(camera, lights);
+		super.render(camera, lights, renderSettings);
 		this.setLineData();
 		this.draw();
 		Renderer.drawCallCount++;

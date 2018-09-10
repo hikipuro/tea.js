@@ -205,7 +205,7 @@ export class Renderer extends Component {
 		return object3d.worldToLocalMatrix;
 	}
 
-	render(camera: Tea.Camera, lights: Array<Tea.Light>): void {
+	render(camera: Tea.Camera, lights: Array<Tea.Light>, renderSettings: Tea.RenderSettings): void {
 		var shader = this.material.shader;
 		if (shader == null) {
 			return;
@@ -215,7 +215,7 @@ export class Renderer extends Component {
 		this.setShaderSettings();
 		this.setIntrinsicUniforms(camera);
 		this.setMaterialUniforms();
-		this.setLightUniforms(camera, lights);
+		this.setLightUniforms(camera, lights, renderSettings);
 		this.setTextures();
 		//this.setTexture(this.material.mainTexture);
 	}
@@ -555,21 +555,8 @@ export class Renderer extends Component {
 		});
 	}
 
-	protected setLightUniforms(camera: Tea.Camera, lights: Array<Tea.Light>): void {
+	protected setLightUniforms(camera: Tea.Camera, lights: Array<Tea.Light>, renderSettings: Tea.RenderSettings): void {
 		var gl = this.gl;
-		/*
-		var light = new Tea.Vector3(0, 0, -1);
-		light.rotateX$(Tea.radians(30));
-		light.rotateY$(Tea.radians(60));
-		//light.rotateX(Tea.radians(this.app.frames/2));
-		//light.rotateY$(Tea.radians(90));
-		//light.x = 0.5;
-		//light.x = Tea.radians(light.x);
-		//light.y = Tea.radians(light.y);
-		//light.z = Tea.radians(light.z);
-		light = light.normalized;
-		*/
-
 		var location: WebGLUniformLocation = null;
 
 		var d = new Tea.Vector3(0, 0, -1);
@@ -584,11 +571,9 @@ export class Renderer extends Component {
 		}
 		location = this.material.shader.propertyToID("ambientColor");
 		if (location != null) {
-			gl.uniform3fv(location, [0.2, 0.2, 0.2]);
+			gl.uniform4fv(location, renderSettings.ambientLight);
 		}
-		//this._uniforms.uniform3fv("lightDirection", light);
 		//this._uniforms.uniform3fv("eyeDirection", camera.object3d.position);
-		//this._uniforms.uniform3fv("ambientColor", [0.2, 0.2, 0.2]);
 	}
 
 	protected setTextures(): void {

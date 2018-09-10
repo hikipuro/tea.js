@@ -59,7 +59,7 @@ export class MeshRenderer extends Renderer {
 		this.deleteBuffers();
 	}
 
-	render(camera: Tea.Camera, lights: Array<Tea.Light>): void {
+	render(camera: Tea.Camera, lights: Array<Tea.Light>, renderSettings: Tea.RenderSettings): void {
 		if (this.enabled === false || camera == null) {
 			return;
 		}
@@ -69,7 +69,7 @@ export class MeshRenderer extends Renderer {
 		if (this._mesh == null) {
 			return;
 		}
-		super.render(camera, lights);
+		super.render(camera, lights, renderSettings);
 
 		var mesh = this._mesh;
 		var location = this.material.shader.propertyToID("receiveShadows");

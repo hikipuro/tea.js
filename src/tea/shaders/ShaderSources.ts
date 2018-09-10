@@ -98,7 +98,7 @@ export module ShaderSources {
 		uniform vec2 uv_NormalTex;
 		uniform vec2 _NormalTex_ST;
 		uniform bool receiveShadows;
-		uniform vec3 ambientColor;
+		uniform vec4 ambientColor;
 
 		varying vec3 vNormal;
 		varying vec2 vTexCoord;
@@ -145,7 +145,7 @@ export module ShaderSources {
 					specular = max(0.0, specular);
 					specular = attenuation * pow(specular, shininess);
 				}
-				col = vec4(ambientColor + vec3(diffuse + specular), 1.0);
+				col = vec4(ambientColor.rgb + vec3(diffuse + specular), 1.0);
 			//}
 			
 			vec4 tex = texture2D(_MainTex, (uv_MainTex + vTexCoord) / _MainTex_ST);
