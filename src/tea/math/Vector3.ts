@@ -3,7 +3,7 @@ import * as Tea from "../Tea";
 export class Vector3 extends Array<number> {
 	protected static _tmp: Vector3 = new Vector3();
 
-	constructor(x: number = 0, y: number = 0, z: number = 0) {
+	constructor(x: number = 0.0, y: number = 0.0, z: number = 0.0) {
 		super(3);
 		this[0] = x;
 		this[1] = y;
@@ -153,8 +153,9 @@ export class Vector3 extends Array<number> {
 	}
 
 	get normalized(): Vector3 {
-		var magnitude = this.magnitude;
-		if (Tea.Mathf.approximately(magnitude, 0)) {
+		var x = this[0], y = this[1], z = this[2];
+		var magnitude = Math.sqrt(x * x + y * y + z * z);
+		if (magnitude === 0) {
 			return new Vector3();
 		}
 		var m = 1 / magnitude;
@@ -507,8 +508,9 @@ export class Vector3 extends Array<number> {
 	}
 
 	normalize$(): Vector3 {
-		var magnitude = this.magnitude;
-		if (Tea.Mathf.approximately(magnitude, 0)) {
+		var x = this[0], y = this[1], z = this[2];
+		var magnitude = Math.sqrt(x * x + y * y + z * z);
+		if (magnitude === 0) {
 			this[0] = 0;
 			this[1] = 0;
 			this[2] = 0;
@@ -522,37 +524,31 @@ export class Vector3 extends Array<number> {
 	}
 
 	applyQuaternion(q: Tea.Quaternion): void {
-		if (q[0] === 0 && q[1] === 0 && q[2] === 0 && q[3] === 0) {
+		var ax = q[0], ay = q[1], az = q[2], aw = q[3];
+		if (ax === 0.0 && ay === 0.0 && az === 0.0 && aw === 0.0) {
 			return;
 		}
-		var ax = q[0], ay = q[1], az = q[2], aw = q[3];
-		var bx = this[0], by = this[1], bz = this[2], bw = 0;
-		var angles = Tea.Quaternion._tmp;
-		angles[0] = aw * bx + ay * bz - by * az;
-		angles[1] = aw * by + az * bx - bz * ax;
-		angles[2] = aw * bz + ax * by - bx * ay;
-		angles[3] = -(ax * bx) - ay * by - az * bz;
-
+		var bx = this[0], by = this[1], bz = this[2], bw = 0.0;
+		var q = Tea.Quaternion._tmp;
+		q[0] = aw * bx + ay * bz - by * az;
+		q[1] = aw * by + az * bx - bz * ax;
+		q[2] = aw * bz + ax * by - bx * ay;
+		q[3] = -(ax * bx) - ay * by - az * bz;
 		bx = -ax, by = -ay, bz = -az, bw = aw;
-		ax = angles[0], ay = angles[1], az = angles[2], aw = angles[3];
-		angles[0] = aw * bx + bw * ax + ay * bz - by * az;
-		angles[1] = aw * by + bw * ay + az * bx - bz * ax;
-		angles[2] = aw * bz + bw * az + ax * by - bx * ay;
-		//angles[3] = aw * bw - ax * bx - ay * by - az * bz;
-		
-		this[0] = angles[0];
-		this[1] = angles[1];
-		this[2] = angles[2];
+		ax = q[0], ay = q[1], az = q[2], aw = q[3];
+		this[0] = aw * bx + bw * ax + ay * bz - by * az;
+		this[1] = aw * by + bw * ay + az * bx - bz * ax;
+		this[2] = aw * bz + bw * az + ax * by - bx * ay;
 	}
 
-	applyMatrix4(matrix: Tea.Matrix4x4): void {
+	applyMatrix4(m: Tea.Matrix4x4): void {
 		var tx = this[0], ty = this[1], tz = this[2];
-		var x = matrix[0] * tx + matrix[4] * ty + matrix[8]  * tz + matrix[12];
-		var y = matrix[1] * tx + matrix[5] * ty + matrix[9]  * tz + matrix[13];
-		var z = matrix[2] * tx + matrix[6] * ty + matrix[10] * tz + matrix[14];
-		var w = matrix[3] * tx + matrix[7] * ty + matrix[11] * tz + matrix[15];
-		if (w !== 0) {
-			w = 1 / w;
+		var x = m[0] * tx + m[4] * ty + m[8]  * tz + m[12];
+		var y = m[1] * tx + m[5] * ty + m[9]  * tz + m[13];
+		var z = m[2] * tx + m[6] * ty + m[10] * tz + m[14];
+		var w = m[3] * tx + m[7] * ty + m[11] * tz + m[15];
+		if (w !== 0.0) {
+			w = 1.0 / w;
 		}
 		this[0] = x * w;
 		this[1] = y * w;

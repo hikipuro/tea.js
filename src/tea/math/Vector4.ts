@@ -3,7 +3,7 @@ import { Vector3 } from "./Vector3";
 export class Vector4 extends Array<number> {
 	constructor(x: number, y: number, z: number, w: number);
 	constructor(vector3: Vector3, w: number);
-	constructor(x: number | Vector3 = 0, y: number = 0, z: number = 0, w: number = 0) {
+	constructor(x: number | Vector3 = 0.0, y: number = 0.0, z: number = 0.0, w: number = 0.0) {
 		super(4);
 		if (x instanceof Vector3) {
 			this[0] = x[0];

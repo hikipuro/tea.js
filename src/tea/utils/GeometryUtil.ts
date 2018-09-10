@@ -30,7 +30,7 @@ export class GeometryUtil {
 				//d = pmat.getValue(3, 3) + pmat.getValue(r, 3);
 			}
 			vec3.set(a, b, c);
-			var normal = vec3.normalize$().mul$(-1);
+			var normal = vec3.normalize$().mul$(-1.0);
 			normal.applyQuaternion(rotation);
 			planes[i] = new Tea.Plane(normal, position);
 		}
@@ -40,7 +40,7 @@ export class GeometryUtil {
 		c = m32 + m22;
 		//d = pmat.getValue(3, 3) + pmat.getValue(2, 3);
 		vec3.set(a, b, c);
-		var normal = vec3.normalize$().mul$(-1);
+		var normal = vec3.normalize$().mul$(-1.0);
 		normal.applyQuaternion(rotation);
 		var forwardNear = forward.mul(near);
 		var p = position.add(forwardNear);
@@ -51,7 +51,7 @@ export class GeometryUtil {
 		c = m32 - m22;
 		//d = pmat.getValue(3, 3) - pmat.getValue(2, 3);
 		vec3.set(a, b, c);
-		normal = vec3.normalize$().mul$(-1);
+		normal = vec3.normalize$().mul$(-1.0);
 		normal.applyQuaternion(rotation);
 		p = position.add(forwardNear.add$(forward.mul$(far)));
 		planes[5] = new Tea.Plane(normal, p);
@@ -67,14 +67,9 @@ export class GeometryUtil {
 			var normal = planes[i].normal;
 			var vp = this.getPositivePoint(bounds, normal);
 			var dp = planes[i].getDistanceToPoint(vp);
-			if (dp < 0) {
+			if (dp < 0.0) {
 				return false;
 			}
-			//var vn = this.getNegativePoint(bounds, normal);
-			//var dn = planes[i].getDistanceToPoint(vn);
-			//if (dn < 0) {
-				//return false;
-			//}
 		}
 		return true;
 	}
@@ -83,13 +78,13 @@ export class GeometryUtil {
 		var result = this._positivePoint;
 		result.copy(bounds.center);
 		result.sub$(bounds.extents);
-		if (normal[0] > 0) {
+		if (normal[0] > 0.0) {
 			result[0] += bounds.size[0];
 		}
-		if (normal[1] > 0) {
+		if (normal[1] > 0.0) {
 			result[1] += bounds.size[1];
 		}
-		if (normal[2] > 0) {
+		if (normal[2] > 0.0) {
 			result[2] += bounds.size[2];
 		}
 		return result;
@@ -97,13 +92,13 @@ export class GeometryUtil {
 
 	protected static getNegativePoint(bounds: Tea.Bounds, normal: Tea.Vector3): Tea.Vector3 {
 		var result = bounds.min;
-		if (normal[0] < 0) {
+		if (normal[0] < 0.0) {
 			result[0] += bounds.size[0];
 		}
-		if (normal[1] < 0) {
+		if (normal[1] < 0.0) {
 			result[1] += bounds.size[1];
 		}
-		if (normal[2] < 0) {
+		if (normal[2] < 0.0) {
 			result[2] += bounds.size[2];
 		}
 		return result;

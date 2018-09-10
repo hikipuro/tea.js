@@ -9,12 +9,13 @@ export class Mouse {
 	prevButtons: Array<boolean>;
 	protected _app: Tea.App;
 	protected _element: HTMLElement;
-	protected _lastMoveTime: number = 0;
 	protected _buttonCount: number = 5;
+	protected _isMoved: boolean;
 
 	constructor(app: Tea.App, element: HTMLElement) {
 		this._app = app;
 		this._element = element;
+		this._isMoved = false;
 		this.addEvents(element);
 		window.addEventListener("mouseup", this.onMouseUp);
 		//window.addEventListener("touchend", this.onMouseUp);
@@ -55,6 +56,7 @@ export class Mouse {
 	update(): void {
 		this.prevX = this.x;
 		this.prevY = this.y;
+		this._isMoved = false;
 		var length = this._buttonCount;
 		for (var i = 0; i < length; i++) {
 			this.prevButtons[i] = this.buttons[i];
@@ -88,14 +90,13 @@ export class Mouse {
 	}
 
 	protected onMouseMove = (e: MouseEvent): void => {
-		//e.stopPropagation();
-		var now = Tea.now();
-		if (now <= this._lastMoveTime + 16) {
+		if (this._isMoved) {
 			return;
 		}
-		this._lastMoveTime = now;
+		//e.stopPropagation();
 		this.x = e.offsetX;
 		this.y = this._app.height - (e.offsetY + 1);
+		this._isMoved = true;
 	}
 
 	protected onMouseDown = (e: MouseEvent): void => {

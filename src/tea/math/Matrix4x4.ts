@@ -13,7 +13,7 @@ export class Matrix4x4 extends Array<number> {
 			this[2] = a[2];
 			this[3] = a[3];
 		} else {
-			this[0] = this[1] = this[2] = this[3] = 0;
+			this[0] = this[1] = this[2] = this[3] = 0.0;
 		}
 
 		if (b != null) {
@@ -22,7 +22,7 @@ export class Matrix4x4 extends Array<number> {
 			this[6] = b[2];
 			this[7] = b[3];
 		} else {
-			this[4] = this[5] = this[6] = this[7] = 0;
+			this[4] = this[5] = this[6] = this[7] = 0.0;
 		}
 		
 		if (c != null) {
@@ -31,7 +31,7 @@ export class Matrix4x4 extends Array<number> {
 			this[10] = c[2];
 			this[11] = c[3];
 		} else {
-			this[8] = this[9] = this[10] = this[11] = 0;
+			this[8] = this[9] = this[10] = this[11] = 0.0;
 		}
 
 		if (d != null) {
@@ -40,7 +40,7 @@ export class Matrix4x4 extends Array<number> {
 			this[14] = d[2];
 			this[15] = d[3];
 		} else {
-			this[12] = this[13] = this[14] = this[15] = 0;
+			this[12] = this[13] = this[14] = this[15] = 0.0;
 		}
 	}
 
@@ -50,7 +50,7 @@ export class Matrix4x4 extends Array<number> {
 
 	static get identity(): Matrix4x4 {
 		var m = new Matrix4x4();
-		m[0] = m[5] = m[10] = m[15] = 1;
+		m[0] = m[5] = m[10] = m[15] = 1.0;
 		return m;
 	}
 
@@ -232,7 +232,7 @@ export class Matrix4x4 extends Array<number> {
 			m[12] = position[0];
 			m[13] = position[1];
 			m[14] = position[2];
-			m[15] = 1;
+			m[15] = 1.0;
 			return m;
 		}
 
@@ -240,19 +240,19 @@ export class Matrix4x4 extends Array<number> {
 		var xx = x * x, yy = y * y, zz = z * z;
 		var xy = x * y, xz = x * z, xw = x * w;
 		var yz = y * z, yw = y * w, zw = z * w;
-		m[0] = (1 - 2 * (yy + zz)) * scale[0];
-		m[1] = (2 * (xy + zw)) * scale[0];
-		m[2] = (2 * (xz - yw)) * scale[0];
-		m[4] = (2 * (xy - zw)) * scale[1];
-		m[5] = (1 - 2 * (xx + zz)) * scale[1];
-		m[6] = (2 * (yz + xw)) * scale[1];
-		m[8] = (2 * (xz + yw)) * scale[2];
-		m[9] = (2 * (yz - xw)) * scale[2];
-		m[10] = (1 - 2 * (xx + yy)) * scale[2];
+		m[0] = (1.0 - 2.0 * (yy + zz)) * scale[0];
+		m[1] = (2.0 * (xy + zw)) * scale[0];
+		m[2] = (2.0 * (xz - yw)) * scale[0];
+		m[4] = (2.0 * (xy - zw)) * scale[1];
+		m[5] = (1.0 - 2.0 * (xx + zz)) * scale[1];
+		m[6] = (2.0 * (yz + xw)) * scale[1];
+		m[8] = (2.0 * (xz + yw)) * scale[2];
+		m[9] = (2.0 * (yz - xw)) * scale[2];
+		m[10] = (1.0 - 2.0 * (xx + yy)) * scale[2];
 		m[12] = position[0];
 		m[13] = position[1];
 		m[14] = position[2];
-		m[15] = 1;
+		m[15] = 1.0;
 		return m;
 	}
 
@@ -282,7 +282,7 @@ export class Matrix4x4 extends Array<number> {
 			m[12] = position[0];
 			m[13] = position[1];
 			m[14] = position[2];
-			m[15] = 1;
+			m[15] = 1.0;
 			return m;
 		}
 
@@ -290,36 +290,36 @@ export class Matrix4x4 extends Array<number> {
 		var xx = x * x, yy = y * y, zz = z * z;
 		var xy = x * y, xz = x * z, xw = x * w;
 		var yz = y * z, yw = y * w, zw = z * w;
-		m[0] = (1 - 2 * (yy + zz));
-		m[1] = (2 * (xy + zw));
-		m[2] = (2 * (xz - yw));
-		m[4] = (2 * (xy - zw));
-		m[5] = (1 - 2 * (xx + zz));
-		m[6] = (2 * (yz + xw));
-		m[8] = (2 * (xz + yw));
-		m[9] = (2 * (yz - xw));
-		m[10] = (1 - 2 * (xx + yy));
+		m[0] = (1.0 - 2.0 * (yy + zz));
+		m[1] = (2.0 * (xy + zw));
+		m[2] = (2.0 * (xz - yw));
+		m[4] = (2.0 * (xy - zw));
+		m[5] = (1.0 - 2.0 * (xx + zz));
+		m[6] = (2.0 * (yz + xw));
+		m[8] = (2.0 * (xz + yw));
+		m[9] = (2.0 * (yz - xw));
+		m[10] = (1.0 - 2.0 * (xx + yy));
 		m[12] = position[0];
 		m[13] = position[1];
 		m[14] = position[2];
-		m[15] = 1;
+		m[15] = 1.0;
 		return m;
 	}
 
 	static perspective(fov: number, aspect: number, zNear: number, zFar: number): Matrix4x4 {
 		var m = new Matrix4x4();
 		fov = Tea.radians(fov);
-		var top = Math.tan(fov / 2) * zNear;
+		var top = Math.tan(fov / 2.0) * zNear;
 		var bottom = -top;
 		var right = top * aspect;
 		var left = -top * aspect;
-		m[0] = 2 * zNear / (right - left);
-		m[5] = 2 * zNear / (top - bottom);
+		m[0] = 2.0 * zNear / (right - left);
+		m[5] = 2.0 * zNear / (top - bottom);
 		m[8] = (right + left) / (right - left);
 		m[9] = (top + bottom) / (top - bottom);
 		m[10] = -(zFar + zNear) / (zFar - zNear);
-		m[11] = -1;
-		m[14] = -(2 * zFar * zNear) / (zFar - zNear);
+		m[11] = -1.0;
+		m[14] = -(2.0 * zFar * zNear) / (zFar - zNear);
 		return m;
 	}
 
@@ -557,19 +557,19 @@ export class Matrix4x4 extends Array<number> {
 			this[0] = (cy * cz + sy * sx * sz) * scale[0];
 			this[1] = cx * sz * scale[0];
 			this[2] = (-sy * cz + cy * sx * sz) * scale[0];
-			this[3] = 0;
+			this[3] = 0.0;
 			this[4] = (cy * -sz + sy * sx * cz) * scale[1];
 			this[5] = cx * cz * scale[1];
 			this[6] = (-sy * -sz + cy * sx * cz) * scale[1];
-			this[7] = 0;
+			this[7] = 0.0;
 			this[8] = sy * cx * scale[2];
 			this[9] = -sx * scale[2];
 			this[10] = cy * cx * scale[2];
-			this[11] = 0;
+			this[11] = 0.0;
 			this[12] = position[0];
 			this[13] = position[1];
 			this[14] = position[2];
-			this[15] = 1;
+			this[15] = 1.0;
 			return;
 		}
 
@@ -577,22 +577,22 @@ export class Matrix4x4 extends Array<number> {
 		var xx = x * x, yy = y * y, zz = z * z;
 		var xy = x * y, xz = x * z, xw = x * w;
 		var yz = y * z, yw = y * w, zw = z * w;
-		this[0] = (1 - 2 * (yy + zz)) * scale[0];
-		this[1] = (2 * (xy + zw)) * scale[0];
-		this[2] = (2 * (xz - yw)) * scale[0];
-		this[3] = 0;
-		this[4] = (2 * (xy - zw)) * scale[1];
-		this[5] = (1 - 2 * (xx + zz)) * scale[1];
-		this[6] = (2 * (yz + xw)) * scale[1];
-		this[7] = 0;
-		this[8] = (2 * (xz + yw)) * scale[2];
-		this[9] = (2 * (yz - xw)) * scale[2];
-		this[10] = (1 - 2 * (xx + yy)) * scale[2];
-		this[11] = 0;
+		this[0] = (1.0 - 2.0 * (yy + zz)) * scale[0];
+		this[1] = (2.0 * (xy + zw)) * scale[0];
+		this[2] = (2.0 * (xz - yw)) * scale[0];
+		this[3] = 0.0;
+		this[4] = (2.0 * (xy - zw)) * scale[1];
+		this[5] = (1.0 - 2.0 * (xx + zz)) * scale[1];
+		this[6] = (2.0 * (yz + xw)) * scale[1];
+		this[7] = 0.0;
+		this[8] = (2.0 * (xz + yw)) * scale[2];
+		this[9] = (2.0 * (yz - xw)) * scale[2];
+		this[10] = (1.0 - 2.0 * (xx + yy)) * scale[2];
+		this[11] = 0.0;
 		this[12] = position[0];
 		this[13] = position[1];
 		this[14] = position[2];
-		this[15] = 1;
+		this[15] = 1.0;
 	}
 
 	setTR(position: Vector3, rotation: Vector3): void;
@@ -611,19 +611,19 @@ export class Matrix4x4 extends Array<number> {
 			this[0] = cy * cz + sy * sx * sz;
 			this[1] = cx * sz;
 			this[2] = -sy * cz + cy * sx * sz;
-			this[3] = 0;
+			this[3] = 0.0;
 			this[4] = cy * -sz + sy * sx * cz;
 			this[5] = cx * cz;
 			this[6] = -sy * -sz + cy * sx * cz;
-			this[7] = 0;
+			this[7] = 0.0;
 			this[8] = sy * cx;
 			this[9] = -sx;
 			this[10] = cy * cx;
-			this[11] = 0;
+			this[11] = 0.0;
 			this[12] = position[0];
 			this[13] = position[1];
 			this[14] = position[2];
-			this[15] = 1;
+			this[15] = 1.0;
 			return;
 		}
 
@@ -631,44 +631,44 @@ export class Matrix4x4 extends Array<number> {
 		var xx = x * x, yy = y * y, zz = z * z;
 		var xy = x * y, xz = x * z, xw = x * w;
 		var yz = y * z, yw = y * w, zw = z * w;
-		this[0] = (1 - 2 * (yy + zz));
-		this[1] = (2 * (xy + zw));
-		this[2] = (2 * (xz - yw));
-		this[3] = 0;
-		this[4] = (2 * (xy - zw));
-		this[5] = (1 - 2 * (xx + zz));
-		this[6] = (2 * (yz + xw));
-		this[7] = 0;
-		this[8] = (2 * (xz + yw));
-		this[9] = (2 * (yz - xw));
-		this[10] = (1 - 2 * (xx + yy));
-		this[11] = 0;
+		this[0] = (1.0 - 2.0 * (yy + zz));
+		this[1] = (2.0 * (xy + zw));
+		this[2] = (2.0 * (xz - yw));
+		this[3] = 0.0;
+		this[4] = (2.0 * (xy - zw));
+		this[5] = (1.0 - 2.0 * (xx + zz));
+		this[6] = (2.0 * (yz + xw));
+		this[7] = 0.0;
+		this[8] = (2.0 * (xz + yw));
+		this[9] = (2.0 * (yz - xw));
+		this[10] = (1.0 - 2.0 * (xx + yy));
+		this[11] = 0.0;
 		this[12] = position[0];
 		this[13] = position[1];
 		this[14] = position[2];
-		this[15] = 1;
+		this[15] = 1.0;
 	}
 
 	perspective(fov: number, aspect: number, zNear: number, zFar: number): void {
 		fov = Tea.radians(fov);
-		var top = Math.tan(fov / 2) * zNear;
+		var top = Math.tan(fov / 2.0) * zNear;
 		var bottom = -top;
 		var right = top * aspect;
 		var left = -top * aspect;
 		var rml = right - left;
 		var tmb = top - bottom;
 		var fmn = zFar - zNear;
-		var zNear2 = 2 * zNear;
+		var zNear2 = 2.0 * zNear;
 		this[0] = zNear2/ rml;
 		this[5] = zNear2 / tmb;
 		this[8] = (right + left) / rml;
 		this[9] = (top + bottom) / tmb;
 		this[10] = -(zFar + zNear) / fmn;
-		this[11] = -1;
+		this[11] = -1.0;
 		this[14] = -(zNear2 * zFar) / fmn;
-		this[1] = this[2] = this[3] = this[4] = 0;
-		this[6] = this[7] = this[12] = this[13] = 0;
-		this[15] = 0;
+		this[1] = this[2] = this[3] = this[4] = 0.0;
+		this[6] = this[7] = this[12] = this[13] = 0.0;
+		this[15] = 0.0;
 	}
 
 	mul(vector: Vector4): Vector4;
@@ -758,7 +758,7 @@ export class Matrix4x4 extends Array<number> {
 		var y = this[1] * tx + this[5] * ty + this[9]  * tz + this[13];
 		var z = this[2] * tx + this[6] * ty + this[10] * tz + this[14];
 		var w = this[3] * tx + this[7] * ty + this[11] * tz + this[15];
-		if (w !== 0) {
+		if (w !== 0.0) {
 			w = 1 / w;
 		}
 		return new Tea.Vector3(
@@ -792,10 +792,10 @@ export class Matrix4x4 extends Array<number> {
 	//*/
 
 	toggleHand(): void {
-		this[8]  *= -1;
-		this[9]  *= -1;
-		this[10] *= -1;
-		this[11] *= -1;
+		this[8]  *= -1.0;
+		this[9]  *= -1.0;
+		this[10] *= -1.0;
+		this[11] *= -1.0;
 	}
 
 	toQuaternion(): Tea.Quaternion {

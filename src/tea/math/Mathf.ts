@@ -51,8 +51,8 @@ export class Mathf {
 	}
 
 	static clamp01(value: number): number {
-		value = Math.max(value, 0);
-		return Math.min(value, 1);
+		value = Math.max(value, 0.0);
+		return Math.min(value, 1.0);
 	}
 
 	static closestPowerOfTwo(value: number): number {

@@ -1,53 +1,53 @@
 import * as Tea from "../Tea";
 
 export class Color extends Array<number> {
-	constructor(r: number = 0, g: number = 0, b: number = 0, a: number = 0) {
+	constructor(r: number = 0.0, g: number = 0.0, b: number = 0.0, a: number = 0.0) {
 		super();
 		this.set(r, g, b, a);
 	}
 
 	static get background(): Color {
-		return new Color(49 / 255, 77 / 255, 121 / 255, 1);
+		return new Color(49 / 255, 77 / 255, 121 / 255, 1.0);
 	}
 
 	static get black(): Color {
-		return new Color(0, 0, 0, 1);
+		return new Color(0.0, 0.0, 0.0, 1.0);
 	}
 
 	static get blue(): Color {
-		return new Color(0, 0, 1, 1);
+		return new Color(0.0, 0.0, 1.0, 1.0);
 	}
 
 	static get clear(): Color {
-		return new Color(0, 0, 0, 0);
+		return new Color(0.0, 0.0, 0.0, 0.0);
 	}
 
 	static get cyan(): Color {
-		return new Color(0, 1, 1, 1);
+		return new Color(0.0, 1.0, 1.0, 1.0);
 	}
 
 	static get gray(): Color {
-		return new Color(0.5, 0.5, 0.5, 1);
+		return new Color(0.5, 0.5, 0.5, 1.0);
 	}
 
 	static get green(): Color {
-		return new Color(0, 1, 0, 1);
+		return new Color(0.0, 1.0, 0.0, 1.0);
 	}
 
 	static get magenta(): Color {
-		return new Color(1, 0, 1, 1);
+		return new Color(1.0, 0.0, 1.0, 1.0);
 	}
 
 	static get red(): Color {
-		return new Color(1, 0, 0, 1);
+		return new Color(1.0, 0.0, 0.0, 1.0);
 	}
 
 	static get white(): Color {
-		return new Color(1, 1, 1, 1);
+		return new Color(1.0, 1.0, 1.0, 1.0);
 	}
 
 	static get yellow(): Color {
-		return new Color(1, 0.92, 0.016, 1);
+		return new Color(1.0, 0.92, 0.016, 1.0);
 	}
 
 	get r(): number {

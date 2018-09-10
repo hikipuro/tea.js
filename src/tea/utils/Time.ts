@@ -11,7 +11,7 @@ export class Time {
 	}
 
 	get deltaTime(): number {
-		return this._deltaTime / 1000;
+		return this._deltaTime / 1000.0;
 	}
 
 	get frameCount(): number {
@@ -19,7 +19,7 @@ export class Time {
 	}
 
 	get time(): number {
-		return (this._lastUpdate - this._startTime) / 1000;
+		return (this._lastUpdate - this._startTime) / 1000.0;
 	}
 
 	start(): void {

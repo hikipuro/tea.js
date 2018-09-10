@@ -3,7 +3,7 @@ import * as Tea from "../Tea";
 export class Quaternion extends Array<number> {
 	static _tmp: Quaternion = new Quaternion();
 
-	constructor(x: number = 0, y: number = 0, z: number = 0, w: number = 0) {
+	constructor(x: number = 0.0, y: number = 0.0, z: number = 0.0, w: number = 0.0) {
 		super(4);
 		this[0] = x;
 		this[1] = y;
@@ -12,15 +12,15 @@ export class Quaternion extends Array<number> {
 	}
 
 	static get identity(): Quaternion {
-		return new Quaternion(0, 0, 0, 1);
+		return new Quaternion(0.0, 0.0, 0.0, 1.0);
 	}
 
 	static euler(x: number, y: number, z: number): Quaternion;
 	static euler(eulerAngles: Tea.Vector3): Quaternion;
-	static euler(a: number | Tea.Vector3, b: number = 0, c: number = 0): Quaternion {
-		var x: number = 0;
-		var y: number = 0;
-		var z: number = 0;
+	static euler(a: number | Tea.Vector3, b: number = 0.0, c: number = 0.0): Quaternion {
+		var x: number = 0.0;
+		var y: number = 0.0;
+		var z: number = 0.0;
 
 		if (a instanceof Tea.Vector3) {
 			x = Tea.radians(a[0] * 0.5);
@@ -32,7 +32,6 @@ export class Quaternion extends Array<number> {
 			z = Tea.radians(c * 0.5);
 		}
 
-		//*
 		var sin = Math.sin, cos = Math.cos;
 		var sx = sin(x), sy = sin(y), sz = sin(z);
 		var cx = cos(x), cy = cos(y), cz = cos(z);
@@ -48,29 +47,6 @@ export class Quaternion extends Array<number> {
 			aw * sz + cz * az,
 			aw * cz - az * sz
 		);
-		//*/
-
-		/*
-		var qx = new Quaternion(
-			Math.sin(x),
-			0,
-			0,
-			Math.cos(x)
-		);
-		var qy = new Quaternion(
-			0,
-			Math.sin(y),
-			0,
-			Math.cos(y)
-		);
-		var qz = new Quaternion(
-			0,
-			0,
-			Math.sin(z),
-			Math.cos(z)
-		);
-		return qy.mul(qx).mul(qz);
-		//*/
 	}
 
 	static fromToRotation(fromDirection: Tea.Vector3, toDirection: Tea.Vector3): Quaternion {
@@ -78,7 +54,7 @@ export class Quaternion extends Array<number> {
 		toDirection = toDirection.normalized;
 		var n = Tea.Vector3.cross(fromDirection, toDirection);
 		var d = Tea.Vector3.dot(fromDirection, toDirection);
-		return new Quaternion(n[0], n[1], n[2], d + 1).normalized;
+		return new Quaternion(n[0], n[1], n[2], d + 1.0).normalized;
 	}
 
 	static lookRotation(forward: Tea.Vector3, upwards: Tea.Vector3 = Tea.Vector3.up): Quaternion {
@@ -140,14 +116,14 @@ export class Quaternion extends Array<number> {
 		var x = this[0], y = this[1], z = this[2], w = this[3];
 		var x2 = x * x, y2 = y * y, z2 = z * z, w2 = w * w;
 
-		var t0 = 2 * (x * z + w * y);
+		var t0 = 2.0 * (x * z + w * y);
 		var t1 = w2 - x2 - y2 + z2;
 		var ay = Math.atan2(t0, t1);
 
-		var t2 = -2 * (y * z - w * x);
+		var t2 = -2.0 * (y * z - w * x);
 		var ax = Math.asin(t2);
 
-		var t3 = 2 * (x * y + w * z);
+		var t3 = 2.0 * (x * y + w * z);
 		var t4 = w2 - x2 + y2 - z2;
 		var az = Math.atan2(t3, t4);
 
@@ -207,7 +183,7 @@ export class Quaternion extends Array<number> {
 	get inversed(): Quaternion {
 		var conjugate = this.conjugated;
 		var magnitude = this.sqrMagnitude;
-		return conjugate.mul(1 / magnitude);
+		return conjugate.mul(1.0 / magnitude);
 	}
 
 	clone(): Quaternion {

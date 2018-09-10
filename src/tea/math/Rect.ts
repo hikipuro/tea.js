@@ -1,7 +1,7 @@
 import { Vector2 } from "./Vector2";
 
 export class Rect extends Array<number> {
-	constructor(x: number = 0, y: number = 0, width: number = 0, height: number = 0) {
+	constructor(x: number = 0.0, y: number = 0.0, width: number = 0.0, height: number = 0.0) {
 		super(4);
 		this[0] = x;
 		this[1] = y;
@@ -75,8 +75,8 @@ export class Rect extends Array<number> {
 
 	get center(): Vector2 {
 		return new Vector2(
-			this[0] + this[2] / 2,
-			this[1] + this[3] / 2
+			this[0] + this[2] / 2.0,
+			this[1] + this[3] / 2.0
 		);
 	}
 

@@ -1,7 +1,7 @@
 import * as Tea from "../Tea";
 
 export class Vector2 extends Array<number> {
-	constructor(x: number = 0, y: number = 0) {
+	constructor(x: number = 0.0, y: number = 0.0) {
 		super(2);
 		this[0] = x;
 		this[1] = y;

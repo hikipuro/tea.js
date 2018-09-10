@@ -6,7 +6,7 @@ export class Bounds {
 
 	constructor(center: Tea.Vector3 = new Tea.Vector3(), size: Tea.Vector3 = new Tea.Vector3()) {
 		this.center = center;
-		this.extents = size.div(2);
+		this.extents = size.div(2.0);
 	}
 
 	get min(): Tea.Vector3 {
@@ -18,13 +18,13 @@ export class Bounds {
 	}
 	
 	get size(): Tea.Vector3 {
-		return this.extents.mul(2);
+		return this.extents.mul(2.0);
 	}
 
 	clone(): Bounds {
 		return new Bounds(
 			this.center.clone(),
-			this.extents.mul(2)
+			this.extents.mul(2.0)
 		);
 	}
 

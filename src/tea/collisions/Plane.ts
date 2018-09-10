@@ -4,6 +4,8 @@ export class Plane {
 	distance: number;
 	normal: Tea.Vector3;
 
+	protected _tmpVec3: Tea.Vector3 = new Tea.Vector3();
+
 	constructor(normal: Tea.Vector3, distance: number);
 	constructor(normal: Tea.Vector3, point: Tea.Vector3);
 	constructor(a: Tea.Vector3, b: Tea.Vector3, c: Tea.Vector3);
@@ -75,10 +77,11 @@ export class Plane {
 	}
 
 	getDistanceToPoint(point: Tea.Vector3): number {
-		var p = this.normal.clone();
+		var p = this._tmpVec3;
+		p.copy(this.normal);
 		p.mul$(this.distance);
-		var v1 = p.add$(point);
-		return v1.dot(this.normal);
+		p.add$(point);
+		return p.dot(this.normal);
 	}
 
 	getSide(point: Tea.Vector3): boolean {

@@ -255,9 +255,9 @@ export class Camera extends Component {
 
 		if (this.orthographic) {
 			var p = position.clone();
-			p.z = -1;
+			p.z = -1.0;
 			var near = this.unproject(p);
-			p.z = 1;
+			p.z = 1.0;
 			var far = this.unproject(p);
 			var direction = far.sub(near).normalized;
 			var z = (position.z - this.nearClipPlane);
@@ -265,7 +265,7 @@ export class Camera extends Component {
 		}
 
 		var p = position.clone();
-		p[2] = 1;
+		p[2] = 1.0;
 		var far = this.unproject(p);
 		var ray = far.sub$(this.object3d.position).normalize$();
 
@@ -285,8 +285,8 @@ export class Camera extends Component {
 		var vp = this._vpMatrix.inverse;
 
 		var world = viewport.clone();
-		world[0] = world[0] * 2 - 1;
-		world[1] = world[1] * 2 - 1;
+		world[0] = world[0] * 2.0 - 1.0;
+		world[1] = world[1] * 2.0 - 1.0;
 		world.applyMatrix4(vp);
 		return world;
 	}

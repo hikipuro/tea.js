@@ -1,11 +1,16 @@
 import * as Tea from "./Tea";
 
+class Status {
+	frontFace: number;
+}
+
 export class App {
 	static useStencil: boolean = true;
 	canvas: HTMLCanvasElement;
 	gl: WebGLRenderingContext;
 	capabilities: Tea.GLCapabilities;
 	parameters: Tea.GLParameters;
+	readonly status: Status;
 	readonly cursor: Tea.Cursor;
 	protected _canvasAttributes: WebGLContextAttributes;
 	protected _renderer: AppRenderer;
@@ -19,6 +24,8 @@ export class App {
 		this.init();
 
 		this.parameters = new Tea.GLParameters(this.gl);
+		this.status = new Status();
+		this.status.frontFace = this.gl.CW;
 		this.cursor = new Tea.Cursor(this);
 		this._renderer = new AppRenderer(this);
 	}

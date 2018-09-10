@@ -28,17 +28,24 @@ export module ShaderSources {
 		varying vec3 vLightDirection;
 		varying vec3 vViewDirection;
 
-		void main() {
-			vec3 norm = normalize((TEA_OBJECT_TO_WORLD * vec4(normal, 0.0)).xyz);
-			vec3 viewDirection = normalize(
+		vec3 getViewDirection(vec4 vertex) {
+			return normalize(
 				vec3(
 					TEA_MATRIX_I_V * vec4(0.0, 0.0, 0.0, 1.0) -
 					TEA_OBJECT_TO_WORLD * vertex
 				)
 			);
+		}
+
+		vec3 getNormal(vec3 normal) {
+			return normalize((TEA_OBJECT_TO_WORLD * vec4(normal, 0.0)).xyz);
+		}
+
+		void main() {
+			vec3 norm = getNormal(normal);
+			vec3 viewDirection = getViewDirection(vertex);
 			
 			/*
-			//vec3 viewDirection = eyeDirection;
 			float diffuse = max(0.0, dot(norm, lightDirection));
 			float attenuation = 1.0;
 			float shininess = 5.0;
@@ -109,13 +116,18 @@ export module ShaderSources {
 			return depth;
 		}
 
-		void main() {
-			if (TEA_CAMERA_STEREO != 0) {
-				float stereoMod = float(TEA_CAMERA_STEREO - 1);
-				if (mod(floor(gl_FragCoord.y), 2.0) == stereoMod) {
-					discard;
-				}
+		void checkStereoCamera() {
+			if (TEA_CAMERA_STEREO == 0) {
+				return;
 			}
+			float stereoMod = float(TEA_CAMERA_STEREO - 1);
+			if (mod(floor(gl_FragCoord.y), 2.0) == stereoMod) {
+				discard;
+			}
+		}
+
+		void main() {
+			checkStereoCamera();
 
 			vec4 col;// = vec4(ambientColor, vColor.a);
 			vec3 normal = (texture2D(_NormalTex, (uv_NormalTex + vTexCoord) / _NormalTex_ST)).rgb;

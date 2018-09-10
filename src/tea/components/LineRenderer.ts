@@ -21,7 +21,7 @@ export class LineRenderer extends Renderer {
 
 	add(x: number, y: number, z: number): void;
 	add(point: Tea.Vector3): void;
-	add(x: Tea.Vector3 | number, y: number = 0, z: number = 0): void {
+	add(x: Tea.Vector3 | number, y: number = 0.0, z: number = 0.0): void {
 		if (x == null) {
 			return;
 		}
@@ -49,6 +49,7 @@ export class LineRenderer extends Renderer {
 		super.render(camera, lights);
 		this.setLineData();
 		this.draw();
+		Renderer.drawCallCount++;
 	}
 	
 	protected get isRenderable(): boolean {
@@ -76,6 +77,5 @@ export class LineRenderer extends Renderer {
 		var count = this.points.length;
 		//gl.frontFace(gl.CW);
 		gl.drawArrays(gl.LINE_STRIP, 0, count);
-		Renderer.drawCallCount++;
 	}
 }
