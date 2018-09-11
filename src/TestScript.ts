@@ -37,7 +37,7 @@ export class TestScript extends Tea.Script {
 
 		var mouse = this.mouse;
 		if (mouse.isMoved) {
-			this.speedY = mouse.x / this.app.width;
+			//this.speedY = mouse.x / this.app.width;
 			//console.log(this.speedY);
 			//console.log(mouse.x, mouse.y, mouse.prevX, mouse.prevY);
 			//this.position.x = -0.5 + mouse.x / this.app.width;

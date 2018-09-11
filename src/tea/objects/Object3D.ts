@@ -28,21 +28,21 @@ class Movement {
 		var b = false;
 		if (!this.position.equals(p)) {
 			b = true;
-			this.position = p.clone();
+			this.position.copy(p);
 		}
 		if (!this.rotation.equals(r)) {
 			b = true;
-			this.rotation = r.clone();
+			this.rotation.copy(r);
 		}
 		if (!this.scale.equals(s)) {
 			b = true;
-			this.scale = s.clone();
+			this.scale.copy(s);
 		}
 		return b;
 	}
 
 	trs(): void {
-		this.localToWorldMatrix = Tea.Matrix4x4.trs(
+		this.localToWorldMatrix.setTRS(
 			this.position,
 			this.rotation,
 			this.scale

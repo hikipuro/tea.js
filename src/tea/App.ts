@@ -400,6 +400,9 @@ class AppRenderer extends Tea.EventDispatcher {
 	}
 
 	protected update = (time: number): void => {
+		//Tea.Vector3.newCount = 0;
+		//Tea.Quaternion.newCount = 0;
+		//Tea.Matrix4x4.newCount = 0;
 		this.time.update();
 		if (this.currentScene != null) {
 			this.currentScene.update();
@@ -409,6 +412,9 @@ class AppRenderer extends Tea.EventDispatcher {
 		this.stats.update();
 		this.emit("update");
 		this._handle = requestAnimationFrame(this.update);
+		//console.log("Tea.Vector3.newCount", Tea.Vector3.newCount);
+		//console.log("Tea.Quaternion.newCount", Tea.Quaternion.newCount);
+		//console.log("Tea.Matrix4x4.newCount", Tea.Matrix4x4.newCount);
 	}
 
 	protected createStats(): void {

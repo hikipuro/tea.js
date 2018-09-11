@@ -1,190 +1,16 @@
 import * as Tea from "../Tea";
 import { Component } from "./Component";
 
-class Uniforms {
-	app: Tea.App;
-	gl: WebGLRenderingContext;
-	shader: Tea.Shader;
-
-	constructor(app: Tea.App) {
-		this.app = app;
-		this.gl = this.app.gl;
-	}
-
-	remove(): void {
-		this.app = null;
-		this.gl = null;
-		this.shader = null;
-	}
-
-	useProgram(): void {
-		this.gl.useProgram(this.shader.program);
-	}
-
-	uniform1f(name: string, value: number): void {
-		var location = this.shader.propertyToID(name);
-		if (location < 0) {
-			return;
-		}
-		this.gl.uniform1f(location, value);
-	}
-
-	uniform1fv(name: string, value: Float32Array | ArrayLike<number>): void {
-		var location = this.shader.propertyToID(name);
-		if (location < 0) {
-			return;
-		}
-		this.gl.uniform1fv(location, value);
-	}
-
-	uniform1i(name: string, value: number): void {
-		var location = this.shader.propertyToID(name);
-		if (location < 0) {
-			return;
-		}
-		this.gl.uniform1i(location, value);
-	}
-
-	uniform1iv(name: string, value: Int32Array | ArrayLike<number>): void {
-		var location = this.shader.propertyToID(name);
-		if (location < 0) {
-			return;
-		}
-		this.gl.uniform1iv(location, value);
-	}
-
-	uniform2f(name: string, x: number, y: number): void {
-		var location = this.shader.propertyToID(name);
-		if (location < 0) {
-			return;
-		}
-		this.gl.uniform2f(location, x, y);
-	}
-
-	uniform2fv(name: string, value: Float32Array | ArrayLike<number>): void {
-		var location = this.shader.propertyToID(name);
-		if (location < 0) {
-			return;
-		}
-		this.gl.uniform2fv(location, value);
-	}
-
-	uniform2i(name: string, x: number, y: number): void {
-		var location = this.shader.propertyToID(name);
-		if (location < 0) {
-			return;
-		}
-		this.gl.uniform2i(location, x, y);
-	}
-
-	uniform2iv(name: string, value: Int32Array | ArrayLike<number>): void {
-		var location = this.shader.propertyToID(name);
-		if (location < 0) {
-			return;
-		}
-		this.gl.uniform2iv(location, value);
-	}
-
-	uniform3f(name: string, x: number, y: number, z: number): void {
-		var location = this.shader.propertyToID(name);
-		if (location < 0) {
-			return;
-		}
-		this.gl.uniform3f(location, x, y, z);
-	}
-
-	uniform3fv(name: string, value: Float32Array | ArrayLike<number>): void {
-		var location = this.shader.propertyToID(name);
-		if (location < 0) {
-			return;
-		}
-		this.gl.uniform3fv(location, value);
-	}
-
-	uniform3i(name: string, x: number, y: number, z: number): void {
-		var location = this.shader.propertyToID(name);
-		if (location < 0) {
-			return;
-		}
-		this.gl.uniform3i(location, x, y, z);
-	}
-
-	uniform3iv(name: string, value: Int32Array | ArrayLike<number>): void {
-		var location = this.shader.propertyToID(name);
-		if (location < 0) {
-			return;
-		}
-		this.gl.uniform3iv(location, value);
-	}
-
-	uniform4f(name: string, x: number, y: number, z: number, w: number): void {
-		var location = this.shader.propertyToID(name);
-		if (location < 0) {
-			return;
-		}
-		this.gl.uniform4f(location, x, y, z, w);
-	}
-
-	uniform4fv(name: string, value: Float32Array | ArrayLike<number>): void {
-		var location = this.shader.propertyToID(name);
-		if (location < 0) {
-			return;
-		}
-		this.gl.uniform4fv(location, value);
-	}
-
-	uniform4i(name: string, x: number, y: number, z: number, w: number): void {
-		var location = this.shader.propertyToID(name);
-		if (location < 0) {
-			return;
-		}
-		this.gl.uniform4i(location, x, y, z, w);
-	}
-
-	uniform4iv(name: string, value: Int32Array | ArrayLike<number>): void {
-		var location = this.shader.propertyToID(name);
-		if (location < 0) {
-			return;
-		}
-		this.gl.uniform3iv(location, value);
-	}
-
-	uniformMatrix2fv(name: string, value: Float32Array | ArrayLike<number>): void {
-		var location = this.shader.propertyToID(name);
-		if (location < 0) {
-			return;
-		}
-		this.gl.uniformMatrix2fv(location, false, value);
-	}
-
-	uniformMatrix3fv(name: string, value: Float32Array | ArrayLike<number>): void {
-		var location = this.shader.propertyToID(name);
-		if (location < 0) {
-			return;
-		}
-		this.gl.uniformMatrix3fv(location, false, value);
-	}
-
-	uniformMatrix4fv(name: string, value: Float32Array | ArrayLike<number>): void {
-		var location = this.shader.propertyToID(name);
-		if (location < 0) {
-			return;
-		}
-		this.gl.uniformMatrix4fv(location, false, value);
-	}
-
-	hasName(name: string): boolean {
-		var location = this.shader.propertyToID(name);
-		return location >= 0;
-	}
-}
-
 export class Renderer extends Component {
 	static drawCallCount: number = 0;
+	static readonly MaxLightCount: number = 2;
 	enabled: boolean;
 	object3d: Tea.Object3D;
 	material: Tea.Material;
 	protected gl: WebGLRenderingContext;
+	protected _tmpVec3: Tea.Vector3 = new Tea.Vector3();
+	protected _mvMatrix: Tea.Matrix4x4 = new Tea.Matrix4x4();
+	protected _mvpMatrix: Tea.Matrix4x4 = new Tea.Matrix4x4();
 	//protected _uniforms: Uniforms;
 
 	constructor(app: Tea.App) {
@@ -417,7 +243,7 @@ export class Renderer extends Component {
 		var model = this.object3d.localToWorldMatrix;
 		var view = camera.worldToCameraMatrix;
 		var projection = camera.projectionMatrix;
-		var vpMatrix = camera.vpMatrix;
+		var vpMatrix = camera.viewProjectionMatrix;
 
 		var inverseModel = this.object3d.worldToLocalMatrix;
 		var inverseView = camera.cameraToWorldMatrix;
@@ -458,7 +284,9 @@ export class Renderer extends Component {
 		u.uniformMatrix4fv("TEA_MATRIX_VP", vpMatrix);
 		*/
 
-		var mvMatrix = view.mul(model);
+		var mvMatrix = this._mvMatrix;
+		mvMatrix.copy(view);
+		mvMatrix.mul$(model);
 		location = shader.propertyToID("TEA_MATRIX_MV");
 		if (location != null) {
 			gl.uniformMatrix4fv(location, false, mvMatrix);
@@ -467,7 +295,9 @@ export class Renderer extends Component {
 
 		location = shader.propertyToID("TEA_MATRIX_MVP");
 		if (location != null) {
-			var mvpMatrix = projection.mul(mvMatrix);
+			var mvpMatrix = this._mvpMatrix;
+			mvpMatrix.copy(projection);
+			mvpMatrix.mul$(mvMatrix);
 			gl.uniformMatrix4fv(location, false, mvpMatrix);
 		}
 		//u.uniformMatrix4fv("TEA_MATRIX_MVP", mvpMatrix);
@@ -559,8 +389,9 @@ export class Renderer extends Component {
 		var gl = this.gl;
 		var location: WebGLUniformLocation = null;
 
-		var d = new Tea.Vector3(0, 0, -1);
-		var lightCount = Math.min(2, lights.length);
+		var d = this._tmpVec3;
+		d.set(0.0, 0.0, -1.0);
+		var lightCount = Math.min(Renderer.MaxLightCount, lights.length);
 		for (var i = 0; i < lightCount; i++) {
 			location = this.material.shader.propertyToID("lights[" + i + "].direction");
 			if (location != null) {

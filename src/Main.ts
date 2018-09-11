@@ -296,7 +296,6 @@ export class Main {
 		);
 		capsule.getComponent(Tea.Renderer).material.shader = s;
 		*/
-		/*
 		var cs = capsule.getComponent(Tea.Renderer).material.shader;
 		cs.settings.enableStencilTest = false;
 		cs.settings.stencil.func = Tea.ShaderTestFunc.Equal;
@@ -304,8 +303,7 @@ export class Main {
 		cs.settings.stencil.fail = Tea.ShaderStencilOp.Keep;
 		cs.settings.stencil.zfail = Tea.ShaderStencilOp.Keep;
 		cs.settings.stencil.zpass = Tea.ShaderStencilOp.Keep;
-		*/
-		capsule.addComponent(TestScript);
+		//capsule.addComponent(TestScript);
 		scene.appendChild(capsule);
 
 		//console.log("capsule", capsule.localToWorldMatrix.toString());

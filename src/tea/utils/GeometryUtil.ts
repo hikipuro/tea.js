@@ -2,6 +2,7 @@ import * as Tea from "../Tea";
 
 export class GeometryUtil {
 	protected static _positivePoint: Tea.Vector3 = new Tea.Vector3();
+	protected static _tmpVec3: Tea.Vector3 = new Tea.Vector3();
 
 	static calculateFrustumPlanes(camera: Tea.Camera): Array<Tea.Plane> {
 		var planes = new Array(6);
@@ -78,14 +79,17 @@ export class GeometryUtil {
 		var result = this._positivePoint;
 		result.copy(bounds.center);
 		result.sub$(bounds.extents);
+		var size = this._tmpVec3;
+		size.copy(bounds.extents);
+		size.mul$(2);
 		if (normal[0] > 0.0) {
-			result[0] += bounds.size[0];
+			result[0] += size[0];
 		}
 		if (normal[1] > 0.0) {
-			result[1] += bounds.size[1];
+			result[1] += size[1];
 		}
 		if (normal[2] > 0.0) {
-			result[2] += bounds.size[2];
+			result[2] += size[2];
 		}
 		return result;
 	}

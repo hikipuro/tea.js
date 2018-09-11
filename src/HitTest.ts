@@ -17,5 +17,8 @@ export class HitTest extends Tea.Script {
 				r.material.color = Tea.Color.white;
 			}
 		}
+		//if (mouse.isMoved) {
+		//	console.log(mouse.position);
+		//}
 	}
 }

@@ -2,6 +2,7 @@ import * as Tea from "../Tea";
 
 export class Quaternion extends Array<number> {
 	static _tmp: Quaternion = new Quaternion();
+	//static newCount: number = 0;
 
 	constructor(x: number = 0.0, y: number = 0.0, z: number = 0.0, w: number = 0.0) {
 		super(4);
@@ -9,6 +10,7 @@ export class Quaternion extends Array<number> {
 		this[1] = y;
 		this[2] = z;
 		this[3] = w;
+		//Quaternion.newCount++;
 	}
 
 	static get identity(): Quaternion {

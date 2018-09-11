@@ -52,7 +52,8 @@ export class Camera extends Component {
 	protected _cameraToWorldMatrix: Tea.Matrix4x4;
 	protected _worldToCameraMatrix: Tea.Matrix4x4;
 	protected _projectionMatrix: Tea.Matrix4x4;
-	protected _vpMatrix: Tea.Matrix4x4;
+	protected _viewProjectionMatrix: Tea.Matrix4x4;
+	protected _inverseViewProjectionMatrix: Tea.Matrix4x4;
 	protected _prev: Prev;
 	protected _viewportRect: Tea.Rect;
 	protected static currentBGColor: Tea.Color;
@@ -74,7 +75,8 @@ export class Camera extends Component {
 		this._cameraToWorldMatrix = new Tea.Matrix4x4();
 		this._worldToCameraMatrix = new Tea.Matrix4x4();
 		this._projectionMatrix = new Tea.Matrix4x4();
-		this._vpMatrix = new Tea.Matrix4x4();
+		this._viewProjectionMatrix = new Tea.Matrix4x4();
+		this._inverseViewProjectionMatrix = new Tea.Matrix4x4();
 		this._prev = new Prev();
 		this._viewportRect = new Tea.Rect();
 		//this.update();
@@ -99,8 +101,8 @@ export class Camera extends Component {
 		return this._projectionMatrix;
 	}
 
-	get vpMatrix(): Tea.Matrix4x4 {
-		return this._vpMatrix;
+	get viewProjectionMatrix(): Tea.Matrix4x4 {
+		return this._viewProjectionMatrix;
 	}
 
 	update(): void {
@@ -149,9 +151,10 @@ export class Camera extends Component {
 		}
 
 		if (isChanged) {
-			this._vpMatrix = this._projectionMatrix.mul(
+			this._viewProjectionMatrix = this._projectionMatrix.mul(
 				this._worldToCameraMatrix
 			);
+			this._inverseViewProjectionMatrix = this._viewProjectionMatrix.inverse;
 			this.frustumPlanes = Tea.GeometryUtil.calculateFrustumPlanes(this);
 		}
 
@@ -201,6 +204,8 @@ export class Camera extends Component {
 
 	screenPointToRay(position: Tea.Vector3): Tea.Ray {
 		var p = position.clone();
+		p[0] += 0.5;
+		p[1] += 1.0;
 		p[2] = this.nearClipPlane;
 		var near = this.screenToWorldPoint(p);
 		p[2] = this.farClipPlane;
@@ -225,8 +230,13 @@ export class Camera extends Component {
 		if (position == null) {
 			return Tea.Vector3.zero;
 		}
-		var p = this.screenToViewportPoint(position);
-		return this.viewportToWorldPoint(p);
+		var viewport = position.clone();
+		var rect = this.getViewportRect();
+		viewport[0] = viewport[0] / this.app.width;
+		viewport[0] = (viewport[0] - rect[0]) / rect[2];
+		viewport[1] = viewport[1] / this.app.height;
+		viewport[1] = (viewport[1] - rect[1]) / rect[3];
+		return this.viewportToWorldPoint(viewport);
 	}
 
 	viewportPointToRay(position: Tea.Vector3): Tea.Ray {
@@ -264,25 +274,31 @@ export class Camera extends Component {
 			return near.add(direction.mul(z));
 		}
 
-		var pz = position[2];
-		position[2] = 1.0;
-		var far = this.unproject(position);
-		position[2] = pz;
-		var ray = far.sub$(this.object3d.position).normalize$();
+		var pos = this.object3d.position;
+		var p = position.clone();
+		p[2] = 1.0;
+		var far = this.unproject$(p);
+		var ray = far.sub$(pos).normalize$();
 
-		var direction = new Tea.Vector3(0, 0, 1);
+		var direction = new Tea.Vector3(0.0, 0.0, 1.0);
 		direction.applyQuaternion(this.object3d.rotation);
-		var d = ray.dot(direction.normalize$());
-		return this.object3d.position.add(ray.mul$(position[2] / d));
+		var d = ray.dot(direction);
+		return pos.add(ray.mul$(position.z / d));
 	}
 
 	unproject(viewport: Tea.Vector3): Tea.Vector3 {
-		var vp = this._vpMatrix.inverse;
 		var world = viewport.clone();
 		world[0] = world[0] * 2.0 - 1.0;
 		world[1] = world[1] * 2.0 - 1.0;
-		world.applyMatrix4(vp);
+		world.applyMatrix4(this._inverseViewProjectionMatrix);
 		return world;
+	}
+
+	unproject$(viewport: Tea.Vector3): Tea.Vector3 {
+		viewport[0] = viewport[0] * 2.0 - 1.0;
+		viewport[1] = viewport[1] * 2.0 - 1.0;
+		viewport.applyMatrix4(this._inverseViewProjectionMatrix);
+		return viewport;
 	}
 
 	/*

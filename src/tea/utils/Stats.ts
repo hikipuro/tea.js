@@ -51,7 +51,7 @@ export class Stats {
 		}
 		this._frameCount++;
 		var now = Tea.now();
-		if (now - this._time > 1000) {
+		if (now - this._time > 1000.0) {
 			this._time = now;
 			this.draw();
 		}

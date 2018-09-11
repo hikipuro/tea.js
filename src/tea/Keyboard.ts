@@ -53,9 +53,12 @@ export class Keyboard {
 	}
 
 	update(): void {
-		for (var key in this._keys) {
+		Object.keys(this._keys).forEach((key) => {
 			this._prevKeys[key] = this._keys[key];
-		}
+		});
+		//for (var key in this._keys) {
+		//	this._prevKeys[key] = this._keys[key];
+		//}
 		//this._prevKeys = Object.assign({}, this._keys);
 	}
 

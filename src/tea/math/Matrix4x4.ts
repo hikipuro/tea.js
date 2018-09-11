@@ -3,9 +3,12 @@ import { Vector3 } from "./Vector3";
 import { Vector4 } from "./Vector4";
 
 export class Matrix4x4 extends Array<number> {
+	//static newCount: number = 0;
+
 	constructor();
 	constructor(column0: Tea.Vector4, column1: Tea.Vector4, column2: Tea.Vector4, column3: Tea.Vector4);
 	constructor(a?: Tea.Vector4, b?: Tea.Vector4, c?: Tea.Vector4, d?: Tea.Vector4) {
+		//Matrix4x4.newCount++;
 		super(16);
 		if (a != null) {
 			this[0] = a[0];
@@ -485,6 +488,25 @@ export class Matrix4x4 extends Array<number> {
 			}
 		}
 		return true;
+	}
+
+	copy(value: Matrix4x4): void {
+		this[0]  = value[0];
+		this[1]  = value[1];
+		this[2]  = value[2];
+		this[3]  = value[3];
+		this[4]  = value[4];
+		this[5]  = value[5];
+		this[6]  = value[6];
+		this[7]  = value[7];
+		this[8]  = value[8];
+		this[9]  = value[9];
+		this[10] = value[10];
+		this[11] = value[11];
+		this[12] = value[12];
+		this[13] = value[13];
+		this[14] = value[14];
+		this[15] = value[15];
 	}
 
 	clone(): Matrix4x4 {

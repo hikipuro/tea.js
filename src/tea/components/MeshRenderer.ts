@@ -15,6 +15,7 @@ export class MeshRenderer extends Renderer {
 		super(app);
 		this.receiveShadows = false;
 		this._stride = 0;
+		this._bounds = new Tea.Bounds();
 		this._wireframe = false;
 		this._draw = this.draw;
 		this.createBuffers();
@@ -36,7 +37,8 @@ export class MeshRenderer extends Renderer {
 		var component = this.object3d.getComponent(Tea.MeshFilter);
 		if (component != null && component.mesh != null) {
 			var mesh = component.mesh;
-			var bounds = mesh.bounds.clone();
+			this._bounds.copy(mesh.bounds);
+			var bounds = this._bounds;
 			bounds.center.add$(this.object3d.position);
 			
 			var rotation = this.object3d.rotation;
@@ -48,10 +50,10 @@ export class MeshRenderer extends Renderer {
 			bounds.extents.scale$(this.object3d.scale);
 			
 			this._mesh = mesh;
-			this._bounds = bounds;
+			//this._bounds = bounds;
 		} else {
 			this._mesh = null;
-			this._bounds = null;
+			//this._bounds = null;
 		}
 	}
 

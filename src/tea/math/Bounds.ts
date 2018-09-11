@@ -34,6 +34,11 @@ export class Bounds {
 		);
 	}
 
+	copy(value: Tea.Bounds): void {
+		this.center.copy(value.center);
+		this.extents.copy(value.extents);
+	}
+
 	contains(point: Tea.Vector3): boolean {
 		if (point == null) {
 			return false;

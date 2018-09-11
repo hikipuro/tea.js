@@ -60,10 +60,12 @@ export class BoxCollider extends Collider {
 				return false;
 			}
 		}
+		/*
 		console.log("late",early,late);
 		if (early > 10.0) {
 			return false;
 		}
+		*/
 		return true;
 	}
 }

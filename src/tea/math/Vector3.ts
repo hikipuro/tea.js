@@ -2,12 +2,14 @@ import * as Tea from "../Tea";
 
 export class Vector3 extends Array<number> {
 	protected static _tmp: Vector3 = new Vector3();
+	//static newCount: number = 0;
 
 	constructor(x: number = 0.0, y: number = 0.0, z: number = 0.0) {
 		super(3);
 		this[0] = x;
 		this[1] = y;
 		this[2] = z;
+		//Vector3.newCount++;
 	}
 
 	static get forward(): Vector3 {
