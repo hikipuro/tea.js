@@ -17,11 +17,11 @@ export class TestScript extends Tea.Script {
 		//console.log(this.count, this.position);
 
 		//this.rotation.x = Tea.radians(this.count / 3);
-		this.localRotation = this.localRotation.mul(Tea.Quaternion.euler(0, 3, 0));// Tea.radians(this.speedY * 2);
+		this.rotate(0., 3., 0.);
 		var r = this.object3d.getComponent(Tea.Renderer);
 		var i = Math.sin(this.count / 40);
-		r.material.mainTextureOffset = new Tea.Vector2(0, i);
-		r.material.mainTextureScale = new Tea.Vector2(1 + i / 2, 1 + i / 2);
+		r.material.mainTextureOffset.set(0.0, i);
+		r.material.mainTextureScale.set(1.0 + i / 2.0, 1.0 + i / 2.0);
 
 		var keyboard = this.app.keyboard;
 		//console.log(keyboard.isDown(Keyboard.Keys.ArrowLeft));
@@ -35,14 +35,15 @@ export class TestScript extends Tea.Script {
 			console.log("held");
 		}
 
-		var mouse = this.app.mouse;
+		var mouse = this.mouse;
 		if (mouse.isMoved) {
 			this.speedY = mouse.x / this.app.width;
 			//console.log(this.speedY);
 			//console.log(mouse.x, mouse.y, mouse.prevX, mouse.prevY);
 			//this.position.x = -0.5 + mouse.x / this.app.width;
 			//this.position.y = 0.5 + mouse.y / this.app.height;
-			var p = new Tea.Vector3(mouse.x, mouse.y, 3);
+			var p = mouse.position;
+			p.z = 3;
 			p = this.object3d.scene.mainCamera.screenToWorldPoint(p);
 			this.localPosition = p;
 			//console.log(p.toString());

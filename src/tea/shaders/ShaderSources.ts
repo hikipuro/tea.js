@@ -4,6 +4,8 @@ export module ShaderSources {
 			vec3 direction;
 		};
 
+		const float Epsilon = 1.192093E-07;
+
 		attribute vec4 vertex;
 		attribute vec3 normal;
 		attribute vec2 texcoord;
@@ -63,7 +65,7 @@ export module ShaderSources {
 			vTexCoord = texcoord;
 
 			vec3 n = norm;
-			vec3 t = normalize(cross(norm, vec3(0.000001, 1.0, 0.000001)));
+			vec3 t = normalize(cross(norm, vec3(Epsilon, 1.0, Epsilon)));
 			vec3 b = cross(n, t);
 			vViewDirection.x = dot(t, viewDirection);
 			vViewDirection.y = dot(b, viewDirection);

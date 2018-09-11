@@ -153,7 +153,7 @@ export class Main {
 		camera2.localPosition = new Tea.Vector3(0, 5, 0);
 		camera2.localRotation = Tea.Quaternion.euler(90, 0, 0);
 		//var cam = camera2.getComponent(Tea.LightCamera);
-		scene.appendChild(camera2);
+		//scene.appendChild(camera2);
 
 		setTimeout(() => {
 			//console.log("ray", scene.camera.screenPointToRay(new Tea.Vector3(100, 100)).toString());
@@ -167,17 +167,17 @@ export class Main {
 
 		//var script = new TestScript();
 
+		/*
 		var cube = Tea.Object3D.createPrimitive(this.app, Tea.PrimitiveType.Cube);
 		//cube.name = "cube";
-		cube.position.y = 2;
-		//cube.position.z = -5;
+		cube.position = Tea.vec3(0, 2, 0);
+		//cube.position.z = 5;
 		//cube.scale.y = -1;
-		//cube.scale.z = -1;
-		//cube.localRotation = Tea.Quaternion.euler(45, 0, 0);
+		//cube.scale.z = 2;
+		//cube.localRotation = Tea.Quaternion.euler(45, 30, 0);
 		//cube.rotation.y = Tea.radians(20);
 		//cube.addScript(new Rotate());
 		//cube.getComponent(Tea.Renderer).material.mainTexture = renderTexture;
-		cube.addComponent(HitTest);
 		scene.appendChild(cube);
 
 		var cube2 = Tea.Object3D.createPrimitive(this.app, Tea.PrimitiveType.Cube);
@@ -186,6 +186,9 @@ export class Main {
 		//cube2.name = "cube2";
 		//scene.appendChild(cube2);
 		cube.appendChild(cube2);
+		//cube2.addComponent(HitTest);
+		//var box2 = cube2.addComponent(Tea.BoxCollider);
+		//box2.size = cube2.getComponent(Tea.MeshFilter).mesh.bounds.size;
 		//cube2.localPosition = new Tea.Vector3(2, 0, 0);
 		//cube2.rotation = Tea.Quaternion.euler(0,45,0);
 		//cube.scale = new Tea.Vector3(2, 1, 1);
@@ -210,9 +213,10 @@ export class Main {
 		//cube3.addComponent(Rotate);
 		//cube2.localScale = new Tea.Vector3(2, 1, 1);
 
-		console.log("cube2", cube2.localPosition);
-		console.log("cube2", cube2.localScale);
-		console.log("cube3", cube3.localPosition);
+		//console.log("cube2", cube2.localPosition);
+		//console.log("cube2", cube2.localScale);
+		//console.log("cube3", cube3.localPosition);
+		*/
 
 		var sphere = Tea.Object3D.createPrimitive(this.app, Tea.PrimitiveType.Sphere);
 		//cube2.name = "cube2";
@@ -292,6 +296,7 @@ export class Main {
 		);
 		capsule.getComponent(Tea.Renderer).material.shader = s;
 		*/
+		/*
 		var cs = capsule.getComponent(Tea.Renderer).material.shader;
 		cs.settings.enableStencilTest = false;
 		cs.settings.stencil.func = Tea.ShaderTestFunc.Equal;
@@ -299,7 +304,8 @@ export class Main {
 		cs.settings.stencil.fail = Tea.ShaderStencilOp.Keep;
 		cs.settings.stencil.zfail = Tea.ShaderStencilOp.Keep;
 		cs.settings.stencil.zpass = Tea.ShaderStencilOp.Keep;
-		//capsule.addComponent(TestScript);
+		*/
+		capsule.addComponent(TestScript);
 		scene.appendChild(capsule);
 
 		//console.log("capsule", capsule.localToWorldMatrix.toString());
@@ -386,7 +392,7 @@ export class Main {
 			*/
 			let r = sphere.getComponent(Tea.Renderer);
 			r.material.mainTexture = texture;
-			r = cube.getComponent(Tea.Renderer);
+			//r = cube.getComponent(Tea.Renderer);
 			//r.material.mainTexture = texture;
 			r = quad.getComponent(Tea.Renderer);
 			//r.material.mainTexture = texture;

@@ -181,9 +181,15 @@ export class Quaternion extends Array<number> {
 	}
 
 	get inversed(): Quaternion {
-		var conjugate = this.conjugated;
-		var magnitude = this.sqrMagnitude;
-		return conjugate.mul(1.0 / magnitude);
+		var x = this[0], y = this[1], z = this[2], w = this[3];
+		var m = x * x + y * y + z * z + w * w;
+		if (m === 0.0) {
+			return new Quaternion();
+		}
+		m = 1.0 / m;
+		return new Quaternion(
+			-x * m, -y * m, -z * m, w * m
+		);
 	}
 
 	clone(): Quaternion {
@@ -327,6 +333,39 @@ export class Quaternion extends Array<number> {
 		this[1] = aw * by + bw * ay + az * bx - bz * ax;
 		this[2] = aw * bz + bw * az + ax * by - bx * ay;
 		this[3] = aw * bw - ax * bx - ay * by - az * bz;
+	}
+
+	rotateEuler(x: number, y: number, z: number): void;
+	rotateEuler(eulerAngles: Tea.Vector3): void;
+	rotateEuler(a: number | Tea.Vector3, b: number = 0.0, c: number = 0.0): void {
+		var toRadian = Math.PI / 180.0;
+		var x: number = 0.0;
+		var y: number = 0.0;
+		var z: number = 0.0;
+		if (a instanceof Tea.Vector3) {
+			x = a[0] * 0.5 * toRadian;
+			y = a[1] * 0.5 * toRadian;
+			z = a[2] * 0.5 * toRadian;
+		} else {
+			x = a * 0.5 * toRadian;
+			y = b * 0.5 * toRadian;
+			z = c * 0.5 * toRadian;
+		}
+		var sin = Math.sin, cos = Math.cos;
+		var sx = sin(x), sy = sin(y), sz = sin(z);
+		var cx = cos(x), cy = cos(y), cz = cos(z);
+		var ax = cy * sx;
+		var ay = cx * sy;
+		var az = -sx * sy;
+		var aw = cy * cx;
+		var q = Quaternion._tmp;
+		q.set(
+			cz * ax + ay * sz,
+			cz * ay - sz * ax,
+			aw * sz + cz * az,
+			aw * cz - az * sz
+		);
+		this.mul$(q);
 	}
 
 	dot(value: Quaternion): number {

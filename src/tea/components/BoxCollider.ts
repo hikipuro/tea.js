@@ -22,15 +22,19 @@ export class BoxCollider extends Collider {
 	}
 
 	testRay(ray: Tea.Ray): boolean {
-		var r = this.object3d.rotation;
-		var p = ray.getPoint(1);
+		var r = this.object3d.rotation.inversed;
+		var p = ray.origin.clone();
+		p.sub$(this.object3d.position);
 		p.applyQuaternion(r);
 		var d = ray.direction.clone();
 		d.applyQuaternion(r);
 		
-		var extents = this.size.mul(0.5);
-		var min = this.center.sub(extents);
-		var max = this.center.add(extents);
+		var extents = this.size.clone();
+		extents.mul$(0.5);
+		extents.scale$(this.object3d.scale);
+		var center = this.center;
+		var min = center.sub(extents);
+		var max = center.add(extents);
 		var early = -Number.MAX_VALUE;
 		var late = Number.MAX_VALUE;
 
@@ -55,6 +59,10 @@ export class BoxCollider extends Collider {
 			if (early > late) {
 				return false;
 			}
+		}
+		console.log("late",early,late);
+		if (early > 10.0) {
+			return false;
 		}
 		return true;
 	}

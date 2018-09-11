@@ -95,7 +95,7 @@ export * from "./Mouse";
  * @returns {number} degrees * Math.PI / 180
  */
 export function radians(degrees: number): number {
-	return degrees * Math.PI / 180;
+	return degrees * Math.PI / 180.0;
 }
 
 /**
@@ -105,7 +105,7 @@ export function radians(degrees: number): number {
  * @returns {number} degrees * Math.PI / 180
  */
 export function degrees(radians: number): number {
-	return radians * 180 / Math.PI;
+	return radians * 180.0 / Math.PI;
 }
 
 /**

@@ -264,26 +264,20 @@ export class Camera extends Component {
 			return near.add(direction.mul(z));
 		}
 
-		var p = position.clone();
-		p[2] = 1.0;
-		var far = this.unproject(p);
+		var pz = position[2];
+		position[2] = 1.0;
+		var far = this.unproject(position);
+		position[2] = pz;
 		var ray = far.sub$(this.object3d.position).normalize$();
 
 		var direction = new Tea.Vector3(0, 0, 1);
-		//direction.rotate$(this.rotation.eulerAngles.mul(Tea.Mathf.Deg2Rad));
-		//direction = this.object3d.rotation.mul(direction);
 		direction.applyQuaternion(this.object3d.rotation);
-		var d = Tea.Vector3.dot(ray, direction.normalize$());
-
+		var d = ray.dot(direction.normalize$());
 		return this.object3d.position.add(ray.mul$(position[2] / d));
 	}
 
 	unproject(viewport: Tea.Vector3): Tea.Vector3 {
-		//var view = this.worldToCameraMatrix;
-		//var projection = this.projectionMatrix;
-		//var vp = projection.mul(view);
 		var vp = this._vpMatrix.inverse;
-
 		var world = viewport.clone();
 		world[0] = world[0] * 2.0 - 1.0;
 		world[1] = world[1] * 2.0 - 1.0;
@@ -319,7 +313,6 @@ export class Camera extends Component {
 	}
 	
 	protected setViewport(): void {
-		var gl = this.gl;
 		var rx = this.rect[0];
 		var ry = this.rect[1];
 		var rw = this.rect[2];
@@ -347,6 +340,7 @@ export class Camera extends Component {
 		var w = rw * width;
 		var h = rh * height;
 
+		var gl = this.gl;
 		gl.viewport(x, y, w, h);
 		gl.scissor(x, y, w, h);
 	}

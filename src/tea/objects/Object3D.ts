@@ -442,12 +442,10 @@ export class Object3D {
 	rotate(xAngle: number, yAngle: number, zAngle: number): void;
 	rotate(a: number | Tea.Vector3, b?: number, c?: number): void {
 		if (a instanceof Tea.Vector3) {
-			var q = Tea.Quaternion.euler(a);
-			this.localRotation.mul$(q);
+			this.localRotation.rotateEuler(a);
 			return;
 		}
-		var q = Tea.Quaternion.euler(a, b, c);
-		this.localRotation.mul$(q);
+		this.localRotation.rotateEuler(a, b, c);
 	}
 
 	rotateAround(point: Tea.Vector3, axis: Tea.Vector3, angle: number): void {

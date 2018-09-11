@@ -11,11 +11,13 @@ export class Mouse {
 	protected _element: HTMLElement;
 	protected _buttonCount: number = 5;
 	protected _isMoved: boolean;
+	protected _position: Tea.Vector3;
 
 	constructor(app: Tea.App, element: HTMLElement) {
 		this._app = app;
 		this._element = element;
 		this._isMoved = false;
+		this._position = new Tea.Vector3();
 		this.addEvents(element);
 		window.addEventListener("mouseup", this.onMouseUp);
 		//window.addEventListener("touchend", this.onMouseUp);
@@ -36,6 +38,10 @@ export class Mouse {
 	get isMoved(): boolean {
 		return this.x !== this.prevX
 			|| this.y !== this.prevY;
+	}
+
+	get position(): Tea.Vector3 {
+		return this._position;
 	}
 
 	isDown(button: number): boolean {
@@ -96,6 +102,7 @@ export class Mouse {
 		//e.stopPropagation();
 		this.x = e.offsetX;
 		this.y = this._app.height - (e.offsetY + 1);
+		this._position.set(this.x, this.y, 0);
 		this._isMoved = true;
 	}
 
