@@ -8,7 +8,8 @@ export class HitTest extends Tea.Script {
 			var p2 = new Tea.Vector3(mouse.x, mouse.y, 0);
 			var ray = this.scene.mainCamera.screenPointToRay(p2);
 			var r = this.object3d.getComponent(Tea.MeshRenderer);
-			if (r.bounds.collideRay(ray)) {
+			var box = this.object3d.getComponent(Tea.BoxCollider);
+			if (box != null && box.testRay(ray)) {
 				console.log("HitTest: true");
 				r.material.color = Tea.Color.red;
 			} else {

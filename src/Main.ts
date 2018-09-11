@@ -268,6 +268,9 @@ export class Main {
 		ps.settings.stencil.zpass = Tea.ShaderStencilOp.Replace;
 		
 		plane.addComponent(HitTest);
+		var box = plane.addComponent(Tea.BoxCollider);
+		box.size = plane.getComponent(Tea.MeshFilter).mesh.bounds.size;
+		console.log("box.size", box.size);
 		scene.appendChild(plane);
 
 		console.log("bounds", plane.getComponent(Tea.MeshFilter).mesh.bounds);
@@ -278,7 +281,7 @@ export class Main {
 		//capsule.position.y = 2;
 		//capsule.position.z = 2;
 		//capsule.scale.x = 2;
-		//capsule.rotation.x = Tea.radians(90);
+		//capsule.rotation = Tea.Quaternion.euler(-45, 0, 0);
 		/*
 		console.log("extension", this.app.isExtensionSupported(Tea.GLExtensions.OES_standard_derivatives));
 		this.app.getExtension(Tea.GLExtensions.OES_standard_derivatives);

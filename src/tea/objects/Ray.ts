@@ -16,9 +16,16 @@ export class Ray {
 		this._direction = value.normalized;
 	}
 
+	clone(): Ray {
+		return new Ray(
+			this.origin.clone(),
+			this._direction.clone()
+		);
+	}
+
 	getPoint(distance: number): Tea.Vector3 {
 		var point = this.origin.clone();
-		point = point.add(this._direction.mul(distance));
+		point.add$(this._direction.mul(distance));
 		return point;
 	}
 

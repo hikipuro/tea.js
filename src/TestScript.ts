@@ -49,13 +49,13 @@ export class TestScript extends Tea.Script {
 		}
 		//this.localPosition.z = Math.sin(this.count / 40) * 3.5 - 5;
 		if (mouse.isDown(0)) {
-			console.log("mouse down");
+			//console.log("mouse down");
 			var p2 = new Tea.Vector3(mouse.x, mouse.y, 10);
 			var p = this.object3d.scene.mainCamera.screenToViewportPoint(p2);
-			console.log(p);
+			//console.log(p);
 		}
 		if (mouse.isUp(0)) {
-			console.log("mouse up");
+			//console.log("mouse up");
 		}
 
 		//console.log(this.app.keyboard._keys);

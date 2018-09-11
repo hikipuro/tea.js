@@ -11,35 +11,35 @@ export class Vector3 extends Array<number> {
 	}
 
 	static get forward(): Vector3 {
-		return new Vector3(0, 0, 1);
+		return new Vector3(0.0, 0.0, 1.0);
 	}
 
 	static get back(): Vector3 {
-		return new Vector3(0, 0, -1);
+		return new Vector3(0.0, 0.0, -1.0);
 	}
 
 	static get up(): Vector3 {
-		return new Vector3(0, 1, 0);
+		return new Vector3(0.0, 1.0, 0.0);
 	}
 
 	static get down(): Vector3 {
-		return new Vector3(0, -1, 0);
+		return new Vector3(0.0, -1.0, 0.0);
 	}
 
 	static get left(): Vector3 {
-		return new Vector3(-1, 0, 0);
+		return new Vector3(-1.0, 0.0, 0.0);
 	}
 
 	static get right(): Vector3 {
-		return new Vector3(1, 0, 0);
+		return new Vector3(1.0, 0.0, 0.0);
 	}
 
 	static get zero(): Vector3 {
-		return new Vector3(0, 0, 0);
+		return new Vector3(0.0, 0.0, 0.0);
 	}
 
 	static get one(): Vector3 {
-		return new Vector3(1, 1, 1);
+		return new Vector3(1.0, 1.0, 1.0);
 	}
 
 	static get positiveInfinity(): Vector3 {
@@ -101,14 +101,14 @@ export class Vector3 extends Array<number> {
 	static orthoNormalize(normal: Vector3, tangent: Vector3): any {
 		var nm = normal.magnitude;
 		var e1 = Tea.Vector3.zero;
-		if (nm != 0) {
-			e1 = normal.mul(1 / nm);
+		if (nm != 0.0) {
+			e1 = normal.mul(1.0 / nm);
 		}
 		var f2 = tangent.sub(e1.mul(tangent.dot(e1)));
 		var f2m = f2.magnitude;
 		var e2 = Tea.Vector3.zero;
-		if (f2m != 0) {
-			e2 = f2.mul(1 / f2m);
+		if (f2m != 0.0) {
+			e2 = f2.mul(1.0 / f2m);
 		}
 		//normal.set(e1.x, e1.y, e1.z);
 		//tangent.set(e2.x, e2.y, e2.z);
@@ -155,10 +155,10 @@ export class Vector3 extends Array<number> {
 	get normalized(): Vector3 {
 		var x = this[0], y = this[1], z = this[2];
 		var magnitude = Math.sqrt(x * x + y * y + z * z);
-		if (magnitude === 0) {
+		if (magnitude === 0.0) {
 			return new Vector3();
 		}
-		var m = 1 / magnitude;
+		var m = 1.0 / magnitude;
 		return new Vector3(
 			this[0] * m,
 			this[1] * m,
@@ -510,13 +510,13 @@ export class Vector3 extends Array<number> {
 	normalize$(): Vector3 {
 		var x = this[0], y = this[1], z = this[2];
 		var magnitude = Math.sqrt(x * x + y * y + z * z);
-		if (magnitude === 0) {
-			this[0] = 0;
-			this[1] = 0;
-			this[2] = 0;
+		if (magnitude === 0.0) {
+			this[0] = 0.0;
+			this[1] = 0.0;
+			this[2] = 0.0;
 			return this;
 		}
-		var m = 1 / magnitude;
+		var m = 1.0 / magnitude;
 		this[0] *= m;
 		this[1] *= m;
 		this[2] *= m;

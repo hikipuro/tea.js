@@ -165,7 +165,7 @@ export class Quaternion extends Array<number> {
 
 	get normalized(): Quaternion {
 		var x = this[0], y = this[1], z = this[2], w = this[3];
-		var m = 1 / Math.sqrt(x * x + y * y + z * z + w * w);
+		var m = 1.0 / Math.sqrt(x * x + y * y + z * z + w * w);
 		return new Quaternion(
 			x * m, y * m, z * m, w * m
 		);
@@ -266,14 +266,14 @@ export class Quaternion extends Array<number> {
 	mul(value: number | Quaternion | Tea.Vector3): Quaternion | Tea.Vector3 {
 		if (value instanceof Tea.Vector3) {
 			//*
-			if (this[0] === 0
-				&& this[1] === 0
-				&& this[2] === 0
-				&& this[3] === 0) {
+			if (this[0] === 0.0
+				&& this[1] === 0.0
+				&& this[2] === 0.0
+				&& this[3] === 0.0) {
 				return value;
 			}
 			var ax = this[0], ay = this[1], az = this[2], aw = this[3];
-			var bx = value[0], by = value[1], bz = value[2], bw = 0;
+			var bx = value[0], by = value[1], bz = value[2], bw = 0.0;
 			var angles = Quaternion._tmp;
 			angles[0] = aw * bx + ay * bz - by * az;
 			angles[1] = aw * by + az * bx - bz * ax;
@@ -359,7 +359,7 @@ export class Quaternion extends Array<number> {
 
 	slerpUnclamped(q: Quaternion, t: number): Quaternion {
 		var a = Math.acos(this.dot(q));
-		var u = 1 - t;
+		var u = 1.0 - t;
 		var sa = Math.sin(a);
 		var w1 = Math.sin(t * a) / sa;
 		var w2 = Math.sin(u * a) / sa;

@@ -1,8 +1,8 @@
 import { Vector3 } from "./Vector3";
 
 export class Vector4 extends Array<number> {
-	constructor(x: number, y: number, z: number, w: number);
-	constructor(vector3: Vector3, w: number);
+	constructor(x?: number, y?: number, z?: number, w?: number);
+	constructor(vector3: Vector3, w?: number);
 	constructor(x: number | Vector3 = 0.0, y: number = 0.0, z: number = 0.0, w: number = 0.0) {
 		super(4);
 		if (x instanceof Vector3) {
@@ -19,11 +19,11 @@ export class Vector4 extends Array<number> {
 	}
 
 	static get zero(): Vector4 {
-		return new Vector4(0, 0, 0, 0);
+		return new Vector4();
 	}
 
 	static get one(): Vector4 {
-		return new Vector4(1, 1, 1, 1);
+		return new Vector4(1.0, 1.0, 1.0, 1.0);
 	}
 
 	static get positiveInfinity(): Vector4 {
@@ -73,8 +73,14 @@ export class Vector4 extends Array<number> {
 
 	get normalized(): Vector4 {
 		var x = this[0], y = this[1], z = this[2], w = this[3];
-		var m = 1 / this.magnitude;
+		var m = 1.0 / this.magnitude;
 		return new Vector4(x * m, y * m, z * m, w * m);
+	}
+
+	clone(): Vector4 {
+		return new Vector4(
+			this[0], this[1], this[2], this[3]
+		);
 	}
 
 	set(x: number, y: number, z: number, w: number): void {
@@ -82,6 +88,13 @@ export class Vector4 extends Array<number> {
 		this[1] = y;
 		this[2] = z;
 		this[3] = w;
+	}
+
+	copy(value: Vector4): void {
+		this[0] = value[0];
+		this[1] = value[1];
+		this[2] = value[2];
+		this[3] = value[3];
 	}
 
 	equals(value: Vector4): boolean {
@@ -107,8 +120,8 @@ export class Vector4 extends Array<number> {
 
 	toVector3(useW: boolean = false): Vector3 {
 		var vector3 = new Vector3(this[0], this[1], this[2]);
-		if (useW && this.w != 0) {
-			var w = 1 / this[3];
+		if (useW && this.w != 0.0) {
+			var w = 1.0 / this[3];
 			vector3[0] *= w;
 			vector3[1] *= w;
 			vector3[2] *= w;

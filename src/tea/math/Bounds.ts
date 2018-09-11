@@ -4,7 +4,13 @@ export class Bounds {
 	center: Tea.Vector3;
 	extents: Tea.Vector3;
 
-	constructor(center: Tea.Vector3 = new Tea.Vector3(), size: Tea.Vector3 = new Tea.Vector3()) {
+	constructor(center?: Tea.Vector3, size?: Tea.Vector3) {
+		if (center == null) {
+			center = new Tea.Vector3();
+		}
+		if (size == null) {
+			size = new Tea.Vector3();
+		}
 		this.center = center;
 		this.extents = size.div(2.0);
 	}

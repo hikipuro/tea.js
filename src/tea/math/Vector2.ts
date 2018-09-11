@@ -8,11 +8,11 @@ export class Vector2 extends Array<number> {
 	}
 
 	static get zero(): Vector2 {
-		return new Vector2(0, 0);
+		return new Vector2();
 	}
 
 	static get one(): Vector2 {
-		return new Vector2(1, 1);
+		return new Vector2(1.0, 1.0);
 	}
 
 	/** x == this[0] */
@@ -32,15 +32,19 @@ export class Vector2 extends Array<number> {
 	}
 
 	clone(): Vector2 {
-		var vector2 = new Vector2();
-		vector2[0] = this[0];
-		vector2[1] = this[1];
-		return vector2;
+		return new Vector2(
+			this[0], this[1]
+		);
 	}
 
 	set(x: number, y: number): void {
 		this[0] = x;
 		this[1] = y;
+	}
+
+	copy(value: Vector2): void {
+		this[0] = value[0];
+		this[1] = value[1];
 	}
 
 	equals(value: Vector2): boolean {

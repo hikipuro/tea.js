@@ -63,7 +63,7 @@ export module ShaderSources {
 			vTexCoord = texcoord;
 
 			vec3 n = norm;
-			vec3 t = normalize(cross(norm, vec3(0.0, 1.0, 0.0)));
+			vec3 t = normalize(cross(norm, vec3(0.000001, 1.0, 0.000001)));
 			vec3 b = cross(n, t);
 			vViewDirection.x = dot(t, viewDirection);
 			vViewDirection.y = dot(b, viewDirection);
