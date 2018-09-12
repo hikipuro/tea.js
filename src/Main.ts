@@ -34,6 +34,7 @@ export class Main {
 			alpha: false,
 			//premultipliedAlpha: false
 		});
+		this.app.enableUint32Index();
 		this.app.canvas.style.background = "#000";
 		this.app.width = 400;
 		this.app.height = 400;
@@ -361,15 +362,38 @@ export class Main {
 		///*
 		this.app.start();
 
-		this.app.readObjFile("../models/teapot/teapot.obj", (object3d) => {
-			var scale = 0.04;
+		var objList = [
+			{
+				path: "../models/teapot/teapot.obj",
+				scale: 0.04
+			},
+			{
+				path: "../models/bunny.obj",
+				scale: 2
+			},
+			{
+				path: "../models/dragon.obj",
+				scale: 4
+			},
+			{
+				path: "../models/CornellBox/CornellBox-Original.obj",
+				scale: 2
+			},
+			{
+				path: "../models/bedroom/iscv2.obj",
+				scale: 2
+			}
+		];
+		var objIndex = 2;
+		this.app.readObjFile(objList[objIndex].path, (object3d) => {
+			var scale = objList[objIndex].scale;
 			object3d.localScale = new Tea.Vector3(scale, scale, scale);
 			object3d.localPosition.z = -4;
 			object3d.addComponent(Rotate);
-			//scene.appendChild(object3d);
+			scene.appendChild(object3d);
 		});
 
-		Tea.File.readImage("../models/texture.png", (image) => {
+		Tea.File.readImage("../models/texture.png", (err, image) => {
 			var texture = this.app.createTexture(image);
 			let r = plane.getComponent(Tea.Renderer);
 			r.material.setTexture("_NormalTex", texture);
@@ -377,7 +401,7 @@ export class Main {
 			r.material.setTexture("_NormalTex", texture);
 		});
 
-		Tea.File.readImage("../models/google.jpg", (image) => {
+		Tea.File.readImage("../models/google.jpg", (err, image) => {
 			//document.body.appendChild(image);
 			var texture = this.app.createTexture(image);
 			//texture.filterMode = Tea.FilterMode.Bilinear;
@@ -402,7 +426,7 @@ export class Main {
 			r.material.mainTexture = texture;
 		});
 
-		Tea.File.readImage("../models/earth.jpg", (image) => {
+		Tea.File.readImage("../models/earth.jpg", (err, image) => {
 			//document.body.appendChild(image);
 			var texture = this.app.createTexture(image);
 			//sphere.renderer.shader.texture = texture;

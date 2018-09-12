@@ -2,7 +2,7 @@ import * as Tea from "./tea/Tea";
 
 export class Rotate extends Tea.Script {
 	count: number = 0;
-	rotateVec: Tea.Vector3 = new Tea.Vector3(0, 3, 0);
+	rotateVec: Tea.Vector3 = new Tea.Vector3(0, 1, 0);
 
 	update(): void {
 		//console.log(this.object3d.name);

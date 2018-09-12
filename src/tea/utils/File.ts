@@ -1,7 +1,3 @@
-interface FileReadImageCallback {
-	(image: HTMLImageElement, path: string): void
-}
-
 export class File {
 	static readFile(url: string, callback: (err: any, data: ArrayBuffer) => void): void {
 		if (callback == null) {
@@ -21,17 +17,18 @@ export class File {
 		xhr.open("get", url, true);
 	}
 
-	static readImage(url: string, callback: FileReadImageCallback): void {
+	static readImage(url: string, callback: (err: any, image: HTMLImageElement, path: string) => void): void {
 		var image = new Image();
 		var onLoad = () => {
 			image.removeEventListener("load", onLoad);
 			image.removeEventListener("error", onError);
-			callback(image, url);
+			callback(null, image, url);
 		};
 		var onError = () => {
 			image.removeEventListener("load", onLoad);
 			image.removeEventListener("error", onError);
-			console.error("readImage", url);
+			console.error("File.readImage", url);
+			callback("error", image, url);
 		};
 		image.addEventListener("load", onLoad);
 		image.addEventListener("error", onError);

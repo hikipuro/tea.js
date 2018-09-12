@@ -2,6 +2,7 @@ import * as Tea from "./Tea";
 
 class Status {
 	frontFace: number;
+	OES_element_index_uint: any;
 }
 
 export class App {
@@ -118,6 +119,10 @@ export class App {
 			throw "extension not supported: " + name;
 		}
 		return extension;
+	}
+
+	enableUint32Index(): void {
+		this.status.OES_element_index_uint = this.gl.getExtension("OES_element_index_uint");
 	}
 
 	captureScreenshot(callback: (data: ArrayBuffer) => void, type: string = "image/png"): void {

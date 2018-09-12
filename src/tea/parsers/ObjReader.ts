@@ -85,10 +85,17 @@ class MaterialReader {
 				case "bump":     // 
 				case "disp":     // 
 				case "decal":    // 
-					context.textureCount++;
-					var path = this.getUrl(context.url, params[1]);
+					var path = "";
+					if (params.length <= 2) {
+						path = this.getUrl(context.url, params[1]);
+					} else {
+						path = this.getUrl(context.url, params[params.length - 1]);
+					}
 					//console.log("path", path);
-					material[params[0]] = path;
+					if (material[params[0]] == null) {
+						context.textureCount++;
+						material[params[0]] = path;
+					}
 					//this.readImage(material, params[0], path);
 					break;
 			}
@@ -116,9 +123,12 @@ class MaterialReader {
 	}
 
 	protected readImage(context: MaterialReaderContext, material: any, name: string, path: string): void {
-		Tea.File.readImage(path, (image) => {
-			material[name] = image;
+		Tea.File.readImage(path, (err, image) => {
+			if (err == null) {
+				material[name] = image;
+			}
 			context.textureLoaded++;
+			//console.log("context.textureLoaded", context.textureLoaded, context.textureCount);
 			if (context.isCompleted) {
 				//console.log("complete");
 				context.complete();
@@ -281,7 +291,12 @@ export class ObjReader {
 					break;
 				case "f":
 					// triangles
-					var f = this.parseF(params);
+					var f = this.parseF(
+						params,
+						obj.v.length,
+						obj.vt.length,
+						obj.vn.length
+					);
 					obj.f.push(f);
 					break;
 				case "vn":
@@ -293,6 +308,15 @@ export class ObjReader {
 					// texture coord
 					var vt = this.parseVT(params);
 					obj.vt.push(vt);
+					break;
+				case "vp":
+					// parameter space vertices
+					break;
+				case "s":
+					// smooth shading
+					break;
+				case "l":
+					// line element
 					break;
 			}
 		});
@@ -306,78 +330,168 @@ export class ObjReader {
 	protected createObject3D(context: ObjReaderContext): Tea.Object3D {
 		//console.log("createObject3D");
 		var obj = context.obj;
-		var objf = obj.f;
+		var vf = obj.f;
 		var vt = obj.vt;
 		var vn = obj.vn;
-		var vertices = obj.v;
+		var v = obj.v;
+
+		var vertices: Array<Tea.Vector3> = [];
 		var triangles: Array<Tea.Vector3> = [];
-		var normals: Array<Tea.Vector3> = new Array(vertices.length);
-		var uv: Array<Tea.Vector2> = new Array(vertices.length);
+		//var normals: Array<Tea.Vector3> = [];
+		//var uv: Array<Tea.Vector2> = [];
+		var normals: Array<Tea.Vector3> = [];
+		if (vn.length > 0) {
+			normals = new Array(vf.length);
+		}
+		var uv: Array<Tea.Vector2> = [];
+		if (vt.length > 0) {
+			uv = new Array(vf.length);
+		}
 
-		var dup: Array<number> = new Array(triangles.length);
-		dup.fill(0);
+		//var dup: Array<number> = new Array(triangles.length);
+		//dup.fill(0);
 		//var dupCount = 0;
-		var length = objf.length;
+		var t = 0;
+		var length = vf.length;
 		for (var i = 0; i < length; i++) {
-			var f = objf[i];
-			var v0 = f[0].triangle;
-			var v1 = f[1].triangle;
-			var v2 = f[2].triangle;
-			var v3 = null;
+			var f = vf[i];
+			var i0 = f[0].triangle;
+			var i1 = f[1].triangle;
+			var i2 = f[2].triangle;
+			var i3 = null;
 			if (f[3] != null) {
-				v3 = f[3].triangle;
+				i3 = f[3].triangle;
 			}
 
-			if (uv[v0] != null && uv[v0].equals(vt[f[0].uv]) === false) {
+			/*
+			if (i0 < 0) {
+				//i0 = length + (i0 + 1);
+				i0 = -(i0 + 1);
+				//i0 = -i0;
+			}
+			if (i1 < 0) {
+				//i1 = length + (i1 + 1);
+				i1 = -(i1 + 1);
+				//i1 = -i1;
+			}
+			if (i2 < 0) {
+				//i2 = length + (i2 + 1);
+				i2 = -(i2 + 1);
+				//i2 = -i2;
+			}
+			if (i3 < 0) {
+				//i3 = length + (i3 + 1);
+				i3 = -(i3 + 1);
+				//i3 = -i3;
+			}
+			*/
+
+			/*
+			if (uv[i0] != null && uv[i0].equals(vt[f[0].uv]) === false) {
 				//dupCount++;
-				vertices.push(vertices[v0]);
+				v.push(v[i0]);
 				uv.push(null);
 				normals.push(null);
-				v0 = vertices.length - 1;
+				i0 = v.length - 1;
 			}
-			if (uv[v1] != null && uv[v1].equals(vt[f[1].uv]) === false) {
+			if (uv[i1] != null && uv[i1].equals(vt[f[1].uv]) === false) {
 				//dupCount++;
-				vertices.push(vertices[v1]);
+				v.push(v[i1]);
 				uv.push(null);
 				normals.push(null);
-				v1 = vertices.length - 1;
+				i1 = v.length - 1;
 			}
-			if (uv[v2] != null && uv[v2].equals(vt[f[2].uv]) === false) {
+			if (uv[i2] != null && uv[i2].equals(vt[f[2].uv]) === false) {
 				//dupCount++;
-				vertices.push(vertices[v2]);
+				v.push(v[i2]);
 				uv.push(null);
 				normals.push(null);
-				v2 = vertices.length - 1;
+				i2 = v.length - 1;
 			}
-			if (uv[v3] != null && uv[v3].equals(vt[f[3].uv]) === false) {
+			if (uv[i3] != null && uv[i3].equals(vt[f[3].uv]) === false) {
 				//dupCount++;
-				vertices.push(vertices[v3]);
+				v.push(v[i3]);
 				uv.push(null);
 				normals.push(null);
-				v3 = vertices.length - 1;
+				i3 = v.length - 1;
 			}
+			//*/
 
 			switch (f.length) {
 				case 3:
-					triangles.push(new Tea.Vector3(v0, v1, v2));
-					uv[v0] = vt[f[0].uv];
-					uv[v1] = vt[f[1].uv];
-					uv[v2] = vt[f[2].uv];
-					normals[v0] = vn[f[0].normal];
-					normals[v1] = vn[f[1].normal];
-					normals[v2] = vn[f[2].normal];
+					/*
+					triangles.push(new Tea.Vector3(t, t + 1, t + 2));
+					vertices.push(v[i0], v[i1], v[i2]);
+					uv.push(vt[f[0].uv], vt[f[1].uv], vt[f[2].uv]);
+					normals.push(vn[f[0].normal], vn[f[1].normal], vn[f[2].normal]);
+					t += 3;
+					//*/
+					
+					//*
+					triangles.push(new Tea.Vector3(i0, i1, i2));
+					/*
+					if (uv[i0] == null) {
+						uv[i0] = vt[f[0].uv];
+					}
+					if (uv[i1] == null) {
+						uv[i1] = vt[f[1].uv];
+					}
+					if (uv[i2] == null) {
+						uv[i2] = vt[f[2].uv];
+					}
+					//*/
+					if (vt.length > 0) {
+						uv[i0] = vt[f[0].uv];
+						uv[i1] = vt[f[1].uv];
+						uv[i2] = vt[f[2].uv];
+					}
+					if (vn.length > 0) {
+						normals[i0] = vn[f[0].normal];
+						normals[i1] = vn[f[1].normal];
+						normals[i2] = vn[f[2].normal];
+					}
+					//*/
 					break;
 				case 4:
-					triangles.push(new Tea.Vector3(v0, v1, v2));
-					triangles.push(new Tea.Vector3(v0, v2, v3));
-					uv[v0] = vt[f[0].uv];
-					uv[v1] = vt[f[1].uv];
-					uv[v2] = vt[f[2].uv];
-					uv[v3] = vt[f[3].uv];
-					normals[v0] = vn[f[0].normal];
-					normals[v1] = vn[f[1].normal];
-					normals[v2] = vn[f[2].normal];
-					normals[v3] = vn[f[3].normal];
+					/*
+					triangles.push(new Tea.Vector3(t, t + 1, t + 2));
+					triangles.push(new Tea.Vector3(t, t + 2, t + 3));
+					vertices.push(v[i0], v[i1], v[i2], v[i3]);
+					uv.push(vt[f[0].uv], vt[f[1].uv], vt[f[2].uv], vt[f[3].uv]);
+					normals.push(vn[f[0].normal], vn[f[1].normal], vn[f[2].normal], vn[f[3].normal]);
+					t += 4;
+					//*/
+					
+					//*
+					triangles.push(new Tea.Vector3(i0, i1, i2));
+					triangles.push(new Tea.Vector3(i0, i2, i3));
+					/*
+					if (uv[i0] == null) {
+						uv[i0] = vt[f[0].uv];
+					}
+					if (uv[i1] == null) {
+						uv[i1] = vt[f[1].uv];
+					}
+					if (uv[i2] == null) {
+						uv[i2] = vt[f[2].uv];
+					}
+					if (uv[i3] == null) {
+						uv[i3] = vt[f[3].uv];
+					}
+					//*/
+					if (vt.length > 0) {
+						uv[i0] = vt[f[0].uv];
+						uv[i1] = vt[f[1].uv];
+						uv[i2] = vt[f[2].uv];
+						uv[i3] = vt[f[3].uv];
+					}
+					if (vn.length > 0) {
+						normals[i0] = vn[f[0].normal];
+						normals[i1] = vn[f[1].normal];
+						normals[i2] = vn[f[2].normal];
+						normals[i3] = vn[f[3].normal];
+					}
+					//*/
 					break;
 				default:
 					//console.log("5");
@@ -386,10 +500,12 @@ export class ObjReader {
 		}
 
 		//console.log("dup", dupCount);
-		//console.log("vertices", vertices.length);
-		//console.log("triangles", triangles.length);
+		console.log("vertices", v.length);
+		console.log("triangles", triangles.length);
+		//console.log("vt", vt.length);
 		var mesh = new Tea.Mesh();
-		mesh.vertices = vertices;
+		mesh.vertices = v;
+		//mesh.vertices = vertices;
 		mesh.triangles = triangles;
 		mesh.normals = normals;
 		mesh.uv = uv;
@@ -408,9 +524,13 @@ export class ObjReader {
 		var renderer = object3d.addComponent(Tea.MeshRenderer);
 		//renderer.wireframe = true;
 		renderer.material.shader = shader;
-		var image = obj.materials[obj.usemtl].map_Kd;
-		var texture = this.app.createTexture(image);
-		renderer.material.mainTexture = texture;
+		if (obj.materials != null) {
+			var image = obj.materials[obj.usemtl].map_Kd;
+			if (image != null && image instanceof HTMLImageElement) {
+				var texture = this.app.createTexture(image);
+				renderer.material.mainTexture = texture;
+			}
+		}
 		var meshFilter = object3d.addComponent(Tea.MeshFilter);
 		meshFilter.mesh = mesh;
 		return object3d;
@@ -447,7 +567,7 @@ export class ObjReader {
 		return new Tea.Vector3(x, y, z);
 	}
 
-	protected parseF(params: Array<string>): any {
+	protected parseF(params: Array<string>, vLength: number, vtLength: number, vnLength: number): any {
 		var list = [];
 		var length = params.length;
 		for (var i = 1; i < length; i++) {
@@ -458,6 +578,15 @@ export class ObjReader {
 			var triangle = this.parseInt(param[0]);
 			var uv = this.parseInt(param[1]);
 			var normal = this.parseInt(param[2]);
+			if (triangle < 0) {
+				triangle += vLength + 1;
+			}
+			if (uv < 0) {
+				uv += vtLength + 1;
+			}
+			if (normal < 0) {
+				normal += vnLength + 1;
+			}
 			list.push({
 				triangle: triangle - 1,
 				uv: uv - 1,

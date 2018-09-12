@@ -17,9 +17,6 @@ class BufferAttributes {
 
 	add(name: string, size: number, type: number, offset: number): void {
 		var location = this.shader.getAttribLocation(name);
-		if (location < 0) {
-			return;
-		}
 		var attrib = new BufferAttribute();
 		attrib.name = name;
 		attrib.location = location;
@@ -164,37 +161,27 @@ export class MeshRenderer extends Renderer {
 
 		var gl = this.gl;
 		var stride = 4 * 3;
-		this.enableVertexAttribArray("vertex");
 		this._attributes.clear();
 		this._attributes.shader = this.material.shader;
 		this._attributes.add("vertex", 3, gl.FLOAT, 0);
 
-		if (mesh.hasTriangles === false) {
-			this.disableVertexAttrib("normal");
-			this.disableVertexAttrib("texcoord");
-			this.disableVertexAttrib("color");
+		if (mesh.hasNormals) {
+			this._attributes.add("normal", 3, gl.FLOAT, stride);
+			stride += 4 * 3;
 		} else {
-			if (mesh.hasNormals) {
-				this.enableVertexAttribArray("normal");
-				this._attributes.add("normal", 3, gl.FLOAT, stride);
-				stride += 4 * 3;
-			} else {
-				this.disableVertexAttrib("normal");
-			}
-			if (mesh.hasUVs) {
-				this.enableVertexAttribArray("texcoord");
-				this._attributes.add("texcoord", 2, gl.FLOAT, stride);
-				stride += 4 * 2;
-			} else {
-				this.disableVertexAttrib("texcoord");
-			}
-			if (mesh.hasColors) {
-				this.enableVertexAttribArray("color");
-				this._attributes.add("color", 4, gl.FLOAT, stride);
-				stride += 4 * 4;
-			} else {
-				this.disableVertexAttrib("color");
-			}
+			this._attributes.add("normal", 0, gl.FLOAT, 0);
+		}
+		if (mesh.hasUVs) {
+			this._attributes.add("texcoord", 2, gl.FLOAT, stride);
+			stride += 4 * 2;
+		} else {
+			this._attributes.add("texcoord", 0, gl.FLOAT, 0);
+		}
+		if (mesh.hasColors) {
+			this._attributes.add("color", 4, gl.FLOAT, stride);
+			stride += 4 * 4;
+		} else {
+			this._attributes.add("color", 0, gl.FLOAT, 0);
 		}
 		this._attributes.stride = stride;
 
@@ -208,11 +195,19 @@ export class MeshRenderer extends Renderer {
 			}
 			if (mesh.hasNormals) {
 				var normal = mesh.normals[i];
-				data.push(normal[0], normal[1], normal[2]);
+				if (normal == null) {
+					data.push(0.0, 0.0, 0.0);
+				} else {
+					data.push(normal[0], normal[1], normal[2]);
+				}
 			}
 			if (mesh.hasUVs) {
 				var uv = mesh.uv[i];
-				data.push(uv[0], uv[1]);
+				if (uv == null) {
+					data.push(0.0, 0.0);
+				} else {
+					data.push(uv[0], uv[1]);
+				}
 			}
 			if (mesh.hasColors) {
 				var color = mesh.colors[i];
@@ -228,7 +223,12 @@ export class MeshRenderer extends Renderer {
 
 		if (mesh.hasTriangles) {
 			target = gl.ELEMENT_ARRAY_BUFFER;
-			var triangles = new Uint16Array(Tea.ArrayUtil.unroll(mesh.triangles));
+			var triangles = null;
+			if (this.app.status.OES_element_index_uint != null) {
+				triangles = new Uint32Array(Tea.ArrayUtil.unroll(mesh.triangles));
+			} else {
+				triangles = new Uint16Array(Tea.ArrayUtil.unroll(mesh.triangles));
+			}
 			gl.bindBuffer(target, this.indexBuffer);
 			gl.bufferData(target, triangles, gl.STATIC_DRAW);
 			gl.bindBuffer(target, null);
@@ -246,6 +246,14 @@ export class MeshRenderer extends Renderer {
 		var length = items.length;
 		for (var i = 0; i < length; i++) {
 			var item = items[i];
+			if (item.location < 0) {
+				continue;
+			}
+			if (item.size <= 0) {
+				gl.disableVertexAttribArray(item.location);
+				continue;
+			}
+			gl.enableVertexAttribArray(item.location);
 			gl.vertexAttribPointer(
 				item.location,
 				item.size,
@@ -281,11 +289,17 @@ export class MeshRenderer extends Renderer {
 	protected getDrawFunc(mesh: Tea.Mesh): Function {
 		if (this.wireframe) {
 			if (mesh.hasTriangles) {
+				if (this.app.status.OES_element_index_uint != null) {
+					return this.drawWireframe32;
+				}
 				return this.drawWireframe;
 			}
 			return this.drawArraysWireframe;
 		}
 		if (mesh.hasTriangles) {
+			if (this.app.status.OES_element_index_uint != null) {
+				return this.draw32;
+			}
 			return this.draw;
 		}
 		return this.drawArrays;
@@ -295,6 +309,12 @@ export class MeshRenderer extends Renderer {
 		var gl = this.gl;
 		var count = mesh.triangles.length * 3;
 		gl.drawElements(gl.TRIANGLES, count, gl.UNSIGNED_SHORT, 0);
+	}
+
+	protected draw32(mesh: Tea.Mesh): void {
+		var gl = this.gl;
+		var count = mesh.triangles.length * 3;
+		gl.drawElements(gl.TRIANGLES, count, gl.UNSIGNED_INT, 0);
 	}
 
 	protected drawArrays(mesh: Tea.Mesh): void {
@@ -308,6 +328,12 @@ export class MeshRenderer extends Renderer {
 		var gl = this.gl;
 		var count = mesh.triangles.length * 3;
 		gl.drawElements(gl.LINES, count, gl.UNSIGNED_SHORT, 0);
+	}
+
+	protected drawWireframe32(mesh: Tea.Mesh): void {
+		var gl = this.gl;
+		var count = mesh.triangles.length * 3;
+		gl.drawElements(gl.LINES, count, gl.UNSIGNED_INT, 0);
 	}
 
 	protected drawArraysWireframe(mesh: Tea.Mesh): void {
