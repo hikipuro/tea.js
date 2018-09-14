@@ -1,53 +1,35 @@
 import * as Tea from "../Tea";
 
 export class Color extends Array<number> {
+	static readonly background = new Color(49 / 255, 77 / 255, 121 / 255, 1.0);
+	static readonly black = new Color(0.0, 0.0, 0.0, 1.0);
+	static readonly blue = new Color(0.0, 0.0, 1.0, 1.0);
+	static readonly clear = new Color(0.0, 0.0, 0.0, 0.0);
+	static readonly cyan = new Color(0.0, 1.0, 1.0, 1.0);
+	static readonly gray = new Color(0.5, 0.5, 0.5, 1.0);
+	static readonly green = new Color(0.0, 1.0, 0.0, 1.0);
+	static readonly magenta = new Color(1.0, 0.0, 1.0, 1.0);
+	static readonly red = new Color(1.0, 0.0, 0.0, 1.0);
+	static readonly white = new Color(1.0, 1.0, 1.0, 1.0);
+	static readonly yellow = new Color(1.0, 0.92, 0.016, 1.0);
+
 	constructor(r: number = 0.0, g: number = 0.0, b: number = 0.0, a: number = 0.0) {
 		super();
 		this.set(r, g, b, a);
 	}
 
-	static get background(): Color {
-		return new Color(49 / 255, 77 / 255, 121 / 255, 1.0);
-	}
-
-	static get black(): Color {
-		return new Color(0.0, 0.0, 0.0, 1.0);
-	}
-
-	static get blue(): Color {
-		return new Color(0.0, 0.0, 1.0, 1.0);
-	}
-
-	static get clear(): Color {
-		return new Color(0.0, 0.0, 0.0, 0.0);
-	}
-
-	static get cyan(): Color {
-		return new Color(0.0, 1.0, 1.0, 1.0);
-	}
-
-	static get gray(): Color {
-		return new Color(0.5, 0.5, 0.5, 1.0);
-	}
-
-	static get green(): Color {
-		return new Color(0.0, 1.0, 0.0, 1.0);
-	}
-
-	static get magenta(): Color {
-		return new Color(1.0, 0.0, 1.0, 1.0);
-	}
-
-	static get red(): Color {
-		return new Color(1.0, 0.0, 0.0, 1.0);
-	}
-
-	static get white(): Color {
-		return new Color(1.0, 1.0, 1.0, 1.0);
-	}
-
-	static get yellow(): Color {
-		return new Color(1.0, 0.92, 0.016, 1.0);
+	static init() {
+		Object.freeze(Color.background);
+		Object.freeze(Color.black);
+		Object.freeze(Color.blue);
+		Object.freeze(Color.clear);
+		Object.freeze(Color.cyan);
+		Object.freeze(Color.gray);
+		Object.freeze(Color.green);
+		Object.freeze(Color.magenta);
+		Object.freeze(Color.red);
+		Object.freeze(Color.white);
+		Object.freeze(Color.yellow);
 	}
 
 	get r(): number {
@@ -97,7 +79,7 @@ export class Color extends Array<number> {
 	}
 
 	get maxColorComponent(): number {
-		return Math.max(this.r, this.g, this.b);
+		return Math.max(this[0], this[1], this[2]);
 	}
 
 	set(r: number, g: number, b: number, a: number): void {
@@ -105,6 +87,13 @@ export class Color extends Array<number> {
 		this[1] = g;
 		this[2] = b;
 		this[3] = a;
+	}
+
+	copy(value: Color): void {
+		this[0] = value[0];
+		this[1] = value[1];
+		this[2] = value[2];
+		this[3] = value[3];
 	}
 
 	equals(value: Color): boolean {
@@ -219,3 +208,5 @@ export class Color extends Array<number> {
 		);
 	}
 }
+
+Color.init();
