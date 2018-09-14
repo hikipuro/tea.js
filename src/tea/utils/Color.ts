@@ -96,6 +96,50 @@ export class Color extends Array<number> {
 		this[3] = value[3];
 	}
 
+	setHSV(h: number, s: number, v: number): void {
+		h = Tea.Mathf.clamp01(h);
+		s = Tea.Mathf.clamp01(s);
+		v = Tea.Mathf.clamp01(v);
+		var r = v, g = v, b = v;
+
+		if (s > 0.0) {
+			h *= 6.0;
+			var i = Math.floor(h);
+			var f = h - i;
+			switch (i) {
+				default:
+				case 0:
+					g *= 1.0 - s * (1.0 - f);
+					b *= 1.0 - s;
+					break;
+				case 1:
+					r *= 1.0 - s * f;
+					b *= 1.0 - s;
+					break;
+				case 2:
+					r *= 1.0 - s;
+					b *= 1.0 - s * (1.0 - f);
+					break;
+				case 3:
+					r *= 1.0 - s;
+					g *= 1.0 - s * f;
+					break;
+				case 4:
+					r *= 1.0 - s * (1.0 - f);
+					g *= 1.0 - s;
+					break;
+				case 5:
+					g *= 1.0 - s;
+					b *= 1.0 - s * f;
+					break;
+			}
+		}
+		this[0] = r;
+		this[1] = g;
+		this[2] = b;
+		this[3] = 1.0;
+	}
+
 	equals(value: Color): boolean {
 		if (value == null) {
 			return false;
@@ -140,48 +184,13 @@ export class Color extends Array<number> {
 	}
 
 	static fromRGB(r: number, g: number, b: number): Color {
-		return new Color(r, g, b, 1);
+		return new Color(r, g, b, 1.0);
 	}
 
 	static fromHSV(h: number, s: number, v: number): Color {
-		h = Tea.Mathf.clamp01(h);
-		s = Tea.Mathf.clamp01(s);
-		v = Tea.Mathf.clamp01(v);
-		var r = v, g = v, b = v;
-
-		if (s > 0) {
-			h *= 6;
-			var i = Math.floor(h);
-			var f = h - i;
-			switch (i) {
-				default:
-				case 0:
-					g *= 1 - s * (1 - f);
-					b *= 1 - s;
-					break;
-				case 1:
-					r *= 1 - s * f;
-					b *= 1 - s;
-					break;
-				case 2:
-					r *= 1 - s;
-					b *= 1 - s * (1 - f);
-					break;
-				case 3:
-					r *= 1 - s;
-					g *= 1 - s * f;
-					break;
-				case 4:
-					r *= 1 - s * (1 - f);
-					g *= 1 - s;
-					break;
-				case 5:
-					g *= 1 - s;
-					b *= 1 - s * f;
-					break;
-			}
-		}
-		return Color.fromRGBA(r, g, b, 1);
+		var color = new Color();
+		color.setHSV(h, s, v);
+		return color;
 	}
 
 	static fromRGBA32(color: number): Color {
@@ -204,7 +213,7 @@ export class Color extends Array<number> {
 			bytes[1] / 255,
 			bytes[2] / 255,
 			bytes[3] / 255,
-			1
+			1.0
 		);
 	}
 }

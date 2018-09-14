@@ -18,7 +18,7 @@ export class TestScript extends Tea.Script {
 		//console.log(this.count, this.position);
 
 		this.rotate(0., 3., 0.);
-		var r = this.object3d.getComponent(Tea.Renderer);
+		var r = this.renderer;
 		var i = Math.sin(this.count / 40);
 		r.material.mainTextureOffset.set(0.0, i);
 		r.material.mainTextureScale.set(1.0 + i / 2.0, 1.0 + i / 2.0);

@@ -45,10 +45,10 @@ export class Material {
 		this.renderQueue = 2000;
 		this._uniforms = {};
 		this._textures = {};
-		this.color = Tea.Color.white;
+		this.color = Tea.Color.white.clone();
 		this.mainTexture = Tea.Texture.getEmpty(app);
 		this.mainTextureOffset = new Tea.Vector2();
-		this.mainTextureScale = new Tea.Vector2(1, 1);
+		this.mainTextureScale = new Tea.Vector2(1.0, 1.0);
 		this.setTexture("_ShadowTex", Tea.Texture.getEmpty(app));
 		this.setTextureOffset("_ShadowTex", new Tea.Vector2());
 		this.setTextureScale("_ShadowTex", new Tea.Vector2(1.0, 1.0));

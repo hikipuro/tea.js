@@ -76,6 +76,10 @@ export class Script extends Component {
 		return this.object3d.scale;
 	}
 
+	get renderer(): Tea.Renderer {
+		return this.object3d.getComponent(Tea.Renderer);
+	}
+
 	translate(translation: Tea.Vector3): void;
 	translate(x: number, y: number, z: number): void;
 	translate(a: number | Tea.Vector3, b?: number, c?: number): void {

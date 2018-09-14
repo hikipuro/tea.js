@@ -294,6 +294,20 @@ export class Object3D {
 		return c;
 	}
 
+	removeComponent<T extends Tea.Component>(component: new (app: Tea.App) => T): void {
+		if (component == null) {
+			return;
+		}
+		var c = this._components.find((c) => {
+			return c instanceof component;
+		}) as T;
+		if (c == null) {
+			return;
+		}
+		var index = this._components.indexOf(c);
+		this._components.splice(index, 1);
+	}
+
 	getComponent<T extends Tea.Component>(component: {new (app: Tea.App): T}): T {
 		return this._components.find((c) => {
 			return c instanceof component;
@@ -301,16 +315,9 @@ export class Object3D {
 	}
 
 	getComponents<T extends Tea.Component>(component: {new (app: Tea.App): T}): Array<T> {
-		var array = [];
-		var components = this._components;
-		var length = components.length;
-		for (var i = 0; i < length; i++) {
-			var c = components[i];
-			if (c instanceof component) {
-				array.push(c);
-			}
-		}
-		return array;
+		return this._components.filter((c) => {
+			return c instanceof component;
+		}) as Array<T>;
 	}
 
 	getComponentsInParent<T extends Tea.Component>(
@@ -357,7 +364,7 @@ export class Object3D {
 			return;
 		}
 		var scripts = this.getComponents(Tea.Script);
-		Tea.ArrayUtil.each(scripts, (i, script) => {
+		scripts.forEach((script) => {
 			var method = script[methodName];
 			if (method instanceof Function) {
 				method.apply(script, args);
@@ -398,37 +405,24 @@ export class Object3D {
 		if (parent === this) {
 			return true;
 		}
-		var found = false;
-		Tea.ArrayUtil.each(parent.children, (i, child) => {
-			if (child === this) {
-				found = true;
-				return false;
-			}
-		});
-		if (found) {
+		if (parent.children.indexOf(this) >= 0) {
 			return true;
 		}
-		Tea.ArrayUtil.each(parent.children, (i, child) => {
+		return parent.children.some((child) => {
 			if (this.isChildOf(child)) {
-				found = true;
-				return false;
+				return true;
 			}
 		});
-		return found;
 	}
 
 	getSiblingIndex(): number {
 		if (this._parent == null) {
-			return 0;
-		}
-		var index = 0;
-		Tea.ArrayUtil.each(this._parent.children, (i, child) => {
-			if (child === this) {
-				index = i;
-				return false;
+			if (this.scene == null) {
+				return -1;
 			}
-		});
-		return index;
+			return this.scene.children.indexOf(this);
+		}
+		return this._parent.children.indexOf(this);
 	}
 
 	detachChildren(): void {
@@ -439,14 +433,9 @@ export class Object3D {
 	}
 
 	find(name: string): Object3D {
-		var object3d = null;
-		this.children.forEach((child) => {
-			if (child.name === name) {
-				object3d = child;
-				return false;
-			}
+		return this.children.find((child) => {
+			return child.name === name;
 		});
-		return object3d;
 	}
 
 	translate(translation: Tea.Vector3): void;

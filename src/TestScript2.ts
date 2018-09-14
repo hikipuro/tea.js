@@ -8,8 +8,8 @@ export class TestScript2 extends Tea.Script {
 		//console.log("update");
 		this.count++;
 
-		var renderer = this.object3d.getComponent(Tea.LineRenderer);
+		var renderer = this.renderer;
 		//var r = renderer as Tea.LineRenderer;
-		renderer.material.color = Tea.Color.fromHSV(this.count % 360 / 360, 1, 1);
+		renderer.material.color.setHSV(this.count % 360 / 360, 1, 1);
 	}
 }

@@ -214,11 +214,10 @@ export class Main {
 		//cube.rotate(45, 0, 0);
 		//cube2.localPosition = new Tea.Vector3(0, 2, 0);
 
-		/*
 		var cube3 = Tea.Object3D.createPrimitive(this.app, Tea.PrimitiveType.Cube);
 		cube3.position.x = 4;
 		cube3.position.y = 2;
-		cube2.appendChild(cube3);
+		cube3.parent = cube2;
 
 		//cube2.position = new Tea.Vector3(2, 0, 0);
 		//cube.localScale = new Tea.Vector3(2, 1, 1);
@@ -235,7 +234,7 @@ export class Main {
 		//console.log("cube2", cube2.localPosition);
 		//console.log("cube2", cube2.localScale);
 		//console.log("cube3", cube3.localPosition);
-		*/
+		//*/
 
 		var sphere = Tea.Object3D.createPrimitive(this.app, Tea.PrimitiveType.Sphere);
 		//cube2.name = "cube2";
@@ -262,6 +261,14 @@ export class Main {
 		console.log(cube2.localPosition);
 		console.log(cube2.localEulerAngles);
 		console.log(cube2.localScale);
+
+		console.log(quad.find("Cube"));
+		console.log(cube3.getSiblingIndex());
+		console.log(cube3.isChildOf(quad));
+		console.log(cube3.isChildOf(cube2));
+		console.log(cube3.isChildOf(cube));
+		console.log(cube2.isChildOf(quad));
+		console.log(cube2.isChildOf(cube));
 
 		var cylinder = Tea.Object3D.createPrimitive(this.app, Tea.PrimitiveType.Cylinder);
 		//cylinder.renderer.wireframe = true;
