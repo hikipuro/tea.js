@@ -141,6 +141,7 @@ export class Main {
 
 		var light = this.app.createLight();
 		light.localRotation = Tea.Quaternion.euler(30, 60, 0);
+		//light.addComponent(Rotate);
 		scene.appendChild(light);
 
 		var camera = this.app.createCamera();
@@ -176,11 +177,11 @@ export class Main {
 
 		var cube = Tea.Object3D.createPrimitive(this.app, Tea.PrimitiveType.Cube);
 		//cube.name = "cube";
-		cube.position = Tea.vec3(0, 2, 0);
+		cube.position.set(0, 2, 0);
 		//cube.position.z = 5;
 		//cube.scale.y = -1;
-		//cube.scale.z = 2;
-		//cube.localRotation = Tea.Quaternion.euler(45, 30, 0);
+		cube.scale.x = 1.4;
+		cube.localRotation = Tea.Quaternion.euler(45, 0, 0);
 		//cube.rotation.y = Tea.radians(20);
 		//cube.addScript(new Rotate());
 		//cube.getComponent(Tea.Renderer).material.mainTexture = renderTexture;
@@ -188,13 +189,21 @@ export class Main {
 		box2.size = cube.getComponent(Tea.MeshFilter).mesh.bounds.size.clone();
 		scene.appendChild(cube);
 
-		/*
 		var cube2 = Tea.Object3D.createPrimitive(this.app, Tea.PrimitiveType.Cube);
 		cube2.position.x = 2;
 		cube2.position.y = 2;
+		cube2.rotation.rotateEuler(40,0,0);
+		cube2.scale.set(2,1,1);
 		//cube2.name = "cube2";
 		//scene.appendChild(cube2);
-		cube.appendChild(cube2);
+		scene.appendChild(cube2);
+		cube2.parent = cube;
+		cube.translate(-4,0,0);
+		cube.rotate(0, 45, 0);
+		cube.scale.set(1,1,1);
+		console.log(cube2.localPosition);
+		console.log(cube2.localEulerAngles);
+		console.log(cube2.localScale);
 		//cube2.addComponent(HitTest);
 		//var box2 = cube2.addComponent(Tea.BoxCollider);
 		//box2.size = cube2.getComponent(Tea.MeshFilter).mesh.bounds.size;
@@ -205,6 +214,7 @@ export class Main {
 		//cube.rotate(45, 0, 0);
 		//cube2.localPosition = new Tea.Vector3(0, 2, 0);
 
+		/*
 		var cube3 = Tea.Object3D.createPrimitive(this.app, Tea.PrimitiveType.Cube);
 		cube3.position.x = 4;
 		cube3.position.y = 2;
@@ -248,6 +258,10 @@ export class Main {
 		quad.addComponent(Rotate);
 		scene.appendChild(quad);
 		//this.plain = quad;
+		cube2.parent = quad;
+		console.log(cube2.localPosition);
+		console.log(cube2.localEulerAngles);
+		console.log(cube2.localScale);
 
 		var cylinder = Tea.Object3D.createPrimitive(this.app, Tea.PrimitiveType.Cylinder);
 		//cylinder.renderer.wireframe = true;
@@ -335,7 +349,7 @@ export class Main {
 		lineRenderer.add(0, 0, 7);
 		//lineRenderer.color = new Tea.Color(1, 0, 0, 1);
 		lines.addComponent(TestScript2);
-		capsule.appendChild(lines);
+		lines.parent = capsule;
 		//console.log("scale", lines.scale);
 		//scene.appendChild(lines);
 

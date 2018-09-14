@@ -61,9 +61,9 @@ export class Object3D {
 	localPosition: Tea.Vector3;
 	localRotation: Tea.Quaternion;
 	localScale: Tea.Vector3;
-	parent: Object3D;
 	children: Array<Object3D>;
 	protected _m: Movement;
+	protected _parent: Object3D;
 	protected _components: Array<Tea.Component>;
 
 	constructor(app: Tea.App) {
@@ -75,6 +75,7 @@ export class Object3D {
 		this.localScale = Tea.Vector3.one.clone();
 		this.children = [];
 		this._m = new Movement();
+		this._parent = null;
 		this._components = [];
 	}
 
@@ -124,18 +125,41 @@ export class Object3D {
 	}
 
 	get isActiveInHierarchy(): boolean {
-		if (this.parent != null) {
-			return this.parent.isActiveInHierarchy
+		if (this._parent != null) {
+			return this._parent.isActiveInHierarchy
 				&& this.isActive;
 		}
 		return this.isActive;
 	}
 
+	get parent(): Object3D {
+		return this._parent;
+	}
+	set parent(value: Object3D) {
+		if (this._parent === value || value === this) {
+			return;
+		}
+		var parent = this._parent;
+		if (parent != null) {
+			parent.adjustChildPosition(this, false);
+			var index = parent.children.indexOf(this);
+			parent.children.splice(index, 1);
+		}
+		if (value == null) {
+			this._parent = null;
+			return;
+		}
+		this._parent = value;
+		this.scene = value.scene;
+		value.adjustChildPosition(this, true);
+		value.children.push(this);
+	}
+
 	get position(): Tea.Vector3 {
-		if (this.parent != null) {
-			var p = this.parent.position;
-			var r = this.parent.rotation;
-			var s = this.parent.scale;
+		if (this._parent != null) {
+			var p = this._parent.position;
+			var r = this._parent.rotation;
+			var s = this._parent.scale;
 			var lp = this.localPosition.clone();
 			lp.scale$(s);
 			lp.applyQuaternion(r);
@@ -145,10 +169,10 @@ export class Object3D {
 	}
 
 	set position(value: Tea.Vector3) {
-		if (this.parent != null) {
-			var p = this.parent.position;
-			var r = this.parent.rotation;
-			var s = this.parent.scale.clone();
+		if (this._parent != null) {
+			var p = this._parent.position;
+			var r = this._parent.rotation;
+			var s = this._parent.scale.clone();
 			p = value.sub(p);
 			p.applyQuaternion(r.inversed);
 			this.reverseScale$(s);
@@ -160,16 +184,16 @@ export class Object3D {
 	}
 
 	get rotation(): Tea.Quaternion {
-		if (this.parent != null) {
-			var r = this.parent.rotation;
+		if (this._parent != null) {
+			var r = this._parent.rotation;
 			return r.mul(this.localRotation);
 		}
 		return this.localRotation;
 	}
 
 	set rotation(value: Tea.Quaternion) {
-		if (this.parent != null) {
-			var r = this.parent.rotation;
+		if (this._parent != null) {
+			var r = this._parent.rotation;
 			this.localRotation = r.inversed.mul(value);
 			return;
 		}
@@ -177,16 +201,16 @@ export class Object3D {
 	}
 
 	get scale(): Tea.Vector3 {
-		if (this.parent != null) {
-			var s = this.parent.scale;
+		if (this._parent != null) {
+			var s = this._parent.scale;
 			return s.scale(this.localScale);
 		}
 		return this.localScale;
 	}
 
 	set scale(value: Tea.Vector3) {
-		if (this.parent != null) {
-			var s = this.parent.scale.clone();
+		if (this._parent != null) {
+			var s = this._parent.scale.clone();
 			this.reverseScale$(s);
 			this.localScale = value.scale(s);
 			return;
@@ -249,6 +273,13 @@ export class Object3D {
 		return this._m.worldToLocalMatrix;
 	}
 
+	get root(): Tea.Object3D {
+		if (parent == null) {
+			return this;
+		}
+		return this._parent.root;
+	}
+
 	toString(): string {
 		return JSON.stringify(this);
 	}
@@ -287,9 +318,9 @@ export class Object3D {
 		includeInactive: boolean = false): Array<T>
 	{
 		var array = [];
-		if (this.parent != null) {
-			if (includeInactive === true || this.parent.isActive === true) {
-				var c = this.parent.getComponentsInParent(
+		if (this._parent != null) {
+			if (includeInactive === true || this._parent.isActive === true) {
+				var c = this._parent.getComponentsInParent(
 					component, includeInactive
 				);
 				array.push(c);
@@ -338,8 +369,8 @@ export class Object3D {
 		if (methodName == null || methodName === "") {
 			return;
 		}
-		if (this.parent != null) {
-			this.parent.sendMessageUpwards(methodName, args);
+		if (this._parent != null) {
+			this._parent.sendMessageUpwards(methodName, args);
 		}
 		this.sendMessage(methodName, args);
 	}
@@ -354,16 +385,6 @@ export class Object3D {
 			});
 		}
 		this.sendMessage(methodName, args);
-	}
-
-	appendChild(object3d: Tea.Object3D): void {
-		if (object3d == null || object3d === this) {
-			return;
-		}
-		object3d.parent = this;
-		object3d.scene = this.scene;
-		this.adjustChildPosition(object3d);
-		this.children.push(object3d);
 	}
 
 	getChild(index: number): Object3D {
@@ -397,11 +418,11 @@ export class Object3D {
 	}
 
 	getSiblingIndex(): number {
-		if (this.parent == null) {
+		if (this._parent == null) {
 			return 0;
 		}
 		var index = 0;
-		Tea.ArrayUtil.each(this.parent.children, (i, child) => {
+		Tea.ArrayUtil.each(this._parent.children, (i, child) => {
 			if (child === this) {
 				index = i;
 				return false;
@@ -432,10 +453,10 @@ export class Object3D {
 	translate(x: number, y: number, z: number): void;
 	translate(a: number | Tea.Vector3, b?: number, c?: number): void {
 		if (a instanceof Tea.Vector3) {
-			this.localPosition.add(a);
+			this.localPosition.add$(a);
 			return;
 		}
-		this.localPosition.add(new Tea.Vector3(a, b, c));
+		this.localPosition.add$(new Tea.Vector3(a, b, c));
 	}
 
 	rotate(eulerAngles: Tea.Vector3): void;
@@ -493,12 +514,21 @@ export class Object3D {
 		return scale;
 	}
 
-	protected adjustChildPosition(child: Tea.Object3D): void {
-		child.localPosition = child.localPosition.sub(this.position);
-		var rotation = this.rotation.clone();
-		child.localRotation = rotation.inversed.mul(child.localRotation);
-		var scale = this.scale.clone();
-		this.reverseScale$(scale);
-		child.localScale = child.localScale.scale(scale);
+	protected adjustChildPosition(child: Tea.Object3D, isAppend: boolean): void {
+		if (isAppend) {
+			child.localPosition.sub$(this.position);
+			var rotation = this.rotation.clone();
+			child.localRotation = rotation.inversed.mul(child.localRotation);
+			var scale = this.scale.clone();
+			this.reverseScale$(scale);
+			child.localPosition.scale$(scale);
+			child.localScale.scale$(scale);
+			return;
+		}
+		child.localPosition.scale$(this.scale);
+		child.localPosition.applyQuaternion(this.rotation);
+		child.localPosition.add$(this.position);
+		child.localRotation = this.rotation.mul(child.localRotation);
+		child.localScale.scale$(this.scale);
 	}
 }

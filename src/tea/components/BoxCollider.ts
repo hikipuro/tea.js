@@ -80,8 +80,8 @@ export class BoxCollider extends Collider {
 	testBoxCollider(box: BoxCollider): boolean {
 		var ao = this.object3d;
 		var bo = box.object3d;
-		var ae = this.size.mul(0.5);
-		var be = box.size.mul(0.5);
+		var ae = this.size.mul(0.5).scale(ao.scale);
+		var be = box.size.mul(0.5).scale(bo.scale);
 		var ax = ao.right, axl = ax.mul(ae.x);
 		var ay = ao.up, ayl = ay.mul(ae.y);
 		var az = ao.forward, azl = az.mul(ae.z);
