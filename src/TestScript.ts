@@ -3,6 +3,7 @@ import * as Tea from "./tea/Tea";
 export class TestScript extends Tea.Script {
 	count: number = 0;
 	speedY: number = 0;
+	cube: Tea.Object3D;
 
 	start(): void {
 		console.log("TestScript.start");
@@ -16,7 +17,6 @@ export class TestScript extends Tea.Script {
 		//this.position.z = Math.sin(Tea.radians(this.count)) * 5;
 		//console.log(this.count, this.position);
 
-		//this.rotation.x = Tea.radians(this.count / 3);
 		this.rotate(0., 3., 0.);
 		var r = this.object3d.getComponent(Tea.Renderer);
 		var i = Math.sin(this.count / 40);
@@ -43,7 +43,7 @@ export class TestScript extends Tea.Script {
 			//this.position.x = -0.5 + mouse.x / this.app.width;
 			//this.position.y = 0.5 + mouse.y / this.app.height;
 			var p = mouse.position;
-			p.z = 3;
+			p.z = 10;
 			p = this.object3d.scene.mainCamera.screenToWorldPoint(p);
 			this.localPosition = p;
 			//console.log(p.toString());
@@ -57,6 +57,18 @@ export class TestScript extends Tea.Script {
 		}
 		if (mouse.isUp(0)) {
 			//console.log("mouse up");
+		}
+
+		var box1 = this.object3d.getComponent(Tea.BoxCollider);
+		var box2 = this.cube.getComponent(Tea.BoxCollider);
+		var r = this.cube.getComponent(Tea.Renderer);
+		//console.log(box1.toString());
+		if (box1.testBoxCollider(box2)) {
+			//console.log("true");
+			r.material.color = Tea.Color.red;
+		} else {
+			//console.log("false");
+			r.material.color = Tea.Color.white;
 		}
 
 		//console.log(this.app.keyboard._keys);

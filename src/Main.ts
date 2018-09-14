@@ -79,18 +79,24 @@ export class Main {
 			var t = 2;
 			var loop = 100;
 			var count = 200;
-			var test2 = Tea.benchmark(() => {
-				for (var i = 0; i < loop; i++) {
-					t = Math.pow(t, 2);
-				}
-			}, count);
+			/*
+			var m1 = new Tea.Matrix4x4();
+			var m2 = Tea.Matrix4x4.identity;
 			var test1 = Tea.benchmark(() => {
 				for (var i = 0; i < loop; i++) {
-					t = t ** 2;
+					m1.copy2(m2);
+				}
+			}, count);
+			m1 = new Tea.Matrix4x4();
+			m2 = Tea.Matrix4x4.identity;
+			var test2 = Tea.benchmark(() => {
+				for (var i = 0; i < loop; i++) {
+					m1.copy(m2);
 				}
 			}, count);
 			console.log("test1", test1);
 			console.log("test2", test2);
+			*/
 		}, 1000);
 		//*/
 
@@ -168,7 +174,6 @@ export class Main {
 
 		//var script = new TestScript();
 
-		/*
 		var cube = Tea.Object3D.createPrimitive(this.app, Tea.PrimitiveType.Cube);
 		//cube.name = "cube";
 		cube.position = Tea.vec3(0, 2, 0);
@@ -179,8 +184,11 @@ export class Main {
 		//cube.rotation.y = Tea.radians(20);
 		//cube.addScript(new Rotate());
 		//cube.getComponent(Tea.Renderer).material.mainTexture = renderTexture;
+		var box2 = cube.addComponent(Tea.BoxCollider);
+		box2.size = cube.getComponent(Tea.MeshFilter).mesh.bounds.size.clone();
 		scene.appendChild(cube);
 
+		/*
 		var cube2 = Tea.Object3D.createPrimitive(this.app, Tea.PrimitiveType.Cube);
 		cube2.position.x = 2;
 		cube2.position.y = 2;
@@ -286,7 +294,7 @@ export class Main {
 		//capsule.position.y = 2;
 		//capsule.position.z = 2;
 		//capsule.scale.x = 2;
-		//capsule.rotation = Tea.Quaternion.euler(-45, 0, 0);
+		capsule.rotation = Tea.Quaternion.euler(0, 0, 45);
 		/*
 		console.log("extension", this.app.isExtensionSupported(Tea.GLExtensions.OES_standard_derivatives));
 		this.app.getExtension(Tea.GLExtensions.OES_standard_derivatives);
@@ -297,6 +305,7 @@ export class Main {
 		);
 		capsule.getComponent(Tea.Renderer).material.shader = s;
 		*/
+		/*
 		var cs = capsule.getComponent(Tea.Renderer).material.shader;
 		cs.settings.enableStencilTest = false;
 		cs.settings.stencil.func = Tea.ShaderTestFunc.Equal;
@@ -304,7 +313,10 @@ export class Main {
 		cs.settings.stencil.fail = Tea.ShaderStencilOp.Keep;
 		cs.settings.stencil.zfail = Tea.ShaderStencilOp.Keep;
 		cs.settings.stencil.zpass = Tea.ShaderStencilOp.Keep;
-		//capsule.addComponent(TestScript);
+		*/
+		var box1 = capsule.addComponent(Tea.BoxCollider);
+		box1.size = capsule.getComponent(Tea.MeshFilter).mesh.bounds.size.clone();
+		capsule.addComponent(TestScript).cube = cube;
 		scene.appendChild(capsule);
 
 		//console.log("capsule", capsule.localToWorldMatrix.toString());
@@ -385,6 +397,7 @@ export class Main {
 			}
 		];
 		var objIndex = 2;
+		/*
 		this.app.readObjFile(objList[objIndex].path, (object3d) => {
 			var scale = objList[objIndex].scale;
 			object3d.localScale = new Tea.Vector3(scale, scale, scale);
@@ -392,6 +405,7 @@ export class Main {
 			object3d.addComponent(Rotate);
 			scene.appendChild(object3d);
 		});
+		//*/
 
 		Tea.File.readImage("../models/texture.png", (err, image) => {
 			var texture = this.app.createTexture(image);

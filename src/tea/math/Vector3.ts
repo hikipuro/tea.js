@@ -174,16 +174,18 @@ export class Vector3 extends Array<number> {
 		);
 	}
 
-	set(x: number, y: number, z: number): void {
+	set(x: number, y: number, z: number): Tea.Vector3 {
 		this[0] = x;
 		this[1] = y;
 		this[2] = z;
+		return this;
 	}
 
-	copy(value: Vector3): void {
+	copy(value: Vector3): Tea.Vector3 {
 		this[0] = value[0];
 		this[1] = value[1];
 		this[2] = value[2];
+		return this;
 	}
 
 	equals(value: Vector3): boolean {

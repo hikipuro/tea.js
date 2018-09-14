@@ -487,9 +487,9 @@ export class Object3D {
 	}
 
 	protected reverseScale$(scale: Tea.Vector3): Tea.Vector3 {
-		scale[0] = scale[0] !== 0 ? 1 / scale[0] : 0;
-		scale[1] = scale[1] !== 0 ? 1 / scale[1] : 0;
-		scale[2] = scale[2] !== 0 ? 1 / scale[2] : 0;
+		scale[0] = scale[0] !== 0.0 ? 1.0 / scale[0] : 0.0;
+		scale[1] = scale[1] !== 0.0 ? 1.0 / scale[1] : 0.0;
+		scale[2] = scale[2] !== 0.0 ? 1.0 / scale[2] : 0.0;
 		return scale;
 	}
 
