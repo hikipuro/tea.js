@@ -4,6 +4,13 @@ import { Vector4 } from "./Vector4";
 
 export class Matrix4x4 extends Array<number> {
 	//static newCount: number = 0;
+	static readonly identity = new Matrix4x4(
+		new Vector4(1.0, 0.0, 0.0, 0.0),
+		new Vector4(0.0, 1.0, 0.0, 0.0),
+		new Vector4(0.0, 0.0, 1.0, 0.0),
+		new Vector4(0.0, 0.0, 0.0, 1.0)
+	);
+	static readonly zero = new Matrix4x4();
 
 	constructor();
 	constructor(column0: Tea.Vector4, column1: Tea.Vector4, column2: Tea.Vector4, column3: Tea.Vector4);
@@ -47,14 +54,9 @@ export class Matrix4x4 extends Array<number> {
 		}
 	}
 
-	static get zero(): Matrix4x4 {
-		return new Matrix4x4();
-	}
-
-	static get identity(): Matrix4x4 {
-		var m = new Matrix4x4();
-		m[0] = m[5] = m[10] = m[15] = 1.0;
-		return m;
+	static init() {
+		Object.freeze(Matrix4x4.identity);
+		Object.freeze(Matrix4x4.zero);
 	}
 
 	static fromArray(array: Array<number>, offset: number = 0): Matrix4x4 {
@@ -879,3 +881,5 @@ export class Matrix4x4 extends Array<number> {
 		);
 	}
 }
+
+Matrix4x4.init();

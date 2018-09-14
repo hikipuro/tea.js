@@ -1,6 +1,8 @@
 import { Vector2 } from "./Vector2";
 
 export class Rect extends Array<number> {
+	static readonly zero = new Rect();
+
 	constructor(x: number = 0.0, y: number = 0.0, width: number = 0.0, height: number = 0.0) {
 		super(4);
 		this[0] = x;
@@ -9,8 +11,8 @@ export class Rect extends Array<number> {
 		this[3] = height;
 	}
 
-	static get zero(): Rect {
-		return new Rect();
+	static init() {
+		Object.freeze(Rect.zero);
 	}
 
 	get x(): number {
@@ -152,3 +154,5 @@ export class Rect extends Array<number> {
 		);
 	}
 }
+
+Rect.init();

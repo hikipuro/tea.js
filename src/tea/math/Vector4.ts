@@ -1,6 +1,11 @@
 import { Vector3 } from "./Vector3";
 
 export class Vector4 extends Array<number> {
+	static readonly zero = new Vector4();
+	static readonly one = new Vector4(1.0, 1.0, 1.0, 1.0);
+	static readonly positiveInfinity = new Vector4(Infinity, Infinity, Infinity, Infinity);
+	static readonly negativeInfinity = new Vector4(-Infinity, -Infinity, -Infinity, -Infinity);
+
 	constructor(x?: number, y?: number, z?: number, w?: number);
 	constructor(vector3: Vector3, w?: number);
 	constructor(x: number | Vector3 = 0.0, y: number = 0.0, z: number = 0.0, w: number = 0.0) {
@@ -18,20 +23,11 @@ export class Vector4 extends Array<number> {
 		}
 	}
 
-	static get zero(): Vector4 {
-		return new Vector4();
-	}
-
-	static get one(): Vector4 {
-		return new Vector4(1.0, 1.0, 1.0, 1.0);
-	}
-
-	static get positiveInfinity(): Vector4 {
-		return new Vector4(Infinity, Infinity, Infinity, Infinity);
-	}
-
-	static get negativeInfinity(): Vector4 {
-		return new Vector4(-Infinity, -Infinity, -Infinity, -Infinity);
+	static init() {
+		Object.freeze(Vector4.zero);
+		Object.freeze(Vector4.one);
+		Object.freeze(Vector4.positiveInfinity);
+		Object.freeze(Vector4.negativeInfinity);
 	}
 
 	/** x == this[0] */
@@ -165,3 +161,5 @@ export class Vector4 extends Array<number> {
 		);
 	}
 }
+
+Vector4.init();

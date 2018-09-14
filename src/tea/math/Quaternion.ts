@@ -1,6 +1,7 @@
 import * as Tea from "../Tea";
 
 export class Quaternion extends Array<number> {
+	static readonly identity = new Quaternion(0.0, 0.0, 0.0, 1.0);
 	static _tmp: Quaternion = new Quaternion();
 	//static newCount: number = 0;
 
@@ -13,8 +14,8 @@ export class Quaternion extends Array<number> {
 		//Quaternion.newCount++;
 	}
 
-	static get identity(): Quaternion {
-		return new Quaternion(0.0, 0.0, 0.0, 1.0);
+	static init() {
+		Object.freeze(Quaternion.identity);
 	}
 
 	static euler(x: number, y: number, z: number): Quaternion;
@@ -54,8 +55,8 @@ export class Quaternion extends Array<number> {
 	static fromToRotation(fromDirection: Tea.Vector3, toDirection: Tea.Vector3): Quaternion {
 		fromDirection = fromDirection.normalized;
 		toDirection = toDirection.normalized;
-		var n = Tea.Vector3.cross(fromDirection, toDirection);
-		var d = Tea.Vector3.dot(fromDirection, toDirection);
+		var n = fromDirection.cross(toDirection);
+		var d = fromDirection.dot(toDirection);
 		return new Quaternion(n[0], n[1], n[2], d + 1.0).normalized;
 	}
 
@@ -413,3 +414,5 @@ export class Quaternion extends Array<number> {
 		return q.normalized;
 	}
 }
+
+Quaternion.init();

@@ -70,9 +70,9 @@ export class Object3D {
 		this.app = app;
 		this.name = "";
 		this.isActive = true;
-		this.localPosition = Tea.Vector3.zero;
-		this.localRotation = Tea.Quaternion.identity;
-		this.localScale = Tea.Vector3.one;
+		this.localPosition = Tea.Vector3.zero.clone();
+		this.localRotation = Tea.Quaternion.identity.clone();
+		this.localScale = Tea.Vector3.one.clone();
 		this.children = [];
 		this._m = new Movement();
 		this._components = [];
@@ -215,19 +215,19 @@ export class Object3D {
 	}
 
 	get forward(): Tea.Vector3 {
-		var f = Tea.Vector3.forward;
+		var f = Tea.Vector3.forward.clone();
 		f.applyQuaternion(this.rotation);
 		return f;
 	}
 
 	get up(): Tea.Vector3 {
-		var u = Tea.Vector3.up;
+		var u = Tea.Vector3.up.clone();
 		u.applyQuaternion(this.rotation);
 		return u;
 	}
 
 	get right(): Tea.Vector3 {
-		var r = Tea.Vector3.right;
+		var r = Tea.Vector3.right.clone();
 		r.applyQuaternion(this.rotation);
 		return r;
 	}

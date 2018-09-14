@@ -1,6 +1,16 @@
 import * as Tea from "../Tea";
 
 export class Vector3 extends Array<number> {
+	static readonly forward = new Vector3(0.0, 0.0, 1.0);
+	static readonly back = new Vector3(0.0, 0.0, -1.0);
+	static readonly up = new Vector3(0.0, 1.0, 0.0);
+	static readonly down = new Vector3(0.0, -1.0, 0.0);
+	static readonly left = new Vector3(-1.0, 0.0, 0.0);
+	static readonly right = new Vector3(1.0, 0.0, 0.0);
+	static readonly zero = new Vector3(0.0, 0.0, 0.0);
+	static readonly one = new Vector3(1.0, 1.0, 1.0);
+	static readonly positiveInfinity = new Vector3(Infinity, Infinity, Infinity);
+	static readonly negativeInfinity = new Vector3(-Infinity, -Infinity, -Infinity);
 	protected static _tmp: Vector3 = new Vector3();
 	//static newCount: number = 0;
 
@@ -12,44 +22,17 @@ export class Vector3 extends Array<number> {
 		//Vector3.newCount++;
 	}
 
-	static get forward(): Vector3 {
-		return new Vector3(0.0, 0.0, 1.0);
-	}
-
-	static get back(): Vector3 {
-		return new Vector3(0.0, 0.0, -1.0);
-	}
-
-	static get up(): Vector3 {
-		return new Vector3(0.0, 1.0, 0.0);
-	}
-
-	static get down(): Vector3 {
-		return new Vector3(0.0, -1.0, 0.0);
-	}
-
-	static get left(): Vector3 {
-		return new Vector3(-1.0, 0.0, 0.0);
-	}
-
-	static get right(): Vector3 {
-		return new Vector3(1.0, 0.0, 0.0);
-	}
-
-	static get zero(): Vector3 {
-		return new Vector3(0.0, 0.0, 0.0);
-	}
-
-	static get one(): Vector3 {
-		return new Vector3(1.0, 1.0, 1.0);
-	}
-
-	static get positiveInfinity(): Vector3 {
-		return new Vector3(Infinity, Infinity, Infinity);
-	}
-
-	static get negativeInfinity(): Vector3 {
-		return new Vector3(-Infinity, -Infinity, -Infinity);
+	static init() {
+		Object.freeze(Vector3.forward);
+		Object.freeze(Vector3.back);
+		Object.freeze(Vector3.up);
+		Object.freeze(Vector3.down);
+		Object.freeze(Vector3.left);
+		Object.freeze(Vector3.right);
+		Object.freeze(Vector3.zero);
+		Object.freeze(Vector3.one);
+		Object.freeze(Vector3.positiveInfinity);
+		Object.freeze(Vector3.negativeInfinity);
 	}
 
 	static max(a: Vector3, b: Vector3): Vector3 {
@@ -74,30 +57,6 @@ export class Vector3 extends Array<number> {
 		var ratio = Math.min(magnitude, maxDistanceDelta) / magnitude;
 		diff = diff.mul(ratio);
 		return current.sub(diff);
-	}
-
-	static dot(a: Vector3, b: Vector3): number {
-		return a.dot(b);
-	}
-
-	static cross(a: Vector3, b: Vector3): Vector3 {
-		return a.cross(b);
-	}
-
-	static angle(a: Vector3, b: Vector3): number {
-		return a.angle(b);
-	}
-
-	static distance(a: Vector3, b: Vector3): number {
-		return a.distance(b);
-	}
-
-	static normalize(value: Vector3): Vector3 {
-		return value.normalized;
-	}
-
-	static scale(a: Vector3, b: Vector3): Vector3 {
-		return a.scale(b);
 	}
 
 	static orthoNormalize(normal: Vector3, tangent: Vector3): any {
@@ -559,3 +518,5 @@ export class Vector3 extends Array<number> {
 		this[2] = z * w;
 	}
 }
+
+Vector3.init();

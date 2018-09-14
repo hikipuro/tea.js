@@ -1,18 +1,18 @@
 import * as Tea from "../Tea";
 
 export class Vector2 extends Array<number> {
+	static readonly zero = new Vector2(0.0, 0.0);
+	static readonly one = new Vector2(1.0, 1.0);
+
 	constructor(x: number = 0.0, y: number = 0.0) {
 		super(2);
 		this[0] = x;
 		this[1] = y;
 	}
 
-	static get zero(): Vector2 {
-		return new Vector2();
-	}
-
-	static get one(): Vector2 {
-		return new Vector2(1.0, 1.0);
+	static init() {
+		Object.freeze(Vector2.zero);
+		Object.freeze(Vector2.one);
 	}
 
 	/** x == this[0] */
@@ -101,3 +101,5 @@ export class Vector2 extends Array<number> {
 		);
 	}
 }
+
+Vector2.init();
