@@ -107,6 +107,10 @@ export class App {
 		this.gl.clearStencil(value);
 	}
 
+	get isOnline(): boolean {
+		return navigator.onLine;
+	}
+
 	isExtensionSupported(name: Tea.GLExtensions | string): boolean {
 		var extensions = this.supportedExtensions;
 		return extensions.indexOf(name) >= 0;
