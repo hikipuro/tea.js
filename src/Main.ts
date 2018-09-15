@@ -140,9 +140,43 @@ export class Main {
 		this.app.setScene(scene);
 
 		var light = this.app.createLight();
+		//light.getComponent(Tea.Light).color.set(1.0,0,0,1);
+		//light.getComponent(Tea.Light).type = Tea.LightType.Point;
+		//light.getComponent(Tea.Light).intensity = 0.5;
+		//light.getComponent(Tea.Light).range = 1;
+		light.localPosition.set(0, 3, 0);
 		light.localRotation = Tea.Quaternion.euler(30, 60, 0);
 		//light.addComponent(Rotate);
 		scene.appendChild(light);
+
+		var light2 = this.app.createLight();
+		light2.getComponent(Tea.Light).type = Tea.LightType.Point;
+		light2.getComponent(Tea.Light).color.set(1, 0, 0, 1);
+		//light2.getComponent(Tea.Light).intensity = 10;
+		//light2.getComponent(Tea.Light).range = 10;
+		light2.localPosition.set(3, 5, 0);
+		//light2.localRotation = Tea.Quaternion.euler(90, 0, 0);
+		scene.appendChild(light2);
+
+		/*
+		var light3 = this.app.createLight();
+		light3.getComponent(Tea.Light).type = Tea.LightType.Point;
+		light3.getComponent(Tea.Light).color.set(0,1,0,1);
+		light3.getComponent(Tea.Light).intensity = 3;
+		light3.getComponent(Tea.Light).range = 1;
+		light3.localPosition.set(-5, 3, 0);
+		light3.localRotation = Tea.Quaternion.euler(30, 60, 0);
+		scene.appendChild(light3);
+
+		var light4 = this.app.createLight();
+		light4.getComponent(Tea.Light).type = Tea.LightType.Point;
+		light4.getComponent(Tea.Light).color.set(0,0,1,1);
+		light4.getComponent(Tea.Light).intensity = 3;
+		light4.getComponent(Tea.Light).range = 1;
+		light4.localPosition.set(0, 3, -5);
+		light4.localRotation = Tea.Quaternion.euler(30, 60, 0);
+		scene.appendChild(light4);
+		*/
 
 		var camera = this.app.createCamera();
 		//camera.localPosition = new Tea.Vector3(0, 4, 0);

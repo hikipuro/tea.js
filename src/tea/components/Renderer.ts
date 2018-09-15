@@ -3,12 +3,13 @@ import { Component } from "./Component";
 
 export class Renderer extends Component {
 	static drawCallCount: number = 0;
-	static readonly MaxLightCount: number = 2;
+	static readonly MaxLightCount: number = 4;
 	enabled: boolean;
 	object3d: Tea.Object3D;
 	material: Tea.Material;
 	protected gl: WebGLRenderingContext;
 	protected _tmpVec3: Tea.Vector3 = new Tea.Vector3();
+	protected _tmpVec4: Tea.Vector4 = new Tea.Vector4();
 	protected _mvMatrix: Tea.Matrix4x4 = new Tea.Matrix4x4();
 	protected _mvpMatrix: Tea.Matrix4x4 = new Tea.Matrix4x4();
 	//protected _uniforms: Uniforms;
@@ -41,7 +42,7 @@ export class Renderer extends Component {
 		this.setShaderSettings();
 		this.setIntrinsicUniforms(camera);
 		this.setMaterialUniforms();
-		this.setLightUniforms(camera, lights, renderSettings);
+		this.setLightUniforms(lights, renderSettings);
 		this.setTextures();
 		//this.setTexture(this.material.mainTexture);
 	}
@@ -385,22 +386,51 @@ export class Renderer extends Component {
 		});
 	}
 
-	protected setLightUniforms(camera: Tea.Camera, lights: Array<Tea.Light>, renderSettings: Tea.RenderSettings): void {
+	protected setLightUniforms(lights: Array<Tea.Light>, renderSettings: Tea.RenderSettings): void {
 		var gl = this.gl;
+		var shader = this.material.shader;
 		var location: WebGLUniformLocation = null;
 
 		var d = this._tmpVec3;
-		d.set(0.0, 0.0, -1.0);
 		var lightCount = Math.min(Renderer.MaxLightCount, lights.length);
+		location = shader.propertyToID("lightCount");
+		if (location != null) {
+			gl.uniform1i(location, lightCount);
+		}
+
 		for (var i = 0; i < lightCount; i++) {
-			location = this.material.shader.propertyToID("lights[" + i + "].direction");
+			var light = lights[i];
+			location = shader.propertyToID("lights[" + i + "].color");
 			if (location != null) {
-				d.applyQuaternion(lights[i].object3d.rotation);
+				var color = light.color.mul(light.intensity);
+				gl.uniform4fv(location, color);
+			}
+			location = shader.propertyToID("lights[" + i + "].position");
+			if (location != null) {
+				var p = light.object3d.position;
+				var vec4 = this._tmpVec4;
+				vec4.set(p[0], p[1], p[2], 0.0);
+				gl.uniform4fv(location, vec4);
+			}
+			location = shader.propertyToID("lights[" + i + "].direction");
+			if (location != null) {
+				d.set(0.0, 0.0, -1.0);
+				d.applyQuaternion(light.object3d.rotation);
 				d.normalize$();
-				gl.uniform3fv(location, d);
+				var vec4 = this._tmpVec4;
+				vec4.set(d[0], d[1], d[2], light.type);
+				gl.uniform4fv(location, vec4);
+			}
+			location = shader.propertyToID("lights[" + i + "].range");
+			if (location != null) {
+				gl.uniform1f(location, light.range);
+			}
+			location = shader.propertyToID("lights[" + i + "].spotAngle");
+			if (location != null) {
+				gl.uniform1f(location, Tea.radians(light.spotAngle));
 			}
 		}
-		location = this.material.shader.propertyToID("ambientColor");
+		location = shader.propertyToID("ambientColor");
 		if (location != null) {
 			gl.uniform4fv(location, renderSettings.ambientLight);
 		}

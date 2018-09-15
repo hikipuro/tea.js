@@ -159,6 +159,14 @@ export class Color extends Array<number> {
 		);
 	}
 
+	mul(value: number): Tea.Color {
+		var color = this.clone();
+		color[0] *= value;
+		color[1] *= value;
+		color[2] *= value;
+		return color;
+	}
+
 	toCssColor(): string {
 		if (this.a == 1) {
 			var r = Math.floor(this.r * 255).toString(16);

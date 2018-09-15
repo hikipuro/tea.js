@@ -1,6 +1,6 @@
 export enum LightType {
-	//Spot,
 	Directional,
-	//Point,
+	Point,
+	Spot,
 	//Area
 }

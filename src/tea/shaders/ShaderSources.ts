@@ -1,7 +1,13 @@
 export module ShaderSources {
 	export const defaultVS = `
+		precision mediump int;
+
 		struct TLight {
-			vec3 direction;
+			vec4 color;
+			vec4 position;
+			vec4 direction;
+			float range;
+			float spotAngle;
 		};
 
 		const float Epsilon = 1.192093E-07;
@@ -20,14 +26,17 @@ export module ShaderSources {
 		uniform mat4 TEA_WORLD_TO_OBJECT;
 		uniform mat4 _LightCamera;
 		uniform mat4 tMatrix;
-		uniform TLight lights[2];
+		uniform int lightCount;
+		uniform TLight lights[4];
 		uniform bool receiveShadows;
 
 		varying vec3 vNormal;
 		varying vec2 vTexCoord;
 		varying vec4 vDepth;
 		varying vec4 vShadowTexCoord;
-		varying vec3 vLightDirection;
+		varying vec4 vLightColor[4];
+		varying vec3 vLightDirection[4];
+		varying float vAttenuation[4];
 		varying vec3 vViewDirection;
 
 		vec3 getViewDirection(vec4 vertex) {
@@ -44,6 +53,7 @@ export module ShaderSources {
 		}
 
 		void main() {
+			vec4 vert = TEA_OBJECT_TO_WORLD * vertex;
 			vec3 norm = getNormal(normal);
 			vec3 viewDirection = getViewDirection(vertex);
 			
@@ -62,6 +72,7 @@ export module ShaderSources {
 			vColor = vec4(ambientColor + vec3(diffuse + specular), 1.0);
 			*/
 			//vColor = vec4(ambientColor, 1.0);
+			//vLightSource = lights[0].position - vert;
 			vTexCoord = texcoord;
 
 			vec3 n = norm;
@@ -71,15 +82,122 @@ export module ShaderSources {
 			vViewDirection.y = dot(b, viewDirection);
 			vViewDirection.z = dot(n, viewDirection);
 			vViewDirection = normalize(vViewDirection);
-			vLightDirection.x = dot(t, lights[0].direction);
-			vLightDirection.y = dot(b, lights[0].direction);
-			vLightDirection.z = dot(n, lights[0].direction);
-			vLightDirection = normalize(vLightDirection);
+
+			vec4 lightSource = lights[0].position - vert;
+			float lightDistance = length(lightSource.xyz);
+			float lightType = lights[0].direction.w;
+			vec3 d;
+			if (lightType == 0.0) {
+				d = lights[0].direction.xyz;
+				vAttenuation[0] = 1.0;
+			} else if (lightType == 1.0) {
+				d = normalize(lightSource.xyz);
+				vAttenuation[0] = min(1.0, (1.0 * lights[0].range) / lightDistance);
+			} else {
+				d = normalize(lightSource.xyz);
+				float clampedCosine = max(0.0, dot(d, lights[0].direction.xyz));
+				if (clampedCosine < cos(lights[0].spotAngle)) {
+					vAttenuation[0] = 0.0;
+				} else {
+					float spotExponent = 20.0;
+					vAttenuation[0] = min(1.0, (1.0 * lights[0].range) / lightDistance);
+					vAttenuation[0] = vAttenuation[0] * pow(clampedCosine, spotExponent);
+				}
+			}
+			vLightDirection[0].x = dot(t, d);
+			vLightDirection[0].y = dot(b, d);
+			vLightDirection[0].z = dot(n, d);
+			vLightDirection[0] = normalize(vLightDirection[0]);
+			vLightColor[0] = lights[0].color;
+
+			if (lightCount >= 2) {
+				lightSource = lights[1].position - vert;
+				lightDistance = length(lightSource.xyz);
+				lightType = lights[1].direction.w;
+				if (lightType == 0.0) {
+					d = lights[1].direction.xyz;
+					vAttenuation[1] = 1.0;
+				} else if (lightType == 1.0) {
+					d = normalize(lightSource.xyz);
+					vAttenuation[1] = min(1.0, (1.0 * lights[1].range) / lightDistance);
+				} else {
+					d = normalize(lightSource.xyz);
+					float clampedCosine = max(0.0, dot(d, lights[1].direction.xyz));
+					if (clampedCosine < cos(lights[1].spotAngle)) {
+						vAttenuation[1] = 0.0;
+					} else {
+						float spotExponent = 20.0;
+						vAttenuation[1] = min(1.0, (1.0 * lights[1].range) / lightDistance);
+						vAttenuation[1] = vAttenuation[1] * pow(clampedCosine, spotExponent);
+					}
+				}
+				vLightDirection[1].x = dot(t, d);
+				vLightDirection[1].y = dot(b, d);
+				vLightDirection[1].z = dot(n, d);
+				vLightDirection[1] = normalize(vLightDirection[1]);
+				vLightColor[1] = lights[1].color;
+			}
+
+			if (lightCount >= 3) {
+				lightSource = lights[2].position - vert;
+				lightDistance = length(lightSource.xyz);
+				lightType = lights[2].direction.w;
+				if (lightType == 0.0) {
+					d = lights[2].direction.xyz;
+					vAttenuation[2] = 1.0;
+				} else if (lightType == 1.0) {
+					d = normalize(lightSource.xyz);
+					vAttenuation[2] = min(1.0, (1.0 * lights[2].range) / lightDistance);
+				} else {
+					d = normalize(lightSource.xyz);
+					float clampedCosine = max(0.0, dot(d, lights[2].direction.xyz));
+					if (clampedCosine < cos(lights[2].spotAngle)) {
+						vAttenuation[2] = 0.0;
+					} else {
+						float spotExponent = 20.0;
+						vAttenuation[2] = min(1.0, (1.0 * lights[2].range) / lightDistance);
+						vAttenuation[2] = vAttenuation[2] * pow(clampedCosine, spotExponent);
+					}
+				}
+				vLightDirection[2].x = dot(t, d);
+				vLightDirection[2].y = dot(b, d);
+				vLightDirection[2].z = dot(n, d);
+				vLightDirection[2] = normalize(vLightDirection[2]);
+				vLightColor[2] = lights[2].color;
+			}
+
+			if (lightCount >= 4) {
+				lightSource = lights[3].position - vert;
+				lightDistance = length(lightSource.xyz);
+				lightType = lights[3].direction.w;
+				if (lightType == 0.0) {
+					d = lights[3].direction.xyz;
+					vAttenuation[3] = 1.0;
+				} else if (lightType == 1.0) {
+					d = normalize(lightSource.xyz);
+					vAttenuation[3] = min(1.0, (1.0 * lights[3].range) / lightDistance);
+				} else {
+					d = normalize(lightSource.xyz);
+					float clampedCosine = max(0.0, dot(d, lights[3].direction.xyz));
+					if (clampedCosine < cos(lights[3].spotAngle)) {
+						vAttenuation[3] = 0.0;
+					} else {
+						float spotExponent = 20.0;
+						vAttenuation[3] = min(1.0, (1.0 * lights[3].range) / lightDistance);
+						vAttenuation[3] = vAttenuation[3] * pow(clampedCosine, spotExponent);
+					}
+				}
+				vLightDirection[3].x = dot(t, d);
+				vLightDirection[3].y = dot(b, d);
+				vLightDirection[3].z = dot(n, d);
+				vLightDirection[3] = normalize(vLightDirection[3]);
+				vLightColor[3] = lights[3].color;
+			}
 
 			if (receiveShadows) {
 				vDepth = _LightCamera * vertex;
 				//vShadowTexCoord = tMatrix * vertex;
-				vShadowTexCoord = tMatrix * (TEA_OBJECT_TO_WORLD * vertex);
+				vShadowTexCoord = tMatrix * vert;
 			}
 			gl_Position = TEA_MATRIX_MVP * vertex;
 		}
@@ -87,6 +205,7 @@ export module ShaderSources {
 
 	export const defaultFS = `
 		precision mediump float;
+		precision mediump int;
 
 		uniform vec4 _Color;
 		uniform sampler2D _MainTex;
@@ -101,12 +220,15 @@ export module ShaderSources {
 		uniform vec2 _NormalTex_ST;
 		uniform bool receiveShadows;
 		uniform vec4 ambientColor;
+		uniform int lightCount;
 
 		varying vec3 vNormal;
 		varying vec2 vTexCoord;
 		varying vec4 vDepth;
 		varying vec4 vShadowTexCoord;
-		varying vec3 vLightDirection;
+		varying vec4 vLightColor[4];
+		varying vec3 vLightDirection[4];
+		varying float vAttenuation[4];
 		varying vec3 vViewDirection;
 
 		float restDepth(vec4 RGBA) {
@@ -137,17 +259,66 @@ export module ShaderSources {
 				normal = 2.0 * normal - 1.0;
 				//normal.z *= 1.0 / 0.6;
 				normal = normalize(normal);
-				float diffuse = max(0.0, dot(normal, vLightDirection));
-				float attenuation = 1.0;
+
+				vec3 d = vLightDirection[0].xyz;
+				float attenuation = vAttenuation[0];//1.0;
+				float diffuse = attenuation * max(0.0, dot(normal, d));
 				float shininess = 5.0;
 				float specular = 0.0;
 				if (diffuse > 0.0) {
-					vec3 ref = reflect(-vLightDirection, normal);
+					vec3 ref = reflect(-d, normal);
 					specular = dot(ref, vViewDirection);
 					specular = max(0.0, specular);
 					specular = attenuation * pow(specular, shininess);
 				}
-				col = vec4(ambientColor.rgb + vec3(diffuse + specular), 1.0);
+				col = vec4(vLightColor[0].rgb * vec3(diffuse + specular), 1.0);
+
+				if (lightCount >= 2) {
+					d = vLightDirection[1].xyz;
+					attenuation = vAttenuation[1];//1.0;
+					diffuse = attenuation * max(0.0, dot(normal, d));
+					shininess = 5.0;
+					specular = 0.0;
+					if (diffuse > 0.0) {
+						vec3 ref = reflect(-d, normal);
+						specular = dot(ref, vViewDirection);
+						specular = max(0.0, specular);
+						specular = attenuation * pow(specular, shininess);
+					}
+					col += vec4(vLightColor[1].rgb * vec3(diffuse + specular), 1.0);
+				}
+
+				if (lightCount >= 3) {
+					d = vLightDirection[2].xyz;
+					attenuation = vAttenuation[2];//1.0;
+					diffuse = attenuation * max(0.0, dot(normal, d));
+					shininess = 5.0;
+					specular = 0.0;
+					if (diffuse > 0.0) {
+						vec3 ref = reflect(-d, normal);
+						specular = dot(ref, vViewDirection);
+						specular = max(0.0, specular);
+						specular = attenuation * pow(specular, shininess);
+					}
+					col += vec4(vLightColor[2].rgb * vec3(diffuse + specular), 1.0);
+				}
+
+				if (lightCount >= 4) {
+					d = vLightDirection[3].xyz;
+					attenuation = vAttenuation[3];//1.0;
+					diffuse = attenuation * max(0.0, dot(normal, d));
+					shininess = 5.0;
+					specular = 0.0;
+					if (diffuse > 0.0) {
+						vec3 ref = reflect(-d, normal);
+						specular = dot(ref, vViewDirection);
+						specular = max(0.0, specular);
+						specular = attenuation * pow(specular, shininess);
+					}
+					col += vec4(vLightColor[3].rgb * vec3(diffuse + specular), 1.0);
+				}
+
+				col += vec4(ambientColor.rgb, 0.0);
 			//}
 			
 			vec4 tex = texture2D(_MainTex, (uv_MainTex + vTexCoord) / _MainTex_ST);
