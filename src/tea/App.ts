@@ -294,7 +294,7 @@ export class App {
 		gl.cullFace(gl.BACK);
 
 		gl.enable(gl.SCISSOR_TEST);
-		gl.scissor(0, 0, this.width, this.height);
+		gl.scissor(0.0, 0.0, this.width, this.height);
 
 		if (this._canvasAttributes.stencil) {
 			gl.clearStencil(0);

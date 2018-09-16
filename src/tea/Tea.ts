@@ -76,6 +76,7 @@ export * from "./shaders/ShaderColorMask";
 export * from "./shaders/ShaderFace";
 export * from "./shaders/ShaderHint";
 export * from "./shaders/ShaderSettings";
+export * from "./shaders/ShaderSources";
 export * from "./shaders/ShaderStencil";
 export * from "./shaders/ShaderStencilMask";
 export * from "./shaders/ShaderStencilOp";

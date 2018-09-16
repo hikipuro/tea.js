@@ -439,28 +439,26 @@ export class Renderer extends Component {
 
 	protected setTextures(): void {
 		var gl = this.gl;
+		var shader = this.material.shader;
+		var maxUnits = gl.getParameter(gl.MAX_COMBINED_TEXTURE_IMAGE_UNITS);
 		var keys = this.material.textureKeys;
-		var length = keys.length;
+		var length = Math.min(maxUnits, keys.length);
+		var id = 0;
 		for (var i = 0; i < length; i++) {
 			var key = keys[i];
+			var location = shader.propertyToID(key);
+			if (location == null) {
+				continue;
+			}
 			var texture = this.material.getTexture(key);
-			gl.activeTexture(gl["TEXTURE" + i]);
-			this.setTexture(i, key, texture);
+			gl.activeTexture(gl["TEXTURE" + id]);
+			if (texture == null) {
+				gl.bindTexture(gl.TEXTURE_2D, null);
+				continue;
+			}
+			gl.bindTexture(gl.TEXTURE_2D, texture.webgl.texture);
+			gl.uniform1i(location, id);
+			id++;
 		}
-	}
-
-	protected setTexture(id: number, name: string, texture: Tea.Texture): void {
-		var location = this.material.shader.propertyToID(name);
-		if (location == null) {
-			return;
-		}
-		var gl = this.gl;
-		if (texture == null) {
-			gl.bindTexture(gl.TEXTURE_2D, null);
-			return;
-		}
-		gl.bindTexture(gl.TEXTURE_2D, texture.webgl.texture);
-		gl.uniform1i(location, id);
-		//this._uniforms.uniform1i(name, id);
 	}
 }

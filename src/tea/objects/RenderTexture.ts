@@ -19,6 +19,10 @@ export class RenderTexture extends Texture {
 		super(app);
 		this._width = Tea.Mathf.closestPowerOfTwo(width);
 		this._height = Tea.Mathf.closestPowerOfTwo(height);
+		var gl = app.gl;
+		var maxSize = gl.getParameter(gl.MAX_TEXTURE_SIZE);
+		this._width = Math.min(maxSize, this._width);
+		this._height = Math.min(maxSize, this._height);
 		this.createBuffers();
 	}
 
@@ -65,6 +69,8 @@ export class RenderTexture extends Texture {
 		);
 		gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
 		gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+		gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+		gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
 		gl.bindRenderbuffer(gl.RENDERBUFFER, this.renderBuffer);
 		gl.renderbufferStorage(
 			gl.RENDERBUFFER,

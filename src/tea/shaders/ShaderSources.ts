@@ -195,7 +195,12 @@ export module ShaderSources {
 			}
 
 			if (receiveShadows) {
-				vDepth = _LightCamera * vertex;
+				const mat4 texUnitConverter = mat4(
+					0.5, 0.0, 0.0, 0.0,
+					0.0, 0.5, 0.0, 0.0,
+					0.0, 0.0, 0.5, 0.0,
+					0.5, 0.5, 0.5, 1.0);
+				vDepth = texUnitConverter * _LightCamera * vert;
 				//vShadowTexCoord = tMatrix * vertex;
 				vShadowTexCoord = tMatrix * vert;
 			}
@@ -231,13 +236,14 @@ export module ShaderSources {
 		varying float vAttenuation[4];
 		varying vec3 vViewDirection;
 
-		float restDepth(vec4 RGBA) {
-			const float rMask = 1.0;
-			const float gMask = 1.0 / 255.0;
-			const float bMask = 1.0 / (255.0 * 255.0);
-			const float aMask = 1.0 / (255.0 * 255.0 * 255.0);
-			float depth = dot(RGBA, vec4(rMask, gMask, bMask, aMask));
-			return depth;
+		float decodeFloat(vec4 color) {
+			const vec4 bitShift = vec4(
+				1.0 / (256.0 * 256.0 * 256.0),
+				1.0 / (256.0 * 256.0),
+				1.0 / 256.0,
+				1.0
+			);
+			return dot(color, bitShift);
 		}
 
 		void checkStereoCamera() {
@@ -260,7 +266,7 @@ export module ShaderSources {
 				//normal.z *= 1.0 / 0.6;
 				normal = normalize(normal);
 
-				vec3 d = vLightDirection[0].xyz;
+				vec3 d = vLightDirection[0];
 				float attenuation = vAttenuation[0];//1.0;
 				float diffuse = attenuation * max(0.0, dot(normal, d));
 				float shininess = 5.0;
@@ -271,10 +277,10 @@ export module ShaderSources {
 					specular = max(0.0, specular);
 					specular = attenuation * pow(specular, shininess);
 				}
-				col = vec4(vLightColor[0].rgb * vec3(diffuse + specular), 1.0);
+				col = vec4(vLightColor[0].rgb * vec3(diffuse + specular), 0.0);
 
 				if (lightCount >= 2) {
-					d = vLightDirection[1].xyz;
+					d = vLightDirection[1];
 					attenuation = vAttenuation[1];//1.0;
 					diffuse = attenuation * max(0.0, dot(normal, d));
 					shininess = 5.0;
@@ -285,11 +291,11 @@ export module ShaderSources {
 						specular = max(0.0, specular);
 						specular = attenuation * pow(specular, shininess);
 					}
-					col += vec4(vLightColor[1].rgb * vec3(diffuse + specular), 1.0);
+					col += vec4(vLightColor[1].rgb * vec3(diffuse + specular), 0.0);
 				}
 
 				if (lightCount >= 3) {
-					d = vLightDirection[2].xyz;
+					d = vLightDirection[2];
 					attenuation = vAttenuation[2];//1.0;
 					diffuse = attenuation * max(0.0, dot(normal, d));
 					shininess = 5.0;
@@ -300,11 +306,11 @@ export module ShaderSources {
 						specular = max(0.0, specular);
 						specular = attenuation * pow(specular, shininess);
 					}
-					col += vec4(vLightColor[2].rgb * vec3(diffuse + specular), 1.0);
+					col += vec4(vLightColor[2].rgb * vec3(diffuse + specular), 0.0);
 				}
 
 				if (lightCount >= 4) {
-					d = vLightDirection[3].xyz;
+					d = vLightDirection[3];
 					attenuation = vAttenuation[3];//1.0;
 					diffuse = attenuation * max(0.0, dot(normal, d));
 					shininess = 5.0;
@@ -315,10 +321,10 @@ export module ShaderSources {
 						specular = max(0.0, specular);
 						specular = attenuation * pow(specular, shininess);
 					}
-					col += vec4(vLightColor[3].rgb * vec3(diffuse + specular), 1.0);
+					col += vec4(vLightColor[3].rgb * vec3(diffuse + specular), 0.0);
 				}
 
-				col += vec4(ambientColor.rgb, 0.0);
+				col += vec4(ambientColor.rgb, 1.0);
 			//}
 			
 			vec4 tex = texture2D(_MainTex, (uv_MainTex + vTexCoord) / _MainTex_ST);
@@ -327,16 +333,41 @@ export module ShaderSources {
 				return;
 			}
 
-			vec4 depth = vDepth;
-			float shadow = restDepth(texture2DProj(_ShadowTex, vShadowTexCoord));
-			vec4 depthColor = vec4(1.0);
-			if (depth.w > 0.0) {
-				vec4 lightCoord = depth / depth.w;
-				if (lightCoord.z - 0.0001 > shadow) {
-					depthColor = vec4(0.5, 0.5, 0.5, 1.0);
+			/*
+			vec3 fragmentDepth = vDepth.xyz;
+			float shadowAcneRemover = 0.001;
+			fragmentDepth.z -= shadowAcneRemover;
+			float texelSize = 1.0;
+			float amountInLight = 0.0;
+
+			for (int x = -1; x <= 1; x++) {
+				for (int y = -1; y <= 1; y++) {
+					vec2 pos = fragmentDepth.xy + vec2(x, y) * texelSize;
+					if (pos.x < 0.0 || pos.y < 0.0) {
+						amountInLight += 1.0;
+						continue;
+					}
+					float texelDepth = decodeFloat(texture2D(_ShadowTex, pos));
+					//float texelDepth = decodeFloat(texture2DProj(_ShadowTex, vDepth));
+					if (fragmentDepth.z < texelDepth) {
+						amountInLight += 1.0;
+					}
 				}
 			}
+			amountInLight /= 9.0 * 2.0;
+			amountInLight += 0.5;
+			gl_FragColor = tex * _Color * col * amountInLight;
+			*/
+
+			//*
+			float shadow = decodeFloat(texture2DProj(_ShadowTex, vDepth));
+			vec4 depthColor = vec4(1.0);
+			if (vDepth.z - 0.001 > shadow) {
+				float color = 0.5;
+				depthColor = vec4(color, color, color, 1.0);
+			}
 			gl_FragColor = tex * _Color * col * depthColor;
+			//*/
 			//gl_FragColor = vec4(1.0, 1.0, 1.0, 1.0);
 		}
 	`;
@@ -399,32 +430,34 @@ export module ShaderSources {
 	export const depthVS = `
 		attribute vec4 vertex;
 		uniform mat4 TEA_MATRIX_MVP;
-		varying vec4 vPosition;
-
 		void main() {
-			vPosition = TEA_MATRIX_MVP * vertex;
-			gl_Position = vPosition;
+			gl_Position = TEA_MATRIX_MVP * vertex;
 		}
 	`;
 
 	export const depthFS = `
 		precision mediump float;
-		varying vec4 vPosition;
 
-		vec4 convRGBA(float depth) {
-			float r = depth;
-			float g = fract(r * 255.0);
-			float b = fract(g * 255.0);
-			float a = fract(b * 255.0);
-			float coef = 1.0 / 255.0;
-			r -= g * coef;
-			g -= b * coef;
-			b -= a * coef;
-			return vec4(r, g, b, a);
+		vec4 encodeFloat(float depth) {
+			const vec4 bitShift = vec4(
+				256 * 256 * 256,
+				256 * 256,
+				256,
+				1.0
+			);
+			const vec4 bitMask = vec4(
+				0,
+				1.0 / 256.0,
+				1.0 / 256.0,
+				1.0 / 256.0
+			);
+			vec4 comp = fract(depth * bitShift);
+			comp -= comp.xxyz * bitMask;
+			return comp;
 		}
 
 		void main() {
-			gl_FragColor = convRGBA(gl_FragCoord.z);
+			gl_FragColor = encodeFloat(gl_FragCoord.z);
 			//gl_FragColor = vec4(gl_FragCoord.z, 0.0, 0.0, 1.0);
 		}
 	`;

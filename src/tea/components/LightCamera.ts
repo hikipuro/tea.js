@@ -6,7 +6,11 @@ export class LightCamera extends Camera {
 
 	constructor(app: Tea.App) {
 		super(app);
-		this.backgroundColor = Tea.Color.white;
+		this.backgroundColor = Tea.Color.white.clone();
+		//this.fieldOfView = 90;
+		this.aspect = 1.0;
+		this.orthographic = true;
+		//this.orthographicSize = 14;
 		var renderTexture = new Tea.RenderTexture(app);
 		this.targetTexture = renderTexture;
 

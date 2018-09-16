@@ -9,6 +9,7 @@ class Prev {
 	aspect: number;
 	nearClipPlane: number;
 	farClipPlane: number;
+	orthographicSize: number;
 
 	constructor() {
 		this.position = new Tea.Vector3(0.0001, 0.0002, 0.0003);
@@ -18,6 +19,7 @@ class Prev {
 		this.aspect = 0;
 		this.nearClipPlane = 0;
 		this.farClipPlane = 0;
+		this.orthographicSize = 0;
 	}
 
 	isViewChanged(object3d: Tea.Object3D): boolean {
@@ -28,6 +30,13 @@ class Prev {
 	isPerspectiveChanged(camera: Tea.Camera, aspect: number): boolean {
 		return this.fieldOfView != camera.fieldOfView
 			|| this.aspect != aspect
+			|| this.nearClipPlane != camera.nearClipPlane
+			|| this.farClipPlane != camera.farClipPlane;
+	}
+
+	isOrthoChanged(camera: Tea.Camera, aspect: number): boolean {
+		return this.aspect != aspect
+			|| this.orthographicSize != camera.orthographicSize
 			|| this.nearClipPlane != camera.nearClipPlane
 			|| this.farClipPlane != camera.farClipPlane;
 	}
@@ -49,6 +58,7 @@ export class Camera extends Component {
 	frustumPlanes: Array<Tea.Plane>;
 
 	protected gl: WebGLRenderingContext;
+	protected _aspect: number;
 	protected _cameraToWorldMatrix: Tea.Matrix4x4;
 	protected _worldToCameraMatrix: Tea.Matrix4x4;
 	protected _projectionMatrix: Tea.Matrix4x4;
@@ -61,13 +71,13 @@ export class Camera extends Component {
 	constructor(app: Tea.App) {
 		super(app);
 		this.gl = app.gl;
-		this.fieldOfView = 60;
+		this.fieldOfView = 60.0;
 		this.nearClipPlane = 0.3;
-		this.farClipPlane = 1000;
+		this.farClipPlane = 1000.0;
 		this.backgroundColor = Tea.Color.background;
 		this.orthographic = false;
 		this.orthographicSize = 5;
-		this.rect = new Tea.Rect(0, 0, 1, 1);
+		this.rect = new Tea.Rect(0.0, 0.0, 1.0, 1.0);
 		this.enableStereo = false;
 		this.stereoDistance = 0.1;
 		this.stereoMode = Tea.CameraStereoMode.SideBySide;
@@ -83,10 +93,16 @@ export class Camera extends Component {
 	}
 
 	get aspect(): number {
+		if (this._aspect != null) {
+			return this._aspect;
+		}
 		var rect = this.getViewportRect();
 		var width = this.app.width;
 		var height = this.app.height;
 		return (width * rect.width) / (height * rect.height);
+	}
+	set aspect(value: number) {
+		this._aspect = value;
 	}
 
 	get cameraToWorldMatrix(): Tea.Matrix4x4 {
@@ -125,14 +141,21 @@ export class Camera extends Component {
 		}
 
 		if (this.orthographic) {
-			var h = this.orthographicSize;
-			var w = h * this.aspect;
-			this._projectionMatrix = Tea.Matrix4x4.ortho(
-				-w, w, -h, h,
-				this.nearClipPlane,
-				this.farClipPlane
-			);
-			isChanged = true;
+			var aspect = this.aspect;
+			if (this._prev.isOrthoChanged(this, aspect)) {
+				var h = this.orthographicSize;
+				var w = h * aspect;
+				this._projectionMatrix.ortho(
+					-w, w, -h, h,
+					this.nearClipPlane,
+					this.farClipPlane
+				);
+				this._prev.aspect = aspect;
+				this._prev.orthographicSize = this.orthographicSize;
+				this._prev.nearClipPlane = this.nearClipPlane;
+				this._prev.farClipPlane = this.farClipPlane;
+				isChanged = true;
+			}
 		} else {
 			var aspect = this.aspect;
 			if (this._prev.isPerspectiveChanged(this, aspect)) {

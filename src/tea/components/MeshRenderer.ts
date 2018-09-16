@@ -50,7 +50,7 @@ export class MeshRenderer extends Renderer {
 
 	constructor(app: Tea.App) {
 		super(app);
-		this.receiveShadows = false;
+		this.receiveShadows = true;
 		this._bounds = new Tea.Bounds();
 		this._wireframe = false;
 		this._draw = this.draw;
@@ -68,6 +68,10 @@ export class MeshRenderer extends Renderer {
 	set wireframe(value: boolean) {
 		this._wireframe = value;
 		this._draw = this.getDrawFunc(this._mesh);
+	}
+
+	get mesh(): Tea.Mesh {
+		return this._mesh;
 	}
 
 	update(): void {
@@ -111,6 +115,7 @@ export class MeshRenderer extends Renderer {
 		super.render(camera, lights, renderSettings);
 
 		var mesh = this._mesh;
+		/*
 		var location = this.material.shader.propertyToID("receiveShadows");
 		if (location != null) {
 			if (this.receiveShadows) {
@@ -119,6 +124,7 @@ export class MeshRenderer extends Renderer {
 				this.gl.uniform1i(location, 0);
 			}
 		}
+		*/
 		if (mesh.isModified === true) {
 			this.setMeshData(mesh);
 		}
@@ -154,71 +160,52 @@ export class MeshRenderer extends Renderer {
 		}
 	}
 
+	updateAttributes(): void {
+		var gl = this.gl;
+		var type = gl.FLOAT;
+		var mesh = this._mesh;
+		var stride = 4 * 3;
+		this._attributes.clear();
+		this._attributes.shader = this.material.shader;
+		this._attributes.add("vertex", 3, type, 0);
+
+		if (mesh.hasTriangles === false) {
+			this._attributes.stride = stride;
+			return;
+		}
+		if (mesh.hasNormals) {
+			this._attributes.add("normal", 3, type, stride);
+			stride += 4 * 3;
+		} else {
+			this._attributes.add("normal", 0, type, 0);
+		}
+		if (mesh.hasUVs) {
+			this._attributes.add("texcoord", 2, type, stride);
+			stride += 4 * 2;
+		} else {
+			this._attributes.add("texcoord", 0, type, 0);
+		}
+		if (mesh.hasColors) {
+			this._attributes.add("color", 4, type, stride);
+			stride += 4 * 4;
+		} else {
+			this._attributes.add("color", 0, type, 0);
+		}
+		this._attributes.stride = stride;
+	}
+
 	protected setMeshData(mesh: Tea.Mesh): void {
 		if (mesh.vertices == null || mesh.vertices.length <= 0) {
 			return;
 		}
+		this.updateAttributes();
+		var data = mesh.createVertexBufferData();
 
 		var gl = this.gl;
-		var stride = 4 * 3;
-		this._attributes.clear();
-		this._attributes.shader = this.material.shader;
-		this._attributes.add("vertex", 3, gl.FLOAT, 0);
-
-		if (mesh.hasNormals) {
-			this._attributes.add("normal", 3, gl.FLOAT, stride);
-			stride += 4 * 3;
-		} else {
-			this._attributes.add("normal", 0, gl.FLOAT, 0);
-		}
-		if (mesh.hasUVs) {
-			this._attributes.add("texcoord", 2, gl.FLOAT, stride);
-			stride += 4 * 2;
-		} else {
-			this._attributes.add("texcoord", 0, gl.FLOAT, 0);
-		}
-		if (mesh.hasColors) {
-			this._attributes.add("color", 4, gl.FLOAT, stride);
-			stride += 4 * 4;
-		} else {
-			this._attributes.add("color", 0, gl.FLOAT, 0);
-		}
-		this._attributes.stride = stride;
-
-		var data = [];
-		var length = mesh.vertexCount;
-		for (var i = 0; i < length; i++) {
-			var vertex = mesh.vertices[i];
-			data.push(vertex[0], vertex[1], vertex[2]);
-			if (mesh.hasTriangles === false) {
-				continue;
-			}
-			if (mesh.hasNormals) {
-				var normal = mesh.normals[i];
-				if (normal == null) {
-					data.push(0.0, 0.0, 0.0);
-				} else {
-					data.push(normal[0], normal[1], normal[2]);
-				}
-			}
-			if (mesh.hasUVs) {
-				var uv = mesh.uv[i];
-				if (uv == null) {
-					data.push(0.0, 0.0);
-				} else {
-					data.push(uv[0], uv[1]);
-				}
-			}
-			if (mesh.hasColors) {
-				var color = mesh.colors[i];
-				data.push(color[0], color[1], color[2], color[3]);
-			}
-		}
-
 		var target = gl.ARRAY_BUFFER;
 
 		gl.bindBuffer(target, this.vertexBuffer);
-		gl.bufferData(target, new Float32Array(data), gl.STATIC_DRAW);
+		gl.bufferData(target, data, gl.STATIC_DRAW);
 		//gl.bindBuffer(target, null);
 
 		if (mesh.hasTriangles) {
@@ -231,7 +218,7 @@ export class MeshRenderer extends Renderer {
 			}
 			gl.bindBuffer(target, this.indexBuffer);
 			gl.bufferData(target, triangles, gl.STATIC_DRAW);
-			gl.bindBuffer(target, null);
+			//gl.bindBuffer(target, null);
 		}
 
 		this._draw = this.getDrawFunc(mesh);

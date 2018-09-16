@@ -83,9 +83,9 @@ export class Scene {
 			var rendererCount = renderers.length;
 			for (var i = 0; i < rendererCount; i++) {
 				var renderer = renderers[i];
-				if (this.frustumCulling(renderer, camera.frustumPlanes)) {
-					continue;
-				}
+				//if (this.frustumCulling(renderer, camera.frustumPlanes)) {
+					//continue;
+				//}
 				this.renderCamera(camera, this._lights, renderer);
 			}
 			if (renderTexture != null) {
@@ -146,31 +146,34 @@ export class Scene {
 	protected renderLightCamera(camera: Tea.LightCamera, lights: Array<Tea.Light>, renderer: Tea.Renderer): void {
 		var shader = renderer.material.shader;
 		renderer.material.shader = camera.shader;
-		renderer.render(camera, lights, this.renderSettings);
 
 		if (renderer instanceof Tea.MeshRenderer) {
+			renderer.updateAttributes();
+			renderer.render(camera, lights, this.renderSettings);
 			if (renderer.receiveShadows) {
 				renderer.material.setTexture("_ShadowTex", camera.targetTexture);
 				//renderer.material.setTextureOffset("_ShadowTex", new Tea.Vector2(0, 0));
 				//renderer.material.setTextureScale("_ShadowTex", new Tea.Vector2(1, 1));
 		
-				var model = renderer.object3d.localToWorldMatrix;
-				var view = camera.worldToCameraMatrix;
-				var projection = camera.projectionMatrix;
-				var tMatrix = Tea.Matrix4x4.identity;
-				tMatrix[0] = tMatrix[5] = 0.4;
-				tMatrix[12] = tMatrix[13] = 0.5;
-				//projection = tMatrix.mul(projection);
+				var tMatrix = Tea.Matrix4x4.identity.clone();
+				tMatrix[0] = tMatrix[5] = 0.5; // scale
+				tMatrix[12] = tMatrix[13] = 0.5; // translate
 		
-				var mvMatrix = view.mul(model);
-				var vpMatrix = projection.mul(view);
-				var mvpMatrix = projection.mul(mvMatrix);
+				var model = renderer.object3d.localToWorldMatrix;
+				//var model = camera.object3d.localToWorldMatrix;
+				var vpMatrix = camera.viewProjectionMatrix;
+				var mvpMatrix = vpMatrix.mul(model);
 				//mvpMatrix = tMatrix.mul(mvpMatrix);
-				renderer.material.setMatrix("_LightCamera", mvpMatrix);
+				renderer.material.setMatrix("_LightCamera", vpMatrix);
 				renderer.material.setMatrix("tMatrix", tMatrix.mul(vpMatrix));
+				renderer.material.setInt("receiveShadows", 1);
 			}
+			renderer.material.shader = shader;
+			renderer.updateAttributes();
+		} else {
+			renderer.render(camera, lights, this.renderSettings);
+			renderer.material.shader = shader;
 		}
-		renderer.material.shader = shader;
 	}
 
 	protected frustumCulling(renderer: Tea.Renderer, planes: Array<Tea.Plane>): boolean {

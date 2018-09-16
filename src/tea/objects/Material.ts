@@ -49,7 +49,7 @@ export class Material {
 		this.mainTexture = Tea.Texture.getEmpty(app);
 		this.mainTextureOffset = new Tea.Vector2();
 		this.mainTextureScale = new Tea.Vector2(1.0, 1.0);
-		this.setTexture("_ShadowTex", Tea.Texture.getEmpty(app));
+		this.setTexture("_ShadowTex", null);
 		this.setTextureOffset("_ShadowTex", new Tea.Vector2());
 		this.setTextureScale("_ShadowTex", new Tea.Vector2(1.0, 1.0));
 		var normalTex = Tea.Texture.getEmpty(app, 0.5, 0.5, 1.0, 1.0);

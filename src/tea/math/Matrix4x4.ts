@@ -695,6 +695,21 @@ export class Matrix4x4 extends Array<number> {
 		this[15] = 0.0;
 	}
 
+	ortho(left: number, right: number, bottom: number, top: number, zNear: number, zFar: number): void {
+		var dz = zFar - zNear;
+		var rml = right - left;
+		var tmb = top - bottom;
+		this[0] = 2.0 / rml;
+		this[5] = 2.0 / tmb;
+		this[10] = -2.0 / dz;
+		this[12] = -(right + left) / rml;
+		this[13] = -(top + bottom) / tmb;
+		this[14] = -(zFar + zNear) / dz;
+		this[15] = 1.0;
+		this[1] = this[2] = this[3] = this[4] = 0.0;
+		this[6] = this[7] = this[8] = this[9] = this[11] = 0.0;
+	}
+
 	mul(vector: Vector4): Vector4;
 	mul(matrix: Matrix4x4): Matrix4x4;
 	mul(value: Vector4 | Matrix4x4): Matrix4x4 | Vector4 {

@@ -211,6 +211,64 @@ export class Mesh {
 		this.normals = normals;
 	}
 
+	createVertexBufferData(): Float32Array {
+		var stride = 4 * 3;
+		if (this.hasTriangles) {
+			if (this.hasNormals) {
+				stride += 4 * 3;
+			}
+			if (this.hasUVs) {
+				stride += 4 * 2;
+			}
+			if (this.hasColors) {
+				stride += 4 * 4;
+			}
+		}
+
+		var length = this.vertexCount;
+		var data = new DataView(new ArrayBuffer(stride * length));
+		var offset = -4;
+		for (var i = 0; i < length; i++) {
+			var vertex = this.vertices[i];
+			data.setFloat32(offset += 4, vertex[0], true);
+			data.setFloat32(offset += 4, vertex[1], true);
+			data.setFloat32(offset += 4, vertex[2], true);
+			if (this.hasTriangles === false) {
+				continue;
+			}
+			if (this.hasNormals) {
+				var normal = this.normals[i];
+				if (normal == null) {
+					data.setFloat32(offset += 4, 0.0, true);
+					data.setFloat32(offset += 4, 0.0, true);
+					data.setFloat32(offset += 4, 0.0, true);
+				} else {
+					data.setFloat32(offset += 4, normal[0], true);
+					data.setFloat32(offset += 4, normal[1], true);
+					data.setFloat32(offset += 4, normal[2], true);
+				}
+			}
+			if (this.hasUVs) {
+				var uv = this.uv[i];
+				if (uv == null) {
+					data.setFloat32(offset += 4, 0.0, true);
+					data.setFloat32(offset += 4, 0.0, true);
+				} else {
+					data.setFloat32(offset += 4, uv[0], true);
+					data.setFloat32(offset += 4, uv[1], true);
+				}
+			}
+			if (this.hasColors) {
+				var color = this.colors[i];
+				data.setFloat32(offset += 4, color[0], true);
+				data.setFloat32(offset += 4, color[1], true);
+				data.setFloat32(offset += 4, color[2], true);
+				data.setFloat32(offset += 4, color[3], true);
+			}
+		}
+		return new Float32Array(data.buffer, 0);
+	}
+
 	protected convertToVec2Array(array: Array<number>): Array<Tea.Vector2> {
 		if (array == null || array.length <= 0) {
 			return [];
