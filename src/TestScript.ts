@@ -58,6 +58,14 @@ export class TestScript extends Tea.Script {
 		if (mouse.isUp(0)) {
 			//console.log("mouse up");
 		}
+		if (mouse.wheelY != 0) {
+			var camera = this.scene.mainCamera;
+			var fov = camera.fieldOfView;
+			fov += mouse.wheelY / 10;
+			fov = Math.min(120, fov);
+			fov = Math.max(20, fov);
+			camera.fieldOfView = fov;
+		}
 
 		var box1 = this.object3d.getComponent(Tea.BoxCollider);
 		var box2 = this.cube.getComponent(Tea.BoxCollider);

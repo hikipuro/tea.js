@@ -3,6 +3,8 @@ import * as Tea from "./Tea";
 export class Mouse {
 	x: number = 0;
 	y: number = 0;
+	wheelX: number = 0;
+	wheelY: number = 0;
 	prevX: number = 0;
 	prevY: number = 0;
 	buttons: Array<boolean>;
@@ -76,6 +78,7 @@ export class Mouse {
 		element.addEventListener("mousemove", this.onMouseMove);
 		element.addEventListener("mousedown", this.onMouseDown);
 		//element.addEventListener("mouseup", this.onMouseUp);
+		element.addEventListener("wheel", this.onWheel);
 
 		//element.addEventListener("touchmove", this.onMouseMove);
 		//element.addEventListener("touchstart", this.onMouseDown);
@@ -89,6 +92,7 @@ export class Mouse {
 		element.removeEventListener("mousemove", this.onMouseMove);
 		element.removeEventListener("mousedown", this.onMouseDown);
 		//element.removeEventListener("mouseup", this.onMouseUp);
+		element.removeEventListener("wheel", this.onWheel);
 
 		//element.removeEventListener("touchmove", this.onMouseMove);
 		//element.removeEventListener("touchstart", this.onMouseDown);
@@ -115,6 +119,11 @@ export class Mouse {
 	protected onMouseUp = (e: MouseEvent): void => {
 		e.stopPropagation();
 		this.buttons[e.button] = false;
+	}
+
+	protected onWheel = (e: WheelEvent): void => {
+		this.wheelX = e.wheelDeltaX;
+		this.wheelY = e.wheelDeltaY;
 	}
 }
 
