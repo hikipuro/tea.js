@@ -5,6 +5,10 @@ export class TestScript extends Tea.Script {
 	speedY: number = 0;
 	cube: Tea.Object3D;
 
+	awake(): void {
+		console.log("TestScript.awake");
+	}
+
 	start(): void {
 		console.log("TestScript.start");
 	}
@@ -61,7 +65,7 @@ export class TestScript extends Tea.Script {
 		if (mouse.wheelY != 0) {
 			var camera = this.scene.mainCamera;
 			var fov = camera.fieldOfView;
-			fov += mouse.wheelY / 10;
+			fov += mouse.wheelY / 3;
 			fov = Math.min(120, fov);
 			fov = Math.max(20, fov);
 			camera.fieldOfView = fov;
@@ -80,5 +84,9 @@ export class TestScript extends Tea.Script {
 		}
 
 		//console.log(this.app.keyboard._keys);
+	}
+
+	lateUpdate(): void {
+		//console.log("TestScript lateUpdate");
 	}
 }

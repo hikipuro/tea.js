@@ -123,20 +123,17 @@ export class Camera extends Component {
 
 	update(): void {
 		var isChanged = false;
-		if (this._prev.isViewChanged(this.object3d)) {
+		var object3d = this.object3d;
+		if (this._prev.isViewChanged(object3d)) {
 			this._cameraToWorldMatrix.setTR(
-				this.object3d.position,
-				this.object3d.rotation
+				object3d.position,
+				object3d.rotation
 			);
 			this._cameraToWorldMatrix.toggleHand();
-			//view.toggleHand();
-			//this._cameraToWorldMatrix = view;
-	
-			//view = view.inverse;
 			this._worldToCameraMatrix = this._cameraToWorldMatrix.inverse;
 
-			this._prev.position.copy(this.object3d.position);
-			this._prev.rotation.copy(this.object3d.rotation);
+			this._prev.position.copy(object3d.position);
+			this._prev.rotation.copy(object3d.rotation);
 			isChanged = true;
 		}
 
@@ -183,8 +180,10 @@ export class Camera extends Component {
 
 		if (this.targetTexture != null) {
 			var t = this.targetTexture;
-			this.gl.viewport(0, 0, t.width, t.height);
-			this.gl.scissor(0, 0, t.width, t.height);
+			var w = t.width;
+			var h = t.height;
+			this.gl.viewport(0.0, 0.0, w, h);
+			this.gl.scissor(0.0, 0.0, w, h);
 		} else {
 			this.setViewport();
 		}
@@ -462,8 +461,13 @@ export class Camera extends Component {
 		var w = rect.width * width;
 		var h = rect.height * height;
 
-		gl.viewport(x, y, w, h);
-		gl.scissor(x, y, w, h);
+		var viewport = this.app.status.viewport;
+		if (viewport[0] !== x && viewport[1] !== y &&
+			viewport[2] !== w && viewport[3] !== h) {
+			gl.viewport(x, y, w, h);
+			gl.scissor(x, y, w, h);
+			viewport.set(x, y, w, h);
+		}
 	}
 
 	protected clear(): void {

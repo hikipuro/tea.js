@@ -2,6 +2,7 @@ import * as Tea from "./Tea";
 
 class Status {
 	frontFace: number;
+	viewport: Tea.Rect;
 	OES_element_index_uint: any;
 }
 
@@ -27,6 +28,7 @@ export class App {
 		this.parameters = new Tea.GLParameters(this.gl);
 		this.status = new Status();
 		this.status.frontFace = this.gl.CW;
+		this.status.viewport = new Tea.Rect(0.0, 0.0, 1.0, 1.0);
 		this.cursor = new Tea.Cursor(this);
 		this._renderer = new AppRenderer(this);
 	}

@@ -6,9 +6,13 @@ export class Script extends Component {
 	enabled: boolean;
 	object3d: Tea.Object3D;
 
+	isStarted: boolean;
+
 	constructor(app: Tea.App) {
 		super(app);
 		this.enabled = true;
+		this.isStarted = false;
+		this.awake();
 	}
 
 	get keyboard(): Tea.Keyboard {
@@ -125,9 +129,15 @@ export class Script extends Component {
 		setTimeout(method, time * 1000);
 	}
 
+	awake(): void {
+	}
+
 	start(): void {
 	}
 
 	update(): void {
+	}
+
+	lateUpdate(): void {
 	}
 }

@@ -1,4 +1,5 @@
 import * as Tea from "../Tea";
+import { isNull } from "util";
 
 class Movement {
 	position: Tea.Vector3;
@@ -150,7 +151,9 @@ export class Object3D {
 			return;
 		}
 		this._parent = value;
-		this.scene = value.scene;
+		if (this.scene == null && value.scene != null) {
+			value.scene.appendChild(this);
+		}
 		value.adjustChildPosition(this, true);
 		value.children.push(this);
 	}
@@ -363,13 +366,16 @@ export class Object3D {
 		if (this.isActive === false) {
 			return;
 		}
-		var scripts = this.getComponents(Tea.Script);
-		scripts.forEach((script) => {
+		var scripts = this._components.filter((c) => {
+			return c instanceof Tea.Script;
+		}) as Array<Tea.Script>;
+		for (var i = 0; i < scripts.length; i++) {
+			var script = scripts[i];
 			var method = script[methodName];
 			if (method instanceof Function) {
 				method.apply(script, args);
 			}
-		});
+		}
 	}
 
 	sendMessageUpwards(methodName: string, args: Array<any> = null): void {
@@ -479,20 +485,22 @@ export class Object3D {
 		this.localRotation = q;
 	}
 
-	start(): void {
-		var scripts = this.getComponents(Tea.Script);
-		var length = scripts.length;
-		for (var i = 0; i < length; i++) {
-			scripts[i].start();
-		}
-	}
-
 	update(): void {
 		this._m.update(this);
 		var components = this._components;
 		var length = components.length;
 		for (var i = 0; i < length; i++) {
-			components[i].update();
+			var component = components[i];
+			if (component instanceof Tea.Camera) {
+				continue;
+			}
+			if (component instanceof Tea.Script) {
+				if (component.isStarted === false) {
+					component.start();
+					component.isStarted = true;
+				}
+			}
+			component.update();
 		}
 	}
 

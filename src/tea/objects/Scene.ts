@@ -5,7 +5,6 @@ export class Scene {
 	mainCamera: Tea.Camera;
 	renderSettings: Tea.RenderSettings;
 	protected _children: Array<Tea.Object3D>;
-	protected _firstTime: boolean;
 	protected _cameras: Array<Tea.Camera>;
 	protected _renderers: Array<Tea.Renderer>;
 	protected _lights: Array<Tea.Light>;
@@ -14,7 +13,6 @@ export class Scene {
 		this.app = app;
 		this.renderSettings = new Tea.RenderSettings();
 		this._children = [];
-		this._firstTime = true;
 		this._cameras = [];
 		this._renderers = [];
 		this._lights = [];
@@ -26,6 +24,9 @@ export class Scene {
 
 	appendChild(object3d: Tea.Object3D): void {
 		if (object3d == null) {
+			return;
+		}
+		if (this.children.indexOf(object3d) >= 0) {
 			return;
 		}
 		object3d.scene = this;
@@ -41,6 +42,18 @@ export class Scene {
 			);
 		}
 
+		var renderers = object3d.getComponents(Tea.Renderer);
+		if (renderers.length > 0) {
+			this._renderers.push.apply(
+				this._renderers, renderers
+			);
+			this._renderers = this._renderers.sort((a, b) => {
+				var renderQueueA = a.material.renderQueue;
+				var renderQueueB = b.material.renderQueue;
+				return renderQueueA - renderQueueB;
+			});
+		}
+
 		var lights = object3d.getComponents(Tea.Light);
 		if (lights.length > 0) {
 			this._lights.push.apply(
@@ -50,21 +63,15 @@ export class Scene {
 	}
 
 	update(): void {
-		if (this._firstTime) {
-			this._firstTime = false;
-			this.start();
-		}
-
 		var children = this.children;
 		var childCount = children.length;
 		for (var i = 0; i < childCount; i++) {
 			this.updateObject3D(children[i]);
 		}
-		var renderers = this._renderers.sort((a, b) => {
-			var renderQueueA = a.material.renderQueue;
-			var renderQueueB = b.material.renderQueue;
-			return renderQueueA - renderQueueB;
-		});
+		for (var i = 0; i < childCount; i++) {
+			this.lateUpdateObject3D(children[i]);
+		}
+		var renderers = this._renderers;
 		var cameras = this._cameras.sort((a, b) => {
 			var at = a.targetTexture ? 1 : 0;
 			var bt = b.targetTexture ? 1 : 0;
@@ -92,16 +99,8 @@ export class Scene {
 				renderTexture.unbind();
 			}
 		}
-		this._renderers = [];
+		//this._renderers.length = 0;
 		//console.log("drawCallCount", Tea.Renderer.drawCallCount);
-	}
-
-	protected start(): void {
-		var children = this.children;
-		var length = children.length;
-		for (var i = 0; i < length; i++) {
-			children[i].start();
-		}
 	}
 
 	protected updateObject3D(object3d: Tea.Object3D): void {
@@ -109,16 +108,22 @@ export class Scene {
 			return;
 		}
 		object3d.update();
-		var renderer = object3d.getComponent(Tea.Renderer);
-		if (renderer != null) {
-			if (renderer.material != null) {
-				this._renderers.push(renderer);
-			}
-		}
 		var children = object3d.children;
 		var length = children.length;
 		for (var i = 0; i < length; i++) {
 			this.updateObject3D(children[i]);
+		}
+	}
+
+	protected lateUpdateObject3D(object3d: Tea.Object3D): void {
+		if (object3d == null || object3d.isActive === false) {
+			return;
+		}
+		object3d.sendMessage("lateUpdate");
+		var children = object3d.children;
+		var length = children.length;
+		for (var i = 0; i < length; i++) {
+			this.lateUpdateObject3D(children[i]);
 		}
 	}
 

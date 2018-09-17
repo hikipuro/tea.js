@@ -64,6 +64,8 @@ export class Mouse {
 	update(): void {
 		this.prevX = this.x;
 		this.prevY = this.y;
+		this.wheelX = 0;
+		this.wheelY = 0;
 		this._isMoved = false;
 		var length = this._buttonCount;
 		for (var i = 0; i < length; i++) {
@@ -122,8 +124,8 @@ export class Mouse {
 	}
 
 	protected onWheel = (e: WheelEvent): void => {
-		this.wheelX = e.wheelDeltaX;
-		this.wheelY = e.wheelDeltaY;
+		this.wheelX = e.deltaX;
+		this.wheelY = e.deltaY;
 	}
 }
 
