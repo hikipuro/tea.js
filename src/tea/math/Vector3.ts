@@ -175,6 +175,18 @@ export class Vector3 extends Array<number> {
 		);
 	}
 
+	toVector2(): Tea.Vector2 {
+		return new Tea.Vector2(
+			this[0], this[1]
+		);
+	}
+
+	toVector4(): Tea.Vector4 {
+		return new Tea.Vector4(
+			this[0], this[1], this[2], 0.0
+		);
+	}
+
 	isParallel(value: Vector3): boolean {
 		var m = this.cross(value).magnitude;
 		return Tea.Mathf.approximately(m, 0);
@@ -190,13 +202,6 @@ export class Vector3 extends Array<number> {
 		return Math.acos(cos);
 	}
 
-	distance(value: Vector3): number {
-		var t = Vector3._tmp;
-		t.copy(this).sub$(value);
-		var x = t[0], y = t[1], z = t[2];
-		return Math.sqrt(x * x + y * y + z * z);
-	}
-
 	clampMagnitude(maxLength: number): Vector3 {
 		var x = this[0], y = this[1], z = this[2];
 		var m = x * x + y * y + z * z;
@@ -210,6 +215,13 @@ export class Vector3 extends Array<number> {
 			this[1] * m,
 			this[2] * m
 		);
+	}
+
+	distance(value: Vector3): number {
+		var t = Vector3._tmp;
+		t.copy(this).sub$(value);
+		var x = t[0], y = t[1], z = t[2];
+		return Math.sqrt(x * x + y * y + z * z);
 	}
 
 	lerp(value: Vector3, t: number): Vector3 {

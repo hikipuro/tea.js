@@ -1,3 +1,4 @@
+import * as Tea from "../Tea";
 import { Vector2 } from "./Vector2";
 
 export class Rect extends Array<number> {
@@ -134,6 +135,16 @@ export class Rect extends Array<number> {
 			&& this[1] === value[1]
 			&& this[2] === value[2]
 			&& this[3] === value[3];
+	}
+
+	approxEquals(value: Rect): boolean {
+		if (value == null) {
+			return false;
+		}
+		return Tea.Mathf.approximately(this[0], value[0])
+			&& Tea.Mathf.approximately(this[1], value[1])
+			&& Tea.Mathf.approximately(this[2], value[2])
+			&& Tea.Mathf.approximately(this[3], value[3]);
 	}
 
 	contains(point: Vector2): boolean {

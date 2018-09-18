@@ -34,10 +34,26 @@ export class Bounds {
 		);
 	}
 
-	copy(value: Tea.Bounds): Bounds {
+	copy(value: Bounds): Bounds {
 		this.center.copy(value.center);
 		this.extents.copy(value.extents);
 		return this;
+	}
+
+	equals(value: Bounds): boolean {
+		if (value == null) {
+			return false;
+		}
+		return this.center.equals(value.center)
+			&& this.extents.equals(value.extents);
+	}
+
+	approxEquals(value: Bounds): boolean {
+		if (value == null) {
+			return false;
+		}
+		return this.center.approxEquals(value.center)
+			&& this.extents.approxEquals(value.extents);
 	}
 
 	contains(point: Tea.Vector3): boolean {

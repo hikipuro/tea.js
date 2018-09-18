@@ -1,3 +1,5 @@
+import { Color } from "../utils/Color";
+
 export class Mathf {
 	static readonly Epsilon = 1.192093E-07;
 	static readonly Deg2Rad = Math.PI / 180.0;
@@ -69,15 +71,42 @@ export class Mathf {
 		return 2 << shift;
 	}
 
-	//static correlatedColorTemperatureToRGB(kelvin: number): Tea.Color {
-	//}
+	static correlatedColorTemperatureToRGB(kelvin: number): Color {
+		var t = kelvin / 100;
+		var r = 0, g = 0, b = 0;
+		if (t <= 66) {
+			r = 255;
+			g = t;
+			g = 99.4708025861 * Math.log(g) - 161.1195681661;
+		} else {
+			r = t - 60;
+			r = 329.698727446 * Math.pow(r, -0.1332047592);
+			g = t - 60;
+			g = 288.1221695283 * Math.pow(g, -0.0755148492);
+		}
+		if (t >= 66) {
+			b = 255;
+		} else if (t <= 16) {
+			b = 0;
+		} else {
+			b = t - 10;
+			b = 138.5177312231 * Math.log(b) - 305.0447927307;
+		}
+		r = Mathf.clamp(r, 0, 255);
+		g = Mathf.clamp(g, 0, 255);
+		b = Mathf.clamp(b, 0, 255);
+		return new Color(r / 255, g / 255, b / 255, 1.0);
+	}
 
 	static cos(f: number): number {
 		return Math.cos(f);
 	}
 
-	//static deltaAngle(current: number, target: number): number {
-	//}
+	static deltaAngle(current: number, target: number): number {
+		current %= 360;
+		target %= 360;
+		return target - current;
+	}
 
 	static exp(f: number): number {
 		return Math.exp(f);
@@ -91,8 +120,9 @@ export class Mathf {
 		return Math.floor(f);
 	}
 
-	//static gammaToLinearSpace(value: number): number {
-	//}
+	static gammaToLinearSpace(value: number): number {
+		return Math.pow(value, 2.2);
+	}
 
 	static inverseLerp(a: number, b: number, value: number): number {
 		return (value - a) / (b - a);
@@ -122,8 +152,9 @@ export class Mathf {
 		return a + (b - a) * t;
 	}
 
-	//static linearToGammaSpace(value: number): number {
-	//}
+	static linearToGammaSpace(value: number): number {
+		return Math.pow(value, 1.0 / 2.2);
+	}
 
 	static log(f: number): number {
 		return Math.log(f);
@@ -159,8 +190,16 @@ export class Mathf {
 		return Math.pow(f, p);
 	}
 
-	//static repeat(t: number, length: number): number {
-	//}
+	static repeat(t: number, length: number): number {
+		if (length < 0) {
+			return 0;
+		}
+		var a = t % length;
+		if (a < 0) {
+			return a + length;
+		}
+		return a;
+	}
 
 	static round(f: number): number {
 		return Math.round(f);

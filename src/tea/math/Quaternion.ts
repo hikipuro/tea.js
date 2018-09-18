@@ -228,6 +228,16 @@ export class Quaternion extends Array<number> {
 			&& this[3] === value[3];
 	}
 
+	approxEquals(value: Quaternion): boolean {
+		if (value == null) {
+			return false;
+		}
+		return Tea.Mathf.approximately(this[0], value[0])
+			&& Tea.Mathf.approximately(this[1], value[1])
+			&& Tea.Mathf.approximately(this[2], value[2])
+			&& Tea.Mathf.approximately(this[3], value[3]);
+	}
+
 	pow(value: number): Quaternion {
 		var e = Tea.Mathf.Epsilon;
 		var x = this[0], y = this[1], z = this[2], w = this[3];

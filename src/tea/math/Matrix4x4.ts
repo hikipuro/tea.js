@@ -480,12 +480,24 @@ export class Matrix4x4 extends Array<number> {
 		this[row + column * 4] = value;
 	}
 
-	equals(matrix: Matrix4x4): boolean {
-		if (matrix == null) {
+	equals(value: Matrix4x4): boolean {
+		if (value == null) {
 			return false;
 		}
 		for (var i = 0; i < 16; i++) {
-			if (this[i] != matrix[i]) {
+			if (this[i] != value[i]) {
+				return false;
+			}
+		}
+		return true;
+	}
+
+	approxEquals(value: Matrix4x4): boolean {
+		if (value == null) {
+			return false;
+		}
+		for (var i = 0; i < 16; i++) {
+			if (Tea.Mathf.approximately(this[i], value[i]) === false) {
 				return false;
 			}
 		}

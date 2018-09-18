@@ -1,3 +1,4 @@
+import * as Tea from "../Tea";
 import { Vector3 } from "./Vector3";
 
 export class Vector4 extends Array<number> {
@@ -105,6 +106,16 @@ export class Vector4 extends Array<number> {
 			&& this[3] === value[3];
 	}
 
+	approxEquals(value: Vector4): boolean {
+		if (value == null) {
+			return false;
+		}
+		return Tea.Mathf.approximately(this[0], value[0])
+			&& Tea.Mathf.approximately(this[1], value[1])
+			&& Tea.Mathf.approximately(this[2], value[2])
+			&& Tea.Mathf.approximately(this[3], value[3]);
+	}
+
 	toString(): string {
 		var t = new Array(4);
 		for (var i = 0; i < 4; i++) {
@@ -114,6 +125,10 @@ export class Vector4 extends Array<number> {
 			"[x: " + t[0] + ", y: " + t[1] + ", " +
 			 "z: " + t[2] + ", w: " + t[3] + "]"
 		);
+	}
+
+	toVector2(): Tea.Vector2 {
+		return new Tea.Vector2(this[0], this[1]);
 	}
 
 	toVector3(useW: boolean = false): Vector3 {
