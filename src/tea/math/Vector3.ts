@@ -115,11 +115,11 @@ export class Vector3 extends Array<number> {
 
 	get normalized(): Vector3 {
 		var x = this[0], y = this[1], z = this[2];
-		var magnitude = Math.sqrt(x * x + y * y + z * z);
-		if (magnitude === 0.0) {
+		var m = x * x + y * y + z * z;
+		if (m === 0.0) {
 			return new Vector3();
 		}
-		var m = 1.0 / magnitude;
+		m = 1.0 / Math.sqrt(m);
 		return new Vector3(
 			this[0] * m,
 			this[1] * m,
@@ -181,18 +181,30 @@ export class Vector3 extends Array<number> {
 	}
 
 	angle(value: Vector3): number {
-		var ma = this.magnitude;
-		var mb = value.magnitude;
-		var cos = this.dot(value) / (ma * mb);
+		var ma = this.sqrMagnitude;
+		var mb = value.sqrMagnitude;
+		if (ma === 0.0 && mb === 0.0) {
+			return 0;
+		}
+		var cos = this.dot(value) / Math.sqrt(ma * mb);
 		return Math.acos(cos);
 	}
 
 	distance(value: Vector3): number {
-		return this.sub(value).magnitude;
+		var t = Vector3._tmp;
+		t.copy(this).sub$(value);
+		var x = t[0], y = t[1], z = t[2];
+		return Math.sqrt(x * x + y * y + z * z);
 	}
 
 	clampMagnitude(maxLength: number): Vector3 {
-		var m = maxLength / this.magnitude;
+		var x = this[0], y = this[1], z = this[2];
+		var m = x * x + y * y + z * z;
+		if (m === 0.0) {
+			return new Vector3();
+		}
+		m = Math.sqrt(m);
+		m = maxLength / m;
 		return new Vector3(
 			this[0] * m,
 			this[1] * m,
@@ -216,39 +228,72 @@ export class Vector3 extends Array<number> {
 		);
 	}
 
-	/*
 	project(onNormal: Vector3): Vector3 {
-		return Vector3.zero;
+		if (onNormal.approxEquals(Vector3.zero)) {
+			return new Vector3();
+		}
+		var n = onNormal.normalized;
+		return n.mul(n.dot(this));
 	}
 
 	projectOnPlane(planeNormal: Vector3): Vector3 {
-		return Vector3.zero;
+		if (planeNormal.approxEquals(Vector3.zero)) {
+			return new Vector3();
+		}
+		var n = planeNormal;
+		var m = this.dot(n) / n.sqrMagnitude;
+		return this.sub(n.mul(m));
 	}
 
-	reflect(): void {
+	reflect(inNormal: Vector3): Vector3 {
+		var n = inNormal;
+		var d = this.dot(n) * -2.0;
+		var t = Vector3._tmp;
+		t.copy(n).mul$(d).add$(this);
+		return t.clone(); 
 	}
 
-	rotateTowards(): void {
+	rotateTowards(target: Vector3, maxRadiansDelta: number, maxMagnitudeDelta: number): Vector3 {
+		var q = Tea.Quaternion.fromToRotation(this, target);
+		q = q.pow(maxRadiansDelta);
+		var m = this.magnitude - maxMagnitudeDelta;
+		m = Math.max(m, target.magnitude);
+		var v = this.normalized.mul(m);
+		return q.mul(v);
 	}
 
-	signedAngle(): void {
+	signedAngle(to: Vector3, axis: Vector3): number {
+		var ma = this.sqrMagnitude;
+		var mb = to.sqrMagnitude;
+		if (ma === 0.0 && mb === 0.0) {
+			return 0;
+		}
+		var cos = this.dot(to) / Math.sqrt(ma * mb);
+		var angle = Math.acos(cos);
+		var cross = this.cross(to);
+		if (cross.dot(axis) < 0) {
+			angle = -angle;
+		}
+		return angle;
 	}
 
-	slerp(value: Vector3, t: number): Vector3 {
-		var a = this.angle(value);
-		a = Tea.Mathf.lerp(0, a, t);
-		var m = this.magnitude - value.magnitude;
-		m = Tea.Mathf.lerp(0, m, t);
-		return new Vector3(
-			this[0],
-			this[1],
-			this[2]
-		);
+	slerp(b: Vector3, t: number): Vector3 {
+		var q = Tea.Quaternion.fromToRotation(this, b);
+		q = Tea.Quaternion.identity.slerp(q, t);
+		var m1 = this.magnitude * (1.0 - t);
+		var m2 = b.magnitude * t;
+		return q.mul(this.normalized).mul(m1 + m2);
 	}
 
-	slerpUnclamped(): void {
+	slerpUnclamped(b: Vector3, t: number): Vector3 {
+		var q = Tea.Quaternion.fromToRotation(this, b);
+		q = Tea.Quaternion.identity.slerpUnclamped(q, t);
+		var m1 = this.magnitude * (1.0 - t);
+		var m2 = b.magnitude * t;
+		return q.mul(this.normalized).mul(m1 + m2);
 	}
 
+	/*
 	smoothDamp(): void {
 	}
 	//*/

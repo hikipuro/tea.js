@@ -202,18 +202,20 @@ export class Quaternion extends Array<number> {
 		);
 	}
 
-	set(x: number, y: number, z: number, w: number): void {
+	set(x: number, y: number, z: number, w: number): Quaternion {
 		this[0] = x;
 		this[1] = y;
 		this[2] = z;
 		this[3] = w;
+		return this;
 	}
 
-	copy(value: Quaternion): void {
+	copy(value: Quaternion): Quaternion {
 		this[0] = value[0];
 		this[1] = value[1];
 		this[2] = value[2];
 		this[3] = value[3];
+		return this;
 	}
 
 	equals(value: Quaternion): boolean {
@@ -226,22 +228,42 @@ export class Quaternion extends Array<number> {
 			&& this[3] === value[3];
 	}
 
+	pow(value: number): Quaternion {
+		var e = Tea.Mathf.Epsilon;
+		var x = this[0], y = this[1], z = this[2], w = this[3];
+		var r = Math.sqrt(x * x + y * y + z * z);
+		var t = r > e ? Math.atan2(r, w) / r: 0.0;
+		w = 0.5 * Math.log(w * w + x * x + y * y + z * z) * value;
+		x *= t * value;
+		y *= t * value;
+		z *= t * value;
+
+		r = Math.sqrt(x * x + y * y + z * z);
+		var et = Math.exp(w);
+		var s = r >= e ? et * Math.sin(r) / r: 0.0;
+		w = et * Math.cos(r);
+		x *= s;
+		y *= s;
+		z *= s;
+		return new Quaternion(x, y, z, w);
+	}
+
 	toMatrix4x4(): Tea.Matrix4x4 {
 		var x = this[0], y = this[1], z = this[2], w = this[3];
 		var xx = x * x, yy = y * y, zz = z * z;
 		var xy = x * y, xz = x * z, yz = y * z;
 		var wx = w * x, wy = w * y, wz = w * z;
 		var m = new Tea.Matrix4x4();
-		m[0] = 1 - 2 * (yy + zz);
-		m[1] = 2 * (xy + wz);
-		m[2] = 2 * (xz - wy);
-		m[4] = 2 * (xy - wz);
-		m[5] = 1 - 2 * (xx + zz);
-		m[6] = 2 * (yz + wx);
-		m[8] = 2 * (xz + wy);
-		m[9] = 2 * (yz - wx);
-		m[10] = 1 - 2 * (xx + yy);
-		m[15] = 1;
+		m[0] = 1.0 - 2.0 * (yy + zz);
+		m[1] = 2.0 * (xy + wz);
+		m[2] = 2.0 * (xz - wy);
+		m[4] = 2.0 * (xy - wz);
+		m[5] = 1.0 - 2.0 * (xx + zz);
+		m[6] = 2.0 * (yz + wx);
+		m[8] = 2.0 * (xz + wy);
+		m[9] = 2.0 * (yz - wx);
+		m[10] = 1.0 - 2.0 * (xx + yy);
+		m[15] = 1.0;
 		return m;
 	}
 
@@ -326,16 +348,26 @@ export class Quaternion extends Array<number> {
 		);
 	}
 
-	mul$(value: Quaternion): void {
+	mul$(value: number): Quaternion;
+	mul$(value: Quaternion): Quaternion;
+	mul$(value: number | Quaternion): Quaternion {
 		if (value == null) {
-			return;
+			return this;
 		}
-		var ax = this[0], ay = this[1], az = this[2], aw = this[3];
-		var bx = value[0], by = value[1], bz = value[2], bw = value[3];
-		this[0] = aw * bx + bw * ax + ay * bz - by * az;
-		this[1] = aw * by + bw * ay + az * bx - bz * ax;
-		this[2] = aw * bz + bw * az + ax * by - bx * ay;
-		this[3] = aw * bw - ax * bx - ay * by - az * bz;
+		if (value instanceof Quaternion) {
+			var ax = this[0], ay = this[1], az = this[2], aw = this[3];
+			var bx = value[0], by = value[1], bz = value[2], bw = value[3];
+			this[0] = aw * bx + bw * ax + ay * bz - by * az;
+			this[1] = aw * by + bw * ay + az * bx - bz * ax;
+			this[2] = aw * bz + bw * az + ax * by - bx * ay;
+			this[3] = aw * bw - ax * bx - ay * by - az * bz;
+			return this;
+		}
+		this[0] *= value;
+		this[1] *= value;
+		this[2] *= value;
+		this[3] *= value;
+		return this;
 	}
 
 	rotateEuler(x: number, y: number, z: number): void;
@@ -403,6 +435,9 @@ export class Quaternion extends Array<number> {
 		var a = Math.acos(this.dot(q));
 		var u = 1.0 - t;
 		var sa = Math.sin(a);
+		if (sa === 0.0) {
+			return new Quaternion();
+		}
 		var w1 = Math.sin(t * a) / sa;
 		var w2 = Math.sin(u * a) / sa;
 		var q = new Quaternion(

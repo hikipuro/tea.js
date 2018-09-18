@@ -79,18 +79,20 @@ export class Vector4 extends Array<number> {
 		);
 	}
 
-	set(x: number, y: number, z: number, w: number): void {
+	set(x: number, y: number, z: number, w: number): Vector4 {
 		this[0] = x;
 		this[1] = y;
 		this[2] = z;
 		this[3] = w;
+		return this;
 	}
 
-	copy(value: Vector4): void {
+	copy(value: Vector4): Vector4 {
 		this[0] = value[0];
 		this[1] = value[1];
 		this[2] = value[2];
 		this[3] = value[3];
+		return this;
 	}
 
 	equals(value: Vector4): boolean {

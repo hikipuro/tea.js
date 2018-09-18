@@ -103,18 +103,20 @@ export class Rect extends Array<number> {
 		);
 	}
 
-	set(x: number, y: number, width: number, height: number): void {
+	set(x: number, y: number, width: number, height: number): Rect {
 		this[0] = x;
 		this[1] = y;
 		this[2] = width;
 		this[3] = height;
+		return this;
 	}
 
-	copy(rect: Rect): void {
+	copy(rect: Rect): Rect {
 		this[0] = rect[0];
 		this[1] = rect[1];
 		this[2] = rect[2];
 		this[3] = rect[3];
+		return this;
 	}
 
 	clone(): Rect {

@@ -76,7 +76,7 @@ export class Camera extends Component {
 		this.farClipPlane = 1000.0;
 		this.backgroundColor = Tea.Color.background;
 		this.orthographic = false;
-		this.orthographicSize = 5;
+		this.orthographicSize = 5.0;
 		this.rect = new Tea.Rect(0.0, 0.0, 1.0, 1.0);
 		this.enableStereo = false;
 		this.stereoDistance = 0.1;

@@ -37,14 +37,16 @@ export class Vector2 extends Array<number> {
 		);
 	}
 
-	set(x: number, y: number): void {
+	set(x: number, y: number): Vector2 {
 		this[0] = x;
 		this[1] = y;
+		return this;
 	}
 
-	copy(value: Vector2): void {
+	copy(value: Vector2): Vector2 {
 		this[0] = value[0];
 		this[1] = value[1];
+		return this;
 	}
 
 	equals(value: Vector2): boolean {

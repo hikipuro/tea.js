@@ -198,16 +198,16 @@ export class Matrix4x4 extends Array<number> {
 		var xx = x * x, yy = y * y, zz = z * z;
 		var xy = x * y, xz = x * z, xw = x * w;
 		var yz = y * z, yw = y * w, zw = z * w;
-		m[0] = 1 - 2 * (yy + zz);
-		m[1] = 2 * (xy + zw);
-		m[2] = 2 * (xz - yw);
-		m[4] = 2 * (xy - zw);
-		m[5] = 1 - 2 * (xx + zz);
-		m[6] = 2 * (yz + xw);
-		m[8] = 2 * (xz + yw);
-		m[9] = 2 * (yz - xw);
-		m[10] = 1 - 2 * (xx + yy);
-		m[15] = 1;
+		m[0] = 1.0 - 2.0 * (yy + zz);
+		m[1] = 2.0 * (xy + zw);
+		m[2] = 2.0 * (xz - yw);
+		m[4] = 2.0 * (xy - zw);
+		m[5] = 1.0 - 2.0 * (xx + zz);
+		m[6] = 2.0 * (yz + xw);
+		m[8] = 2.0 * (xz + yw);
+		m[9] = 2.0 * (yz - xw);
+		m[10] = 1.0 - 2.0 * (xx + yy);
+		m[15] = 1.0;
 		return m;
 	}
 
@@ -331,25 +331,25 @@ export class Matrix4x4 extends Array<number> {
 	static ortho(left: number, right: number, bottom: number, top: number, zNear: number, zFar: number): Matrix4x4 {
 		var dz = zFar - zNear;
 		var m = new Matrix4x4();
-		m[0] = 2 / (right - left);
-		m[5] = 2 / (top - bottom);
-		m[10] = -2 / dz;
+		m[0] = 2.0 / (right - left);
+		m[5] = 2.0 / (top - bottom);
+		m[10] = -2.0 / dz;
 		m[12] = -(right + left) / (right - left);
 		m[13] = -(top + bottom) / (top - bottom);
 		m[14] = -(zFar + zNear) / dz;
-		m[15] = 1;
+		m[15] = 1.0;
 		return m;
 	}
 
 	static frustum(left: number, right: number, bottom: number, top: number, zNear: number, zFar: number): Matrix4x4 {
 		var m = new Matrix4x4();
-		m[0] = 2 * zNear / (right - left);
-		m[5] = 2 * zNear / (top - bottom);
+		m[0] = 2.0 * zNear / (right - left);
+		m[5] = 2.0 * zNear / (top - bottom);
 		m[8] = (right + left) / (right - left);
 		m[9] = (top + bottom) / (top - bottom);
 		m[10] = -(zFar + zNear) / (zFar - zNear);
-		m[11] = -1;
-		m[14] = -(2 * zFar * zNear) / (zFar - zNear);
+		m[11] = -1.0;
+		m[14] = -(2.0 * zFar * zNear) / (zFar - zNear);
 		return m;
 	}
 
@@ -492,7 +492,7 @@ export class Matrix4x4 extends Array<number> {
 		return true;
 	}
 
-	copy(value: Matrix4x4): void {
+	copy(value: Matrix4x4): Matrix4x4 {
 		this[0]  = value[0];
 		this[1]  = value[1];
 		this[2]  = value[2];
@@ -509,6 +509,7 @@ export class Matrix4x4 extends Array<number> {
 		this[13] = value[13];
 		this[14] = value[14];
 		this[15] = value[15];
+		return this;
 	}
 
 	clone(): Matrix4x4 {
@@ -839,7 +840,7 @@ export class Matrix4x4 extends Array<number> {
 
 	toQuaternion(): Tea.Quaternion {
 		var trace = this[0] + this[5] + this[10];
-		if (trace > 0) {
+		if (trace > 0.0) {
 			var s = Math.sqrt(trace + 1);
 			var t = 0.5 / s;
 			return new Tea.Quaternion(

@@ -1,7 +1,7 @@
 export class Mathf {
 	static readonly Epsilon = 1.192093E-07;
-	static readonly Deg2Rad = Math.PI / 180;
-	static readonly Rad2Deg = 180 / Math.PI;
+	static readonly Deg2Rad = Math.PI / 180.0;
+	static readonly Rad2Deg = 180.0 / Math.PI;
 	static readonly PI = Math.PI;
 	static readonly Infinity = Number.POSITIVE_INFINITY;
 	static readonly NegativeInfinity = Number.NEGATIVE_INFINITY;
@@ -98,8 +98,15 @@ export class Mathf {
 		return (value - a) / (b - a);
 	}
 
-	//static isPowerOfTwo(value: number): boolean {
-	//}
+	static isPowerOf2(x: number, y: number): boolean;
+	static isPowerOf2(value: number): boolean;
+	static isPowerOf2(a: number, b?: number): boolean {
+		var r = (a & (a - 1)) === 0
+		if (b == null) {
+			return r;
+		}
+		return r && (b & (b - 1)) === 0;
+	}
 
 	static lerp(a: number, b: number, t: number): number {
 		t = this.clamp01(t);
@@ -189,15 +196,5 @@ export class Mathf {
 
 	static tan(f: number): number {
 		return Math.tan(f);
-	}
-
-	static isPowerOf2(x: number, y: number): boolean;
-	static isPowerOf2(value: number): boolean;
-	static isPowerOf2(a: number, b?: number): boolean {
-		var r = (a & (a - 1)) === 0
-		if (b == null) {
-			return r;
-		}
-		return r && (b & (b - 1)) === 0;
 	}
 }
