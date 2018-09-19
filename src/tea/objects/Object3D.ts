@@ -1,5 +1,4 @@
 import * as Tea from "../Tea";
-import { isNull } from "util";
 
 class Movement {
 	position: Tea.Vector3;
@@ -183,7 +182,7 @@ export class Object3D {
 			this.localPosition = p;
 			return;
 		}
-		this.localPosition = value;
+		this.localPosition.copy(value);
 	}
 
 	get rotation(): Tea.Quaternion {
@@ -200,7 +199,7 @@ export class Object3D {
 			this.localRotation = r.inversed.mul(value);
 			return;
 		}
-		this.localRotation = value;
+		this.localRotation.copy(value);
 	}
 
 	get scale(): Tea.Vector3 {
@@ -218,7 +217,7 @@ export class Object3D {
 			this.localScale = value.scale(s);
 			return;
 		}
-		this.localScale = value;
+		this.localScale.copy(value);
 	}
 
 	get localEulerAngles(): Tea.Vector3 {
@@ -226,7 +225,7 @@ export class Object3D {
 	}
 
 	set localEulerAngles(value: Tea.Vector3) {
-		this.localRotation = Tea.Quaternion.euler(value);
+		this.localRotation.setEuler(value);
 	}
 
 	get eulerAngles(): Tea.Vector3 {
@@ -234,7 +233,7 @@ export class Object3D {
 	}
 
 	set eulerAngles(value: Tea.Vector3) {
-		this.rotation = Tea.Quaternion.euler(value);
+		this.rotation.setEuler(value);
 	}
 
 	get childCount(): number {
@@ -500,7 +499,9 @@ export class Object3D {
 					component.isStarted = true;
 				}
 			}
-			component.update();
+			if (component.enabled) {
+				component.update();
+			}
 		}
 	}
 

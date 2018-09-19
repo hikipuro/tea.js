@@ -4,6 +4,7 @@ export class Scene {
 	app: Tea.App;
 	mainCamera: Tea.Camera;
 	renderSettings: Tea.RenderSettings;
+	physics: Tea.Physics;
 	protected _children: Array<Tea.Object3D>;
 	protected _cameras: Array<Tea.Camera>;
 	protected _renderers: Array<Tea.Renderer>;
@@ -12,6 +13,7 @@ export class Scene {
 	constructor(app: Tea.App) {
 		this.app = app;
 		this.renderSettings = new Tea.RenderSettings();
+		this.physics = new Tea.Physics();
 		this._children = [];
 		this._cameras = [];
 		this._renderers = [];

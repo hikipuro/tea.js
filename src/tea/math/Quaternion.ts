@@ -380,6 +380,37 @@ export class Quaternion extends Array<number> {
 		return this;
 	}
 
+	setEuler(x: number, y: number, z: number): void;
+	setEuler(eulerAngles: Tea.Vector3): void;
+	setEuler(a: number | Tea.Vector3, b: number = 0.0, c: number = 0.0): void {
+		var toRadian = Math.PI / 180.0;
+		var x: number = 0.0;
+		var y: number = 0.0;
+		var z: number = 0.0;
+		if (a instanceof Tea.Vector3) {
+			x = a[0] * 0.5 * toRadian;
+			y = a[1] * 0.5 * toRadian;
+			z = a[2] * 0.5 * toRadian;
+		} else {
+			x = a * 0.5 * toRadian;
+			y = b * 0.5 * toRadian;
+			z = c * 0.5 * toRadian;
+		}
+		var sin = Math.sin, cos = Math.cos;
+		var sx = sin(x), sy = sin(y), sz = sin(z);
+		var cx = cos(x), cy = cos(y), cz = cos(z);
+		var ax = cy * sx;
+		var ay = cx * sy;
+		var az = -sx * sy;
+		var aw = cy * cx;
+		this.set(
+			cz * ax + ay * sz,
+			cz * ay - sz * ax,
+			aw * sz + cz * az,
+			aw * cz - az * sz
+		);
+	}
+
 	rotateEuler(x: number, y: number, z: number): void;
 	rotateEuler(eulerAngles: Tea.Vector3): void;
 	rotateEuler(a: number | Tea.Vector3, b: number = 0.0, c: number = 0.0): void {

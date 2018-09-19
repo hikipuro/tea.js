@@ -2,10 +2,6 @@ import * as Tea from "../Tea";
 import { Component } from "./Component";
 
 export class Script extends Component {
-	app: Tea.App;
-	enabled: boolean;
-	object3d: Tea.Object3D;
-
 	isStarted: boolean;
 
 	constructor(app: Tea.App) {
@@ -25,6 +21,10 @@ export class Script extends Component {
 
 	get scene(): Tea.Scene {
 		return this.object3d.scene;
+	}
+
+	get time(): Tea.Time {
+		return this.app.time;
 	}
 
 	get parent(): Tea.Object3D {

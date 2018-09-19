@@ -342,6 +342,12 @@ export class Main {
 		*/
 		
 		plane.addComponent(HitTest);
+		var rigidbody = plane.addComponent(Tea.Rigidbody);
+		//rigidbody.useGravity = false;
+		//rigidbody.drag = 10;
+		rigidbody.addForce(1, 0, 0, Tea.ForceMode.VelocityChange);
+		//rigidbody.addTorque(new Tea.Vector3(10, 10, 10));
+		//rigidbody.constraints |= Tea.RigidbodyConstraints.FreezePositionX;
 		var box = plane.addComponent(Tea.BoxCollider);
 		box.size = plane.getComponent(Tea.MeshFilter).mesh.bounds.size;
 		console.log("box.size", box.size);
