@@ -548,12 +548,12 @@ export module ShaderSources {
 	`;
 
 	export const skyboxVS = `
-		const float Front = 0.0;
-		const float Back = 1.0;
-		const float Left = 2.0;
-		const float Right = 3.0;
-		const float Up = 4.0;
-		const float Down = 5.0;
+		const float Front = 0.5;
+		const float Back = 1.5;
+		const float Left = 2.5;
+		const float Right = 3.5;
+		const float Up = 4.5;
+		const float Down = 5.5;
 		attribute vec4 vertex;
 		attribute vec3 normal;
 		attribute vec2 texcoord;
@@ -608,18 +608,19 @@ export module ShaderSources {
 					discard;
 				}
 			}
+			float d = floor(direction);
 			vec4 tex = vec4(0.0);
-			if (direction == Front) {
+			if (d == Front) {
 				tex = texture2D(_Front, vTexCoord);
-			} else if (direction == Back) {
+			} else if (d == Back) {
 				tex = texture2D(_Back, vTexCoord);
-			} else if (direction == Up) {
+			} else if (d == Up) {
 				tex = texture2D(_Up, vTexCoord);
-			} else if (direction == Down) {
+			} else if (d == Down) {
 				tex = texture2D(_Down, vTexCoord);
-			} else if (direction == Left) {
+			} else if (d == Left) {
 				tex = texture2D(_Left, vTexCoord);
-			} else if (direction == Right) {
+			} else if (d == Right) {
 				tex = texture2D(_Right, vTexCoord);
 			}
 			//vec4 tex = texture2D(_SkyboxUp, vTexCoord);
