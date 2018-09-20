@@ -435,4 +435,166 @@ export class Primitives {
 		mesh.calculateBounds();
 		return mesh;
 	}
+
+	static createSkyboxMesh(): Tea.Mesh {
+		var vertices = [
+			// front
+			vec3( 0.5,  0.5, 0.5),
+			vec3(-0.5,  0.5, 0.5),
+			vec3(-0.5, -0.5, 0.5),
+			vec3( 0.5, -0.5, 0.5),
+			// back
+			vec3(-0.5,  0.5, -0.5),
+			vec3( 0.5,  0.5, -0.5),
+			vec3( 0.5, -0.5, -0.5),
+			vec3(-0.5, -0.5, -0.5),
+			// top
+			vec3( 0.5,  0.5, -0.5),
+			vec3(-0.5,  0.5, -0.5),
+			vec3(-0.5,  0.5,  0.5),
+			vec3( 0.5,  0.5,  0.5),
+			// bottom
+			vec3(-0.5, -0.5, -0.5),
+			vec3( 0.5, -0.5, -0.5),
+			vec3( 0.5, -0.5,  0.5),
+			vec3(-0.5, -0.5,  0.5),
+			// left
+			vec3(-0.5,  0.5,  0.5),
+			vec3(-0.5,  0.5, -0.5),
+			vec3(-0.5, -0.5, -0.5),
+			vec3(-0.5, -0.5,  0.5),
+			// right
+			vec3( 0.5,  0.5, -0.5),
+			vec3( 0.5,  0.5,  0.5),
+			vec3( 0.5, -0.5,  0.5),
+			vec3( 0.5, -0.5, -0.5)
+		];
+		var triangles = [
+			// front
+			vec3( 0,  2,  1),
+			vec3( 0,  3,  2),
+			// back
+			vec3( 4,  6,  5),
+			vec3( 4,  7,  6),
+			// top
+			vec3( 8, 10,  9),
+			vec3( 8, 11, 10),
+			// bottom
+			vec3(12, 14, 13),
+			vec3(12, 15, 14),
+			// left
+			vec3(16, 18, 17),
+			vec3(16, 19, 18),
+			// right
+			vec3(20, 22, 21),
+			vec3(20, 23, 22)
+		];
+		var normals = [
+			// front
+			vec3(-1, -1, -1),
+			vec3( 1, -1, -1),
+			vec3( 1,  1, -1),
+			vec3(-1,  1, -1),
+			// back
+			vec3( 1, -1,  1),
+			vec3(-1, -1,  1),
+			vec3(-1,  1,  1),
+			vec3( 1,  1,  1),
+			// top
+			vec3(-1, -1,  1),
+			vec3( 1, -1,  1),
+			vec3( 1, -1, -1),
+			vec3(-1, -1, -1),
+			// bottom
+			vec3( 1,  1,  1),
+			vec3(-1,  1,  1),
+			vec3(-1,  1, -1),
+			vec3( 1,  1, -1),
+			// left
+			vec3( 1, -1, -1),
+			vec3( 1, -1,  1),
+			vec3( 1,  1,  1),
+			vec3( 1,  1, -1),
+			// right
+			vec3(-1, -1,  1),
+			vec3(-1, -1, -1),
+			vec3(-1,  1, -1),
+			vec3(-1,  1,  1)
+		];
+		var uv = [
+			// front
+			vec2(1, 1),
+			vec2(0, 1),
+			vec2(0, 0),
+			vec2(1, 0),
+			// back
+			vec2(1, 1),
+			vec2(0, 1),
+			vec2(0, 0),
+			vec2(1, 0),
+			// top
+			vec2(0, 0),
+			vec2(1, 0),
+			vec2(1, 1),
+			vec2(0, 1),
+			// bottom
+			vec2(1, 1),
+			vec2(0, 1),
+			vec2(0, 0),
+			vec2(1, 0),
+			// left
+			vec2(1, 1),
+			vec2(0, 1),
+			vec2(0, 0),
+			vec2(1, 0),
+			// right
+			vec2(1, 1),
+			vec2(0, 1),
+			vec2(0, 0),
+			vec2(1, 0),
+		];
+		var colors = [
+			// back
+			0, 1, 0, 0,
+			0, 1, 0, 0,
+			0, 1, 0, 0,
+			0, 1, 0, 0,
+			// front
+			1, 0, 0, 0,
+			1, 0, 0, 0,
+			1, 0, 0, 0,
+			1, 0, 0, 0,
+			// top
+			0, 0, 1, 0,
+			0, 0, 1, 0,
+			0, 0, 1, 0,
+			0, 0, 1, 0,
+			// bottom
+			1, 1, 0, 0,
+			1, 1, 0, 0,
+			1, 1, 0, 0,
+			1, 1, 0, 0,
+			// left
+			1, 0, 1, 0,
+			1, 0, 1, 0,
+			1, 0, 1, 0,
+			1, 0, 1, 0,
+			// right
+			0, 1, 1, 0,
+			0, 1, 1, 0,
+			0, 1, 1, 0,
+			0, 1, 1, 0
+		];
+		for (var i = 0; i < normals.length; i++) {
+			normals[i].normalize$();
+		}
+		var mesh = new Tea.Mesh();
+		mesh.vertices = vertices;
+		mesh.triangles = triangles;
+		mesh.normals = normals;
+		mesh.uv = uv;
+		mesh.setColors(colors);
+		mesh.calculateBounds();
+		return mesh;
+	}
 }

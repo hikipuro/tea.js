@@ -546,4 +546,83 @@ export module ShaderSources {
 			gl_FragColor = vColor;
 		}
 	`;
+
+	export const skyboxVS = `
+		const float Front = 0.0;
+		const float Back = 1.0;
+		const float Left = 2.0;
+		const float Right = 3.0;
+		const float Up = 4.0;
+		const float Down = 5.0;
+		attribute vec4 vertex;
+		attribute vec3 normal;
+		attribute vec2 texcoord;
+		attribute vec4 color;
+		uniform mat4 TEA_MATRIX_MVP;
+		varying vec2 vTexCoord;
+		varying float direction;
+
+		void main() {
+			vec3 c = color.rgb;
+			if (c == vec3(1.0, 0.0, 0.0)) {
+				direction = Front;
+			} else if (c == vec3(0.0, 1.0, 0.0)) {
+				direction = Back;
+			} else if (c == vec3(0.0, 0.0, 1.0)) {
+				direction = Up;
+			} else if (c == vec3(1.0, 1.0, 0.0)) {
+				direction = Down;
+			} else if (c == vec3(1.0, 0.0, 1.0)) {
+				direction = Left;
+			} else if (c == vec3(0.0, 1.0, 1.0)) {
+				direction = Right;
+			}
+			vTexCoord = texcoord;
+			gl_Position = TEA_MATRIX_MVP * vertex;
+		}
+	`;
+
+	export const skyboxFS = `
+		precision mediump float;
+		const float Front = 0.0;
+		const float Back = 1.0;
+		const float Left = 2.0;
+		const float Right = 3.0;
+		const float Up = 4.0;
+		const float Down = 5.0;
+		uniform int TEA_CAMERA_STEREO;
+		uniform sampler2D _Front;
+		uniform sampler2D _Back;
+		uniform sampler2D _Left;
+		uniform sampler2D _Right;
+		uniform sampler2D _Up;
+		uniform sampler2D _Down;
+		varying vec2 vTexCoord;
+		varying float direction;
+
+		void main() {
+			if (TEA_CAMERA_STEREO != 0) {
+				float stereoMod = float(TEA_CAMERA_STEREO - 1);
+				if (mod(floor(gl_FragCoord.y), 2.0) == stereoMod) {
+					discard;
+				}
+			}
+			vec4 tex = vec4(0.0);
+			if (direction == Front) {
+				tex = texture2D(_Front, vTexCoord);
+			} else if (direction == Back) {
+				tex = texture2D(_Back, vTexCoord);
+			} else if (direction == Up) {
+				tex = texture2D(_Up, vTexCoord);
+			} else if (direction == Down) {
+				tex = texture2D(_Down, vTexCoord);
+			} else if (direction == Left) {
+				tex = texture2D(_Left, vTexCoord);
+			} else if (direction == Right) {
+				tex = texture2D(_Right, vTexCoord);
+			}
+			//vec4 tex = texture2D(_SkyboxUp, vTexCoord);
+			gl_FragColor = tex;
+		}
+	`;
 }

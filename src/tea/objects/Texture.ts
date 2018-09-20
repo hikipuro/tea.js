@@ -136,6 +136,19 @@ export class Texture {
 	}
 	//*/
 
+	load(url: string): void {
+		if (url == null || url === "") {
+			return;
+		}
+		Tea.File.readImage(url, (err, image) => {
+			if (err) {
+				console.error("Texture.load()", err);
+				return;
+			}
+			this.image = image;
+		});
+	}
+
 	remove(): void {
 		if (this.webgl.texture != null) {
 			this.gl.deleteTexture(this.webgl.texture);

@@ -62,13 +62,23 @@ export class TestScript extends Tea.Script {
 		if (mouse.isUp(0)) {
 			//console.log("mouse up");
 		}
+		if (mouse.wheelX != 0) {
+			var camera = this.scene.mainCamera;
+			var rotation = camera.object3d.rotation;
+			rotation.rotateEuler(0, mouse.wheelX / 10, 0);
+		}
 		if (mouse.wheelY != 0) {
+			/*
 			var camera = this.scene.mainCamera;
 			var fov = camera.fieldOfView;
 			fov += mouse.wheelY / 3;
 			fov = Math.min(120, fov);
 			fov = Math.max(20, fov);
 			camera.fieldOfView = fov;
+			*/
+			var camera = this.scene.mainCamera;
+			var rotation = camera.object3d.rotation;
+			rotation.rotateEuler(mouse.wheelY / 10, 0, 0);
 		}
 
 		var box1 = this.object3d.getComponent(Tea.BoxCollider);

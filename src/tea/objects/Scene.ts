@@ -12,7 +12,7 @@ export class Scene {
 
 	constructor(app: Tea.App) {
 		this.app = app;
-		this.renderSettings = new Tea.RenderSettings();
+		this.renderSettings = new Tea.RenderSettings(app);
 		this.physics = new Tea.Physics();
 		this._children = [];
 		this._cameras = [];

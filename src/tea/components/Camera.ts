@@ -43,6 +43,7 @@ class Prev {
 }
 
 export class Camera extends Component {
+	clearFlags: Tea.CameraClearFlags;
 	fieldOfView: number;
 	nearClipPlane: number;
 	farClipPlane: number;
@@ -71,6 +72,7 @@ export class Camera extends Component {
 	constructor(app: Tea.App) {
 		super(app);
 		this.gl = app.gl;
+		this.clearFlags = Tea.CameraClearFlags.SolidColor;
 		this.fieldOfView = 60.0;
 		this.nearClipPlane = 0.3;
 		this.farClipPlane = 1000.0;
@@ -477,11 +479,31 @@ export class Camera extends Component {
 			gl.clearColor(color.r, color.g, color.b, color.a);
 			Camera.currentBGColor = color;
 		}
-		gl.clear(
-			gl.COLOR_BUFFER_BIT |
-			gl.DEPTH_BUFFER_BIT |
-			gl.STENCIL_BUFFER_BIT
-		);
+		switch (this.clearFlags) {
+			case Tea.CameraClearFlags.SolidColor:
+				gl.clear(
+					gl.COLOR_BUFFER_BIT |
+					gl.DEPTH_BUFFER_BIT |
+					gl.STENCIL_BUFFER_BIT
+				);
+				break;
+			case Tea.CameraClearFlags.Depth:
+				gl.clear(
+					gl.DEPTH_BUFFER_BIT |
+					gl.STENCIL_BUFFER_BIT
+				);
+				break;
+			case Tea.CameraClearFlags.Skybox:
+				var far = this.farClipPlane;
+				var skybox = this.object3d.scene.renderSettings.skybox;
+				skybox.object3d.scale.set(far, far, far);
+				this.object3d.scene.appendChild(skybox.object3d);
+				gl.clear(
+					gl.DEPTH_BUFFER_BIT |
+					gl.STENCIL_BUFFER_BIT
+				);
+				break;
+		}
 	}
 
 	protected flush(): void {

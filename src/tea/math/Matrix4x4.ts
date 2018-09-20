@@ -691,12 +691,12 @@ export class Matrix4x4 extends Array<number> {
 		var top = Math.tan(fov / 2.0) * zNear;
 		var bottom = -top;
 		var right = top * aspect;
-		var left = -top * aspect;
+		var left = -right;
 		var rml = right - left;
 		var tmb = top - bottom;
 		var fmn = zFar - zNear;
 		var zNear2 = 2.0 * zNear;
-		this[0] = zNear2/ rml;
+		this[0] = zNear2 / rml;
 		this[5] = zNear2 / tmb;
 		this[8] = (right + left) / rml;
 		this[9] = (top + bottom) / tmb;

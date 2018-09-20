@@ -180,6 +180,7 @@ export class Main {
 		*/
 
 		var camera = this.app.createCamera();
+		camera.getComponent(Tea.Camera).clearFlags = Tea.CameraClearFlags.Skybox;
 		//camera.getComponent(Tea.Camera).orthographic = true;
 		//camera.getComponent(Tea.Camera).orthographicSize = 5;
 		//camera.localPosition = new Tea.Vector3(0, 4, 0);
@@ -211,6 +212,14 @@ export class Main {
 		//console.log("camera", scene.camera.projectionMatrix);
 
 		//var script = new TestScript();
+
+		var skybox = scene.renderSettings.skybox;
+		skybox.front.load("../models/skybox/Sunny_01A_front.jpg");
+		skybox.back.load("../models/skybox/Sunny_01A_back.jpg");
+		skybox.up.load("../models/skybox/Sunny_01A_up.jpg");
+		skybox.down.load("../models/skybox/Sunny_01A_down.jpg");
+		skybox.left.load("../models/skybox/Sunny_01A_left.jpg");
+		skybox.right.load("../models/skybox/Sunny_01A_right.jpg");
 
 		var cube = Tea.Object3D.createPrimitive(this.app, Tea.PrimitiveType.Cube);
 		//cube.name = "cube";

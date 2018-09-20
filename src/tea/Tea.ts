@@ -21,6 +21,7 @@ export * from "./components/Rigidbody";
 export * from "./components/Script";
 //export * from "./components/Transform";
 
+export * from "./enums/CameraClearFlags";
 export * from "./enums/CameraStereoMode";
 export * from "./enums/FilterMode";
 export * from "./enums/FontStyle";
@@ -67,6 +68,7 @@ export * from "./objects/RenderSettings";
 export * from "./objects/RenderTexture";
 export * from "./objects/Material";
 export * from "./objects/Scene";
+export * from "./objects/Skybox";
 export * from "./objects/TextMesh";
 export * from "./objects/Texture";
 
