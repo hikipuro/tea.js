@@ -387,6 +387,9 @@ export class Renderer extends Component {
 	}
 
 	protected setLightUniforms(lights: Array<Tea.Light>, renderSettings: Tea.RenderSettings): void {
+		if (lights == null) {
+			return;
+		}
 		var gl = this.gl;
 		var shader = this.material.shader;
 		var location: WebGLUniformLocation = null;

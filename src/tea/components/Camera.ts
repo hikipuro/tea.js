@@ -494,14 +494,16 @@ export class Camera extends Component {
 				);
 				break;
 			case Tea.CameraClearFlags.Skybox:
-				var far = this.farClipPlane;
-				var skybox = this.object3d.scene.renderSettings.skybox;
-				skybox.object3d.scale.set(far, far, far);
-				this.object3d.scene.appendChild(skybox.object3d);
 				gl.clear(
 					gl.DEPTH_BUFFER_BIT |
 					gl.STENCIL_BUFFER_BIT
 				);
+				var far = this.farClipPlane;
+				var scene = this.object3d.scene;
+				var skybox = scene.renderSettings.skybox;
+				skybox.object3d.scale.set(far, far, far);
+				skybox.object3d.update();
+				skybox.renderer.render(this, [], scene.renderSettings);
 				break;
 		}
 	}

@@ -597,6 +597,7 @@ export module ShaderSources {
 		uniform sampler2D _Right;
 		uniform sampler2D _Up;
 		uniform sampler2D _Down;
+		uniform vec4 ambientColor;
 		varying vec2 vTexCoord;
 		varying float direction;
 
@@ -622,7 +623,7 @@ export module ShaderSources {
 				tex = texture2D(_Right, vTexCoord);
 			}
 			//vec4 tex = texture2D(_SkyboxUp, vTexCoord);
-			gl_FragColor = tex;
+			gl_FragColor = ambientColor + tex;
 		}
 	`;
 }

@@ -2,6 +2,7 @@ import * as Tea from "../Tea";
 
 export class Skybox {
 	object3d: Tea.Object3D;
+	renderer: Tea.MeshRenderer;
 	front: Tea.Texture;
 	back: Tea.Texture;
 	up: Tea.Texture;
@@ -24,6 +25,7 @@ export class Skybox {
 		renderer.material.renderQueue = 1000;
 		renderer.material.shader = shader;
 		this.object3d = object3d;
+		this.renderer = renderer;
 
 		this.front = Tea.Texture.getEmpty(app, 0.5, 0.5, 0.5, 1.0);
 		this.front.wrapMode = Tea.TextureWrapMode.Mirror;
