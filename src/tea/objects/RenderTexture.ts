@@ -54,11 +54,11 @@ export class RenderTexture extends Texture {
 		var gl = this.gl;
 		var width = this._width;
 		var height = this._height;
-		this.webgl.texture = gl.createTexture();
+		this.texture = gl.createTexture();
 		this.renderBuffer = gl.createRenderbuffer();
 		this.frameBuffer = gl.createFramebuffer();
 		gl.activeTexture(gl.TEXTURE0);
-		gl.bindTexture(gl.TEXTURE_2D, this.webgl.texture);
+		gl.bindTexture(gl.TEXTURE_2D, this.texture);
 		gl.texImage2D(
 			gl.TEXTURE_2D,
 			0, gl.RGBA,
@@ -88,7 +88,7 @@ export class RenderTexture extends Texture {
 			gl.FRAMEBUFFER,
 			gl.COLOR_ATTACHMENT0,
 			gl.TEXTURE_2D,
-			this.webgl.texture, 0
+			this.texture, 0
 		);
 		gl.bindTexture(gl.TEXTURE_2D, null);
 		gl.bindRenderbuffer(gl.RENDERBUFFER, null);

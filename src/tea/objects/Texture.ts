@@ -10,9 +10,7 @@ type TextureImage = (
 
 export class Texture {
 	app: Tea.App;
-	webgl: any = {
-		texture: WebGLTexture
-	};
+	texture: WebGLTexture;
 
 	protected gl: WebGLRenderingContext;
 	protected _image: TextureImage;
@@ -27,7 +25,7 @@ export class Texture {
 		this._wrapMode = Tea.TextureWrapMode.Repeat;
 		this._updateCount = 0;
 		var gl = this.gl;
-		this.webgl.texture = gl.createTexture();
+		this.texture = gl.createTexture();
 	}
 
 	static getEmpty(app: Tea.App, r: number = 1.0, g: number = 1.0, b: number = 1.0, a: number = 1.0): Texture {
@@ -36,10 +34,6 @@ export class Texture {
 		var imageData = new ImageData(array, 1, 1);
 		texture.image = imageData;
 		return texture;
-	}
-
-	get texture(): WebGLTexture {
-		return this.webgl.texture;
 	}
 
 	get width(): number {
@@ -150,9 +144,9 @@ export class Texture {
 	}
 
 	remove(): void {
-		if (this.webgl.texture != null) {
-			this.gl.deleteTexture(this.webgl.texture);
-			this.webgl.texture = null;
+		if (this.texture != null) {
+			this.gl.deleteTexture(this.texture);
+			this.texture = null;
 		}
 	}
 
@@ -189,7 +183,7 @@ export class Texture {
 
 	protected bind(): void {
 		var gl = this.gl;
-		gl.bindTexture(gl.TEXTURE_2D, this.webgl.texture);
+		gl.bindTexture(gl.TEXTURE_2D, this.texture);
 	}
 
 	protected unbind(): void {

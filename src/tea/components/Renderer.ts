@@ -459,7 +459,7 @@ export class Renderer extends Component {
 				gl.bindTexture(gl.TEXTURE_2D, null);
 				continue;
 			}
-			gl.bindTexture(gl.TEXTURE_2D, texture.webgl.texture);
+			gl.bindTexture(gl.TEXTURE_2D, texture.texture);
 			gl.uniform1i(location, id);
 			id++;
 		}
