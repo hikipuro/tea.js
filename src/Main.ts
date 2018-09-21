@@ -148,7 +148,7 @@ export class Main {
 		light.localPosition = light.localRotation.mul(new Tea.Vector3(0,0,-1)).mul(10);
 		console.log("light", light.localPosition);
 		//light.addComponent(Rotate);
-		scene.appendChild(light);
+		scene.addChild(light);
 
 		var light2 = this.app.createLight();
 		light2.getComponent(Tea.Light).type = Tea.LightType.Point;
@@ -185,7 +185,7 @@ export class Main {
 		//camera.getComponent(Tea.Camera).orthographicSize = 5;
 		//camera.localPosition = new Tea.Vector3(0, 4, 0);
 		//camera.localRotation = Tea.Quaternion.euler(90, 0, 0);
-		scene.appendChild(camera);
+		scene.addChild(camera);
 		//camera.addComponent(CameraRotate);
 
 		/*
@@ -199,7 +199,8 @@ export class Main {
 		camera2.localPosition = light.localPosition.clone();
 		camera2.localRotation = light.localRotation.clone();
 		//var cam = camera2.getComponent(Tea.LightCamera);
-		scene.appendChild(camera2);
+		scene.addChild(camera2);
+		//camera2.removeComponent(camera2.getComponent(Tea.Camera));
 
 		setTimeout(() => {
 			//console.log("ray", scene.camera.screenPointToRay(new Tea.Vector3(100, 100)).toString());
@@ -233,7 +234,7 @@ export class Main {
 		//cube.getComponent(Tea.Renderer).material.mainTexture = renderTexture;
 		var box2 = cube.addComponent(Tea.BoxCollider);
 		box2.size = cube.getComponent(Tea.MeshFilter).mesh.bounds.size.clone();
-		scene.appendChild(cube);
+		scene.addChild(cube);
 
 		var cube2 = Tea.Object3D.createPrimitive(this.app, Tea.PrimitiveType.Cube);
 		cube2.position.x = 2;
@@ -302,7 +303,7 @@ export class Main {
 		quad.scale.y = 2;
 		//plain.addScript(script);
 		quad.addComponent(Rotate);
-		scene.appendChild(quad);
+		scene.addChild(quad);
 		//this.plain = quad;
 		//cube2.parent = quad;
 		console.log(cube2.localPosition);
@@ -360,7 +361,7 @@ export class Main {
 		var box = plane.addComponent(Tea.BoxCollider);
 		box.size = plane.getComponent(Tea.MeshFilter).mesh.bounds.size;
 		console.log("box.size", box.size);
-		scene.appendChild(plane);
+		scene.addChild(plane);
 
 		console.log("bounds", plane.getComponent(Tea.MeshFilter).mesh.bounds);
 
@@ -393,7 +394,7 @@ export class Main {
 		var box1 = capsule.addComponent(Tea.BoxCollider);
 		box1.size = capsule.getComponent(Tea.MeshFilter).mesh.bounds.size.clone();
 		capsule.addComponent(TestScript).cube = cube;
-		scene.appendChild(capsule);
+		scene.addChild(capsule);
 
 		//console.log("capsule", capsule.localToWorldMatrix.toString());
 
