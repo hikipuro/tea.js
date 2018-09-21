@@ -7,4 +7,12 @@ export class MeshFilter extends Component {
 	constructor(app: Tea.App) {
 		super(app);
 	}
+
+	toJSON(): Object {
+		var json = super.toJSON();
+		Object.assign(json, {
+			_type: "MeshFilter"
+		});
+		return json;
+	}
 }

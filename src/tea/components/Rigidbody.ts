@@ -305,6 +305,14 @@ export class Rigidbody extends Component {
 		this.object3d.rotation = rot;
 	}
 
+	toJSON(): Object {
+		var json = super.toJSON();
+		Object.assign(json, {
+			_type: "Rigidbody"
+		});
+		return json;
+	}
+
 	protected addPosition(position: Tea.Vector3): void {
 		var p = this._tmpVec3[0];
 		p.copy(position);

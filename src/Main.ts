@@ -264,7 +264,7 @@ export class Main {
 		var cube3 = Tea.Object3D.createPrimitive(this.app, Tea.PrimitiveType.Cube);
 		cube3.position.x = 4;
 		cube3.position.y = 2;
-		//cube3.parent = cube2;
+		cube3.parent = cube2;
 
 		//cube2.position = new Tea.Vector3(2, 0, 0);
 		//cube.localScale = new Tea.Vector3(2, 1, 1);
@@ -553,6 +553,9 @@ export class Main {
 		console.log("plane", p.getDistanceToPoint(Tea.vec3(-1,1,1)));
 		console.log("plane", p.getDistanceToPoint(Tea.vec3()));
 		console.log("plane", p.getSide(Tea.vec3(0, 1, 0)));
+
+		//var json = JSON.stringify(scene.toJSON(), null, 2);
+		//console.log(json, json.length);
 
 		//setTimeout(() => {
 			//this.app.stop();

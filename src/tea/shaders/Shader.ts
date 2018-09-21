@@ -245,6 +245,13 @@ export class Shader {
 		//gl.useProgram(this.program);
 	}
 
+	toJSON(): Object {
+		var json = {
+			_type: "Shader"
+		};
+		return json;
+	}
+
 	protected compile(shader: WebGLShader, source: string): void {
 		var gl = this.gl;
 		gl.shaderSource(shader, source);

@@ -332,6 +332,14 @@ export class Camera extends Component {
 	}
 	*/
 
+	toJSON(): Object {
+		var json = super.toJSON();
+		Object.assign(json, {
+			_type: "Camera"
+		});
+		return json;
+	}
+
 	protected getViewportRect(): Tea.Rect {
 		var rect = this._viewportRect;
 		rect.copy(this.rect);

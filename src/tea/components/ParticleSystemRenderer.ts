@@ -34,6 +34,14 @@ export class ParticleSystemRenderer extends Renderer {
 		this.draw(particleSystem);
 	}
 
+	toJSON(): Object {
+		var json = super.toJSON();
+		Object.assign(json, {
+			_type: "ParticleSystemRenderer"
+		});
+		return json;
+	}
+
 	protected get isRenderable(): boolean {
 		return (
 			this.object3d != null &&

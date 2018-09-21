@@ -134,6 +134,16 @@ export class MeshRenderer extends Renderer {
 		Renderer.drawCallCount++;
 	}
 
+	toJSON(): Object {
+		var json = super.toJSON();
+		Object.assign(json, {
+			_type: "MeshRenderer",
+			receiveShadows: this.receiveShadows,
+			wireframe: this._wireframe
+		});
+		return json;
+	}
+
 	protected get isRenderable(): boolean {
 		return (
 			this.object3d != null &&

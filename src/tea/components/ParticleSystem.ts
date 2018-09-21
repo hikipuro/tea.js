@@ -86,6 +86,14 @@ export class ParticleSystem extends Component {
 			this.particles.push(new Particle());
 		}
 	}
+
+	toJSON(): Object {
+		var json = super.toJSON();
+		Object.assign(json, {
+			_type: "ParticleSystem"
+		});
+		return json;
+	}
 }
 
 export module ParticleSystem {

@@ -263,6 +263,15 @@ export class Material {
 		}
 	}
 
+	toJSON(): Object {
+		var json = {
+			_type: "Material",
+			renderQueue: this.renderQueue,
+			shader: this.shader.toJSON()
+		};
+		return json;
+	}
+
 	protected getValue(name: string, type: UniformType): UniformValue {
 		if (name == null || name === "") {
 			return null;

@@ -11,4 +11,13 @@ export class Collider extends Component {
 	raycast(ray: Tea.Ray, hitInfo: Tea.RaycastHit, maxDistance: number): boolean {
 		return false;
 	}
+
+	toJSON(): Object {
+		var json = super.toJSON();
+		Object.assign(json, {
+			_type: "Collider",
+			bounds: this.bounds
+		});
+		return json;
+	}
 }

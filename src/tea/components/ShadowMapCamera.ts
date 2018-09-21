@@ -22,4 +22,11 @@ export class ShadowMapCamera extends Camera {
 		this.shader = shader;
 	}
 
+	toJSON(): Object {
+		var json = super.toJSON();
+		Object.assign(json, {
+			_type: "ShadowMapCamera"
+		});
+		return json;
+	}
 }

@@ -105,6 +105,23 @@ export class Scene {
 		//console.log("drawCallCount", Tea.Renderer.drawCallCount);
 	}
 
+	toJSON(): Object {
+		var json = {
+			_type: "Scene",
+			physics: this.physics.toJSON(),
+			renderSettings: this.renderSettings.toJSON(),
+			children: []
+		};
+		for (var i = 0; i < this.children.length; i++) {
+			var child = this.children[i];
+			if (child == null) {
+				continue;
+			}
+			json.children.push(child.toJSON());
+		}
+		return json;
+	}
+
 	protected updateObject3D(object3d: Tea.Object3D): void {
 		if (object3d == null || object3d.isActive === false) {
 			return;

@@ -52,6 +52,14 @@ export class LineRenderer extends Renderer {
 		Renderer.drawCallCount++;
 	}
 	
+	toJSON(): Object {
+		var json = super.toJSON();
+		Object.assign(json, {
+			_type: "LineRenderer"
+		});
+		return json;
+	}
+
 	protected get isRenderable(): boolean {
 		return (
 			this.object3d != null &&

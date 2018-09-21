@@ -12,4 +12,12 @@ export class Component {
 
 	update(): void {
 	}
+
+	toJSON(): Object {
+		var json = {
+			_type: "Component",
+			enabled: this.enabled
+		};
+		return json;
+	}
 }

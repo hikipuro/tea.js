@@ -286,6 +286,34 @@ export class Object3D {
 		return JSON.stringify(this);
 	}
 
+	toJSON(): Object {
+		var json = {
+			_type: "Object3D",
+			name: this.name,
+			isActive: this.isActive,
+			localPosition: this.localPosition,
+			localRotation: this.localRotation,
+			localScale: this.localScale,
+			components: [],
+			children: []
+		};
+		for (var i = 0; i < this._components.length; i++) {
+			var component = this._components[i];
+			if (component == null) {
+				continue;
+			}
+			json.components.push(component.toJSON());
+		}
+		for (var i = 0; i < this.children.length; i++) {
+			var child = this.children[i];
+			if (child == null) {
+				continue;
+			}
+			json.children.push(child.toJSON());
+		}
+		return json;
+	}
+
 	addComponent<T extends Tea.Component>(component: new (app: Tea.App) => T): T {
 		if (component == null) {
 			return;

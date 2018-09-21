@@ -29,6 +29,16 @@ export class BoxCollider extends Collider {
 		);
 	}
 
+	toJSON(): Object {
+		var json = super.toJSON();
+		Object.assign(json, {
+			_type: "BoxCollider",
+			center: this.center,
+			size: this.size
+		});
+		return json;
+	}
+
 	testRay(ray: Tea.Ray): boolean {
 		var r = this.object3d.rotation.inversed;
 		var p = ray.origin.clone();

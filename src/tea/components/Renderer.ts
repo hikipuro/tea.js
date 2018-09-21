@@ -4,7 +4,6 @@ import { Component } from "./Component";
 export class Renderer extends Component {
 	static drawCallCount: number = 0;
 	static readonly MaxLightCount: number = 4;
-	enabled: boolean;
 	object3d: Tea.Object3D;
 	material: Tea.Material;
 	protected gl: WebGLRenderingContext;
@@ -70,6 +69,15 @@ export class Renderer extends Component {
 		if (0 <= location) {
 			this.gl.disableVertexAttribArray(location);
 		}
+	}
+
+	toJSON(): Object {
+		var json = super.toJSON();
+		Object.assign(json, {
+			_type: "Renderer",
+			material: this.material.toJSON()
+		});
+		return json;
 	}
 
 	protected setShaderSettings(): void {

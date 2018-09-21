@@ -16,4 +16,17 @@ export class Light extends Component {
 		this.spotAngle = 50;
 		this.type = Tea.LightType.Directional;
 	}
+
+	toJSON(): Object {
+		var json = super.toJSON();
+		Object.assign(json, {
+			_type: "Light",
+			color: this.color,
+			intensity: this.intensity,
+			range: this.range,
+			spotAngle: this.spotAngle,
+			type: this.type,
+		});
+		return json;
+	}
 }

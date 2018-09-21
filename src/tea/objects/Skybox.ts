@@ -47,4 +47,12 @@ export class Skybox {
 		renderer.material.setTexture("_Left", this.left);
 		renderer.material.setTexture("_Right", this.right);
 	}
+
+	toJSON(): Object {
+		var json = {
+			_type: "Skybox",
+			object3d: this.object3d.toJSON(),
+		};
+		return json;
+	}
 }

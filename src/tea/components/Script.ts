@@ -129,6 +129,15 @@ export class Script extends Component {
 		setTimeout(method, time * 1000);
 	}
 
+	toJSON(): Object {
+		var json = super.toJSON();
+		Object.assign(json, {
+			_type: "Script",
+			class: this.constructor.name
+		});
+		return json;
+	}
+
 	awake(): void {
 	}
 
