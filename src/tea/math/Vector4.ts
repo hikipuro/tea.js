@@ -31,6 +31,15 @@ export class Vector4 extends Array<number> {
 		Object.freeze(Vector4.negativeInfinity);
 	}
 
+	static fromArray(array: Array<number>): Vector4 {
+		var x = array[0], y = array[1], z = array[2], w = array[3];
+		x = x != null ? x : 0.0;
+		y = y != null ? y : 0.0;
+		z = z != null ? z : 0.0;
+		w = w != null ? w : 0.0;
+		return new Vector4(x, y, z, w);
+	}
+
 	/** x == this[0] */
 	get x(): number {
 		return this[0];

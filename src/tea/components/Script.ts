@@ -130,11 +130,21 @@ export class Script extends Component {
 	}
 
 	toJSON(): Object {
-		var json = super.toJSON();
+		var json = super.toJSON() as any;
 		Object.assign(json, {
 			_type: "Script",
-			class: this.constructor.name
+			class: this.constructor.name,
+			members: []
 		});
+		var keys = Object.keys(this);
+		for (var i = 0; i < keys.length; i++) {
+			var key = keys[i];
+			console.log(key);
+			json.members.push({
+				key: key,
+				value: this[key]
+			});
+		}
 		return json;
 	}
 

@@ -35,6 +35,14 @@ export class Vector3 extends Array<number> {
 		Object.freeze(Vector3.negativeInfinity);
 	}
 
+	static fromArray(array: Array<number>): Vector3 {
+		var x = array[0], y = array[1], z = array[2];
+		x = x != null ? x : 0.0;
+		y = y != null ? y : 0.0;
+		z = z != null ? z : 0.0;
+		return new Vector3(x, y, z);
+	}
+
 	static max(a: Vector3, b: Vector3): Vector3 {
 		return new Vector3(
 			Math.max(a[0], b[0]),

@@ -34,4 +34,22 @@ export class ShaderSettings {
 		this.blend = new Tea.ShaderBlend();
 		this.stencil = new Tea.ShaderStencil();
 	}
+
+	toJSON(): Object {
+		var json = {
+			_type: "ShaderSettings",
+			enableBlend: this.enableBlend,
+			enableCullFace: this.enableCullFace,
+			enableDither: this.enableDither,
+			enableDepthTest: this.enableDepthTest,
+			enableStencilTest: this.enableStencilTest,
+			colorWriteMask: this.colorWriteMask,
+			depthWriteMask: this.depthWriteMask,
+			cullFaceMode: this.cullFaceMode,
+			depthFunc: this.depthFunc,
+			blend: this.blend,
+			stencil: this.stencil
+		};
+		return json;
+	}
 }

@@ -32,6 +32,15 @@ export class Color extends Array<number> {
 		Object.freeze(Color.yellow);
 	}
 
+	static fromArray(array: Array<number>): Color {
+		var r = array[0], g = array[1], b = array[2], a = array[3];
+		r = r != null ? r : 0.0;
+		g = g != null ? g : 0.0;
+		b = b != null ? b : 0.0;
+		a = a != null ? a : 0.0;
+		return new Color(r, g, b, a);
+	}
+
 	get r(): number {
 		return this[0];
 	}

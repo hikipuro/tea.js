@@ -1,5 +1,4 @@
 import * as Tea from "../Tea";
-import { ShaderSources } from "./ShaderSources";
 
 export class Shader {
 	app: Tea.App;
@@ -199,7 +198,8 @@ export class Shader {
 
 	toJSON(): Object {
 		var json = {
-			_type: "Shader"
+			_type: "Shader",
+			settings: this.settings.toJSON()
 		};
 		return json;
 	}

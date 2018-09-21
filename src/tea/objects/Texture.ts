@@ -10,6 +10,7 @@ type TextureImage = (
 
 export class Texture {
 	app: Tea.App;
+	url: string;
 	texture: WebGLTexture;
 
 	protected gl: WebGLRenderingContext;
@@ -17,13 +18,18 @@ export class Texture {
 	protected _filterMode: Tea.FilterMode;
 	protected _wrapMode: Tea.TextureWrapMode;
 	protected _updateCount: number;
+	protected _isEmpty: boolean;
+	protected _emptyColor: Tea.Color;
 
 	constructor(app: Tea.App) {
 		this.app = app;
+		this.url = null;
 		this.gl = app.gl;
 		this._filterMode = Tea.FilterMode.Point;
 		this._wrapMode = Tea.TextureWrapMode.Repeat;
 		this._updateCount = 0;
+		this._isEmpty = false;
+		this._emptyColor = Tea.Color.white.clone();
 		var gl = this.gl;
 		this.texture = gl.createTexture();
 	}
@@ -33,6 +39,8 @@ export class Texture {
 		var array = new Uint8ClampedArray([255.0 * r, 255.0 * g, 255.0 * b, 255.0 * a]);
 		var imageData = new ImageData(array, 1, 1);
 		texture.image = imageData;
+		texture._isEmpty = true;
+		texture._emptyColor.set(r, g, b, a);
 		return texture;
 	}
 
@@ -139,6 +147,7 @@ export class Texture {
 				console.error("Texture.load()", err);
 				return;
 			}
+			this.url = url;
 			this.image = image;
 		});
 	}
@@ -171,6 +180,16 @@ export class Texture {
 		this.unbind();
 		gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, false);
 		this._updateCount++;
+	}
+
+	toJSON(): Object {
+		var json = {
+			_type: "Texture",
+			url: this.url,
+			isEmpty: this._isEmpty,
+			emptyColor: this._emptyColor
+		};
+		return json;
 	}
 
 	protected generateMipmap(image: TextureImage): void {

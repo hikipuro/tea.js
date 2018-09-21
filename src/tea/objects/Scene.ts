@@ -105,6 +105,16 @@ export class Scene {
 		//console.log("drawCallCount", Tea.Renderer.drawCallCount);
 	}
 
+	static fromJSON(app: Tea.App, json: any): Scene {
+		if (json == null || json._type !== "Scene") {
+			return null;
+		}
+		var scene = new Scene(app);
+		scene.physics = Tea.Physics.fromJSON(app, json.physics);
+		scene.renderSettings = Tea.RenderSettings.fromJSON(app, json.renderSettings);
+		return scene;
+	}
+
 	toJSON(): Object {
 		var json = {
 			_type: "Scene",

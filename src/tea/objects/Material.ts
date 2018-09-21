@@ -33,6 +33,40 @@ class UniformItem {
 		this.type = type;
 		this.value = value;
 	}
+
+	toJSON(): Object {
+		var json = {
+			type: this.getTypeString(),
+			value: this.value
+		};
+		return json;
+	}
+
+	protected getTypeString(): string {
+		switch (this.type) {
+			case UniformType.Int:
+				return "Int";
+			case UniformType.Float:
+				return "Float";
+			case UniformType.Vector2:
+				return "Vector2";
+			case UniformType.Vector4:
+				return "Vector4";
+			case UniformType.Matrix:
+				return "Matrix";
+			case UniformType.Color:
+				return "Color";
+			case UniformType.FloatArray:
+				return "FloatArray";
+			case UniformType.Vector4Array:
+				return "Vector4Array";
+			case UniformType.MatrixArray:
+				return "MatrixArray";
+			case UniformType.ColorArray:
+				return "ColorArray";
+		}
+		return "";
+	}
 }
 
 export class Material {
@@ -49,7 +83,7 @@ export class Material {
 		this.mainTexture = Tea.Texture.getEmpty(app);
 		this.mainTextureOffset = new Tea.Vector2();
 		this.mainTextureScale = new Tea.Vector2(1.0, 1.0);
-		this.setTexture("_ShadowTex", null);
+		this.setTexture("_ShadowTex", Tea.Texture.getEmpty(app));
 		this.setTextureOffset("_ShadowTex", new Tea.Vector2());
 		this.setTextureScale("_ShadowTex", new Tea.Vector2(1.0, 1.0));
 		var normalTex = Tea.Texture.getEmpty(app, 0.5, 0.5, 1.0, 1.0);
@@ -267,8 +301,30 @@ export class Material {
 		var json = {
 			_type: "Material",
 			renderQueue: this.renderQueue,
+			//color: this.color,
+			//mainTexture: this.mainTexture.toJSON(),
+			//mainTextureOffset: this.mainTextureOffset,
+			//mainTextureScale: this.mainTextureScale,
+			uniforms: [],
+			textures: [],
 			shader: this.shader.toJSON()
 		};
+		var keys = Object.keys(this._uniforms);
+		for (var i = 0; i < keys.length; i++) {
+			var key = keys[i];
+			json.uniforms.push({
+				key: key,
+				value: this._uniforms[key]
+			});
+		}
+		keys = Object.keys(this._textures);
+		for (var i = 0; i < keys.length; i++) {
+			var key = keys[i];
+			json.textures.push({
+				key: key,
+				value: this._textures[key]
+			});
+		}
 		return json;
 	}
 

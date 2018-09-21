@@ -18,6 +18,15 @@ export class Quaternion extends Array<number> {
 		Object.freeze(Quaternion.identity);
 	}
 
+	static fromArray(array: Array<number>): Quaternion {
+		var x = array[0], y = array[1], z = array[2], w = array[3];
+		x = x != null ? x : 0.0;
+		y = y != null ? y : 0.0;
+		z = z != null ? z : 0.0;
+		w = w != null ? w : 0.0;
+		return new Quaternion(x, y, z, w);
+	}
+
 	static euler(x: number, y: number, z: number): Quaternion;
 	static euler(eulerAngles: Tea.Vector3): Quaternion;
 	static euler(a: number | Tea.Vector3, b: number = 0.0, c: number = 0.0): Quaternion {

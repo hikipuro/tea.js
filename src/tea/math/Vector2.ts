@@ -28,6 +28,13 @@ export class Vector2 extends Array<number> {
 		Object.freeze(Vector2.negativeInfinity);
 	}
 
+	static fromArray(array: Array<number>): Vector2 {
+		var x = array[0], y = array[1];
+		x = x != null ? x : 0.0;
+		y = y != null ? y : 0.0;
+		return new Vector2(x, y);
+	}
+
 	/** x == this[0] */
 	get x(): number {
 		return this[0];
