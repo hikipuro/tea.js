@@ -195,7 +195,7 @@ export class Main {
 		scene.appendChild(camera2);
 		*/
 
-		var camera2 = this.app.createLightCamera();
+		var camera2 = this.app.createShadowMapCamera();
 		camera2.localPosition = light.localPosition.clone();
 		camera2.localRotation = light.localRotation.clone();
 		//var cam = camera2.getComponent(Tea.LightCamera);

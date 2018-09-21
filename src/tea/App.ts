@@ -174,11 +174,11 @@ export class App {
 		return object3d;
 	}
 
-	createLightCamera(): Tea.Object3D {
+	createShadowMapCamera(): Tea.Object3D {
 		var object3d = new Tea.Object3D(this);
-		object3d.name = "LightCamera";
+		object3d.name = "ShadowMapCamera";
 		object3d.localPosition.set(0, 1, -10);
-		object3d.addComponent(Tea.LightCamera);
+		object3d.addComponent(Tea.ShadowMapCamera);
 		return object3d;
 	}
 

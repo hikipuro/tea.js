@@ -1,7 +1,7 @@
 import * as Tea from "../Tea";
 import { Camera } from "./Camera";
 
-export class LightCamera extends Camera {
+export class ShadowMapCamera extends Camera {
 	shader: Tea.Shader;
 
 	constructor(app: Tea.App) {

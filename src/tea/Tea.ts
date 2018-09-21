@@ -10,7 +10,6 @@ export * from "./components/Camera";
 export * from "./components/Collider";
 export * from "./components/Component";
 export * from "./components/Light";
-export * from "./components/LightCamera";
 export * from "./components/LineRenderer";
 export * from "./components/MeshFilter";
 export * from "./components/MeshRenderer";
@@ -19,6 +18,7 @@ export * from "./components/ParticleSystemRenderer";
 export * from "./components/Renderer";
 export * from "./components/Rigidbody";
 export * from "./components/Script";
+export * from "./components/ShadowMapCamera";
 //export * from "./components/Transform";
 
 export * from "./enums/CameraClearFlags";

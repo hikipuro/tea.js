@@ -136,8 +136,8 @@ export class Scene {
 				return;
 			}
 		}
-		if (camera instanceof Tea.LightCamera) {
-			this.renderLightCamera(camera, lights, renderer);
+		if (camera instanceof Tea.ShadowMapCamera) {
+			this.renderShadowMapCamera(camera, lights, renderer);
 			return;
 		}
 		if (camera.enableStereo) {
@@ -150,7 +150,7 @@ export class Scene {
 		renderer.render(camera, lights, this.renderSettings);
 	}
 
-	protected renderLightCamera(camera: Tea.LightCamera, lights: Array<Tea.Light>, renderer: Tea.Renderer): void {
+	protected renderShadowMapCamera(camera: Tea.ShadowMapCamera, lights: Array<Tea.Light>, renderer: Tea.Renderer): void {
 		var shader = renderer.material.shader;
 		renderer.material.shader = camera.shader;
 
