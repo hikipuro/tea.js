@@ -13,8 +13,8 @@ export class LineRenderer extends Renderer {
 
 		var shader = new Tea.Shader(this.app);
 		shader.attach(
-			Tea.Shader.lineVertexShaderSource,
-			Tea.Shader.lineFragmentShaderSource
+			Tea.ShaderSources.lineVS,
+			Tea.ShaderSources.lineFS
 		);
 		this.material.shader = shader;
 	}

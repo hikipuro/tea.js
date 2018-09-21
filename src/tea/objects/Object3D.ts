@@ -114,8 +114,8 @@ export class Object3D {
 		object3d.name = name;
 		var shader = new Tea.Shader(app);
 		shader.attach(
-			Tea.Shader.defaultVertexShaderSource,
-			Tea.Shader.defaultFragmentShaderSource
+			Tea.ShaderSources.defaultVS,
+			Tea.ShaderSources.defaultFS
 		);
 		var meshFilter = object3d.addComponent(Tea.MeshFilter);
 		meshFilter.mesh = mesh;

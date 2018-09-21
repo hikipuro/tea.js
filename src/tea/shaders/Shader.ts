@@ -139,54 +139,6 @@ export class Shader {
 		return gl.ZERO;
 	}
 
-	static get defaultVertexShaderSource(): string {
-		return ShaderSources.defaultVS;
-	}
-
-	static get defaultFragmentShaderSource(): string {
-		return ShaderSources.defaultFS;
-	}
-
-	static get flatVertexShaderSource(): string {
-		return ShaderSources.flatVS;
-	}
-
-	static get flatFragmentShaderSource(): string {
-		return ShaderSources.flatFS;
-	}
-
-	static get depthVertexShaderSource(): string {
-		return ShaderSources.depthVS;
-	}
-
-	static get depthFragmentShaderSource(): string {
-		return ShaderSources.depthFS;
-	}
-
-	static get lineVertexShaderSource(): string {
-		return ShaderSources.lineVS;
-	}
-
-	static get lineFragmentShaderSource(): string {
-		return ShaderSources.lineFS;
-	}
-
-	static get textVertexShaderSource(): string {
-		return ShaderSources.textVS;
-	}
-
-	static get textFragmentShaderSource(): string {
-		return ShaderSources.textFS;
-	}
-
-	static get particleVertexShaderSource(): string {
-		return ShaderSources.particleVS;
-	}
-
-	static get particleFragmentShaderSource(): string {
-		return ShaderSources.particleFS;
-	}
-
 	propertyToID(name: string): WebGLUniformLocation {
 		var cache = this._locationsCache[name];
 		if (cache !== undefined) {

@@ -185,8 +185,8 @@ export class App {
 	createDefaultShader(): Tea.Shader {
 		var shader = new Tea.Shader(this);
 		shader.attach(
-			Tea.Shader.defaultVertexShaderSource,
-			Tea.Shader.defaultFragmentShaderSource
+			Tea.ShaderSources.defaultVS,
+			Tea.ShaderSources.defaultFS
 		);
 		return shader;
 	}
@@ -207,8 +207,8 @@ export class App {
 		var renderer = new Tea.LineRenderer(this);
 		var shader = new Tea.Shader(this);
 		shader.attach(
-			Tea.Shader.lineVertexShaderSource,
-			Tea.Shader.lineFragmentShaderSource
+			Tea.ShaderSources.lineVS,
+			Tea.ShaderSources.lineFS
 		);
 		renderer.material.shader = shader;
 		return renderer;
@@ -224,8 +224,8 @@ export class App {
 		var object3d = new Tea.Object3D(this);
 		var shader = new Tea.Shader(this);
 		shader.attach(
-			Tea.Shader.particleVertexShaderSource,
-			Tea.Shader.particleFragmentShaderSource
+			Tea.ShaderSources.particleVS,
+			Tea.ShaderSources.particleFS
 		);
 		object3d.addComponent(Tea.ParticleSystem);
 		var renderer = object3d.addComponent(Tea.ParticleSystemRenderer);
@@ -256,8 +256,8 @@ export class App {
 		var object3d = new Tea.Object3D(this);
 		var shader = new Tea.Shader(this);
 		shader.attach(
-			Tea.Shader.textVertexShaderSource,
-			Tea.Shader.textFragmentShaderSource
+			Tea.ShaderSources.textVS,
+			Tea.ShaderSources.textFS
 		);
 		shader.settings.enableBlend = true;
 		shader.settings.blend.srcRGB = Tea.ShaderBlendFunc.SrcAlpha;

@@ -16,8 +16,8 @@ export class ShadowMapCamera extends Camera {
 
 		var shader = new Tea.Shader(app);
 		shader.attach(
-			Tea.Shader.depthVertexShaderSource,
-			Tea.Shader.depthFragmentShaderSource
+			Tea.ShaderSources.depthVS,
+			Tea.ShaderSources.depthFS
 		);
 		this.shader = shader;
 	}
