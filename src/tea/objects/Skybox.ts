@@ -18,6 +18,7 @@ export class Skybox {
 			Tea.ShaderSources.skyboxVS,
 			Tea.ShaderSources.skyboxFS
 		);
+		shader.settings.enableDepthTest = false;
 		var mesh = Tea.Primitives.createSkyboxMesh();
 		var meshFilter = object3d.addComponent(Tea.MeshFilter);
 		meshFilter.mesh = mesh;

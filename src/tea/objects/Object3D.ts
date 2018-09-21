@@ -56,8 +56,8 @@ export class Object3D {
 	app: Tea.App;
 	name: string;
 	isActive: boolean;
-	scene: Tea.Scene;
 	//transform: Tea.Transform;
+	scene: Tea.Scene;
 	localPosition: Tea.Vector3;
 	localRotation: Tea.Quaternion;
 	localScale: Tea.Vector3;
@@ -70,6 +70,7 @@ export class Object3D {
 		this.app = app;
 		this.name = "";
 		this.isActive = true;
+		this.scene = null;
 		this.localPosition = Tea.Vector3.zero.clone();
 		this.localRotation = Tea.Quaternion.identity.clone();
 		this.localScale = Tea.Vector3.one.clone();
@@ -136,25 +137,61 @@ export class Object3D {
 		return this._parent;
 	}
 	set parent(value: Object3D) {
-		if (this._parent === value || value === this) {
+		var scene = this.scene;
+		var parent = this._parent;
+		if (parent === value || value === this) {
 			return;
 		}
-		var parent = this._parent;
+		if (parent == null && value == null) {
+			return;
+		}
+		if (parent != null && value == null) {
+			this._parent = null;
+			parent.adjustChildPosition(this, false);
+			var index = parent.children.indexOf(this);
+			parent.children.splice(index, 1);
+			if (scene != null) {
+				this.scene = null;
+				scene.removeComponents(this);
+				var children = this.children;
+				var length = children.length;
+				for (var i = 0; i < length; i++) {
+					var child = children[i];
+					if (child == null) {
+						continue;
+					}
+					child.scene = null;
+					scene.removeComponents(child);
+				}
+			}
+			return;
+		}
 		if (parent != null) {
 			parent.adjustChildPosition(this, false);
 			var index = parent.children.indexOf(this);
 			parent.children.splice(index, 1);
 		}
-		if (value == null) {
-			this._parent = null;
-			return;
-		}
 		this._parent = value;
-		if (this.scene == null && value.scene != null) {
-			value.scene.appendChild(this);
-		}
 		value.adjustChildPosition(this, true);
 		value.children.push(this);
+		if (scene != null && scene.childIndex(this) >= 0) {
+			scene.removeChild(this);
+		}
+		scene = value.scene;
+		if (scene != null) {
+			this.scene = scene;
+			scene.addComponents(this);
+			var children = this.children;
+			var length = children.length;
+			for (var i = 0; i < length; i++) {
+				var child = children[i];
+				if (child == null) {
+					continue;
+				}
+				child.scene = scene;
+				scene.addComponents(child);
+			}
+		}
 	}
 
 	get position(): Tea.Vector3 {
@@ -321,21 +358,27 @@ export class Object3D {
 		var c = new component(this.app);
 		c.object3d = this;
 		this._components.push(c);
+		if (this.scene != null) {
+			this.scene.addComponent(c);
+		}
 		return c;
 	}
 
-	removeComponent<T extends Tea.Component>(component: new (app: Tea.App) => T): void {
+	removeComponent(component: Tea.Component): void {
 		if (component == null) {
 			return;
 		}
 		var c = this._components.find((c) => {
-			return c instanceof component;
-		}) as T;
+			return c === component;
+		});
 		if (c == null) {
 			return;
 		}
 		var index = this._components.indexOf(c);
 		this._components.splice(index, 1);
+		if (this.scene != null) {
+			this.scene.removeComponent(c);
+		}
 	}
 
 	getComponent<T extends Tea.Component>(component: {new (app: Tea.App): T}): T {

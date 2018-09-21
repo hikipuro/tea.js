@@ -518,8 +518,8 @@ export class ObjReader {
 		object3d.name = context.filename;
 		var shader = new Tea.Shader(this.app);
 		shader.attach(
-			Tea.Shader.defaultVertexShaderSource,
-			Tea.Shader.defaultFragmentShaderSource
+			Tea.ShaderSources.defaultVS,
+			Tea.ShaderSources.defaultFS
 		);
 		var renderer = object3d.addComponent(Tea.MeshRenderer);
 		//renderer.wireframe = true;

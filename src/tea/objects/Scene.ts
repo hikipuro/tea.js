@@ -1,67 +1,306 @@
 import * as Tea from "../Tea";
 
+class SceneComponents {
+	mainCamera: Tea.Camera;
+	cameras: Array<Tea.Camera>;
+	renderers: Array<Tea.Renderer>;
+	lights: Array<Tea.Light>;
+
+	constructor() {
+		this.mainCamera = null;
+		this.cameras = [];
+		this.renderers = [];
+		this.lights = [];
+	}
+
+	add(object3d: Tea.Object3D): void {
+		if (object3d == null) {
+			return;
+		}
+		this.addCameras(
+			object3d.getComponents(Tea.Camera)
+		);
+		this.addRenderers(
+			object3d.getComponents(Tea.Renderer)
+		);
+		this.addLights(
+			object3d.getComponents(Tea.Light)
+		);
+		this.updateMainCamera();
+	}
+
+	remove(object3d: Tea.Object3D): void {
+		if (object3d == null) {
+			return;
+		}
+		this.removeCameras(
+			object3d.getComponents(Tea.Camera)
+		);
+		this.removeRenderers(
+			object3d.getComponents(Tea.Renderer)
+		);
+		this.removeLights(
+			object3d.getComponents(Tea.Light)
+		);
+		if (this.mainCamera != null) {
+			if (this.cameras.indexOf(this.mainCamera) < 0) {
+				this.mainCamera = null;
+			}
+		}
+		this.updateMainCamera();
+	}
+
+	addComponent(component: Tea.Component): void {
+		if (component instanceof Tea.Camera) {
+			this.addCameras([component]);
+			return;
+		}
+		if (component instanceof Tea.Renderer) {
+			this.addRenderers([component]);
+			return;
+		}
+		if (component instanceof Tea.Light) {
+			this.addLights([component]);
+			return;
+		}
+	}
+
+	removeComponent(component: Tea.Component): void {
+		if (component instanceof Tea.Camera) {
+			this.removeCameras([component]);
+			return;
+		}
+		if (component instanceof Tea.Renderer) {
+			this.removeRenderers([component]);
+			return;
+		}
+		if (component instanceof Tea.Light) {
+			this.removeLights([component]);
+			return;
+		}
+	}
+
+	addCameras(cameras: Array<Tea.Camera>): void {
+		if (cameras == null || cameras.length <= 0) {
+			return;
+		}
+		var length = cameras.length;
+		for (var i = 0; i < length; i++) {
+			var camera = cameras[i];
+			if (this.cameras.indexOf(camera) < 0) {
+				this.cameras.push(camera);
+			}
+		}
+		if (length > 0) {
+			this.sortCameras();
+		}
+	}
+
+	addRenderers(renderers: Array<Tea.Renderer>): void {
+		if (renderers == null || renderers.length <= 0) {
+			return;
+		}
+		var length = renderers.length;
+		for (var i = 0; i < length; i++) {
+			var renderer = renderers[i];
+			if (this.renderers.indexOf(renderer) < 0) {
+				this.renderers.push(renderer);
+			}
+		}
+		if (length > 0) {
+			this.sortRenderers();
+		}
+	}
+
+	addLights(lights: Array<Tea.Light>): void {
+		if (lights == null || lights.length <= 0) {
+			return;
+		}
+		var length = lights.length;
+		for (var i = 0; i < length; i++) {
+			var light = lights[i];
+			if (this.lights.indexOf(light) < 0) {
+				this.lights.push(light);
+			}
+		}
+	}
+
+	removeCameras(cameras: Array<Tea.Camera>): void {
+		if (cameras == null || cameras.length <= 0) {
+			return;
+		}
+		var length = cameras.length;
+		for (var i = 0; i < length; i++) {
+			var camera = cameras[i];
+			var index = this.cameras.indexOf(camera);
+			if (index >= 0) {
+				this.cameras.splice(index, 1);
+			}
+		}
+	}
+
+	removeRenderers(renderers: Array<Tea.Renderer>): void {
+		if (renderers == null || renderers.length <= 0) {
+			return;
+		}
+		var length = renderers.length;
+		for (var i = 0; i < length; i++) {
+			var renderer = renderers[i];
+			var index = this.renderers.indexOf(renderer);
+			if (index >= 0) {
+				this.renderers.splice(index, 1);
+			}
+		}
+	}
+
+	removeLights(lights: Array<Tea.Light>): void {
+		if (lights == null || lights.length <= 0) {
+			return;
+		}
+		var length = lights.length;
+		for (var i = 0; i < length; i++) {
+			var light = lights[i];
+			var index = this.lights.indexOf(light);
+			if (index >= 0) {
+				this.lights.splice(index, 1);
+			}
+		}
+	}
+
+	updateMainCamera(): void {
+		if (this.mainCamera != null) {
+			return;
+		}
+		if (this.cameras.length <= 0) {
+			return;
+		}
+		var cameras = this.cameras;
+		var length = cameras.length;
+		for (var i = 0; i < length; i++) {
+			var camera = cameras[i];
+			if (camera.constructor.name !== "Camera") {
+				continue;
+			}
+			this.mainCamera = camera;
+		}
+	}
+
+	sortCameras(): void {
+		this.cameras = this.cameras.sort((a, b) => {
+			var at = a.targetTexture ? 1 : 0;
+			var bt = b.targetTexture ? 1 : 0;
+			return bt - at;
+		});
+	}
+
+	sortRenderers(): void {
+		this.renderers = this.renderers.sort((a, b) => {
+			var renderQueueA = a.material.renderQueue;
+			var renderQueueB = b.material.renderQueue;
+			return renderQueueA - renderQueueB;
+		});
+	}
+}
+
 export class Scene {
 	app: Tea.App;
-	mainCamera: Tea.Camera;
 	renderSettings: Tea.RenderSettings;
 	physics: Tea.Physics;
 	protected _children: Array<Tea.Object3D>;
-	protected _cameras: Array<Tea.Camera>;
-	protected _renderers: Array<Tea.Renderer>;
-	protected _lights: Array<Tea.Light>;
+	protected _components: SceneComponents;
 
 	constructor(app: Tea.App) {
 		this.app = app;
 		this.renderSettings = new Tea.RenderSettings(app);
 		this.physics = new Tea.Physics();
 		this._children = [];
-		this._cameras = [];
-		this._renderers = [];
-		this._lights = [];
+		this._components = new SceneComponents();
 	}
 
 	get children(): Array<Tea.Object3D> {
 		return this._children;
 	}
 
-	appendChild(object3d: Tea.Object3D): void {
+	get mainCamera(): Tea.Camera {
+		return this._components.mainCamera;
+	}
+
+	childIndex(object3d: Tea.Object3D): number {
+		return this._children.indexOf(object3d);
+	}
+
+	addChild(object3d: Tea.Object3D): void {
 		if (object3d == null) {
 			return;
 		}
-		if (this.children.indexOf(object3d) >= 0) {
+		if (this.childIndex(object3d) >= 0) {
 			return;
 		}
+		object3d.parent = null;
 		object3d.scene = this;
+		this._components.add(object3d);
 		this.children.push(object3d);
-
-		var cameras = object3d.getComponents(Tea.Camera);
-		if (cameras.length > 0) {
-			if (this.mainCamera == null) {
-				this.mainCamera = cameras[0];
+		var children = object3d.children;
+		var length = children.length;
+		for (var i = 0; i < length; i++) {
+			var child = children[i];
+			if (child == null) {
+				continue;
 			}
-			this._cameras.push.apply(
-				this._cameras, cameras
-			);
+			child.scene = this;
+			this._components.add(child);
 		}
+	}
 
-		var renderers = object3d.getComponents(Tea.Renderer);
-		if (renderers.length > 0) {
-			this._renderers.push.apply(
-				this._renderers, renderers
-			);
-			this._renderers = this._renderers.sort((a, b) => {
-				var renderQueueA = a.material.renderQueue;
-				var renderQueueB = b.material.renderQueue;
-				return renderQueueA - renderQueueB;
-			});
+	removeChild(object3d: Tea.Object3D): void {
+		if (object3d == null) {
+			return;
 		}
+		var index = this.childIndex(object3d);
+		if (index < 0) {
+			return;
+		}
+		object3d.scene = null;
+		this._components.remove(object3d);
+		this.children.splice(index, 1);
+		var children = object3d.children;
+		var length = children.length;
+		for (var i = 0; i < length; i++) {
+			var child = children[i];
+			if (child == null) {
+				continue;
+			}
+			child.scene = null;
+			this._components.remove(child);
+		}
+	}
 
-		var lights = object3d.getComponents(Tea.Light);
-		if (lights.length > 0) {
-			this._lights.push.apply(
-				this._lights, lights
-			);
+	addComponent(component: Tea.Component): void {
+		if (component == null) {
+			return;
 		}
+		this._components.addComponent(component);
+	}
+
+	removeComponent(component: Tea.Component): void {
+		if (component == null) {
+			return;
+		}
+		this._components.removeComponent(component);
+	}
+
+	addComponents(object3d: Tea.Object3D): void {
+		if (object3d == null) {
+			return;
+		}
+		this._components.add(object3d);
+	}
+
+	removeComponents(object3d: Tea.Object3D): void {
+		if (object3d == null) {
+			return;
+		}
+		this._components.remove(object3d);
 	}
 
 	update(): void {
@@ -73,12 +312,12 @@ export class Scene {
 		for (var i = 0; i < childCount; i++) {
 			this.lateUpdateObject3D(children[i]);
 		}
-		var renderers = this._renderers;
-		var cameras = this._cameras.sort((a, b) => {
-			var at = a.targetTexture ? 1 : 0;
-			var bt = b.targetTexture ? 1 : 0;
-			return bt - at;
-		});
+
+		this._components.sortCameras();
+		this._components.sortRenderers();
+		var renderers = this._components.renderers;
+		var cameras = this._components.cameras;
+		var lights = this._components.lights;
 
 		Tea.Renderer.drawCallCount = 0;
 		var cameraCount = cameras.length;
@@ -95,7 +334,7 @@ export class Scene {
 				//if (this.frustumCulling(renderer, camera.frustumPlanes)) {
 					//continue;
 				//}
-				this.renderCamera(camera, this._lights, renderer);
+				this.renderCamera(camera, lights, renderer);
 			}
 			if (renderTexture != null) {
 				renderTexture.unbind();
