@@ -34,6 +34,20 @@ export class RenderTexture extends Texture {
 		return this._height;
 	}
 
+	destroy(): void {
+		console.log("destroy RenderTexture", arguments.callee);
+		var gl = this.gl;
+		if (this.frameBuffer != null) {
+			gl.deleteFramebuffer(this.frameBuffer);
+			this.frameBuffer = undefined;
+		}
+		if (this.renderBuffer != null) {
+			gl.deleteRenderbuffer(this.renderBuffer);
+			this.renderBuffer = undefined;
+		}
+		super.destroy();
+	}
+
 	bind(): void {
 		var gl = this.gl;
 		gl.bindFramebuffer(

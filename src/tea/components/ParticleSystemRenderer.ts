@@ -9,8 +9,9 @@ export class ParticleSystemRenderer extends Renderer {
 		this.createBuffers();
 	}
 
-	remove(): void {
+	destroy(): void {
 		this.deleteBuffers();
+		super.destroy();
 	}
 
 	render(camera: Tea.Camera, lights: Array<Tea.Light>, renderSettings: Tea.RenderSettings): void {
@@ -58,8 +59,12 @@ export class ParticleSystemRenderer extends Renderer {
 	protected deleteBuffers(): void {
 		var gl = this.gl;
 		if (this.vertexBuffer != null) {
-			gl.deleteBuffer(this.vertexBuffer);
-			this.vertexBuffer = null;
+			// TODO: delete vertex buffer
+			gl.bindBuffer(gl.ARRAY_BUFFER, this.vertexBuffer);
+			gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([]), gl.STATIC_DRAW);
+			gl.bindBuffer(gl.ARRAY_BUFFER, null);
+			//gl.deleteBuffer(this.vertexBuffer);
+			this.vertexBuffer = undefined;
 		}
 	}
 

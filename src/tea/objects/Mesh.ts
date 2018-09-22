@@ -59,6 +59,16 @@ export class Mesh {
 			&& this.uv.length > 0;
 	}
 
+	destroy(): void {
+		this.vertices = undefined;
+		this.triangles = undefined;
+		this.normals = undefined;
+		this.uv = undefined;
+		this.colors = undefined;
+		this.bounds = undefined;
+		this.isModified = undefined;
+	}
+
 	clear(): void {
 		this.vertices = [];
 		this.triangles = [];

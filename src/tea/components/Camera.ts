@@ -22,6 +22,16 @@ class Prev {
 		this.orthographicSize = 0;
 	}
 
+	destroy(): void {
+		this.position = undefined;
+		this.rotation = undefined;
+		this.fieldOfView = undefined;
+		this.aspect = undefined;
+		this.nearClipPlane = undefined;
+		this.farClipPlane = undefined;
+		this.orthographicSize = undefined;
+	}
+
 	isViewChanged(object3d: Tea.Object3D): boolean {
 		return !this.position.equals(object3d.position)
 			|| !this.rotation.equals(object3d.rotation);
@@ -121,6 +131,34 @@ export class Camera extends Component {
 
 	get viewProjectionMatrix(): Tea.Matrix4x4 {
 		return this._viewProjectionMatrix;
+	}
+
+	destroy(): void {
+		this.clearFlags = undefined;
+		this.fieldOfView = undefined;
+		this.nearClipPlane = undefined;
+		this.farClipPlane = undefined;
+		this.backgroundColor = undefined;
+		this.orthographic = undefined;
+		this.orthographicSize = undefined;
+		this.rect = undefined;
+		this.targetTexture = undefined;
+		this.enableStereo = undefined;
+		this.stereoDistance = undefined;
+		this.stereoMode = undefined;
+		this.isStereoLeft = undefined;
+		this.frustumPlanes = undefined;
+		this.gl = undefined;
+		this._aspect = undefined;
+		this._cameraToWorldMatrix = undefined;
+		this._worldToCameraMatrix = undefined;
+		this._projectionMatrix = undefined;
+		this._viewProjectionMatrix = undefined;
+		this._inverseViewProjectionMatrix = undefined;
+		this._prev.destroy();
+		this._prev = undefined;
+		this._cameraToWorldMatrix = undefined;
+		super.destroy();
 	}
 
 	update(): void {

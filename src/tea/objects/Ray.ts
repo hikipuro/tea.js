@@ -32,4 +32,13 @@ export class Ray {
 	toString(): string {
 		return JSON.stringify(this);
 	}
+
+	toJSON(): Object {
+		var json = {
+			_type: "Ray",
+			origin: this.origin,
+			direction: this._direction
+		};
+		return json;
+	}
 }

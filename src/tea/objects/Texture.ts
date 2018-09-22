@@ -132,33 +132,6 @@ export class Texture {
 		return this._updateCount;
 	}
 
-	/*
-	isGLTexture(texture: WebGLTexture): boolean {
-		return this.gl.isTexture(texture);
-	}
-	//*/
-
-	load(url: string): void {
-		if (url == null || url === "") {
-			return;
-		}
-		Tea.File.readImage(url, (err, image) => {
-			if (err) {
-				console.error("Texture.load()", err);
-				return;
-			}
-			this.url = url;
-			this.image = image;
-		});
-	}
-
-	remove(): void {
-		if (this.texture != null) {
-			this.gl.deleteTexture(this.texture);
-			this.texture = null;
-		}
-	}
-
 	get image(): TextureImage {
 		return this._image;
 	}
@@ -180,6 +153,36 @@ export class Texture {
 		this.unbind();
 		gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, false);
 		this._updateCount++;
+	}
+
+	load(url: string): void {
+		if (url == null || url === "") {
+			return;
+		}
+		Tea.File.readImage(url, (err, image) => {
+			if (err) {
+				console.error("Texture.load()", err);
+				return;
+			}
+			this.url = url;
+			this.image = image;
+		});
+	}
+
+	destroy(): void {
+		if (this.texture != null) {
+			this.gl.deleteTexture(this.texture);
+			this.texture = null;
+		}
+		this.app = undefined;
+		this.url = undefined;
+		this.gl = undefined;
+		this._image = undefined;
+		this._filterMode = undefined;
+		this._wrapMode = undefined;
+		this._updateCount = undefined;
+		this._isEmpty = undefined;
+		this._emptyColor = undefined;
 	}
 
 	toJSON(): Object {

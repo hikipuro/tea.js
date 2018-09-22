@@ -61,6 +61,12 @@ export class ParticleSystem extends Component {
 		return list;
 	}
 
+	destroy(): void {
+		this.particles = undefined;
+		this.main = undefined;
+		super.destroy();
+	}
+
 	update(): void {
 		var particles = this.particles;
 		var length = particles.length;

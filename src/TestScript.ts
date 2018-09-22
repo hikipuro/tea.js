@@ -58,6 +58,8 @@ export class TestScript extends Tea.Script {
 			var p2 = new Tea.Vector3(mouse.x, mouse.y, 10);
 			var p = this.object3d.scene.mainCamera.screenToViewportPoint(p2);
 			//console.log(p);
+			this.object3d.destroy();
+			return;
 		}
 		if (mouse.isUp(0)) {
 			//console.log("mouse up");

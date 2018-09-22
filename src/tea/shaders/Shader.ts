@@ -159,31 +159,34 @@ export class Shader {
 		}
 		var gl = this.gl;
 		var location = gl.getAttribLocation(this.program, name);
-		if (location == null) {
-			location = -1;
-		}
+		//if (location == null) {
+		//	location = -1;
+		//}
 		this._attribLocationsCache[name] = location;
 		return location;
 	}
 
-	remove(): void {
+	destroy(): void {
 		var gl = this.app.gl;
 		if (this.program != null) {
 			gl.detachShader(this.program, this.vertexShader);
-			gl.detachShader(this.program, this.vertexShader);
+			gl.detachShader(this.program, this.fragmentShader);
 			gl.deleteProgram(this.program);
-			this.program = null;
+			this.program = undefined;
 		}
 		if (this.vertexShader != null) {
 			gl.deleteShader(this.vertexShader);
-			this.vertexShader = null;
+			this.vertexShader = undefined;
 		}
 		if (this.fragmentShader != null) {
 			gl.deleteShader(this.fragmentShader);
-			this.fragmentShader = null;
+			this.fragmentShader = undefined;
 		}
-		this._locationsCache = {};
-		this._attribLocationsCache = {};
+		this.app = undefined;
+		this.settings = undefined;
+		this.gl = undefined;
+		this._locationsCache = undefined;
+		this._attribLocationsCache = undefined;
 	}
 
 	attach(vsSource: string, fsSource: string): void {

@@ -17,6 +17,15 @@ export class Light extends Component {
 		this.type = Tea.LightType.Directional;
 	}
 
+	destroy(): void {
+		this.color = undefined;
+		this.intensity = undefined;
+		this.range = undefined;
+		this.spotAngle = undefined;
+		this.type = undefined;
+		super.destroy();
+	}
+
 	toJSON(): Object {
 		var json = super.toJSON();
 		Object.assign(json, {

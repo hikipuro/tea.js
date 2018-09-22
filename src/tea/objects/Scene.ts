@@ -239,7 +239,7 @@ export class Scene {
 		object3d.parent = null;
 		object3d.scene = this;
 		this._components.add(object3d);
-		this.children.push(object3d);
+		this.children.unshift(object3d);
 		var children = object3d.children;
 		var length = children.length;
 		for (var i = 0; i < length; i++) {
@@ -306,10 +306,11 @@ export class Scene {
 	update(): void {
 		var children = this.children;
 		var childCount = children.length;
-		for (var i = 0; i < childCount; i++) {
+		for (var i = childCount - 1; i >= 0 ; i--) {
 			this.updateObject3D(children[i]);
 		}
-		for (var i = 0; i < childCount; i++) {
+		childCount = children.length;
+		for (var i = childCount - 1; i >= 0; i--) {
 			this.lateUpdateObject3D(children[i]);
 		}
 
@@ -419,6 +420,7 @@ export class Scene {
 	protected renderShadowMapCamera(camera: Tea.ShadowMapCamera, lights: Array<Tea.Light>, renderer: Tea.Renderer): void {
 		var shader = renderer.material.shader;
 		renderer.material.shader = camera.shader;
+		//console.log(renderer.object3d.name);
 
 		if (renderer instanceof Tea.MeshRenderer) {
 			renderer.updateAttributes();

@@ -152,6 +152,23 @@ export class Material {
 		return this._uniforms.hasOwnProperty(name);
 	}
 
+	destroy(): void {
+		if (this.shader != null) {
+			this.shader.destroy();
+			this.shader = undefined;
+		}
+		this.renderQueue = undefined;
+		this._uniforms = undefined;
+		var keys = Object.keys(this._textures);
+		for (var i = 0; i < keys.length; i++) {
+			var key = keys[i];
+			// TODO: delete texture
+			//this._textures[key].destroy();
+			delete this._textures[key];
+		}
+		this._textures = undefined;
+	}
+
 	getColor(name: string): Tea.Color {
 		var type = UniformType.Color;
 		var value = this.getValue(name, type);

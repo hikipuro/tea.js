@@ -12,7 +12,7 @@ class BufferAttributes {
 	}
 
 	clear(): void {
-		this.items = [];
+		this.items.splice(0, this.items.length);
 	}
 
 	add(name: string, size: number, type: number, offset: number): void {
@@ -55,7 +55,9 @@ export class MeshRenderer extends Renderer {
 		this._wireframe = false;
 		this._draw = this.draw;
 		this._attributes = new BufferAttributes();
-		this.createBuffers();
+		var gl = this.gl;
+		this.vertexBuffer = gl.createBuffer();
+		this.indexBuffer = gl.createBuffer();
 	}
 
 	get bounds(): Tea.Bounds {
@@ -72,6 +74,29 @@ export class MeshRenderer extends Renderer {
 
 	get mesh(): Tea.Mesh {
 		return this._mesh;
+	}
+
+	destroy(): void {
+		var gl = this.gl;
+		if (this.vertexBuffer != null) {
+			// TODO: delete vertex buffer
+			gl.bindBuffer(gl.ARRAY_BUFFER, this.vertexBuffer);
+			gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([]), gl.STATIC_DRAW);
+			gl.bindBuffer(gl.ARRAY_BUFFER, null);
+			//gl.deleteBuffer(this.vertexBuffer);
+			this.vertexBuffer = undefined;
+		}
+		if (this.indexBuffer != null) {
+			gl.deleteBuffer(this.indexBuffer);
+			this.indexBuffer = undefined;
+		}
+		this.receiveShadows = undefined;
+		this._mesh = undefined;
+		this._bounds = undefined;
+		this._wireframe = undefined;
+		this._draw = undefined;
+		this._attributes = undefined;
+		super.destroy();
 	}
 
 	update(): void {
@@ -96,10 +121,6 @@ export class MeshRenderer extends Renderer {
 			this._mesh = null;
 			//this._bounds = null;
 		}
-	}
-
-	remove(): void {
-		this.deleteBuffers();
 	}
 
 	render(camera: Tea.Camera, lights: Array<Tea.Light>, renderSettings: Tea.RenderSettings): void {
@@ -152,24 +173,6 @@ export class MeshRenderer extends Renderer {
 		);
 	}
 
-	protected createBuffers(): void {
-		var gl = this.gl;
-		this.vertexBuffer = gl.createBuffer();
-		this.indexBuffer = gl.createBuffer();
-	}
-
-	protected deleteBuffers(): void {
-		var gl = this.gl;
-		if (this.vertexBuffer != null) {
-			gl.deleteBuffer(this.vertexBuffer);
-			this.vertexBuffer = null;
-		}
-		if (this.indexBuffer != null) {
-			gl.deleteBuffer(this.indexBuffer);
-			this.indexBuffer = null;
-		}
-	}
-
 	updateAttributes(): void {
 		var gl = this.gl;
 		var type = gl.FLOAT;
@@ -202,13 +205,28 @@ export class MeshRenderer extends Renderer {
 			this._attributes.add("color", 0, type, 0);
 		}
 		this._attributes.stride = stride;
+
+		/*
+		var items = this._attributes.items;
+		var length = items.length;
+		for (var i = 0; i < length; i++) {
+			var item = items[i];
+			if (item.location < 0) {
+				continue;
+			}
+			if (item.size <= 0) {
+				gl.disableVertexAttribArray(item.location);
+				continue;
+			}
+			gl.enableVertexAttribArray(item.location);
+		}
+		*/
 	}
 
 	protected setMeshData(mesh: Tea.Mesh): void {
 		if (mesh.vertices == null || mesh.vertices.length <= 0) {
 			return;
 		}
-		this.updateAttributes();
 		var data = mesh.createVertexBufferData();
 
 		var gl = this.gl;
@@ -231,6 +249,7 @@ export class MeshRenderer extends Renderer {
 			//gl.bindBuffer(target, null);
 		}
 
+		this.updateAttributes();
 		this._draw = this.getDrawFunc(mesh);
 		mesh.isModified = false;
 	}
@@ -251,6 +270,7 @@ export class MeshRenderer extends Renderer {
 				continue;
 			}
 			gl.enableVertexAttribArray(item.location);
+			//console.log(gl.getError());
 			gl.vertexAttribPointer(
 				item.location,
 				item.size,

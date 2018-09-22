@@ -20,6 +20,8 @@ export class ShadowMapCamera extends Camera {
 			Tea.ShaderSources.depthFS
 		);
 		this.shader = shader;
+		//this.gl.useProgram(shader.program);
+		//shader.getAttribLocation("vertex");
 	}
 
 	toJSON(): Object {

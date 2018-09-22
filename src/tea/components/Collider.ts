@@ -8,6 +8,11 @@ export class Collider extends Component {
 		super(app);
 	}
 
+	destroy(): void {
+		this.bounds = undefined;
+		super.destroy();
+	}
+
 	raycast(ray: Tea.Ray, hitInfo: Tea.RaycastHit, maxDistance: number): boolean {
 		return false;
 	}

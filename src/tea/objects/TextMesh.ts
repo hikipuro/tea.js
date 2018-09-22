@@ -112,6 +112,26 @@ export class TextMesh extends Mesh {
 		this.draw();
 	}
 
+	destroy(): void {
+		this.alignment = undefined;
+		this.anchor = undefined;
+		this.characterSize = undefined;
+		this.lineSpacing = undefined;
+		if (this.texture != null) {
+			this.texture.destroy();
+			this.texture = undefined;
+		}
+		this.color = undefined;
+		this._font = undefined;
+		this._fontSize = undefined;
+		this._fontStyle = undefined;
+		this._text = undefined;
+		this._padding = undefined;
+		this._canvas = undefined;
+		this._context = undefined;
+		super.destroy();
+	}
+
 	update(): void {
 		this.draw();
 	}

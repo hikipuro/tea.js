@@ -8,6 +8,14 @@ export class MeshFilter extends Component {
 		super(app);
 	}
 
+	destroy(): void {
+		if (this.mesh != null) {
+			this.mesh.destroy();
+			this.mesh = undefined;
+		}
+		super.destroy();
+	}
+	
 	toJSON(): Object {
 		var json = super.toJSON();
 		Object.assign(json, {

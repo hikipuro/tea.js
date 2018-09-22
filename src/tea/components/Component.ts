@@ -8,6 +8,13 @@ export class Component {
 	constructor(app: Tea.App) {
 		this.app = app;
 		this.enabled = true;
+		this.object3d = null;
+	}
+
+	destroy(): void {
+		this.app = undefined;
+		this.object3d = undefined;
+		this.enabled = undefined;
 	}
 
 	update(): void {

@@ -4,7 +4,6 @@ import { Component } from "./Component";
 export class Renderer extends Component {
 	static drawCallCount: number = 0;
 	static readonly MaxLightCount: number = 4;
-	object3d: Tea.Object3D;
 	material: Tea.Material;
 	protected gl: WebGLRenderingContext;
 	protected _tmpVec3: Tea.Vector3 = new Tea.Vector3();
@@ -29,6 +28,19 @@ export class Renderer extends Component {
 	get worldToLocalMatrix(): Tea.Matrix4x4 {
 		var object3d = this.object3d;
 		return object3d.worldToLocalMatrix;
+	}
+
+	destroy(): void {
+		if (this.material != null) {
+			this.material.destroy();
+			this.material = undefined;
+		}
+		this.gl = undefined;
+		this._tmpVec3 = undefined;
+		this._tmpVec4 = undefined;
+		this._mvMatrix = undefined;
+		this._mvpMatrix = undefined;
+		super.destroy();
 	}
 
 	render(camera: Tea.Camera, lights: Array<Tea.Light>, renderSettings: Tea.RenderSettings): void {

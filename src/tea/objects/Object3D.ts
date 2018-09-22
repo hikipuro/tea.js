@@ -15,6 +15,14 @@ class Movement {
 		this.worldToLocalMatrix = new Tea.Matrix4x4();
 	}
 
+	destroy(): void {
+		this.position = undefined;
+		this.rotation = undefined;
+		this.scale = undefined;
+		this.localToWorldMatrix = undefined;
+		this.worldToLocalMatrix = undefined;
+	}
+
 	update(object3d: Object3D): void {
 		if (this.isMoved(object3d)) {
 			this.trs();
@@ -56,7 +64,6 @@ export class Object3D {
 	app: Tea.App;
 	name: string;
 	isActive: boolean;
-	//transform: Tea.Transform;
 	scene: Tea.Scene;
 	localPosition: Tea.Vector3;
 	localRotation: Tea.Quaternion;
@@ -65,6 +72,7 @@ export class Object3D {
 	protected _m: Movement;
 	protected _parent: Object3D;
 	protected _components: Array<Tea.Component>;
+	protected _toDestroy: boolean;
 
 	constructor(app: Tea.App) {
 		this.app = app;
@@ -78,6 +86,7 @@ export class Object3D {
 		this._m = new Movement();
 		this._parent = null;
 		this._components = [];
+		this._toDestroy = false;
 	}
 
 	static createPrimitive(app: Tea.App, type: Tea.PrimitiveType): Object3D {
@@ -319,6 +328,41 @@ export class Object3D {
 		return this._parent.root;
 	}
 
+	destroy(): void {
+		this._toDestroy = true;
+	}
+
+	protected _destroy(): void {
+		if (this.scene != null) {
+			this.scene.removeComponents(this);
+			this.scene.removeChild(this);
+		}
+		this.parent = null;
+		for (var i = 0; i < this.children.length; i++) {
+			var child = this.children[i];
+			child.destroy();
+			delete this.children[i];
+		}
+		this.children = [];
+		this.app = undefined;
+		this.name = undefined;
+		this.isActive = undefined;
+		this.scene = undefined;
+		this.localPosition = undefined;
+		this.localRotation = undefined;
+		this.localScale = undefined;
+		this._m.destroy();
+		this._m = undefined;
+		var keys = Object.keys(this._components);
+		for (var i = 0; i < keys.length; i++) {
+			var key = keys[i];
+			this._components[key].destroy();
+			delete this._components[key];
+		}
+		this._components = undefined;
+		this._toDestroy = undefined;
+	}
+
 	toString(): string {
 		return JSON.stringify(this);
 	}
@@ -349,6 +393,23 @@ export class Object3D {
 			json.children.push(child.toJSON());
 		}
 		return json;
+	}
+
+	addChild(object3d: Object3D): void {
+		if (object3d == null) {
+			return;
+		}
+		object3d.parent = this;
+	}
+
+	removeChild(object3d: Object3D): void {
+		if (object3d == null) {
+			return;
+		}
+		if (this.children.indexOf(object3d) < 0) {
+			return;
+		}
+		object3d.parent = null;
 	}
 
 	addComponent<T extends Tea.Component>(component: new (app: Tea.App) => T): T {
@@ -573,6 +634,9 @@ export class Object3D {
 			if (component.enabled) {
 				component.update();
 			}
+		}
+		if (this._toDestroy) {
+			this._destroy();
 		}
 	}
 

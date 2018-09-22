@@ -136,13 +136,31 @@ export class Script extends Component {
 			class: this.constructor.name,
 			members: []
 		});
-		var keys = Object.keys(this);
-		for (var i = 0; i < keys.length; i++) {
+		var keys1 = Object.keys(new Script(null));
+		var keys2 = Object.keys(this);
+		var keys = keys2.filter((value) => {
+			var length = keys1.length;
+			for (var i = 0; i < length; i++) {
+				if (keys1[i] === value) {
+					return false;
+				}
+			}
+			return true;
+		});
+		var length = keys.length;
+		for (var i = 0; i < length; i++) {
 			var key = keys[i];
-			console.log(key);
+			var value = this[key];
+			if (value["toJSON"] != null) {
+				json.members.push({
+					key: key,
+					value: value.toJSON()
+				});
+				continue;
+			}
 			json.members.push({
 				key: key,
-				value: this[key]
+				value: value
 			});
 		}
 		return json;

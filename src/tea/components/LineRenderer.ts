@@ -19,6 +19,16 @@ export class LineRenderer extends Renderer {
 		this.material.shader = shader;
 	}
 
+	destroy(): void {
+		var gl = this.gl;
+		this.points = undefined;
+		if (this.vertexBuffer != null) {
+			gl.deleteBuffer(this.vertexBuffer);
+			this.vertexBuffer = undefined;
+		}
+		super.destroy();
+	}
+
 	add(x: number, y: number, z: number): void;
 	add(point: Tea.Vector3): void;
 	add(x: Tea.Vector3 | number, y: number = 0.0, z: number = 0.0): void {
