@@ -6,11 +6,16 @@ export class ParticleSystemRenderer extends Renderer {
 
 	constructor(app: Tea.App) {
 		super(app);
-		this.createBuffers();
+		var gl = this.gl;
+		this.vertexBuffer = gl.createBuffer();
 	}
 
 	destroy(): void {
-		this.deleteBuffers();
+		var gl = this.gl;
+		if (this.vertexBuffer != null) {
+			gl.deleteBuffer(this.vertexBuffer);
+			this.vertexBuffer = undefined;
+		}
 		super.destroy();
 	}
 
@@ -49,23 +54,6 @@ export class ParticleSystemRenderer extends Renderer {
 			this.material != null &&
 			this.material.shader != null
 		);
-	}
-
-	protected createBuffers(): void {
-		var gl = this.gl;
-		this.vertexBuffer = gl.createBuffer();
-	}
-
-	protected deleteBuffers(): void {
-		var gl = this.gl;
-		if (this.vertexBuffer != null) {
-			// TODO: delete vertex buffer
-			gl.bindBuffer(gl.ARRAY_BUFFER, this.vertexBuffer);
-			gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([]), gl.STATIC_DRAW);
-			gl.bindBuffer(gl.ARRAY_BUFFER, null);
-			//gl.deleteBuffer(this.vertexBuffer);
-			this.vertexBuffer = undefined;
-		}
 	}
 
 	protected setVertexBuffer(particleSystem: Tea.ParticleSystem): void {

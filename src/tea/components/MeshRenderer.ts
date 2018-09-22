@@ -79,11 +79,10 @@ export class MeshRenderer extends Renderer {
 	destroy(): void {
 		var gl = this.gl;
 		if (this.vertexBuffer != null) {
-			// TODO: delete vertex buffer
-			gl.bindBuffer(gl.ARRAY_BUFFER, this.vertexBuffer);
-			gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([]), gl.STATIC_DRAW);
-			gl.bindBuffer(gl.ARRAY_BUFFER, null);
-			//gl.deleteBuffer(this.vertexBuffer);
+			//gl.bindBuffer(gl.ARRAY_BUFFER, this.vertexBuffer);
+			//gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([]), gl.STATIC_DRAW);
+			//gl.bindBuffer(gl.ARRAY_BUFFER, null);
+			gl.deleteBuffer(this.vertexBuffer);
 			this.vertexBuffer = undefined;
 		}
 		if (this.indexBuffer != null) {
@@ -152,6 +151,7 @@ export class MeshRenderer extends Renderer {
 		this.setVertexBuffer(mesh);
 		this.setFrontFace();
 		this._draw(mesh);
+		this.disableAllAttributes();
 		Renderer.drawCallCount++;
 	}
 
@@ -183,6 +183,9 @@ export class MeshRenderer extends Renderer {
 		this._attributes.add("vertex", 3, type, 0);
 
 		if (mesh.hasTriangles === false) {
+			this._attributes.add("normal", 0, type, 0);
+			this._attributes.add("texcoord", 0, type, 0);
+			this._attributes.add("color", 0, type, 0);
 			this._attributes.stride = stride;
 			return;
 		}
@@ -287,6 +290,21 @@ export class MeshRenderer extends Renderer {
 		} else {
 			gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, null);
 		}
+	}
+
+	protected disableAllAttributes(): void {
+		var gl = this.gl;
+		var items = this._attributes.items;
+		var length = items.length;
+		for (var i = 0; i < length; i++) {
+			var item = items[i];
+			if (item.location < 0) {
+				continue;
+			}
+			gl.disableVertexAttribArray(item.location);
+		}
+		gl.bindBuffer(gl.ARRAY_BUFFER, null);
+		gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, null);
 	}
 
 	protected setFrontFace(): void {

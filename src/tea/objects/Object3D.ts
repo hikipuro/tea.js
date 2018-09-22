@@ -343,6 +343,12 @@ export class Object3D {
 			child.destroy();
 			delete this.children[i];
 		}
+		var keys = Object.keys(this._components);
+		for (var i = 0; i < keys.length; i++) {
+			var key = keys[i];
+			this._components[key].destroy();
+			delete this._components[key];
+		}
 		this.children = [];
 		this.app = undefined;
 		this.name = undefined;
@@ -353,12 +359,6 @@ export class Object3D {
 		this.localScale = undefined;
 		this._m.destroy();
 		this._m = undefined;
-		var keys = Object.keys(this._components);
-		for (var i = 0; i < keys.length; i++) {
-			var key = keys[i];
-			this._components[key].destroy();
-			delete this._components[key];
-		}
 		this._components = undefined;
 		this._toDestroy = undefined;
 	}
