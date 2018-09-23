@@ -425,8 +425,9 @@ export class Main {
 		//var r = textmesh.getComponent(Tea.MeshRenderer);
 		var meshFilter = textmesh.getComponent(Tea.MeshFilter);
 		var mesh = meshFilter.mesh as Tea.TextMesh;
-		mesh.characterSize = 0.3;
-		mesh.fontSize = 20;
+		mesh.color.set(1,1,1,1);
+		mesh.characterSize = 0.1;
+		mesh.fontSize = 100;
 		//mesh.color = Tea.Color.red;
 		//mesh.color = Tea.Color.black;
 		//mesh.font = "Arial";
@@ -439,7 +440,8 @@ export class Main {
 		textmesh.position.y = 1;
 		textmesh.position.z = -6;
 		//document.body.appendChild(mesh.canvas);
-		//scene.appendChild(textmesh);
+		textmesh.addComponent(TestScript2);
+		scene.addChild(textmesh);
 
 		//var wp = camera.getComponent(Tea.Camera).viewportToWorldPoint(new Tea.Vector3(0, 0, 0));
 		//var stats = this.app.createStats();

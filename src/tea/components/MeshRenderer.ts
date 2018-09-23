@@ -115,6 +115,11 @@ export class MeshRenderer extends Renderer {
 			bounds.extents.scale$(this.object3d.scale);
 			
 			this._mesh = mesh;
+			if (mesh instanceof Tea.TextMesh) {
+				if (this.material != null) {
+					this.material.color.copy(mesh.color);
+				}
+			}
 			//this._bounds = bounds;
 		} else {
 			this._mesh = null;

@@ -38,7 +38,7 @@ export class TextMesh extends Mesh {
 		this.texture = new Tea.Texture(app);
 		this.texture.image = this._canvas;
 
-		this._color = Tea.Color.white;
+		this._color = Tea.Color.white.clone();
 		this._font = "sans-serif";
 		this._fontSize = TextMesh.DefaultFontSize;
 		this._fontStyle = Tea.FontStyle.Normal;
@@ -65,7 +65,6 @@ export class TextMesh extends Mesh {
 			return;
 		}
 		this._color = value;
-		this.updateColor();
 	}
 
 	get font(): string {
@@ -150,8 +149,6 @@ export class TextMesh extends Mesh {
 
 	protected draw(): void {
 		var textSize = this.resizeCanvas();
-		this.updateColor();
-
 		var context = this._context;
 		var text = this._text.split(/\r\n|\r|\n/);
 		var fontSize = this._fontSize;
@@ -233,12 +230,8 @@ export class TextMesh extends Mesh {
 		//context.imageSmoothingEnabled = false;
 		context.textAlign = "start";
 		context.textBaseline = "top";
-		this.updateColor();
+		context.fillStyle = "#000";
 		this.updateFont();
-	}
-
-	protected updateColor(): void {
-		this._context.fillStyle = this._color.toCssColor();
 	}
 
 	protected updateFont(): void {
