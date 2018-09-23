@@ -7,7 +7,7 @@ import { MenuItem, ipcMain, IpcMessageEvent, MenuItemConstructorOptions } from "
 
 module Settings {
 	export const Title: string = "WebGL Test";
-	export const Content: string = "../html/Main.html";
+	export const Content: string = "../html/index.html";
 	export const DevTools: boolean = true;
 }
 

@@ -3,6 +3,10 @@ import * as Electron from "electron";
 import { ipcMain, IpcMessageEvent } from "electron";
 import { MainWindow } from "./MainWindow";
 
+class Config {
+	static runElectron = true;
+}
+
 class NodeMain {
 	protected _app: Electron.App = null;
 	protected _mainWindow: MainWindow = null;
@@ -75,5 +79,24 @@ class NodeMain {
 	}
 }
 
-let main: NodeMain;
-main = new NodeMain(Electron.app);
+class WebServer {
+	constructor() {
+		var express = require("express");
+		var app = express();
+		app.use("/", express.static("html"));
+
+		var server = app.listen(3000, () => {
+			var host = "localhost";
+			var port = server.address().port;
+			console.log('Example app listening at http://%s:%s', host, port);
+		});
+	}
+}
+
+if (Config.runElectron) {
+	let main: NodeMain;
+	main = new NodeMain(Electron.app);
+} else {
+	let server: WebServer;
+	server = new WebServer();
+}

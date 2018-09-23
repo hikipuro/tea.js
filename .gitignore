@@ -1,7 +1,8 @@
 todo.txt
 dist
 models
-html/minMatrix.js
+html/main.js
+html/models
 
 # Logs
 logs

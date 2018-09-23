@@ -124,6 +124,7 @@ export class Mouse {
 	}
 
 	protected onWheel = (e: WheelEvent): void => {
+		e.preventDefault();
 		this.wheelX = e.deltaX;
 		this.wheelY = e.deltaY;
 	}

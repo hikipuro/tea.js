@@ -215,12 +215,12 @@ export class Main {
 		//var script = new TestScript();
 
 		var skybox = scene.renderSettings.skybox;
-		skybox.front.load("../models/skybox/Sunny_01A_front.jpg");
-		skybox.back.load("../models/skybox/Sunny_01A_back.jpg");
-		skybox.up.load("../models/skybox/Sunny_01A_up.jpg");
-		skybox.down.load("../models/skybox/Sunny_01A_down.jpg");
-		skybox.left.load("../models/skybox/Sunny_01A_left.jpg");
-		skybox.right.load("../models/skybox/Sunny_01A_right.jpg");
+		skybox.front.load("./models/skybox/Sunny_01A_front.jpg");
+		skybox.back.load("./models/skybox/Sunny_01A_back.jpg");
+		skybox.up.load("./models/skybox/Sunny_01A_up.jpg");
+		skybox.down.load("./models/skybox/Sunny_01A_down.jpg");
+		skybox.left.load("./models/skybox/Sunny_01A_left.jpg");
+		skybox.right.load("./models/skybox/Sunny_01A_right.jpg");
 
 		var cube = Tea.Object3D.createPrimitive(this.app, Tea.PrimitiveType.Cube);
 		//cube.name = "cube";
@@ -453,23 +453,23 @@ export class Main {
 
 		var objList = [
 			{
-				path: "../models/teapot/teapot.obj",
+				path: "./models/teapot/teapot.obj",
 				scale: 0.04
 			},
 			{
-				path: "../models/bunny.obj",
+				path: "./models/bunny.obj",
 				scale: 2
 			},
 			{
-				path: "../models/dragon.obj",
+				path: "./models/dragon.obj",
 				scale: 4
 			},
 			{
-				path: "../models/CornellBox/CornellBox-Original.obj",
+				path: "./models/CornellBox/CornellBox-Original.obj",
 				scale: 2
 			},
 			{
-				path: "../models/bedroom/iscv2.obj",
+				path: "./models/bedroom/iscv2.obj",
 				scale: 2
 			}
 		];
@@ -484,7 +484,7 @@ export class Main {
 		});
 		//*/
 
-		Tea.File.readImage("../models/texture.png", (err, image) => {
+		Tea.File.readImage("./models/texture.png", (err, image) => {
 			var texture = this.app.createTexture(image);
 			let r = plane.getComponent(Tea.Renderer);
 			r.material.setTexture("_NormalTex", texture);
@@ -492,7 +492,7 @@ export class Main {
 			r.material.setTexture("_NormalTex", texture);
 		});
 
-		Tea.File.readImage("../models/google.jpg", (err, image) => {
+		Tea.File.readImage("./models/google.jpg", (err, image) => {
 			//document.body.appendChild(image);
 			var texture = this.app.createTexture(image);
 			//texture.filterMode = Tea.FilterMode.Bilinear;
@@ -517,7 +517,7 @@ export class Main {
 			r.material.mainTexture = texture;
 		});
 
-		Tea.File.readImage("../models/earth.jpg", (err, image) => {
+		Tea.File.readImage("./models/earth.jpg", (err, image) => {
 			//document.body.appendChild(image);
 			var texture = this.app.createTexture(image);
 			//sphere.renderer.shader.texture = texture;
@@ -555,8 +555,8 @@ export class Main {
 		console.log("plane", p.getDistanceToPoint(Tea.vec3()));
 		console.log("plane", p.getSide(Tea.vec3(0, 1, 0)));
 
-		//var json = JSON.stringify(scene.toJSON(), null, 2);
-		//console.log(json, json.length);
+		var json = JSON.stringify(scene.toJSON(), null, 2);
+		console.log(json, json.length);
 
 		//setTimeout(() => {
 			//this.app.stop();
@@ -573,8 +573,8 @@ export class Main {
 
 		//this.app.camera = this.camera;
 
-		//Tea.File.readImage("../teapot/default.png", (image) => {
-		Tea.File.readImage("../models/google.jpg", (image) => {
+		//Tea.File.readImage("./teapot/default.png", (image) => {
+		Tea.File.readImage("./models/google.jpg", (image) => {
 			//document.body.appendChild(image);
 			var texture = this.app.createTexture(image);
 			this.texture = texture;
@@ -590,3 +590,7 @@ export class Main {
 		*/
 	}
 }
+
+document.addEventListener("DOMContentLoaded", () => {
+	var main = new Main();
+});
