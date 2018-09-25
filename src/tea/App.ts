@@ -270,6 +270,7 @@ export class App {
 		meshFilter.mesh = mesh;
 		var renderer = object3d.addComponent(Tea.MeshRenderer);
 		renderer.material.renderQueue = 3000;
+		renderer.material.setFloat("_Cutoff", 0.0);
 		renderer.material.mainTexture = mesh.texture;
 		renderer.material.shader = shader;
 		//renderer.material.color.set(1,0,0,1);
