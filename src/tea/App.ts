@@ -10,6 +10,7 @@ export class App {
 	static useStencil: boolean = true;
 	canvas: HTMLCanvasElement;
 	gl: WebGLRenderingContext;
+	audio: Tea.AppAudio;
 	capabilities: Tea.GLCapabilities;
 	parameters: Tea.GLParameters;
 	readonly status: Status;
@@ -31,6 +32,7 @@ export class App {
 		this.status.viewport = new Tea.Rect(0.0, 0.0, 1.0, 1.0);
 		this.cursor = new Tea.Cursor(this);
 		this._renderer = new AppRenderer(this);
+		this.audio = new Tea.AppAudio(this);
 	}
 
 	static get absoluteURL(): string {
@@ -87,6 +89,14 @@ export class App {
 
 	get isStarted(): boolean {
 		return this._renderer.isStarted;
+	}
+
+	get isPaused(): boolean {
+		return this._renderer.isPaused;
+	}
+
+	get renderer(): AppRenderer {
+		return this._renderer;
 	}
 
 	get currentScene(): Tea.Scene {
@@ -378,12 +388,14 @@ class AppRenderer extends Tea.EventDispatcher {
 				this._handle = 0;
 			}
 			this.isPaused = true;
+			this.emit("pause");
 		});
 		window.addEventListener("focus", () => {
 			if (this.isStarted && this.isPaused) {
 				this._handle = requestAnimationFrame(this.update);
 			}
 			this.isPaused = false;
+			this.emit("resume");
 		});
 		window.addEventListener("resize", () => {
 			this.stats.updateSize();

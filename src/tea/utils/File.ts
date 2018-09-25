@@ -35,9 +35,18 @@ export class File {
 		image.src = url;
 	}
 
+	static readArrayBuffer(url: string, callback: (err: any, data: ArrayBuffer) => void): void {
+		if (callback == null) {
+			return;
+		}
+		var xhr = this.createXHR(callback);
+		xhr.responseType = "arraybuffer";
+		xhr.open("get", url, true);
+	}
+
 	protected static createXHR(callback: (err: any, data: any) => void): XMLHttpRequest {
 		var xhr = new XMLHttpRequest();
-		var onReadystatechange = () => {
+		var onReadystatechange = (e: Event) => {
 			switch (xhr.readyState) {
 			case XMLHttpRequest.OPENED:
 				xhr.send(null);
@@ -49,7 +58,11 @@ export class File {
 			case XMLHttpRequest.DONE:
 				xhr.removeEventListener("readystatechange", onReadystatechange);
 				xhr.removeEventListener("error", onError);
-				callback(null, xhr.response);
+				if (xhr.status === 0) {
+					callback("error", null);
+				} else {
+					callback(null, xhr.response);
+				}
 				xhr = undefined;
 				break;
 			}

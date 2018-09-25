@@ -45,6 +45,10 @@ export * from "./math/Vector2";
 export * from "./math/Vector3";
 export * from "./math/Vector4";
 
+export * from "./sounds/AppAudio";
+export * from "./sounds/AudioClip";
+export * from "./sounds/AudioSource";
+
 export * from "./utils/ArrayBufferUtil";
 export * from "./utils/ArrayUtil";
 export * from "./utils/Color";

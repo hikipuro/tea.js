@@ -236,6 +236,23 @@ export class Main {
 		box2.size = cube.getComponent(Tea.MeshFilter).mesh.bounds.size.clone();
 		scene.addChild(cube);
 
+		this.app.audio.volume = 0.5;
+		var audioSource = cube.addComponent(Tea.AudioSource);
+		var sound = new Tea.AudioClip(this.app);
+		sound.load("./media/jump01.mp3", (err) => {
+			if (err) {
+				return;
+			}
+			var count = 0;
+			audioSource.clip = sound;
+			audioSource.play();
+			setInterval(() => {
+				count++;
+				this.app.audio.pan = Math.sin(count);
+				audioSource.play();
+			}, 1000);
+		});
+
 		var cube2 = Tea.Object3D.createPrimitive(this.app, Tea.PrimitiveType.Cube);
 		cube2.position.x = 2;
 		cube2.position.y = 3;
