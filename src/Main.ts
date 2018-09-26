@@ -435,7 +435,7 @@ export class Main {
 
 
 		var particles = this.app.createParticleSystem();
-		//scene.appendChild(particles);
+		scene.addChild(particles);
 
 
 		var textmesh = this.app.createTextMesh();
@@ -574,8 +574,8 @@ export class Main {
 		console.log("plane", p.getDistanceToPoint(Tea.vec3()));
 		console.log("plane", p.getSide(Tea.vec3(0, 1, 0)));
 
-		var json = JSON.stringify(scene.toJSON(), null, 2);
-		console.log(json, json.length);
+		//var json = JSON.stringify(scene.toJSON(), null, 2);
+		//console.log(json, json.length);
 
 		//setTimeout(() => {
 			//this.app.stop();

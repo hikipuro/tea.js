@@ -523,22 +523,26 @@ export module ShaderSources {
 
 	export const particleVS = `
 		attribute vec3 vertex;
-		attribute vec4 color;
-		attribute float size;
-		uniform mat4 TEA_MATRIX_MVP;
-		//uniform float pointSize;
-		varying vec4 vColor;
+		attribute vec2 texcoord;
+		uniform mat4 TEA_MATRIX_VP;
+		uniform vec3 CameraRight;
+		uniform vec3 CameraUp;
+		uniform vec3 position;
+		varying vec2 vTexCoord;
 		void main() {
-			vColor = color;
-			gl_Position = TEA_MATRIX_MVP * vec4(vertex, 1.0);
-			gl_PointSize = size;
+			vec3 v = CameraRight * vertex.x + CameraUp * vertex.y;
+			gl_Position = TEA_MATRIX_VP * vec4(position + v, 1.0);
+			vTexCoord = texcoord;
 		}
 	`;
 
 	export const particleFS = `
 		precision mediump float;
 		uniform int TEA_CAMERA_STEREO;
-		varying vec4 vColor;
+		uniform sampler2D _MainTex;
+		uniform vec2 uv_MainTex;
+		uniform vec2 _MainTex_ST;
+		varying vec2 vTexCoord;
 		void main() {
 			if (TEA_CAMERA_STEREO != 0) {
 				float stereoMod = float(TEA_CAMERA_STEREO - 1);
@@ -546,7 +550,11 @@ export module ShaderSources {
 					discard;
 				}
 			}
-			gl_FragColor = vColor;
+			vec4 tex = texture2D(_MainTex, (uv_MainTex + vTexCoord) / _MainTex_ST);
+			if (tex.a <= 0.0) {
+				discard;
+			}
+			gl_FragColor = tex;
 		}
 	`;
 

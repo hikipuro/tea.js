@@ -3,11 +3,15 @@ import { Renderer } from "./Renderer";
 
 export class ParticleSystemRenderer extends Renderer {
 	vertexBuffer: WebGLBuffer;
+	indexBuffer: WebGLBuffer;
+	mesh: Tea.Mesh;
 
 	constructor(app: Tea.App) {
 		super(app);
 		var gl = this.gl;
 		this.vertexBuffer = gl.createBuffer();
+		this.indexBuffer = gl.createBuffer();
+		this.mesh = Tea.Primitives.createQuadMesh();
 	}
 
 	destroy(): void {
@@ -16,6 +20,11 @@ export class ParticleSystemRenderer extends Renderer {
 			gl.deleteBuffer(this.vertexBuffer);
 			this.vertexBuffer = undefined;
 		}
+		if (this.indexBuffer != null) {
+			gl.deleteBuffer(this.indexBuffer);
+			this.indexBuffer = undefined;
+		}
+		this.mesh = undefined;
 		super.destroy();
 	}
 
@@ -35,9 +44,14 @@ export class ParticleSystemRenderer extends Renderer {
 			return;
 		}
 		super.render(camera, lights, renderSettings);
-		//this._uniforms.uniform1f("pointSize", particleSystem.pointSize);
-		this.setVertexBuffer(particleSystem);
-		this.draw(particleSystem);
+		var mesh = this.mesh;
+		if (mesh.isModified === true) {
+			this.setMeshData(mesh);
+		}
+		this.setVertexBuffer(mesh);
+		this.setFrontFace();
+		this.draw(particleSystem, mesh);
+		this.disableAllAttributes();
 	}
 
 	toJSON(): Object {
@@ -56,26 +70,114 @@ export class ParticleSystemRenderer extends Renderer {
 		);
 	}
 
-	protected setVertexBuffer(particleSystem: Tea.ParticleSystem): void {
+	protected setMeshData(mesh: Tea.Mesh): void {
+		if (mesh.vertices == null || mesh.vertices.length <= 0) {
+			return;
+		}
+		var data = mesh.createVertexBufferData();
 		var gl = this.gl;
 		var target = gl.ARRAY_BUFFER;
-		gl.useProgram(this.material.shader.program);
-		var data = new Float32Array(particleSystem.bufferData);
+
 		gl.bindBuffer(target, this.vertexBuffer);
-		gl.bufferData(target, data, gl.DYNAMIC_DRAW);
-		var stride = 4 * 8;
-		this.enableVertexAttribArray("vertex");
-		this.enableVertexAttribArray("color");
-		this.enableVertexAttribArray("size");
-		this.vertexAttribPointer("vertex", 3, stride, 0);
-		this.vertexAttribPointer("color",  4, stride, 4 * 3);
-		this.vertexAttribPointer("size",   1, stride, 4 * 7);
-		gl.bindBuffer(target, null);
+		gl.bufferData(target, data, gl.STATIC_DRAW);
+		//gl.bindBuffer(target, null);
+
+		if (mesh.hasTriangles) {
+			target = gl.ELEMENT_ARRAY_BUFFER;
+			var triangles = null;
+			//if (this.app.status.OES_element_index_uint != null) {
+			//	triangles = new Uint32Array(Tea.ArrayUtil.unroll(mesh.triangles));
+			//} else {
+				triangles = new Uint16Array(Tea.ArrayUtil.unroll(mesh.triangles));
+			//}
+			gl.bindBuffer(target, this.indexBuffer);
+			gl.bufferData(target, triangles, gl.STATIC_DRAW);
+			//gl.bindBuffer(target, null);
+		}
+		mesh.isModified = false;
 	}
 
-	protected draw(particleSystem: Tea.ParticleSystem): void {
+	protected setVertexBuffer(mesh: Tea.Mesh): void {
 		var gl = this.gl;
+		gl.bindBuffer(gl.ARRAY_BUFFER, this.vertexBuffer);
+		gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this.indexBuffer);
+
+		var stride = 4 * 3;
+		if (mesh.hasTriangles) {
+			if (mesh.hasNormals) {
+				stride += 4 * 3;
+			}
+			if (mesh.hasUVs) {
+				stride += 4 * 2;
+			}
+		}
+		this.enableVertexAttribArray("vertex");
+		this.vertexAttribPointer("vertex", 3, stride, 0);
+		var offset = 4 * 3;
+		if (mesh.hasTriangles) {
+			if (mesh.hasNormals) {
+				this.enableVertexAttribArray("normal");
+				this.vertexAttribPointer("normal", 3, stride, offset);
+				offset += 4 * 3;
+			}
+			if (mesh.hasUVs) {
+				this.enableVertexAttribArray("texcoord");
+				this.vertexAttribPointer("texcoord", 2, stride, offset);
+			}
+		}
+	}
+
+	protected setFrontFace(): void {
+		var gl = this.gl;
+		var status = this.app.status;
+		var face = gl.CW;
+		if (status.frontFace !== face) {
+			gl.frontFace(face);
+			status.frontFace = face;
+		}
+	}
+
+	protected disableAllAttributes(): void {
+		this.disableVertexAttrib("vertex");
+		this.disableVertexAttrib("normal");
+		this.disableVertexAttrib("texcoord");
+		this.disableVertexAttrib("color");
+	}
+
+	protected getCamera(): Tea.Camera {
+		var object3d = this.object3d;
+		if (object3d == null || object3d.scene == null) {
+			return null;
+		}
+		var scene = object3d.scene;
+		if (scene.mainCamera == null) {
+			return null;
+		}
+		return scene.mainCamera;
+	}
+
+	protected draw(particleSystem: Tea.ParticleSystem, mesh: Tea.Mesh): void {
+		var gl = this.gl;
+		var position = this.material.shader.propertyToID("position");
+		if (position == null) {
+			return;
+		}
+		var camera = this.getCamera();
+		if (camera == null) {
+			return;
+		}
+		var right = this.material.shader.propertyToID("CameraRight");
+		var up = this.material.shader.propertyToID("CameraUp");
+		var view = camera.cameraToWorldMatrix;
+		gl.uniform3f(right, view[0], view[1], view[2]);
+		gl.uniform3f(up, view[4], view[5], view[6]);
 		var count = particleSystem.particleCount;
-		gl.drawArrays(gl.POINTS, 0, count);
+		var particles = particleSystem.particles;
+		var triangles = mesh.triangles.length * 3;
+		for (var i = 0; i < count; i++) {
+			var p = particles[i].position;
+			gl.uniform3f(position, p[0], p[1], p[2]);
+			gl.drawElements(gl.TRIANGLES, triangles, gl.UNSIGNED_SHORT, 0);
+		}
 	}
 }

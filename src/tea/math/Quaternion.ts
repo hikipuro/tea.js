@@ -389,6 +389,24 @@ export class Quaternion extends Array<number> {
 		return this;
 	}
 
+	inverse$(): Quaternion {
+		var x = this[0], y = this[1], z = this[2], w = this[3];
+		var m = x * x + y * y + z * z + w * w;
+		if (m === 0.0) {
+			this[0] = 0.0;
+			this[1] = 0.0;
+			this[2] = 0.0;
+			this[3] = 0.0;
+			return this;
+		}
+		m = 1.0 / m;
+		this[0] = -x * m;
+		this[1] = -y * m;
+		this[2] = -z * m;
+		this[3] = w * m;
+		return this;
+	}
+
 	setEuler(x: number, y: number, z: number): void;
 	setEuler(eulerAngles: Tea.Vector3): void;
 	setEuler(a: number | Tea.Vector3, b: number = 0.0, c: number = 0.0): void {

@@ -44,6 +44,33 @@ export class Texture {
 		return texture;
 	}
 
+	static getDefaultParticle(app: Tea.App): Texture {
+		var texture = new Tea.Texture(app);
+		var size = 64;
+		var center = size / 2;
+		var data = new Array(4 * size * size);
+		data.fill(0.0);
+		for (var y = 0; y < size; y++) {
+			for (var x = 0; x < size; x++) {
+				var dx = Math.abs(x - center);
+				var dy = Math.abs(y - center);
+				var distance = Math.sqrt(dx * dx + dy * dy);
+				if (distance < center) {
+					var index = (y * size + x) * 4;
+					var value = 1.0 - (distance / center);
+					data[index + 0] = 255;
+					data[index + 1] = 255;
+					data[index + 2] = 255;
+					data[index + 3] = 255 * value;
+				}
+			}
+		}
+		var array = new Uint8ClampedArray(data);
+		var imageData = new ImageData(array, size, size);
+		texture.image = imageData;
+		return texture;
+	}
+
 	get width(): number {
 		if (this._image == null) {
 			return 0;

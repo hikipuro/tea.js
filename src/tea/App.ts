@@ -237,9 +237,17 @@ export class App {
 			Tea.ShaderSources.particleVS,
 			Tea.ShaderSources.particleFS
 		);
+		//shader.settings.enableDepthTest = false;
+		shader.settings.depthWriteMask = false;
+		shader.settings.enableBlend = true;
+		shader.settings.blend.srcRGB = Tea.ShaderBlendFunc.SrcAlpha;
+		shader.settings.blend.dstRGB = Tea.ShaderBlendFunc.OneMinusSrcAlpha;
+		shader.settings.blend.srcAlpha = Tea.ShaderBlendFunc.One;
+		shader.settings.blend.dstAlpha = Tea.ShaderBlendFunc.One;
 		object3d.addComponent(Tea.ParticleSystem);
 		var renderer = object3d.addComponent(Tea.ParticleSystemRenderer);
 		renderer.material.shader = shader;
+		renderer.material.mainTexture = Tea.Texture.getDefaultParticle(this);
 		object3d.name = "ParticleSystem";
 		return object3d;
 	}
