@@ -50,9 +50,7 @@ export class AppAudio {
 	}
 	set volume(value: number) {
 		var gain = this._gainNode.gain;
-		var min = gain.minValue;
-		var max = gain.maxValue;
-		gain.value = Tea.Mathf.clamp(value, min, max);
+		gain.value = Tea.Mathf.clamp01(value);
 	}
 
 	get pan(): number {
@@ -60,9 +58,7 @@ export class AppAudio {
 	}
 	set pan(value: number) {
 		var pan = this._pannerNode.pan;
-		var min = pan.minValue;
-		var max = pan.maxValue;
-		pan.value = Tea.Mathf.clamp(value, min, max);
+		pan.value = Tea.Mathf.clamp01(value);
 	}
 
 	get currentTime(): number {

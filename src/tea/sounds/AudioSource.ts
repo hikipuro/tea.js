@@ -36,9 +36,7 @@ export class AudioSource extends Component {
 	}
 	set volume(value: number) {
 		var gain = this._gainNode.gain;
-		var min = gain.minValue;
-		var max = gain.maxValue;
-		gain.value = Tea.Mathf.clamp(value, min, max);
+		gain.value = Tea.Mathf.clamp01(value);
 	}
 
 	destroy(): void {
