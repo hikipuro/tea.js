@@ -528,9 +528,10 @@ export module ShaderSources {
 		uniform vec3 CameraRight;
 		uniform vec3 CameraUp;
 		uniform vec3 position;
+		uniform float size;
 		varying vec2 vTexCoord;
 		void main() {
-			vec3 v = CameraRight * vertex.x + CameraUp * vertex.y;
+			vec3 v = CameraRight * vertex.x * size + CameraUp * vertex.y * size;
 			gl_Position = TEA_MATRIX_VP * vec4(position + v, 1.0);
 			vTexCoord = texcoord;
 		}
@@ -542,6 +543,7 @@ export module ShaderSources {
 		uniform sampler2D _MainTex;
 		uniform vec2 uv_MainTex;
 		uniform vec2 _MainTex_ST;
+		uniform vec4 color;
 		varying vec2 vTexCoord;
 		void main() {
 			if (TEA_CAMERA_STEREO != 0) {
@@ -554,7 +556,7 @@ export module ShaderSources {
 			if (tex.a <= 0.0) {
 				discard;
 			}
-			gl_FragColor = tex;
+			gl_FragColor = tex * color;
 		}
 	`;
 

@@ -435,7 +435,26 @@ export class Main {
 
 
 		var particles = this.app.createParticleSystem();
+		var ps = particles.getComponent(Tea.ParticleSystem);
+		ps.main.gravityModifier = 0.1;
+		ps.velocityOverLifetime.enabled = true;
+		ps.velocityOverLifetime.x = 1;
+		//ps.main.startSpeed = 2;
+		//ps.main.startSize = 0.5;
 		scene.addChild(particles);
+		ps.start();
+
+		var curve = Tea.AnimationCurve.easeInOut(0, 3, 1, 5);
+		console.log(curve);
+		var curve2 = new Tea.AnimationCurve();
+		//curve2.addKey(0, 1);
+		curve2.addKey(3, 2);
+		//curve2.addKey(1, 1);
+		console.log(curve.evaluate(0.1));
+		console.log(curve.evaluate(0.2));
+		console.log(curve.evaluate(0.3));
+		console.log(curve.evaluate(0.4));
+		console.log(curve.evaluate(0.5));
 
 
 		var textmesh = this.app.createTextMesh();

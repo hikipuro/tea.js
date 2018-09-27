@@ -1,53 +1,35 @@
 import * as Tea from "../Tea";
 import { Component } from "./Component";
-
-class Particle {
-	position: Tea.Vector3;
-	velocity: Tea.Vector3;
-	color: Tea.Color;
-	size: number;
-	lifetime: number;
-
-	constructor() {
-		this.position = new Tea.Vector3();
-		this.velocity = new Tea.Vector3(
-			(Math.random() - 0.5) / 4,
-			Math.random() / 2,
-			(Math.random() - 0.5) / 4
-		);
-		this.color = new Tea.Color(
-			Math.random(), Math.random(), Math.random(), 1
-		);
-		this.size = Math.random() * 5 + 5;
-		this.lifetime = Math.random() * 120;
-	}
-
-	update(): boolean {
-		if (this.lifetime <= 0) {
-			return true;
-		}
-		this.lifetime--;
-		this.position.add$(this.velocity);
-		this.velocity.y -= 0.01;
-	}
-}
+import { PSMinMaxCurve } from "../particles/MinMaxCurve";
+import { PSMainModule } from "../particles/MainModule";
+import { PSEmissionModule } from "../particles/EmissionModule";
+import { PSVelocityOverLifetimeModule } from "../particles/VelocityOverLifetimeModule";
+import { PSLimitVelocityOverLifetimeModule } from "../particles/LimitVelocityOverLifetimeModule";
 
 export class ParticleSystem extends Component {
-	particles: Array<Particle>;
-	//pointSize: number;
+	particles: Array<Tea.Particle>;
 	main: ParticleSystem.MainModule;
+	emission: ParticleSystem.EmissionModule;
+	velocityOverLifetime: ParticleSystem.VelocityOverLifetimeModule;
+	//limitVelocityOverLifetime: ParticleSystem.LimitVelocityOverLifetimeModule;
+	isPlaying: boolean;
+	protected _startTime: number;
 
 	constructor(app: Tea.App) {
 		super(app);
 		this.particles = [];
-		//this.pointSize = 10;
 		this.main = new ParticleSystem.MainModule();
+		this.velocityOverLifetime = new ParticleSystem.VelocityOverLifetimeModule();
+		//this.limitVelocityOverLifetime = 
+		//	new ParticleSystem.LimitVelocityOverLifetimeModule();
+		this.isPlaying = false;
 	}
 
 	get particleCount(): number {
 		return this.particles.length;
 	}
 
+	/*
 	get bufferData(): Array<number> {
 		var list = [];
 		var particles = this.particles;
@@ -60,6 +42,7 @@ export class ParticleSystem extends Component {
 		}
 		return list;
 	}
+	*/
 
 	destroy(): void {
 		this.particles = undefined;
@@ -67,9 +50,31 @@ export class ParticleSystem extends Component {
 		super.destroy();
 	}
 
+	start(): void {
+		if (this.isPlaying) {
+			return;
+		}
+		this.isPlaying = true;
+		this._startTime = Tea.now();
+	}
+
+	stop(): void {
+		if (this.isPlaying === false) {
+			return;
+		}
+		this.isPlaying = false;
+	}
+
 	update(): void {
+		if (this.isPlaying === false) {
+			return;
+		}
 		var particles = this.particles;
 		var length = particles.length;
+		if (length <= 0 && this.isTimeOver) {
+			this.stop();
+			return;
+		}
 		for (var i = length - 1; i >= 0; i--) {
 			if (particles[i].update()) {
 				particles.splice(i, 1);
@@ -83,13 +88,35 @@ export class ParticleSystem extends Component {
 	}
 
 	emit(count: number): void {
+		if (this.isTimeOver) {
+			return;
+		}
 		var particles = this.particles;
 		var maxParticles = this.main.maxParticles;
 		if (particles.length + count > maxParticles) {
 			count = maxParticles - particles.length;
 		}
+
+		var main = this.main;
+		var velocityOverLifetime = this.velocityOverLifetime;
+		var gravity = this.object3d.scene.physics.gravity.clone();
+		gravity.div$(60.0);
+		gravity.mul$(this.main.gravityModifier);
 		for (var i = 0; i < count; i++) {
-			this.particles.push(new Particle());
+			var particle = new Tea.Particle();
+			particle.size = main.startSize;
+			if (velocityOverLifetime.enabled) {
+				particle.velocity.set(
+					velocityOverLifetime.x,
+					velocityOverLifetime.y,
+					velocityOverLifetime.z
+				);
+			}
+			particle.velocity.mul$(main.startSpeed);
+			particle.color = main.startColor;
+			particle.gravity = gravity;
+			particle.lifetime = main.startLifetime * 60;
+			this.particles.push(particle);
 		}
 	}
 
@@ -100,14 +127,29 @@ export class ParticleSystem extends Component {
 		});
 		return json;
 	}
+
+	protected get isTimeOver(): boolean {
+		var main = this.main;
+		if (main.loop === true) {
+			return false;
+		}
+		var time = Tea.now() - this._startTime;
+		if (time > main.duration * 1000.0) {
+			return true;
+		}
+		return false;
+	}
 }
 
 export module ParticleSystem {
-	export class MainModule {
-		maxParticles: number;
-
-		constructor() {
-			this.maxParticles = 1000;
-		}
-	}
+	export type MinMaxCurve = PSMinMaxCurve;
+	export var MinMaxCurve = PSMinMaxCurve;
+	export type MainModule = PSMainModule;
+	export var MainModule = PSMainModule;
+	export type EmissionModule = PSEmissionModule;
+	export var EmissionModule = PSEmissionModule;
+	export type VelocityOverLifetimeModule = PSVelocityOverLifetimeModule;
+	export var VelocityOverLifetimeModule = PSVelocityOverLifetimeModule;
+	export type LimitVelocityOverLifetimeModule = PSLimitVelocityOverLifetimeModule;
+	export var LimitVelocityOverLifetimeModule = PSLimitVelocityOverLifetimeModule;
 }

@@ -118,6 +118,9 @@ export class AudioSource extends Component {
 	}
 
 	protected onEnded = (e: Event): any => {
+		if (this._sourceNode == null) {
+			return;
+		}
 		this._sourceNode.removeEventListener("ended", this.onEnded);
 		this._sourceNode.disconnect();
 		this._sourceNode = null;

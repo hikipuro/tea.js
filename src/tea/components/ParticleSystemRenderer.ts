@@ -36,7 +36,7 @@ export class ParticleSystemRenderer extends Renderer {
 			return;
 		}
 		var particleSystem = this.object3d.getComponent(Tea.ParticleSystem);
-		if (particleSystem == null) {
+		if (particleSystem == null || particleSystem.isPlaying === false) {
 			return;
 		}
 		//particleSystem.update();
@@ -159,7 +159,9 @@ export class ParticleSystemRenderer extends Renderer {
 	protected draw(particleSystem: Tea.ParticleSystem, mesh: Tea.Mesh): void {
 		var gl = this.gl;
 		var position = this.material.shader.propertyToID("position");
-		if (position == null) {
+		var color = this.material.shader.propertyToID("color");
+		var size = this.material.shader.propertyToID("size");
+		if (position == null || color == null || size == null) {
 			return;
 		}
 		var camera = this.getCamera();
@@ -175,8 +177,12 @@ export class ParticleSystemRenderer extends Renderer {
 		var particles = particleSystem.particles;
 		var triangles = mesh.triangles.length * 3;
 		for (var i = 0; i < count; i++) {
-			var p = particles[i].position;
+			var particle = particles[i];
+			var p = particle.position;
+			var c = particle.color;
 			gl.uniform3f(position, p[0], p[1], p[2]);
+			gl.uniform4f(color, c[0], c[1], c[2], c[3]);
+			gl.uniform1f(size, particle.size);
 			gl.drawElements(gl.TRIANGLES, triangles, gl.UNSIGNED_SHORT, 0);
 		}
 	}

@@ -50,6 +50,7 @@ export class Texture {
 		var center = size / 2;
 		var data = new Array(4 * size * size);
 		data.fill(0.0);
+		var hPI = Math.PI / 2.0;
 		for (var y = 0; y < size; y++) {
 			for (var x = 0; x < size; x++) {
 				var dx = Math.abs(x - center);
@@ -57,7 +58,8 @@ export class Texture {
 				var distance = Math.sqrt(dx * dx + dy * dy);
 				if (distance < center) {
 					var index = (y * size + x) * 4;
-					var value = 1.0 - (distance / center);
+					var value = distance / center;
+					value = Math.cos(hPI * value);
 					data[index + 0] = 255;
 					data[index + 1] = 255;
 					data[index + 2] = 255;

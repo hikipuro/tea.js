@@ -34,6 +34,8 @@ export * from "./enums/TextAlignment";
 export * from "./enums/TextAnchor";
 export * from "./enums/TextureDimension";
 export * from "./enums/TextureWrapMode";
+export * from "./enums/WeightedMode";
+export * from "./enums/WrapMode";
 
 export * from "./math/Bounds";
 export * from "./math/Mathf";
@@ -49,6 +51,7 @@ export * from "./sounds/AppAudio";
 export * from "./sounds/AudioClip";
 export * from "./sounds/AudioSource";
 
+export * from "./utils/AnimationCurve";
 export * from "./utils/ArrayBufferUtil";
 export * from "./utils/ArrayUtil";
 export * from "./utils/Color";
@@ -56,6 +59,7 @@ export * from "./utils/Cursor";
 export * from "./utils/EventDispatcher";
 export * from "./utils/File";
 export * from "./utils/GeometryUtil";
+export * from "./utils/Keyframe";
 export * from "./utils/MatrixChecker";
 export * from "./utils/Screen";
 export * from "./utils/Stats";
@@ -78,6 +82,11 @@ export * from "./objects/Texture";
 
 export * from "./parsers/DaeReader";
 export * from "./parsers/ObjReader";
+
+export * from "./particles/Particle";
+export * from "./particles/ParticleSystemCurveMode";
+export * from "./particles/ParticleSystemShapeType";
+export * from "./particles/ParticleSystemSimulationSpace";
 
 export * from "./shaders/Shader";
 export * from "./shaders/ShaderBlend";
