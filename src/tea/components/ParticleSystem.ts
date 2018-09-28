@@ -3,34 +3,34 @@ import { Component } from "./Component";
 import { PSMinMaxCurve } from "../particles/MinMaxCurve";
 import { PSMinMaxGradient } from "../particles/MinMaxGradient";
 import { PSBurst } from "../particles/Burst";
-import { PSCollisionModule } from "../particles/CollisionModule";
-import { PSColorBySpeedModule } from "../particles/ColorBySpeedModule";
-import { PSColorOverLifetimeModule } from "../particles/ColorOverLifetimeModule";
-import { PSCustomDataModule } from "../particles/CustomDataModule";
-import { PSEmissionModule } from "../particles/EmissionModule";
-import { PSExternalForcesModule } from "../particles/ExternalForcesModule";
-import { PSForceOverLifetimeModule } from "../particles/ForceOverLifetimeModule";
-import { PSInheritVelocityModule } from "../particles/InheritVelocityModule";
-import { PSLightsModule } from "../particles/LightsModule";
-import { PSLimitVelocityOverLifetimeModule } from "../particles/LimitVelocityOverLifetimeModule";
-import { PSMainModule } from "../particles/MainModule";
-import { PSNoiseModule } from "../particles/NoiseModule";
-import { PSRotationBySpeedModule } from "../particles/RotationBySpeedModule";
-import { PSRotationOverLifetimeModule } from "../particles/RotationOverLifetimeModule";
-import { PSShapeModule } from "../particles/ShapeModule";
-import { PSSizeBySpeedModule } from "../particles/SizeBySpeedModule";
-import { PSSizeOverLifetimeModule } from "../particles/SizeOverLifetimeModule";
-import { PSSubEmittersModule } from "../particles/SubEmittersModule";
-import { PSTextureSheetAnimationModule } from "../particles/TextureSheetAnimationModule";
-import { PSTrailModule } from "../particles/TrailModule";
-import { PSTriggerModule } from "../particles/TriggerModule";
-import { PSVelocityOverLifetimeModule } from "../particles/VelocityOverLifetimeModule";
+import { PSCollisionModule } from "../particles/modules/CollisionModule";
+import { PSColorBySpeedModule } from "../particles/modules/ColorBySpeedModule";
+import { PSColorOverLifetimeModule } from "../particles/modules/ColorOverLifetimeModule";
+import { PSCustomDataModule } from "../particles/modules/CustomDataModule";
+import { PSEmissionModule } from "../particles/modules/EmissionModule";
+import { PSExternalForcesModule } from "../particles/modules/ExternalForcesModule";
+import { PSForceOverLifetimeModule } from "../particles/modules/ForceOverLifetimeModule";
+import { PSInheritVelocityModule } from "../particles/modules/InheritVelocityModule";
+import { PSLightsModule } from "../particles/modules/LightsModule";
+import { PSLimitVelocityOverLifetimeModule } from "../particles/modules/LimitVelocityOverLifetimeModule";
+import { PSMainModule } from "../particles/modules/MainModule";
+import { PSNoiseModule } from "../particles/modules/NoiseModule";
+import { PSRotationBySpeedModule } from "../particles/modules/RotationBySpeedModule";
+import { PSRotationOverLifetimeModule } from "../particles/modules/RotationOverLifetimeModule";
+import { PSShapeModule } from "../particles/modules/ShapeModule";
+import { PSSizeBySpeedModule } from "../particles/modules/SizeBySpeedModule";
+import { PSSizeOverLifetimeModule } from "../particles/modules/SizeOverLifetimeModule";
+import { PSSubEmittersModule } from "../particles/modules/SubEmittersModule";
+import { PSTextureSheetAnimationModule } from "../particles/modules/TextureSheetAnimationModule";
+import { PSTrailModule } from "../particles/modules/TrailModule";
+import { PSTriggerModule } from "../particles/modules/TriggerModule";
+import { PSVelocityOverLifetimeModule } from "../particles/modules/VelocityOverLifetimeModule";
 
 export class ParticleSystem extends Component {
 	//automaticCullingEnabled: boolean;
 	//collision: ParticleSystem.CollisionModule;
 	//colorBySpeed: ParticleSystem.ColorBySpeedModule;
-	//colorOverLifetime: ParticleSystem.ColorOverLifetimeModule;
+	colorOverLifetime: ParticleSystem.ColorOverLifetimeModule;
 	//customData: ParticleSystem.CustomDataModule;
 	emission: ParticleSystem.EmissionModule;
 	//externalForces: ParticleSystem.ExternalForcesModule;
@@ -63,8 +63,7 @@ export class ParticleSystem extends Component {
 	constructor(app: Tea.App) {
 		super(app);
 		this.particles = [];
-		//this.limitVelocityOverLifetime = 
-		//	new ParticleSystem.LimitVelocityOverLifetimeModule();
+		this.colorOverLifetime = new ParticleSystem.ColorOverLifetimeModule();
 		this.main = new ParticleSystem.MainModule();
 		this.velocityOverLifetime = new ParticleSystem.VelocityOverLifetimeModule();
 		this.isPlaying = false;
@@ -127,7 +126,7 @@ export class ParticleSystem extends Component {
 			return;
 		}
 		for (var i = length - 1; i >= 0; i--) {
-			if (particles[i].update()) {
+			if (particles[i].update(this)) {
 				particles.splice(i, 1);
 			}
 		}
@@ -149,13 +148,28 @@ export class ParticleSystem extends Component {
 		}
 
 		var main = this.main;
+		var colorOverLifetime = this.colorOverLifetime;
 		var velocityOverLifetime = this.velocityOverLifetime;
+
 		var gravity = this.object3d.scene.physics.gravity.clone();
 		gravity.div$(60.0);
-		gravity.mul$(this.main.gravityModifier);
+		gravity.mul$(this.main.gravityModifier.evaluate(0.0));
+		gravity.mul$(this.main.gravityModifierMultiplier);
+
+		var lifetime = main.startLifetime.evaluate(0.0);
+		lifetime *= main.startLifetimeMultiplier * 60.0;
+
+		var startSize = main.startSize.evaluate(0.0);
+		startSize *= main.startSizeMultiplier;
+
+		var startSpeed = main.startSpeed.evaluate(0.0);
+		startSpeed *= main.startSpeedMultiplier;
+
+		var startColor = main.startColor.evaluate(0.0);
+
 		for (var i = 0; i < count; i++) {
 			var particle = new Tea.Particle();
-			particle.size = main.startSize;
+			particle.size = startSize;
 			if (velocityOverLifetime.enabled) {
 				particle.velocity.set(
 					velocityOverLifetime.x.constant,
@@ -163,10 +177,13 @@ export class ParticleSystem extends Component {
 					velocityOverLifetime.z.constant
 				);
 			}
-			particle.velocity.mul$(main.startSpeed);
-			particle.color = main.startColor;
+			particle.velocity.mul$(startSpeed);
+			particle.color = startColor;
+			if (colorOverLifetime.enabled) {
+				particle.color = colorOverLifetime.color.evaluate(0.0);
+			}
 			particle.gravity = gravity;
-			particle.lifetime = main.startLifetime * 60;
+			particle.lifetime = lifetime;
 			this.particles.push(particle);
 		}
 	}

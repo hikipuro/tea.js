@@ -13,15 +13,20 @@ export class Particle {
 		this.velocity = new Tea.Vector3();
 		this.color = Tea.Color.white.clone();
 		this.size = 1.0;
-		this.lifetime = 60;
+		this.lifetime = 0.0;
 	}
 
-	update(): boolean {
+	update(particleSystem: Tea.ParticleSystem): boolean {
 		if (this.lifetime <= 0) {
 			return true;
 		}
 		this.lifetime--;
+		if (particleSystem.colorOverLifetime.enabled) {
+			var colorOverLifetime = particleSystem.colorOverLifetime;
+			this.color = colorOverLifetime.color.evaluate(1.0 - this.lifetime / 60.0);
+		}
 		this.position.add$(this.velocity);
 		this.velocity.add$(this.gravity);
+		return false;
 	}
 }

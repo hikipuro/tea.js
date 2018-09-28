@@ -1,5 +1,5 @@
-import { PSMinMaxCurve } from "./MinMaxCurve";
-import { PSBurst } from "./Burst";
+import { PSMinMaxCurve } from "../MinMaxCurve";
+import { PSBurst } from "../Burst";
 
 type MinMaxCurve = PSMinMaxCurve;
 var  MinMaxCurve = PSMinMaxCurve;

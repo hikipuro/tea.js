@@ -1,6 +1,6 @@
-import * as Tea from "../Tea";
+import * as Tea from "../../Tea";
 
-export class PSSizeBySpeedModule {
+export class PSSizeOverLifetimeModule {
 	enabled: boolean;
 	range: Tea.Vector2;
 	separateAxes: boolean;

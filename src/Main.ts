@@ -436,9 +436,19 @@ export class Main {
 
 		var particles = this.app.createParticleSystem();
 		var ps = particles.getComponent(Tea.ParticleSystem);
-		ps.main.gravityModifier = 0.1;
+		//ps.main.gravityModifier.constant = 0.1;
 		ps.velocityOverLifetime.enabled = true;
 		ps.velocityOverLifetime.x.constant = 1;
+		ps.colorOverLifetime.enabled = true;
+		ps.colorOverLifetime.color.gradient.setKeys([
+			new Tea.GradientColorKey(Tea.Color.black, 0),
+			new Tea.GradientColorKey(Tea.Color.red, 0.2),
+			new Tea.GradientColorKey(Tea.Color.yellow, 0.5),
+			new Tea.GradientColorKey(Tea.Color.white, 1)
+		], [
+			new Tea.GradientAlphaKey(1, 0),
+			new Tea.GradientAlphaKey(1, 1)
+		]);
 		//ps.main.startSpeed = 2;
 		//ps.main.startSize = 0.5;
 		scene.addChild(particles);

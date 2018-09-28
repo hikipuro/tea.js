@@ -1,4 +1,4 @@
-import * as Tea from "../Tea";
+import * as Tea from "../../Tea";
 
 export class PSCollisionModule {
 	enabled: boolean;

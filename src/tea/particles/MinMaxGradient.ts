@@ -37,6 +37,18 @@ export class PSMinMaxGradient {
 	}
 
 	evaluate(time: number, lerpFactor?: number): Tea.Color {
-		return Tea.Color.white;
+		switch (this.mode) {
+			case Tea.ParticleSystemGradientMode.Color:
+				return this.color;
+			case Tea.ParticleSystemGradientMode.TwoColors:
+				return this.color;
+			case Tea.ParticleSystemGradientMode.Gradient:
+				return this.gradient.evaluate(time);
+			case Tea.ParticleSystemGradientMode.TwoGradients:
+				return this.gradient.evaluate(time);
+			case Tea.ParticleSystemGradientMode.RandomColor:
+				return Tea.Random.colorHSV();
+		}
+		return Tea.Color.white.clone();
 	}
 }
