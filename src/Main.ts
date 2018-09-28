@@ -456,6 +456,18 @@ export class Main {
 		console.log(curve.evaluate(0.4));
 		console.log(curve.evaluate(0.5));
 
+		var g = new Tea.Gradient();
+		g.mode = Tea.GradientMode.Blend;
+		g.setKeys([
+			new Tea.GradientColorKey(Tea.Color.black, 0),
+			new Tea.GradientColorKey(Tea.Color.white, 1)
+		], [
+			new Tea.GradientAlphaKey(0, 0),
+			new Tea.GradientAlphaKey(1, 1)
+		]);
+		console.log("Gradient", g.evaluate(2));
+		console.log("Gradient", g.evaluate(0.1));
+
 
 		var textmesh = this.app.createTextMesh();
 		//var r = textmesh.getComponent(Tea.MeshRenderer);

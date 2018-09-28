@@ -168,12 +168,42 @@ export class Color extends Array<number> {
 		);
 	}
 
-	mul(value: number): Tea.Color {
+	add(value: Color): Color {
+		var color = this.clone();
+		color[0] += value[0];
+		color[1] += value[1];
+		color[2] += value[2];
+		color[3] += value[3];
+		return color;
+	}
+
+	add$(value: Color): Color {
+		this[0] += value[0];
+		this[1] += value[1];
+		this[2] += value[2];
+		this[3] += value[3];
+		return this;
+	}
+
+	mul(value: number, alpha?: boolean): Color {
 		var color = this.clone();
 		color[0] *= value;
 		color[1] *= value;
 		color[2] *= value;
+		if (alpha === true) {
+			color[3] *= value;
+		}
 		return color;
+	}
+
+	mul$(value: number, alpha?: boolean): Color {
+		this[0] *= value;
+		this[1] *= value;
+		this[2] *= value;
+		if (alpha === true) {
+			this[3] *= value;
+		}
+		return this;
 	}
 
 	toCssColor(): string {
