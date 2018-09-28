@@ -1,6 +1,7 @@
 import * as Tea from "../Tea";
 import { Component } from "./Component";
 import { PSMinMaxCurve } from "../particles/MinMaxCurve";
+import { PSMinMaxGradient } from "../particles/MinMaxGradient";
 import { PSBurst } from "../particles/Burst";
 import { PSCollisionModule } from "../particles/CollisionModule";
 import { PSColorBySpeedModule } from "../particles/ColorBySpeedModule";
@@ -157,9 +158,9 @@ export class ParticleSystem extends Component {
 			particle.size = main.startSize;
 			if (velocityOverLifetime.enabled) {
 				particle.velocity.set(
-					velocityOverLifetime.x,
-					velocityOverLifetime.y,
-					velocityOverLifetime.z
+					velocityOverLifetime.x.constant,
+					velocityOverLifetime.y.constant,
+					velocityOverLifetime.z.constant
 				);
 			}
 			particle.velocity.mul$(main.startSpeed);
@@ -215,6 +216,8 @@ export class ParticleSystem extends Component {
 export module ParticleSystem {
 	export type MinMaxCurve = PSMinMaxCurve;
 	export var  MinMaxCurve = PSMinMaxCurve;
+	export type MinMaxGradient = PSMinMaxGradient;
+	export var  MinMaxGradient = PSMinMaxGradient;
 	export type Burst = PSBurst;
 	export var  Burst = PSBurst;
 	export type CollisionModule = PSCollisionModule;

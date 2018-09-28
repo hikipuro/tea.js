@@ -1,5 +1,7 @@
 export class PSSubEmittersModule {
-	constructor() {
+	enabled: boolean;
 
+	constructor() {
+		this.enabled = false;
 	}
 }

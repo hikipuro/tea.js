@@ -2,9 +2,9 @@ import { PSMinMaxCurve } from "./MinMaxCurve";
 import { PSBurst } from "./Burst";
 
 type MinMaxCurve = PSMinMaxCurve;
-var MinMaxCurve = PSMinMaxCurve;
+var  MinMaxCurve = PSMinMaxCurve;
 type Burst = PSBurst;
-var Burst = PSBurst;
+var  Burst = PSBurst;
 
 export class PSEmissionModule {
 	enabled: boolean;

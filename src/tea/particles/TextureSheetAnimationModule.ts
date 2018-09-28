@@ -1,5 +1,7 @@
 export class PSTextureSheetAnimationModule {
-	constructor() {
+	enabled: boolean;
 
+	constructor() {
+		this.enabled = false;
 	}
 }
