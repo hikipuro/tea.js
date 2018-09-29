@@ -58,9 +58,6 @@ export class PSShapeModule {
 		this.radiusThickness = 1.0;
 		this.rotation = new Tea.Vector3();
 		this.scale = Tea.Vector3.one.clone();
-		//this.scale.x = 10;
-		//this.scale.y = 10;
-		//this.scale.z = 1;
 	}
 
 	apply(time: number, particle: Tea.Particle): void {
@@ -78,26 +75,34 @@ export class PSShapeModule {
 				this.box(time, particle);
 				break;
 			case Tea.ParticleSystemShapeType.Mesh:
+				console.warn("ShapeModule.shapeType = Mesh is not supported");
 				break;
 			case Tea.ParticleSystemShapeType.ConeVolume:
+				this.coneVolume(time, particle);
 				break;
 			case Tea.ParticleSystemShapeType.Circle:
 				this.circle(time, particle);
 				break;
 			case Tea.ParticleSystemShapeType.SingleSidedEdge:
+				this.singleSidedEdge(time, particle);
 				break;
 			case Tea.ParticleSystemShapeType.MeshRenderer:
+				console.warn("ShapeModule.shapeType = MeshRenderer is not supported");
 				break;
 			case Tea.ParticleSystemShapeType.SkinnedMeshRenderer:
+				console.warn("ShapeModule.shapeType = SkinnedMeshRenderer is not supported");
 				break;
 			case Tea.ParticleSystemShapeType.BoxShell:
+				this.boxShell(time, particle);
 				break;
 			case Tea.ParticleSystemShapeType.BoxEdge:
 				this.boxEdge(time, particle);
 				break;
 			case Tea.ParticleSystemShapeType.Donut:
+				console.warn("ShapeModule.shapeType = Donut is not supported");
 				break;
 			case Tea.ParticleSystemShapeType.Rectangle:
+				this.rectangle(time, particle);
 				break;
 		}
 	}
@@ -219,6 +224,39 @@ export class PSShapeModule {
 		particle.velocity[2] = speed;
 	}
 
+	protected coneVolume(time: number, particle: Tea.Particle): void {
+		var speed = this.getSpeed();
+		var position = this.position;
+		var scale = this.scale;
+		var radius = this.radius;
+		var a = this.getArc(time);
+		var az = 90.0 - Tea.Mathf.clamp(this.angle, 0.0, 90.0);
+		az = az * Math.PI / 180.0;
+		var r = /* Math.random() * */radius;
+		var x = Math.cos(a) * r;
+		var y = Math.sin(a) * r;
+		var length = this.length * Math.random();
+		var offset = Math.cos(az) * length;
+		var z = Math.sin(az) * length;
+		particle.position.set(
+			position[0] + (x + Math.cos(a) * offset) * scale[0],
+			position[1] + (y + Math.sin(a) * offset) * scale[1],
+			position[2] + z * scale[2]
+		);
+		//particle.position.scale(scale);
+		a = Tea.Mathf.clamp(this.angle, 0.0, 90.0);
+		a = a * Math.PI / 180.0;
+		x = Math.sin(a * x / radius) * speed * scale[0];
+		y = Math.sin(a * y / radius) * speed * scale[1];
+		var z = Math.cos(a * r / radius) * speed * scale[2];
+		particle.velocity.set(x, y, z);
+		if (this.rotation.equals(Tea.Vector3.zero) === false) {
+			var q = Tea.Quaternion.euler(this.rotation);
+			particle.position.applyQuaternion(q);
+			particle.velocity.applyQuaternion(q);
+		}
+	}
+
 	protected circle(time: number, particle: Tea.Particle): void {
 		var speed = this.getSpeed();
 		var position = this.position;
@@ -237,7 +275,24 @@ export class PSShapeModule {
 		particle.velocity.set(x, y, 0.0);
 	}
 
-	protected boxEdge(time: number, particle: Tea.Particle): void {
+	protected singleSidedEdge(time: number, particle: Tea.Particle): void {
+		var speed = this.getSpeed();
+		var position = this.position;
+		var scale = this.scale;
+		var radius = this.radius;
+		var a = this.getArc(time);
+		var x = Math.cos(a) * radius;
+		particle.position.set(
+			position[0] + x * scale[0],
+			position[1],
+			position[2]
+		);
+		particle.velocity.set(
+			0.0, speed * scale[0], 0.0
+		);
+	}
+
+	protected boxShell(time: number, particle: Tea.Particle): void {
 		var rand = Math.random;
 		var speed = this.getSpeed();
 		var position = this.position;
@@ -261,6 +316,55 @@ export class PSShapeModule {
 			position[0] + x,
 			position[1] + y,
 			position[2] + z
+		);
+		particle.velocity[2] = speed;
+	}
+
+	protected boxEdge(time: number, particle: Tea.Particle): void {
+		var rand = Math.random;
+		var speed = this.getSpeed();
+		var position = this.position;
+		var s = this.scale;
+		var scaleX = s[0], scaleY = s[1], scaleZ = s[2];
+		var x = 0.0, y = 0.0, z = 0.0;
+		var d = Tea.Random.rangeInt(0, 3);
+		switch (d) {
+			case 0:
+				x = Math.round(rand()) * scaleX - (scaleX * 0.5);
+				y = Math.round(rand()) * scaleY - (scaleY * 0.5);
+				z = rand() * scaleZ - (scaleZ * 0.5);
+				break;
+			case 1:
+				x = Math.round(rand()) * scaleX - (scaleX * 0.5);
+				y = rand() * scaleY - (scaleY * 0.5);
+				z = Math.round(rand()) * scaleZ - (scaleZ * 0.5);
+				break;
+			case 2:
+				x = rand() * scaleX - (scaleX * 0.5);
+				y = Math.round(rand()) * scaleY - (scaleY * 0.5);
+				z = Math.round(rand()) * scaleZ - (scaleZ * 0.5);
+				break;
+		}
+		particle.position.set(
+			position[0] + x,
+			position[1] + y,
+			position[2] + z
+		);
+		particle.velocity[2] = speed;
+	}
+
+	protected rectangle(time: number, particle: Tea.Particle): void {
+		var rand = Math.random;
+		var speed = this.getSpeed();
+		var position = this.position;
+		var s = this.scale;
+		var scaleX = s[0], scaleY = s[1];
+		var x = rand() * scaleX - (scaleX * 0.5);
+		var y = rand() * scaleY - (scaleY * 0.5);
+		particle.position.set(
+			position[0] + x,
+			position[1] + y,
+			position[2]
 		);
 		particle.velocity[2] = speed;
 	}
