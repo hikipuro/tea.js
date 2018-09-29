@@ -16,9 +16,9 @@ export class PSEmissionModule {
 
 	constructor() {
 		this.enabled = false;
-		this.rateOverDistance = new MinMaxCurve(0);
-		this.rateOverDistanceMultiplier = 0.0;
-		this.rateOverTime = new MinMaxCurve(0);
+		this.rateOverDistance = new MinMaxCurve(0.0);
+		this.rateOverDistanceMultiplier = 1.0;
+		this.rateOverTime = new MinMaxCurve(10.0);
 		this.rateOverTimeMultiplier = 1.0;
 		this._bursts = [];
 	}

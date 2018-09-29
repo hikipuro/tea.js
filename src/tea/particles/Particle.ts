@@ -6,6 +6,7 @@ export class Particle {
 	color: Tea.Color;
 	size: number;
 	lifetime: number;
+	maxLifetime: number;
 	gravity: Tea.Vector3;
 
 	constructor() {
@@ -14,6 +15,7 @@ export class Particle {
 		this.color = Tea.Color.white.clone();
 		this.size = 1.0;
 		this.lifetime = 0.0;
+		this.maxLifetime = 0.0;
 	}
 
 	update(particleSystem: Tea.ParticleSystem): boolean {
@@ -23,7 +25,7 @@ export class Particle {
 		this.lifetime--;
 		if (particleSystem.colorOverLifetime.enabled) {
 			var colorOverLifetime = particleSystem.colorOverLifetime;
-			this.color = colorOverLifetime.color.evaluate(1.0 - this.lifetime / 60.0);
+			this.color = colorOverLifetime.color.evaluate(1.0 - this.lifetime / this.maxLifetime);
 		}
 		this.position.add$(this.velocity);
 		this.velocity.add$(this.gravity);

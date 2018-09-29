@@ -47,7 +47,7 @@ export class ParticleSystem extends Component {
 	//randomSeed: number;
 	//rotationBySpeed: ParticleSystem.RotationBySpeedModule;
 	//rotationOverLifetime: ParticleSystem.RotationOverLifetimeModule;
-	//shape: ParticleSystem.ShapeModule;
+	shape: ParticleSystem.ShapeModule;
 	//sizeBySpeed: ParticleSystem.SizeBySpeedModule;
 	//sizeOverLifetime: ParticleSystem.SizeOverLifetimeModule;
 	//subEmitters: ParticleSystem.SubEmittersModule;
@@ -59,14 +59,23 @@ export class ParticleSystem extends Component {
 	velocityOverLifetime: ParticleSystem.VelocityOverLifetimeModule;
 	particles: Array<Tea.Particle>;
 	protected _startTime: number;
+	protected _frameCount: number;
+	protected _emittedPerSecond: number;
 
 	constructor(app: Tea.App) {
 		super(app);
 		this.particles = [];
 		this.colorOverLifetime = new ParticleSystem.ColorOverLifetimeModule();
+		this.emission = new ParticleSystem.EmissionModule();
+		this.emission.enabled = true;
 		this.main = new ParticleSystem.MainModule();
+		this.shape = new ParticleSystem.ShapeModule();
+		this.shape.enabled = true;
+		this.time = 0.0;
 		this.velocityOverLifetime = new ParticleSystem.VelocityOverLifetimeModule();
 		this.isPlaying = false;
+		this._frameCount = 0;
+		this._emittedPerSecond = 0;
 	}
 
 	get particleCount(): number {
@@ -130,7 +139,25 @@ export class ParticleSystem extends Component {
 				particles.splice(i, 1);
 			}
 		}
-		this.emit(2);
+		/*
+		if (this.emission.enabled) {
+			var rate = this.emission.rateOverTime.evaluate(this._frameCount / 60);
+			console.log(rate, this._emittedPerSecond);
+			rate *= this.emission.rateOverDistanceMultiplier;
+			if (rate - this._emittedPerSecond > 1.0) {
+				var count = rate - this._emittedPerSecond;
+				this._emittedPerSecond += count;
+				this.emit(Math.floor(count));
+			}
+			this._frameCount++;
+			if (this._frameCount >= 60) {
+				this._emittedPerSecond = 0;
+				this._frameCount = 0;
+			}
+		}
+		*/
+		this.emit(1);
+		this.time += 1.0 / 60.0;
 	}
 
 	clear(): void {
@@ -152,7 +179,7 @@ export class ParticleSystem extends Component {
 		var velocityOverLifetime = this.velocityOverLifetime;
 
 		var gravity = this.object3d.scene.physics.gravity.clone();
-		gravity.div$(60.0);
+		gravity.div$(60.0 * 60.0);
 		gravity.mul$(this.main.gravityModifier.evaluate(0.0));
 		gravity.mul$(this.main.gravityModifierMultiplier);
 
@@ -169,6 +196,9 @@ export class ParticleSystem extends Component {
 
 		for (var i = 0; i < count; i++) {
 			var particle = new Tea.Particle();
+			if (this.shape.enabled) {
+				this.shape.apply(this.time, particle);
+			}
 			particle.size = startSize;
 			if (velocityOverLifetime.enabled) {
 				particle.velocity.set(
@@ -184,6 +214,7 @@ export class ParticleSystem extends Component {
 			}
 			particle.gravity = gravity;
 			particle.lifetime = lifetime;
+			particle.maxLifetime = lifetime;
 			this.particles.push(particle);
 		}
 	}

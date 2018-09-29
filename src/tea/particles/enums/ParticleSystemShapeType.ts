@@ -1,6 +1,5 @@
 export enum ParticleSystemShapeType {
 	Sphere,
-	/*
 	Hemisphere,
 	Cone,
 	Box,
@@ -14,5 +13,4 @@ export enum ParticleSystemShapeType {
 	BoxEdge,
 	Donut,
 	Rectangle
-	*/
 }
