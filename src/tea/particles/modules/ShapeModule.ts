@@ -66,8 +66,10 @@ export class PSShapeModule {
 	apply(time: number, particle: Tea.Particle): void {
 		switch (this.shapeType) {
 			case Tea.ParticleSystemShapeType.Sphere:
+				this.sphere(time, particle);
 				break;
 			case Tea.ParticleSystemShapeType.Hemisphere:
+				this.hemisphere(time, particle);
 				break;
 			case Tea.ParticleSystemShapeType.Cone:
 				this.cone(time, particle);
@@ -80,6 +82,7 @@ export class PSShapeModule {
 			case Tea.ParticleSystemShapeType.ConeVolume:
 				break;
 			case Tea.ParticleSystemShapeType.Circle:
+				this.circle(time, particle);
 				break;
 			case Tea.ParticleSystemShapeType.SingleSidedEdge:
 				break;
@@ -129,6 +132,48 @@ export class PSShapeModule {
 		return arc;
 	}
 
+	protected sphere(time: number, particle: Tea.Particle): void {
+		var rand = Math.random;
+		var speed = this.getSpeed();
+		var position = this.position;
+		var scale = this.scale;
+		var radius = this.radius;
+		var vec3 = new Tea.Vector3(0.0, 0.0, 1.0);
+		var q = Tea.Quaternion.euler(rand() * 360, rand() * 360, rand() * 360);
+		vec3.applyQuaternion(q);
+		particle.position.set(
+			position[0] + vec3[0] * radius * scale[0],
+			position[1] + vec3[1] * radius * scale[1],
+			position[2] + vec3[2] * radius * scale[2]
+		);
+		vec3.mul$(speed);
+		vec3.scale$(scale);
+		particle.velocity.copy(vec3);
+	}
+
+	protected hemisphere(time: number, particle: Tea.Particle): void {
+		var rand = Math.random;
+		var speed = this.getSpeed();
+		var position = this.position;
+		var scale = this.scale;
+		var radius = this.radius;
+		var vec3 = new Tea.Vector3(0.0, 0.0, 1.0);
+		var q = Tea.Quaternion.euler(
+			rand() * 180 - 90.0,
+			rand() * 180 - 90.0,
+			rand() * 360
+		);
+		vec3.applyQuaternion(q);
+		particle.position.set(
+			position[0] + vec3[0] * radius * scale[0],
+			position[1] + vec3[1] * radius * scale[1],
+			position[2] + vec3[2] * radius * scale[2]
+		);
+		vec3.mul$(speed);
+		vec3.scale$(scale);
+		particle.velocity.copy(vec3);
+	}
+
 	protected cone(time: number, particle: Tea.Particle): void {
 		var speed = this.getSpeed();
 		var position = this.position;
@@ -172,6 +217,24 @@ export class PSShapeModule {
 			position[2] + z
 		);
 		particle.velocity[2] = speed;
+	}
+
+	protected circle(time: number, particle: Tea.Particle): void {
+		var speed = this.getSpeed();
+		var position = this.position;
+		var scale = this.scale;
+		var radius = this.radius;
+		var a = this.getArc(time);
+		var x = Math.cos(a) * radius;
+		var y = Math.sin(a) * radius;
+		particle.position.set(
+			position[0] + x * scale[0],
+			position[1] + y * scale[1],
+			position[2]
+		);
+		x *= speed * scale[0];
+		y *= speed * scale[1];
+		particle.velocity.set(x, y, 0.0);
 	}
 
 	protected boxEdge(time: number, particle: Tea.Particle): void {
