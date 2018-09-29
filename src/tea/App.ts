@@ -232,6 +232,7 @@ export class App {
 
 	createParticleSystem(): Tea.Object3D {
 		var object3d = new Tea.Object3D(this);
+		object3d.rotate(-90.0, 0.0, 0.0);
 		var shader = new Tea.Shader(this);
 		shader.attach(
 			Tea.ShaderSources.particleVS,

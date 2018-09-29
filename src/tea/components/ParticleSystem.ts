@@ -201,11 +201,11 @@ export class ParticleSystem extends Component {
 			}
 			particle.size = startSize;
 			if (velocityOverLifetime.enabled) {
-				particle.velocity.set(
+				particle.velocity.scale$(new Tea.Vector3(
 					velocityOverLifetime.x.constant,
 					velocityOverLifetime.y.constant,
 					velocityOverLifetime.z.constant
-				);
+				));
 			}
 			particle.velocity.mul$(startSpeed);
 			particle.color = startColor;
@@ -215,6 +215,9 @@ export class ParticleSystem extends Component {
 			particle.gravity = gravity;
 			particle.lifetime = lifetime;
 			particle.maxLifetime = lifetime;
+
+			particle.position.applyQuaternion(this.object3d.rotation);
+			particle.velocity.applyQuaternion(this.object3d.rotation);
 			this.particles.push(particle);
 		}
 	}
