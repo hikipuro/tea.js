@@ -138,7 +138,12 @@ export class App {
 	}
 
 	enableUint32Index(): void {
-		this.status.OES_element_index_uint = this.gl.getExtension("OES_element_index_uint");
+		var name = "OES_element_index_uint";
+		var ext = this.gl.getExtension(name);
+		if (ext == null) {
+			console.warn("App.enableUint32Index(): " + name + " is not supported");
+		}
+		this.status.OES_element_index_uint = ext;
 	}
 
 	captureScreenshot(callback: (data: ArrayBuffer) => void, type: string = "image/png"): void {

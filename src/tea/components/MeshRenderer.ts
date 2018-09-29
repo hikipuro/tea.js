@@ -247,7 +247,7 @@ export class MeshRenderer extends Renderer {
 		if (mesh.hasTriangles) {
 			target = gl.ELEMENT_ARRAY_BUFFER;
 			var triangles = null;
-			if (this.app.status.OES_element_index_uint != null) {
+			if (mesh.vertices.length > 0xFFFF) {
 				triangles = new Uint32Array(Tea.ArrayUtil.unroll(mesh.triangles));
 			} else {
 				triangles = new Uint16Array(Tea.ArrayUtil.unroll(mesh.triangles));
@@ -327,9 +327,12 @@ export class MeshRenderer extends Renderer {
 	}
 
 	protected getDrawFunc(mesh: Tea.Mesh): Function {
+		var use32BitIndex = false;
+		use32BitIndex = mesh.vertices.length > 0xFFFF &&
+			this.app.status.OES_element_index_uint != null;
 		if (this.wireframe) {
 			if (mesh.hasTriangles) {
-				if (this.app.status.OES_element_index_uint != null) {
+				if (use32BitIndex) {
 					return this.drawWireframe32;
 				}
 				return this.drawWireframe;
@@ -337,7 +340,7 @@ export class MeshRenderer extends Renderer {
 			return this.drawArraysWireframe;
 		}
 		if (mesh.hasTriangles) {
-			if (this.app.status.OES_element_index_uint != null) {
+			if (use32BitIndex) {
 				return this.draw32;
 			}
 			return this.draw;

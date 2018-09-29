@@ -541,7 +541,7 @@ export class Main {
 			object3d.localScale = new Tea.Vector3(scale, scale, scale);
 			object3d.localPosition.z = -4;
 			object3d.addComponent(Rotate);
-			scene.appendChild(object3d);
+			scene.addChild(object3d);
 		});
 		//*/
 
