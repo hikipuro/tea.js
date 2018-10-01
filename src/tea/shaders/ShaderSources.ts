@@ -560,6 +560,48 @@ export module ShaderSources {
 		}
 	`;
 
+	export const particleInstancingVS = `
+		attribute vec3 vertex;
+		attribute vec2 texcoord;
+		attribute vec3 position;
+		attribute vec4 color;
+		attribute float size;
+		uniform mat4 TEA_MATRIX_VP;
+		uniform vec3 CameraRight;
+		uniform vec3 CameraUp;
+		varying vec2 vTexCoord;
+		varying vec4 vColor;
+		void main() {
+			vec3 v = CameraRight * vertex.x * size + CameraUp * vertex.y * size;
+			gl_Position = TEA_MATRIX_VP * vec4(position + v, 1.0);
+			vTexCoord = texcoord;
+			vColor = color;
+		}
+	`;
+
+	export const particleInstancingFS = `
+		precision mediump float;
+		uniform int TEA_CAMERA_STEREO;
+		uniform sampler2D _MainTex;
+		uniform vec2 uv_MainTex;
+		uniform vec2 _MainTex_ST;
+		varying vec2 vTexCoord;
+		varying vec4 vColor;
+		void main() {
+			if (TEA_CAMERA_STEREO != 0) {
+				float stereoMod = float(TEA_CAMERA_STEREO - 1);
+				if (mod(floor(gl_FragCoord.y), 2.0) == stereoMod) {
+					discard;
+				}
+			}
+			vec4 tex = texture2D(_MainTex, (uv_MainTex + vTexCoord) / _MainTex_ST);
+			if (tex.a <= 0.0) {
+				discard;
+			}
+			gl_FragColor = tex * vColor;
+		}
+	`;
+
 	export const skyboxVS = `
 		const float Front = 0.5;
 		const float Back = 1.5;

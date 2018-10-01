@@ -29,7 +29,7 @@ export class Particle {
 		this.maxLifetime = 0.0;
 	}
 
-	update(time: number, particleSystem: Tea.ParticleSystem): boolean {
+	update(): boolean {
 		if (this.lifetime <= 0) {
 			return true;
 		}

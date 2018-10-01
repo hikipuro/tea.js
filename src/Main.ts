@@ -436,9 +436,11 @@ export class Main {
 
 		var particles = this.app.createParticleSystem();
 		var ps = particles.getComponent(Tea.ParticleSystem);
-		//ps.emission.rateOverTime = new Tea.ParticleSystem.MinMaxCurve(0, 10);
+		ps.main.loop = true;
+		//ps.main.maxParticles = 10000;
+		ps.emission.rateOverTime = new Tea.ParticleSystem.MinMaxCurve(60);
 		//ps.emission.rateOverTimeMultiplier = 1;
-		ps.shape.angle = 0;
+		//ps.shape.angle = 0;
 		ps.shape.arcMode = Tea.ParticleSystemShapeMultiModeValue.Loop;
 		//ps.main.startSize.constant = 2;
 		//ps.main.gravityModifier.constant = 0.2;
@@ -456,7 +458,7 @@ export class Main {
 			new Tea.GradientAlphaKey(1, 0),
 			new Tea.GradientAlphaKey(0, 1)
 		]);
-		ps.main.startSize = new Tea.ParticleSystem.MinMaxCurve(10, Tea.AnimationCurve.easeInOut(0, 0, 1, 1));
+		//ps.main.startSize = new Tea.ParticleSystem.MinMaxCurve(10, Tea.AnimationCurve.easeInOut(0, 0, 1, 1));
 		//ps.main.startSpeed = 2;
 		//ps.main.startSize = 0.5;
 		scene.addChild(particles);

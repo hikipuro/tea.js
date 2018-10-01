@@ -4,7 +4,10 @@ import { Renderer } from "./Renderer";
 export class ParticleSystemRenderer extends Renderer {
 	vertexBuffer: WebGLBuffer;
 	indexBuffer: WebGLBuffer;
+	particlesBuffer: WebGLBuffer;
 	mesh: Tea.Mesh;
+	protected _maxParticles: number;
+	protected _draw: Function;
 
 	constructor(app: Tea.App) {
 		super(app);
@@ -12,6 +15,17 @@ export class ParticleSystemRenderer extends Renderer {
 		this.vertexBuffer = gl.createBuffer();
 		this.indexBuffer = gl.createBuffer();
 		this.mesh = Tea.Primitives.createQuadMesh();
+		this._maxParticles = 0;
+		if (this.enableInstancing) {
+			this.particlesBuffer = gl.createBuffer();
+			this._draw = this.drawInstances;
+		} else {
+			this._draw = this.draw;
+		}
+	}
+
+	protected get enableInstancing(): boolean {
+		return this.app.status.ANGLE_instanced_arrays != null;
 	}
 
 	destroy(): void {
@@ -23,6 +37,10 @@ export class ParticleSystemRenderer extends Renderer {
 		if (this.indexBuffer != null) {
 			gl.deleteBuffer(this.indexBuffer);
 			this.indexBuffer = undefined;
+		}
+		if (this.particlesBuffer != null) {
+			gl.deleteBuffer(this.particlesBuffer);
+			this.particlesBuffer = undefined;
 		}
 		this.mesh = undefined;
 		super.destroy();
@@ -39,18 +57,30 @@ export class ParticleSystemRenderer extends Renderer {
 		if (particleSystem == null || particleSystem.isPlaying === false) {
 			return;
 		}
-		//particleSystem.update();
 		if (particleSystem.particleCount <= 0) {
 			return;
+		}
+		if (this._maxParticles !== particleSystem.main.maxParticles) {
+			this._maxParticles = particleSystem.main.maxParticles;
+			if (this.enableInstancing) {
+				var gl = this.gl;
+				var maxParticles = this._maxParticles;
+				var data = new Float32Array(maxParticles * (3 + 4 + 1));
+				gl.bindBuffer(gl.ARRAY_BUFFER, this.particlesBuffer);
+				gl.bufferData(gl.ARRAY_BUFFER, data, gl.DYNAMIC_DRAW);
+			}
 		}
 		super.render(camera, lights, renderSettings);
 		var mesh = this.mesh;
 		if (mesh.isModified === true) {
-			this.setMeshData(mesh);
+			this.setMeshData(mesh, particleSystem);
 		}
 		this.setVertexBuffer(mesh);
+		if (this.enableInstancing) {
+			this.setParticlesBuffer(particleSystem);
+		}
 		this.setFrontFace();
-		this.draw(particleSystem, mesh);
+		this._draw(particleSystem, mesh);
 		this.disableAllAttributes();
 	}
 
@@ -70,26 +100,20 @@ export class ParticleSystemRenderer extends Renderer {
 		);
 	}
 
-	protected setMeshData(mesh: Tea.Mesh): void {
+	protected setMeshData(mesh: Tea.Mesh, particleSystem: Tea.ParticleSystem): void {
 		if (mesh.vertices == null || mesh.vertices.length <= 0) {
 			return;
 		}
-		var data = mesh.createVertexBufferData();
 		var gl = this.gl;
+		var data = mesh.createVertexBufferData();
 		var target = gl.ARRAY_BUFFER;
-
 		gl.bindBuffer(target, this.vertexBuffer);
 		gl.bufferData(target, data, gl.STATIC_DRAW);
 		//gl.bindBuffer(target, null);
 
 		if (mesh.hasTriangles) {
 			target = gl.ELEMENT_ARRAY_BUFFER;
-			var triangles = null;
-			//if (this.app.status.OES_element_index_uint != null) {
-			//	triangles = new Uint32Array(Tea.ArrayUtil.unroll(mesh.triangles));
-			//} else {
-				triangles = new Uint16Array(Tea.ArrayUtil.unroll(mesh.triangles));
-			//}
+			var triangles = new Uint16Array(Tea.ArrayUtil.unroll(mesh.triangles));
 			gl.bindBuffer(target, this.indexBuffer);
 			gl.bufferData(target, triangles, gl.STATIC_DRAW);
 			//gl.bindBuffer(target, null);
@@ -113,6 +137,7 @@ export class ParticleSystemRenderer extends Renderer {
 		}
 		this.enableVertexAttribArray("vertex");
 		this.vertexAttribPointer("vertex", 3, stride, 0);
+
 		var offset = 4 * 3;
 		if (mesh.hasTriangles) {
 			if (mesh.hasNormals) {
@@ -124,6 +149,36 @@ export class ParticleSystemRenderer extends Renderer {
 				this.enableVertexAttribArray("texcoord");
 				this.vertexAttribPointer("texcoord", 2, stride, offset);
 			}
+		}
+	}
+
+	protected setParticlesBuffer(particleSystem: Tea.ParticleSystem): void {
+		var ext = this.app.status.ANGLE_instanced_arrays;
+		var gl = this.gl;
+		var shader = this.material.shader;
+		var data = particleSystem.createData();
+		gl.bindBuffer(gl.ARRAY_BUFFER, this.particlesBuffer);
+		gl.bufferSubData(gl.ARRAY_BUFFER, 0, data);
+
+		var stride = 4 * (3 + 4 + 1);
+		var location = -1;
+		location = shader.getAttribLocation("position");
+		if (location >= 0) {
+			gl.enableVertexAttribArray(location);
+			gl.vertexAttribPointer(location, 3, gl.FLOAT, false, stride, 0);
+			ext.vertexAttribDivisorANGLE(location, 1);
+		}
+		location = shader.getAttribLocation("color");
+		if (location >= 0) {
+			gl.enableVertexAttribArray(location);
+			gl.vertexAttribPointer(location, 4, gl.FLOAT, false, stride, 3 * 4);
+			ext.vertexAttribDivisorANGLE(location, 1);
+		}
+		location = shader.getAttribLocation("size");
+		if (location >= 0) {
+			gl.enableVertexAttribArray(location);
+			gl.vertexAttribPointer(location, 1, gl.FLOAT, false, stride, (3 + 4) * 4);
+			ext.vertexAttribDivisorANGLE(location, 1);
 		}
 	}
 
@@ -142,6 +197,26 @@ export class ParticleSystemRenderer extends Renderer {
 		this.disableVertexAttrib("normal");
 		this.disableVertexAttrib("texcoord");
 		this.disableVertexAttrib("color");
+		var ext = this.app.status.ANGLE_instanced_arrays;
+		if (ext != null) {
+			this.disableVertexAttrib("position");
+			//this.disableVertexAttrib("color");
+			this.disableVertexAttrib("size");
+			var shader = this.material.shader;
+			var location = -1;
+			location = shader.getAttribLocation("position");
+			if (location >= 0) {
+				ext.vertexAttribDivisorANGLE(location, 0);
+			}
+			location = shader.getAttribLocation("color");
+			if (location >= 0) {
+				ext.vertexAttribDivisorANGLE(location, 0);
+			}
+			location = shader.getAttribLocation("size");
+			if (location >= 0) {
+				ext.vertexAttribDivisorANGLE(location, 0);
+			}
+		}
 	}
 
 	protected getCamera(): Tea.Camera {
@@ -154,6 +229,29 @@ export class ParticleSystemRenderer extends Renderer {
 			return null;
 		}
 		return scene.mainCamera;
+	}
+
+	protected drawInstances(particleSystem: Tea.ParticleSystem, mesh: Tea.Mesh): void {
+		var gl = this.gl;
+		var ext = this.app.status.ANGLE_instanced_arrays;
+
+		var camera = this.getCamera();
+		if (camera == null) {
+			return;
+		}
+		var right = this.material.shader.propertyToID("CameraRight");
+		var up = this.material.shader.propertyToID("CameraUp");
+		var view = camera.cameraToWorldMatrix;
+		gl.uniform3f(right, view[0], view[1], view[2]);
+		gl.uniform3f(up, view[4], view[5], view[6]);
+
+		var triangles = mesh.triangles.length * 3;
+		var count = particleSystem.particleCount;
+		ext.drawElementsInstancedANGLE(
+			gl.TRIANGLES, triangles,
+			gl.UNSIGNED_SHORT, 0, count
+		);
+		//console.log("drawElementsInstancedANGLE");
 	}
 
 	protected draw(particleSystem: Tea.ParticleSystem, mesh: Tea.Mesh): void {

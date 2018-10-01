@@ -59,8 +59,9 @@ export class ParticleSystem extends Component {
 	velocityOverLifetime: ParticleSystem.VelocityOverLifetimeModule;
 	particles: Array<Tea.Particle>;
 	protected _startTime: number;
-	protected _frameCount: number;
-	protected _emittedPerSecond: number;
+	protected _data: Float32Array;
+	protected _maxParticles: number;
+	protected _dataElements: number = 8;
 
 	constructor(app: Tea.App) {
 		super(app);
@@ -74,8 +75,8 @@ export class ParticleSystem extends Component {
 		this.time = 0.0;
 		this.velocityOverLifetime = new ParticleSystem.VelocityOverLifetimeModule();
 		this.isPlaying = false;
-		this._frameCount = 0;
-		this._emittedPerSecond = 0;
+		this._maxParticles = this.main.maxParticles;
+		this.createDataBuffer();
 	}
 
 	get particleCount(): number {
@@ -128,6 +129,10 @@ export class ParticleSystem extends Component {
 		if (this.isPlaying === false) {
 			return;
 		}
+		if (this._maxParticles !== this.main.maxParticles) {
+			this._maxParticles = this.main.maxParticles;
+			this.createDataBuffer();
+		}
 		var particles = this.particles;
 		var length = particles.length;
 		if (length <= 0 && this.isTimeOver) {
@@ -135,7 +140,7 @@ export class ParticleSystem extends Component {
 			return;
 		}
 		for (var i = length - 1; i >= 0; i--) {
-			if (particles[i].update(this.time, this)) {
+			if (particles[i].update()) {
 				particles.splice(i, 1);
 			}
 		}
@@ -147,7 +152,7 @@ export class ParticleSystem extends Component {
 		}
 		this.time += 1.0 / 60.0;
 		if (this.time >= this.main.duration) {
-			this.time = 0.0;
+			this.time -= this.main.duration;
 		}
 	}
 
@@ -223,6 +228,30 @@ export class ParticleSystem extends Component {
 		}
 	}
 
+	createData(): Float32Array {
+		var particles = this.particles;
+		var count = particles.length;
+		var elements = this._dataElements;
+		var data = this._data;
+		//var data = new Float32Array(count * elements);
+		for (var i = 0; i < count; i++) {
+			var particle = particles[i];
+			var index = i * elements;
+			var position = particle.position;
+			var color = particle.color;
+			var size = particle.size;
+			data[index + 0] = position[0];
+			data[index + 1] = position[1];
+			data[index + 2] = position[2];
+			data[index + 3] = color[0];
+			data[index + 4] = color[1];
+			data[index + 5] = color[2];
+			data[index + 6] = color[3];
+			data[index + 7] = size;
+		}
+		return data.subarray(0, count * elements);
+	}
+
 	//simulate(): void {
 	//}
 
@@ -262,6 +291,15 @@ export class ParticleSystem extends Component {
 			return true;
 		}
 		return false;
+	}
+
+	protected createDataBuffer(): void {
+		if (this.app.status.ANGLE_instanced_arrays == null) {
+			return;
+		}
+		var count = this.main.maxParticles;
+		var elements = this._dataElements;
+		this._data = new Float32Array(count * elements);
 	}
 
 	protected getGravity(t: number): Tea.Vector3 {

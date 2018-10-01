@@ -4,6 +4,7 @@ class Status {
 	frontFace: number;
 	viewport: Tea.Rect;
 	OES_element_index_uint: any;
+	ANGLE_instanced_arrays: ANGLE_instanced_arrays;
 }
 
 export class App {
@@ -138,12 +139,29 @@ export class App {
 	}
 
 	enableUint32Index(): void {
+		if (this.status.OES_element_index_uint != null) {
+			return;
+		}
 		var name = "OES_element_index_uint";
 		var ext = this.gl.getExtension(name);
 		if (ext == null) {
 			console.warn("App.enableUint32Index(): " + name + " is not supported");
+			return;
 		}
 		this.status.OES_element_index_uint = ext;
+	}
+
+	enableInstancedArrays(): void {
+		if (this.status.ANGLE_instanced_arrays != null) {
+			return;
+		}
+		var name = "ANGLE_instanced_arrays";
+		var ext = this.gl.getExtension(name);
+		if (ext == null) {
+			console.warn("App.enableInstancedArrays(): " + name + " is not supported");
+			return;
+		}
+		this.status.ANGLE_instanced_arrays = ext;
 	}
 
 	captureScreenshot(callback: (data: ArrayBuffer) => void, type: string = "image/png"): void {
@@ -236,13 +254,21 @@ export class App {
 	}
 
 	createParticleSystem(): Tea.Object3D {
+		this.enableInstancedArrays();
 		var object3d = new Tea.Object3D(this);
 		object3d.rotate(-90.0, 0.0, 0.0);
 		var shader = new Tea.Shader(this);
-		shader.attach(
-			Tea.ShaderSources.particleVS,
-			Tea.ShaderSources.particleFS
-		);
+		if (this.status.ANGLE_instanced_arrays != null) {
+			shader.attach(
+				Tea.ShaderSources.particleInstancingVS,
+				Tea.ShaderSources.particleInstancingFS
+			);
+		} else {
+			shader.attach(
+				Tea.ShaderSources.particleVS,
+				Tea.ShaderSources.particleFS
+			);
+		}
 		//shader.settings.enableDepthTest = false;
 		shader.settings.depthWriteMask = false;
 		shader.settings.enableBlend = true;
