@@ -185,6 +185,23 @@ export class Color extends Array<number> {
 		return this;
 	}
 
+	sub(value: Color): Color {
+		var color = this.clone();
+		color[0] -= value[0];
+		color[1] -= value[1];
+		color[2] -= value[2];
+		color[3] -= value[3];
+		return color;
+	}
+
+	sub$(value: Color): Color {
+		this[0] -= value[0];
+		this[1] -= value[1];
+		this[2] -= value[2];
+		this[3] -= value[3];
+		return this;
+	}
+
 	mul(value: number, alpha?: boolean): Color {
 		var color = this.clone();
 		color[0] *= value;
@@ -203,6 +220,23 @@ export class Color extends Array<number> {
 		if (alpha === true) {
 			this[3] *= value;
 		}
+		return this;
+	}
+
+	scale(value: Color): Color {
+		var color = this.clone();
+		color[0] *= value[0];
+		color[1] *= value[1];
+		color[2] *= value[2];
+		color[3] *= value[3];
+		return color;
+	}
+
+	scale$(value: Color): Color {
+		this[0] *= value[0];
+		this[1] *= value[1];
+		this[2] *= value[2];
+		this[3] *= value[3];
 		return this;
 	}
 

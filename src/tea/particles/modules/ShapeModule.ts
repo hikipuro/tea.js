@@ -7,7 +7,6 @@ export class PSShapeModule {
 	arc: number;
 	arcMode: Tea.ParticleSystemShapeMultiModeValue;
 	arcSpeed: Tea.ParticleSystem.MinMaxCurve;
-	arcSpeedMultiplier: number;
 	arcSpread: number;
 	boxThickness: Tea.Vector3;
 	donutRadius: number;
@@ -21,7 +20,6 @@ export class PSShapeModule {
 	radius: number;
 	radiusMode: Tea.ParticleSystemShapeMultiModeValue;
 	radiusSpeed: Tea.ParticleSystem.MinMaxCurve;
-	radiusSpeedMultiplier: number;
 	radiusSpread: number;
 	radiusThickness: number;
 	randomDirectionAmount: number;
@@ -48,7 +46,6 @@ export class PSShapeModule {
 		this.arc = 360.0;
 		this.arcMode = Tea.ParticleSystemShapeMultiModeValue.Random;
 		this.arcSpeed = new Tea.ParticleSystem.MinMaxCurve(1.0);
-		this.arcSpeedMultiplier = 1.0;
 		this.arcSpread = 0.0;
 		this.length = 5.0;
 		this.shapeType = Tea.ParticleSystemShapeType.Cone;
@@ -58,6 +55,20 @@ export class PSShapeModule {
 		this.radiusThickness = 1.0;
 		this.rotation = new Tea.Vector3();
 		this.scale = Tea.Vector3.one.clone();
+	}
+
+	get arcSpeedMultiplier(): number {
+		return this.arcSpeed.curveMultiplier;
+	}
+	set arcSpeedMultiplier(value: number) {
+		this.arcSpeed.curveMultiplier = value;
+	}
+
+	get radiusSpeedMultiplier(): number {
+		return this.radiusSpeed.curveMultiplier;
+	}
+	set radiusSpeedMultiplier(value: number) {
+		this.radiusSpeed.curveMultiplier = value;
 	}
 
 	apply(time: number, particle: Tea.Particle): void {

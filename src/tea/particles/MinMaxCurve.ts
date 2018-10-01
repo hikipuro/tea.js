@@ -20,12 +20,14 @@ export class PSMinMaxCurve {
 		this.constantMin = 0.0;
 		this.curveMultiplier = 1.0;
 		if (c != null) {
+			this.curveMultiplier = a;
 			this.curveMin = b as Tea.AnimationCurve;
 			this.curveMax = c;
 			this.mode = Tea.ParticleSystemCurveMode.TwoCurves;
 			return;
 		}
 		if (b instanceof Tea.AnimationCurve) {
+			this.curveMultiplier = a;
 			this.curve = b;
 			this.mode = Tea.ParticleSystemCurveMode.Curve;
 			return;
@@ -49,12 +51,15 @@ export class PSMinMaxCurve {
 			case Tea.ParticleSystemCurveMode.Constant:
 				return this.constant;
 			case Tea.ParticleSystemCurveMode.TwoConstants:
-				return this.constantMin + 
-					(this.constantMax - this.constantMin) * time;
+				var min = this.constantMin;
+				var max = this.constantMax;
+				return min + Math.random() * (max - min);
 			case Tea.ParticleSystemCurveMode.Curve:
-				return this.constant;
+				return this.curve.evaluate(time) * this.curveMultiplier;
 			case Tea.ParticleSystemCurveMode.TwoCurves:
-				return this.constant;
+				var min = this.curveMin.evaluate(time);
+				var max = this.curveMax.evaluate(time);
+				return (min + Math.random() * (max - min)) * this.curveMultiplier;
 		}
 	}
 }

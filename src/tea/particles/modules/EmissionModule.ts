@@ -9,22 +9,57 @@ var  Burst = PSBurst;
 export class PSEmissionModule {
 	enabled: boolean;
 	rateOverDistance: MinMaxCurve;
-	rateOverDistanceMultiplier: number;
 	rateOverTime: MinMaxCurve;
-	rateOverTimeMultiplier: number;
 	protected _bursts: Array<Burst>;
+	protected _time: number;
+	protected _rate: number;
+	protected _emitted: number;
 
 	constructor() {
 		this.enabled = false;
 		this.rateOverDistance = new MinMaxCurve(0.0);
 		this.rateOverDistanceMultiplier = 1.0;
-		this.rateOverTime = new MinMaxCurve(10.0);
-		this.rateOverTimeMultiplier = 1.0;
+		this.rateOverTime = new MinMaxCurve(1.0);
+		this.rateOverTimeMultiplier = 10.0;
 		this._bursts = [];
+		this._time = 0;
+		this._rate = 0.0;
+		this._emitted = 0;
+	}
+
+	get rateOverDistanceMultiplier(): number {
+		return this.rateOverDistance.curveMultiplier;
+	}
+	set rateOverDistanceMultiplier(value: number) {
+		this.rateOverDistance.curveMultiplier = value;
+	}
+
+	get rateOverTimeMultiplier(): number {
+		return this.rateOverTime.curveMultiplier;
+	}
+	set rateOverTimeMultiplier(value: number) {
+		this.rateOverTime.curveMultiplier = value;
 	}
 
 	get burstCount(): number {
 		return this._bursts.length;
+	}
+
+	evaluate(time: number, duration: number): number {
+		var ti = Math.floor(time);
+		var t = time % 1.0;
+		if (this._time !== ti) {
+			this._emitted = 0;
+			this._time = ti;
+		}
+		t += 1.0 / 60.0;
+		var rate = this.rateOverTime.evaluate(time / duration);
+		rate *= this.rateOverTimeMultiplier;
+		this._rate = rate * t;
+		rate = Math.floor(this._rate);
+		var count = rate - this._emitted;
+		this._emitted = rate;
+		return count;
 	}
 
 	getBurst(index: number): Burst {

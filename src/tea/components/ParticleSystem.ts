@@ -135,29 +135,20 @@ export class ParticleSystem extends Component {
 			return;
 		}
 		for (var i = length - 1; i >= 0; i--) {
-			if (particles[i].update(this)) {
+			if (particles[i].update(this.time, this)) {
 				particles.splice(i, 1);
 			}
 		}
-		/*
 		if (this.emission.enabled) {
-			var rate = this.emission.rateOverTime.evaluate(this._frameCount / 60);
-			console.log(rate, this._emittedPerSecond);
-			rate *= this.emission.rateOverDistanceMultiplier;
-			if (rate - this._emittedPerSecond > 1.0) {
-				var count = rate - this._emittedPerSecond;
-				this._emittedPerSecond += count;
-				this.emit(Math.floor(count));
-			}
-			this._frameCount++;
-			if (this._frameCount >= 60) {
-				this._emittedPerSecond = 0;
-				this._frameCount = 0;
-			}
+			var count = this.emission.evaluate(
+				this.time, this.main.duration
+			);
+			this.emit(count);
 		}
-		*/
-		this.emit(1);
 		this.time += 1.0 / 60.0;
+		if (this.time >= this.main.duration) {
+			this.time = 0.0;
+		}
 	}
 
 	clear(): void {
@@ -173,26 +164,23 @@ export class ParticleSystem extends Component {
 		if (particles.length + count > maxParticles) {
 			count = maxParticles - particles.length;
 		}
+		if (count <= 0) {
+			return;
+		}
 
 		var main = this.main;
 		var colorOverLifetime = this.colorOverLifetime;
 		var velocityOverLifetime = this.velocityOverLifetime;
+		var time = this.time, duration = main.duration;
+		var t = time / duration;
 
-		var gravity = this.object3d.scene.physics.gravity.clone();
-		gravity.div$(60.0 * 60.0);
-		gravity.mul$(this.main.gravityModifier.evaluate(0.0));
-		gravity.mul$(this.main.gravityModifierMultiplier);
+		var gravity = this.getGravity(t);
+		var lifetime = main.startLifetime.evaluate(t);
+		lifetime *= 60.0;
 
-		var lifetime = main.startLifetime.evaluate(0.0);
-		lifetime *= main.startLifetimeMultiplier * 60.0;
-
-		var startSize = main.startSize.evaluate(0.0);
-		startSize *= main.startSizeMultiplier;
-
-		var startSpeed = main.startSpeed.evaluate(0.0);
-		startSpeed *= main.startSpeedMultiplier;
-
-		var startColor = main.startColor.evaluate(0.0);
+		var startSize = main.startSize.evaluate(t);
+		var startSpeed = main.startSpeed.evaluate(t);
+		var startColor = main.startColor.evaluate(t);
 
 		for (var i = 0; i < count; i++) {
 			var particle = new Tea.Particle();
@@ -208,9 +196,22 @@ export class ParticleSystem extends Component {
 				));
 			}
 			particle.velocity.mul$(startSpeed);
-			particle.color = startColor;
+			particle.startColor = startColor;
 			if (colorOverLifetime.enabled) {
-				particle.color = colorOverLifetime.color.evaluate(0.0);
+				switch (colorOverLifetime.color.mode) {
+					case Tea.ParticleSystemGradientMode.Gradient:
+						particle.lifetimeColor = colorOverLifetime.color.gradient;
+						break;
+					case Tea.ParticleSystemGradientMode.TwoGradients:
+						switch (Tea.Random.rangeInt(0, 2)) {
+							case 0:
+								particle.lifetimeColor = colorOverLifetime.color.gradientMin;
+								break;
+							case 1:
+								particle.lifetimeColor = colorOverLifetime.color.gradientMax;
+								break;
+						}
+				}
 			}
 			particle.gravity = gravity;
 			particle.lifetime = lifetime;
@@ -261,6 +262,16 @@ export class ParticleSystem extends Component {
 			return true;
 		}
 		return false;
+	}
+
+	protected getGravity(t: number): Tea.Vector3 {
+		if (this.object3d == null || this.object3d.scene == null) {
+			return Tea.Vector3.zero.clone();
+		}
+		var gravity = this.object3d.scene.physics.gravity.clone();
+		gravity.div$(60.0 * 60.0);
+		gravity.mul$(this.main.gravityModifier.evaluate(t));
+		return gravity;
 	}
 }
 

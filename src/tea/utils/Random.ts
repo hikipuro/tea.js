@@ -24,7 +24,7 @@ export class Random {
 		hueMin: number = 0.0, hueMax: number = 1.0,
 		saturationMin: number = 0.0, saturationMax: number = 1.0,
 		valueMin: number = 0.0, valueMax: number = 1.0,
-		alphaMin: number = 0.0, alphaMax: number = 1.0): Tea.Color
+		alphaMin: number = 1.0, alphaMax: number = 1.0): Tea.Color
 	{
 		var h = Random.range(hueMin, hueMax);
 		var s = Random.range(saturationMin, saturationMax);
