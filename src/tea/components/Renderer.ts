@@ -1,23 +1,57 @@
 import * as Tea from "../Tea";
 import { Component } from "./Component";
 
+class Attributes {
+	list: Array<boolean>;
+	indexList: Array<number>;
+	constructor() {
+		this.list = [];
+		this.indexList = [];
+	}
+	isEnabled(i: number): boolean {
+		return this.list[i] != null ? this.list[i] : false;
+	}
+	enable(i: number): void {
+		if (i < 0) {
+			return;
+		}
+		this.indexList.push(i);
+		this.list[i] = true;
+	}
+	end(gl: WebGLRenderingContext):void {
+		var list = this.list;
+		var indexList = this.indexList;
+		var keys = list.keys();
+		for (var key of keys) {
+			if (indexList.indexOf(key) >= 0) {
+				continue;
+			}
+			if (list[key] === false) {
+				continue;
+			}
+			gl.disableVertexAttribArray(key);
+			list[key] = false;
+		}
+		indexList.splice(0, indexList.length);
+	}
+}
+
 export class Renderer extends Component {
 	static drawCallCount: number = 0;
 	static readonly MaxLightCount: number = 4;
+	static readonly attributes: Attributes = new Attributes();
 	material: Tea.Material;
 	protected gl: WebGLRenderingContext;
 	protected _tmpVec3: Tea.Vector3 = new Tea.Vector3();
 	protected _tmpVec4: Tea.Vector4 = new Tea.Vector4();
 	protected _mvMatrix: Tea.Matrix4x4 = new Tea.Matrix4x4();
 	protected _mvpMatrix: Tea.Matrix4x4 = new Tea.Matrix4x4();
-	//protected _uniforms: Uniforms;
 
 	constructor(app: Tea.App) {
 		super(app);
 		this.gl = app.gl;
 		this.enabled = true;
 		this.material = Tea.Material.getDefault(app);
-		//this._uniforms = new Uniforms(app);
 	}
 
 	get localToWorldMatrix(): Tea.Matrix4x4 {
@@ -48,14 +82,12 @@ export class Renderer extends Component {
 		if (shader == null) {
 			return;
 		}
-		//this._uniforms.shader = shader;
 		this.gl.useProgram(this.material.shader.program);
 		this.setShaderSettings();
 		this.setIntrinsicUniforms(camera);
 		this.setMaterialUniforms();
 		this.setLightUniforms(lights, renderSettings);
 		this.setTextures();
-		//this.setTexture(this.material.mainTexture);
 	}
 
 	vertexAttribPointer(name: string, size: number, stride: number = 0, offset: number = 0): void {

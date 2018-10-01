@@ -75,10 +75,7 @@ export class ParticleSystemRenderer extends Renderer {
 		if (mesh.isModified === true) {
 			this.setMeshData(mesh, particleSystem);
 		}
-		this.setVertexBuffer(mesh);
-		if (this.enableInstancing) {
-			this.setParticlesBuffer(particleSystem);
-		}
+		this.setVertexBuffer(mesh, particleSystem);
 		this.setFrontFace();
 		this._draw(particleSystem, mesh);
 		this.disableAllAttributes();
@@ -121,7 +118,7 @@ export class ParticleSystemRenderer extends Renderer {
 		mesh.isModified = false;
 	}
 
-	protected setVertexBuffer(mesh: Tea.Mesh): void {
+	protected setVertexBuffer(mesh: Tea.Mesh, particleSystem: Tea.ParticleSystem): void {
 		var gl = this.gl;
 		gl.bindBuffer(gl.ARRAY_BUFFER, this.vertexBuffer);
 		gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this.indexBuffer);
@@ -135,21 +132,53 @@ export class ParticleSystemRenderer extends Renderer {
 				stride += 4 * 2;
 			}
 		}
-		this.enableVertexAttribArray("vertex");
-		this.vertexAttribPointer("vertex", 3, stride, 0);
 
+		var attributes = Renderer.attributes;
+		//attributes.start();
+
+		var shader = this.material.shader;
+		var location = -1;
+		location = shader.getAttribLocation("vertex");
+		if (location >= 0) {
+			if (attributes.isEnabled(location) === false) {
+				gl.enableVertexAttribArray(location);
+			}
+			attributes.enable(location);
+			gl.vertexAttribPointer(location, 3, gl.FLOAT, false, stride, 0);
+		}
+		
 		var offset = 4 * 3;
 		if (mesh.hasTriangles) {
 			if (mesh.hasNormals) {
-				this.enableVertexAttribArray("normal");
-				this.vertexAttribPointer("normal", 3, stride, offset);
+				location = shader.getAttribLocation("normal");
+				if (location >= 0) {
+					if (attributes.isEnabled(location) === false) {
+						gl.enableVertexAttribArray(location);
+					}
+					attributes.enable(location);
+					gl.vertexAttribPointer(location, 3, gl.FLOAT, false, stride, offset);
+				}
+				//this.enableVertexAttribArray("normal");
+				//this.vertexAttribPointer("normal", 3, stride, offset);
 				offset += 4 * 3;
 			}
 			if (mesh.hasUVs) {
-				this.enableVertexAttribArray("texcoord");
-				this.vertexAttribPointer("texcoord", 2, stride, offset);
+				location = shader.getAttribLocation("texcoord");
+				if (location >= 0) {
+					if (attributes.isEnabled(location) === false) {
+						gl.enableVertexAttribArray(location);
+					}
+					attributes.enable(location);
+					gl.vertexAttribPointer(location, 2, gl.FLOAT, false, stride, offset);
+				}
+				//this.enableVertexAttribArray("texcoord");
+				//this.vertexAttribPointer("texcoord", 2, stride, offset);
 			}
 		}
+		if (this.enableInstancing) {
+			this.setParticlesBuffer(particleSystem);
+		}
+		attributes.end(gl);
 	}
 
 	protected setParticlesBuffer(particleSystem: Tea.ParticleSystem): void {
@@ -160,24 +189,34 @@ export class ParticleSystemRenderer extends Renderer {
 		gl.bindBuffer(gl.ARRAY_BUFFER, this.particlesBuffer);
 		gl.bufferSubData(gl.ARRAY_BUFFER, 0, data);
 
-		var stride = 4 * (3 + 4 + 1);
+		var attributes = Renderer.attributes;
+		var stride = 32;
 		var location = -1;
 		location = shader.getAttribLocation("position");
 		if (location >= 0) {
-			gl.enableVertexAttribArray(location);
+			if (attributes.isEnabled(location) === false) {
+				gl.enableVertexAttribArray(location);
+			}
+			attributes.enable(location);
 			gl.vertexAttribPointer(location, 3, gl.FLOAT, false, stride, 0);
 			ext.vertexAttribDivisorANGLE(location, 1);
 		}
 		location = shader.getAttribLocation("color");
 		if (location >= 0) {
-			gl.enableVertexAttribArray(location);
-			gl.vertexAttribPointer(location, 4, gl.FLOAT, false, stride, 3 * 4);
+			if (attributes.isEnabled(location) === false) {
+				gl.enableVertexAttribArray(location);
+			}
+			attributes.enable(location);
+			gl.vertexAttribPointer(location, 4, gl.FLOAT, false, stride, 12);
 			ext.vertexAttribDivisorANGLE(location, 1);
 		}
 		location = shader.getAttribLocation("size");
 		if (location >= 0) {
-			gl.enableVertexAttribArray(location);
-			gl.vertexAttribPointer(location, 1, gl.FLOAT, false, stride, (3 + 4) * 4);
+			if (attributes.isEnabled(location) === false) {
+				gl.enableVertexAttribArray(location);
+			}
+			attributes.enable(location);
+			gl.vertexAttribPointer(location, 1, gl.FLOAT, false, stride, 28);
 			ext.vertexAttribDivisorANGLE(location, 1);
 		}
 	}
@@ -193,29 +232,23 @@ export class ParticleSystemRenderer extends Renderer {
 	}
 
 	protected disableAllAttributes(): void {
-		this.disableVertexAttrib("vertex");
-		this.disableVertexAttrib("normal");
-		this.disableVertexAttrib("texcoord");
-		this.disableVertexAttrib("color");
 		var ext = this.app.status.ANGLE_instanced_arrays;
-		if (ext != null) {
-			this.disableVertexAttrib("position");
-			//this.disableVertexAttrib("color");
-			this.disableVertexAttrib("size");
-			var shader = this.material.shader;
-			var location = -1;
-			location = shader.getAttribLocation("position");
-			if (location >= 0) {
-				ext.vertexAttribDivisorANGLE(location, 0);
-			}
-			location = shader.getAttribLocation("color");
-			if (location >= 0) {
-				ext.vertexAttribDivisorANGLE(location, 0);
-			}
-			location = shader.getAttribLocation("size");
-			if (location >= 0) {
-				ext.vertexAttribDivisorANGLE(location, 0);
-			}
+		if (ext == null) {
+			return;
+		}
+		var shader = this.material.shader;
+		var location = -1;
+		location = shader.getAttribLocation("position");
+		if (location >= 0) {
+			ext.vertexAttribDivisorANGLE(location, 0);
+		}
+		location = shader.getAttribLocation("color");
+		if (location >= 0) {
+			ext.vertexAttribDivisorANGLE(location, 0);
+		}
+		location = shader.getAttribLocation("size");
+		if (location >= 0) {
+			ext.vertexAttribDivisorANGLE(location, 0);
 		}
 	}
 

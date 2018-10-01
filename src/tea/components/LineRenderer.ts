@@ -85,9 +85,17 @@ export class LineRenderer extends Renderer {
 		var vertices = new Float32Array(Tea.ArrayUtil.unroll(this.points));
 		gl.bindBuffer(target, this.vertexBuffer);
 		gl.bufferData(target, vertices, gl.DYNAMIC_DRAW);
-		this.enableVertexAttribArray("vertex");
+
+		var shader = this.material.shader;
+		var attributes = Renderer.attributes;
+		var location = shader.getAttribLocation("vertex");
+		if (attributes.isEnabled(location) === false) {
+			gl.enableVertexAttribArray(location);
+		}
+		attributes.enable(location);
+		attributes.end(gl);
 		this.vertexAttribPointer("vertex", 3);
-		gl.bindBuffer(target, null);
+		//gl.bindBuffer(target, null);
 	}
 
 	protected draw(): void {

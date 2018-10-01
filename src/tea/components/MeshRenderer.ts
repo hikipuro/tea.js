@@ -156,7 +156,7 @@ export class MeshRenderer extends Renderer {
 		this.setVertexBuffer(mesh);
 		this.setFrontFace();
 		this._draw(mesh);
-		this.disableAllAttributes();
+		//this.disableAllAttributes();
 		Renderer.drawCallCount++;
 	}
 
@@ -265,19 +265,29 @@ export class MeshRenderer extends Renderer {
 	protected setVertexBuffer(mesh: Tea.Mesh): void {
 		var gl = this.gl;
 		gl.bindBuffer(gl.ARRAY_BUFFER, this.vertexBuffer);
+		var attributes = Renderer.attributes;
 		var stride = this._attributes.stride;
 		var items = this._attributes.items;
 		var length = items.length;
+		//var locations = [];
+		//attributes.start();
 		for (var i = 0; i < length; i++) {
 			var item = items[i];
 			if (item.location < 0) {
 				continue;
 			}
 			if (item.size <= 0) {
-				gl.disableVertexAttribArray(item.location);
+				//if (attributes.isEnabled(item.location)) {
+				//	gl.disableVertexAttribArray(item.location);
+				//	attributes.set(item.location, false);
+				//}
 				continue;
 			}
-			gl.enableVertexAttribArray(item.location);
+			//locations.push(item.location);
+			if (attributes.isEnabled(item.location) === false) {
+				gl.enableVertexAttribArray(item.location);
+			}
+			attributes.enable(item.location);
 			//console.log(gl.getError());
 			gl.vertexAttribPointer(
 				item.location,
@@ -288,7 +298,9 @@ export class MeshRenderer extends Renderer {
 				item.offset
 			);
 		}
-		gl.bindBuffer(gl.ARRAY_BUFFER, null);
+
+		attributes.end(gl);
+		//gl.bindBuffer(gl.ARRAY_BUFFER, null);
 
 		if (mesh.hasTriangles) {
 			gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this.indexBuffer);
@@ -299,6 +311,7 @@ export class MeshRenderer extends Renderer {
 
 	protected disableAllAttributes(): void {
 		var gl = this.gl;
+		/*
 		var items = this._attributes.items;
 		var length = items.length;
 		for (var i = 0; i < length; i++) {
@@ -308,6 +321,7 @@ export class MeshRenderer extends Renderer {
 			}
 			gl.disableVertexAttribArray(item.location);
 		}
+		*/
 		gl.bindBuffer(gl.ARRAY_BUFFER, null);
 		gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, null);
 	}

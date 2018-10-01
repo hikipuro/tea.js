@@ -303,6 +303,7 @@ export class TextMesh extends Mesh {
 		v1.x =  width + ow; v1.y = -height - oh;
 		v2.x =  width + ow; v2.y =  height - oh;
 		v3.x = -width + ow; v3.y =  height - oh;
+		this.calculateBounds();
 		this.uploadMeshData();
 	}
 }
