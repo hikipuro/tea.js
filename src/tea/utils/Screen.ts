@@ -14,14 +14,33 @@ export class Screen {
 	}
 
 	static get fullscreen(): boolean {
-		return document.webkitIsFullScreen;
+		var element = document.fullscreenElement ||
+			document.webkitFullscreenElement ||
+			document["mozFullScreenElement"];
+		return element != null;
 	}
-
-	/*
 	static set fullscreen(value: boolean) {
-		document.webkitIsFullScreen = value;
+		if (value) {
+			var element = document.documentElement;
+			var requestFullscreen = element.requestFullscreen ||
+				element.webkitRequestFullscreen ||
+				element["mozRequestFullscreen"];
+			try {
+				requestFullscreen.apply(element);
+			} catch (e) {
+				console.error(e);
+			}
+		} else {
+			var exitFullscreen = document.exitFullscreen ||
+				document.webkitExitFullscreen ||
+				document["mozExitFullscreen"];
+			try {
+				exitFullscreen.apply(document);
+			} catch (e) {
+				console.error(e);
+			}
+		}
 	}
-	*/
 
 	static get orientation(): Tea.ScreenOrientation {
 		if (screen["orientation"] == null) {
