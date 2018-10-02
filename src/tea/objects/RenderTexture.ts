@@ -35,7 +35,7 @@ export class RenderTexture extends Texture {
 	}
 
 	destroy(): void {
-		console.log("destroy RenderTexture", arguments.callee);
+		//console.log("destroy RenderTexture", arguments.callee);
 		var gl = this.gl;
 		if (this.frameBuffer != null) {
 			gl.deleteFramebuffer(this.frameBuffer);
@@ -48,7 +48,7 @@ export class RenderTexture extends Texture {
 		super.destroy();
 	}
 
-	bind(): void {
+	bindFramebuffer(): void {
 		var gl = this.gl;
 		gl.bindFramebuffer(
 			gl.FRAMEBUFFER,
@@ -56,7 +56,7 @@ export class RenderTexture extends Texture {
 		);
 	}
 
-	unbind(): void {
+	unbindFramebuffer(): void {
 		var gl = this.gl;
 		gl.bindFramebuffer(
 			gl.FRAMEBUFFER,

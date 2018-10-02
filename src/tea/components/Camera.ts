@@ -398,7 +398,7 @@ export class Camera extends Component {
 		return rect;
 	}
 	
-	protected setViewport(): void {
+	setViewport(): void {
 		var rx = this.rect[0];
 		var ry = this.rect[1];
 		var rw = this.rect[2];
@@ -541,6 +541,13 @@ export class Camera extends Component {
 				break;
 			case Tea.CameraClearFlags.Skybox:
 				var scene = this.object3d.scene;
+				if (scene.enablePostProcessing) {
+					scene.renderTexture.bindFramebuffer();
+					var width = scene.renderTexture.width;
+					var height = scene.renderTexture.height;
+					this.gl.scissor(0.0, 0.0, width, height);
+					this.gl.viewport(0.0, 0.0, width, height);
+				}
 				var skybox = scene.renderSettings.skybox;
 				skybox.object3d.position.copy(this.object3d.position);
 				skybox.object3d.update();
@@ -549,6 +556,9 @@ export class Camera extends Component {
 					gl.DEPTH_BUFFER_BIT |
 					gl.STENCIL_BUFFER_BIT
 				);
+				if (scene.enablePostProcessing) {
+					scene.renderTexture.unbindFramebuffer();
+				}
 				break;
 		}
 	}

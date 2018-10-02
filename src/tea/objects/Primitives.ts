@@ -597,4 +597,28 @@ export class Primitives {
 		mesh.calculateBounds();
 		return mesh;
 	}
+
+	static createPostProcessingMesh(): Tea.Mesh {
+		var vertices = [
+			vec3(-1.0, -1.0, 0.0),
+			vec3( 1.0, -1.0, 0.0),
+			vec3( 1.0,  1.0, 0.0),
+			vec3(-1.0,  1.0, 0.0)
+		];
+		var triangles = [
+			vec3(0, 1, 2),
+			vec3(0, 2, 3)
+		];
+		var uv = [
+			vec2(0.0, 0.0),
+			vec2(1.0, 0.0),
+			vec2(1.0, 1.0),
+			vec2(0.0, 1.0)
+		];
+		var mesh = new Tea.Mesh();
+		mesh.vertices = vertices;
+		mesh.triangles = triangles;
+		mesh.uv = uv;
+		return mesh;
+	}
 }

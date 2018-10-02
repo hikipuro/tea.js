@@ -39,7 +39,7 @@ export class Main {
 		this.app.width = 400;
 		this.app.height = 400;
 
-		window.addEventListener("resize", () => {
+		this.app.renderer.on("resize", () => {
 			this.app.canvas.width = document.body.clientWidth;
 			this.app.canvas.height = document.body.clientHeight;
 		});
@@ -138,6 +138,12 @@ export class Main {
 		//scene.camera.position.set(0, 10, 0);
 		//scene.camera.rotation = Tea.Quaternion.euler(90,0,0);
 		this.app.setScene(scene);
+		scene.enablePostProcessing = true;
+		var shader = this.app.createShader(
+			Tea.ShaderSources.antialiasPostProcessingVS,
+			Tea.ShaderSources.antialiasPostProcessingFS
+		);
+		scene.postProcessingRenderer.material.shader = shader;
 
 		var light = this.app.createLight();
 		//light.getComponent(Tea.Light).color.set(1.0,0,0,1);

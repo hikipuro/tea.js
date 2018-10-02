@@ -682,4 +682,88 @@ export module ShaderSources {
 			gl_FragColor = ambientColor + tex;
 		}
 	`;
+
+	export const simplePostProcessingVS = `
+		attribute vec4 vertex;
+		attribute vec2 texcoord;
+		varying vec2 vTexCoord;
+		void main() {
+			gl_Position = vertex;
+			vTexCoord = texcoord;
+		}
+	`;
+
+	export const simplePostProcessingFS = `
+		precision mediump float;
+		uniform sampler2D _MainTex;
+		uniform vec2 uv_MainTex;
+		uniform vec2 _MainTex_ST;
+		varying vec2 vTexCoord;
+		void main() {
+			vec4 tex = texture2D(_MainTex, (uv_MainTex + vTexCoord) / _MainTex_ST);
+			gl_FragColor = tex;
+		}
+	`;
+
+	export const grayScalePostProcessingVS = `
+		attribute vec4 vertex;
+		attribute vec2 texcoord;
+		varying vec2 vTexCoord;
+		void main() {
+			gl_Position = vertex;
+			vTexCoord = texcoord;
+		}
+	`;
+
+	export const grayScalePostProcessingFS = `
+		precision mediump float;
+		uniform sampler2D _MainTex;
+		uniform vec2 uv_MainTex;
+		uniform vec2 _MainTex_ST;
+		varying vec2 vTexCoord;
+		const vec3 grayScale = vec3(0.298912, 0.586611, 0.114478);
+		void main() {
+			vec4 tex = texture2D(_MainTex, (uv_MainTex + vTexCoord) / _MainTex_ST);
+			float color = dot(tex.rgb, grayScale);
+			gl_FragColor = vec4(color);
+		}
+	`;
+
+	export const antialiasPostProcessingVS = `
+		attribute vec4 vertex;
+		attribute vec2 texcoord;
+		varying vec2 vTexCoord;
+		void main() {
+			gl_Position = vertex;
+			vTexCoord = texcoord;
+		}
+	`;
+
+	export const antialiasPostProcessingFS = `
+		precision highp float;
+		uniform sampler2D _MainTex;
+		uniform vec2 uv_MainTex;
+		uniform vec2 _MainTex_ST;
+		uniform float ScreenWidth;
+		uniform float ScreenHeight;
+		varying vec2 vTexCoord;
+		const vec2 p0 = vec2(1.0 / 4.0, 3.0 / 4.0);
+		const vec2 p1 = vec2(-3.0 / 4.0, 1.0 / 4.0);
+		const vec2 p2 = vec2(3.0 / 4.0, 1.0 / 4.0);
+		const vec2 p3 = vec2(-1.0 / 4.0, -3.0 / 4.0);
+		vec2 pos(vec2 p1, vec2 p2, float x, float y) {
+			return vec2(p1.x + p2.x * x, p1.y + p2.y * y);
+		}
+		void main() {
+			float x = 1.0 / ScreenWidth;
+			float y = 1.0 / ScreenHeight;
+			vec2 p = (uv_MainTex + vTexCoord) / _MainTex_ST;
+			vec4 t0 = texture2D(_MainTex, pos(p, p0, x, y));
+			vec4 t1 = texture2D(_MainTex, pos(p, p1, x, y));
+			vec4 t2 = texture2D(_MainTex, pos(p, p2, x, y));
+			vec4 t3 = texture2D(_MainTex, pos(p, p3, x, y));
+			vec4 color = (t0 + t1 + t2 + t3) / 4.0;
+			gl_FragColor = color;
+		}
+	`;
 }

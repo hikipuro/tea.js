@@ -76,6 +76,7 @@ export * from "./objects/LayerMask";
 export * from "./objects/Mesh";
 export * from "./objects/Object3D";
 export * from "./objects/Physics";
+export * from "./objects/PostProcessingRenderer";
 export * from "./objects/Primitives";
 export * from "./objects/Ray";
 export * from "./objects/RaycastHit";

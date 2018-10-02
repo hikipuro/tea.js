@@ -206,6 +206,9 @@ export class Scene {
 	app: Tea.App;
 	renderSettings: Tea.RenderSettings;
 	physics: Tea.Physics;
+	enablePostProcessing: boolean;
+	renderTexture: Tea.RenderTexture;
+	postProcessingRenderer: Tea.PostProcessingRenderer;
 	protected _children: Array<Tea.Object3D>;
 	protected _components: SceneComponents;
 
@@ -213,8 +216,15 @@ export class Scene {
 		this.app = app;
 		this.renderSettings = new Tea.RenderSettings(app);
 		this.physics = new Tea.Physics();
+		this.enablePostProcessing = false;
+		this.refreshRenderTexture();
+		this.postProcessingRenderer = new Tea.PostProcessingRenderer(app);
 		this._children = [];
 		this._components = new SceneComponents();
+		this.app.renderer.on("resize", () => {
+			this.renderTexture.destroy();
+			this.refreshRenderTexture();
+		})
 	}
 
 	get children(): Array<Tea.Object3D> {
@@ -326,7 +336,9 @@ export class Scene {
 			var camera = cameras[n];
 			var renderTexture = camera.targetTexture;
 			if (renderTexture != null) {
-				renderTexture.bind();
+				renderTexture.bindFramebuffer();
+				//this.app.gl.scissor(0.0, 0.0, this.renderTexture.width, this.renderTexture.height);
+				//this.app.gl.viewport(0.0, 0.0, this.renderTexture.width, this.renderTexture.height);
 			}
 			camera.update();
 			var rendererCount = renderers.length;
@@ -339,8 +351,12 @@ export class Scene {
 				this.renderCamera(camera, lights, renderer);
 			}
 			if (renderTexture != null) {
-				renderTexture.unbind();
+				renderTexture.unbindFramebuffer();
 			}
+		}
+		if (this.enablePostProcessing) {
+			this.postProcessingRenderer.renderTexture = this.renderTexture;
+			this.postProcessingRenderer.render(this.mainCamera);
 		}
 		//this._renderers.length = 0;
 		//console.log("drawCallCount", Tea.Renderer.drawCallCount);
@@ -408,6 +424,9 @@ export class Scene {
 			this.renderShadowMapCamera(camera, lights, renderer);
 			return;
 		}
+		if (this.enablePostProcessing) {
+			this.renderTexture.bindFramebuffer();
+		}
 		if (camera.enableStereo) {
 			camera.updateLeft();
 			renderer.render(camera, lights, this.renderSettings);
@@ -416,6 +435,9 @@ export class Scene {
 			return;
 		}
 		renderer.render(camera, lights, this.renderSettings);
+		if (this.enablePostProcessing) {
+			this.renderTexture.unbindFramebuffer();
+		}
 	}
 
 	protected renderShadowMapCamera(camera: Tea.ShadowMapCamera, lights: Array<Tea.Light>, renderer: Tea.Renderer): void {
@@ -460,5 +482,12 @@ export class Scene {
 			return !Tea.GeometryUtil.testPlanesAABB(planes, renderer.bounds);
 		}
 		return false;
+	}
+
+	protected refreshRenderTexture(): void {
+		var app = this.app;
+		this.renderTexture = new Tea.RenderTexture(app, app.width, app.height);
+		//this.renderTexture.filterMode = Tea.FilterMode.Bilinear;
+		this.renderTexture.wrapMode = Tea.TextureWrapMode.Mirror;
 	}
 }
