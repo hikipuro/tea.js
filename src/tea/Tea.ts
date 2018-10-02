@@ -71,6 +71,7 @@ export * from "./utils/Stats";
 export * from "./utils/StringUtil";
 export * from "./utils/Time";
 
+export * from "./objects/LayerMask";
 export * from "./objects/Mesh";
 export * from "./objects/Object3D";
 export * from "./objects/Physics";

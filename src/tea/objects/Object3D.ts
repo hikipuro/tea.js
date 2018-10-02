@@ -69,6 +69,8 @@ export class Object3D {
 	localRotation: Tea.Quaternion;
 	localScale: Tea.Vector3;
 	children: Array<Object3D>;
+	tag: string;
+	layer: number;
 	protected _m: Movement;
 	protected _parent: Object3D;
 	protected _components: Array<Tea.Component>;
@@ -83,6 +85,8 @@ export class Object3D {
 		this.localRotation = Tea.Quaternion.identity.clone();
 		this.localScale = Tea.Vector3.one.clone();
 		this.children = [];
+		this.tag = "";
+		this.layer = 0;
 		this._m = new Movement();
 		this._parent = null;
 		this._components = [];
