@@ -30,6 +30,7 @@ export * from "./enums/GradientMode";
 export * from "./enums/LightType";
 export * from "./enums/PrimitiveType";
 export * from "./enums/RigidbodyConstraints";
+export * from "./enums/ScreenOrientation";
 export * from "./enums/Space";
 export * from "./enums/TextAlignment";
 export * from "./enums/TextAnchor";
