@@ -124,6 +124,13 @@ export class App {
 		return navigator.onLine;
 	}
 
+	get runInBackground(): boolean {
+		return this._renderer.runInBackground;
+	}
+	set runInBackground(value: boolean) {
+		this._renderer.runInBackground = value;
+	}
+
 	isExtensionSupported(name: Tea.GLExtensions | string): boolean {
 		var extensions = this.supportedExtensions;
 		return extensions.indexOf(name) >= 0;
@@ -409,6 +416,7 @@ class AppRenderer extends Tea.EventDispatcher {
 	mouse: Tea.Mouse;
 	time: Tea.Time;
 	stats: Tea.Stats;
+	runInBackground: boolean;
 	protected _handle: number;
 
 	constructor(app: App) {
@@ -419,10 +427,14 @@ class AppRenderer extends Tea.EventDispatcher {
 		this.keyboard = new Tea.Keyboard(document.body);
 		this.mouse = new Tea.Mouse(app, this.app.canvas);
 		this.time = new Tea.Time();
+		this.runInBackground = false;
 		this._handle = 0;
 		this.createStats();
 
 		window.addEventListener("blur", () => {
+			if (this.runInBackground) {
+				return;
+			}
 			if (this.isStarted && this.isPaused === false) {
 				cancelAnimationFrame(this._handle);
 				this._handle = 0;
@@ -431,6 +443,9 @@ class AppRenderer extends Tea.EventDispatcher {
 			this.emit("pause");
 		});
 		window.addEventListener("focus", () => {
+			if (this.runInBackground) {
+				return;
+			}
 			if (this.isStarted && this.isPaused) {
 				this._handle = requestAnimationFrame(this.update);
 			}
