@@ -127,6 +127,13 @@ export * from "./GLParameters";
 export * from "./Keyboard";
 export * from "./Mouse";
 
+import * as ELabel from "./editor/Label";
+
+export module Editor {
+	export var  Label = ELabel.Label;
+	export type Label = ELabel.Label;
+}
+
 /**
  * degrees to radians.
  * @export

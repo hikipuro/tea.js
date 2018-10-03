@@ -1,16 +1,15 @@
 {
 	"compilerOptions": {
 		"target": "es6",
-		"module": "commonjs",
+		"module": "es2015",
 		"moduleResolution": "node",
-		//"esModuleInterop": true,
+		"esModuleInterop": true,
 		"sourceMap": true,
 		"noImplicitAny": false,
 		"noImplicitThis": true,
 		"outDir": "./dist",
 		"baseUrl": ".",
-		"paths": {
-		}
+		"paths": {}
 	},
 	"include": [
 		"./src/**/*"

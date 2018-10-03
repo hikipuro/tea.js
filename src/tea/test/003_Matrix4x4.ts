@@ -1,8 +1,7 @@
 import * as mocha from "mocha";
-import assert = require("assert");
+var assert = require("assert");
 import * as Tea from "../Tea";
 import { Matrix4x4 } from "../math/Matrix4x4";
-
 
 describe("Matrix4x4", () => {
 	function checkRange(m: Matrix4x4): void {

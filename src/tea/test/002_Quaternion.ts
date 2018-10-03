@@ -1,5 +1,5 @@
 import * as mocha from "mocha";
-import assert = require("assert");
+var assert = require("assert");
 import * as Tea from "../Tea";
 import { Quaternion } from "../math/Quaternion";
 import { isString } from "util";

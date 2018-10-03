@@ -5,6 +5,8 @@ import { Rotate } from "./Rotate";
 import { CameraRotate } from "./CameraRotate";
 import { HitTest } from "./HitTest";
 
+const Editor = Tea.Editor;
+
 export class Main {
 	app: Tea.App;
 	renderer: Tea.Renderer;
@@ -21,6 +23,8 @@ export class Main {
 		//console.log("width", Tea.Screen.width);
 		//console.log("height", Tea.Screen.height);
 		//console.log(Tea.Screen.fullscreen);
+
+		var label = new Editor.Label();
 
 		var b = document.querySelector("#b");
 		b.addEventListener("click", () => {
@@ -467,8 +471,8 @@ export class Main {
 		//ps.main.startSize = new Tea.ParticleSystem.MinMaxCurve(10, Tea.AnimationCurve.easeInOut(0, 0, 1, 1));
 		//ps.main.startSpeed = 2;
 		//ps.main.startSize = 0.5;
-		scene.addChild(particles);
-		ps.start();
+		//scene.addChild(particles);
+		//ps.start();
 
 		var curve = Tea.AnimationCurve.easeInOut(0, 3, 1, 5);
 		console.log(curve);

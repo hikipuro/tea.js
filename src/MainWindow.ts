@@ -3,7 +3,7 @@ import * as path from "path";
 import * as url from "url";
 import * as fs from "fs";
 
-import { MenuItem, ipcMain, IpcMessageEvent, MenuItemConstructorOptions } from "electron";
+//import { MenuItem, ipcMain, IpcMessageEvent, MenuItemConstructorOptions } from "electron";
 
 module Settings {
 	export const Title: string = "WebGL Test";

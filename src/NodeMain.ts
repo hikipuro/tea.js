@@ -12,6 +12,9 @@ class NodeMain {
 	protected _mainWindow: MainWindow = null;
 
 	constructor(app: Electron.App) {
+		//app.commandLine.appendSwitch("force-gpu-rasterization");
+		//app.commandLine.appendSwitch("ignore-gpu-blacklist");
+		//console.log(app.getGPUFeatureStatus());
 		this._app = app;
 		this.addAppEvents();
 	}
