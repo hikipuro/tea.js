@@ -5,7 +5,9 @@ import { Rotate } from "./Rotate";
 import { CameraRotate } from "./CameraRotate";
 import { HitTest } from "./HitTest";
 
-const Editor = Tea.Editor;
+import { Editor } from "./tea/editor/Editor";
+var editor = Editor.instance;
+console.log(editor);
 
 export class Main {
 	app: Tea.App;
@@ -24,7 +26,14 @@ export class Main {
 		//console.log("height", Tea.Screen.height);
 		//console.log(Tea.Screen.fullscreen);
 
-		var label = new Editor.Label();
+		//Editor.instance.$children[0].text = "aaa";
+		//var label = new Editor.Label();
+		//label.text = "test";
+		/*Editor.instance.$data.current = "Button";
+		Editor.instance.nextTick(() => {
+			console.log(Editor.instance.$children[0]);
+			Editor.instance.$children[0].$data.text = "***";
+		});*/
 
 		var b = document.querySelector("#b");
 		b.addEventListener("click", () => {
@@ -671,6 +680,13 @@ export class Main {
 	}
 }
 
-document.addEventListener("DOMContentLoaded", () => {
-	var main = new Main();
-});
+var main: Main = null;
+var loaded = () => {
+	document.removeEventListener(
+		"DOMContentLoaded", loaded
+	);
+	main = new Main();
+};
+document.addEventListener(
+	"DOMContentLoaded", loaded
+);

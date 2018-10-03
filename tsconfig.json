@@ -4,6 +4,7 @@
 		"module": "es2015",
 		"moduleResolution": "node",
 		"esModuleInterop": true,
+		"experimentalDecorators": true,
 		"sourceMap": true,
 		"noImplicitAny": false,
 		"noImplicitThis": true,

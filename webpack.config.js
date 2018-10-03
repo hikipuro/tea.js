@@ -1,14 +1,18 @@
 const path = require("path");
-const nodeExternals = require("webpack-node-externals");
-module.exports = {
-	mode: "development",
-	target: "node",
-	externals: [nodeExternals()],
+//const nodeExternals = require("webpack-node-externals");
+
+const settings = {
+	mode: "development"
+};
+
+const nodeConfig = {
+	mode: settings.mode,
+	target: "electron-main",
+	//externals: [nodeExternals()],
 	node: {
 		__dirname: false
 	},
 	entry: {
-		"html/main": "./src/Main.ts",
 		"dist/NodeMain": "./src/NodeMain.ts",
 	},
 	output: {
@@ -28,4 +32,40 @@ module.exports = {
 			}
 		]
 	}
-}
+};
+
+const teaConfig = {
+	mode: settings.mode,
+	target: "web",
+	node: {
+		__dirname: false
+	},
+	entry: {
+		"html/main": "./src/Main.ts",
+	},
+	output: {
+		path: path.join(__dirname, "/"),
+		filename: "[name].js"
+	},
+	resolve: {
+		alias: {
+			"vue": "vue/dist/vue.common.js"
+		},
+		extensions: [".ts", ".js"]
+	},
+	devServer: {
+		contentBase: path.join(__dirname, "/html")
+	},
+	module: {
+		rules: [
+			{
+				test: /\.ts$/, loader: "ts-loader"
+			}
+		]
+	}
+};
+
+module.exports = [
+	nodeConfig,
+	teaConfig
+];

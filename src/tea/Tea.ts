@@ -127,11 +127,13 @@ export * from "./GLParameters";
 export * from "./Keyboard";
 export * from "./Mouse";
 
+import * as EEditor from "./editor/Editor";
 import * as ELabel from "./editor/Label";
 
 export module Editor {
-	export var  Label = ELabel.Label;
-	export type Label = ELabel.Label;
+	export var  Editor = EEditor;
+	//export var  Label = ELabel.Label;
+	//export type Label = ELabel.Label;
 }
 
 /**
