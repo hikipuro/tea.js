@@ -1,5 +1,5 @@
 const path = require("path");
-//const nodeExternals = require("webpack-node-externals");
+const nodeExternals = require("webpack-node-externals");
 
 const settings = {
 	mode: "development"
@@ -8,7 +8,7 @@ const settings = {
 const nodeConfig = {
 	mode: settings.mode,
 	target: "electron-main",
-	//externals: [nodeExternals()],
+	externals: [nodeExternals()],
 	node: {
 		__dirname: false
 	},
