@@ -3,16 +3,13 @@
 <head>
 <meta charset="utf-8">
 <link rel="stylesheet" href="css/Main.css">
+<link rel="stylesheet" href="css/editor.css">
 <script>
 window.ELECTRON_DISABLE_SECURITY_WARNINGS = true;
 </script>
 <script src="main.js"></script>
 </head>
 <body>
-<canvas id="canvas"></canvas>
-<button id="b">Test</button>
-<div id="editor">
-	<component :is="current"></component>
-</div>
+<div id="editor"></div>
 </body>
 </html>

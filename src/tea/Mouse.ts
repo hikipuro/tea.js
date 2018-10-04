@@ -106,8 +106,12 @@ export class Mouse {
 			return;
 		}
 		//e.stopPropagation();
-		this.x = e.offsetX;
-		this.y = this._app.height - (e.offsetY + 1);
+		var width = this._app.width;
+		var height = this._app.height;
+		var clientWidth = this._element.clientWidth;
+		var clientHeight = this._element.clientHeight;
+		this.x = width * e.offsetX / clientWidth;
+		this.y = height * (1.0 - (e.offsetY / clientHeight));
 		this._position.set(this.x, this.y, 0);
 		this._isMoved = true;
 	}

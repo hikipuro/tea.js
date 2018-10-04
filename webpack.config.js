@@ -1,5 +1,6 @@
 const path = require("path");
 const nodeExternals = require("webpack-node-externals");
+const ExtractTextPlugin = require("extract-text-webpack-plugin");
 
 const settings = {
 	mode: "development"
@@ -65,7 +66,34 @@ const teaConfig = {
 	}
 };
 
+const scssConfig = {
+	mode: settings.mode,
+	context: path.join(__dirname, "./src/tea/editor/css"),
+	entry: {
+		"html/css/editor": "./editor.scss",
+	},
+	output: {
+		path: path.join(__dirname, "/"),
+		filename: "[name].css"
+	},
+	module: {
+		rules: [
+			{
+				test: /\.scss$/,
+				use: ExtractTextPlugin.extract({
+					fallback: "style-loader",
+					use: ["css-loader", "sass-loader"]
+				})
+			}
+		]
+	},
+	plugins: [
+		new ExtractTextPlugin('[name].css')
+	]
+};
+
 module.exports = [
 	nodeConfig,
-	teaConfig
+	teaConfig,
+	scssConfig
 ];

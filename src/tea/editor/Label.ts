@@ -1,9 +1,8 @@
 import Vue from "vue";
-//import Vue from "vue/dist/vue.common";
 import Component from "vue-class-component";
 
 @Component({
-	template: "<div @click='onClick'>{{text}}</div>",
+	template: "<span @click='onClick'>{{ text }}</span>",
 	data: () => {
 		return {
 			text: "Label"
@@ -15,9 +14,4 @@ export class Label extends Vue {
 	onClick (): void {
 		//window.alert(this.$data.test);
 	}
-	/*
-	set text(value: string) {
-		this.$data.message = "test";
-	}
-	*/
 }

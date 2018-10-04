@@ -1,19 +1,13 @@
 import Vue from "vue";
-//import Vue from "vue/dist/vue.common";
+import Component from "vue-class-component";
 
-//console.log("Vue", Vue);
-
-export var Button = Vue.extend({
+@Component({
+	template: "<button>{{text}}</button>",
 	data: () => {
 		return {
-			text: 'Hello Vue!'
-		};
-	},
-	template: "<button>{{text}}</button>",
-	/*
-	set text(value: string) {
-		console.log("***** TEST");
-		this.$data.text = value;
+			text: "Button"
+		}
 	}
-	*/
-});
+})
+export class Button extends Vue {
+}

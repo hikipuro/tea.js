@@ -4,6 +4,7 @@ models
 html/main.js
 html/media
 html/models
+html/css/editor.css
 
 # Logs
 logs

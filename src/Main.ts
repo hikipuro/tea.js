@@ -26,21 +26,15 @@ export class Main {
 		//console.log("height", Tea.Screen.height);
 		//console.log(Tea.Screen.fullscreen);
 
-		//Editor.instance.$children[0].text = "aaa";
-		//var label = new Editor.Label();
-		//label.text = "test";
-		/*Editor.instance.$data.current = "Button";
-		Editor.instance.nextTick(() => {
-			console.log(Editor.instance.$children[0]);
-			Editor.instance.$children[0].$data.text = "***";
-		});*/
-
-		var b = document.querySelector("#b");
-		b.addEventListener("click", () => {
-			console.log("click", Tea.now());
-			//this.app.bench();
+		var editor = Editor.instance;
+		editor.panes.left.component = "ListView";
+		editor.panes.main.content = `<canvas id="canvas"></canvas>`;
+		editor.nextTick(() => {
+			this.init();
 		});
+	}
 
+	init(): void {
 		this.count = 0;
 		this.app = new Tea.App("canvas", {
 			antialias: false,
@@ -51,6 +45,9 @@ export class Main {
 		this.app.canvas.style.background = "#000";
 		this.app.width = 400;
 		this.app.height = 400;
+		this.app.canvas.style.width = "100%";
+		this.app.canvas.width = document.body.clientWidth;
+		this.app.canvas.height = document.body.clientHeight;
 
 		this.app.renderer.on("resize", () => {
 			this.app.canvas.width = document.body.clientWidth;
@@ -677,6 +674,18 @@ export class Main {
 		var v3 = new Tea.Vector3(-2, -3, -4);
 		console.log(v3.magnitude);
 		*/
+
+		var items = [];
+		for (var i = scene.children.length - 1; i >= 0; i--) {
+			var child = scene.children[i];
+			items.push({
+				text: child.name
+			});
+		}
+
+		var editor = Editor.instance;
+		var listView = editor.panes.left.getComponent() as Tea.Editor.ListView;
+		listView.items = items;
 	}
 }
 

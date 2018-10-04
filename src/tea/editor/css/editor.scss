@@ -1,0 +1,19 @@
+$parent: "#editor";
+@import "Button.scss";
+@import "Label.scss";
+@import "ListView.scss";
+
+#{$parent} {
+	width: 100%;
+	height: 100%;
+	div.LeftPane {
+		float: left;
+		width: 200px;
+		height: 100%;
+	}
+	div.MainPane {
+		float: left;
+		width: calc(100% - 200px);
+		height: 100%;
+	}
+}
