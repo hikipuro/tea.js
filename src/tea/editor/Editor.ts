@@ -1,6 +1,7 @@
 import Vue from "vue";
 import Component from "vue-class-component";
 import { Button } from "./Button";
+import { ContextMenu } from "./ContextMenu";
 import { Label } from "./Label";
 import { ListView } from "./ListView";
 import { Pane } from "./Pane";
@@ -8,6 +9,7 @@ import { TreeView } from "./TreeView";
 
 //*
 Vue.component("Button", Button);
+Vue.component("ContextMenu", ContextMenu);
 Vue.component("Label", Label);
 Vue.component("ListView", ListView);
 Vue.component("Pane", Pane);
@@ -16,9 +18,12 @@ Vue.component("TreeView", TreeView);
 
 @Component({
 	template: `
-		<div id="editor">
+		<div
+			id="editor"
+			@mousedown="onMouseDown">
 			<Pane ref="left" class="LeftPane"></Pane>
 			<Pane ref="main" class="MainPane"></Pane>
+			<ContextMenu ref="menu"></ContextMenu>
 		</div>
 	`,
 	data: () => { return {
@@ -42,9 +47,11 @@ export class Editor extends Vue {
 		super(obj);
 		this.panes = new Editor.Panes(this);
 	}
-	
-	onClick(): void {
+
+	get menu(): ContextMenu {
+		return this.$refs.menu as ContextMenu;
 	}
+	
 	nextTick(callback: () => void): void {
 		this.$nextTick(callback);
 	}
@@ -56,10 +63,20 @@ export class Editor extends Vue {
 			console.log(i);
 		}
 	}
+
+	protected onMouseDown(e: MouseEvent): void {
+		var parent = e.srcElement.parentElement;
+		if (parent && parent.classList.contains("ContextMenu")) {
+			return;
+		}
+		this.menu.hide();
+	}
 }
 
 var  _Button = Button;
 type _Button = Button;
+var  _ContextMenu = ContextMenu;
+type _ContextMenu = ContextMenu;
 var  _Label = Label;
 type _Label = Label;
 var  _ListView = ListView;
@@ -86,6 +103,8 @@ export module Editor {
 	}
 	export var  Button = _Button;
 	export type Button = _Button;
+	export var  ContextMenu = _ContextMenu;
+	export type ContextMenu = _ContextMenu;
 	export var  Label = _Label;
 	export type Label = _Label;
 	export var  ListView = _ListView;

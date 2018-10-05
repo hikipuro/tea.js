@@ -118,7 +118,7 @@ export class Mouse {
 
 	protected onMouseDown = (e: MouseEvent): void => {
 		e.preventDefault();
-		e.stopPropagation();
+		//e.stopPropagation();
 		this.buttons[e.button] = true;
 	}
 

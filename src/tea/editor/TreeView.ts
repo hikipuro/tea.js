@@ -97,7 +97,8 @@ export class Item extends Vue {
 	template: `
 		<ul
 			class="TreeView"
-			@click="onClick">
+			@click="onClick"
+			@contextmenu="onContextMenu">
 			<item
 				v-for="(model, index) in items"
 				:key="index"
@@ -156,6 +157,10 @@ export class TreeView extends Vue {
 		});
 		this.selectedItem = null;
 		this.$emit("select", null);
+	}
+
+	protected onContextMenu(e: MouseEvent): void {
+		this.$emit("menu", e);
 	}
 
 	protected onSelectItem(item: Item): void {

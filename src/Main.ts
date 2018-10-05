@@ -702,8 +702,22 @@ export class Main {
 		//var listView = editor.panes.left.getComponent() as Tea.Editor.ListView;
 		//listView.items = items;
 
+		editor.menu.$on("select", (item) => {
+			console.log("menu select", item.text);
+		});
 		type TreeView = Tea.Editor.TreeView;
 		var treeView = editor.panes.left.getComponent() as TreeView;
+		treeView.$on("menu", (e) => {
+			editor.menu.items = [
+				{ text: "test1" },
+				{ text: "-" },
+				{ text: "test2" },
+				{ text: "test3" },
+				{ text: "test4" }
+			]
+			editor.menu.move(e.clientX, e.clientY);
+			editor.menu.show();
+		});
 		treeView.items = items;
 		/*
 		treeView.items = [
