@@ -6,8 +6,7 @@ import { CameraRotate } from "./CameraRotate";
 import { HitTest } from "./HitTest";
 
 import { Editor } from "./tea/editor/Editor";
-var editor = Editor.instance;
-console.log(editor);
+var editor: Editor;
 
 export class Main {
 	app: Tea.App;
@@ -25,9 +24,9 @@ export class Main {
 		//console.log("width", Tea.Screen.width);
 		//console.log("height", Tea.Screen.height);
 		//console.log(Tea.Screen.fullscreen);
-
-		var editor = Editor.instance;
-		editor.panes.left.component = "ListView";
+		
+		editor = Editor.instance;
+		editor.panes.left.component = "TreeView";
 		editor.panes.main.content = `<canvas id="canvas"></canvas>`;
 		editor.nextTick(() => {
 			this.init();
@@ -676,16 +675,70 @@ export class Main {
 		*/
 
 		var items = [];
+		var createItems = (items, child) => {
+			var item = {
+				text: child.name,
+				children: []
+			};
+			child.children.forEach((i) => {
+				createItems(item.children, i);
+			});
+			items.push(item);
+		};
 		for (var i = scene.children.length - 1; i >= 0; i--) {
 			var child = scene.children[i];
+			createItems(items, child);
+			/*
+			var item = {
+				text: child.name,
+				children: []
+			}
 			items.push({
 				text: child.name
 			});
+			*/
 		}
 
-		var editor = Editor.instance;
-		var listView = editor.panes.left.getComponent() as Tea.Editor.ListView;
-		listView.items = items;
+		//var listView = editor.panes.left.getComponent() as Tea.Editor.ListView;
+		//listView.items = items;
+
+		type TreeView = Tea.Editor.TreeView;
+		var treeView = editor.panes.left.getComponent() as TreeView;
+		treeView.items = items;
+		/*
+		treeView.items = [
+			{
+				text: "test",
+				children: [
+					{
+						text: "test 2",
+						children: [
+							{
+								text: "test 3",
+							}
+						]
+					},
+					{ text: "test 3"}
+				]
+			}, {
+				text: "test 2"
+			}, {
+				text: "test 3",
+				children: [
+					{
+						text: "test 2",
+					}
+				]
+			}
+		];
+		*/
+		treeView.$on("select", () => {
+			console.log("select", treeView.selectedItem);
+		});
+		treeView.$nextTick(() => {
+			console.log(treeView.childCount);
+			treeView.expandAll();
+		})
 	}
 }
 

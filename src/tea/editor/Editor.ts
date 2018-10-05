@@ -4,12 +4,14 @@ import { Button } from "./Button";
 import { Label } from "./Label";
 import { ListView } from "./ListView";
 import { Pane } from "./Pane";
+import { TreeView } from "./TreeView";
 
 //*
 Vue.component("Button", Button);
 Vue.component("Label", Label);
 Vue.component("ListView", ListView);
 Vue.component("Pane", Pane);
+Vue.component("TreeView", TreeView);
 //*/
 
 @Component({
@@ -62,6 +64,10 @@ var  _Label = Label;
 type _Label = Label;
 var  _ListView = ListView;
 type _ListView = ListView;
+var  _Pane = Pane;
+type _Pane = Pane;
+var  _TreeView = TreeView;
+type _TreeView = TreeView;
 
 export module Editor {
 	export class Panes {
@@ -84,6 +90,10 @@ export module Editor {
 	export type Label = _Label;
 	export var  ListView = _ListView;
 	export type ListView = _ListView;
+	export var  Pane = _Pane;
+	export type Pane = _Pane;
+	export var  TreeView = _TreeView;
+	export type TreeView = _TreeView;
 }
 
 var loaded = () => {

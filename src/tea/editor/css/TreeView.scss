@@ -1,0 +1,40 @@
+#{$parent} {
+	$folderWidth: 1.3em;
+	$lineHeight: 1.5;
+
+	ul.TreeView {
+		margin: 0;
+		padding: 0;
+		height: 100%;
+		line-height: $lineHeight;
+		background-color: #ddd;
+		list-style-type: none;
+
+		ul {
+			padding-left: 0;
+			list-style-type: none;
+		}
+
+		li {
+			padding-left: 0;
+			cursor: pointer;
+			.item {
+				letter-spacing: -1em;
+			}
+			.folder {
+				display: inline-block;
+				min-width: $folderWidth;
+				letter-spacing: normal;
+			}
+			.text {
+				display: inline-block;
+				letter-spacing: normal;
+			}
+		}
+
+		div.selected {
+			color: white;
+			background-color: #8af;
+		}
+	}
+}

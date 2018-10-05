@@ -2,6 +2,7 @@ $parent: "#editor";
 @import "Button.scss";
 @import "Label.scss";
 @import "ListView.scss";
+@import "TreeView.scss";
 
 #{$parent} {
 	width: 100%;

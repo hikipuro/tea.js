@@ -70,7 +70,7 @@ const scssConfig = {
 	mode: settings.mode,
 	context: path.join(__dirname, "./src/tea/editor/css"),
 	entry: {
-		"html/css/editor": "./editor.scss",
+		"html/css/editor": "./Editor.scss",
 	},
 	output: {
 		path: path.join(__dirname, "/"),
