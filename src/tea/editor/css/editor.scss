@@ -18,14 +18,19 @@ $parent: "#editor";
 		width: 200px;
 		height: 100%;
 		border-right: 1px solid theme("border");
+		overflow-x: hidden;
+		overflow-y: auto;
 	}
 	div.MainPanel {
 		height: 100%;
+		overflow: hidden;
 	}
 	div.RightPanel {
 		width: 250px;
 		height: 100%;
 		border-left: 1px solid theme("border");
+		overflow-x: hidden;
+		overflow-y: auto;
 	}
 
 	.fadeout-leave-active {

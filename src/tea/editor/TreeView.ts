@@ -14,7 +14,7 @@ import Component from "vue-class-component";
 				<div
 					class="folder"
 					@click.stop="toggle">
-					{{ isFolder ? isOpen ? "🔽" : "▶️" : "" }}
+					{{ isFolder ? isOpen ? "⏏️" : "▶️" : "" }}
 				</div>
 				<div class="text">{{ model.text }}</div>
 			</div>
@@ -101,6 +101,7 @@ export class Item extends Vue {
 	template: `
 		<ul
 			class="TreeView"
+			@keydown="onKeyDown"
 			@click="onClick"
 			@contextmenu="onContextMenu">
 			<item
@@ -152,6 +153,38 @@ export class TreeView extends Vue {
 		});
 	}
 
+	expand(): void {
+		if (this.selectedItem == null) {
+			return;
+		}
+		this.selectedItem.expand();
+	}
+
+	collapse(): void {
+		if (this.selectedItem == null) {
+			return;
+		}
+		this.selectedItem.collapse();
+	}
+
+	selectNext(): void {
+		if (this.selectedItem == null) {
+			this.onSelectItem(this.$children[0] as Item);
+			return;
+		}
+		var index = this.$children.indexOf(this.selectedItem);
+		this.onSelectItem(this.$children[index + 1] as Item);
+	}
+
+	selectPrev(): void {
+		if (this.selectedItem == null) {
+			this.onSelectItem(this.$children[this.$children.length - 1] as Item);
+			return;
+		}
+		var index = this.$children.indexOf(this.selectedItem);
+		this.onSelectItem(this.$children[index - 1] as Item);
+	}
+
 	protected onClick(): void {
 		if (this.selectedItem == null) {
 			return;
@@ -167,8 +200,26 @@ export class TreeView extends Vue {
 		this.$emit("menu", e);
 	}
 
+	protected onKeyDown = (e: KeyboardEvent): void => {
+		console.log("onKeyDown", e.key, document.activeElement);
+		switch (e.key) {
+			case "ArrowUp":
+				this.selectPrev();
+				break;
+			case "ArrowDown":
+				this.selectNext();
+				break;
+			case "ArrowLeft":
+				this.collapse();
+				break;
+			case "ArrowRight":
+				this.expand();
+				break;
+		}
+	}
+
 	protected onSelectItem(item: Item): void {
-		if (this.selectedItem == item) {
+		if (item == null || item == this.selectedItem) {
 			return;
 		}
 		this.forEachChild((item: Item) => {

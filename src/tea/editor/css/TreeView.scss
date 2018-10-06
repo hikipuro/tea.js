@@ -33,6 +33,14 @@
 
 		div.selected {
 			color: white;
+			background-color: theme("selectedInactive");
+		}
+	}
+	
+	ul.TreeView:focus {
+		outline: 0;
+
+		div.selected {
 			background-color: theme("selected");
 		}
 	}

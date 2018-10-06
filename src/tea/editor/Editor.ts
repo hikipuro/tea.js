@@ -34,7 +34,7 @@ Vue.component("VLayout", VLayout);
 					height: '100%'
 				}">
 				<Panel ref="left" class="LeftPanel">
-					<TreeView></TreeView>
+					<TreeView tabindex="0"></TreeView>
 				</Panel>
 				<Panel ref="main" class="MainPanel">
 					<div>
