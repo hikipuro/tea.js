@@ -14,7 +14,7 @@ import Component from "vue-class-component";
 				<div
 					class="folder"
 					@click.stop="toggle">
-					{{ isFolder ? isOpen ? "[-]" : "[+]" : "" }}
+					{{ isFolder ? isOpen ? "🔽" : "▶️" : "" }}
 				</div>
 				<div class="text">{{ model.text }}</div>
 			</div>
@@ -100,9 +100,9 @@ export class Item extends Vue {
 			@click="onClick"
 			@contextmenu="onContextMenu">
 			<item
-				v-for="(model, index) in items"
+				v-for="(item, index) in items"
 				:key="index"
-				:model="model"
+				:model="item"
 				:depth="0"
 				@select="onSelectItem">
 			</item>
@@ -152,7 +152,7 @@ export class TreeView extends Vue {
 		if (this.selectedItem == null) {
 			return;
 		}
-		this.forEachChildren((item: Item) => {
+		this.forEachChild((item: Item) => {
 			item.select(false);
 		});
 		this.selectedItem = null;
@@ -167,7 +167,7 @@ export class TreeView extends Vue {
 		if (this.selectedItem == item) {
 			return;
 		}
-		this.forEachChildren((item: Item) => {
+		this.forEachChild((item: Item) => {
 			item.select(false);
 		});
 		item.select();
@@ -175,7 +175,7 @@ export class TreeView extends Vue {
 		this.$emit("select", item);
 	}
 
-	protected forEachChildren(callback: (item: Item) => void) {
+	protected forEachChild(callback: (item: Item) => void) {
 		var forEach = (item: Item) => {
 			callback(item);
 			item.$children.forEach((item: Item) => {

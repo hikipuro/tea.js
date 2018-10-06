@@ -26,9 +26,9 @@ export class Main {
 		//console.log(Tea.Screen.fullscreen);
 		
 		editor = Editor.instance;
-		editor.panes.left.component = "TreeView";
-		editor.panes.main.content = `<canvas id="canvas"></canvas>`;
-		editor.nextTick(() => {
+		//editor.panes.left.component = "TreeView";
+		//editor.panes.main.content = `<canvas id="canvas"></canvas>`;
+		editor.$nextTick(() => {
 			this.init();
 		});
 	}
@@ -45,12 +45,12 @@ export class Main {
 		this.app.width = 400;
 		this.app.height = 400;
 		this.app.canvas.style.width = "100%";
-		this.app.canvas.width = document.body.clientWidth;
-		this.app.canvas.height = document.body.clientHeight;
+		//this.app.canvas.width = document.body.clientWidth;
+		//this.app.canvas.height = document.body.clientHeight;
 
 		this.app.renderer.on("resize", () => {
-			this.app.canvas.width = document.body.clientWidth;
-			this.app.canvas.height = document.body.clientHeight;
+			//this.app.canvas.width = document.body.clientWidth;
+			//this.app.canvas.height = document.body.clientHeight;
 		});
 
 		//console.log("aspectRatio", this.app.aspectRatio);
@@ -705,8 +705,19 @@ export class Main {
 		editor.menu.$on("select", (item) => {
 			console.log("menu select", item.text);
 		});
+		/*
+		editor.layout.add("Label");
+		editor.layout.add("Label");
+		editor.layout.add("Label");
+		editor.layout.$nextTick(() => {
+			//editor.layout.panel(0).width = "100px";
+			console.log("editor.layout", editor.layout.panelCount);
+			editor.layout.panel(0).padding = "10px";
+			//editor.layout.panel(0).paddingBottom = "10px";
+		});
+		*/
 		type TreeView = Tea.Editor.TreeView;
-		var treeView = editor.panes.left.getComponent() as TreeView;
+		var treeView = editor.panels.left.$children[0] as TreeView;
 		treeView.$on("menu", (e) => {
 			editor.menu.items = [
 				{ text: "test1" },

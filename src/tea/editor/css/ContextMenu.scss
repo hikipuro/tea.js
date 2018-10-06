@@ -1,23 +1,27 @@
 #{$parent} {
 	$fontSize: 14px;
 	$lineHeight: 1.4;
+	$background: #2f2d30;
+	$separator: #535154;
+	$border: rgba(255, 255, 255, 0.1);
+	$shadow: rgba(0, 0, 0, 0.1);
 
 	div.ContextMenu {
 		position: absolute;
 		padding: 0.3em 0;
 		font-size: $fontSize;
 		line-height: $lineHeight;
-		background-color: #eee;
+		background-color: $background;
 		border-radius: 0.4em;
-		border: 1px solid rgba(0, 0, 0, 0.1);
-		box-shadow: 1px 1px 12px rgba(0, 0, 0, 0.1);
+		border: 1px solid $border;
+		box-shadow: 1px 1px 12px $shadow;
 
 		.item {
 			padding: 0 1.5em;
 		}
 		.item:hover {
 			color: white;
-			background-color: $selectedColor;
+			background-color: theme("selected");
 		}
 		.selected:hover {
 			color: inherit;
@@ -25,11 +29,11 @@
 		}
 		.selected-after {
 			color: white;
-			background-color: $selectedColor;
+			background-color: theme("selected");
 		}
 		.selected-after:hover {
 			color: white;
-			background-color: $selectedColor;
+			background-color: theme("selected");
 		}
 		.unselected {
 			color: inherit;
@@ -42,7 +46,7 @@
 		.separator {
 			margin: 0.3em 0 -0.7em 0;
 			height: 1em;
-			border-top: 2px solid #e2e2e2;
+			border-top: 2px solid $separator;
 		}
 		.separator:hover {
 			color: transparent;

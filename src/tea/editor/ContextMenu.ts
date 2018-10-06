@@ -53,31 +53,33 @@ export class Item extends Vue {
 		}, 50);
 		setTimeout(() => {
 			this.isSelectedAfter = false;
-		}, 100);
-		setTimeout(() => {
 			this.$emit("select", this);
-		}, 150);
+		}, 100);
 	}
 }
 
 @Component({
 	template: `
-		<div
-			class="ContextMenu"
-			:style="{
-				left: x + 'px',
-				top: y + 'px',
-				display: isVisible ? 'block' : 'none'
-			}">
-			<item
-				v-for="(model, index) in items"
-				:key="index"
-				:model="model"
-				:depth="0"
-				@beforeSelect="onBeforeSelect"
-				@select="onSelect">
-			</item>
-		</div>
+		<transition
+			name="fadeout"
+			@after-leave="onFadeoutComplete">
+			<div
+				class="ContextMenu"
+				v-if="isVisible"
+				:style="{
+					left: x + 'px',
+					top: y + 'px'
+				}">
+				<item
+					v-for="(model, index) in items"
+					:key="index"
+					:model="model"
+					:depth="0"
+					@beforeSelect="onBeforeSelect"
+					@select="onSelect">
+				</item>
+			</div>
+		</transition>
 	`,
 	data: () => { return {
 		x: 0,
@@ -97,20 +99,39 @@ export class ContextMenu extends Vue {
 	protected _isSelectStart: boolean = false;
 
 	move(x: number, y: number): void {
+		if (this._isSelectStart) {
+			return;
+		}
 		this.x = x;
 		this.y = y;
 	}
 
 	show(): void {
+		if (this._isSelectStart) {
+			return;
+		}
 		this.isVisible = true;
+		this.$nextTick(() => {
+			var screenWidth = document.body.clientWidth;
+			var screenHeight = document.body.clientHeight;
+			var width = this.$el.clientWidth;
+			var height = this.$el.clientHeight;
+			var xMax = this.x + width;
+			var yMax = this.y + height;
+			if (xMax > screenWidth) {
+				this.x = screenWidth - width;
+			}
+			if (yMax > screenHeight) {
+				this.y = screenHeight - height;
+			}
+		});
 	}
 
 	hide(): void {
+		if (this._isSelectStart) {
+			return;
+		}
 		this.isVisible = false;
-	}
-
-	protected onClick(): void {
-		console.log("onClick", this);
 	}
 
 	protected onBeforeSelect(item: Item): void {
@@ -118,7 +139,7 @@ export class ContextMenu extends Vue {
 			return;
 		}
 		this._isSelectStart = true;
-		this.forEachChildren((i) => {
+		this.forEachChild((i) => {
 			if (i == item) {
 				return;
 			}
@@ -130,15 +151,18 @@ export class ContextMenu extends Vue {
 		if (this._isSelectStart === false) {
 			return;
 		}
-		this.hide();
-		this._isSelectStart = false;
-		this.forEachChildren((item) => {
+		this.forEachChild((item) => {
 			item.isUnselected = false;
 		});
+		this.isVisible = false;
 		this.$emit("select", item);
 	}
 
-	protected forEachChildren(callback: (item: Item) => void) {
+	protected onFadeoutComplete(): void {
+		this._isSelectStart = false;
+	}
+
+	protected forEachChild(callback: (item: Item) => void) {
 		var forEach = (item: Item) => {
 			callback(item);
 			item.$children.forEach((item: Item) => {

@@ -1,0 +1,18 @@
+$themeColors: (
+	"dark": (
+		"font": #ddd,
+		"selected": #0e5ccd,
+		"selectedInactive": #464646,
+		"foreground": #2b2d2f,
+		"background": #1e1f21,
+		"border": #111112
+	)
+);
+
+//$selectedColor: #489cf4;
+
+@function theme($variant: "font") {
+	$key: "dark";
+	$map: map-get($themeColors, $key);
+	@return map-get($map, $variant);
+}

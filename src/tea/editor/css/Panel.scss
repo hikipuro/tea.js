@@ -1,0 +1,18 @@
+#{$parent} {
+	div.Panel {
+		position: relative;
+		box-sizing: border-box;
+		background-color: theme("background");
+		overflow: scroll;
+		min-width: 50px;
+	}
+	div.Panel.resizeX {
+		resize: horizontal;
+	}
+	div.Panel.resizeY {
+		resize: vertical;
+	}
+	div.Panel.resize {
+		resize: both;
+	}
+}

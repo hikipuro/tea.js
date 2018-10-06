@@ -7,7 +7,6 @@
 		padding: 0;
 		height: 100%;
 		line-height: $lineHeight;
-		background-color: #ddd;
 		list-style-type: none;
 
 		ul {
@@ -34,7 +33,7 @@
 
 		div.selected {
 			color: white;
-			background-color: $selectedColor;
+			background-color: theme("selected");
 		}
 	}
 }
