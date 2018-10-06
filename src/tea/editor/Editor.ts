@@ -3,20 +3,24 @@ import Component from "vue-class-component";
 import { Button } from "./Button";
 import { ContextMenu } from "./ContextMenu";
 import { HLayout } from "./HLayout";
+import { Inspector } from "./Inspector";
 import { Label } from "./Label";
 import { ListView } from "./ListView";
 import { Panel } from "./Panel";
 import { TreeView } from "./TreeView";
+import { Vector3 } from "./Vector3";
 import { VLayout } from "./VLayout";
 
 //*
 Vue.component("Button", Button);
 Vue.component("ContextMenu", ContextMenu);
 Vue.component("HLayout", HLayout);
+Vue.component("Inspector", Inspector);
 Vue.component("Label", Label);
 Vue.component("ListView", ListView);
 Vue.component("Panel", Panel);
 Vue.component("TreeView", TreeView);
+Vue.component("Vector3", Vector3);
 Vue.component("VLayout", VLayout);
 //*/
 
@@ -33,10 +37,12 @@ Vue.component("VLayout", VLayout);
 					<TreeView></TreeView>
 				</Panel>
 				<Panel ref="main" class="MainPanel">
-					<canvas id="canvas"></canvas>
+					<div>
+						<canvas id="canvas"></canvas>
+					</div>
 				</Panel>
-				<Panel class="RightPanel">
-					<TreeView ref="right"></TreeView>
+				<Panel ref="right" class="RightPanel">
+					<Inspector></Inspector>
 				</Panel>
 			</HLayout>
 			<ContextMenu ref="menu"></ContextMenu>
@@ -94,6 +100,8 @@ var  _ContextMenu = ContextMenu;
 type _ContextMenu = ContextMenu;
 var  _HLayout = HLayout;
 type _HLayout = HLayout;
+var  _Inspector = Inspector;
+type _Inspector = Inspector;
 var  _Label = Label;
 type _Label = Label;
 var  _ListView = ListView;
@@ -102,6 +110,8 @@ var  _Panel = Panel;
 type _Panel = Panel;
 var  _TreeView = TreeView;
 type _TreeView = TreeView;
+var  _Vector3 = Vector3;
+type _Vector3 = Vector3;
 var  _VLayout = VLayout;
 type _VLayout = VLayout;
 
@@ -115,6 +125,14 @@ export module Editor {
 			var $refs = this.editor.$refs;
 			return $refs.left as Panel;
 		}
+		get main(): Panel {
+			var $refs = this.editor.$refs;
+			return $refs.main as Panel;
+		}
+		get right(): Panel {
+			var $refs = this.editor.$refs;
+			return $refs.right as Panel;
+		}
 	}
 	export var  Button = _Button;
 	export type Button = _Button;
@@ -122,6 +140,8 @@ export module Editor {
 	export type ContextMenu = _ContextMenu;
 	export var  HLayout = _HLayout;
 	export type HLayout = _HLayout;
+	export var  Inspector = _Inspector;
+	export type Inspector = _Inspector;
 	export var  Label = _Label;
 	export type Label = _Label;
 	export var  ListView = _ListView;
@@ -130,6 +150,8 @@ export module Editor {
 	export type Panel = _Panel;
 	export var  TreeView = _TreeView;
 	export type TreeView = _TreeView;
+	export var  Vector3 = _Vector3;
+	export type Vector3 = _Vector3;
 	export var  VLayout = _VLayout;
 	export type VLayout = _VLayout;
 }

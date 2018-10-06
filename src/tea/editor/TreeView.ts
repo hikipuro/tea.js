@@ -54,6 +54,10 @@ export class Item extends Vue {
 	title: string;
 	tag: any;
 
+	get text(): string {
+		return this.model.text;
+	}
+
 	get isFolder(): boolean {
 		return this.model.children &&
 			this.model.children.length;

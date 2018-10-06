@@ -1,0 +1,28 @@
+#{$parent} {
+	div.Vector3 {
+		position: relative;
+		width: 100%;
+		line-height: 1.5;
+		white-space: nowrap;
+		overflow: hidden;
+
+		.title {
+			display: inline-block;
+			width: 30%;
+		}
+
+		.value {
+			display: inline-block;
+			position: absolute;
+			right: 0;
+			width: 70%;
+			text-align: right;
+		}
+
+		input {
+			min-width: 3.5em;
+			width: auto;
+			height: 1em;
+		}
+	}
+}

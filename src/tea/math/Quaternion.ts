@@ -138,11 +138,12 @@ export class Quaternion extends Array<number> {
 		var t3 = 2.0 * (x * y + w * z);
 		var t4 = w2 - x2 + y2 - z2;
 		var az = Math.atan2(t3, t4);
+		var toDegree = 180.0 / Math.PI;
 
 		return new Tea.Vector3(
-			Tea.degrees(ax),
-			Tea.degrees(ay),
-			Tea.degrees(az)
+			ax * toDegree,
+			ay * toDegree,
+			az * toDegree
 		);
 	}
 	set eulerAngles(value: Tea.Vector3) {

@@ -44,9 +44,15 @@ export class Main {
 		this.app.canvas.style.background = "#000";
 		this.app.width = 400;
 		this.app.height = 400;
-		this.app.canvas.style.width = "100%";
+		//this.app.canvas.style.width = "100%";
 		//this.app.canvas.width = document.body.clientWidth;
 		//this.app.canvas.height = document.body.clientHeight;
+
+		var parent = this.app.canvas.parentElement;
+		parent.style.display = "flex";
+		//parent.style.height = "100%";
+		parent.style.justifyContent = "center";
+		parent.style.alignItems = "center";
 
 		this.app.renderer.on("resize", () => {
 			//this.app.canvas.width = document.body.clientWidth;
@@ -674,36 +680,29 @@ export class Main {
 		console.log(v3.magnitude);
 		*/
 
-		var items = [];
-		var createItems = (items, child) => {
-			var item = {
-				text: child.name,
-				children: []
-			};
-			child.children.forEach((i) => {
-				createItems(item.children, i);
-			});
-			items.push(item);
-		};
-		for (var i = scene.children.length - 1; i >= 0; i--) {
-			var child = scene.children[i];
-			createItems(items, child);
-			/*
-			var item = {
-				text: child.name,
-				children: []
-			}
-			items.push({
-				text: child.name
-			});
-			*/
-		}
 
 		//var listView = editor.panes.left.getComponent() as Tea.Editor.ListView;
 		//listView.items = items;
 
 		editor.menu.$on("select", (item) => {
 			console.log("menu select", item.text);
+			if (item.text === "Delete") {
+				if (treeView.selectedItem == null) {
+					return;
+				}
+				var name = treeView.selectedItem.text;
+				var object3d = scene.findChildByName(name);
+				console.log(object3d);
+				object3d.destroy();
+				this.updateObjectList(scene, treeView);
+				return;
+			}
+			if (item.text === "Add Cube") {
+				var cube = Tea.Object3D.createPrimitive(this.app, Tea.PrimitiveType.Cube);
+				scene.addChild(cube);
+				this.updateObjectList(scene, treeView);
+				return;
+			}
 		});
 		/*
 		editor.layout.add("Label");
@@ -720,50 +719,57 @@ export class Main {
 		var treeView = editor.panels.left.$children[0] as TreeView;
 		treeView.$on("menu", (e) => {
 			editor.menu.items = [
-				{ text: "test1" },
+				{ text: "Delete" },
 				{ text: "-" },
-				{ text: "test2" },
+				{ text: "Add Cube" },
 				{ text: "test3" },
 				{ text: "test4" }
 			]
 			editor.menu.move(e.clientX, e.clientY);
 			editor.menu.show();
 		});
-		treeView.items = items;
-		/*
-		treeView.items = [
-			{
-				text: "test",
-				children: [
-					{
-						text: "test 2",
-						children: [
-							{
-								text: "test 3",
-							}
-						]
-					},
-					{ text: "test 3"}
-				]
-			}, {
-				text: "test 2"
-			}, {
-				text: "test 3",
-				children: [
-					{
-						text: "test 2",
-					}
-				]
-			}
-		];
-		*/
+		this.updateObjectList(scene, treeView);
+		
+		type Inspector = Tea.Editor.Inspector;
+		var inspector = editor.panels.right.$children[0] as Inspector;
 		treeView.$on("select", () => {
-			console.log("select", treeView.selectedItem);
+			if (treeView.selectedItem == null) {
+				return;
+			}
+			console.log("select", treeView.selectedItem.text);
+			var name = treeView.selectedItem.text;
+			var object3d = scene.findChildByName(name);
+			//console.log(object3d);
+			inspector.name = object3d.name;
+			inspector.position = object3d.localPosition.clone();
+			inspector.rotation = object3d.localEulerAngles.clone();
+			inspector.scale = object3d.localScale.clone();
 		});
-		treeView.$nextTick(() => {
-			console.log(treeView.childCount);
-			treeView.expandAll();
-		})
+	}
+
+	updateObjectList(scene: Tea.Scene, treeView: Tea.Editor.TreeView): void {
+		setTimeout(() => {
+			var items = [];
+			var createItems = (items, child) => {
+				var item = {
+					text: child.name,
+					children: []
+				};
+				child.children.forEach((i) => {
+					createItems(item.children, i);
+				});
+				items.push(item);
+			};
+			for (var i = scene.children.length - 1; i >= 0; i--) {
+				var child = scene.children[i];
+				createItems(items, child);
+			}
+			treeView.items = items;
+			//treeView.$forceUpdate();
+			treeView.$nextTick(() => {
+				treeView.expandAll();
+			})
+		}, 32);
 	}
 }
 

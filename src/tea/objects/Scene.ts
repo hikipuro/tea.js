@@ -285,6 +285,23 @@ export class Scene {
 		}
 	}
 
+	findChildByName(name: string): Tea.Object3D {
+		var length = this.children.length;
+		for (var i = 0; i < length; i++) {
+			var child = this.children[i];
+			if (child.name === name) {
+				return child;
+			}
+			var child2 = child.children.find((child) => {
+				return child.name === name;
+			});
+			if (child2 != null) {
+				return child2;
+			}
+		}
+		return null;
+	}
+
 	addComponent(component: Tea.Component): void {
 		if (component == null) {
 			return;
