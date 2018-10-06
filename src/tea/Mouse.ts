@@ -14,15 +14,16 @@ export class Mouse {
 	protected _buttonCount: number = 5;
 	protected _isMoved: boolean;
 	protected _position: Tea.Vector3;
+	protected _isPassiveSupported: boolean;
 
 	constructor(app: Tea.App, element: HTMLElement) {
 		this._app = app;
 		this._element = element;
 		this._isMoved = false;
 		this._position = new Tea.Vector3();
+		this._isPassiveSupported = false;
+		this.checkPassiveSupported();
 		this.addEvents(element);
-		window.addEventListener("mouseup", this.onMouseUp);
-		//window.addEventListener("touchend", this.onMouseUp);
 		this.buttons = new Array(this._buttonCount);
 		this.buttons.fill(false);
 		this.prevButtons = Object.assign({}, this.buttons);
@@ -77,11 +78,19 @@ export class Mouse {
 		if (element == null) {
 			return;
 		}
-		element.addEventListener("mousemove", this.onMouseMove);
-		element.addEventListener("mousedown", this.onMouseDown);
-		//element.addEventListener("mouseup", this.onMouseUp);
-		element.addEventListener("wheel", this.onWheel);
+		var options: AddEventListenerOptions = {
+			capture: false
+		};
+		if (this._isPassiveSupported) {
+			options.passive = true;
+		}
+		element.addEventListener("mousemove", this.onMouseMove, options);
+		element.addEventListener("mousedown", this.onMouseDown, options);
+		window.addEventListener("mouseup", this.onMouseUp, options);
+		options.passive = false;
+		element.addEventListener("wheel", this.onWheel, options);
 
+		//element.addEventListener("mouseup", this.onMouseUp);
 		//element.addEventListener("touchmove", this.onMouseMove);
 		//element.addEventListener("touchstart", this.onMouseDown);
 		//element.addEventListener("touchend", this.onMouseUp);
@@ -93,12 +102,26 @@ export class Mouse {
 		}
 		element.removeEventListener("mousemove", this.onMouseMove);
 		element.removeEventListener("mousedown", this.onMouseDown);
-		//element.removeEventListener("mouseup", this.onMouseUp);
+		window.removeEventListener("mouseup", this.onMouseUp);
 		element.removeEventListener("wheel", this.onWheel);
 
+		//element.removeEventListener("mouseup", this.onMouseUp);
 		//element.removeEventListener("touchmove", this.onMouseMove);
 		//element.removeEventListener("touchstart", this.onMouseDown);
 		//element.removeEventListener("touchend", this.onMouseUp);
+	}
+
+	protected checkPassiveSupported(): void {
+		try {
+			var options = Object.defineProperty(
+				{}, "passive", {
+					get: () => {
+						this._isPassiveSupported = true;
+					}
+				}
+			);
+			window.addEventListener("test", null, options);
+		} catch(err) {}
 	}
 
 	protected onMouseMove = (e: MouseEvent): void => {
@@ -117,13 +140,13 @@ export class Mouse {
 	}
 
 	protected onMouseDown = (e: MouseEvent): void => {
-		e.preventDefault();
+		//e.preventDefault();
 		//e.stopPropagation();
 		this.buttons[e.button] = true;
 	}
 
 	protected onMouseUp = (e: MouseEvent): void => {
-		e.stopPropagation();
+		//e.stopPropagation();
 		this.buttons[e.button] = false;
 	}
 
