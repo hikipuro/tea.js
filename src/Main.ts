@@ -690,8 +690,8 @@ export class Main {
 				if (treeView.selectedItem == null) {
 					return;
 				}
-				var name = treeView.selectedItem.text;
-				var object3d = scene.findChildByName(name);
+				var id = treeView.selectedItem.tag as number;
+				var object3d = scene.findChildById(id);
 				console.log(object3d);
 				object3d.destroy();
 				this.updateObjectList(scene, treeView);
