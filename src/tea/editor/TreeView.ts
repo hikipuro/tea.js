@@ -49,6 +49,7 @@ import Component from "vue-class-component";
 })
 export class Item extends Vue {
 	model: any;
+	depth: number;
 	isOpen: boolean;
 	isSelected: boolean;
 	title: string;
@@ -64,6 +65,31 @@ export class Item extends Vue {
 	get isFolder(): boolean {
 		return this.model.children &&
 			this.model.children.length;
+	}
+
+	get index(): number {
+		return this.$parent.$children.indexOf(this);
+	}
+
+	get firstChild(): Item {
+		return this.$children[0] as Item;
+	}
+
+	get lastChild(): Item {
+		var length = this.$children.length;
+		return this.$children[length - 1] as Item;
+	}
+
+	get nextSibling(): Item {
+		var parent = this.$parent;
+		var index = parent.$children.indexOf(this);
+		return parent.$children[index + 1] as Item;
+	}
+
+	get prevSibling(): Item {
+		var parent = this.$parent;
+		var index = parent.$children.indexOf(this);
+		return parent.$children[index - 1] as Item;
 	}
 
 	expand(): void {
@@ -175,17 +201,65 @@ export class TreeView extends Vue {
 			this.onSelectItem(this.$children[0] as Item);
 			return;
 		}
-		var index = this.$children.indexOf(this.selectedItem);
-		this.onSelectItem(this.$children[index + 1] as Item);
+		var item = this.selectedItem;
+		if (item.isFolder && item.isOpen) {
+			var child = item.firstChild;
+			if (child) {
+				this.onSelectItem(child);
+			}
+			return;
+		}
+		var next = item;
+		for (var i = 0; i < 10; i++) {
+			if (next.nextSibling == null) {
+				next = next.$parent as Item;
+				if (next == null) {
+					break;
+				}
+				continue;
+			}
+			next = next.nextSibling;
+			break;
+		}
+		this.onSelectItem(next);
 	}
 
 	selectPrev(): void {
 		if (this.selectedItem == null) {
-			this.onSelectItem(this.$children[this.$children.length - 1] as Item);
+			var length = this.$children.length;
+			this.onSelectItem(this.$children[length - 1] as Item);
 			return;
 		}
-		var index = this.$children.indexOf(this.selectedItem);
-		this.onSelectItem(this.$children[index - 1] as Item);
+		var item = this.selectedItem;
+		/*
+		if (item.isFolder && item.isOpen) {
+			var child = item.lastChild;
+			if (child) {
+				this.onSelectItem(child);
+			}
+			return;
+		}
+		*/
+		var prev = item.prevSibling;
+		if (prev == null) {
+			prev = item.$parent as Item;
+			if (prev instanceof TreeView) {
+				return;
+			}
+			this.onSelectItem(prev);
+			return;
+		}
+		if (prev.isFolder && prev.isOpen) {
+			prev = prev.lastChild;
+			for (var i = 0; i < 10; i++) {
+				if (prev.isFolder && prev.isOpen) {
+					prev = prev.lastChild;
+					continue;
+				}
+				break;
+			}
+		}
+		this.onSelectItem(prev);
 	}
 
 	protected onClick(): void {
