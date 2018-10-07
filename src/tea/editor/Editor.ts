@@ -3,6 +3,7 @@ import Component from "vue-class-component";
 import { Button } from "./Button";
 import { ContextMenu } from "./ContextMenu";
 import { HLayout } from "./HLayout";
+import { InputNumber } from "./InputNumber";
 import { Inspector } from "./Inspector";
 import { Label } from "./Label";
 import { ListView } from "./ListView";
@@ -15,6 +16,7 @@ import { VLayout } from "./VLayout";
 Vue.component("Button", Button);
 Vue.component("ContextMenu", ContextMenu);
 Vue.component("HLayout", HLayout);
+Vue.component("InputNumber", InputNumber);
 Vue.component("Inspector", Inspector);
 Vue.component("Label", Label);
 Vue.component("ListView", ListView);
@@ -28,7 +30,7 @@ Vue.component("VLayout", VLayout);
 	template: `
 		<div
 			id="editor"
-			@mousedown="onMouseDown">
+			@click.capture="onClick">
 			<HLayout
 				:style="{
 					height: '100%'
@@ -85,12 +87,15 @@ export class Editor extends Vue {
 		return this.$children[index];
 	}
 
-	protected onMouseDown(e: MouseEvent): void {
+	protected onClick(e: MouseEvent): void {
 		var parent = e.srcElement.parentElement;
 		if (parent && parent.classList.contains("ContextMenu")) {
 			return;
 		}
-		this.menu.hide();
+		if (this.menu.isVisible) {
+			this.menu.hide();
+			e.stopPropagation();
+		}
 	}
 }
 
@@ -100,6 +105,8 @@ var  _ContextMenu = ContextMenu;
 type _ContextMenu = ContextMenu;
 var  _HLayout = HLayout;
 type _HLayout = HLayout;
+var  _InputNumber = InputNumber;
+type _InputNumber = InputNumber;
 var  _Inspector = Inspector;
 type _Inspector = Inspector;
 var  _Label = Label;
@@ -140,6 +147,8 @@ export module Editor {
 	export type ContextMenu = _ContextMenu;
 	export var  HLayout = _HLayout;
 	export type HLayout = _HLayout;
+	export var  InputNumber = _InputNumber;
+	export type InputNumber = _InputNumber;
 	export var  Inspector = _Inspector;
 	export type Inspector = _Inspector;
 	export var  Label = _Label;

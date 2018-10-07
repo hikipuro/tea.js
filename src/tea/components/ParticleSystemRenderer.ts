@@ -224,7 +224,7 @@ export class ParticleSystemRenderer extends Renderer {
 	protected setFrontFace(): void {
 		var gl = this.gl;
 		var status = this.app.status;
-		var face = gl.CW;
+		var face = gl.CCW;
 		if (status.frontFace !== face) {
 			gl.frontFace(face);
 			status.frontFace = face;

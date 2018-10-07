@@ -52,10 +52,13 @@ export class Item extends Vue {
 	isOpen: boolean;
 	isSelected: boolean;
 	title: string;
-	tag: any;
 
 	get text(): string {
 		return this.model.text;
+	}
+
+	get tag(): any {
+		return this.model.tag;
 	}
 
 	get isFolder(): boolean {
@@ -201,7 +204,6 @@ export class TreeView extends Vue {
 	}
 
 	protected onKeyDown = (e: KeyboardEvent): void => {
-		console.log("onKeyDown", e.key, document.activeElement);
 		switch (e.key) {
 			case "ArrowUp":
 				this.selectPrev();

@@ -718,6 +718,7 @@ export class Main {
 		type TreeView = Tea.Editor.TreeView;
 		var treeView = editor.panels.left.$children[0] as TreeView;
 		treeView.$on("menu", (e) => {
+			e.preventDefault();
 			editor.menu.items = [
 				{ text: "Delete" },
 				{ text: "-" },
@@ -732,18 +733,85 @@ export class Main {
 		
 		type Inspector = Tea.Editor.Inspector;
 		var inspector = editor.panels.right.$children[0] as Inspector;
-		treeView.$on("select", () => {
+		inspector.$on("update", (key: string, value: any) => {
 			if (treeView.selectedItem == null) {
 				return;
 			}
-			console.log("select", treeView.selectedItem.text);
-			var name = treeView.selectedItem.text;
-			var object3d = scene.findChildByName(name);
-			//console.log(object3d);
-			inspector.name = object3d.name;
+			var id = treeView.selectedItem.tag as number;
+			var object3d = scene.findChildById(id);
+			switch (key) {
+				case "position":
+					object3d.localPosition.copy(value);
+					break;
+				case "rotation":
+					object3d.localRotation.setEuler(value);
+					break;
+				case "scale":
+					object3d.localScale.copy(value);
+					break;
+			}
+		});
+
+		var updateHandle = null;
+		var update = () => {
+			if (treeView.selectedItem == null) {
+				clearInterval(updateHandle);
+				updateHandle = 0;
+				return;
+			}
+			if (inspector.hasFocus()) {
+				return;
+			}
+			var id = treeView.selectedItem.tag as number;
+			var object3d = scene.findChildById(id);
+			if (object3d == null) {
+				return;
+			}
 			inspector.position = object3d.localPosition.clone();
 			inspector.rotation = object3d.localEulerAngles.clone();
 			inspector.scale = object3d.localScale.clone();
+			/*
+			var scale = object3d.localScale;
+			if (scale[0] !== inspector.scale[0]
+			|| scale[1] !== inspector.scale[1]
+			|| scale[2] !== inspector.scale[2]) {
+				inspector.scale = scale.clone();
+			}
+			//*/
+		};
+
+		treeView.$on("select", () => {
+			if (treeView.selectedItem == null) {
+				inspector.hide();
+				return;
+			}
+			inspector.show();
+			console.log("select", treeView.selectedItem.tag);
+			/*
+			var id = treeView.selectedItem.tag as number;
+			var object3d = scene.findChildById(id);
+			if (object3d == null) {
+				return;
+			}
+			inspector.position = object3d.localPosition.clone();
+			inspector.rotation = object3d.localEulerAngles.clone();
+			inspector.scale = object3d.localScale.clone();
+			//*/
+			updateHandle = setInterval(update, 100);
+
+			/*
+			var id = treeView.selectedItem.tag as number;
+			var object3d = scene.findChildById(id);
+			if (object3d == null) {
+				return;
+			}
+			//console.log(object3d);
+			inspector.name = object3d.name;
+			//inspector.setPosition(object3d.localPosition);
+			inspector.position = object3d.localPosition.clone();
+			inspector.rotation = object3d.localEulerAngles.clone();
+			inspector.scale = object3d.localScale.clone();
+			*/
 		});
 	}
 
@@ -753,7 +821,8 @@ export class Main {
 			var createItems = (items, child) => {
 				var item = {
 					text: child.name,
-					children: []
+					children: [],
+					tag: child.id
 				};
 				child.children.forEach((i) => {
 					createItems(item.children, i);

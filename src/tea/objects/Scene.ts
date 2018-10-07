@@ -285,6 +285,32 @@ export class Scene {
 		}
 	}
 
+	findChildById(id: number): Tea.Object3D {
+		var find = (object3d: Tea.Object3D) => {
+			if (object3d.id === id) {
+				return object3d;
+			}
+			var length = object3d.children.length;
+			for (var i = 0; i < length; i++) {
+				var child = object3d.children[i];
+				var found = find(child);
+				if (found) {
+					return found;
+				}
+			}
+			return null;
+		};
+		var length = this.children.length;
+		for (var i = 0; i < length; i++) {
+			var child = this.children[i];
+			var found = find(child);
+			if (found) {
+				return found;
+			}
+		}
+		return null;
+	}
+
 	findChildByName(name: string): Tea.Object3D {
 		var length = this.children.length;
 		for (var i = 0; i < length; i++) {

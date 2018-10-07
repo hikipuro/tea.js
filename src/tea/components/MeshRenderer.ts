@@ -330,9 +330,9 @@ export class MeshRenderer extends Renderer {
 		var gl = this.gl;
 		var scale = this.object3d.scale;
 		var status = this.app.status;
-		var face = gl.CW;
+		var face = gl.CCW;
 		if (scale[0] * scale[1] * scale[2] < 0.0) {
-			face = gl.CCW;
+			face = gl.CW;
 		}
 		if (status.frontFace !== face) {
 			gl.frontFace(face);

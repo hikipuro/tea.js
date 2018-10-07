@@ -29,7 +29,7 @@ export class App {
 
 		this.parameters = new Tea.GLParameters(this.gl);
 		this.status = new Status();
-		this.status.frontFace = this.gl.CW;
+		this.status.frontFace = this.gl.CCW;
 		this.status.viewport = new Tea.Rect(0.0, 0.0, 1.0, 1.0);
 		this.cursor = new Tea.Cursor(this);
 		this._renderer = new AppRenderer(this);

@@ -61,7 +61,9 @@ class Movement {
 }
 
 export class Object3D {
+	protected static _nextId: number = 0;
 	app: Tea.App;
+	id: number;
 	name: string;
 	isActive: boolean;
 	scene: Tea.Scene;
@@ -78,6 +80,7 @@ export class Object3D {
 
 	constructor(app: Tea.App) {
 		this.app = app;
+		this.id = Object3D._nextId++;
 		this.name = "";
 		this.isActive = true;
 		this.scene = null;

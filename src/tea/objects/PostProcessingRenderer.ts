@@ -54,6 +54,14 @@ export class PostProcessingRenderer extends Renderer {
 		}
 		camera.setViewport();
 		//gl.viewport(0.0, 0.0, this.app.width, this.app.height);
+
+		var status = this.app.status;
+		var face = gl.CCW;
+		if (status.frontFace !== face) {
+			gl.frontFace(face);
+			status.frontFace = face;
+		}
+
 		var count = this.mesh.triangles.length * 3;
 		gl.drawElements(gl.TRIANGLES, count, gl.UNSIGNED_SHORT, 0);
 	}

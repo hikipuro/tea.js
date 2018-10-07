@@ -1,42 +1,34 @@
 import Vue from "vue";
 import Component from "vue-class-component";
-import * as Tea from "../Tea";
+//import * as Tea from "../Tea";
 
 @Component({
 	template: `
 		<div class="Vector3">
-			<template v-if="value">
-				<div class="title">{{ text }}</div>
-				<div class="value">
-					X <input type="text" size="1" :value="x"></input>
-					Y <input type="text" size="1" :value="y"></input>
-					Z <input type="text" size="1" :value="z"></input>
-				</div>
-			</template>
+			<div class="title">
+				<slot></slot>
+			</div>
+			<div class="value">
+				<InputNumber :value="x" @update="onUpdateX">X</InputNumber>
+				<InputNumber :value="y" @update="onUpdateY">Y</InputNumber>
+				<InputNumber :value="z" @update="onUpdateZ">Z</InputNumber>
+			</div>
 		</div>
 	`,
 	props: {
 		text: String,
-		value: Array
-	},
-	data: () => {
-		return {
-			//text: "",
-			//value: null
-		}
+		x: Number,
+		y: Number,
+		z: Number
 	}
 })
 export class Vector3 extends Vue {
 	text: string;
-	value: Tea.Vector3;
+	x: number;
+	y: number;
+	z: number;
 
-	get x(): string {
-		if (this.value == null) {
-			return "";
-		}
-		return this.toText(this.value[0]);
-	}
-
+	/*
 	get y(): string {
 		if (this.value == null) {
 			return "";
@@ -61,5 +53,18 @@ export class Vector3 extends Vue {
 		}
 		text = text.replace(/0+$/, "");
 		return text;
+	}
+	*/
+
+	protected onUpdateX(value: number): void {
+		this.$emit("update", value, this.y, this.z);
+	}
+
+	protected onUpdateY(value: number): void {
+		this.$emit("update", this.x, value, this.z);
+	}
+
+	protected onUpdateZ(value: number): void {
+		this.$emit("update", this.x, this.y, value);
 	}
 }

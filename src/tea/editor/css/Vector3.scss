@@ -6,23 +6,19 @@
 		white-space: nowrap;
 		overflow: hidden;
 
-		.title {
+		> .title {
 			display: inline-block;
 			width: 30%;
+			overflow: hidden;
+			vertical-align: top;
 		}
 
-		.value {
-			display: inline-block;
+		> .value {
+			display: inline-flex;
 			position: absolute;
 			right: 0;
 			width: 70%;
-			text-align: right;
-		}
-
-		input {
-			min-width: 2em;
-			width: 22%;
-			height: 1em;
+			justify-content: space-evenly;
 		}
 	}
 }
