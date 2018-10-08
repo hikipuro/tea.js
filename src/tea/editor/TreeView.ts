@@ -180,6 +180,7 @@ export class Item extends Vue {
 	}
 })
 export class TreeView extends Vue {
+	static readonly maxDepth: number = 10;
 	items: Array<any>;
 	selectedItem: Item;
 	openIcon: string;
@@ -242,7 +243,7 @@ export class TreeView extends Vue {
 			return;
 		}
 		var next = item;
-		for (var i = 0; i < 10; i++) {
+		for (var i = 0; i < TreeView.maxDepth; i++) {
 			if (next.nextSibling == null) {
 				next = next.$parent as Item;
 				if (next == null) {
@@ -259,19 +260,18 @@ export class TreeView extends Vue {
 	selectPrev(): void {
 		if (this.selectedItem == null) {
 			var length = this.$children.length;
-			this.onSelectItem(this.$children[length - 1] as Item);
+			var item = this.$children[length - 1] as Item;
+			for (var i = 0; i < TreeView.maxDepth; i++) {
+				if (item.isFolder && item.isOpen) {
+					item = item.lastChild;
+					continue;
+				}
+				break;
+			}
+			this.onSelectItem(item);
 			return;
 		}
 		var item = this.selectedItem;
-		/*
-		if (item.isFolder && item.isOpen) {
-			var child = item.lastChild;
-			if (child) {
-				this.onSelectItem(child);
-			}
-			return;
-		}
-		*/
 		var prev = item.prevSibling;
 		if (prev == null) {
 			prev = item.$parent as Item;
@@ -283,7 +283,7 @@ export class TreeView extends Vue {
 		}
 		if (prev.isFolder && prev.isOpen) {
 			prev = prev.lastChild;
-			for (var i = 0; i < 10; i++) {
+			for (var i = 0; i < TreeView.maxDepth; i++) {
 				if (prev.isFolder && prev.isOpen) {
 					prev = prev.lastChild;
 					continue;

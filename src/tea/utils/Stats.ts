@@ -61,8 +61,9 @@ export class Stats {
 		var canvas = this.app.canvas;
 		var style = this.canvas.style;
 		style.position = "absolute";
-		style.left = canvas.offsetLeft + canvas.clientWidth - this.canvas.width + "px";
-		style.top = canvas.offsetTop + "px";
+		var rect = canvas.getBoundingClientRect();
+		style.left = rect.left + canvas.clientWidth - this.canvas.width + "px";
+		style.top = rect.top + "px";
 	}
 
 	protected clearRect(x?: number, y?: number, w?: number, h?: number): void {

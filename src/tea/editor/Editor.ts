@@ -10,6 +10,7 @@ import { Inspector } from "./Inspector";
 import { Label } from "./Label";
 import { ListView } from "./ListView";
 import { Panel } from "./Panel";
+import { SelectAspect } from "./SelectAspect";
 import { TreeView } from "./TreeView";
 import { Vector3 } from "./Vector3";
 import { VLayout } from "./VLayout";
@@ -23,6 +24,7 @@ Vue.component("Inspector", Inspector);
 Vue.component("Label", Label);
 Vue.component("ListView", ListView);
 Vue.component("Panel", Panel);
+Vue.component("SelectAspect", SelectAspect);
 Vue.component("TreeView", TreeView);
 Vue.component("Vector3", Vector3);
 Vue.component("VLayout", VLayout);
@@ -41,7 +43,17 @@ Vue.component("VLayout", VLayout);
 					<TreeView ref="hierarchy" tabindex="0"></TreeView>
 				</Panel>
 				<Panel ref="main" class="MainPanel">
-					<canvas id="canvas"></canvas>
+					<VLayout>
+						<Panel>
+							<SelectAspect
+								ref="aspect"
+								@update="onUpdateAspect">
+							</SelectAspect>
+						</Panel>
+						<Panel class="CanvasPanel">
+							<canvas ref="canvas" id="canvas"></canvas>
+						</Panel>
+					</VLayout>
 				</Panel>
 				<Panel ref="right" class="RightPanel">
 					<Inspector ref="inspector"></Inspector>
@@ -84,6 +96,10 @@ export class Editor extends Vue {
 
 	setScene(value: Tea.Scene) {
 		this._behavior.scene = value;
+	}
+
+	protected onUpdateAspect(): void {
+		this._behavior.onUpdateAspect();
 	}
 
 	protected onClick(e: MouseEvent): void {

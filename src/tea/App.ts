@@ -453,8 +453,8 @@ class AppRenderer extends Tea.EventDispatcher {
 			this.emit("resume");
 		});
 		window.addEventListener("resize", () => {
-			this.stats.updateSize();
 			this.emit("resize");
+			this.stats.updateSize();
 		});
 	}
 

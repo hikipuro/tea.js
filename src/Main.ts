@@ -41,17 +41,19 @@ export class Main {
 			//premultipliedAlpha: false
 		});
 		this.app.enableUint32Index();
+		this.app.width = this.app.canvas.parentElement.clientWidth;
+		this.app.height = this.app.canvas.parentElement.clientHeight;
 		//this.app.canvas.style.background = "#000";
-		this.app.width = 400;
-		this.app.height = 400;
+		//this.app.width = 400;
+		//this.app.height = 400;
 		//this.app.canvas.style.width = "100%";
 		//this.app.canvas.width = document.body.clientWidth;
 		//this.app.canvas.height = document.body.clientHeight;
 
-		this.app.renderer.on("resize", () => {
+		//this.app.renderer.on("resize", () => {
 			//this.app.canvas.width = document.body.clientWidth;
 			//this.app.canvas.height = document.body.clientHeight;
-		});
+		//});
 
 		//console.log("aspectRatio", this.app.aspectRatio);
 		//console.log("params", this.app.parameters);

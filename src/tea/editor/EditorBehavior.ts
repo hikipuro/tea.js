@@ -1,5 +1,6 @@
 import * as Tea from "../Tea";
 import { Editor } from "./Editor";
+import { SelectAspect } from "./SelectAspect";
 
 export class EditorBehavior {
 	editor: Editor;
@@ -24,11 +25,20 @@ export class EditorBehavior {
 
 	init(): void {
 		this.editor.$nextTick(() => {
+			this.initScreenView();
 			this.initHierarchyView();
 			this.initInspectorView();
 			this.initContextMenu();
-			this.updateHierarchyView();
+			this.updateHierarchyView(true);
 		});
+	}
+
+	initScreenView(): void {
+		setTimeout(() => {
+			this.scene.app.renderer.on("resize", () => {
+				this.updateScreenSize();
+			});
+		}, 30);
 	}
 
 	initHierarchyView(): void {
@@ -104,6 +114,28 @@ export class EditorBehavior {
 		});
 	}
 
+	updateScreenSize(): void {
+		var app = this.scene.app;
+		var aspect = this.editor.$refs.aspect as SelectAspect;
+		var canvas = this.editor.$refs.canvas as HTMLCanvasElement;
+		var width = canvas.parentElement.clientWidth;
+		var height = canvas.parentElement.clientHeight;
+		if (aspect.x != 0 && aspect.y != 0) {
+			if (width / height < aspect.x / aspect.y) {
+				height = width * aspect.y / aspect.x;
+			} else {
+				width = height * aspect.x / aspect.y;
+			}
+		}
+		app.width = width;
+		app.height = height;
+		console.log("updateScreenSize", width, height);
+	}
+
+	onUpdateAspect(): void {
+		this.updateScreenSize();
+	}
+
 	onSelectHierarchyViewMenu(item: Tea.Editor.ContextMenuItem): void {
 		var hierarchyView = this.editor.hierarchyView;
 		var inspectorView = this.editor.inspectorView;
@@ -131,7 +163,7 @@ export class EditorBehavior {
 		}
 	}
 
-	updateHierarchyView(): void {
+	updateHierarchyView(expand: boolean = false): void {
 		setTimeout(() => {
 			var items = [];
 			var createItems = (items, child) => {
@@ -152,9 +184,11 @@ export class EditorBehavior {
 			}
 			var hierarchyView = this.editor.hierarchyView;
 			hierarchyView.items = items;
-			hierarchyView.$nextTick(() => {
-				hierarchyView.expandAll();
-			});
+			if (expand) {
+				hierarchyView.$nextTick(() => {
+					hierarchyView.expandAll();
+				});
+			}
 		}, 17);
 	}
 
