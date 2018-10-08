@@ -44,7 +44,7 @@ Vue.component("VLayout", VLayout);
 				</Panel>
 				<Panel ref="main" class="MainPanel">
 					<VLayout>
-						<Panel>
+						<Panel class="Toolbar">
 							<SelectAspect
 								ref="aspect"
 								@update="onUpdateAspect">
