@@ -41,9 +41,7 @@ Vue.component("VLayout", VLayout);
 					<TreeView ref="hierarchy" tabindex="0"></TreeView>
 				</Panel>
 				<Panel ref="main" class="MainPanel">
-					<div>
-						<canvas id="canvas"></canvas>
-					</div>
+					<canvas id="canvas"></canvas>
 				</Panel>
 				<Panel ref="right" class="RightPanel">
 					<Inspector ref="inspector"></Inspector>

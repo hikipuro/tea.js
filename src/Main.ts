@@ -41,18 +41,12 @@ export class Main {
 			//premultipliedAlpha: false
 		});
 		this.app.enableUint32Index();
-		this.app.canvas.style.background = "#000";
+		//this.app.canvas.style.background = "#000";
 		this.app.width = 400;
 		this.app.height = 400;
 		//this.app.canvas.style.width = "100%";
 		//this.app.canvas.width = document.body.clientWidth;
 		//this.app.canvas.height = document.body.clientHeight;
-
-		var parent = this.app.canvas.parentElement;
-		parent.style.display = "flex";
-		//parent.style.height = "100%";
-		parent.style.justifyContent = "center";
-		parent.style.alignItems = "center";
 
 		this.app.renderer.on("resize", () => {
 			//this.app.canvas.width = document.body.clientWidth;

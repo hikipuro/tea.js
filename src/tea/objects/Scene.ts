@@ -387,10 +387,12 @@ export class Scene {
 			var rendererCount = renderers.length;
 			for (var i = 0; i < rendererCount; i++) {
 				var renderer = renderers[i];
+				/*
 				if (camera.orthographic === false
 				&& this.frustumCulling(renderer, camera.frustumPlanes)) {
 					continue;
 				}
+				//*/
 				this.renderCamera(camera, lights, renderer);
 			}
 			if (renderTexture != null) {

@@ -106,24 +106,28 @@ export class EditorBehavior {
 
 	onSelectHierarchyViewMenu(item: Tea.Editor.ContextMenuItem): void {
 		var hierarchyView = this.editor.hierarchyView;
+		var inspectorView = this.editor.inspectorView;
 		var scene = this.scene;
 		console.log("menu select", item.text);
-		if (item.text === "Delete") {
-			if (hierarchyView.selectedItem == null) {
-				return;
-			}
-			var id = hierarchyView.selectedItem.tag as number;
-			var object3d = scene.findChildById(id);
-			console.log(object3d);
-			object3d.destroy();
-			this.updateHierarchyView();
-			return;
-		}
-		if (item.text === "Add Cube") {
-			var cube = Tea.Object3D.createPrimitive(scene.app, Tea.PrimitiveType.Cube);
-			scene.addChild(cube);
-			this.updateHierarchyView();
-			return;
+		switch (item.text) {
+			case "Delete":
+				if (hierarchyView.selectedItem == null) {
+					return;
+				}
+				var id = hierarchyView.selectedItem.tag as number;
+				var object3d = scene.findChildById(id);
+				console.log(object3d);
+				inspectorView.hide();
+				object3d.destroy();
+				this.updateHierarchyView();
+				break;
+			case "Add Cube":
+				var cube = Tea.Object3D.createPrimitive(
+					scene.app, Tea.PrimitiveType.Cube
+				);
+				scene.addChild(cube);
+				this.updateHierarchyView();
+				break;
 		}
 	}
 

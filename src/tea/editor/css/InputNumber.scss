@@ -6,6 +6,9 @@
 		> .title {
 			display: inline-block;
 		}
+		> .title:hover {
+			cursor: ew-resize;
+		}
 
 		> input {
 			margin: 0 2px;

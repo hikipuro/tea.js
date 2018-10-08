@@ -7,7 +7,7 @@ import * as Tea from "../Tea";
 		<div
 			class="Inspector">
 			<template v-if="isVisible">
-			<div>{{ name }}</div>
+			<div class="name">{{ name }}</div>
 			<Vector3
 				ref="position"
 				:x="position[0]"
