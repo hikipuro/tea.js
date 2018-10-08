@@ -95,6 +95,7 @@ export class ContextMenu extends Vue {
 	x: number;
 	y: number;
 	isVisible: boolean;
+	state: string;
 	items: Array<any>;
 	protected _isSelectStart: boolean = false;
 
@@ -106,10 +107,11 @@ export class ContextMenu extends Vue {
 		this.y = y;
 	}
 
-	show(): void {
+	show(state: string = null): void {
 		if (this._isSelectStart) {
 			return;
 		}
+		this.state = state;
 		this.isVisible = true;
 		this.$nextTick(() => {
 			var screenWidth = document.body.clientWidth;
@@ -155,7 +157,7 @@ export class ContextMenu extends Vue {
 			item.isUnselected = false;
 		});
 		this.isVisible = false;
-		this.$emit("select", item);
+		this.$emit("select", this.state, item);
 	}
 
 	protected onFadeoutComplete(): void {
@@ -173,4 +175,11 @@ export class ContextMenu extends Vue {
 			forEach(item);
 		});
 	}
+}
+
+var  _Item = Item;
+type _Item = Item;
+export module ContextMenu {
+	export var  Item = _Item;
+	export type Item = _Item;
 }

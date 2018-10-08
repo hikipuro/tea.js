@@ -13,8 +13,8 @@ import Component from "vue-class-component";
 				@click.stop="onClick">
 				<div
 					class="folder"
-					@click.stop="toggle">
-					{{ isFolder ? isOpen ? "⏏️" : "▶️" : "" }}
+					@click.stop="toggle"
+					v-html="folderIcon">
 				</div>
 				<div class="text">{{ model.text }}</div>
 			</div>
@@ -24,6 +24,7 @@ import Component from "vue-class-component";
 					:key="index"
 					:model="model"
 					:depth="depth + 1"
+					@create="onCreate"
 					@select="onSelect">
 				</item>
 			</ul>
@@ -36,7 +37,9 @@ import Component from "vue-class-component";
 	data: () => { return {
 		isOpen: false,
 		isSelected: false,
-		title: null
+		title: null,
+		openIcon: "📂",
+		closeIcon: "📁",
 	}},
 	computed: {
 		/*
@@ -46,6 +49,10 @@ import Component from "vue-class-component";
 		}
 		*/
 	},
+	created: function () {
+		var item = this as Item;
+		item.$emit("create", item);
+	}
 })
 export class Item extends Vue {
 	model: any;
@@ -53,6 +60,8 @@ export class Item extends Vue {
 	isOpen: boolean;
 	isSelected: boolean;
 	title: string;
+	openIcon: string;
+	closeIcon: string;
 
 	get text(): string {
 		return this.model.text;
@@ -63,12 +72,23 @@ export class Item extends Vue {
 	}
 
 	get isFolder(): boolean {
-		return this.model.children &&
-			this.model.children.length;
+		var children = this.model.children;
+		return children != null
+			&& children.length > 0;
 	}
 
 	get index(): number {
 		return this.$parent.$children.indexOf(this);
+	}
+
+	get folderIcon(): string {
+		if (this.isFolder === false) {
+			return "";
+		}
+		if (this.isOpen) {
+			return this.openIcon;
+		}
+		return this.closeIcon;
 	}
 
 	get firstChild(): Item {
@@ -121,6 +141,15 @@ export class Item extends Vue {
 		this.$emit("select", this);
 	}
 
+	protected onCreate(item: Item): void {
+		if (this.openIcon != null) {
+			item.openIcon = this.openIcon;
+		}
+		if (this.closeIcon != null) {
+			item.closeIcon = this.closeIcon;
+		}
+	}
+
 	protected onSelect(item: Item): void {
 		this.$emit("select", item);
 	}
@@ -138,6 +167,7 @@ export class Item extends Vue {
 				:key="index"
 				:model="item"
 				:depth="0"
+				@create="onCreateItem"
 				@select="onSelectItem">
 			</item>
 		</ul>
@@ -152,6 +182,8 @@ export class Item extends Vue {
 export class TreeView extends Vue {
 	items: Array<any>;
 	selectedItem: Item;
+	openIcon: string;
+	closeIcon: string;
 	tag: any;
 
 	get childCount(): number {
@@ -291,6 +323,15 @@ export class TreeView extends Vue {
 			case "ArrowRight":
 				this.expand();
 				break;
+		}
+	}
+
+	protected onCreateItem(item: Item): void {
+		if (this.openIcon != null) {
+			item.openIcon = this.openIcon;
+		}
+		if (this.closeIcon != null) {
+			item.closeIcon = this.closeIcon;
 		}
 	}
 

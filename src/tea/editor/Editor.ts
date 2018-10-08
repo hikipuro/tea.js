@@ -1,5 +1,7 @@
 import Vue from "vue";
 import Component from "vue-class-component";
+import * as Tea from "../Tea";
+import { EditorBehavior } from "./EditorBehavior";
 import { Button } from "./Button";
 import { ContextMenu } from "./ContextMenu";
 import { HLayout } from "./HLayout";
@@ -36,7 +38,7 @@ Vue.component("VLayout", VLayout);
 					height: '100%'
 				}">
 				<Panel ref="left" class="LeftPanel">
-					<TreeView tabindex="0"></TreeView>
+					<TreeView ref="hierarchy" tabindex="0"></TreeView>
 				</Panel>
 				<Panel ref="main" class="MainPanel">
 					<div>
@@ -44,7 +46,7 @@ Vue.component("VLayout", VLayout);
 					</div>
 				</Panel>
 				<Panel ref="right" class="RightPanel">
-					<Inspector></Inspector>
+					<Inspector ref="inspector"></Inspector>
 				</Panel>
 			</HLayout>
 			<ContextMenu ref="menu"></ContextMenu>
@@ -64,27 +66,26 @@ Vue.component("VLayout", VLayout);
 export class Editor extends Vue {
 	static instance: Editor;
 	static readonly el = "#editor";
-	current: string = "Label";
-	panels: Editor.Panels;
+	protected _behavior: EditorBehavior;
 
-	constructor(obj: any) {
-		super(obj);
-		this.panels = new Editor.Panels(this);
-		this.$nextTick(() => {
-			this.panels.left.isResizableX = true;
-		});
+	created(): void {
+		this._behavior = new EditorBehavior(this);
 	}
 
-	get layout(): HLayout {
-		return this.$refs.layout as HLayout;
+	get hierarchyView(): TreeView {
+		return this.$refs.hierarchy as TreeView;
 	}
 
-	get menu(): ContextMenu {
+	get inspectorView(): Inspector {
+		return this.$refs.inspector as Inspector;
+	}
+
+	get contextMenu(): ContextMenu {
 		return this.$refs.menu as ContextMenu;
 	}
-	
-	children(index: number): Vue {
-		return this.$children[index];
+
+	setScene(value: Tea.Scene) {
+		this._behavior.scene = value;
 	}
 
 	protected onClick(e: MouseEvent): void {
@@ -92,8 +93,8 @@ export class Editor extends Vue {
 		if (parent && parent.classList.contains("ContextMenu")) {
 			return;
 		}
-		if (this.menu.isVisible) {
-			this.menu.hide();
+		if (this.contextMenu.isVisible) {
+			this.contextMenu.hide();
 			e.stopPropagation();
 		}
 	}
@@ -123,28 +124,12 @@ var  _VLayout = VLayout;
 type _VLayout = VLayout;
 
 export module Editor {
-	export class Panels {
-		editor: Editor;
-		constructor(editor: Editor) {
-			this.editor = editor;
-		}
-		get left(): Panel {
-			var $refs = this.editor.$refs;
-			return $refs.left as Panel;
-		}
-		get main(): Panel {
-			var $refs = this.editor.$refs;
-			return $refs.main as Panel;
-		}
-		get right(): Panel {
-			var $refs = this.editor.$refs;
-			return $refs.right as Panel;
-		}
-	}
 	export var  Button = _Button;
 	export type Button = _Button;
 	export var  ContextMenu = _ContextMenu;
 	export type ContextMenu = _ContextMenu;
+	export var  ContextMenuItem = ContextMenu.Item;
+	export type ContextMenuItem = ContextMenu.Item;
 	export var  HLayout = _HLayout;
 	export type HLayout = _HLayout;
 	export var  InputNumber = _InputNumber;

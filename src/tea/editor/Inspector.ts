@@ -50,14 +50,26 @@ export class Inspector extends Vue {
 	rotation: Array<number>;
 	scale: Array<number>;
 
-	/*
-	protected _position: Tea.Vector3;
-
 	setPosition(value: Tea.Vector3): void {
-		this.position = value.clone();
-		this._position = value;
+		var position = this.position;
+		Vue.set(position, 0, value[0]);
+		Vue.set(position, 1, value[1]);
+		Vue.set(position, 2, value[2]);
 	}
-	*/
+
+	setRotation(value: Tea.Vector3): void {
+		var rotation = this.rotation;
+		Vue.set(rotation, 0, value[0]);
+		Vue.set(rotation, 1, value[1]);
+		Vue.set(rotation, 2, value[2]);
+	}
+
+	setScale(value: Tea.Vector3): void {
+		var scale = this.scale;
+		Vue.set(scale, 0, value[0]);
+		Vue.set(scale, 1, value[1]);
+		Vue.set(scale, 2, value[2]);
+	}
 
 	show(): void {
 		this.isVisible = true;
