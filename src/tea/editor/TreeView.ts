@@ -10,7 +10,8 @@ import Component from "vue-class-component";
 				:class="{ selected: isSelected }"
 				:style="{ paddingLeft: (depth * 1.3) + 'em' }"
 				:title="model.title"
-				@click.stop="onClick">
+				@click.stop="onClick"
+				@contextmenu="onContextMenu">
 				<div
 					class="folder"
 					@click.stop="toggle"
@@ -138,6 +139,10 @@ export class Item extends Vue {
 	}
 
 	protected onClick(): void {
+		this.$emit("select", this);
+	}
+
+	protected onContextMenu(): void {
 		this.$emit("select", this);
 	}
 
