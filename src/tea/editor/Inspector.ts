@@ -32,6 +32,12 @@ import * as Tea from "../Tea";
 				@update="onUpdateScale">
 				Scale
 			</Vector3>
+			<component
+				ref="components"
+				v-for="(item, index) in components"
+				:is="item"
+				:key="index">
+			</component>
 			</template>
 		</div>
 	`,
@@ -40,7 +46,8 @@ import * as Tea from "../Tea";
 		name: "",
 		position: [0, 0, 0],
 		rotation: [0, 0, 0],
-		scale: [0, 0, 0]
+		scale: [0, 0, 0],
+		components: []
 	}}
 })
 export class Inspector extends Vue {
@@ -49,6 +56,12 @@ export class Inspector extends Vue {
 	position: Array<number>;
 	rotation: Array<number>;
 	scale: Array<number>;
+	components: Array<any>;
+
+	get lastComponent(): Vue {
+		var components = this.$refs.components as Vue[];
+		return components[components.length - 1];
+	}
 
 	setPosition(value: Tea.Vector3): void {
 		var position = this.position;
@@ -81,6 +94,11 @@ export class Inspector extends Vue {
 
 	hasFocus(): boolean {
 		return this.$el.querySelector(":focus") != null;
+	}
+
+	clearComponents(): void {
+		var components = this.components;
+		components.splice(0, components.length);
 	}
 
 	protected onUpdatePosition(x: number, y: number, z: number): void {

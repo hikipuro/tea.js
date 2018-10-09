@@ -1,0 +1,28 @@
+#{$parent} {
+	div.Rectangle {
+		//position: relative;
+		width: 100%;
+		line-height: 1.5;
+		white-space: nowrap;
+		overflow: hidden;
+
+		> .title {
+			display: inline-block;
+			width: 45%;
+			overflow: hidden;
+			vertical-align: top;
+		}
+
+		> .value {
+			display: inline-flex;
+			//position: absolute;
+			right: 0;
+			width: 55%;
+			justify-content: space-evenly;
+		}
+
+		.Panel {
+			display: flex;
+		}
+	}
+}

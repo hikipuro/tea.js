@@ -1,6 +1,8 @@
+import Vue from "vue";
 import * as Tea from "../Tea";
 import { Editor } from "./Editor";
 import { SelectAspect } from "./SelectAspect";
+import { Camera } from "./Camera";
 
 export class EditorBehavior {
 	editor: Editor;
@@ -61,18 +63,32 @@ export class EditorBehavior {
 			contextMenu.show("hierarchyView");
 		});
 
-		hierarchyView.$on("select", () => {
-			if (hierarchyView.selectedItem == null) {
+		hierarchyView.$on("select", (item: Tea.Editor.TreeViewItem) => {
+			if (item == null) {
 				inspectorView.hide();
 				return;
 			}
 			inspectorView.show();
-			console.log("select", hierarchyView.selectedItem.tag);
+			console.log("select", item.tag);
 			var object3d = this.hierarchyViewItem;
 			if (object3d == null) {
 				return;
 			}
 			inspectorView.name = object3d.name;
+			inspectorView.clearComponents();
+			var components = object3d.getComponents(Tea.Component);
+			components.forEach((component) => {
+				//console.log(component.editorView);
+				if (component.editorView == null) {
+					return;
+				}
+				var vue = component.editorView.extend({
+					created: function () {
+						(this as any)._component = component;
+					}
+				});
+				inspectorView.components.push(vue);
+			});
 			this.inspectorViewTimer.start();
 		});
 	}

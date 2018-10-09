@@ -1,12 +1,14 @@
 $parent: "#editor";
 @import "Theme.scss";
 @import "Button.scss";
+@import "CheckBox.scss";
 @import "ContextMenu.scss";
 @import "HLayout.scss";
 @import "InputNumber.scss";
 @import "Label.scss";
 @import "ListView.scss";
 @import "Panel.scss";
+@import "Rectangle.scss";
 @import "TreeView.scss";
 @import "Vector3.scss";
 @import "VLayout.scss";
@@ -56,6 +58,7 @@ $parent: "#editor";
 	}
 	div.Inspector {
 		width: 100%;
+		line-height: 1.5;
 	}
 
 	.fadeout-leave-active {

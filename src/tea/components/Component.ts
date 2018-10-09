@@ -4,6 +4,7 @@ export class Component {
 	app: Tea.App;
 	object3d: Tea.Object3D;
 	enabled: boolean;
+	editorView: any;
 
 	constructor(app: Tea.App) {
 		this.app = app;

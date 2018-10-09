@@ -3,6 +3,8 @@ import Component from "vue-class-component";
 import * as Tea from "../Tea";
 import { EditorBehavior } from "./EditorBehavior";
 import { Button } from "./Button";
+import { Camera } from "./Camera";
+import { CheckBox } from "./CheckBox";
 import { ContextMenu } from "./ContextMenu";
 import { HLayout } from "./HLayout";
 import { InputNumber } from "./InputNumber";
@@ -10,6 +12,7 @@ import { Inspector } from "./Inspector";
 import { Label } from "./Label";
 import { ListView } from "./ListView";
 import { Panel } from "./Panel";
+import { Rectangle } from "./Rectangle";
 import { SelectAspect } from "./SelectAspect";
 import { TreeView } from "./TreeView";
 import { Vector3 } from "./Vector3";
@@ -17,6 +20,8 @@ import { VLayout } from "./VLayout";
 
 //*
 Vue.component("Button", Button);
+Vue.component("Camera", Camera);
+Vue.component("CheckBox", CheckBox);
 Vue.component("ContextMenu", ContextMenu);
 Vue.component("HLayout", HLayout);
 Vue.component("InputNumber", InputNumber);
@@ -24,6 +29,7 @@ Vue.component("Inspector", Inspector);
 Vue.component("Label", Label);
 Vue.component("ListView", ListView);
 Vue.component("Panel", Panel);
+Vue.component("Rectangle", Rectangle);
 Vue.component("SelectAspect", SelectAspect);
 Vue.component("TreeView", TreeView);
 Vue.component("Vector3", Vector3);
@@ -82,6 +88,12 @@ export class Editor extends Vue {
 		this._behavior = new EditorBehavior(this);
 	}
 
+	/*
+	addComponent(name: string, component: Vue): void {
+		Vue.component(name, component);
+	}
+	//*/
+
 	get hierarchyView(): TreeView {
 		return this.$refs.hierarchy as TreeView;
 	}
@@ -116,6 +128,10 @@ export class Editor extends Vue {
 
 var  _Button = Button;
 type _Button = Button;
+var  _Camera = Camera;
+type _Camera = Camera;
+var  _CheckBox = CheckBox;
+type _CheckBox = CheckBox;
 var  _ContextMenu = ContextMenu;
 type _ContextMenu = ContextMenu;
 var  _HLayout = HLayout;
@@ -130,6 +146,8 @@ var  _ListView = ListView;
 type _ListView = ListView;
 var  _Panel = Panel;
 type _Panel = Panel;
+var  _Rect = Rectangle;
+type _Rect = Rectangle;
 var  _TreeView = TreeView;
 type _TreeView = TreeView;
 var  _Vector3 = Vector3;
@@ -140,6 +158,10 @@ type _VLayout = VLayout;
 export module Editor {
 	export var  Button = _Button;
 	export type Button = _Button;
+	export var  Camera = _Camera;
+	export type Camera = _Camera;
+	export var  CheckBox = _CheckBox;
+	export type CheckBox = _CheckBox;
 	export var  ContextMenu = _ContextMenu;
 	export type ContextMenu = _ContextMenu;
 	export var  ContextMenuItem = ContextMenu.Item;
@@ -156,8 +178,12 @@ export module Editor {
 	export type ListView = _ListView;
 	export var  Panel = _Panel;
 	export type Panel = _Panel;
+	export var  Rect = _Rect;
+	export type Rect = _Rect;
 	export var  TreeView = _TreeView;
 	export type TreeView = _TreeView;
+	export var  TreeViewItem = TreeView.Item;
+	export type TreeViewItem = TreeView.Item;
 	export var  Vector3 = _Vector3;
 	export type Vector3 = _Vector3;
 	export var  VLayout = _VLayout;

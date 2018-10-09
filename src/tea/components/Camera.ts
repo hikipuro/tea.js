@@ -81,6 +81,7 @@ export class Camera extends Component {
 
 	constructor(app: Tea.App) {
 		super(app);
+		this.editorView = Tea.Editor.Camera;
 		this.gl = app.gl;
 		this.clearFlags = Tea.CameraClearFlags.SolidColor;
 		this.fieldOfView = 60.0;
@@ -540,6 +541,7 @@ export class Camera extends Component {
 				);
 				break;
 			case Tea.CameraClearFlags.Skybox:
+				//gl.clear(gl.COLOR_BUFFER_BIT);
 				var scene = this.object3d.scene;
 				if (scene.enablePostProcessing) {
 					scene.renderTexture.bindFramebuffer();
