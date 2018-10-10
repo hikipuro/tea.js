@@ -89,6 +89,9 @@ export class Camera extends Component {
 			camera.object3d = new Tea.Object3D(app);
 			Camera._skyboxCamera = camera;
 		}
+		if (Camera.currentBGColor == null) {
+			Camera.currentBGColor = Tea.Color.black.clone();
+		}
 		this.gl = app.gl;
 		this.clearFlags = Tea.CameraClearFlags.SolidColor;
 		this.fieldOfView = 60.0;
@@ -537,9 +540,9 @@ export class Camera extends Component {
 	protected clear(): void {
 		var gl = this.gl;
 		var color = this.backgroundColor;
-		if (Camera.currentBGColor !== color) {
+		if (Camera.currentBGColor.equals(color) === false) {
 			gl.clearColor(color[0], color[1], color[2], color[3]);
-			Camera.currentBGColor = color;
+			Camera.currentBGColor.copy(color);
 		}
 		switch (this.clearFlags) {
 			case Tea.CameraClearFlags.SolidColor:
@@ -586,13 +589,17 @@ export class Camera extends Component {
 			gl.viewport(0.0, 0.0, width, height);
 		}
 		if (this.orthographic) {
-			skybox.object3d.position.set(0.0, 0.0, 0.0);
+			skybox.object3d.localPosition.set(0.0, 0.0, 0.0);
 			skybox.object3d.update();
 			skybox.renderer.render(
 				camera, [], scene.renderSettings
 			);
 		} else {
-			skybox.object3d.position.copy(this.object3d.position);
+			var skyboxPosition = skybox.object3d.localPosition;
+			var position = this.object3d.position;
+			skyboxPosition[0] = position[0];
+			skyboxPosition[1] = position[1];
+			skyboxPosition[2] = position[2];
 			skybox.object3d.update();
 			skybox.renderer.render(
 				this, [], scene.renderSettings
