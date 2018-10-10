@@ -162,20 +162,24 @@ export class Item extends Vue {
 
 @Component({
 	template: `
-		<ul
+		<div
 			class="TreeView"
 			@keydown="onKeyDown"
 			@click="onClick"
 			@contextmenu="onContextMenu">
-			<item
-				v-for="(item, index) in items"
-				:key="index"
-				:model="item"
-				:depth="0"
-				@create="onCreateItem"
-				@select="onSelectItem">
-			</item>
-		</ul>
+			<slot name="before"></slot>
+			<ul ref="root">
+				<item
+					v-for="(item, index) in items"
+					:key="index"
+					:model="item"
+					:depth="0"
+					@create="onCreateItem"
+					@select="onSelectItem">
+				</item>
+			</ul>
+			<slot name="after"></slot>
+		</div>
 	`,
 	data: () => { return {
 		items: []
@@ -185,7 +189,7 @@ export class Item extends Vue {
 	}
 })
 export class TreeView extends Vue {
-	static readonly maxDepth: number = 10;
+	static readonly maxDepth: number = 100;
 	items: Array<any>;
 	selectedItem: Item;
 	openIcon: string;
@@ -204,6 +208,9 @@ export class TreeView extends Vue {
 			});
 		};
 		this.$children.forEach((item: Item) => {
+			if (item instanceof Item === false) {
+				return;
+			}
 			expand(item);
 		});
 	}
@@ -216,6 +223,9 @@ export class TreeView extends Vue {
 			});
 		};
 		this.$children.forEach((item: Item) => {
+			if (item instanceof Item === false) {
+				return;
+			}
 			collapse(item);
 		});
 	}
@@ -314,20 +324,57 @@ export class TreeView extends Vue {
 		this.$emit("menu", e);
 	}
 
-	protected onKeyDown = (e: KeyboardEvent): void => {
+	protected onKeyDown(e: KeyboardEvent): void {
+		var isArrow = false;
 		switch (e.key) {
+			case "Escape":
+				if (this.selectedItem != null) {
+					this.forEachChild((item: Item) => {
+						item.select(false);
+					});
+					this.selectedItem = null;
+					this.$emit("select", null);
+				}
+				break;
 			case "ArrowUp":
+				isArrow = true;
 				this.selectPrev();
 				break;
 			case "ArrowDown":
+				isArrow = true;
 				this.selectNext();
 				break;
 			case "ArrowLeft":
+				isArrow = true;
 				this.collapse();
 				break;
 			case "ArrowRight":
+				isArrow = true;
 				this.expand();
 				break;
+		}
+
+		if (isArrow) {
+			e.preventDefault();
+			var item = this.selectedItem;
+			if (item == null) {
+				return;
+			}
+			var el = this.$el as HTMLElement;
+			var itemEl = item.$el as HTMLElement;
+			var itemChildEl = itemEl.querySelector(".item") as HTMLElement;
+
+			var top = el.scrollTop;
+			var itemTop = itemEl.offsetTop;
+			if (top > itemTop) {
+				el.scrollTo(0, itemTop);
+				return;
+			}
+			var bottom = top + el.clientHeight;
+			var itemBottom = itemTop + itemChildEl.offsetHeight;
+			if (bottom < itemBottom) {
+				el.scrollTo(0, itemBottom - el.clientHeight);
+			}
 		}
 	}
 
@@ -360,6 +407,9 @@ export class TreeView extends Vue {
 			});
 		};
 		this.$children.forEach((item: Item) => {
+			if (item instanceof Item === false) {
+				return;
+			}
 			forEach(item);
 		});
 	}

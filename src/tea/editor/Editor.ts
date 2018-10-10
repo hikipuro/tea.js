@@ -6,6 +6,7 @@ import { Button } from "./Button";
 import { CheckBox } from "./CheckBox";
 import { ContextMenu } from "./ContextMenu";
 import { HLayout } from "./HLayout";
+import { HResizeBar } from "./HResizeBar";
 import { InputNumber } from "./InputNumber";
 import { Inspector } from "./Inspector";
 import { Label } from "./Label";
@@ -30,6 +31,7 @@ Vue.component("Button", Button);
 Vue.component("CheckBox", CheckBox);
 Vue.component("ContextMenu", ContextMenu);
 Vue.component("HLayout", HLayout);
+Vue.component("HResizeBar", HResizeBar);
 Vue.component("InputNumber", InputNumber);
 Vue.component("Inspector", Inspector);
 Vue.component("Label", Label);
@@ -61,6 +63,7 @@ Vue.component("Script", Script);
 				}">
 				<Panel ref="left" class="LeftPanel">
 					<TreeView ref="hierarchy" tabindex="0"></TreeView>
+					<HResizeBar></HResizeBar>
 				</Panel>
 				<Panel ref="main" class="MainPanel">
 					<VLayout>
@@ -77,6 +80,7 @@ Vue.component("Script", Script);
 				</Panel>
 				<Panel ref="right" class="RightPanel">
 					<Inspector ref="inspector"></Inspector>
+					<HResizeBar :isLeft="true"></HResizeBar>
 				</Panel>
 			</HLayout>
 			<ContextMenu ref="menu"></ContextMenu>
