@@ -400,19 +400,25 @@ export class Camera extends Component {
 	protected getViewportRect(): Tea.Rect {
 		var rect = this._viewportRect;
 		rect.copy(this.rect);
-		if (rect[0] < 0) {
+		if (rect[0] < 0.0) {
 			rect[2] += rect[0];
-			rect[0] = 0;
+			rect[0] = 0.0;
 		}
-		if (rect[1] < 0) {
+		if (rect[1] < 0.0) {
 			rect[3] += rect[1];
-			rect[1] = 0;
+			rect[1] = 0.0;
 		}
-		if (rect[0] + rect[2] > 1) {
-			rect[2] = 1 - rect[0];
+		if (rect[0] + rect[2] > 1.0) {
+			rect[2] = 1.0 - rect[0];
 		}
-		if (rect[1] + rect[3] > 1) {
-			rect[3] = 1 - rect[1];
+		if (rect[1] + rect[3] > 1.0) {
+			rect[3] = 1.0 - rect[1];
+		}
+		if (rect[2] < 0.0) {
+			rect[2] = 0.0;
+		}
+		if (rect[3] < 0.0) {
+			rect[3] = 0.0;
 		}
 		return rect;
 	}
@@ -444,6 +450,13 @@ export class Camera extends Component {
 		var y = ry * height;
 		var w = rw * width;
 		var h = rh * height;
+
+		if (w < 0.0) {
+			w = 0.0;
+		}
+		if (h < 0.0) {
+			h = 0.0;
+		}
 
 		var gl = this.gl;
 		gl.viewport(x, y, w, h);
@@ -487,6 +500,13 @@ export class Camera extends Component {
 		var w = rect.width * width;
 		var h = rect.height * height;
 
+		if (w < 0.0) {
+			w = 0.0;
+		}
+		if (h < 0.0) {
+			h = 0.0;
+		}
+		
 		gl.viewport(x, y, w, h);
 		gl.scissor(x, y, w, h);
 	}
@@ -527,6 +547,13 @@ export class Camera extends Component {
 		var y = rect.y * height;
 		var w = rect.width * width;
 		var h = rect.height * height;
+
+		if (w < 0.0) {
+			w = 0.0;
+		}
+		if (h < 0.0) {
+			h = 0.0;
+		}
 
 		var viewport = this.app.status.viewport;
 		if (viewport[0] !== x && viewport[1] !== y &&
