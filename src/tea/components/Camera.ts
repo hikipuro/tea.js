@@ -54,12 +54,12 @@ class Prev {
 
 export class Camera extends Component {
 	static editorView = Tea.Editor.Camera;
+	protected static _skyboxCamera: Camera;
 	clearFlags: Tea.CameraClearFlags;
 	fieldOfView: number;
 	nearClipPlane: number;
 	farClipPlane: number;
 	backgroundColor: Tea.Color;
-	orthographic: boolean;
 	orthographicSize: number;
 	rect: Tea.Rect;
 	targetTexture: Tea.RenderTexture;
@@ -71,6 +71,7 @@ export class Camera extends Component {
 
 	protected gl: WebGLRenderingContext;
 	protected _aspect: number;
+	protected _orthographic: boolean;
 	protected _cameraToWorldMatrix: Tea.Matrix4x4;
 	protected _worldToCameraMatrix: Tea.Matrix4x4;
 	protected _projectionMatrix: Tea.Matrix4x4;
@@ -82,13 +83,19 @@ export class Camera extends Component {
 
 	constructor(app: Tea.App) {
 		super(app);
+		if (Camera._skyboxCamera === undefined) {
+			Camera._skyboxCamera = null;
+			var camera = new Camera(app);
+			camera.object3d = new Tea.Object3D(app);
+			Camera._skyboxCamera = camera;
+		}
 		this.gl = app.gl;
 		this.clearFlags = Tea.CameraClearFlags.SolidColor;
 		this.fieldOfView = 60.0;
 		this.nearClipPlane = 0.3;
 		this.farClipPlane = 1000.0;
 		this.backgroundColor = Tea.Color.background;
-		this.orthographic = false;
+		this._orthographic = false;
 		this.orthographicSize = 5.0;
 		this.rect = new Tea.Rect(0.0, 0.0, 1.0, 1.0);
 		this.enableStereo = false;
@@ -116,6 +123,14 @@ export class Camera extends Component {
 	}
 	set aspect(value: number) {
 		this._aspect = value;
+	}
+	
+	get orthographic(): boolean {
+		return this._orthographic;
+	}
+	set orthographic(value: boolean) {
+		this._prev.aspect = 0.0;
+		this._orthographic = value;
 	}
 
 	get cameraToWorldMatrix(): Tea.Matrix4x4 {
@@ -216,7 +231,7 @@ export class Camera extends Component {
 				this._worldToCameraMatrix
 			);
 			this._inverseViewProjectionMatrix = this._viewProjectionMatrix.inverse;
-			this.frustumPlanes = Tea.GeometryUtil.calculateFrustumPlanes(this);
+			//this.frustumPlanes = Tea.GeometryUtil.calculateFrustumPlanes(this);
 		}
 
 		if (this.targetTexture != null) {
@@ -523,7 +538,7 @@ export class Camera extends Component {
 		var gl = this.gl;
 		var color = this.backgroundColor;
 		if (Camera.currentBGColor !== color) {
-			gl.clearColor(color.r, color.g, color.b, color.a);
+			gl.clearColor(color[0], color[1], color[2], color[3]);
 			Camera.currentBGColor = color;
 		}
 		switch (this.clearFlags) {
@@ -541,31 +556,54 @@ export class Camera extends Component {
 				);
 				break;
 			case Tea.CameraClearFlags.Skybox:
-				//gl.clear(gl.COLOR_BUFFER_BIT);
-				var scene = this.object3d.scene;
-				if (scene.enablePostProcessing) {
-					scene.renderTexture.bindFramebuffer();
-					var width = scene.renderTexture.width;
-					var height = scene.renderTexture.height;
-					this.gl.scissor(0.0, 0.0, width, height);
-					this.gl.viewport(0.0, 0.0, width, height);
-				}
-				var skybox = scene.renderSettings.skybox;
-				skybox.object3d.position.copy(this.object3d.position);
-				skybox.object3d.update();
-				skybox.renderer.render(this, [], scene.renderSettings);
-				gl.clear(
-					gl.DEPTH_BUFFER_BIT |
-					gl.STENCIL_BUFFER_BIT
-				);
-				if (scene.enablePostProcessing) {
-					scene.renderTexture.unbindFramebuffer();
-				}
+				this.drawSkybox();
 				break;
 		}
 	}
 
 	protected flush(): void {
 		this.gl.flush();
+	}
+
+	protected drawSkybox(): void {
+		var gl = this.gl;
+		var camera = Camera._skyboxCamera;
+		var scene = this.object3d.scene;
+		var skybox = scene.renderSettings.skybox;
+		//gl.clear(gl.COLOR_BUFFER_BIT);
+
+		if (this.orthographic) {
+			//camera.targetTexture = this.targetTexture;
+			camera.object3d.localRotation.copy(this.object3d.rotation);
+			camera.update();
+		}
+
+		if (scene.enablePostProcessing) {
+			scene.renderTexture.bindFramebuffer();
+			var width = scene.renderTexture.width;
+			var height = scene.renderTexture.height;
+			gl.scissor(0.0, 0.0, width, height);
+			gl.viewport(0.0, 0.0, width, height);
+		}
+		if (this.orthographic) {
+			skybox.object3d.position.set(0.0, 0.0, 0.0);
+			skybox.object3d.update();
+			skybox.renderer.render(
+				camera, [], scene.renderSettings
+			);
+		} else {
+			skybox.object3d.position.copy(this.object3d.position);
+			skybox.object3d.update();
+			skybox.renderer.render(
+				this, [], scene.renderSettings
+			);
+		}
+		gl.clear(
+			gl.DEPTH_BUFFER_BIT |
+			gl.STENCIL_BUFFER_BIT
+		);
+		if (scene.enablePostProcessing) {
+			scene.renderTexture.unbindFramebuffer();
+		}
 	}
 }
