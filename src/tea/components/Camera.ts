@@ -86,6 +86,7 @@ export class Camera extends Component {
 		if (Camera._skyboxCamera === undefined) {
 			Camera._skyboxCamera = null;
 			var camera = new Camera(app);
+			camera.clearFlags = Tea.CameraClearFlags.Nothing;
 			camera.object3d = new Tea.Object3D(app);
 			Camera._skyboxCamera = camera;
 		}
