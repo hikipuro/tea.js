@@ -2,6 +2,7 @@ import * as Tea from "../Tea";
 import { Component } from "./Component";
 
 export class Script extends Component {
+	static editorView = Tea.Editor.Script;
 	isStarted: boolean;
 
 	constructor(app: Tea.App) {

@@ -39,7 +39,7 @@
     "webpack-node-externals": "^1.7.2"
   },
   "dependencies": {
-    "electron": "^3.0.2",
+    "electron": "^3.0.3",
     "vue": "^2.5.17",
     "vue-class-component": "^6.2.0"
   }

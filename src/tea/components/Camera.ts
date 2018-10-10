@@ -53,6 +53,7 @@ class Prev {
 }
 
 export class Camera extends Component {
+	static editorView = Tea.Editor.Camera;
 	clearFlags: Tea.CameraClearFlags;
 	fieldOfView: number;
 	nearClipPlane: number;
@@ -81,7 +82,6 @@ export class Camera extends Component {
 
 	constructor(app: Tea.App) {
 		super(app);
-		this.editorView = Tea.Editor.Camera;
 		this.gl = app.gl;
 		this.clearFlags = Tea.CameraClearFlags.SolidColor;
 		this.fieldOfView = 60.0;

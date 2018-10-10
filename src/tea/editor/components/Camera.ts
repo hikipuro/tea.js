@@ -1,11 +1,11 @@
 import Vue from "vue";
 import Component from "vue-class-component";
-import * as Tea from "../Tea";
+import * as Tea from "../../Tea";
 
 @Component({
 	template: `
 		<div
-			class="Camera">
+			class="Component Camera">
 			<div class="name">{{ name }}</div>
 			<InputNumber
 				ref="fieldOfView"

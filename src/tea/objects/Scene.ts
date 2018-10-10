@@ -505,11 +505,14 @@ export class Scene {
 				var model = renderer.object3d.localToWorldMatrix;
 				//var model = camera.object3d.localToWorldMatrix;
 				var vpMatrix = camera.viewProjectionMatrix;
-				var mvpMatrix = vpMatrix.mul(model);
+				//var mvpMatrix = vpMatrix.mul(model);
 				//mvpMatrix = tMatrix.mul(mvpMatrix);
 				renderer.material.setMatrix("_LightCamera", vpMatrix);
 				renderer.material.setMatrix("tMatrix", tMatrix.mul(vpMatrix));
 				renderer.material.setInt("receiveShadows", 1);
+			} else {
+				renderer.material.setTexture("_ShadowTex", null);
+				renderer.material.setInt("receiveShadows", 0);
 			}
 			renderer.material.shader = shader;
 			renderer.updateAttributes();

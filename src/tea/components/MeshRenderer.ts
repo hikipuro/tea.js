@@ -39,6 +39,7 @@ class BufferAttribute {
 }
 
 export class MeshRenderer extends Renderer {
+	static editorView = Tea.Editor.MeshRenderer;
 	receiveShadows: boolean;
 	vertexBuffer: WebGLBuffer;
 	indexBuffer: WebGLBuffer;

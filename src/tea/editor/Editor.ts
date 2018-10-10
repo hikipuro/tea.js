@@ -3,7 +3,6 @@ import Component from "vue-class-component";
 import * as Tea from "../Tea";
 import { EditorBehavior } from "./EditorBehavior";
 import { Button } from "./Button";
-import { Camera } from "./Camera";
 import { CheckBox } from "./CheckBox";
 import { ContextMenu } from "./ContextMenu";
 import { HLayout } from "./HLayout";
@@ -18,9 +17,16 @@ import { TreeView } from "./TreeView";
 import { Vector3 } from "./Vector3";
 import { VLayout } from "./VLayout";
 
+import { BoxCollider } from "./components/BoxCollider";
+import { Camera } from "./components/Camera";
+import { Light } from "./components/Light";
+import { LineRenderer } from "./components/LineRenderer";
+import { MeshRenderer } from "./components/MeshRenderer";
+import { Rigidbody } from "./components/Rigidbody";
+import { Script } from "./components/Script";
+
 //*
 Vue.component("Button", Button);
-Vue.component("Camera", Camera);
 Vue.component("CheckBox", CheckBox);
 Vue.component("ContextMenu", ContextMenu);
 Vue.component("HLayout", HLayout);
@@ -34,6 +40,14 @@ Vue.component("SelectAspect", SelectAspect);
 Vue.component("TreeView", TreeView);
 Vue.component("Vector3", Vector3);
 Vue.component("VLayout", VLayout);
+
+Vue.component("BoxCollider", BoxCollider);
+Vue.component("Camera", Camera);
+Vue.component("Light", Light);
+Vue.component("LineRenderer", LineRenderer);
+Vue.component("MeshRenderer", MeshRenderer);
+Vue.component("Rigidbody", Rigidbody);
+Vue.component("Script", Script);
 //*/
 
 @Component({
@@ -128,8 +142,6 @@ export class Editor extends Vue {
 
 var  _Button = Button;
 type _Button = Button;
-var  _Camera = Camera;
-type _Camera = Camera;
 var  _CheckBox = CheckBox;
 type _CheckBox = CheckBox;
 var  _ContextMenu = ContextMenu;
@@ -155,11 +167,24 @@ type _Vector3 = Vector3;
 var  _VLayout = VLayout;
 type _VLayout = VLayout;
 
+var  _BoxCollider = BoxCollider;
+type _BoxCollider = BoxCollider;
+var  _Camera = Camera;
+type _Camera = Camera;
+var  _Light = Light;
+type _Light = Light;
+var  _LineRenderer = LineRenderer;
+type _LineRenderer = LineRenderer;
+var  _MeshRenderer = MeshRenderer;
+type _MeshRenderer = MeshRenderer;
+var  _Rigidbody = Rigidbody;
+type _Rigidbody = Rigidbody;
+var  _Script = Script;
+type _Script = Script;
+
 export module Editor {
 	export var  Button = _Button;
 	export type Button = _Button;
-	export var  Camera = _Camera;
-	export type Camera = _Camera;
 	export var  CheckBox = _CheckBox;
 	export type CheckBox = _CheckBox;
 	export var  ContextMenu = _ContextMenu;
@@ -188,6 +213,21 @@ export module Editor {
 	export type Vector3 = _Vector3;
 	export var  VLayout = _VLayout;
 	export type VLayout = _VLayout;
+
+	export var  BoxCollider = _BoxCollider;
+	export type BoxCollider = _BoxCollider;
+	export var  Camera = _Camera;
+	export type Camera = _Camera;
+	export var  Light = _Light;
+	export type Light = _Light;
+	export var  LineRenderer = _LineRenderer;
+	export type LineRenderer = _LineRenderer;
+	export var  MeshRenderer = _MeshRenderer;
+	export type MeshRenderer = _MeshRenderer;
+	export var  Rigidbody = _Rigidbody;
+	export type Rigidbody = _Rigidbody;
+	export var  Script = _Script;
+	export type Script = _Script;
 }
 
 var loaded = () => {

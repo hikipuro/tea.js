@@ -2,7 +2,6 @@ import Vue from "vue";
 import * as Tea from "../Tea";
 import { Editor } from "./Editor";
 import { SelectAspect } from "./SelectAspect";
-import { Camera } from "./Camera";
 
 export class EditorBehavior {
 	editor: Editor;
@@ -77,12 +76,13 @@ export class EditorBehavior {
 			inspectorView.name = object3d.name;
 			inspectorView.clearComponents();
 			var components = object3d.getComponents(Tea.Component);
-			components.forEach((component) => {
+			components.forEach((component: Tea.Component) => {
 				//console.log(component.editorView);
-				if (component.editorView == null) {
+				var editorView = (component.constructor as any).editorView;//.editorView as Vue;
+				if (editorView == null) {
 					return;
 				}
-				var vue = component.editorView.extend({
+				var vue = editorView.extend({
 					created: function () {
 						(this as any)._component = component;
 					}

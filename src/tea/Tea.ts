@@ -1,3 +1,5 @@
+export * from "./editor/Editor";
+
 export * from "./collisions/AABB";
 export * from "./collisions/Line";
 export * from "./collisions/LineSegment";
@@ -126,8 +128,6 @@ export * from "./GLExtensions";
 export * from "./GLParameters";
 export * from "./Keyboard";
 export * from "./Mouse";
-
-export * from "./editor/Editor";
 
 /**
  * degrees to radians.
