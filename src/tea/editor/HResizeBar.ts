@@ -44,6 +44,7 @@ export class HResizeBar extends Vue {
 			x += this._parentX;
 		}
 		this.$parent.$el.style.width = x + "px";
+		this.$emit("resize");
 	}
 
 	protected onMouseUp(e: MouseEvent): void {

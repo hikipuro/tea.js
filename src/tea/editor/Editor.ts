@@ -63,7 +63,7 @@ Vue.component("Script", Script);
 				}">
 				<Panel ref="left" class="LeftPanel">
 					<TreeView ref="hierarchy" tabindex="0"></TreeView>
-					<HResizeBar></HResizeBar>
+					<HResizeBar ref="hierarchyResize"></HResizeBar>
 				</Panel>
 				<Panel ref="main" class="MainPanel">
 					<VLayout>
@@ -80,7 +80,7 @@ Vue.component("Script", Script);
 				</Panel>
 				<Panel ref="right" class="RightPanel">
 					<Inspector ref="inspector"></Inspector>
-					<HResizeBar :isLeft="true"></HResizeBar>
+					<HResizeBar :isLeft="true" ref="inspectorResize"></HResizeBar>
 				</Panel>
 			</HLayout>
 			<ContextMenu ref="menu"></ContextMenu>

@@ -35,6 +35,15 @@ export class EditorBehavior {
 	}
 
 	initScreenView(): void {
+		var hierarchyResize = this.editor.$refs.hierarchyResize as Vue;
+		var inspectorResize = this.editor.$refs.inspectorResize as Vue;
+		hierarchyResize.$on("resize", () => {
+			this.updateScreenSize();
+		});
+		inspectorResize.$on("resize", () => {
+			this.updateScreenSize();
+			this.scene.app.renderer.stats.updateSize();
+		});
 		setTimeout(() => {
 			this.scene.app.renderer.on("resize", () => {
 				this.updateScreenSize();
