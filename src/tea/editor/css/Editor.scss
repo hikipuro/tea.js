@@ -63,6 +63,9 @@ $parent: "#editor";
 		height: 200px;
 		border-top: 1px solid theme("border");
 
+		.Panel {
+			overflow: auto;
+		}
 		.TreeView {
 			width: 200px;
 		}
