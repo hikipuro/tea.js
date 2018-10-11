@@ -1,15 +1,10 @@
 #{$parent} {
 	div.HLayout {
 		display: flex;
-		width: 100%;
+		flex-direction: row;
+		height: 100%;
 		//letter-spacing: -1em;
 		//white-space: nowrap;
 		overflow: hidden;
-
-		> div.Panel {
-			display: inline-flex;
-			vertical-align: top;
-			//letter-spacing: normal;
-		}
 	}
 }

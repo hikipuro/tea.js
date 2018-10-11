@@ -43,6 +43,7 @@ const teaConfig = {
 	},
 	externals: {
 		fs: "commonjs fs",
+		path: "commonjs path",
 	},
 	entry: {
 		"html/main": "./src/Main.ts",

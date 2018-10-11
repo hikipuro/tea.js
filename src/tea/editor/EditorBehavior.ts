@@ -29,6 +29,7 @@ export class EditorBehavior {
 			this.initScreenView();
 			this.initHierarchyView();
 			this.initInspectorView();
+			this.initProjectView();
 			this.initContextMenu();
 			this.updateHierarchyView(true);
 		});
@@ -37,12 +38,16 @@ export class EditorBehavior {
 	initScreenView(): void {
 		var hierarchyResize = this.editor.$refs.hierarchyResize as Vue;
 		var inspectorResize = this.editor.$refs.inspectorResize as Vue;
+		var projectResize = this.editor.$refs.projectResize as Vue;
 		hierarchyResize.$on("resize", () => {
 			this.updateScreenSize();
 		});
 		inspectorResize.$on("resize", () => {
 			this.updateScreenSize();
 			this.scene.app.renderer.stats.updateSize();
+		});
+		projectResize.$on("resize", () => {
+			this.updateScreenSize();
 		});
 		setTimeout(() => {
 			this.scene.app.renderer.on("resize", () => {
@@ -131,6 +136,57 @@ export class EditorBehavior {
 		});
 	}
 
+	initProjectView(): void {
+		var projectView = this.editor.projectView;
+		projectView.$on("expand", (item: Tea.Editor.TreeViewItem) => {
+			//console.log("expand", item);
+			var i = item.model;
+			if (i == null || i.children.length > 0) {
+				return;
+			}
+			var items = [];
+			var files = Tea.Directory.getFilesSync(item.tag);
+			files.forEach(file => {
+				var item = createItems(file);
+				if (item == null) {
+					return;
+				}
+				items.push(item);
+			});
+			i.children = items;
+		});
+		projectView.$on("collapse", (item: Tea.Editor.TreeViewItem) => {
+			//console.log("collapse", item);
+		});
+
+		var createItems = (file: Tea.FileInfo): any => {
+			if (file == null || file.exists === false) {
+				return null;
+			}
+			if (file.isDirectory === false) {
+				return null;
+			}
+			var item = {
+				text: file.name,
+				children: [],
+				isFolder: file.hasChildDirectory,
+				tag: file.fullName
+			};
+			return item;
+		};
+		var items = [];
+		Tea.Directory.getFiles(".", (files) => {
+			files.forEach(file => {
+				var item = createItems(file);
+				if (item == null) {
+					return;
+				}
+				items.push(item);
+			});
+		});
+		projectView.items = items;
+	}
+
 	initContextMenu(): void {
 		/*
 		var contextMenu = this.editor.contextMenu;
@@ -159,7 +215,7 @@ export class EditorBehavior {
 		}
 		app.width = width;
 		app.height = height;
-		console.log("updateScreenSize", width, height);
+		//console.log("updateScreenSize", width, height);
 	}
 
 	showHierarchyViewMenu(): void {
@@ -367,11 +423,15 @@ export class EditorBehavior {
 				var item = {
 					text: child.name,
 					children: [],
+					isFolder: false,
 					tag: child.id
 				};
 				child.children.forEach((i) => {
 					createItems(item.children, i);
 				});
+				if (item.children.length > 0) {
+					item.isFolder = true;
+				}
 				items.push(item);
 			};
 			var children = this.scene.children;

@@ -18,6 +18,7 @@ import { SelectAspect } from "./SelectAspect";
 import { TreeView } from "./TreeView";
 import { Vector3 } from "./Vector3";
 import { VLayout } from "./VLayout";
+import { VResizeBar } from "./VResizeBar";
 
 import { BoxCollider } from "./components/BoxCollider";
 import { Camera } from "./components/Camera";
@@ -43,6 +44,7 @@ Vue.component("SelectAspect", SelectAspect);
 Vue.component("TreeView", TreeView);
 Vue.component("Vector3", Vector3);
 Vue.component("VLayout", VLayout);
+Vue.component("VResizeBar", VResizeBar);
 
 Vue.component("BoxCollider", BoxCollider);
 Vue.component("Camera", Camera);
@@ -62,26 +64,41 @@ Vue.component("Script", Script);
 				:style="{
 					height: '100%'
 				}">
-				<Panel ref="left" class="LeftPanel">
-					<TreeView ref="hierarchy" tabindex="0"></TreeView>
-					<HResizeBar ref="hierarchyResize"></HResizeBar>
-				</Panel>
-				<Panel ref="main" class="MainPanel">
-					<VLayout>
-						<Panel class="Toolbar">
-							<SelectAspect
-								ref="aspect"
-								@update="onUpdateAspect">
-							</SelectAspect>
+				<VLayout class="LeftLayout">
+					<HLayout class="TopLeftLayout">
+						<Panel ref="left" class="LeftPanel">
+							<TreeView ref="hierarchy" tabindex="0"></TreeView>
+							<HResizeBar ref="hierarchyResize"></HResizeBar>
 						</Panel>
-						<Panel class="CanvasPanel">
-							<canvas ref="canvas" id="canvas"></canvas>
+						<Panel ref="main" class="MainPanel">
+							<VLayout
+								:style="{
+									height: '100%'
+								}">
+								<Panel class="Toolbar">
+									<SelectAspect
+										ref="aspect"
+										@update="onUpdateAspect">
+									</SelectAspect>
+								</Panel>
+								<Panel class="CanvasPanel">
+									<canvas ref="canvas" id="canvas"></canvas>
+								</Panel>
+							</VLayout>
 						</Panel>
-					</VLayout>
-				</Panel>
+					</HLayout>
+					<HLayout class="BottomLayout">
+						<Panel class="BottomPanel">
+							<TreeView ref="project" tabindex="1"></TreeView>
+						</Panel>
+						<Panel class="FileList">
+						</Panel>
+						<VResizeBar ref="projectResize" :isTop="true"></VResizeBar>
+					</HLayout>
+				</VLayout>
 				<Panel ref="right" class="RightPanel">
 					<Inspector ref="inspector"></Inspector>
-					<HResizeBar :isLeft="true" ref="inspectorResize"></HResizeBar>
+					<HResizeBar ref="inspectorResize" :isLeft="true"></HResizeBar>
 				</Panel>
 			</HLayout>
 			<ContextMenu ref="menu"></ContextMenu>
@@ -119,6 +136,10 @@ export class Editor extends Vue {
 
 	get inspectorView(): Inspector {
 		return this.$refs.inspector as Inspector;
+	}
+
+	get projectView(): TreeView {
+		return this.$refs.project as TreeView;
 	}
 
 	get contextMenu(): ContextMenu {

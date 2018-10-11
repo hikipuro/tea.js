@@ -1,13 +1,10 @@
 #{$parent} {
 	div.VLayout {
+		display: flex;
+		flex-direction: column;
 		width: 100%;
 		//letter-spacing: -1em;
-		white-space: nowrap;
+		//white-space: nowrap;
 		overflow: hidden;
-
-		> div.Panel {
-			width: 100%;
-			//letter-spacing: normal;
-		}
 	}
 }

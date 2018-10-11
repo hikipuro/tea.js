@@ -60,6 +60,7 @@ export class Item extends Vue {
 	depth: number;
 	isOpen: boolean;
 	isSelected: boolean;
+	//isFolder: boolean;
 	title: string;
 	openIcon: string;
 	closeIcon: string;
@@ -73,10 +74,16 @@ export class Item extends Vue {
 	}
 
 	get isFolder(): boolean {
+		return this.model.isFolder;
+	}
+
+	/*
+	get isFolder(): boolean {
 		var children = this.model.children;
 		return children != null
 			&& children.length > 0;
 	}
+	//*/
 
 	get index(): number {
 		return this.$parent.$children.indexOf(this);
@@ -117,25 +124,54 @@ export class Item extends Vue {
 		if (this.isFolder === false) {
 			return;
 		}
+		if (this.isOpen) {
+			return;
+		}
 		this.isOpen = true;
+		var parent = this.findTreeView();
+		parent.$emit("expand", this);
 	}
 
 	collapse(): void {
 		if (this.isFolder === false) {
 			return;
 		}
+		if (this.isOpen === false) {
+			return;
+		}
 		this.isOpen = false;
+		var parent = this.findTreeView();
+		parent.$emit("collapse", this);
 	}
 
 	toggle(): void {
 		if (this.isFolder === false) {
 			return;
 		}
-		this.isOpen = !this.isOpen;
+		if (this.isOpen) {
+			this.collapse();
+		} else {
+			this.expand();
+		}
 	}
 
 	select(value: boolean = true): void {
 		this.isSelected = value;
+	}
+
+	protected findTreeView(): TreeView {
+		var treeView = this.$parent;
+		var length = TreeView.maxDepth;
+		for (var i = 0; i < length; i++) {
+			if (treeView == null) {
+				return null;
+			}
+			if (treeView instanceof TreeView) {
+				return treeView;
+			}
+			treeView = treeView.$parent;
+		}
+		return null;
 	}
 
 	protected onClick(): void {
@@ -178,6 +214,7 @@ export class Item extends Vue {
 					@select="onSelectItem">
 				</item>
 			</ul>
+			<slot></slot>
 			<slot name="after"></slot>
 		</div>
 	`,
@@ -275,6 +312,22 @@ export class TreeView extends Vue {
 			var child = item.firstChild;
 			if (child) {
 				this.onSelectItem(child);
+			} else {
+				var next = item.nextSibling;
+				if (next == null) {
+					next = item;
+					for (var i = 0; i < TreeView.maxDepth; i++) {
+						next = next.$parent as Item;
+						if (next == null) {
+							break;
+						}
+						if (next.nextSibling != null) {
+							next = next.nextSibling;
+							break;
+						}
+					}
+				}
+				this.onSelectItem(next);
 			}
 			return;
 		}
@@ -319,8 +372,16 @@ export class TreeView extends Vue {
 		}
 		if (prev.isFolder && prev.isOpen) {
 			prev = prev.lastChild;
+			if (prev == null) {
+				item = item.prevSibling;
+				this.onSelectItem(item);
+				return;
+			}
 			for (var i = 0; i < TreeView.maxDepth; i++) {
 				if (prev.isFolder && prev.isOpen) {
+					if (prev.lastChild == null) {
+						break;
+					}
 					prev = prev.lastChild;
 					continue;
 				}
