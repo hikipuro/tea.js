@@ -244,6 +244,27 @@ export class TreeView extends Vue {
 		this.selectedItem.collapse();
 	}
 
+	findItemByTag(tag: any): Item {
+		return this.$children.find((item: Item) => {
+			if (item instanceof Item === false) {
+				return false;
+			}
+			return item.tag == tag;
+		}) as Item;
+	}
+
+	select(item: Item): void {
+		this.onSelectItem(item);
+	}
+
+	unselect(): void {
+		this.forEachChild((item: Item) => {
+			item.select(false);
+		});
+		this.selectedItem = null;
+		this.$emit("select", null);
+	}
+
 	selectNext(): void {
 		if (this.selectedItem == null) {
 			this.onSelectItem(this.$children[0] as Item);

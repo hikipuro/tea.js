@@ -54,12 +54,14 @@ export class EditorBehavior {
 	initHierarchyView(): void {
 		var hierarchyView = this.editor.hierarchyView;
 		var inspectorView = this.editor.inspectorView;
-		var contextMenu = this.editor.contextMenu;
+		//var contextMenu = this.editor.contextMenu;
 		hierarchyView.openIcon = "⏏️";
 		hierarchyView.closeIcon = "▶️";
 
 		hierarchyView.$on("menu", (e: MouseEvent) => {
 			e.preventDefault();
+			this.showHierarchyViewMenu();
+			/*
 			contextMenu.items = [
 				{ text: "Delete" },
 				{ text: "-" },
@@ -69,6 +71,7 @@ export class EditorBehavior {
 			]
 			contextMenu.move(e.clientX, e.clientY);
 			contextMenu.show("hierarchyView");
+			//*/
 		});
 
 		hierarchyView.$on("select", (item: Tea.Editor.TreeViewItem) => {
@@ -129,6 +132,7 @@ export class EditorBehavior {
 	}
 
 	initContextMenu(): void {
+		/*
 		var contextMenu = this.editor.contextMenu;
 		contextMenu.$on("select", (state: string, item: Tea.Editor.ContextMenuItem) => {
 			switch (state) {
@@ -137,6 +141,7 @@ export class EditorBehavior {
 					break;
 			}
 		});
+		//*/
 	}
 
 	updateScreenSize(): void {
@@ -157,10 +162,176 @@ export class EditorBehavior {
 		console.log("updateScreenSize", width, height);
 	}
 
+	showHierarchyViewMenu(): void {
+		var template: Electron.MenuItemConstructorOptions[] = [
+			{
+				id: "Create Empty",
+				label: "Create Empty"
+			},
+			{
+				label: "3D Object",
+				submenu: [
+					{
+						id: "3D Object/Cube",
+						label: "Cube"
+					},
+					{
+						id: "3D Object/Sphere",
+						label: "Sphere"
+					},
+					{
+						id: "3D Object/Capsule",
+						label: "Capsule"
+					},
+					{
+						id: "3D Object/Cylinder",
+						label: "Cylinder"
+					},
+					{
+						id: "3D Object/Plane",
+						label: "Plane"
+					},
+					{
+						id: "3D Object/Quad",
+						label: "Quad"
+					},
+					{
+						type: "separator"
+					},
+					{
+						id: "3D Object/Text",
+						label: "Text"
+					},
+				]
+			},
+			{
+				label: "Effects",
+				submenu: [
+					{
+						id: "Effects/Particle System",
+						label: "Particle System"
+					}
+				]
+			},
+			{
+				label: "Light",
+				submenu: [
+					{
+						id: "Light/Directional Light",
+						label: "Directional Light"
+					}
+				]
+			},
+			{
+				id: "Camera",
+				label: "Camera"
+			}
+		];
+		var hierarchyView = this.editor.hierarchyView;
+		if (hierarchyView.selectedItem != null) {
+			template.unshift(
+				{
+					id: "Delete",
+					label: "Delete"
+				},
+				{
+					type: "separator"
+				}
+			);
+		}
+		Tea.Editor.NativeContextMenu.setMenuItemHandler(
+			template, this.onSelectHierarchyViewMenuItem
+		);
+		var contextMenu = Tea.Editor.NativeContextMenu.create(template);
+		contextMenu.show();
+	}
+
+	selectHierarchyViewItem(object3d: Tea.Object3D): void {
+		var hierarchyView = this.editor.hierarchyView;
+		var item = hierarchyView.findItemByTag(object3d.id);
+		hierarchyView.select(item);
+	}
+
 	onUpdateAspect(): void {
 		this.updateScreenSize();
 	}
 
+	onSelectHierarchyViewMenuItem = (item: Electron.MenuItem): void => {
+		var scene = this.scene;
+		var app = scene.app;
+		console.log(item.id);
+		var object3d: Tea.Object3D;
+
+		switch (item.id) {
+			case "Create Empty":
+				object3d = app.createObject3D();
+				break;
+			case "3D Object/Cube":
+				object3d = Tea.Object3D.createPrimitive(
+					app, Tea.PrimitiveType.Cube
+				);
+				break;
+			case "3D Object/Sphere":
+				object3d = Tea.Object3D.createPrimitive(
+					app, Tea.PrimitiveType.Sphere
+				);
+				break;
+			case "3D Object/Capsule":
+				object3d = Tea.Object3D.createPrimitive(
+					app, Tea.PrimitiveType.Capsule
+				);
+				break;
+			case "3D Object/Cylinder":
+				object3d = Tea.Object3D.createPrimitive(
+					app, Tea.PrimitiveType.Cylinder
+				);
+				break;
+			case "3D Object/Plane":
+				object3d = Tea.Object3D.createPrimitive(
+					app, Tea.PrimitiveType.Plane
+				);
+				break;
+			case "3D Object/Quad":
+				object3d = Tea.Object3D.createPrimitive(
+					app, Tea.PrimitiveType.Quad
+				);
+				break;
+			case "3D Object/Text":
+				object3d = app.createTextMesh();
+				break;
+			case "Effects/Particle System":
+				object3d = app.createParticleSystem();
+				break;
+			case "Light/Directional Light":
+				object3d = app.createLight();
+				break;
+			case "Camera":
+				object3d = app.createCamera();
+				break;
+			case "Delete":
+				var hierarchyView = this.editor.hierarchyView;
+				var inspectorView = this.editor.inspectorView;
+				if (hierarchyView.selectedItem == null) {
+					return;
+				}
+				var id = hierarchyView.selectedItem.tag as number;
+				var object3d = scene.findChildById(id);
+				console.log(object3d);
+				inspectorView.hide();
+				object3d.destroy();
+				this.updateHierarchyView();
+				return;
+		}
+
+		if (object3d != null) {
+			scene.addChild(object3d);
+			this.updateHierarchyView(false, () => {
+				this.selectHierarchyViewItem(object3d);
+			});
+		}
+	}
+
+	/*
 	onSelectHierarchyViewMenu(item: Tea.Editor.ContextMenuItem): void {
 		var hierarchyView = this.editor.hierarchyView;
 		var inspectorView = this.editor.inspectorView;
@@ -187,8 +358,9 @@ export class EditorBehavior {
 				break;
 		}
 	}
+	//*/
 
-	updateHierarchyView(expand: boolean = false): void {
+	updateHierarchyView(expand: boolean = false, callback: Function = null): void {
 		setTimeout(() => {
 			var items = [];
 			var createItems = (items, child) => {
@@ -209,9 +381,15 @@ export class EditorBehavior {
 			}
 			var hierarchyView = this.editor.hierarchyView;
 			hierarchyView.items = items;
+			hierarchyView.unselect();
 			if (expand) {
 				hierarchyView.$nextTick(() => {
 					hierarchyView.expandAll();
+				});
+			}
+			if (callback != null) {
+				hierarchyView.$nextTick(() => {
+					callback();
 				});
 			}
 		}, 17);

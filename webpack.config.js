@@ -37,9 +37,12 @@ const nodeConfig = {
 
 const teaConfig = {
 	mode: settings.mode,
-	target: "web",
+	target: "electron-renderer",
 	node: {
 		__dirname: false
+	},
+	externals: {
+		fs: "commonjs fs",
 	},
 	entry: {
 		"html/main": "./src/Main.ts",
