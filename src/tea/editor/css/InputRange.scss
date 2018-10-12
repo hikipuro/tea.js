@@ -1,5 +1,5 @@
 #{$parent} {
-	div.Vector3 {
+	div.InputRange {
 		display: inline-flex;
 		box-sizing: border-box;
 		align-items: center;
@@ -8,15 +8,29 @@
 
 		> .title {
 			display: inline-block;
-			min-width: 30%;
+			width: 40%;
 			white-space: nowrap;
 			overflow: hidden;
 		}
 
 		> .value {
 			display: inline-flex;
-			width: 70%;
-			justify-content: space-evenly;
+			flex: 1;
+			align-items: center;
+
+			> input {
+				margin: 0 2px;
+			}
+
+			> input[type="range"] {
+				width: 3em !important;
+				height: 1em;
+				flex: 1;
+			}
+
+			> input[type="text"] {
+				width: 2em;
+			}
 		}
 	}
 }

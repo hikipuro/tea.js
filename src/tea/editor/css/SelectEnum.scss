@@ -1,17 +1,22 @@
 #{$parent} {
 	div.SelectEnum {
 		display: inline-flex;
+		box-sizing: border-box;
+		align-items: center;
+		padding: 1px;
 		width: 100%;
 
 		> .title {
 			display: inline-block;
+			width: 40%;
+			white-space: nowrap;
+			overflow: hidden;
 		}
 
-		> input {
+		> select {
 			margin: 0 2px;
 			min-width: 1em;
-			width: 100%;
-			height: 1em;
+			width: 60%;
 			flex: 1;
 		}
 		> input:focus {

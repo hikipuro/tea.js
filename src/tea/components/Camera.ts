@@ -591,7 +591,7 @@ export class Camera extends Component {
 	protected clearNothing(): void {
 		var gl = this.gl;
 		var scene = this.object3d.scene;
-		if (scene.enablePostProcessing) {
+		if (scene != null && scene.enablePostProcessing) {
 			scene.renderTexture.bindFramebuffer();
 			var width = scene.renderTexture.width;
 			var height = scene.renderTexture.height;

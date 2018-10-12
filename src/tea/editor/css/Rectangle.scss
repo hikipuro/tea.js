@@ -1,29 +1,34 @@
 #{$parent} {
 	div.Rectangle {
-		//position: relative;
+		display: inline-flex;
+		box-sizing: border-box;
+		//align-items: center;
+		padding: 1px;
 		width: 100%;
-		line-height: 1.5;
-		white-space: nowrap;
-		overflow: hidden;
+		//line-height: 1.5;
+		//overflow: hidden;
 
 		> .title {
 			display: inline-block;
-			width: 45%;
+			width: 40%;
+			white-space: nowrap;
 			overflow: hidden;
-			vertical-align: top;
 		}
 
 		> .value {
 			display: inline-flex;
-			//position: absolute;
-			right: 0;
-			width: 55%;
+			width: 60%;
 			justify-content: space-evenly;
-		}
 
-		.Panel {
-			display: flex;
-			overflow: hidden;
+			.Panel {
+				display: flex;
+				overflow: hidden;
+
+				.title {
+					min-width: 1.1em;
+					text-align: center;
+				}
+			}
 		}
 	}
 }

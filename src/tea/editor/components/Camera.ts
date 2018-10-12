@@ -11,10 +11,12 @@ import * as Tea from "../../Tea";
 				ref="clearFlags"
 				:value="clearFlags"
 				@update="onUpdateClearFlags">Clear Flags</SelectEnum>
-			<InputNumber
+			<InputRange
 				ref="fieldOfView"
+				:min="1"
+				:max="179"
 				:value="fieldOfView"
-				@update="onUpdateFov">Field of View</InputNumber>
+				@update="onUpdateFov">Field of View</InputRange>
 			<CheckBox
 				ref="orthographic"
 				:value="orthographic"
