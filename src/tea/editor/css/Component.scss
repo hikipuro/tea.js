@@ -1,5 +1,11 @@
 #{$parent} {
 	div.Component {
+		margin-top: 2px;
 		border-top: 1px solid gray;
+	}
+
+	div.ComponentTitle {
+		display: inline-flex;
+		margin-top: 2px;
 	}
 }

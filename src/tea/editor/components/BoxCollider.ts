@@ -6,26 +6,39 @@ import * as Tea from "../../Tea";
 	template: `
 		<div
 			class="Component BoxCollider">
-			<div class="name">{{ name }}</div>
+			<ComponentTitle
+				ref="title"
+				:enabled="enabled"
+				@update="onUpdateEnabled">{{ name }}</ComponentTitle>
 		</div>
 	`,
 	data: () => {
 		return {
-			name: "BoxCollider"
+			name: "BoxCollider",
+			enabled: false,
 		}
 	}
 })
 export class BoxCollider extends Vue {
 	_component: Tea.BoxCollider;
+	enabled: boolean;
 
 	mounted(): void {
 		var component = this._component;
 		if (component == null) {
 			return;
 		}
+		this.enabled = component.enabled;
 	}
 
 	protected destroyed(): void {
 		this._component = undefined;
+	}
+
+	protected onUpdateEnabled(value: boolean): void {
+		this.enabled = value;
+		if (this._component) {
+			this._component.enabled = value;
+		}
 	}
 }

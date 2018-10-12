@@ -6,7 +6,10 @@ import * as Tea from "../../Tea";
 	template: `
 		<div
 			class="Component MeshRenderer">
-			<div class="name">{{ name }}</div>
+			<ComponentTitle
+				ref="title"
+				:enabled="enabled"
+				@update="onUpdateEnabled">{{ name }}</ComponentTitle>
 			<CheckBox
 				ref="receiveShadows"
 				:value="receiveShadows"
@@ -20,6 +23,7 @@ import * as Tea from "../../Tea";
 	data: () => {
 		return {
 			name: "MeshRenderer",
+			enabled: false,
 			receiveShadows: true,
 			wireframe: false
 		}
@@ -27,6 +31,7 @@ import * as Tea from "../../Tea";
 })
 export class MeshRenderer extends Vue {
 	_component: Tea.MeshRenderer;
+	enabled: boolean;
 	receiveShadows: boolean;
 	wireframe: boolean;
 
@@ -35,12 +40,20 @@ export class MeshRenderer extends Vue {
 		if (component == null) {
 			return;
 		}
+		this.enabled = component.enabled;
 		this.wireframe = component.wireframe;
 		this.receiveShadows = component.receiveShadows;
 	}
 
 	protected destroyed(): void {
 		this._component = undefined;
+	}
+
+	protected onUpdateEnabled(value: boolean): void {
+		this.enabled = value;
+		if (this._component) {
+			this._component.enabled = value;
+		}
 	}
 
 	protected onUpdateReceiveShadows(value: boolean): void {

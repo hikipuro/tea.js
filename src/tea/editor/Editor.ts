@@ -4,6 +4,7 @@ import * as Tea from "../Tea";
 import { EditorBehavior } from "./EditorBehavior";
 import { Button } from "./Button";
 import { CheckBox } from "./CheckBox";
+import { ComponentTitle } from "./ComponentTitle";
 import { ContextMenu } from "./ContextMenu";
 import { HLayout } from "./HLayout";
 import { HResizeBar } from "./HResizeBar";
@@ -33,6 +34,7 @@ import { Script } from "./components/Script";
 //*
 Vue.component("Button", Button);
 Vue.component("CheckBox", CheckBox);
+Vue.component("ComponentTitle", ComponentTitle);
 Vue.component("ContextMenu", ContextMenu);
 Vue.component("HLayout", HLayout);
 Vue.component("HResizeBar", HResizeBar);

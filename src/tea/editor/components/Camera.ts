@@ -6,7 +6,10 @@ import * as Tea from "../../Tea";
 	template: `
 		<div
 			class="Component Camera">
-			<div class="name">{{ name }}</div>
+			<ComponentTitle
+				ref="title"
+				:enabled="enabled"
+				@update="onUpdateEnabled">{{ name }}</ComponentTitle>
 			<SelectEnum
 				ref="clearFlags"
 				:value="clearFlags"
@@ -30,6 +33,7 @@ import * as Tea from "../../Tea";
 	data: () => {
 		return {
 			name: "Camera",
+			enabled: false,
 			clearFlags: "",
 			fieldOfView: 0,
 			orthographic: false,
@@ -39,6 +43,7 @@ import * as Tea from "../../Tea";
 })
 export class Camera extends Vue {
 	_component: Tea.Camera;
+	enabled: boolean;
 	fieldOfView: number;
 	clearFlags: string;
 	orthographic: boolean;
@@ -49,6 +54,7 @@ export class Camera extends Vue {
 		if (component == null) {
 			return;
 		}
+		this.enabled = component.enabled;
 		var clearFlags = this.$refs.clearFlags as Vue;
 		clearFlags.$data.keys = Tea.CameraClearFlags.getKeys();
 		this.$nextTick(() => {
@@ -61,6 +67,13 @@ export class Camera extends Vue {
 
 	protected destroyed(): void {
 		this._component = undefined;
+	}
+
+	protected onUpdateEnabled(value: boolean): void {
+		this.enabled = value;
+		if (this._component) {
+			this._component.enabled = value;
+		}
 	}
 
 	protected onUpdateClearFlags(value: string): void {
