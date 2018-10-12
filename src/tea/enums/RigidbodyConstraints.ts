@@ -10,3 +10,19 @@ export enum RigidbodyConstraints {
 	FreezeRotation = 0x70,
 	FreezeAll = 0x7E
 }
+
+export module RigidbodyConstraints {
+	export function toString(value: number): string {
+		return RigidbodyConstraints[value];
+	}
+
+	export function getKeys(): Array<string> {
+		var keys = [];
+		for (var n in RigidbodyConstraints) {
+			if (typeof RigidbodyConstraints[n] === "number") {
+				keys.push(n);
+			}
+		}
+		return keys;
+	}
+}

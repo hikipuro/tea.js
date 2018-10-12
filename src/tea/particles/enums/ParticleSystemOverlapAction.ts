@@ -3,3 +3,19 @@ export enum ParticleSystemOverlapAction {
 	Kill,
 	Callback
 }
+
+export module ParticleSystemOverlapAction {
+	export function toString(value: number): string {
+		return ParticleSystemOverlapAction[value];
+	}
+
+	export function getKeys(): Array<string> {
+		var keys = [];
+		for (var n in ParticleSystemOverlapAction) {
+			if (typeof ParticleSystemOverlapAction[n] === "number") {
+				keys.push(n);
+			}
+		}
+		return keys;
+	}
+}

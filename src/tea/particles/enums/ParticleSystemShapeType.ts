@@ -14,3 +14,19 @@ export enum ParticleSystemShapeType {
 	Donut,
 	Rectangle
 }
+
+export module ParticleSystemShapeType {
+	export function toString(value: number): string {
+		return ParticleSystemShapeType[value];
+	}
+
+	export function getKeys(): Array<string> {
+		var keys = [];
+		for (var n in ParticleSystemShapeType) {
+			if (typeof ParticleSystemShapeType[n] === "number") {
+				keys.push(n);
+			}
+		}
+		return keys;
+	}
+}
