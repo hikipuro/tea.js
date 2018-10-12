@@ -573,18 +573,14 @@ export class Camera extends Component {
 			Camera.currentBGColor.copy(color);
 		}
 		switch (this.clearFlags) {
+			case Tea.CameraClearFlags.Nothing:
+				this.clearNothing();
+				break;
 			case Tea.CameraClearFlags.SolidColor:
-				gl.clear(
-					gl.COLOR_BUFFER_BIT |
-					gl.DEPTH_BUFFER_BIT |
-					gl.STENCIL_BUFFER_BIT
-				);
+				this.clearSolidColor();
 				break;
 			case Tea.CameraClearFlags.Depth:
-				gl.clear(
-					gl.DEPTH_BUFFER_BIT |
-					gl.STENCIL_BUFFER_BIT
-				);
+				this.clearDepth();
 				break;
 			case Tea.CameraClearFlags.Skybox:
 				this.drawSkybox();
@@ -592,8 +588,70 @@ export class Camera extends Component {
 		}
 	}
 
-	protected flush(): void {
-		this.gl.flush();
+	protected clearNothing(): void {
+		var gl = this.gl;
+		var scene = this.object3d.scene;
+		if (scene.enablePostProcessing) {
+			scene.renderTexture.bindFramebuffer();
+			var width = scene.renderTexture.width;
+			var height = scene.renderTexture.height;
+			gl.scissor(0.0, 0.0, width, height);
+			gl.viewport(0.0, 0.0, width, height);
+		}
+	}
+
+	protected clearSolidColor(): void {
+		var gl = this.gl;
+		if (this.constructor.name != "Camera") {
+			gl.clear(
+				gl.COLOR_BUFFER_BIT |
+				gl.DEPTH_BUFFER_BIT |
+				gl.STENCIL_BUFFER_BIT
+			);
+			return;
+		}
+		var scene = this.object3d.scene;
+		if (scene.enablePostProcessing) {
+			scene.renderTexture.bindFramebuffer();
+			var width = scene.renderTexture.width;
+			var height = scene.renderTexture.height;
+			gl.scissor(0.0, 0.0, width, height);
+			gl.viewport(0.0, 0.0, width, height);
+		}
+		gl.clear(
+			gl.COLOR_BUFFER_BIT |
+			gl.DEPTH_BUFFER_BIT |
+			gl.STENCIL_BUFFER_BIT
+		);
+		if (scene.enablePostProcessing) {
+			scene.renderTexture.unbindFramebuffer();
+		}
+	}
+
+	protected clearDepth(): void {
+		var gl = this.gl;
+		if (this.constructor.name != "Camera") {
+			gl.clear(
+				gl.DEPTH_BUFFER_BIT |
+				gl.STENCIL_BUFFER_BIT
+			);
+			return;
+		}
+		var scene = this.object3d.scene;
+		if (scene.enablePostProcessing) {
+			scene.renderTexture.bindFramebuffer();
+			var width = scene.renderTexture.width;
+			var height = scene.renderTexture.height;
+			gl.scissor(0.0, 0.0, width, height);
+			gl.viewport(0.0, 0.0, width, height);
+		}
+		gl.clear(
+			gl.DEPTH_BUFFER_BIT |
+			gl.STENCIL_BUFFER_BIT
+		);
+		if (scene.enablePostProcessing) {
+			scene.renderTexture.unbindFramebuffer();
+		}
 	}
 
 	protected drawSkybox(): void {
@@ -640,5 +698,9 @@ export class Camera extends Component {
 		if (scene.enablePostProcessing) {
 			scene.renderTexture.unbindFramebuffer();
 		}
+	}
+
+	protected flush(): void {
+		this.gl.flush();
 	}
 }

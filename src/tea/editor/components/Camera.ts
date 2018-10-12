@@ -7,6 +7,10 @@ import * as Tea from "../../Tea";
 		<div
 			class="Component Camera">
 			<div class="name">{{ name }}</div>
+			<SelectEnum
+				ref="clearFlags"
+				:value="clearFlags"
+				@update="onUpdateClearFlags">Clear Flags</SelectEnum>
 			<InputNumber
 				ref="fieldOfView"
 				:value="fieldOfView"
@@ -24,6 +28,7 @@ import * as Tea from "../../Tea";
 	data: () => {
 		return {
 			name: "Camera",
+			clearFlags: "",
 			fieldOfView: 0,
 			orthographic: false,
 			rect: [0, 0, 0, 0]
@@ -33,6 +38,7 @@ import * as Tea from "../../Tea";
 export class Camera extends Vue {
 	_component: Tea.Camera;
 	fieldOfView: number;
+	clearFlags: string;
 	orthographic: boolean;
 	rect: Array<number>;
 
@@ -41,6 +47,11 @@ export class Camera extends Vue {
 		if (component == null) {
 			return;
 		}
+		var clearFlags = this.$refs.clearFlags as Vue;
+		clearFlags.$data.keys = Tea.CameraClearFlags.getKeys();
+		this.$nextTick(() => {
+			this.clearFlags = Tea.CameraClearFlags[component.clearFlags];
+		});
 		this.fieldOfView = component.fieldOfView;
 		this.orthographic = component.orthographic;
 		this.rect = component.rect.clone();
@@ -48,6 +59,13 @@ export class Camera extends Vue {
 
 	protected destroyed(): void {
 		this._component = undefined;
+	}
+
+	protected onUpdateClearFlags(value: string): void {
+		this.clearFlags = value;
+		if (this._component) {
+			this._component.clearFlags = Tea.CameraClearFlags[value];
+		}
 	}
 
 	protected onUpdateFov(value: number): void {
