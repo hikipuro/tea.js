@@ -40,7 +40,8 @@ export class ClippingPlanes extends Vue {
 			<ComponentTitle
 				ref="title"
 				:enabled="enabled"
-				@update="onUpdateEnabled">{{ name }}</ComponentTitle>
+				@update="onUpdateEnabled"
+				@config="onClickConfig">{{ name }}</ComponentTitle>
 			<SelectEnum
 				ref="clearFlags"
 				:value="clearFlags"
@@ -136,6 +137,10 @@ export class Camera extends Vue {
 		if (this._component) {
 			this._component.enabled = value;
 		}
+	}
+
+	protected onClickConfig(): void {
+		this.$emit("config", this._component);
 	}
 
 	protected onUpdateClearFlags(value: string): void {

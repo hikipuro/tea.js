@@ -122,6 +122,12 @@ export class EditorBehavior {
 					break;
 			}
 		});
+		inspectorView.$on("config", (component: Tea.Component) => {
+			if (hierarchyView.selectedItem == null) {
+				return;
+			}
+			this.showInspectorViewComponentMenu();
+		});
 	}
 
 	initProjectView(): void {
@@ -296,6 +302,20 @@ export class EditorBehavior {
 		hierarchyView.select(item);
 	}
 
+	showInspectorViewComponentMenu(): void {
+		var template: Electron.MenuItemConstructorOptions[] = [
+			{
+				id: "Remove Component",
+				label: "Remove Component"
+			}
+		];
+		Tea.Editor.NativeContextMenu.setMenuItemHandler(
+			template, this.onSelectInspectorViewComponentMenu
+		);
+		var contextMenu = Tea.Editor.NativeContextMenu.create(template);
+		contextMenu.show();
+	}
+
 	onUpdateAspect(): void {
 		this.updateScreenSize();
 	}
@@ -372,6 +392,20 @@ export class EditorBehavior {
 			this.updateHierarchyView(false, () => {
 				this.selectHierarchyViewItem(object3d);
 			});
+		}
+	}
+
+	onSelectInspectorViewComponentMenu = (item: Electron.MenuItem): void => {
+		var inspectorView = this.editor.inspectorView;
+		var component = inspectorView._configComponent;
+		//console.log(item.id, component);
+		var object3d = this.hierarchyViewItem;
+
+		switch (item.id) {
+			case "Remove Component":
+				object3d.removeComponent(component);
+				this.selectHierarchyViewItem(object3d);
+				break;
 		}
 	}
 

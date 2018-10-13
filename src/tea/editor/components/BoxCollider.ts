@@ -9,7 +9,8 @@ import * as Tea from "../../Tea";
 			<ComponentTitle
 				ref="title"
 				:enabled="enabled"
-				@update="onUpdateEnabled">{{ name }}</ComponentTitle>
+				@update="onUpdateEnabled"
+				@config="onClickConfig">{{ name }}</ComponentTitle>
 		</div>
 	`,
 	data: () => {
@@ -40,5 +41,9 @@ export class BoxCollider extends Vue {
 		if (this._component) {
 			this._component.enabled = value;
 		}
+	}
+
+	protected onClickConfig(): void {
+		this.$emit("config", this._component);
 	}
 }

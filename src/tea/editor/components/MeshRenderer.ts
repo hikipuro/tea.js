@@ -9,7 +9,8 @@ import * as Tea from "../../Tea";
 			<ComponentTitle
 				ref="title"
 				:enabled="enabled"
-				@update="onUpdateEnabled">{{ name }}</ComponentTitle>
+				@update="onUpdateEnabled"
+				@config="onClickConfig">{{ name }}</ComponentTitle>
 			<CheckBox
 				ref="receiveShadows"
 				:value="receiveShadows"
@@ -54,6 +55,10 @@ export class MeshRenderer extends Vue {
 		if (this._component) {
 			this._component.enabled = value;
 		}
+	}
+
+	protected onClickConfig(): void {
+		this.$emit("config", this._component);
 	}
 
 	protected onUpdateReceiveShadows(value: boolean): void {

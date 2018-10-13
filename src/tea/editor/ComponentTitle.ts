@@ -6,11 +6,14 @@ import Component from "vue-class-component";
 		<div
 			class="ComponentTitle">
 			<input
-				type="checkbox"
 				ref="checkbox"
+				type="checkbox"
 				:checked="enabled"
 				@change="onChange"></input>
-			<slot></slot>
+			<div class="title"><slot></slot></div>
+			<div
+				ref="config"
+				@click="onClickConfig">⚙️</div>
 		</div>
 	`,
 	props: {
@@ -24,8 +27,12 @@ import Component from "vue-class-component";
 export class ComponentTitle extends Vue {
 	enable: boolean;
 
-	protected onChange (): void {
+	protected onChange(): void {
 		var checkbox = this.$refs.checkbox as HTMLInputElement;
 		this.$emit("update", checkbox.checked);
+	}
+
+	protected onClickConfig(): void {
+		this.$emit("config");
 	}
 }

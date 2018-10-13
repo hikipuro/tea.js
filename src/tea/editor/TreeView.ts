@@ -282,16 +282,39 @@ export class TreeView extends Vue {
 	}
 
 	findItemByTag(tag: any): Item {
-		return this.$children.find((item: Item) => {
-			if (item instanceof Item === false) {
-				return false;
+		var find = (i: Item): Item => {
+			if (i instanceof Item === false) {
+				return null;
 			}
-			return item.tag == tag;
-		}) as Item;
+			if (i.tag == tag) {
+				return i;
+			}
+			var item: Item = null;
+			i.$children.some((i: Item) => {
+				item = find(i);
+				return item != null;
+			});
+			return item;
+		};
+		var item: Item = null;
+		this.$children.some((i: Item) => {
+			item = find(i);
+			return item != null;
+		});
+		return item;
 	}
 
 	select(item: Item): void {
-		this.onSelectItem(item);
+		if (item == null) {
+			return;
+		}
+		//this.onSelectItem(item);
+		this.forEachChild((item: Item) => {
+			item.select(false);
+		});
+		item.select();
+		this.selectedItem = item;
+		this.$emit("select", item);
 	}
 
 	unselect(): void {
@@ -483,15 +506,15 @@ export class TreeView extends Vue {
 
 	protected forEachChild(callback: (item: Item) => void) {
 		var forEach = (item: Item) => {
+			if (item instanceof Item === false) {
+				return;
+			}
 			callback(item);
 			item.$children.forEach((item: Item) => {
 				forEach(item);
 			});
 		};
 		this.$children.forEach((item: Item) => {
-			if (item instanceof Item === false) {
-				return;
-			}
 			forEach(item);
 		});
 	}

@@ -4,6 +4,27 @@ import * as Tea from "../Tea";
 
 @Component({
 	template: `
+		<div class="AddComponent">
+			<button>
+				<slot></slot>
+			</button>
+		</div>
+	`,
+	props: {
+	}
+})
+export class AddComponent extends Vue {
+	protected onUpdateNear(value: number): void {
+		this.$emit("update", "near", value);
+	}
+
+	protected onUpdateFar(value: number): void {
+		this.$emit("update", "far", value);
+	}
+}
+
+@Component({
+	template: `
 		<div
 			class="Inspector">
 			<template v-if="isVisible">
@@ -40,8 +61,10 @@ import * as Tea from "../Tea";
 				ref="components"
 				v-for="(item, index) in components"
 				:is="item"
-				:key="index">
+				:key="index"
+				@config="onConfig">
 			</component>
+			<AddComponent>Add Component</AddComponent>
 			</template>
 		</div>
 	`,
@@ -53,7 +76,10 @@ import * as Tea from "../Tea";
 		rotation: [0, 0, 0],
 		scale: [0, 0, 0],
 		components: []
-	}}
+	}},
+	components: {
+		"AddComponent": AddComponent
+	}
 })
 export class Inspector extends Vue {
 	_object3d: Tea.Object3D;
@@ -64,6 +90,7 @@ export class Inspector extends Vue {
 	rotation: Array<number>;
 	scale: Array<number>;
 	components: Array<any>;
+	_configComponent: Tea.Component;
 
 	get lastComponent(): Vue {
 		var components = this.$refs.components as Vue[];
@@ -178,5 +205,10 @@ export class Inspector extends Vue {
 		this.$forceUpdate();
 		var value = new Tea.Vector3(x, y, z)
 		this.$emit("update", "scale", value);
+	}
+
+	protected onConfig(component: Tea.Component): void {
+		this._configComponent = component;
+		this.$emit("config", component);
 	}
 }
