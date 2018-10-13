@@ -7,7 +7,11 @@ import * as Tea from "../Tea";
 		<div
 			class="Inspector">
 			<template v-if="isVisible">
-			<div class="name">{{ name }}</div>
+			<ObjectTitle
+				ref="title"
+				:isActive="isActive"
+				:name="name"
+				@update="onUpdateTitle"></ObjectTitle>
 			<Vector3
 				ref="position"
 				:x="position[0]"
@@ -44,6 +48,7 @@ import * as Tea from "../Tea";
 	data: () => { return {
 		isVisible: false,
 		name: "",
+		isActive: false,
 		position: [0, 0, 0],
 		rotation: [0, 0, 0],
 		scale: [0, 0, 0],
@@ -51,8 +56,10 @@ import * as Tea from "../Tea";
 	}}
 })
 export class Inspector extends Vue {
+	_object3d: Tea.Object3D;
 	isVisible: boolean;
 	name: string;
+	isActive: boolean;
 	position: Array<number>;
 	rotation: Array<number>;
 	scale: Array<number>;
@@ -61,6 +68,31 @@ export class Inspector extends Vue {
 	get lastComponent(): Vue {
 		var components = this.$refs.components as Vue[];
 		return components[components.length - 1];
+	}
+
+	setObject3D(object3d: Tea.Object3D): void {
+		if (object3d == null) {
+			return;
+		}
+		this._object3d = object3d;
+		this.name = object3d.name;
+		this.isActive = object3d.isActive;
+		this.clearComponents();
+		var components = object3d.getComponents(Tea.Component);
+		components.forEach((component: Tea.Component) => {
+			//console.log(component.editorView);
+			var componentClass = component.constructor as any;
+			var editorView = componentClass.editorView;
+			if (editorView == null) {
+				return;
+			}
+			var vue = editorView.extend({
+				created: function () {
+					(this as any)._component = component;
+				}
+			});
+			this.components.push(vue);
+		});
 	}
 
 	setPosition(value: Tea.Vector3): void {
@@ -99,6 +131,26 @@ export class Inspector extends Vue {
 	clearComponents(): void {
 		var components = this.components;
 		components.splice(0, components.length);
+	}
+
+	protected onUpdateTitle(type: string, value: string | boolean): void {
+		switch (type) {
+			case "isActive":
+				var bValue = value as boolean;
+				this.isActive = bValue;
+				if (this._object3d != null) {
+					this._object3d.isActive = bValue;
+				}
+				break;
+			case "name":
+				var sValue = value as string;
+				this.name = sValue;
+				if (this._object3d != null) {
+					this._object3d.name = sValue;
+				}
+				this.$emit("update", "name", sValue);
+				break;
+		}
 	}
 
 	protected onUpdatePosition(x: number, y: number, z: number): void {

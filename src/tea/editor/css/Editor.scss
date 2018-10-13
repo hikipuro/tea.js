@@ -8,6 +8,7 @@ $parent: "#editor";
 @import "HResizeBar.scss";
 @import "InputNumber.scss";
 @import "InputRange.scss";
+@import "Inspector.scss";
 @import "Label.scss";
 @import "ListView.scss";
 @import "Panel.scss";
@@ -22,6 +23,7 @@ $parent: "#editor";
 	width: 100%;
 	height: 100%;
 	color: theme("font");
+
 	.LeftLayout {
 		flex: 1;
 	}
@@ -81,10 +83,6 @@ $parent: "#editor";
 		border-left: 1px solid theme("border");
 		overflow-x: hidden;
 		overflow-y: auto;
-	}
-	div.Inspector {
-		width: 100%;
-		line-height: 1.5;
 	}
 
 	.fadeout-leave-active {

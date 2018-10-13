@@ -1,0 +1,21 @@
+#{$parent} {
+	div.Inspector {
+		width: 100%;
+		line-height: 1.5;
+	}
+
+	div.ObjectTitle {
+		display: inline-flex;
+		box-sizing: border-box;
+		align-items: center;
+		margin-top: 2px;
+		padding: 1px;
+		width: 100%;
+
+		> input[type="text"] {
+			flex: 1;
+			margin: 0 2px;
+			height: 1em;
+		}
+	}
+}

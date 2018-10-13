@@ -377,6 +377,9 @@ export class Scene {
 		var cameraCount = cameras.length;
 		for (var n = 0; n < cameraCount; n++) {
 			var camera = cameras[n];
+			if (camera.enabled === false) {
+				continue;
+			}
 			var renderTexture = camera.targetTexture;
 			if (renderTexture != null) {
 				renderTexture.bindFramebuffer();
@@ -387,6 +390,9 @@ export class Scene {
 			var rendererCount = renderers.length;
 			for (var i = 0; i < rendererCount; i++) {
 				var renderer = renderers[i];
+				if (renderer.object3d.isActiveInHierarchy === false) {
+					continue;
+				}
 				/*
 				if (camera.orthographic === false
 				&& this.frustumCulling(renderer, camera.frustumPlanes)) {

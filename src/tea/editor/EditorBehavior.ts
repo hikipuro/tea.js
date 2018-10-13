@@ -84,28 +84,13 @@ export class EditorBehavior {
 				inspectorView.hide();
 				return;
 			}
-			inspectorView.show();
 			console.log("select", item.tag);
 			var object3d = this.hierarchyViewItem;
 			if (object3d == null) {
 				return;
 			}
-			inspectorView.name = object3d.name;
-			inspectorView.clearComponents();
-			var components = object3d.getComponents(Tea.Component);
-			components.forEach((component: Tea.Component) => {
-				//console.log(component.editorView);
-				var editorView = (component.constructor as any).editorView;//.editorView as Vue;
-				if (editorView == null) {
-					return;
-				}
-				var vue = editorView.extend({
-					created: function () {
-						(this as any)._component = component;
-					}
-				});
-				inspectorView.components.push(vue);
-			});
+			inspectorView.setObject3D(object3d);
+			inspectorView.show();
 			this.inspectorViewTimer.start();
 		});
 	}
@@ -123,6 +108,9 @@ export class EditorBehavior {
 				return;
 			}
 			switch (key) {
+				case "name":
+					hierarchyView.selectedItem.model.text = value;
+					break;
 				case "position":
 					object3d.localPosition.copy(value);
 					break;
