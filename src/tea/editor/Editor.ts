@@ -4,6 +4,7 @@ import * as Tea from "../Tea";
 import { EditorBehavior } from "./EditorBehavior";
 import { Button } from "./Button";
 import { CheckBox } from "./CheckBox";
+import { ColorPicker } from "./ColorPicker";
 import { ComponentTitle } from "./ComponentTitle";
 import { ContextMenu } from "./ContextMenu";
 import { HLayout } from "./HLayout";
@@ -35,6 +36,7 @@ import { Script } from "./components/Script";
 //*
 Vue.component("Button", Button);
 Vue.component("CheckBox", CheckBox);
+Vue.component("ColorPicker", ColorPicker);
 Vue.component("ComponentTitle", ComponentTitle);
 Vue.component("ContextMenu", ContextMenu);
 Vue.component("HLayout", HLayout);

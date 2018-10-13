@@ -1,0 +1,29 @@
+#{$parent} {
+	div.Camera {
+		div.ClippingPlanes {
+			display: inline-flex;
+			box-sizing: border-box;
+			align-items: center;
+			padding: 1px;
+			width: 100%;
+	
+			> .title {
+				display: inline-block;
+				min-width: 40%;
+				white-space: nowrap;
+				overflow: hidden;
+			}
+	
+			> .value {
+				display: flex;
+				flex-direction: column;
+				width: 60%;
+				justify-content: space-evenly;
+
+				.title {
+					min-width: 2.5em;
+				}
+			}
+		}
+	}
+}

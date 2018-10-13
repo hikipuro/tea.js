@@ -149,6 +149,27 @@ export class Color extends Array<number> {
 		this[3] = 1.0;
 	}
 
+	setCssColor(value: string): void {
+		if (value.substr(0, 1) === "#") {
+			var length = (value.length - 1) / 3;
+			var fact = [17, 1, 0.062272][length - 1];
+			this[0] = Math.round(parseInt(value.substr(1, length), 16) * fact) / 255;
+			this[1] = Math.round(parseInt(value.substr(1 + length, length), 16) * fact) / 255;
+			this[2] = Math.round(parseInt(value.substr(1 + 2 * length, length), 16) * fact) / 255;
+			this[3] = 1.0;
+			return;
+		}
+		var values = value.split("(")[1].split(")")[0].split(",");
+		this[0] = Math.round(parseInt(values[0])) / 255;
+		this[1] = Math.round(parseInt(values[1])) / 255;
+		this[2] = Math.round(parseInt(values[2])) / 255;
+		if (values[3]) {
+			this[3] = Math.round(parseFloat(values[3]));
+		} else {
+			this[3] = 1.0;
+		}
+	}
+
 	equals(value: Color): boolean {
 		if (value == null) {
 			return false;
@@ -271,6 +292,12 @@ export class Color extends Array<number> {
 	static fromHSV(h: number, s: number, v: number): Color {
 		var color = new Color();
 		color.setHSV(h, s, v);
+		return color;
+	}
+
+	static fromCssColor(value: string): Color {
+		var color = new Color();
+		color.setCssColor(value);
 		return color;
 	}
 

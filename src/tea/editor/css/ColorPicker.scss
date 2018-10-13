@@ -1,0 +1,22 @@
+#{$parent} {
+	div.ColorPicker {
+		display: inline-flex;
+		box-sizing: border-box;
+		align-items: center;
+		padding: 1px;
+		width: 100%;
+
+		> .title {
+			display: inline-block;
+			min-width: 40%;
+			white-space: nowrap;
+			overflow: hidden;
+		}
+
+		> input {
+			flex: 1;
+			margin: 0 2px;
+			padding: 0;
+		}
+	}
+}

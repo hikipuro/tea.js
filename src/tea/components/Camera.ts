@@ -98,7 +98,7 @@ export class Camera extends Component {
 		this.fieldOfView = 60.0;
 		this.nearClipPlane = 0.3;
 		this.farClipPlane = 1000.0;
-		this.backgroundColor = Tea.Color.background;
+		this.backgroundColor = Tea.Color.background.clone();
 		this._orthographic = false;
 		this.orthographicSize = 5.0;
 		this.rect = new Tea.Rect(0.0, 0.0, 1.0, 1.0);
