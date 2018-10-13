@@ -49,16 +49,23 @@ export class ClippingPlanes extends Vue {
 				ref="background"
 				:value="background"
 				@update="onUpdateBackground">Background</ColorPicker>
+			<CheckBox
+				ref="orthographic"
+				:value="orthographic"
+				@update="onUpdateOrthographic">Orthographic</CheckBox>
+			<InputNumber
+				v-if="orthographic"
+				ref="size"
+				class="Size"
+				:value="size"
+				@update="onUpdateSize">Size</InputNumber>
 			<InputRange
+				v-else
 				ref="fieldOfView"
 				:min="1"
 				:max="179"
 				:value="fieldOfView"
 				@update="onUpdateFov">Field of View</InputRange>
-			<CheckBox
-				ref="orthographic"
-				:value="orthographic"
-				@update="onUpdateOrthographic">Orthographic</CheckBox>
 			<ClippingPlanes
 				ref="clippingPlanes"
 				:near="near"
@@ -76,8 +83,9 @@ export class ClippingPlanes extends Vue {
 			enabled: false,
 			clearFlags: "",
 			background: "",
-			fieldOfView: 0,
 			orthographic: false,
+			size: 0,
+			fieldOfView: 0,
 			near: 0,
 			far: 0,
 			rect: [0, 0, 0, 0]
@@ -90,10 +98,11 @@ export class ClippingPlanes extends Vue {
 export class Camera extends Vue {
 	_component: Tea.Camera;
 	enabled: boolean;
-	fieldOfView: number;
 	clearFlags: string;
 	background: string;
 	orthographic: boolean;
+	size: number;
+	fieldOfView: number;
 	near: number;
 	far: number;
 	rect: Array<number>;
@@ -110,8 +119,9 @@ export class Camera extends Vue {
 			this.clearFlags = Tea.CameraClearFlags[component.clearFlags];
 		});
 		this.background = component.backgroundColor.toCssColor();
-		this.fieldOfView = component.fieldOfView;
 		this.orthographic = component.orthographic;
+		this.size = component.orthographicSize;
+		this.fieldOfView = component.fieldOfView;
 		this.near = component.nearClipPlane;
 		this.far = component.farClipPlane;
 		this.rect = component.rect.clone();
@@ -143,17 +153,24 @@ export class Camera extends Vue {
 		}
 	}
 
-	protected onUpdateFov(value: number): void {
-		this.fieldOfView = value;
-		if (this._component) {
-			this._component.fieldOfView = value;
-		}
-	}
-
 	protected onUpdateOrthographic(value: boolean): void {
 		this.orthographic = value;
 		if (this._component) {
 			this._component.orthographic = value;
+		}
+	}
+
+	protected onUpdateSize(value: number): void {
+		this.size = value;
+		if (this._component) {
+			this._component.orthographicSize = value;
+		}
+	}
+
+	protected onUpdateFov(value: number): void {
+		this.fieldOfView = value;
+		if (this._component) {
+			this._component.fieldOfView = value;
 		}
 	}
 

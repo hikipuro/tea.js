@@ -25,5 +25,18 @@
 				}
 			}
 		}
+
+		div.Size {
+			box-sizing: border-box;
+			align-items: center;
+			padding: 1px;
+
+			> .title {
+				min-width: 40%;
+			}
+			> .value {
+				width: 60%;
+			}
+		}
 	}
 }
