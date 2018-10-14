@@ -35,25 +35,16 @@ export class AddComponent extends Vue {
 				@update="onUpdateTitle"></ObjectTitle>
 			<Vector3
 				ref="position"
-				:x="position[0]"
-				:y="position[1]"
-				:z="position[2]"
 				@update="onUpdatePosition">
 				Position
 			</Vector3>
 			<Vector3
 				ref="rotation"
-				:x="rotation[0]"
-				:y="rotation[1]"
-				:z="rotation[2]"
 				@update="onUpdateRotation">
 				Rotation
 			</Vector3>
 			<Vector3
 				ref="scale"
-				:x="scale[0]"
-				:y="scale[1]"
-				:z="scale[2]"
 				@update="onUpdateScale">
 				Scale
 			</Vector3>
@@ -72,9 +63,6 @@ export class AddComponent extends Vue {
 		isVisible: false,
 		name: "",
 		isActive: false,
-		position: [0, 0, 0],
-		rotation: [0, 0, 0],
-		scale: [0, 0, 0],
 		components: []
 	}},
 	components: {
@@ -86,9 +74,6 @@ export class Inspector extends Vue {
 	isVisible: boolean;
 	name: string;
 	isActive: boolean;
-	position: Array<number>;
-	rotation: Array<number>;
-	scale: Array<number>;
 	components: Array<any>;
 	_configComponent: Tea.Component;
 
@@ -123,24 +108,41 @@ export class Inspector extends Vue {
 	}
 
 	setPosition(value: Tea.Vector3): void {
-		var position = this.position;
-		Vue.set(position, 0, value[0]);
-		Vue.set(position, 1, value[1]);
-		Vue.set(position, 2, value[2]);
+		var position = this.$refs.position as Tea.Editor.Vector3;
+		var x = value[0], y = value[1], z = value[2];
+		x = Math.abs(x) < Tea.Mathf.Epsilon ? 0 : x;
+		y = Math.abs(y) < Tea.Mathf.Epsilon ? 0 : y;
+		z = Math.abs(z) < Tea.Mathf.Epsilon ? 0 : z;
+		position.x = x;
+		position.y = y;
+		position.z = z;
 	}
 
 	setRotation(value: Tea.Vector3): void {
-		var rotation = this.rotation;
-		Vue.set(rotation, 0, value[0]);
-		Vue.set(rotation, 1, value[1]);
-		Vue.set(rotation, 2, value[2]);
+		var rotation = this.$refs.rotation as Tea.Editor.Vector3;
+		var x = value[0], y = value[1], z = value[2];
+		x = Math.abs(x) < Tea.Mathf.Epsilon ? 0 : x;
+		y = Math.abs(y) < Tea.Mathf.Epsilon ? 0 : y;
+		z = Math.abs(z) < Tea.Mathf.Epsilon ? 0 : z;
+		if (Math.abs(y) === 180.0 && Math.abs(z) === 180.0) {
+			x = 180.0 - x;
+			y = 0;
+			z = 0;
+		}
+		rotation.x = x;
+		rotation.y = y;
+		rotation.z = z;
 	}
 
 	setScale(value: Tea.Vector3): void {
-		var scale = this.scale;
-		Vue.set(scale, 0, value[0]);
-		Vue.set(scale, 1, value[1]);
-		Vue.set(scale, 2, value[2]);
+		var scale = this.$refs.scale as Tea.Editor.Vector3;
+		var x = value[0], y = value[1], z = value[2];
+		x = Math.abs(x) < Tea.Mathf.Epsilon ? 0 : x;
+		y = Math.abs(y) < Tea.Mathf.Epsilon ? 0 : y;
+		z = Math.abs(z) < Tea.Mathf.Epsilon ? 0 : z;
+		scale.x = x;
+		scale.y = y;
+		scale.z = z;
 	}
 
 	show(): void {
@@ -181,30 +183,28 @@ export class Inspector extends Vue {
 	}
 
 	protected onUpdatePosition(x: number, y: number, z: number): void {
-		this.position[0] = x;
-		this.position[1] = y;
-		this.position[2] = z;
-		this.$forceUpdate();
-		var value = new Tea.Vector3(x, y, z)
-		this.$emit("update", "position", value);
+		//var value = new Tea.Vector3(x, y, z)
+		//this.$emit("update", "position", value);
+		if (this._object3d != null) {
+			this._object3d.localPosition.set(x, y, z);
+		}
 	}
 
 	protected onUpdateRotation(x: number, y: number, z: number): void {
-		this.rotation[0] = x;
-		this.rotation[1] = y;
-		this.rotation[2] = z;
-		this.$forceUpdate();
-		var value = new Tea.Vector3(x, y, z)
-		this.$emit("update", "rotation", value);
+		//var value = new Tea.Vector3(x, y, z)
+		//this.$emit("update", "rotation", value);
+		if (this._object3d != null) {
+			this._object3d.localRotation.setEuler(x, y, z);
+		}
+		this.$emit("update", "rotation");
 	}
 
 	protected onUpdateScale(x: number, y: number, z: number): void {
-		this.scale[0] = x;
-		this.scale[1] = y;
-		this.scale[2] = z;
-		this.$forceUpdate();
-		var value = new Tea.Vector3(x, y, z)
-		this.$emit("update", "scale", value);
+		//var value = new Tea.Vector3(x, y, z)
+		//this.$emit("update", "scale", value);
+		if (this._object3d != null) {
+			this._object3d.localScale.set(x, y, z);
+		}
 	}
 
 	protected onConfig(component: Tea.Component): void {

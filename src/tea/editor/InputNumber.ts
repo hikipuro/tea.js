@@ -1,6 +1,15 @@
 import Vue from "vue";
 import Component from "vue-class-component";
 
+declare global {
+	interface HTMLElement {
+		requestPointerLock(): void;
+	}
+	interface Document {
+		exitPointerLock(): void;
+	}
+}
+
 @Component({
 	template: `
 		<div class="InputNumber">
@@ -26,14 +35,6 @@ import Component from "vue-class-component";
 	props: {
 		value: Number
 	},
-	computed: {
-		/*
-		v: function (): string {
-			var item = this as InputNumber;
-			if (item.value;
-		}
-		//*/
-	},
 	data: () => {
 		return {
 			step: 0.03,
@@ -52,10 +53,12 @@ export class InputNumber extends Vue {
 
 	protected update(): void {
 		var el = this.$refs.text as HTMLInputElement;
-		var value = parseFloat(el.value);
+		var text = el.value;
+		if (text === "-0" || text === "-0.") {
+			return;
+		}
+		var value = parseFloat(text);
 		if (isNaN(value)) {
-			this._prev = 0;
-			this.$emit("update", 0);
 			return;
 		}
 		if (this._prev === value) {
@@ -66,6 +69,13 @@ export class InputNumber extends Vue {
 	}
 
 	protected onChange(e: Event): void {
+		var el = this.$refs.text as HTMLInputElement;
+		var value = parseFloat(el.value);
+		if (isNaN(value)) {
+			el.value = "0";
+		} else {
+			el.value = String(value);
+		}
 		this.update();
 	}
 

@@ -114,6 +114,10 @@ export class EditorBehavior {
 				case "name":
 					hierarchyView.selectedItem.model.text = value;
 					break;
+				case "rotation":
+					this.inspectorViewTimer.snooze(1000);
+					break;
+				/*
 				case "position":
 					object3d.localPosition.copy(value);
 					break;
@@ -123,6 +127,7 @@ export class EditorBehavior {
 				case "scale":
 					object3d.localScale.copy(value);
 					break;
+				//*/
 			}
 		});
 		inspectorView.$on("config", (component: Tea.Component) => {
@@ -507,6 +512,7 @@ export class EditorBehavior {
 class Timer {
 	interval: number;
 	handle: any;
+	snoozeHandle: any;
 	update: () => void;
 
 	constructor() {
@@ -527,7 +533,30 @@ class Timer {
 		if (this.handle == null) {
 			return;
 		}
+		if (this.snoozeHandle != null) {
+			clearTimeout(this.snoozeHandle);
+			this.snoozeHandle = null;
+		}
 		clearInterval(this.handle);
 		this.handle = null;
+	}
+
+	snooze(wait: number): void {
+		if (this.handle == null) {
+			if (this.snoozeHandle != null) {
+				clearTimeout(this.snoozeHandle);
+				this.snoozeHandle = setTimeout(() => {
+					this.snoozeHandle = null;
+					this.start();
+				}, wait);
+			}
+			return;
+		}
+		clearInterval(this.handle);
+		this.handle = null;
+		this.snoozeHandle = setTimeout(() => {
+			this.snoozeHandle = null;
+			this.start();
+		}, wait);
 	}
 }
