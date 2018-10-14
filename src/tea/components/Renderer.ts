@@ -447,14 +447,23 @@ export class Renderer extends Component {
 		var location: WebGLUniformLocation = null;
 
 		var d = this._tmpVec3;
-		var lightCount = Math.min(Renderer.MaxLightCount, lights.length);
-		location = shader.propertyToID("lightCount");
-		if (location != null) {
-			gl.uniform1i(location, lightCount);
-		}
+		//var lightCount = Math.min(Renderer.MaxLightCount, lights.length);
 
-		for (var i = 0; i < lightCount; i++) {
+		var lightCount = 0;
+		var length = lights.length;
+		for (var i = 0; i < length; i++) {
 			var light = lights[i];
+			if (light.enabled === false) {
+				continue;
+			}
+			if (light.object3d.isActiveInHierarchy === false) {
+				continue;
+			}
+			lightCount++;
+			if (lightCount > Renderer.MaxLightCount) {
+				lightCount--;
+				break;
+			}
 			location = shader.propertyToID("lights[" + i + "].color");
 			if (location != null) {
 				var color = light.color.mul(light.intensity);
@@ -484,6 +493,10 @@ export class Renderer extends Component {
 			if (location != null) {
 				gl.uniform1f(location, Tea.radians(light.spotAngle));
 			}
+		}
+		location = shader.propertyToID("lightCount");
+		if (location != null) {
+			gl.uniform1i(location, lightCount);
 		}
 		location = shader.propertyToID("ambientColor");
 		if (location != null) {

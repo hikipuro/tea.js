@@ -387,6 +387,9 @@ export class Scene {
 			if (camera.enabled === false) {
 				continue;
 			}
+			if (camera.object3d.isActiveInHierarchy === false) {
+				continue;
+			}
 			if (this.enablePostProcessing) {
 				this.renderTexture.bindFramebuffer();
 			}

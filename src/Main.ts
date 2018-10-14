@@ -163,7 +163,7 @@ export class Main {
 		//light.getComponent(Tea.Light).intensity = 0.5;
 		//light.getComponent(Tea.Light).range = 1;
 		light.localRotation = Tea.Quaternion.euler(90, 0, 0);
-		light.localPosition = light.localRotation.mul(new Tea.Vector3(0,0,-1)).mul(10);
+		//light.localPosition = light.localRotation.mul(new Tea.Vector3(0,0,-1)).mul(10);
 		console.log("light", light.localPosition);
 		//light.addComponent(Rotate);
 		scene.addChild(light);

@@ -83,32 +83,38 @@ export module ShaderSources {
 			vViewDirection.z = dot(n, viewDirection);
 			vViewDirection = normalize(vViewDirection);
 
-			vec4 lightSource = lights[0].position - vert;
-			float lightDistance = length(lightSource.xyz);
-			float lightType = lights[0].direction.w;
+			vec4 lightSource;
+			float lightDistance;
+			float lightType;
 			vec3 d;
-			if (lightType == 0.0) {
-				d = lights[0].direction.xyz;
-				vAttenuation[0] = 1.0;
-			} else if (lightType == 1.0) {
-				d = normalize(lightSource.xyz);
-				vAttenuation[0] = min(1.0, (1.0 * lights[0].range) / lightDistance);
-			} else {
-				d = normalize(lightSource.xyz);
-				float clampedCosine = max(0.0, dot(d, lights[0].direction.xyz));
-				if (clampedCosine < cos(lights[0].spotAngle)) {
-					vAttenuation[0] = 0.0;
-				} else {
-					float spotExponent = 20.0;
+
+			if (lightCount >= 1) {
+				lightSource = lights[0].position - vert;
+				lightDistance = length(lightSource.xyz);
+				lightType = lights[0].direction.w;
+				if (lightType == 0.0) {
+					d = lights[0].direction.xyz;
+					vAttenuation[0] = 1.0;
+				} else if (lightType == 1.0) {
+					d = normalize(lightSource.xyz);
 					vAttenuation[0] = min(1.0, (1.0 * lights[0].range) / lightDistance);
-					vAttenuation[0] = vAttenuation[0] * pow(clampedCosine, spotExponent);
+				} else {
+					d = normalize(lightSource.xyz);
+					float clampedCosine = max(0.0, dot(d, lights[0].direction.xyz));
+					if (clampedCosine < cos(lights[0].spotAngle)) {
+						vAttenuation[0] = 0.0;
+					} else {
+						float spotExponent = 20.0;
+						vAttenuation[0] = min(1.0, (1.0 * lights[0].range) / lightDistance);
+						vAttenuation[0] = vAttenuation[0] * pow(clampedCosine, spotExponent);
+					}
 				}
+				vLightDirection[0].x = dot(t, d);
+				vLightDirection[0].y = dot(b, d);
+				vLightDirection[0].z = dot(n, d);
+				vLightDirection[0] = normalize(vLightDirection[0]);
+				vLightColor[0] = lights[0].color;
 			}
-			vLightDirection[0].x = dot(t, d);
-			vLightDirection[0].y = dot(b, d);
-			vLightDirection[0].z = dot(n, d);
-			vLightDirection[0] = normalize(vLightDirection[0]);
-			vLightColor[0] = lights[0].color;
 
 			if (lightCount >= 2) {
 				lightSource = lights[1].position - vert;
