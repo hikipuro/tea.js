@@ -11,24 +11,48 @@ import Component from "vue-class-component";
 			<div class="value">
 				<VLayout>
 					<Panel>
-						<InputNumber :value="value[0]" @update="onUpdateX">X</InputNumber>
-						<InputNumber :value="value[1]" @update="onUpdateY">Y</InputNumber>
+						<InputNumber
+							ref="x"
+							:value="value[0]"
+							@update="onUpdateX">X</InputNumber>
+						<InputNumber
+							ref="y"
+							:value="value[1]"
+							@update="onUpdateY">Y</InputNumber>
 					</Panel>
 
 					<Panel>
-						<InputNumber :value="value[2]" @update="onUpdateWidth">W</InputNumber>
-						<InputNumber :value="value[3]" @update="onUpdateHeight">H</InputNumber>
+						<InputNumber
+							ref="w"
+							:value="value[2]"
+							@update="onUpdateWidth">W</InputNumber>
+						<InputNumber
+							ref="h"
+							:value="value[3]"
+							@update="onUpdateHeight">H</InputNumber>
 					</Panel>
 				</VLayout>
 			</div>
 		</div>
 	`,
 	props: {
-		value: Array
+		value: Array,
+		step: {
+			type: Number,
+			default: 0.001
+		}
 	}
 })
 export class Rectangle extends Vue {
 	value: Array<number>;
+	step: number;
+
+	protected mounted(): void {
+		(this.$refs.x as any).step = this.step;
+		(this.$refs.y as any).step = this.step;
+		(this.$refs.w as any).step = this.step;
+		(this.$refs.h as any).step = this.step;
+	}
 
 	protected onUpdateX(value: number): void {
 		var rect = this.value.concat();
