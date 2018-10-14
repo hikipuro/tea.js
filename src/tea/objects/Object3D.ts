@@ -345,9 +345,10 @@ export class Object3D {
 			this.scene.removeChild(this);
 		}
 		this.parent = null;
-		for (var i = 0; i < this.children.length; i++) {
+		var length = this.children.length;
+		for (var i = length - 1; i >= 0; i--) {
 			var child = this.children[i];
-			child.destroy();
+			child._destroy();
 			delete this.children[i];
 		}
 		var keys = Object.keys(this._components);
@@ -366,8 +367,9 @@ export class Object3D {
 		this.localScale = undefined;
 		this._m.destroy();
 		this._m = undefined;
-		this._components = undefined;
+		this._components = [];
 		this._toDestroy = undefined;
+		this.id = undefined;
 	}
 
 	toString(): string {
@@ -634,12 +636,20 @@ export class Object3D {
 			}
 			if (component instanceof Tea.Script) {
 				if (component.isStarted === false) {
-					component.start();
+					try {
+						component.start();
+					} catch (err) {
+						console.error(err);
+					}
 					component.isStarted = true;
 				}
 			}
 			if (component.enabled) {
-				component.update();
+				try {
+					component.update();
+				} catch (err) {
+					console.error(err);
+				}
 			}
 		}
 		if (this._toDestroy) {

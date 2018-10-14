@@ -459,9 +459,17 @@ class AppRenderer extends Tea.EventDispatcher {
 		if (Electron && Electron.remote) {
 			var browserWindow = Electron.remote.getCurrentWindow();
 			browserWindow.on("enter-full-screen", () => {
-				this.dispatchResizeEvent();
+				setTimeout(() => {
+					this.dispatchResizeEvent();
+				}, 100);
 			});
 			browserWindow.on("leave-full-screen", () => {
+				this.dispatchResizeEvent();
+			});
+			browserWindow.on("maximize", () => {
+				this.dispatchResizeEvent();
+			});
+			browserWindow.on("unmaximize", () => {
 				this.dispatchResizeEvent();
 			});
 		}

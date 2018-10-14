@@ -85,14 +85,16 @@ export class TestScript extends Tea.Script {
 
 		var box1 = this.object3d.getComponent(Tea.BoxCollider);
 		var box2 = this.cube.getComponent(Tea.BoxCollider);
-		var r = this.cube.getComponent(Tea.Renderer);
-		//console.log(box1.toString());
-		if (box1.testBoxCollider(box2)) {
-			//console.log("true");
-			r.material.color = Tea.Color.red;
-		} else {
-			//console.log("false");
-			r.material.color = Tea.Color.white;
+		if (box2 != null) {
+			var r = this.cube.getComponent(Tea.Renderer);
+			//console.log(box1.toString());
+			if (box1.testBoxCollider(box2)) {
+				//console.log("true");
+				r.material.color = Tea.Color.red;
+			} else {
+				//console.log("false");
+				r.material.color = Tea.Color.white;
+			}
 		}
 
 		//console.log(this.app.keyboard._keys);

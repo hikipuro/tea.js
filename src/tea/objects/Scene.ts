@@ -457,6 +457,9 @@ export class Scene {
 		if (object3d == null || object3d.isActive === false) {
 			return;
 		}
+		if (object3d.id == null) {
+			return;
+		}
 		object3d.update();
 		var children = object3d.children;
 		var length = children.length;
@@ -505,6 +508,9 @@ export class Scene {
 	}
 
 	protected renderShadowMapCamera(camera: Tea.ShadowMapCamera, lights: Array<Tea.Light>, renderer: Tea.Renderer): void {
+		if (renderer.object3d == null) {
+			return;
+		}
 		var shader = renderer.material.shader;
 		renderer.material.shader = camera.shader;
 		//console.log(renderer.object3d.name);
