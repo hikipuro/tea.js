@@ -284,6 +284,7 @@ export class ParticleSystemRenderer extends Renderer {
 			gl.TRIANGLES, triangles,
 			gl.UNSIGNED_SHORT, 0, count
 		);
+		Renderer.drawCallCount++;
 		//console.log("drawElementsInstancedANGLE");
 	}
 
@@ -316,5 +317,6 @@ export class ParticleSystemRenderer extends Renderer {
 			gl.uniform1f(size, particle.size);
 			gl.drawElements(gl.TRIANGLES, triangles, gl.UNSIGNED_SHORT, 0);
 		}
+		Renderer.drawCallCount += count;
 	}
 }

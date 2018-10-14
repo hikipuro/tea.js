@@ -40,14 +40,17 @@ export class EditorBehavior {
 		var inspectorResize = this.editor.$refs.inspectorResize as Vue;
 		var projectResize = this.editor.$refs.projectResize as Vue;
 		hierarchyResize.$on("resize", () => {
-			this.updateScreenSize();
+			this.scene.app.renderer.dispatchResizeEvent();
+			//this.updateScreenSize();
 		});
 		inspectorResize.$on("resize", () => {
-			this.updateScreenSize();
-			this.scene.app.renderer.stats.updateSize();
+			this.scene.app.renderer.dispatchResizeEvent();
+			//this.updateScreenSize();
+			//this.scene.app.renderer.stats.updateSize();
 		});
 		projectResize.$on("resize", () => {
-			this.updateScreenSize();
+			this.scene.app.renderer.dispatchResizeEvent();
+			//this.updateScreenSize();
 		});
 		setTimeout(() => {
 			this.scene.app.renderer.on("resize", () => {

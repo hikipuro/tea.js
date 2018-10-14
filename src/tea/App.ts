@@ -1,3 +1,4 @@
+import * as Electron from "electron";
 import * as Tea from "./Tea";
 
 class Status {
@@ -453,9 +454,22 @@ class AppRenderer extends Tea.EventDispatcher {
 			this.emit("resume");
 		});
 		window.addEventListener("resize", () => {
-			this.emit("resize");
-			this.stats.updateSize();
+			this.dispatchResizeEvent();
 		});
+		if (Electron && Electron.remote) {
+			var browserWindow = Electron.remote.getCurrentWindow();
+			browserWindow.on("enter-full-screen", () => {
+				this.dispatchResizeEvent();
+			});
+			browserWindow.on("leave-full-screen", () => {
+				this.dispatchResizeEvent();
+			});
+		}
+	}
+
+	dispatchResizeEvent(): void {
+		this.emit("resize");
+		this.stats.updateSize();
 	}
 
 	start(): void {

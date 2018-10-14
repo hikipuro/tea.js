@@ -19,10 +19,7 @@ export class RenderTexture extends Texture {
 		super(app);
 		this._width = Tea.Mathf.closestPowerOfTwo(width);
 		this._height = Tea.Mathf.closestPowerOfTwo(height);
-		var gl = app.gl;
-		var maxSize = gl.getParameter(gl.MAX_TEXTURE_SIZE);
-		this._width = Math.min(maxSize, this._width);
-		this._height = Math.min(maxSize, this._height);
+		this.setTextureSize();
 		this.createBuffers();
 	}
 
@@ -64,13 +61,24 @@ export class RenderTexture extends Texture {
 		);
 	}
 
+	protected setTextureSize(): void {
+		var gl = this.app.gl;
+		var maxSize = gl.getParameter(gl.MAX_TEXTURE_SIZE);
+		this._width = Math.min(maxSize, this._width);
+		this._height = Math.min(maxSize, this._height);
+	}
+
 	protected createBuffers(): void {
-		var gl = this.gl;
 		var width = this._width;
 		var height = this._height;
+		this.createTexture(width, height);
+		this.createRenderBuffer(width, height);
+		this.createFrameBuffer();
+	}
+
+	protected createTexture(width: number, height: number): void {
+		var gl = this.gl;
 		this.texture = gl.createTexture();
-		this.renderBuffer = gl.createRenderbuffer();
-		this.frameBuffer = gl.createFramebuffer();
 		gl.activeTexture(gl.TEXTURE0);
 		gl.bindTexture(gl.TEXTURE_2D, this.texture);
 		gl.texImage2D(
@@ -85,12 +93,24 @@ export class RenderTexture extends Texture {
 		gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
 		gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
 		gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+		gl.bindTexture(gl.TEXTURE_2D, null);
+	}
+
+	protected createRenderBuffer(width: number, height: number): void {
+		var gl = this.gl;
+		this.renderBuffer = gl.createRenderbuffer();
 		gl.bindRenderbuffer(gl.RENDERBUFFER, this.renderBuffer);
 		gl.renderbufferStorage(
 			gl.RENDERBUFFER,
 			gl.DEPTH_COMPONENT16,
 			width, height
 		);
+		gl.bindRenderbuffer(gl.RENDERBUFFER, null);
+	}
+
+	protected createFrameBuffer(): void {
+		var gl = this.gl;
+		this.frameBuffer = gl.createFramebuffer();
 		gl.bindFramebuffer(gl.FRAMEBUFFER, this.frameBuffer);
 		gl.framebufferRenderbuffer(
 			gl.FRAMEBUFFER,
@@ -104,8 +124,6 @@ export class RenderTexture extends Texture {
 			gl.TEXTURE_2D,
 			this.texture, 0
 		);
-		gl.bindTexture(gl.TEXTURE_2D, null);
-		gl.bindRenderbuffer(gl.RENDERBUFFER, null);
 		gl.bindFramebuffer(gl.FRAMEBUFFER, null);
 	}
 }

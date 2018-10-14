@@ -222,6 +222,7 @@ export class Scene {
 		this._children = [];
 		this._components = new SceneComponents();
 		this.app.renderer.on("resize", () => {
+			//console.log("resize");
 			this.renderTexture.destroy();
 			this.refreshRenderTexture();
 		})
@@ -373,12 +374,21 @@ export class Scene {
 		var cameras = this._components.cameras;
 		var lights = this._components.lights;
 
+		if (this.enablePostProcessing) {
+			var texture = this.renderTexture;
+			this.postProcessingRenderer.renderTexture = texture;
+			texture.bindFramebuffer();
+			this.postProcessingRenderer.clear();
+		}
 		Tea.Renderer.drawCallCount = 0;
 		var cameraCount = cameras.length;
 		for (var n = 0; n < cameraCount; n++) {
 			var camera = cameras[n];
 			if (camera.enabled === false) {
 				continue;
+			}
+			if (this.enablePostProcessing) {
+				this.renderTexture.bindFramebuffer();
 			}
 			var renderTexture = camera.targetTexture;
 			if (renderTexture != null) {
@@ -406,8 +416,8 @@ export class Scene {
 			}
 		}
 		if (this.enablePostProcessing) {
-			this.postProcessingRenderer.renderTexture = this.renderTexture;
-			this.postProcessingRenderer.render(this.mainCamera);
+			this.renderTexture.unbindFramebuffer();
+			this.postProcessingRenderer.render();
 		}
 		//this._renderers.length = 0;
 		//console.log("drawCallCount", Tea.Renderer.drawCallCount);
@@ -542,6 +552,6 @@ export class Scene {
 		var app = this.app;
 		this.renderTexture = new Tea.RenderTexture(app, app.width, app.height);
 		//this.renderTexture.filterMode = Tea.FilterMode.Bilinear;
-		this.renderTexture.wrapMode = Tea.TextureWrapMode.Mirror;
+		//this.renderTexture.wrapMode = Tea.TextureWrapMode.Mirror;
 	}
 }

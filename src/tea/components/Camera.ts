@@ -79,7 +79,7 @@ export class Camera extends Component {
 	protected _inverseViewProjectionMatrix: Tea.Matrix4x4;
 	protected _prev: Prev;
 	protected _viewportRect: Tea.Rect;
-	protected static currentBGColor: Tea.Color;
+	static currentBGColor: Tea.Color;
 
 	constructor(app: Tea.App) {
 		super(app);
@@ -244,10 +244,19 @@ export class Camera extends Component {
 			var h = t.height;
 			this.gl.viewport(0.0, 0.0, w, h);
 			this.gl.scissor(0.0, 0.0, w, h);
+			this.clear();
 		} else {
-			this.setViewport();
+			var scene = this.object3d.scene;
+			if (scene != null && scene.enablePostProcessing) {
+				//scene.renderTexture.bindFramebuffer();
+				this.setViewport(scene);
+				this.clear();
+				//scene.renderTexture.unbindFramebuffer();
+			} else {
+				this.setViewport();
+				this.clear();
+			}
 		}
-		this.clear();
 	}
 
 	updateLeft(): void {
@@ -424,40 +433,53 @@ export class Camera extends Component {
 		return rect;
 	}
 	
-	setViewport(): void {
+	setViewport(scene: Tea.Scene = null): void {
 		var rx = this.rect[0];
 		var ry = this.rect[1];
 		var rw = this.rect[2];
 		var rh = this.rect[3];
 		
-		if (rx < 0) {
+		if (rx < 0.0) {
 			rw += rx;
-			rx = 0;
+			rx = 0.0;
 		}
-		if (ry < 0) {
+		if (ry < 0.0) {
 			rh += ry;
-			ry = 0;
+			ry = 0.0;
 		}
-		if (rx + rw > 1) {
-			rw = 1 - rx;
+		if (rx + rw > 1.0) {
+			rw = 1.0 - rx;
 		}
-		if (ry + rh > 1) {
-			rh = 1 - ry;
+		if (ry + rh > 1.0) {
+			rh = 1.0 - ry;
 		}
 
-		var width = this.app.width;
-		var height = this.app.height;
+		var width: number = 0.0;
+		var height: number = 0.0;
+
+		if (scene != null && scene.enablePostProcessing) {
+			width = scene.renderTexture.width;
+			height = scene.renderTexture.height;
+		} else {
+			width = this.app.width;
+			height = this.app.height;
+		}
+
 		var x = rx * width;
 		var y = ry * height;
 		var w = rw * width;
 		var h = rh * height;
-
 		if (w < 0.0) {
 			w = 0.0;
 		}
 		if (h < 0.0) {
 			h = 0.0;
 		}
+
+		x = Math.round(x);
+		y = Math.round(y);
+		w = Math.round(w);
+		h = Math.round(h);
 
 		var gl = this.gl;
 		gl.viewport(x, y, w, h);
@@ -566,17 +588,12 @@ export class Camera extends Component {
 	}
 
 	protected clear(): void {
-		var gl = this.gl;
-		var color = this.backgroundColor;
-		if (Camera.currentBGColor.equals(color) === false) {
-			gl.clearColor(color[0], color[1], color[2], color[3]);
-			Camera.currentBGColor.copy(color);
-		}
 		switch (this.clearFlags) {
 			case Tea.CameraClearFlags.Nothing:
-				this.clearNothing();
+				//this.clearNothing();
 				break;
 			case Tea.CameraClearFlags.SolidColor:
+				this.updateClearColor();
 				this.clearSolidColor();
 				break;
 			case Tea.CameraClearFlags.Depth:
@@ -588,7 +605,16 @@ export class Camera extends Component {
 		}
 	}
 
+	protected updateClearColor(): void {
+		var color = this.backgroundColor;
+		if (Camera.currentBGColor.equals(color) === false) {
+			this.gl.clearColor(color[0], color[1], color[2], color[3]);
+			Camera.currentBGColor.copy(color);
+		}
+	}
+
 	protected clearNothing(): void {
+		/*
 		var gl = this.gl;
 		var scene = this.object3d.scene;
 		if (scene != null && scene.enablePostProcessing) {
@@ -598,60 +624,24 @@ export class Camera extends Component {
 			gl.scissor(0.0, 0.0, width, height);
 			gl.viewport(0.0, 0.0, width, height);
 		}
+		//*/
 	}
 
 	protected clearSolidColor(): void {
 		var gl = this.gl;
-		if (this.constructor.name != "Camera") {
-			gl.clear(
-				gl.COLOR_BUFFER_BIT |
-				gl.DEPTH_BUFFER_BIT |
-				gl.STENCIL_BUFFER_BIT
-			);
-			return;
-		}
-		var scene = this.object3d.scene;
-		if (scene.enablePostProcessing) {
-			scene.renderTexture.bindFramebuffer();
-			var width = scene.renderTexture.width;
-			var height = scene.renderTexture.height;
-			gl.scissor(0.0, 0.0, width, height);
-			gl.viewport(0.0, 0.0, width, height);
-		}
 		gl.clear(
 			gl.COLOR_BUFFER_BIT |
 			gl.DEPTH_BUFFER_BIT |
 			gl.STENCIL_BUFFER_BIT
 		);
-		if (scene.enablePostProcessing) {
-			scene.renderTexture.unbindFramebuffer();
-		}
 	}
 
 	protected clearDepth(): void {
 		var gl = this.gl;
-		if (this.constructor.name != "Camera") {
-			gl.clear(
-				gl.DEPTH_BUFFER_BIT |
-				gl.STENCIL_BUFFER_BIT
-			);
-			return;
-		}
-		var scene = this.object3d.scene;
-		if (scene.enablePostProcessing) {
-			scene.renderTexture.bindFramebuffer();
-			var width = scene.renderTexture.width;
-			var height = scene.renderTexture.height;
-			gl.scissor(0.0, 0.0, width, height);
-			gl.viewport(0.0, 0.0, width, height);
-		}
 		gl.clear(
 			gl.DEPTH_BUFFER_BIT |
 			gl.STENCIL_BUFFER_BIT
 		);
-		if (scene.enablePostProcessing) {
-			scene.renderTexture.unbindFramebuffer();
-		}
 	}
 
 	protected drawSkybox(): void {
@@ -661,26 +651,32 @@ export class Camera extends Component {
 		var skybox = scene.renderSettings.skybox;
 		//gl.clear(gl.COLOR_BUFFER_BIT);
 
-		if (this.orthographic) {
+		/*
+		if (scene != null && scene.enablePostProcessing) {
+			gl.clear(
+				gl.DEPTH_BUFFER_BIT |
+				gl.STENCIL_BUFFER_BIT
+			);
+		}
+		//*/
+
+		//if (this.orthographic) {
 			//camera.targetTexture = this.targetTexture;
+			if (this.orthographic === false) {
+				camera.fieldOfView = this.fieldOfView;
+			} else {
+				camera.fieldOfView = 60.0;
+			}
+			camera.object3d.scene = this.object3d.scene;
+			camera.rect.copy(this.rect);
 			camera.object3d.localRotation.copy(this.object3d.rotation);
 			camera.update();
-		}
-
-		if (scene.enablePostProcessing) {
-			scene.renderTexture.bindFramebuffer();
-			var width = scene.renderTexture.width;
-			var height = scene.renderTexture.height;
-			gl.scissor(0.0, 0.0, width, height);
-			gl.viewport(0.0, 0.0, width, height);
-		}
-		if (this.orthographic) {
 			skybox.object3d.localPosition.set(0.0, 0.0, 0.0);
 			skybox.object3d.update();
 			skybox.renderer.render(
 				camera, [], scene.renderSettings
 			);
-		} else {
+		/*} else {
 			var skyboxPosition = skybox.object3d.localPosition;
 			var position = this.object3d.position;
 			skyboxPosition[0] = position[0];
@@ -690,14 +686,11 @@ export class Camera extends Component {
 			skybox.renderer.render(
 				this, [], scene.renderSettings
 			);
-		}
+		}*/
 		gl.clear(
 			gl.DEPTH_BUFFER_BIT |
 			gl.STENCIL_BUFFER_BIT
 		);
-		if (scene.enablePostProcessing) {
-			scene.renderTexture.unbindFramebuffer();
-		}
 	}
 
 	protected flush(): void {

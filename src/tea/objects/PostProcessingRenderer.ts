@@ -6,6 +6,7 @@ export class PostProcessingRenderer extends Renderer {
 	indexBuffer: WebGLBuffer;
 	mesh: Tea.Mesh;
 	renderTexture: Tea.RenderTexture;
+	backgroundColor: Tea.Color;
 
 	constructor(app: Tea.App) {
 		super(app);
@@ -21,9 +22,27 @@ export class PostProcessingRenderer extends Renderer {
 			Tea.ShaderSources.simplePostProcessingFS
 		);
 		this.material.shader = shader;
+		this.backgroundColor = Tea.Color.black.clone();
 	}
 
-	render(camera: Tea.Camera): void {
+	clear(): void {
+		var gl = this.gl;
+		var color = this.backgroundColor;
+		if (Tea.Camera.currentBGColor.equals(color) === false) {
+			gl.clearColor(color[0], color[1], color[2], color[3]);
+			Tea.Camera.currentBGColor.copy(color);
+		}
+		var texture = this.renderTexture;
+		gl.viewport(0.0, 0.0, texture.width, texture.height);
+		gl.scissor(0.0, 0.0, texture.width, texture.height);
+		gl.clear(
+			gl.COLOR_BUFFER_BIT |
+			gl.DEPTH_BUFFER_BIT |
+			gl.STENCIL_BUFFER_BIT
+		);
+	}
+
+	render(): void {
 		var shader = this.material.shader;
 		if (shader == null) {
 			return;
@@ -52,8 +71,15 @@ export class PostProcessingRenderer extends Renderer {
 			gl.enableVertexAttribArray(location);
 			gl.vertexAttribPointer(location, 2, gl.FLOAT, false, 20, 12);
 		}
-		camera.setViewport();
-		//gl.viewport(0.0, 0.0, this.app.width, this.app.height);
+		gl.viewport(0, 0, width, height);
+		gl.scissor(0, 0, width, height);
+		/*
+		gl.clear(
+			gl.COLOR_BUFFER_BIT |
+			gl.DEPTH_BUFFER_BIT |
+			gl.STENCIL_BUFFER_BIT
+		);
+		*/
 
 		var status = this.app.status;
 		var face = gl.CCW;
@@ -62,8 +88,9 @@ export class PostProcessingRenderer extends Renderer {
 			status.frontFace = face;
 		}
 
-		var count = this.mesh.triangles.length * 3;
+		var count = 6;//this.mesh.triangles.length * 3;
 		gl.drawElements(gl.TRIANGLES, count, gl.UNSIGNED_SHORT, 0);
+		Renderer.drawCallCount++;
 	}
 
 	protected setMeshData(mesh: Tea.Mesh): void {
