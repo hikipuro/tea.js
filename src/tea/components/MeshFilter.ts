@@ -2,6 +2,7 @@ import * as Tea from "../Tea";
 import { Component } from "./Component";
 
 export class MeshFilter extends Component {
+	static editorView = Tea.Editor.MeshFilter;
 	mesh: Tea.Mesh;
 	
 	constructor(app: Tea.App) {

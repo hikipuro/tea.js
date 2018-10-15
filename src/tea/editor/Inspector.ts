@@ -5,7 +5,8 @@ import * as Tea from "../Tea";
 @Component({
 	template: `
 		<div class="AddComponent">
-			<button>
+			<button
+				@click="$emit('click', $event)">
 				<slot></slot>
 			</button>
 		</div>
@@ -14,13 +15,6 @@ import * as Tea from "../Tea";
 	}
 })
 export class AddComponent extends Vue {
-	protected onUpdateNear(value: number): void {
-		this.$emit("update", "near", value);
-	}
-
-	protected onUpdateFar(value: number): void {
-		this.$emit("update", "far", value);
-	}
 }
 
 @Component({
@@ -55,7 +49,8 @@ export class AddComponent extends Vue {
 				:key="index"
 				@config="onConfig">
 			</component>
-			<AddComponent>Add Component</AddComponent>
+			<AddComponent
+				@click="onClickAddComponent">Add Component</AddComponent>
 			</template>
 		</div>
 	`,
@@ -210,5 +205,9 @@ export class Inspector extends Vue {
 	protected onConfig(component: Tea.Component): void {
 		this._configComponent = component;
 		this.$emit("config", component);
+	}
+
+	protected onClickAddComponent(): void {
+		this.$emit("addComponent");
 	}
 }

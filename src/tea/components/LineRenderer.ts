@@ -100,8 +100,11 @@ export class LineRenderer extends Renderer {
 	}
 
 	protected draw(): void {
-		var gl = this.gl;
 		var count = this.points.length;
+		if (count <= 0) {
+			return;
+		}
+		var gl = this.gl;
 		gl.drawArrays(gl.LINE_STRIP, 0, count);
 	}
 }

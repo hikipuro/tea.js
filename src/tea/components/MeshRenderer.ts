@@ -16,7 +16,10 @@ class BufferAttributes {
 	}
 
 	add(name: string, size: number, type: number, offset: number): void {
-		var location = this.shader.getAttribLocation(name);
+		var location = -1;
+		if (this.shader != null) {
+			location = this.shader.getAttribLocation(name);
+		}
 		var attrib = new BufferAttribute();
 		attrib.name = name;
 		attrib.location = location;
@@ -180,9 +183,13 @@ export class MeshRenderer extends Renderer {
 	}
 
 	updateAttributes(): void {
+		var mesh = this._mesh;
+		if (mesh == null) {
+			return;
+		}
+
 		var gl = this.gl;
 		var type = gl.FLOAT;
-		var mesh = this._mesh;
 		var stride = 4 * 3;
 		this._attributes.clear();
 		this._attributes.shader = this.material.shader;

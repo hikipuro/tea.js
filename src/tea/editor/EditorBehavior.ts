@@ -1,6 +1,7 @@
 import Vue from "vue";
 import * as Tea from "../Tea";
 import { Editor } from "./Editor";
+import { EditorMenu } from "./EditorMenu";
 import { SelectAspect } from "./SelectAspect";
 
 export class EditorBehavior {
@@ -136,6 +137,12 @@ export class EditorBehavior {
 			}
 			this.showInspectorViewComponentMenu();
 		});
+		inspectorView.$on("addComponent", () => {
+			if (hierarchyView.selectedItem == null) {
+				return;
+			}
+			this.showInspectorViewAddComponentMenu();
+		});
 	}
 
 	initProjectView(): void {
@@ -221,86 +228,24 @@ export class EditorBehavior {
 	}
 
 	showHierarchyViewMenu(): void {
-		var template: Electron.MenuItemConstructorOptions[] = [
-			{
-				id: "Create Empty",
-				label: "Create Empty"
-			},
-			{
-				label: "3D Object",
-				submenu: [
-					{
-						id: "3D Object/Cube",
-						label: "Cube"
-					},
-					{
-						id: "3D Object/Sphere",
-						label: "Sphere"
-					},
-					{
-						id: "3D Object/Capsule",
-						label: "Capsule"
-					},
-					{
-						id: "3D Object/Cylinder",
-						label: "Cylinder"
-					},
-					{
-						id: "3D Object/Plane",
-						label: "Plane"
-					},
-					{
-						id: "3D Object/Quad",
-						label: "Quad"
-					},
-					{
-						type: "separator"
-					},
-					{
-						id: "3D Object/Text",
-						label: "Text"
-					},
-				]
-			},
-			{
-				label: "Effects",
-				submenu: [
-					{
-						id: "Effects/Particle System",
-						label: "Particle System"
-					}
-				]
-			},
-			{
-				label: "Light",
-				submenu: [
-					{
-						id: "Light/Directional Light",
-						label: "Directional Light"
-					}
-				]
-			},
-			{
-				id: "Camera",
-				label: "Camera"
-			}
-		];
-		var hierarchyView = this.editor.hierarchyView;
-		if (hierarchyView.selectedItem != null) {
-			template.unshift(
-				{
-					id: "Delete",
-					label: "Delete"
-				},
-				{
-					type: "separator"
-				}
-			);
-		}
-		Tea.Editor.NativeContextMenu.setMenuItemHandler(
-			template, this.onSelectHierarchyViewMenuItem
+		var contextMenu = EditorMenu.getHierarchyViewMenu(
+			this.editor.hierarchyView,
+			this.onSelectHierarchyViewMenuItem
+		)
+		contextMenu.show();
+	}
+
+	showInspectorViewComponentMenu(): void {
+		var contextMenu = EditorMenu.getInspectorViewComponentMenu(
+			this.onSelectInspectorViewComponentMenu
 		);
-		var contextMenu = Tea.Editor.NativeContextMenu.create(template);
+		contextMenu.show();
+	}
+
+	showInspectorViewAddComponentMenu(): void {
+		var contextMenu = EditorMenu.getInspectorViewAddComponentMenu(
+			this.onSelectInspectorViewAddComponentMenu
+		);
 		contextMenu.show();
 	}
 
@@ -308,20 +253,6 @@ export class EditorBehavior {
 		var hierarchyView = this.editor.hierarchyView;
 		var item = hierarchyView.findItemByTag(object3d.id);
 		hierarchyView.select(item);
-	}
-
-	showInspectorViewComponentMenu(): void {
-		var template: Electron.MenuItemConstructorOptions[] = [
-			{
-				id: "Remove Component",
-				label: "Remove Component"
-			}
-		];
-		Tea.Editor.NativeContextMenu.setMenuItemHandler(
-			template, this.onSelectInspectorViewComponentMenu
-		);
-		var contextMenu = Tea.Editor.NativeContextMenu.create(template);
-		contextMenu.show();
 	}
 
 	onUpdateAspect(): void {
@@ -408,12 +339,51 @@ export class EditorBehavior {
 		var component = inspectorView._configComponent;
 		//console.log(item.id, component);
 		var object3d = this.hierarchyViewItem;
+		if (object3d == null) {
+			return;
+		}
 
 		switch (item.id) {
 			case "Remove Component":
 				object3d.removeComponent(component);
 				this.selectHierarchyViewItem(object3d);
 				break;
+		}
+	}
+
+	onSelectInspectorViewAddComponentMenu = (item: Electron.MenuItem): void => {
+		var object3d = this.hierarchyViewItem;
+		if (object3d == null) {
+			return;
+		}
+
+		var component = null;
+		switch (item.id) {
+			case "Effects/Line Renderer":
+				component = Tea.LineRenderer;
+				break;
+			case "Mesh/Mesh Filter":
+				component = Tea.MeshFilter;
+				break;
+			case "Mesh/Mesh Renderer":
+				component = Tea.MeshRenderer;
+				break;
+			case "Physics/BoxCollider":
+				component = Tea.BoxCollider;
+				break;
+			case "Physics/Rigidbody":
+				component = Tea.Rigidbody;
+				break;
+			case "Rendering/Camera":
+				component = Tea.Camera;
+				break;
+			case "Rendering/Light":
+				component = Tea.Light;
+				break;
+		}
+		if (component != null) {
+			object3d.addComponent(component);
+			this.selectHierarchyViewItem(object3d);
 		}
 	}
 
