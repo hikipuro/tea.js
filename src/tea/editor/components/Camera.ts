@@ -1,6 +1,7 @@
 import Vue from "vue";
 import Component from "vue-class-component";
 import * as Tea from "../../Tea";
+import { ComponentBase } from "./ComponentBase";
 
 @Component({
 	template: `
@@ -81,7 +82,6 @@ export class ClippingPlanes extends Vue {
 	data: () => {
 		return {
 			name: "Camera",
-			enabled: false,
 			clearFlags: "",
 			background: "",
 			orthographic: false,
@@ -96,9 +96,8 @@ export class ClippingPlanes extends Vue {
 		"ClippingPlanes": ClippingPlanes
 	}
 })
-export class Camera extends Vue {
+export class Camera extends ComponentBase {
 	_component: Tea.Camera;
-	enabled: boolean;
 	clearFlags: string;
 	background: string;
 	orthographic: boolean;
@@ -113,7 +112,6 @@ export class Camera extends Vue {
 		if (component == null) {
 			return;
 		}
-		this.enabled = component.enabled;
 		var clearFlags = this.$refs.clearFlags as Vue;
 		clearFlags.$data.keys = Tea.CameraClearFlags.getKeys();
 		this.$nextTick(() => {
@@ -126,21 +124,6 @@ export class Camera extends Vue {
 		this.near = component.nearClipPlane;
 		this.far = component.farClipPlane;
 		this.rect = component.rect.clone();
-	}
-
-	protected destroyed(): void {
-		this._component = undefined;
-	}
-
-	protected onUpdateEnabled(value: boolean): void {
-		this.enabled = value;
-		if (this._component) {
-			this._component.enabled = value;
-		}
-	}
-
-	protected onClickConfig(): void {
-		this.$emit("config", this._component);
 	}
 
 	protected onUpdateClearFlags(value: string): void {

@@ -1,6 +1,7 @@
 import Vue from "vue";
 import Component from "vue-class-component";
 import * as Tea from "../../Tea";
+import { ComponentBase } from "./ComponentBase";
 
 @Component({
 	template: `
@@ -24,15 +25,13 @@ import * as Tea from "../../Tea";
 	data: () => {
 		return {
 			name: "MeshRenderer",
-			enabled: false,
 			receiveShadows: true,
 			wireframe: false
 		}
 	}
 })
-export class MeshRenderer extends Vue {
+export class MeshRenderer extends ComponentBase {
 	_component: Tea.MeshRenderer;
-	enabled: boolean;
 	receiveShadows: boolean;
 	wireframe: boolean;
 
@@ -41,24 +40,8 @@ export class MeshRenderer extends Vue {
 		if (component == null) {
 			return;
 		}
-		this.enabled = component.enabled;
 		this.wireframe = component.wireframe;
 		this.receiveShadows = component.receiveShadows;
-	}
-
-	protected destroyed(): void {
-		this._component = undefined;
-	}
-
-	protected onUpdateEnabled(value: boolean): void {
-		this.enabled = value;
-		if (this._component) {
-			this._component.enabled = value;
-		}
-	}
-
-	protected onClickConfig(): void {
-		this.$emit("config", this._component);
 	}
 
 	protected onUpdateReceiveShadows(value: boolean): void {

@@ -12,6 +12,10 @@ export class Component {
 		this.object3d = null;
 	}
 
+	get className(): string {
+		return this.constructor.name;
+	}
+
 	destroy(): void {
 		this.app = undefined;
 		this.object3d = undefined;
