@@ -3,6 +3,7 @@
 	$lineHeight: 1.5;
 
 	div.TreeView {
+		display: flex;
 		margin: 0;
 		padding: 0;
 		width: 100%;
@@ -12,6 +13,7 @@
 		overflow: auto;
 
 		> ul {
+			flex: 1;
 			padding-bottom: $lineHeight + em;
 		}
 
@@ -23,18 +25,28 @@
 
 		li {
 			padding-left: 0;
-			cursor: pointer;
+			//cursor: pointer;
 			.item {
-				letter-spacing: -1em;
+				display: flex;
+				align-items: center;
+				//width: 100%;
+			}
+			.item.dragEnter {
+				border-radius: 0.5em;
+				box-shadow: 0 0 0 2px theme("selected") inset;
+				//box-sizing: border-box;
+				//outline: 2px solid theme("selected");
+				//outline-offset: -2px;
 			}
 			.folder {
 				display: inline-block;
 				min-width: $folderWidth;
-				letter-spacing: normal;
+				//letter-spacing: normal;
 			}
 			.text {
 				display: inline-block;
-				letter-spacing: normal;
+				//flex: 1;
+				//letter-spacing: normal;
 			}
 		}
 

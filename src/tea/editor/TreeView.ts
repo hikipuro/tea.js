@@ -10,6 +10,7 @@ import Component from "vue-class-component";
 				:class="{ selected: isSelected }"
 				:style="{ paddingLeft: (depth * 1.3) + 'em' }"
 				:title="model.title"
+				:draggable="draggable"
 				@click.stop="onClick"
 				@contextmenu="onContextMenu">
 				<div
@@ -41,6 +42,7 @@ import Component from "vue-class-component";
 		title: null,
 		openIcon: "📂",
 		closeIcon: "📁",
+		draggable: false,
 	}},
 	computed: {
 		/*
@@ -49,10 +51,6 @@ import Component from "vue-class-component";
 			return item.isFolder;
 		}
 		*/
-	},
-	created: function () {
-		var item = this as Item;
-		item.$emit("create", item);
 	}
 })
 export class Item extends Vue {
@@ -64,6 +62,8 @@ export class Item extends Vue {
 	title: string;
 	openIcon: string;
 	closeIcon: string;
+	draggable: boolean;
+	dragEvents: TreeView.DragEvents;
 
 	get text(): string {
 		return this.model.text;
@@ -159,6 +159,39 @@ export class Item extends Vue {
 		this.isSelected = value;
 	}
 
+	protected created(): void {
+		this.$emit("create", this);
+		if (this.dragEvents == null) {
+			this.dragEvents = new TreeView.DragEvents();
+		}
+	}
+
+	protected mounted(): void {
+		if (this.draggable) {
+			var item = this.$refs.item as HTMLElement;
+			item.addEventListener("drag", this.onDrag);
+			item.addEventListener("dragstart", this.onDragStart);
+			item.addEventListener("dragend", this.onDragEnd);
+			item.addEventListener("dragenter", this.onDragEnter);
+			item.addEventListener("dragleave", this.onDragLeave);
+			item.addEventListener("dragover", this.onDragOver);
+			item.addEventListener("drop", this.onDrop);
+		}
+	}
+
+	protected beforeDestroy(): void {
+		if (this.draggable) {
+			var item = this.$refs.item as HTMLElement;
+			item.removeEventListener("drag", this.onDrag);
+			item.removeEventListener("dragstart", this.onDragStart);
+			item.removeEventListener("dragend", this.onDragEnd);
+			item.removeEventListener("dragenter", this.onDragEnter);
+			item.removeEventListener("dragleave", this.onDragLeave);
+			item.removeEventListener("dragover", this.onDragOver);
+			item.removeEventListener("drop", this.onDrop);
+		}
+	}
+
 	protected findTreeView(): TreeView {
 		var treeView = this.$parent;
 		var length = TreeView.maxDepth;
@@ -189,10 +222,56 @@ export class Item extends Vue {
 		if (this.closeIcon != null) {
 			item.closeIcon = this.closeIcon;
 		}
+		item.draggable = this.draggable;
+		if (this.draggable) {
+			item.dragEvents = this.dragEvents;
+		}
 	}
 
 	protected onSelect(item: Item): void {
 		this.$emit("select", item);
+	}
+
+	protected onDrag(e: DragEvent): void {
+		if (this.dragEvents.drag) {
+			this.dragEvents.drag(e, this);
+		}
+	}
+
+	protected onDragStart(e: DragEvent): void {
+		if (this.dragEvents.dragStart) {
+			this.dragEvents.dragStart(e, this);
+		}
+	}
+
+	protected onDragEnd(e: DragEvent): void {
+		if (this.dragEvents.dragEnd) {
+			this.dragEvents.dragEnd(e, this);
+		}
+	}
+
+	protected onDragEnter(e: DragEvent): void {
+		if (this.dragEvents.dragEnter) {
+			this.dragEvents.dragEnter(e, this);
+		}
+	}
+
+	protected onDragLeave(e: DragEvent): void {
+		if (this.dragEvents.dragLeave) {
+			this.dragEvents.dragLeave(e, this);
+		}
+	}
+
+	protected onDragOver(e: DragEvent): void {
+		if (this.dragEvents.dragOver) {
+			this.dragEvents.dragOver(e, this);
+		}
+	}
+
+	protected onDrop(e: DragEvent): void {
+		if (this.dragEvents.drop) {
+			this.dragEvents.drop(e, this);
+		}
 	}
 }
 
@@ -231,6 +310,8 @@ export class TreeView extends Vue {
 	selectedItem: Item;
 	openIcon: string;
 	closeIcon: string;
+	draggable: boolean = false;
+	dragEvents: TreeView.DragEvents;
 	tag: any;
 
 	get childCount(): number {
@@ -414,6 +495,10 @@ export class TreeView extends Vue {
 		this.onSelectItem(prev);
 	}
 
+	protected created(): void {
+		this.dragEvents = new TreeView.DragEvents();
+	}
+
 	protected onClick(): void {
 		if (this.selectedItem == null) {
 			return;
@@ -490,6 +575,10 @@ export class TreeView extends Vue {
 		if (this.closeIcon != null) {
 			item.closeIcon = this.closeIcon;
 		}
+		item.draggable = this.draggable;
+		if (this.draggable) {
+			item.dragEvents = this.dragEvents;
+		}
 	}
 
 	protected onSelectItem(item: Item): void {
@@ -522,7 +611,28 @@ export class TreeView extends Vue {
 
 var  _Item = Item;
 type _Item = Item;
+
 export module TreeView {
+	export class DragEvents {
+		drag: (e: DragEvent, item: Item) => void;
+		dragStart: (e: DragEvent, item: Item) => void;
+		dragEnd: (e: DragEvent, item: Item) => void;
+		dragEnter: (e: DragEvent, item: Item) => void;
+		dragLeave: (e: DragEvent, item: Item) => void;
+		dragOver: (e: DragEvent, item: Item) => void;
+		drop: (e: DragEvent, item: Item) => void;
+
+		constructor() {
+			this.drag = null;
+			this.dragStart = null;
+			this.dragEnd = null;
+			this.dragEnter = null;
+			this.dragLeave = null;
+			this.dragOver = null;
+			this.drop = null;
+		}
+	}
+
 	export var  Item = _Item;
 	export type Item = _Item;
 }

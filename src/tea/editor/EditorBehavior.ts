@@ -66,6 +66,49 @@ export class EditorBehavior {
 		//var contextMenu = this.editor.contextMenu;
 		hierarchyView.openIcon = "⏏️";
 		hierarchyView.closeIcon = "▶️";
+		hierarchyView.draggable = true;
+
+		var dragSource: Tea.Editor.TreeViewItem = null;
+		var dragEvents = hierarchyView.dragEvents;
+		dragEvents.dragStart = (e: DragEvent, item: Tea.Editor.TreeViewItem) => {
+			//console.log("onDragStart");
+			dragSource = item;
+			e.dataTransfer.dropEffect = "move";
+		};
+		dragEvents.dragOver = (e: DragEvent) => {
+			e.dataTransfer.dropEffect = "move";
+			e.preventDefault();
+		}
+		dragEvents.dragEnter = (e: DragEvent, item: Tea.Editor.TreeViewItem) => {
+			//console.log("dragEnter", item.model.text);
+			var el = e.currentTarget as HTMLElement;
+			el.classList.add("dragEnter");
+		}
+		dragEvents.dragLeave = (e: DragEvent, item: Tea.Editor.TreeViewItem) => {
+			//console.log("dragLeave", this, e);
+			var el = e.currentTarget as HTMLElement;
+			el.classList.remove("dragEnter");
+		}
+		dragEvents.drop = (e: DragEvent, item: Tea.Editor.TreeViewItem) => {
+			var el = e.currentTarget as HTMLElement;
+			el.classList.remove("dragEnter");
+			var idSrc = dragSource.model.tag as number;
+			var idDst = item.model.tag as number;
+			if (idSrc == null || idDst == null) {
+				return;
+			}
+			if (idSrc == idDst) {
+				return;
+			}
+			console.log("drop", idSrc, idDst, item.model.text);
+			var object3dSrc = this.scene.findChildById(idSrc);
+			var object3dDst = this.scene.findChildById(idDst);
+			if (object3dSrc == null || object3dDst == null) {
+				return;
+			}
+			object3dSrc.parent = object3dDst;
+			this.updateHierarchyView();
+		}
 
 		hierarchyView.$on("menu", (e: MouseEvent) => {
 			e.preventDefault();
