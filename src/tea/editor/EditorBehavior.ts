@@ -152,6 +152,7 @@ export class EditorBehavior {
 					object3dSrc.parent = object3dDst;
 					this.updateHierarchyView(false, () => {
 						item = hierarchyView.findItemByTag(object3dDst.id);
+						//console.log("item", item);
 						if (item != null) {
 							item.expand();
 							item = hierarchyView.findItemByTag(object3dSrc.id);
@@ -580,7 +581,9 @@ export class EditorBehavior {
 			}
 			if (callback != null) {
 				hierarchyView.$nextTick(() => {
-					callback();
+					setTimeout(() => {
+						callback();
+					}, 0);
 				});
 			}
 		}, 17);
