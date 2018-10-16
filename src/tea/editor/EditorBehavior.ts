@@ -68,16 +68,44 @@ export class EditorBehavior {
 		hierarchyView.closeIcon = "▶️";
 		hierarchyView.draggable = true;
 
+		var dragImages = this.editor.dragImages;
 		var dragSource: Tea.Editor.TreeViewItem = null;
 		var dragEvents = hierarchyView.dragEvents;
 		dragEvents.dragStart = (e: DragEvent, item: Tea.Editor.TreeViewItem) => {
 			//console.log("onDragStart");
 			dragSource = item;
 			e.dataTransfer.dropEffect = "move";
+
+			var dragImage = this.createDragImage(item.model.text);
+			while (dragImages.firstChild) {
+				dragImages.removeChild(dragImages.firstChild);
+			}
+			dragImages.appendChild(dragImage);
+			e.dataTransfer.setDragImage(dragImage, 0, 0);
 		};
-		dragEvents.dragOver = (e: DragEvent) => {
-			e.dataTransfer.dropEffect = "move";
+		dragEvents.dragOver = (e: DragEvent, item: Tea.Editor.TreeViewItem) => {
 			e.preventDefault();
+			e.dataTransfer.dropEffect = "move";
+			var el = e.currentTarget as HTMLElement;
+			var text = el.querySelector(".text");
+			var clientHeight = el.clientHeight;
+			var borderSize = el.clientHeight * 0.3;
+			var offsetY = e.offsetY;
+			//console.log(e.offsetY, el.clientHeight);
+			if (offsetY < borderSize) {
+				el.classList.remove("dragEnter");
+				text.classList.remove("dragOverBottom");
+				text.classList.add("dragOverTop");
+			} else if (clientHeight - offsetY < borderSize) {
+				el.classList.remove("dragEnter");
+				text.classList.remove("dragOverTop");
+				text.classList.add("dragOverBottom");
+			} else {
+				el.classList.add("dragEnter");
+				text.classList.remove("dragOverTop");
+				text.classList.remove("dragOverBottom");
+			}
+
 		}
 		dragEvents.dragEnter = (e: DragEvent, item: Tea.Editor.TreeViewItem) => {
 			//console.log("dragEnter", item.model.text);
@@ -87,11 +115,23 @@ export class EditorBehavior {
 		dragEvents.dragLeave = (e: DragEvent, item: Tea.Editor.TreeViewItem) => {
 			//console.log("dragLeave", this, e);
 			var el = e.currentTarget as HTMLElement;
+			var text = el.querySelector(".text");
 			el.classList.remove("dragEnter");
+			text.classList.remove("dragOverTop");
+			text.classList.remove("dragOverBottom");
 		}
 		dragEvents.drop = (e: DragEvent, item: Tea.Editor.TreeViewItem) => {
+			var mode = 0;
 			var el = e.currentTarget as HTMLElement;
+			var text = el.querySelector(".text");
+			if (text.classList.contains("dragOverTop")) {
+				mode = 1;
+			} else if (text.classList.contains("dragOverBottom")) {
+				mode = 2;
+			}
 			el.classList.remove("dragEnter");
+			text.classList.remove("dragOverTop");
+			text.classList.remove("dragOverBottom");
 			var idSrc = dragSource.model.tag as number;
 			var idDst = item.model.tag as number;
 			if (idSrc == null || idDst == null) {
@@ -100,14 +140,46 @@ export class EditorBehavior {
 			if (idSrc == idDst) {
 				return;
 			}
-			console.log("drop", idSrc, idDst, item.model.text);
+			//console.log("drop", idSrc, idDst, item.model.text);
 			var object3dSrc = this.scene.findChildById(idSrc);
 			var object3dDst = this.scene.findChildById(idDst);
 			if (object3dSrc == null || object3dDst == null) {
 				return;
 			}
-			object3dSrc.parent = object3dDst;
-			this.updateHierarchyView();
+			//console.log(mode);
+			switch (mode) {
+				case 0:
+					object3dSrc.parent = object3dDst;
+					this.updateHierarchyView(false, () => {
+						item = hierarchyView.findItemByTag(object3dDst.id);
+						if (item != null) {
+							item.expand();
+							item = hierarchyView.findItemByTag(object3dSrc.id);
+							if (item != null) {
+								hierarchyView.select(item);
+							}
+						}
+					});
+					break;
+				case 1:
+					this.scene.moveChild(object3dSrc, object3dDst);
+					this.updateHierarchyView(false, () => {
+						item = hierarchyView.findItemByTag(object3dSrc.id);
+						if (item != null) {
+							hierarchyView.select(item);
+						}
+					});
+					break;
+				case 2:
+					this.scene.moveChild(object3dSrc, object3dDst, false);
+					this.updateHierarchyView(false, () => {
+						item = hierarchyView.findItemByTag(object3dSrc.id);
+						if (item != null) {
+							hierarchyView.select(item);
+						}
+					});
+					break;
+			}
 		}
 
 		hierarchyView.$on("menu", (e: MouseEvent) => {
@@ -298,6 +370,15 @@ export class EditorBehavior {
 		hierarchyView.select(item);
 	}
 
+	createDragImage(text: string): HTMLElement {
+		var dragImage = document.createElement("div");
+		var imageText = document.createElement("div");
+		dragImage.classList.add("dragImage");
+		imageText.innerText = text;
+		dragImage.appendChild(imageText);
+		return dragImage;
+	}
+
 	onUpdateAspect(): void {
 		this.updateScreenSize();
 	}
@@ -460,13 +541,15 @@ export class EditorBehavior {
 	//*/
 
 	updateHierarchyView(expand: boolean = false, callback: Function = null): void {
+		var hierarchyView = this.editor.hierarchyView;
 		setTimeout(() => {
 			var items = [];
-			var createItems = (items, child) => {
+			var createItems = (items, child: Tea.Object3D) => {
 				var item = {
 					text: child.name,
 					children: [],
 					isFolder: false,
+					isOpen: null,
 					tag: child.id
 				};
 				child.children.forEach((i) => {
@@ -475,6 +558,12 @@ export class EditorBehavior {
 				if (item.children.length > 0) {
 					item.isFolder = true;
 				}
+				if (expand === false) {
+					var currentItem = hierarchyView.findItemByTag(item.tag);
+					if (currentItem != null) {
+						item.isOpen = currentItem.isOpen;
+					}
+				}
 				items.push(item);
 			};
 			var children = this.scene.children;
@@ -482,7 +571,6 @@ export class EditorBehavior {
 				var child = children[i];
 				createItems(items, child);
 			}
-			var hierarchyView = this.editor.hierarchyView;
 			hierarchyView.items = items;
 			hierarchyView.unselect();
 			if (expand) {

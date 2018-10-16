@@ -177,6 +177,25 @@ export class Item extends Vue {
 			item.addEventListener("dragover", this.onDragOver);
 			item.addEventListener("drop", this.onDrop);
 		}
+		var isOpen = this.model.isOpen;
+		if (isOpen != null) {
+			if (isOpen === true) {
+				this.expand();
+			} else {
+				this.collapse();
+			}
+		}
+	}
+
+	protected updated(): void {
+		var isOpen = this.model.isOpen;
+		if (isOpen != null) {
+			if (isOpen === true) {
+				this.expand();
+			} else {
+				this.collapse();
+			}
+		}
 	}
 
 	protected beforeDestroy(): void {
@@ -497,6 +516,21 @@ export class TreeView extends Vue {
 
 	protected created(): void {
 		this.dragEvents = new TreeView.DragEvents();
+	}
+
+	protected updated(): void {
+		var items = this.items;
+		this.$nextTick(() => {
+			var removeIsOpen = (item) => {
+				delete item.isOpen;
+				item.children.forEach((i) => {
+					removeIsOpen(i);
+				});
+			};
+			items.forEach((item) => {
+				removeIsOpen(item);
+			});
+		});
 	}
 
 	protected onClick(): void {

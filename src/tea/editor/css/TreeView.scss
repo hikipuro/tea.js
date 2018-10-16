@@ -38,6 +38,36 @@
 				//outline: 2px solid theme("selected");
 				//outline-offset: -2px;
 			}
+			.item > .dragOverTop {
+				box-shadow: 0 2px 0 0 theme("selected") inset;
+			}
+			.item > .dragOverTop::before {
+				display: inline-block;
+				position: absolute;
+				content: "";
+				width: 0.5em;
+				height: 0.5em;
+				left: -0.5em;
+				top: -0.2em;
+				background-color: white;
+				box-shadow: 0 0 0 0.1em theme("selected") inset;
+				border-radius: 0.5em;
+			}
+			.item > .dragOverBottom {
+				box-shadow: 0 -2px 0 0 theme("selected") inset;
+			}
+			.item > .dragOverBottom::before {
+				display: inline-block;
+				position: absolute;
+				content: "";
+				width: 0.5em;
+				height: 0.5em;
+				left: -0.5em;
+				bottom: -0.2em;
+				background-color: white;
+				box-shadow: 0 0 0 0.1em theme("selected") inset;
+				border-radius: 0.5em;
+			}
 			.folder {
 				display: inline-block;
 				min-width: $folderWidth;
@@ -45,7 +75,8 @@
 			}
 			.text {
 				display: inline-block;
-				//flex: 1;
+				position: relative;
+				flex: 1;
 				//letter-spacing: normal;
 			}
 		}

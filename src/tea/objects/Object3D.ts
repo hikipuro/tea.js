@@ -161,6 +161,9 @@ export class Object3D {
 		if (parent == null && value == null) {
 			return;
 		}
+		if (value != null && value._parent == this) {
+			return;
+		}
 		if (parent != null && value == null) {
 			this._parent = null;
 			parent.adjustChildPosition(this, false);

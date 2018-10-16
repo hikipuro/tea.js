@@ -113,6 +113,10 @@ Vue.component("Script", Script);
 					<HResizeBar ref="inspectorResize" :isLeft="true"></HResizeBar>
 				</Panel>
 			</HLayout>
+			<div
+				ref="dragImages"
+				class="dragImages">
+			</div>
 			<ContextMenu ref="menu"></ContextMenu>
 		</div>
 	`,
@@ -152,6 +156,10 @@ export class Editor extends Vue {
 
 	get projectView(): TreeView {
 		return this.$refs.project as TreeView;
+	}
+
+	get dragImages(): HTMLElement {
+		return this.$refs.dragImages as HTMLElement;
 	}
 
 	get contextMenu(): ContextMenu {

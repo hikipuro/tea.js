@@ -286,6 +286,76 @@ export class Scene {
 		}
 	}
 
+	swapChildren(child1: Tea.Object3D, child2: Tea.Object3D): void {
+		if (child1 == null || child2 == null) {
+			return;
+		}
+		var children = this.children;
+		var index1 = children.indexOf(child1);
+		var index2 = children.indexOf(child2);
+		if (index1 < 0 || index2 < 0) {
+			return;
+		}
+		var temp = children[index1];
+		children[index1] = children[index2];
+		children[index2] = temp;
+	}
+
+	moveChild(child: Tea.Object3D, target: Tea.Object3D, before: boolean = true): void {
+		if (child == null || target == null) {
+			return;
+		}
+		if (child.parent == null && target.parent == null) {
+			var children = this.children;
+			var index1 = children.indexOf(child);
+			var index2 = children.indexOf(target);
+			if (index1 < 0 || index2 < 0) {
+				return;
+			}
+			var temp = children[index1];
+			children.splice(index1, 1);
+			index2 = children.indexOf(target);
+			if (before) {
+				index2++;
+			}
+			children.splice(index2, 0, temp);
+		} else if (child.parent == target.parent) {
+			var children = child.parent.children;
+			var index1 = children.indexOf(child);
+			var index2 = children.indexOf(target);
+			if (index1 < 0 || index2 < 0) {
+				return;
+			}
+			var temp = children[index1];
+			children.splice(index1, 1);
+			index2 = children.indexOf(target);
+			if (before == false) {
+				index2++;
+			}
+			children.splice(index2, 0, temp);
+		} else {
+			if (target.parent == null) {
+				this.addChild(child);
+				this.moveChild(child, target, before);
+				return;
+			}
+			child.parent = target.parent;
+			var children = child.parent.children;
+			var index1 = children.indexOf(child);
+			var index2 = children.indexOf(target);
+			if (index1 < 0 || index2 < 0) {
+				return;
+			}
+			var temp = children[index1];
+			children.splice(index1, 1);
+			index2 = children.indexOf(target);
+			if (before == false) {
+				index2++;
+			}
+			children.splice(index2, 0, temp);
+		}
+	}
+
 	findChildById(id: number): Tea.Object3D {
 		var find = (object3d: Tea.Object3D) => {
 			if (object3d.id === id) {

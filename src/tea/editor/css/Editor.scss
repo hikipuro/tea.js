@@ -87,6 +87,26 @@ $parent: "#editor";
 		overflow-y: auto;
 	}
 
+	div.dragImages {
+		position: absolute;
+		left: -300px;
+		top: 0;
+
+		> .dragImage {
+			opacity: 0.6;
+			color: theme("font");
+			padding-left: 1.2em;
+
+			> div {
+				padding: 0.2em 0.5em;
+				min-width: 2em;
+				min-height: 1em;
+				background-color: theme("background");
+				border-radius: 0.5em;
+			}
+		}
+	}
+
 	.fadeout-leave-active {
 		transition: opacity .2s;
 	}
@@ -94,3 +114,4 @@ $parent: "#editor";
 		opacity: 0;
 	}
 }
+
