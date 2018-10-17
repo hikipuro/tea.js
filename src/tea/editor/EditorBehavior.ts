@@ -1,4 +1,5 @@
 import Vue from "vue";
+import * as Electron from "electron";
 import * as Tea from "../Tea";
 import { Editor } from "./Editor";
 import { EditorMenu } from "./EditorMenu";
@@ -74,7 +75,8 @@ export class EditorBehavior {
 		dragEvents.dragStart = (e: DragEvent, item: Tea.Editor.TreeViewItem) => {
 			//console.log("onDragStart");
 			dragSource = item;
-			e.dataTransfer.dropEffect = "move";
+			e.dataTransfer.effectAllowed = "move";
+			//e.dataTransfer.dropEffect = "move";
 
 			var dragImage = this.createDragImage(item.model.text);
 			while (dragImages.firstChild) {
@@ -186,17 +188,6 @@ export class EditorBehavior {
 		hierarchyView.$on("menu", (e: MouseEvent) => {
 			e.preventDefault();
 			this.showHierarchyViewMenu();
-			/*
-			contextMenu.items = [
-				{ text: "Delete" },
-				{ text: "-" },
-				{ text: "Add Cube" },
-				{ text: "test3" },
-				{ text: "test4" }
-			]
-			contextMenu.move(e.clientX, e.clientY);
-			contextMenu.show("hierarchyView");
-			//*/
 		});
 
 		hierarchyView.$on("select", (item: Tea.Editor.TreeViewItem) => {
@@ -263,6 +254,7 @@ export class EditorBehavior {
 
 	initProjectView(): void {
 		var projectView = this.editor.projectView;
+		var fileList = this.editor.fileList;
 		projectView.$on("expand", (item: Tea.Editor.TreeViewItem) => {
 			//console.log("expand", item);
 			var i = item.model;
@@ -282,6 +274,37 @@ export class EditorBehavior {
 		});
 		projectView.$on("collapse", (item: Tea.Editor.TreeViewItem) => {
 			//console.log("collapse", item);
+		});
+		projectView.$on("select", (item: Tea.Editor.TreeViewItem) => {
+			if (item == null) {
+				return;
+			}
+			//console.log("select", item.tag);
+			var path = item.tag;
+			Tea.Directory.getFiles(path, (files: Tea.FileInfo[]) => {
+				var items = [];
+				files.forEach((file) => {
+					if (file.isDirectory) {
+						return;
+					}
+					if (file.name === ".DS_Store") {
+						return;
+					}
+					var item = {
+						text: file.name,
+						children: [],
+						isFolder: false,
+						tag: file.fullName
+					};
+					//console.log(file.fullName);
+					items.push(item);
+				});
+				fileList.items = items;
+			});
+		});
+		projectView.$on("menu", (e: MouseEvent) => {
+			e.preventDefault();
+			this.showProjectViewMenu();
 		});
 
 		var createItems = (file: Tea.FileInfo): any => {
@@ -361,6 +384,13 @@ export class EditorBehavior {
 	showInspectorViewAddComponentMenu(): void {
 		var contextMenu = EditorMenu.getInspectorViewAddComponentMenu(
 			this.onSelectInspectorViewAddComponentMenu
+		);
+		contextMenu.show();
+	}
+
+	showProjectViewMenu(): void {
+		var contextMenu = EditorMenu.getProjectViewMenu(
+			this.onSelectProjectViewMenu
 		);
 		contextMenu.show();
 	}
@@ -509,6 +539,18 @@ export class EditorBehavior {
 		if (component != null) {
 			object3d.addComponent(component);
 			this.selectHierarchyViewItem(object3d);
+		}
+	}
+
+	onSelectProjectViewMenu = (item: Electron.MenuItem): void => {
+		var projectView = this.editor.projectView;
+		var menuItem = projectView.selectedItem;
+
+		switch (item.id) {
+			case "Reveal in Finder":
+				Electron.shell.openItem(menuItem.tag);
+				console.log("Reveal in Finder", menuItem);
+				break;
 		}
 	}
 

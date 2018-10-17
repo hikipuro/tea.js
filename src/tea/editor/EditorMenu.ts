@@ -160,4 +160,19 @@ export class EditorMenu {
 		);
 		return Tea.Editor.NativeContextMenu.create(template);
 	}
+
+	static getProjectViewMenu(
+		handler: (menuItem: Electron.MenuItem, browserWindow: Electron.BrowserWindow, event: Event) => void
+	): NativeContextMenu {
+		var template: Electron.MenuItemConstructorOptions[] = [
+			{
+				id: "Reveal in Finder",
+				label: "Reveal in Finder"
+			}
+		];
+		Tea.Editor.NativeContextMenu.setMenuItemHandler(
+			template, handler
+		);
+		return Tea.Editor.NativeContextMenu.create(template);
+	}
 }

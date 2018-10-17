@@ -104,6 +104,7 @@ Vue.component("Script", Script);
 							<TreeView ref="project" tabindex="1"></TreeView>
 						</Panel>
 						<Panel class="FileList">
+							<TreeView ref="fileList" tabindex="2"></TreeView>
 						</Panel>
 						<VResizeBar ref="projectResize" :isTop="true"></VResizeBar>
 					</HLayout>
@@ -156,6 +157,10 @@ export class Editor extends Vue {
 
 	get projectView(): TreeView {
 		return this.$refs.project as TreeView;
+	}
+
+	get fileList(): TreeView {
+		return this.$refs.fileList as TreeView;
 	}
 
 	get dragImages(): HTMLElement {
