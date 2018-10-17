@@ -1,14 +1,18 @@
 import * as Tea from "../Tea";
-import { Mesh } from "./Mesh";
-import { Primitives } from "./Primitives";
+import { Primitives } from "../objects/Primitives";
+import { Component } from "./Component";
 
-export class TextMesh extends Mesh {
+export class TextMesh extends Component {
+	static editorView = Tea.Editor.TextMesh;
 	protected static readonly DefaultFontSize: number = 14;
-	alignment: Tea.TextAlignment;
-	anchor: Tea.TextAnchor;
-	characterSize: number;
-	lineSpacing: number;
+	material: Tea.Material;
 	texture: Tea.Texture;
+	protected _isChanged: boolean;
+	protected _mesh: Tea.Mesh;
+	protected _characterSize: number;
+	protected _lineSpacing: number;
+	protected _anchor: Tea.TextAnchor;
+	protected _alignment: Tea.TextAlignment;
 	protected _color: Tea.Color;
 	protected _font: string;
 	protected _fontSize: number;
@@ -19,18 +23,12 @@ export class TextMesh extends Mesh {
 	protected _context: CanvasRenderingContext2D;
 
 	constructor(app: Tea.App) {
-		super();
-		var mesh = Primitives.createQuadMesh();
-		this.vertices = mesh.vertices;
-		this.triangles = mesh.triangles;
-		this.normals = mesh.normals;
-		this.uv = mesh.uv;
-		this.colors = mesh.colors;
-		this.isModified = mesh.isModified;
+		super(app);
+		this._mesh = Primitives.createQuadMesh();
 
 		this._canvas = document.createElement("canvas");
-		this._canvas.width = 1;
-		this._canvas.height = 1;
+		//this._canvas.width = 1;
+		//this._canvas.height = 1;
 		//this._canvas.style["-webkit-font-smoothing"] = "none";
 		//this._canvas.style["image-rendering"] = "pixelated";
 		this._context = this._canvas.getContext("2d");
@@ -38,33 +36,89 @@ export class TextMesh extends Mesh {
 		this.texture = new Tea.Texture(app);
 		this.texture.image = this._canvas;
 
+		this._isChanged = true;
 		this._color = Tea.Color.white.clone();
 		this._font = "sans-serif";
 		this._fontSize = TextMesh.DefaultFontSize;
 		this._fontStyle = Tea.FontStyle.Normal;
 		this._text = "Text";
-		this.alignment = Tea.TextAlignment.Left;
-		this.anchor = Tea.TextAnchor.MiddleCenter;
-		this.characterSize = 1;
-		this.lineSpacing = 1;
+		this._alignment = Tea.TextAlignment.Left;
+		this._anchor = Tea.TextAnchor.MiddleCenter;
+		this._characterSize = 1;
+		this._lineSpacing = 1;
 		this._padding = 1;
 
-		this.updateContext();
-		this.draw();
+		//this.updateContext();
+		//this.draw();
 	}
 
 	get canvas(): HTMLCanvasElement {
 		return this._canvas;
 	}
 
+	get mesh(): Tea.Mesh {
+		return this._mesh;
+	}
+
+	get characterSize(): number {
+		return this._characterSize;
+	}
+	set characterSize(value: number) {
+		if (this._characterSize === value) {
+			return;
+		}
+		this._characterSize = value;
+		this._isChanged = true;
+	}
+
+	get lineSpacing(): number {
+		return this._lineSpacing;
+	}
+	set lineSpacing(value: number) {
+		if (this._lineSpacing === value) {
+			return;
+		}
+		this._lineSpacing = value;
+		this._isChanged = true;
+	}
+
+	get anchor(): Tea.TextAnchor {
+		return this._anchor;
+	}
+	set anchor(value: Tea.TextAnchor) {
+		if (this._anchor === value) {
+			return;
+		}
+		this._anchor = value;
+		this._isChanged = true;
+	}
+
+	get alignment(): Tea.TextAlignment {
+		return this._alignment;
+	}
+	set alignment(value: Tea.TextAlignment) {
+		if (this._alignment === value) {
+			return;
+		}
+		this._alignment = value;
+		this._isChanged = true;
+	}
+
 	get color(): Tea.Color {
 		return this._color;
 	}
 	set color(value: Tea.Color) {
+		if (value == null) {
+			return;
+		}
 		if (this._color.equals(value)) {
 			return;
 		}
-		this._color = value;
+		this._color.copy(value);
+		if (this.material) {
+			this.material.color.copy(this.color);
+		}
+		//this._isChanged = true;
 	}
 
 	get font(): string {
@@ -75,7 +129,7 @@ export class TextMesh extends Mesh {
 			return;
 		}
 		this._font = value;
-		this.updateFont();
+		this._isChanged = true;
 	}
 
 	get fontSize(): number {
@@ -86,7 +140,7 @@ export class TextMesh extends Mesh {
 			return;
 		}
 		this._fontSize = value;
-		this.updateFont();
+		this._isChanged = true;
 	}
 
 	get fontStyle(): Tea.FontStyle {
@@ -97,7 +151,7 @@ export class TextMesh extends Mesh {
 			return;
 		}
 		this._fontStyle = value;
-		this.updateFont();
+		this._isChanged = true;
 	}
 
 	get text(): string {
@@ -108,19 +162,20 @@ export class TextMesh extends Mesh {
 			return;
 		}
 		this._text = value;
-		this.draw();
+		this._isChanged = true;
 	}
 
 	destroy(): void {
-		this.alignment = undefined;
-		this.anchor = undefined;
-		this.characterSize = undefined;
-		this.lineSpacing = undefined;
+		this._isChanged = undefined;
+		this._alignment = undefined;
+		this._anchor = undefined;
+		this._characterSize = undefined;
+		this._lineSpacing = undefined;
 		if (this.texture != null) {
 			this.texture.destroy();
 			this.texture = undefined;
 		}
-		this.color = undefined;
+		this._color = undefined;
 		this._font = undefined;
 		this._fontSize = undefined;
 		this._fontStyle = undefined;
@@ -132,7 +187,12 @@ export class TextMesh extends Mesh {
 	}
 
 	update(): void {
+		if (this._isChanged === false) {
+			return;
+		}
+		this.updateContext();
 		this.draw();
+		this._isChanged = false;
 	}
 
 	getImageData(): ImageData {
@@ -156,13 +216,14 @@ export class TextMesh extends Mesh {
 			fontSize = TextMesh.DefaultFontSize;
 		}
 		var padding = this._padding;
-		var lineSpacing = this.lineSpacing * 1.2;
-		for (var i = 0; i < text.length; i++) {
+		var lineSpacing = this._lineSpacing * 1.2;
+		var length = text.length;
+		for (var i = 0; i < length; i++) {
 			var line = text[i];
 			var x = padding;
 			var y = padding + (fontSize * i) * lineSpacing;
 			var metrics = context.measureText(line);
-			switch (this.alignment) {
+			switch (this._alignment) {
 				case Tea.TextAlignment.Center:
 					x = (textSize.width - metrics.width) / 2;
 					break;
@@ -184,13 +245,14 @@ export class TextMesh extends Mesh {
 		if (fontSize <= 0) {
 			fontSize = TextMesh.DefaultFontSize;
 		}
-		var lineSpacing = this.lineSpacing * 1.2;
+		var lineSpacing = this._lineSpacing * 1.2;
 		var padding = this._padding * 2;
 		var textWidth = 0;
 		var textHeight = (fontSize * (text.length - 1)) * lineSpacing + padding;
 		textHeight += fontSize;
 
-		for (var i = 0; i < text.length; i++) {
+		var length = text.length;
+		for (var i = 0; i < length; i++) {
 			var line = text[i];
 			var metrics = context.measureText(line);
 			var lineWidth = metrics.width + padding;
@@ -204,21 +266,22 @@ export class TextMesh extends Mesh {
 		textWidth = Tea.Mathf.closestPowerOfTwo(textWidth);
 		textHeight = Tea.Mathf.closestPowerOfTwo(textHeight);
 
-		var updateFlag = false;
-		if (width < textWidth) {
-			updateFlag = true;
+		//var updateFlag = false;
+		if (width !== textWidth) {
+			//updateFlag = true;
 			this._canvas.width = textWidth;
 		}
-		if (height < textHeight) {
-			updateFlag = true;
+		if (height !== textHeight) {
+			//updateFlag = true;
 			this._canvas.height = textHeight;
 		}
-		if (updateFlag) {
+		//if (updateFlag) {
 			this.updateContext();
-			this.udpateVertices(tw, th);
-		} else {
-			this.clearRect();
-		}
+			this.updateVertices(tw, th);
+		//} else {
+		//	this.clearRect();
+		//}
+		//console.log(tw, th);
 		return {
 			width: tw,
 			height: th
@@ -231,6 +294,7 @@ export class TextMesh extends Mesh {
 		context.textAlign = "start";
 		context.textBaseline = "top";
 		context.fillStyle = "#000";
+		this.clearRect();
 		this.updateFont();
 	}
 
@@ -258,18 +322,19 @@ export class TextMesh extends Mesh {
 		context.font = style + size + "px " + font;
 	}
 
-	protected udpateVertices(textWidth: number, textHeight: number): void {
-		var scale = 12 / this.characterSize;
+	protected updateVertices(textWidth: number, textHeight: number): void {
+		var scale = 12 / this._characterSize;
 		var scale2 = scale * 2;
 		var width = this._canvas.width / scale2;
 		var height = this._canvas.height / scale2;
 		var ow = (this._canvas.width - textWidth) / scale2;
 		var oh = (this._canvas.height - textHeight) / scale2;
-		var v0 = this.vertices[0];
-		var v1 = this.vertices[1];
-		var v2 = this.vertices[2];
-		var v3 = this.vertices[3];
-		switch (this.anchor) {
+		var mesh = this._mesh;
+		var v0 = mesh.vertices[0];
+		var v1 = mesh.vertices[1];
+		var v2 = mesh.vertices[2];
+		var v3 = mesh.vertices[3];
+		switch (this._anchor) {
 			case Tea.TextAnchor.UpperLeft:
 				ow = width;
 				oh = height;
@@ -303,7 +368,7 @@ export class TextMesh extends Mesh {
 		v1.x =  width + ow; v1.y = -height - oh;
 		v2.x =  width + ow; v2.y =  height - oh;
 		v3.x = -width + ow; v3.y =  height - oh;
-		this.calculateBounds();
-		this.uploadMeshData();
+		mesh.calculateBounds();
+		mesh.uploadMeshData();
 	}
 }

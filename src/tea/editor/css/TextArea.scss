@@ -1,0 +1,17 @@
+#{$parent} {
+	div.TextArea {
+		display: flex;
+		flex-direction: column;
+		width: 100%;
+
+		> .title {
+			display: block;
+			margin: 0 2px;
+		}
+
+		> textarea {
+			margin: 0 2px;
+			resize: vertical;
+		}
+	}
+}

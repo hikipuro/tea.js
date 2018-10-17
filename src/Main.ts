@@ -509,8 +509,8 @@ export class Main {
 
 		var textmesh = this.app.createTextMesh();
 		//var r = textmesh.getComponent(Tea.MeshRenderer);
-		var meshFilter = textmesh.getComponent(Tea.MeshFilter);
-		var mesh = meshFilter.mesh as Tea.TextMesh;
+		var mesh = textmesh.getComponent(Tea.TextMesh);
+		//var mesh = meshFilter.mesh as Tea.TextMesh;
 		mesh.color.set(1,1,1,1);
 		mesh.characterSize = 0.1;
 		mesh.fontSize = 100;

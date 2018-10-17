@@ -322,16 +322,17 @@ export class App {
 		shader.settings.blend.dstRGB = Tea.ShaderBlendFunc.OneMinusSrcAlpha;
 		shader.settings.blend.srcAlpha = Tea.ShaderBlendFunc.One;
 		shader.settings.blend.dstAlpha = Tea.ShaderBlendFunc.One;
-		var mesh = new Tea.TextMesh(this);
-		mesh.texture.filterMode = Tea.FilterMode.Point;
+		var textMesh = object3d.addComponent(Tea.TextMesh);
+		textMesh.texture.filterMode = Tea.FilterMode.Point;
 		var meshFilter = object3d.addComponent(Tea.MeshFilter);
-		meshFilter.mesh = mesh;
+		meshFilter.mesh = textMesh.mesh;
 		var renderer = object3d.addComponent(Tea.MeshRenderer);
 		renderer.material.renderQueue = 3000;
 		renderer.material.setFloat("_Cutoff", 0.0);
-		renderer.material.mainTexture = mesh.texture;
+		renderer.material.mainTexture = textMesh.texture;
 		renderer.material.shader = shader;
 		//renderer.material.color.set(1,0,0,1);
+		textMesh.material = renderer.material;
 		object3d.name = "TextMesh";
 		return object3d;
 	}

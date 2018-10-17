@@ -21,6 +21,7 @@ export * from "./components/Renderer";
 export * from "./components/Rigidbody";
 export * from "./components/Script";
 export * from "./components/ShadowMapCamera";
+export * from "./components/TextMesh";
 //export * from "./components/Transform";
 
 export * from "./enums/CameraClearFlags";
@@ -88,7 +89,6 @@ export * from "./objects/RenderTexture";
 export * from "./objects/Material";
 export * from "./objects/Scene";
 export * from "./objects/Skybox";
-export * from "./objects/TextMesh";
 export * from "./objects/Texture";
 
 export * from "./parsers/DaeReader";

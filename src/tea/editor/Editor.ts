@@ -20,6 +20,7 @@ import { Panel } from "./Panel";
 import { Rectangle } from "./Rectangle";
 import { SelectAspect } from "./SelectAspect";
 import { SelectEnum } from "./SelectEnum";
+import { TextArea } from "./TextArea";
 import { TreeView } from "./TreeView";
 import { Vector3 } from "./Vector3";
 import { VLayout } from "./VLayout";
@@ -31,8 +32,10 @@ import { Light } from "./components/Light";
 import { LineRenderer } from "./components/LineRenderer";
 import { MeshFilter } from "./components/MeshFilter";
 import { MeshRenderer } from "./components/MeshRenderer";
+import { ParticleSystem } from "./components/ParticleSystem";
 import { Rigidbody } from "./components/Rigidbody";
 import { Script } from "./components/Script";
+import { TextMesh } from "./components/TextMesh";
 
 //*
 Vue.component("Button", Button);
@@ -52,6 +55,7 @@ Vue.component("Panel", Panel);
 Vue.component("Rectangle", Rectangle);
 Vue.component("SelectAspect", SelectAspect);
 Vue.component("SelectEnum", SelectEnum);
+Vue.component("TextArea", TextArea);
 Vue.component("TreeView", TreeView);
 Vue.component("Vector3", Vector3);
 Vue.component("VLayout", VLayout);
@@ -63,8 +67,10 @@ Vue.component("Light", Light);
 Vue.component("LineRenderer", LineRenderer);
 Vue.component("MeshFilter", MeshFilter);
 Vue.component("MeshRenderer", MeshRenderer);
+Vue.component("ParticleSystem", ParticleSystem);
 Vue.component("Rigidbody", Rigidbody);
 Vue.component("Script", Script);
+Vue.component("TextMesh", TextMesh);
 //*/
 
 @Component({
@@ -232,10 +238,14 @@ var  _MeshFilter = MeshFilter;
 type _MeshFilter = MeshFilter;
 var  _MeshRenderer = MeshRenderer;
 type _MeshRenderer = MeshRenderer;
+var  _ParticleSystem = ParticleSystem;
+type _ParticleSystem = ParticleSystem;
 var  _Rigidbody = Rigidbody;
 type _Rigidbody = Rigidbody;
 var  _Script = Script;
 type _Script = Script;
+var  _TextMesh = TextMesh;
+type _TextMesh = TextMesh;
 
 export module Editor {
 	export var  Button = _Button;
@@ -283,10 +293,14 @@ export module Editor {
 	export type MeshFilter = _MeshFilter;
 	export var  MeshRenderer = _MeshRenderer;
 	export type MeshRenderer = _MeshRenderer;
+	export var  ParticleSystem = _ParticleSystem;
+	export type ParticleSystem = _ParticleSystem;
 	export var  Rigidbody = _Rigidbody;
 	export type Rigidbody = _Rigidbody;
 	export var  Script = _Script;
 	export type Script = _Script;
+	export var  TextMesh = _TextMesh;
+	export type TextMesh = _TextMesh;
 }
 
 var loaded = () => {
