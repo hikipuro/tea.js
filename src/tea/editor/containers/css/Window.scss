@@ -1,0 +1,15 @@
+#{$parent} {
+	$background: #2f2d30;
+	$separator: #535154;
+	$border: rgba(255, 255, 255, 0.1);
+	$shadow: rgba(0, 0, 0, 0.1);
+
+	div.Window {
+		position: fixed;
+		padding: 0.3em 0;
+		background-color: $background;
+		border-radius: 0.4em;
+		border: 1px solid $border;
+		box-shadow: 1px 1px 12px $shadow;
+	}
+}

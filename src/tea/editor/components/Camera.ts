@@ -136,11 +136,11 @@ export class Camera extends Vue {
 		}
 	}
 
-	protected onUpdateBackground(value: string): void {
-		console.log("onUpdateBackground", value);
-		this.background = value;
+	protected onUpdateBackground(value: Tea.Color): void {
+		//console.log("onUpdateBackground", value);
+		this.background = value.toCssColor();
 		if (this._component) {
-			this._component.backgroundColor.setCssColor(value);
+			this._component.backgroundColor.copy(value);
 		}
 	}
 

@@ -138,12 +138,14 @@ export class InputNumber extends Vue {
 			var x = this._mouseDownX;
 			var y = this._mouseDownY;
 			var value = this._mouseDownValue + (x + y) * this.step;
+			this._prev = value;
 			this.$emit("update", value);
 			return;
 		}
 		var x = e.screenX - this._mouseDownX;
 		var y = this._mouseDownY - e.screenY;
 		var value = this._mouseDownValue + (x + y) * this.step;
+		this._prev = value;
 		this.$emit("update", value);
 	}
 

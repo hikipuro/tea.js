@@ -164,7 +164,7 @@ export class Color extends Array<number> {
 		this[1] = Math.round(parseInt(values[1])) / 255;
 		this[2] = Math.round(parseInt(values[2])) / 255;
 		if (values[3]) {
-			this[3] = Math.round(parseFloat(values[3]));
+			this[3] = parseFloat(values[3]);
 		} else {
 			this[3] = 1.0;
 		}
@@ -278,7 +278,7 @@ export class Color extends Array<number> {
 			(this.r * 255).toFixed(0) + ", " +
 			(this.g * 255).toFixed(0) + ", " +
 			(this.b * 255).toFixed(0) + ", " +
-			this.a.toFixed(2) + ")";
+			this.a + ")";
 	}
 
 	static fromRGBA(r: number, g: number, b: number, a: number): Color {

@@ -66,10 +66,10 @@ export class Light extends Vue {
 		}
 	}
 
-	protected onUpdateColor(value: string): void {
-		this.color = value;
+	protected onUpdateColor(value: Tea.Color): void {
+		this.color = value.toCssColor();
 		if (this._component) {
-			this._component.color.setCssColor(value);
+			this._component.color.copy(value);
 		}
 	}
 

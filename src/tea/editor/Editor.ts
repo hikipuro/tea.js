@@ -26,6 +26,7 @@ import { VResizeBar } from "./basic/VResizeBar";
 import { Panel } from "./containers/Panel";
 import { HLayout } from "./containers/HLayout";
 import { VLayout } from "./containers/VLayout";
+import { Window } from "./containers/Window";
 
 import { BoxCollider } from "./components/BoxCollider";
 import { Camera } from "./components/Camera";
@@ -62,6 +63,7 @@ Vue.component("VResizeBar", VResizeBar);
 Vue.component("Panel", Panel);
 Vue.component("HLayout", HLayout);
 Vue.component("VLayout", VLayout);
+Vue.component("Window", Window);
 
 Vue.component("BoxCollider", BoxCollider);
 Vue.component("Camera", Camera);
@@ -228,6 +230,8 @@ var  _HLayout = HLayout;
 type _HLayout = HLayout;
 var  _VLayout = VLayout;
 type _VLayout = VLayout;
+var  _Window = Window;
+type _Window = Window;
 
 var  _BoxCollider = BoxCollider;
 type _BoxCollider = BoxCollider;
@@ -284,6 +288,8 @@ export module Editor {
 	export type HLayout = _HLayout;
 	export var  VLayout = _VLayout;
 	export type VLayout = _VLayout;
+	export var  Window = _Window;
+	export type Window = _Window;
 
 	export var  BoxCollider = _BoxCollider;
 	export type BoxCollider = _BoxCollider;
