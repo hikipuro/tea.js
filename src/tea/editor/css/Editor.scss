@@ -1,28 +1,31 @@
 $parent: "#editor";
 @import "Theme.scss";
-@import "Button.scss";
-@import "Camera.scss";
-@import "CheckBox.scss";
-@import "ColorPicker.scss";
 @import "Component.scss";
-@import "ContextMenu.scss";
-@import "HLayout.scss";
-@import "HResizeBar.scss";
-@import "InputNumber.scss";
-@import "InputRange.scss";
 @import "Inspector.scss";
-@import "Label.scss";
-@import "Light.scss";
-@import "ListView.scss";
-@import "Panel.scss";
-@import "Rectangle.scss";
-@import "SelectEnum.scss";
-@import "TextArea.scss";
-@import "TextMesh.scss";
-@import "TreeView.scss";
-@import "Vector3.scss";
-@import "VLayout.scss";
-@import "VResizeBar.scss";
+
+@import "../basic/css/Button.scss";
+@import "../basic/css/CheckBox.scss";
+@import "../basic/css/ColorPicker.scss";
+@import "../basic/css/ContextMenu.scss";
+@import "../basic/css/HResizeBar.scss";
+@import "../basic/css/InputNumber.scss";
+@import "../basic/css/InputRange.scss";
+@import "../basic/css/Label.scss";
+@import "../basic/css/ListView.scss";
+@import "../basic/css/Rectangle.scss";
+@import "../basic/css/SelectEnum.scss";
+@import "../basic/css/TextArea.scss";
+@import "../basic/css/TreeView.scss";
+@import "../basic/css/Vector3.scss";
+@import "../basic/css/VResizeBar.scss";
+
+@import "../containers/css/Panel.scss";
+@import "../containers/css/HLayout.scss";
+@import "../containers/css/VLayout.scss";
+
+@import "../components/css/Camera.scss";
+@import "../components/css/Light.scss";
+@import "../components/css/TextMesh.scss";
 
 #{$parent} {
 	width: 100%;

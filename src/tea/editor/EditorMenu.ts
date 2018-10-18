@@ -1,5 +1,5 @@
 import * as Tea from "../Tea";
-import { NativeContextMenu } from "./NativeContextMenu";
+import { NativeContextMenu } from "./basic/NativeContextMenu";
 
 export class EditorMenu {
 	static getHierarchyViewMenu(

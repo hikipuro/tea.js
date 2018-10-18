@@ -3,7 +3,7 @@ import * as Electron from "electron";
 import * as Tea from "../Tea";
 import { Editor } from "./Editor";
 import { EditorMenu } from "./EditorMenu";
-import { SelectAspect } from "./SelectAspect";
+import { SelectAspect } from "./basic/SelectAspect";
 
 export class EditorBehavior {
 	editor: Editor;
