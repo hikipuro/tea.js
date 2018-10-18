@@ -1,32 +1,35 @@
 import Vue from "vue";
 import Component from "vue-class-component";
 import * as Tea from "../../Tea";
-import { ComponentBase } from "./ComponentBase";
 
 @Component({
 	template: `
-		<div
-			class="Component MeshFilter">
-			<ComponentTitle
-				ref="title"
-				:enabled="enabled"
-				@update="onUpdateEnabled"
-				@config="onClickConfig">{{ name }}</ComponentTitle>
+		<div class="MeshFilter">
 		</div>
 	`,
 	data: () => {
 		return {
 			name: "MeshFilter",
+			enabled: false
+		}
+	},
+	watch: {
+		enabled: function (value: boolean) {
+			var self = this as MeshFilter;
+			self._component.enabled = value;
 		}
 	}
 })
-export class MeshFilter extends ComponentBase {
+export class MeshFilter extends Vue {
 	_component: Tea.MeshFilter;
+	name: string;
+	enabled: boolean;
 
-	mounted(): void {
+	protected mounted(): void {
 		var component = this._component;
 		if (component == null) {
 			return;
 		}
+		this.enabled = component.enabled;
 	}
 }

@@ -300,7 +300,7 @@ export class TextMesh extends Component {
 
 	protected updateFont(): void {
 		var context = this._context;
-		var font = "'" + this._font + "'";
+		var font = this._font;
 		var size = this._fontSize;
 		if (size <= 0) {
 			size = TextMesh.DefaultFontSize;

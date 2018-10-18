@@ -1,17 +1,10 @@
 import Vue from "vue";
 import Component from "vue-class-component";
 import * as Tea from "../../Tea";
-import { ComponentBase } from "./ComponentBase";
 
 @Component({
 	template: `
-		<div
-			class="Component Light">
-			<ComponentTitle
-				ref="title"
-				:enabled="enabled"
-				@update="onUpdateEnabled"
-				@config="onClickConfig">{{ name }}</ComponentTitle>
+		<div class="Light">
 			<SelectEnum
 				ref="type"
 				:value="type"
@@ -30,23 +23,33 @@ import { ComponentBase } from "./ComponentBase";
 	data: () => {
 		return {
 			name: "Light",
+			enabled: false,
 			type: "",
 			color: "",
 			intensity: 0,
 		}
+	},
+	watch: {
+		enabled: function (value: boolean) {
+			var self = this as Light;
+			self._component.enabled = value;
+		}
 	}
 })
-export class Light extends ComponentBase {
+export class Light extends Vue {
 	_component: Tea.Light;
+	name: string;
+	enabled: boolean;
 	type: string;
 	color: string;
 	intensity: number;
 
-	mounted(): void {
+	protected mounted(): void {
 		var component = this._component;
 		if (component == null) {
 			return;
 		}
+		this.enabled = component.enabled;
 		var type = this.$refs.type as Vue;
 		type.$data.keys = Tea.LightType.getKeys();
 		this.$nextTick(() => {

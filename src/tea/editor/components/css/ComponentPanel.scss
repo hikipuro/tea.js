@@ -1,16 +1,21 @@
 #{$parent} {
-	div.Component {
+	div.ComponentPanel {
 		margin-top: 2px;
 		border-top: 1px solid gray;
 	}
 
-	div.ComponentTitle {
+	div.TitleBar {
 		display: inline-flex;
 		margin-top: 2px;
 		width: 100%;
 
 		> .title {
 			flex: 1;
+			white-space: nowrap;
+		}
+
+		> .config {
+			margin: 0 2px;
 		}
 	}
 
@@ -19,11 +24,13 @@
 		justify-content: center;
 		margin-top: 2px;
 		width: 100%;
+		white-space: nowrap;
 		border-top: 1px solid gray;
 
 		button {
 			margin-top: 0.5em;
 			width: 70%;
+			overflow: hidden;
 		}
 	}
 }

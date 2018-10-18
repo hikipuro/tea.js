@@ -1,7 +1,6 @@
 import Vue from "vue";
 import Component from "vue-class-component";
 import * as Tea from "../../Tea";
-import { ComponentBase } from "./ComponentBase";
 
 @Component({
 	template: `
@@ -36,13 +35,7 @@ export class ClippingPlanes extends Vue {
 
 @Component({
 	template: `
-		<div
-			class="Component Camera">
-			<ComponentTitle
-				ref="title"
-				:enabled="enabled"
-				@update="onUpdateEnabled"
-				@config="onClickConfig">{{ name }}</ComponentTitle>
+		<div class="Camera">
 			<SelectEnum
 				ref="clearFlags"
 				:value="clearFlags"
@@ -82,6 +75,7 @@ export class ClippingPlanes extends Vue {
 	data: () => {
 		return {
 			name: "Camera",
+			enabled: false,
 			clearFlags: "",
 			background: "",
 			orthographic: false,
@@ -92,12 +86,20 @@ export class ClippingPlanes extends Vue {
 			rect: [0, 0, 0, 0]
 		}
 	},
+	watch: {
+		enabled: function (value: boolean) {
+			var self = this as Camera;
+			self._component.enabled = value;
+		}
+	},
 	components: {
 		"ClippingPlanes": ClippingPlanes
 	}
 })
-export class Camera extends ComponentBase {
+export class Camera extends Vue {
 	_component: Tea.Camera;
+	name: string;
+	enabled: boolean;
 	clearFlags: string;
 	background: string;
 	orthographic: boolean;
@@ -107,11 +109,12 @@ export class Camera extends ComponentBase {
 	far: number;
 	rect: Array<number>;
 
-	mounted(): void {
+	protected mounted(): void {
 		var component = this._component;
 		if (component == null) {
 			return;
 		}
+		this.enabled = component.enabled;
 		var clearFlags = this.$refs.clearFlags as Vue;
 		clearFlags.$data.keys = Tea.CameraClearFlags.getKeys();
 		this.$nextTick(() => {

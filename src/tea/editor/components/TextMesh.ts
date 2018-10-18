@@ -1,17 +1,10 @@
 import Vue from "vue";
 import Component from "vue-class-component";
 import * as Tea from "../../Tea";
-import { ComponentBase } from "./ComponentBase";
 
 @Component({
 	template: `
-		<div
-			class="Component TextMesh">
-			<ComponentTitle
-				ref="title"
-				:enabled="enabled"
-				@update="onUpdateEnabled"
-				@config="onClickConfig">{{ name }}</ComponentTitle>
+		<div class="TextMesh">
 			<TextArea
 				ref="text"
 				:value="text"
@@ -43,6 +36,10 @@ import { ComponentBase } from "./ComponentBase";
 				ref="fontStyle"
 				:value="fontStyle"
 				@update="onUpdateFontStyle">Font Style</SelectEnum>
+			<InputText
+				ref="font"
+				:value="font"
+				@update="onUpdateFont">Font</InputText>
 			<ColorPicker
 				ref="color"
 				:value="color"
@@ -52,6 +49,7 @@ import { ComponentBase } from "./ComponentBase";
 	data: () => {
 		return {
 			name: "TextMesh",
+			enabled: false,
 			text: "",
 			characterSize: 0,
 			lineSpacing: 0,
@@ -59,12 +57,21 @@ import { ComponentBase } from "./ComponentBase";
 			alignment: "",
 			fontSize: 0,
 			fontStyle: "",
+			font: "",
 			color: "",
+		}
+	},
+	watch: {
+		enabled: function (value: boolean) {
+			var self = this as TextMesh;
+			self._component.enabled = value;
 		}
 	}
 })
-export class TextMesh extends ComponentBase {
+export class TextMesh extends Vue {
 	_component: Tea.TextMesh;
+	name: string;
+	enabled: boolean;
 	text: string;
 	characterSize: number;
 	lineSpacing: number;
@@ -72,13 +79,15 @@ export class TextMesh extends ComponentBase {
 	alignment: string;
 	fontSize: number;
 	fontStyle: string;
+	font: string;
 	color: string;
 
-	mounted(): void {
+	protected mounted(): void {
 		var component = this._component;
 		if (component == null) {
 			return;
 		}
+		this.enabled = component.enabled;
 		this.text = component.text;
 		this.characterSize = component.characterSize;
 		this.lineSpacing = component.lineSpacing;
@@ -89,6 +98,7 @@ export class TextMesh extends ComponentBase {
 		this.fontSize = component.fontSize;
 		var fontStyle = this.$refs.fontStyle as Vue;
 		fontStyle.$data.keys = Tea.FontStyle.getKeys();
+		this.font = component.font;
 		this.color = component.color.toCssColor();
 		this.$nextTick(() => {
 			this.anchor = Tea.TextAnchor[component.anchor];
@@ -147,6 +157,13 @@ export class TextMesh extends ComponentBase {
 		this.fontStyle = value;
 		if (this._component) {
 			this._component.fontStyle = Tea.FontStyle[value];
+		}
+	}
+
+	protected onUpdateFont(value: string): void {
+		this.font = value;
+		if (this._component) {
+			this._component.font = value;
 		}
 	}
 

@@ -7,6 +7,8 @@
 
 			> .title {
 				min-width: 40%;
+				white-space: nowrap;
+				overflow: hidden;
 			}
 			> .value {
 				width: 60%;

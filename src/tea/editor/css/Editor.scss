@@ -1,6 +1,5 @@
 $parent: "#editor";
 @import "Theme.scss";
-@import "Component.scss";
 @import "Inspector.scss";
 
 @import "../basic/css/Button.scss";
@@ -10,6 +9,7 @@ $parent: "#editor";
 @import "../basic/css/HResizeBar.scss";
 @import "../basic/css/InputNumber.scss";
 @import "../basic/css/InputRange.scss";
+@import "../basic/css/InputText.scss";
 @import "../basic/css/Label.scss";
 @import "../basic/css/ListView.scss";
 @import "../basic/css/Rectangle.scss";
@@ -24,6 +24,7 @@ $parent: "#editor";
 @import "../containers/css/VLayout.scss";
 
 @import "../components/css/Camera.scss";
+@import "../components/css/ComponentPanel.scss";
 @import "../components/css/Light.scss";
 @import "../components/css/TextMesh.scss";
 

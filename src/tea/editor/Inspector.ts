@@ -1,6 +1,7 @@
 import Vue from "vue";
 import Component from "vue-class-component";
 import * as Tea from "../Tea";
+import { ComponentPanel } from "./components/ComponentPanel";
 
 @Component({
 	template: `
@@ -42,13 +43,13 @@ export class AddComponent extends Vue {
 				@update="onUpdateScale">
 				Scale
 			</Vector3>
-			<component
+			<ComponentPanel
 				ref="components"
 				v-for="(item, index) in components"
-				:is="item"
+				:type="item"
 				:key="index"
 				@config="onConfig">
-			</component>
+			</ComponentPanel>
 			<AddComponent
 				@click="onClickAddComponent">Add Component</AddComponent>
 			</template>
@@ -61,7 +62,8 @@ export class AddComponent extends Vue {
 		components: []
 	}},
 	components: {
-		"AddComponent": AddComponent
+		AddComponent: AddComponent,
+		ComponentPanel: ComponentPanel
 	}
 })
 export class Inspector extends Vue {
@@ -69,7 +71,7 @@ export class Inspector extends Vue {
 	isVisible: boolean;
 	name: string;
 	isActive: boolean;
-	components: Array<any>;
+	components: Array<Vue>;
 	_configComponent: Tea.Component;
 
 	get lastComponent(): Vue {
@@ -93,9 +95,12 @@ export class Inspector extends Vue {
 			if (editorView == null) {
 				return;
 			}
+			componentClass = undefined;
 			var vue = editorView.extend({
 				created: function () {
 					(this as any)._component = component;
+					editorView = undefined;
+					component = undefined;
 				}
 			});
 			this.components.push(vue);
@@ -203,6 +208,9 @@ export class Inspector extends Vue {
 	}
 
 	protected onConfig(component: Tea.Component): void {
+		if (component == null) {
+			return;
+		}
 		this._configComponent = component;
 		this.$emit("config", component);
 	}

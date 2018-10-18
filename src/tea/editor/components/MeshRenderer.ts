@@ -1,17 +1,10 @@
 import Vue from "vue";
 import Component from "vue-class-component";
 import * as Tea from "../../Tea";
-import { ComponentBase } from "./ComponentBase";
 
 @Component({
 	template: `
-		<div
-			class="Component MeshRenderer">
-			<ComponentTitle
-				ref="title"
-				:enabled="enabled"
-				@update="onUpdateEnabled"
-				@config="onClickConfig">{{ name }}</ComponentTitle>
+		<div class="MeshRenderer">
 			<CheckBox
 				ref="receiveShadows"
 				:value="receiveShadows"
@@ -25,21 +18,31 @@ import { ComponentBase } from "./ComponentBase";
 	data: () => {
 		return {
 			name: "MeshRenderer",
+			enabled: false,
 			receiveShadows: true,
 			wireframe: false
 		}
+	},
+	watch: {
+		enabled: function (value: boolean) {
+			var self = this as MeshRenderer;
+			self._component.enabled = value;
+		}
 	}
 })
-export class MeshRenderer extends ComponentBase {
+export class MeshRenderer extends Vue {
 	_component: Tea.MeshRenderer;
+	name: string;
+	enabled: boolean;
 	receiveShadows: boolean;
 	wireframe: boolean;
 
-	mounted(): void {
+	protected mounted(): void {
 		var component = this._component;
 		if (component == null) {
 			return;
 		}
+		this.enabled = component.enabled;
 		this.wireframe = component.wireframe;
 		this.receiveShadows = component.receiveShadows;
 	}

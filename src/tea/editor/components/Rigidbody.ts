@@ -1,32 +1,35 @@
 import Vue from "vue";
 import Component from "vue-class-component";
 import * as Tea from "../../Tea";
-import { ComponentBase } from "./ComponentBase";
 
 @Component({
 	template: `
-		<div
-			class="Component Rigidbody">
-			<ComponentTitle
-				ref="title"
-				:enabled="enabled"
-				@update="onUpdateEnabled"
-				@config="onClickConfig">{{ name }}</ComponentTitle>
+		<div class="Rigidbody">
 		</div>
 	`,
 	data: () => {
 		return {
 			name: "Rigidbody",
+			enabled: false
+		}
+	},
+	watch: {
+		enabled: function (value: boolean) {
+			var self = this as Rigidbody;
+			self._component.enabled = value;
 		}
 	}
 })
-export class Rigidbody extends ComponentBase {
+export class Rigidbody extends Vue {
 	_component: Tea.Rigidbody;
+	name: string;
+	enabled: boolean;
 
-	mounted(): void {
+	protected mounted(): void {
 		var component = this._component;
 		if (component == null) {
 			return;
 		}
+		this.enabled = component.enabled;
 	}
 }

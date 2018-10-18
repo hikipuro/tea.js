@@ -1,33 +1,36 @@
 import Vue from "vue";
 import Component from "vue-class-component";
 import * as Tea from "../../Tea";
-import { ComponentBase } from "./ComponentBase";
 
 @Component({
 	template: `
-		<div
-			class="Component Script">
-			<ComponentTitle
-				ref="title"
-				:enabled="enabled"
-				@update="onUpdateEnabled"
-				@config="onClickConfig">{{ name }}</ComponentTitle>
+		<div class="Script">
 		</div>
 	`,
 	data: () => {
 		return {
 			name: "Script",
+			enabled: false
+		}
+	},
+	watch: {
+		enabled: function (value: boolean) {
+			var self = this as Script;
+			self._component.enabled = value;
 		}
 	}
 })
-export class Script extends ComponentBase {
+export class Script extends Vue {
 	_component: Tea.Script;
+	name: string;
+	enabled: boolean;
 
-	mounted(): void {
+	protected mounted(): void {
 		var component = this._component;
 		if (component == null) {
 			return;
 		}
-		this.name = this._component.className + " (Script)";
+		this.name = component.className + " (Script)";
+		this.enabled = component.enabled;
 	}
 }

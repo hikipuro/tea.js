@@ -3,8 +3,7 @@ import Component from "vue-class-component";
 
 @Component({
 	template: `
-		<div
-			class="ComponentTitle">
+		<div class="TitleBar">
 			<input
 				ref="checkbox"
 				type="checkbox"
@@ -13,6 +12,7 @@ import Component from "vue-class-component";
 			<div class="title"><slot></slot></div>
 			<div
 				ref="config"
+				class="config"
 				@click="onClickConfig">⚙️</div>
 		</div>
 	`,
@@ -24,7 +24,7 @@ import Component from "vue-class-component";
 		}
 	}
 })
-export class ComponentTitle extends Vue {
+export class TitleBar extends Vue {
 	enable: boolean;
 
 	protected onChange(): void {

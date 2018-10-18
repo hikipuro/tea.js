@@ -1,17 +1,10 @@
 import Vue from "vue";
 import Component from "vue-class-component";
 import * as Tea from "../../Tea";
-import { ComponentBase } from "./ComponentBase";
 
 @Component({
 	template: `
-		<div
-			class="Component BoxCollider">
-			<ComponentTitle
-				ref="title"
-				:enabled="enabled"
-				@update="onUpdateEnabled"
-				@config="onClickConfig">{{ name }}</ComponentTitle>
+		<div class="BoxCollider">
 			<Vector3
 				ref="center"
 				@update="onUpdateCenter">
@@ -27,20 +20,20 @@ import { ComponentBase } from "./ComponentBase";
 	data: () => {
 		return {
 			name: "BoxCollider",
+			enabled: false
+		}
+	},
+	watch: {
+		enabled: function (value: boolean) {
+			var self = this as BoxCollider;
+			self._component.enabled = value;
 		}
 	}
 })
-export class BoxCollider extends ComponentBase {
+export class BoxCollider extends Vue {
 	_component: Tea.BoxCollider;
-
-	mounted(): void {
-		var component = this._component;
-		if (component == null) {
-			return;
-		}
-		this.setCenter(component.center);
-		this.setSize(component.size);
-	}
+	name: string;
+	enabled: boolean;
 
 	setCenter(value: Tea.Vector3): void {
 		var center = this.$refs.center as Tea.Editor.Vector3;
@@ -62,6 +55,16 @@ export class BoxCollider extends ComponentBase {
 		size.x = x;
 		size.y = y;
 		size.z = z;
+	}
+
+	protected mounted(): void {
+		var component = this._component;
+		if (component == null) {
+			return;
+		}
+		this.enabled = component.enabled;
+		this.setCenter(component.center);
+		this.setSize(component.size);
 	}
 
 	protected onUpdateCenter(x: number, y: number, z: number): void {

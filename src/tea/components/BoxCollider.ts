@@ -89,6 +89,9 @@ export class BoxCollider extends Collider {
 	}
 
 	testBoxCollider(box: BoxCollider): boolean {
+		if (box == null) {
+			return false;
+		}
 		var ao = this.object3d;
 		var bo = box.object3d;
 		var ae = this.size.mul(0.5).scale(ao.scale);

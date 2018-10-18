@@ -1,0 +1,27 @@
+#{$parent} {
+	div.InputText {
+		display: inline-flex;
+		box-sizing: border-box;
+		align-items: center;
+		padding: 1px;
+		width: 100%;
+
+		> .title {
+			display: inline-block;
+			width: 40%;
+			white-space: nowrap;
+			overflow: hidden;
+		}
+
+		> .value {
+			display: inline-flex;
+			width: 60%;
+			align-items: center;
+
+			> input {
+				margin: 0 2px;
+				min-width: 1em;
+			}
+		}
+	}
+}
