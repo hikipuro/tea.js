@@ -42,8 +42,6 @@ export class Renderer extends Component {
 	static readonly attributes: Attributes = new Attributes();
 	material: Tea.Material;
 	protected gl: WebGLRenderingContext;
-	protected _tmpVec3: Tea.Vector3 = new Tea.Vector3();
-	protected _tmpVec4: Tea.Vector4 = new Tea.Vector4();
 	protected _mvMatrix: Tea.Matrix4x4 = new Tea.Matrix4x4();
 	protected _mvpMatrix: Tea.Matrix4x4 = new Tea.Matrix4x4();
 
@@ -70,8 +68,6 @@ export class Renderer extends Component {
 			this.material = undefined;
 		}
 		this.gl = undefined;
-		this._tmpVec3 = undefined;
-		this._tmpVec4 = undefined;
 		this._mvMatrix = undefined;
 		this._mvpMatrix = undefined;
 		super.destroy();
@@ -439,31 +435,26 @@ export class Renderer extends Component {
 	}
 
 	protected setLightUniforms(lights: Array<Tea.Light>, renderSettings: Tea.RenderSettings): void {
-		if (lights == null) {
-			return;
-		}
 		var gl = this.gl;
 		var shader = this.material.shader;
 		var location: WebGLUniformLocation = null;
+		
+		if (lights == null && lights.length <= 0) {
+			location = shader.propertyToID("lightCount");
+			if (location != null) {
+				gl.uniform1i(location, 0);
+			}
+			location = shader.propertyToID("ambientColor");
+			if (location != null) {
+				gl.uniform4fv(location, renderSettings.ambientLight);
+			}
+			return;
+		}
 
-		var d = this._tmpVec3;
-		//var lightCount = Math.min(Renderer.MaxLightCount, lights.length);
-
-		var lightCount = 0;
-		var length = lights.length;
+		var length = Math.min(lights.length, Renderer.MaxLightCount);
 		for (var i = 0; i < length; i++) {
 			var light = lights[i];
-			if (light.enabled === false) {
-				continue;
-			}
-			if (light.object3d.isActiveInHierarchy === false) {
-				continue;
-			}
-			if (lightCount >= Renderer.MaxLightCount) {
-				break;
-			}
-			var index = lightCount;
-			location = shader.propertyToID("lights[" + index + "].color");
+			location = shader.propertyToID("lights[" + i + "].color");
 			if (location != null) {
 				var color = light.color;
 				var intensity = light.intensity;
@@ -475,38 +466,35 @@ export class Renderer extends Component {
 					color[3]
 				);
 			}
-			location = shader.propertyToID("lights[" + index + "].position");
+			location = shader.propertyToID("lights[" + i + "].position");
 			if (location != null) {
 				var p = light.object3d.position;
 				gl.uniform4f(
 					location, p[0], p[1], p[2], 0.0
 				);
 			}
-			location = shader.propertyToID("lights[" + index + "].direction");
+			location = shader.propertyToID("lights[" + i + "].direction");
 			if (location != null) {
-				d.set(0.0, 0.0, -1.0);
-				d.applyQuaternion(light.object3d.rotation);
-				d.normalize$();
+				var d = light.direction;
 				gl.uniform4f(
 					location, d[0], d[1], d[2], light.type
 				);
 			}
-			location = shader.propertyToID("lights[" + index + "].range");
+			location = shader.propertyToID("lights[" + i + "].range");
 			if (location != null) {
 				gl.uniform1f(location, light.range);
 			}
-			location = shader.propertyToID("lights[" + index + "].spotAngle");
+			location = shader.propertyToID("lights[" + i + "].spotAngle");
 			if (location != null) {
 				gl.uniform1f(
 					location,
 					light.spotAngle * Math.PI / 180.0
 				);
 			}
-			lightCount++;
 		}
 		location = shader.propertyToID("lightCount");
 		if (location != null) {
-			gl.uniform1i(location, lightCount);
+			gl.uniform1i(location, length);
 		}
 		location = shader.propertyToID("ambientColor");
 		if (location != null) {

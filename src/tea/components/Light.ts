@@ -8,6 +8,7 @@ export class Light extends Component {
 	range: number;
 	spotAngle: number;
 	type: Tea.LightType;
+	protected _direction: Tea.Vector3;
 
 	constructor(app: Tea.App) {
 		super(app);
@@ -16,6 +17,11 @@ export class Light extends Component {
 		this.range = 1.0;
 		this.spotAngle = 50;
 		this.type = Tea.LightType.Directional;
+		this._direction = new Tea.Vector3();
+	}
+
+	get direction(): Tea.Vector3 {
+		return this._direction;
 	}
 
 	destroy(): void {
@@ -25,6 +31,15 @@ export class Light extends Component {
 		this.spotAngle = undefined;
 		this.type = undefined;
 		super.destroy();
+	}
+
+	update(): void {
+		var d = this._direction;
+		d[0] = 0.0;
+		d[1] = 0.0;
+		d[2] = -1.0;
+		d.applyQuaternion(this.object3d.rotation);
+		d.normalize$();
 	}
 
 	toJSON(): Object {

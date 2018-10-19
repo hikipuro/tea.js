@@ -515,7 +515,8 @@ export class Object3D {
 		var scripts = this._components.filter((c) => {
 			return c instanceof Tea.Script;
 		}) as Array<Tea.Script>;
-		for (var i = 0; i < scripts.length; i++) {
+		var length = scripts.length;
+		for (var i = 0; i < length; i++) {
 			var script = scripts[i];
 			var method = script[methodName];
 			if (method instanceof Function) {

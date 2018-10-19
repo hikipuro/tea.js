@@ -4,6 +4,7 @@ import * as Tea from "./Tea";
 class Status {
 	frontFace: number;
 	viewport: Tea.Rect;
+	frameBuffer: WebGLFramebuffer;
 	OES_element_index_uint: any;
 	ANGLE_instanced_arrays: ANGLE_instanced_arrays;
 }

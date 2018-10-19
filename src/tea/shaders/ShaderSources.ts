@@ -33,7 +33,7 @@ export module ShaderSources {
 		varying vec3 vNormal;
 		varying vec2 vTexCoord;
 		varying vec4 vDepth;
-		varying vec4 vShadowTexCoord;
+		//varying vec4 vShadowTexCoord;
 		varying vec4 vLightColor[4];
 		varying vec3 vLightDirection[4];
 		varying float vAttenuation[4];
@@ -208,7 +208,7 @@ export module ShaderSources {
 					0.5, 0.5, 0.5, 1.0);
 				vDepth = texUnitConverter * _LightCamera * vert;
 				//vShadowTexCoord = tMatrix * vertex;
-				vShadowTexCoord = tMatrix * vert;
+				//vShadowTexCoord = tMatrix * vert;
 			}
 			gl_Position = TEA_MATRIX_MVP * vertex;
 		}
@@ -236,7 +236,7 @@ export module ShaderSources {
 		varying vec3 vNormal;
 		varying vec2 vTexCoord;
 		varying vec4 vDepth;
-		varying vec4 vShadowTexCoord;
+		//varying vec4 vShadowTexCoord;
 		varying vec4 vLightColor[4];
 		varying vec3 vLightDirection[4];
 		varying float vAttenuation[4];

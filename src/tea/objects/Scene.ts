@@ -5,12 +5,69 @@ class SceneComponents {
 	cameras: Array<Tea.Camera>;
 	renderers: Array<Tea.Renderer>;
 	lights: Array<Tea.Light>;
+	protected _cameras: Array<Tea.Camera>;
+	protected _renderers: Array<Tea.Renderer>;
+	protected _lights: Array<Tea.Light>;
 
 	constructor() {
 		this.mainCamera = null;
 		this.cameras = [];
 		this.renderers = [];
 		this.lights = [];
+		this._cameras = [];
+		this._renderers = [];
+		this._lights = [];
+	}
+
+	get availableCameras(): Array<Tea.Camera> {
+		var cameras = this._cameras;
+		cameras.splice(0, cameras.length);
+		var length = this.cameras.length;
+		for (var i = 0; i < length; i++) {
+			var camera = this.cameras[i];
+			if (camera.enabled === false) {
+				continue;
+			}
+			if (camera.object3d.isActiveInHierarchy === false) {
+				continue;
+			}
+			cameras.push(camera);
+		}
+		return cameras;
+	}
+
+	get availableRenderers(): Array<Tea.Renderer> {
+		var renderers = this._renderers;
+		renderers.splice(0, renderers.length);
+		var length = this.renderers.length;
+		for (var i = 0; i < length; i++) {
+			var renderer = this.renderers[i];
+			if (renderer.enabled === false) {
+				continue;
+			}
+			if (renderer.object3d.isActiveInHierarchy === false) {
+				continue;
+			}
+			renderers.push(renderer);
+		}
+		return renderers;
+	}
+
+	get availableLights(): Array<Tea.Light> {
+		var lights = this._lights;
+		lights.splice(0, lights.length);
+		var length = this.lights.length;
+		for (var i = 0; i < length; i++) {
+			var light = this.lights[i];
+			if (light.enabled === false) {
+				continue;
+			}
+			if (light.object3d.isActiveInHierarchy === false) {
+				continue;
+			}
+			lights.push(light);
+		}
+		return lights;
 	}
 
 	add(object3d: Tea.Object3D): void {
@@ -442,9 +499,9 @@ export class Scene {
 
 		this._components.sortCameras();
 		this._components.sortRenderers();
-		var renderers = this._components.renderers;
-		var cameras = this._components.cameras;
-		var lights = this._components.lights;
+		var cameras = this._components.availableCameras;
+		var renderers = this._components.availableRenderers;
+		var lights = this._components.availableLights;
 
 		if (this.enablePostProcessing) {
 			var texture = this.renderTexture;
@@ -454,30 +511,27 @@ export class Scene {
 		}
 		Tea.Renderer.drawCallCount = 0;
 		var cameraCount = cameras.length;
+		var haveNormalCamera = false;
 		for (var n = 0; n < cameraCount; n++) {
 			var camera = cameras[n];
-			if (camera.enabled === false) {
-				continue;
-			}
-			if (camera.object3d.isActiveInHierarchy === false) {
-				continue;
-			}
-			if (this.enablePostProcessing) {
-				this.renderTexture.bindFramebuffer();
+			if (haveNormalCamera === false && camera.constructor.name === "Camera") {
+				haveNormalCamera = true;
 			}
 			var renderTexture = camera.targetTexture;
 			if (renderTexture != null) {
 				renderTexture.bindFramebuffer();
 				//this.app.gl.scissor(0.0, 0.0, this.renderTexture.width, this.renderTexture.height);
 				//this.app.gl.viewport(0.0, 0.0, this.renderTexture.width, this.renderTexture.height);
+			} else if (this.enablePostProcessing) {
+				this.renderTexture.bindFramebuffer();
 			}
 			camera.update();
 			var rendererCount = renderers.length;
 			for (var i = 0; i < rendererCount; i++) {
 				var renderer = renderers[i];
-				if (renderer.object3d.isActiveInHierarchy === false) {
-					continue;
-				}
+				//if (renderer.object3d.isActiveInHierarchy === false) {
+				//	continue;
+				//}
 				/*
 				if (camera.orthographic === false
 				&& this.frustumCulling(renderer, camera.frustumPlanes)) {
@@ -490,9 +544,15 @@ export class Scene {
 				renderTexture.unbindFramebuffer();
 			}
 		}
+		var rendererCount = renderers.length;
+		for (var i = 0; i < rendererCount; i++) {
+			renderers[i].material.setTexture("_ShadowTex", null);
+		}
 		if (this.enablePostProcessing) {
 			this.renderTexture.unbindFramebuffer();
 			this.postProcessingRenderer.render();
+		} else if (haveNormalCamera === false) {
+			this.clear();
 		}
 		//this._renderers.length = 0;
 		//console.log("drawCallCount", Tea.Renderer.drawCallCount);
@@ -560,20 +620,20 @@ export class Scene {
 			this.renderShadowMapCamera(camera, lights, renderer);
 			return;
 		}
-		if (this.enablePostProcessing) {
-			this.renderTexture.bindFramebuffer();
-		}
+		//if (this.enablePostProcessing) {
+		//	this.renderTexture.bindFramebuffer();
+		//}
 		if (camera.enableStereo) {
 			camera.updateLeft();
 			renderer.render(camera, lights, this.renderSettings);
 			camera.updateRight();
 			renderer.render(camera, lights, this.renderSettings);
-			return;
+		} else {
+			renderer.render(camera, lights, this.renderSettings);
 		}
-		renderer.render(camera, lights, this.renderSettings);
-		if (this.enablePostProcessing) {
-			this.renderTexture.unbindFramebuffer();
-		}
+		//if (this.enablePostProcessing) {
+		//	this.renderTexture.unbindFramebuffer();
+		//}
 	}
 
 	protected renderShadowMapCamera(camera: Tea.ShadowMapCamera, lights: Array<Tea.Light>, renderer: Tea.Renderer): void {
@@ -592,17 +652,17 @@ export class Scene {
 				//renderer.material.setTextureOffset("_ShadowTex", new Tea.Vector2(0, 0));
 				//renderer.material.setTextureScale("_ShadowTex", new Tea.Vector2(1, 1));
 		
-				var tMatrix = Tea.Matrix4x4.identity.clone();
-				tMatrix[0] = tMatrix[5] = 0.5; // scale
-				tMatrix[12] = tMatrix[13] = 0.5; // translate
+				//var tMatrix = Tea.Matrix4x4.identity.clone();
+				//tMatrix[0] = tMatrix[5] = 0.5; // scale
+				//tMatrix[12] = tMatrix[13] = 0.5; // translate
 		
-				var model = renderer.object3d.localToWorldMatrix;
+				//var model = renderer.object3d.localToWorldMatrix;
 				//var model = camera.object3d.localToWorldMatrix;
 				var vpMatrix = camera.viewProjectionMatrix;
 				//var mvpMatrix = vpMatrix.mul(model);
 				//mvpMatrix = tMatrix.mul(mvpMatrix);
 				renderer.material.setMatrix("_LightCamera", vpMatrix);
-				renderer.material.setMatrix("tMatrix", tMatrix.mul(vpMatrix));
+				//renderer.material.setMatrix("tMatrix", tMatrix.mul(vpMatrix));
 				renderer.material.setInt("receiveShadows", 1);
 			} else {
 				renderer.material.setTexture("_ShadowTex", null);
@@ -614,6 +674,22 @@ export class Scene {
 			renderer.render(camera, lights, this.renderSettings);
 			renderer.material.shader = shader;
 		}
+	}
+
+	protected clear(): void {
+		var gl = this.app.gl;
+		var color = Tea.Color.black;
+		if (Tea.Camera.currentBGColor.equals(color) === false) {
+			gl.clearColor(color[0], color[1], color[2], color[3]);
+			Tea.Camera.currentBGColor.copy(color);
+		}
+		gl.viewport(0.0, 0.0, this.app.width, this.app.height);
+		gl.scissor(0.0, 0.0, this.app.width, this.app.height);
+		gl.clear(
+			gl.COLOR_BUFFER_BIT |
+			gl.DEPTH_BUFFER_BIT |
+			gl.STENCIL_BUFFER_BIT
+		);
 	}
 
 	protected frustumCulling(renderer: Tea.Renderer, planes: Array<Tea.Plane>): boolean {

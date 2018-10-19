@@ -11,7 +11,9 @@ export class ShadowMapCamera extends Camera {
 		this.aspect = 1.0;
 		this.orthographic = true;
 		//this.orthographicSize = 14;
-		var renderTexture = new Tea.RenderTexture(app);
+		var renderTexture = new Tea.RenderTexture(
+			app//, 2048, 2048
+		);
 		this.targetTexture = renderTexture;
 
 		var shader = new Tea.Shader(app);

@@ -46,6 +46,11 @@ export class RenderTexture extends Texture {
 	}
 
 	bindFramebuffer(): void {
+		var status = this.app.status;
+		if (status.frameBuffer === this.frameBuffer) {
+			return;
+		}
+		status.frameBuffer = this.frameBuffer;
 		var gl = this.gl;
 		gl.bindFramebuffer(
 			gl.FRAMEBUFFER,
@@ -54,6 +59,8 @@ export class RenderTexture extends Texture {
 	}
 
 	unbindFramebuffer(): void {
+		var status = this.app.status;
+		status.frameBuffer = null;
 		var gl = this.gl;
 		gl.bindFramebuffer(
 			gl.FRAMEBUFFER,
