@@ -459,40 +459,50 @@ export class Renderer extends Component {
 			if (light.object3d.isActiveInHierarchy === false) {
 				continue;
 			}
-			lightCount++;
-			if (lightCount > Renderer.MaxLightCount) {
-				lightCount--;
+			if (lightCount >= Renderer.MaxLightCount) {
 				break;
 			}
-			location = shader.propertyToID("lights[" + i + "].color");
+			var index = lightCount;
+			location = shader.propertyToID("lights[" + index + "].color");
 			if (location != null) {
-				var color = light.color.mul(light.intensity);
-				gl.uniform4fv(location, color);
+				var color = light.color;
+				var intensity = light.intensity;
+				gl.uniform4f(
+					location,
+					color[0] * intensity,
+					color[1] * intensity,
+					color[2] * intensity,
+					color[3]
+				);
 			}
-			location = shader.propertyToID("lights[" + i + "].position");
+			location = shader.propertyToID("lights[" + index + "].position");
 			if (location != null) {
 				var p = light.object3d.position;
-				var vec4 = this._tmpVec4;
-				vec4.set(p[0], p[1], p[2], 0.0);
-				gl.uniform4fv(location, vec4);
+				gl.uniform4f(
+					location, p[0], p[1], p[2], 0.0
+				);
 			}
-			location = shader.propertyToID("lights[" + i + "].direction");
+			location = shader.propertyToID("lights[" + index + "].direction");
 			if (location != null) {
 				d.set(0.0, 0.0, -1.0);
 				d.applyQuaternion(light.object3d.rotation);
 				d.normalize$();
-				var vec4 = this._tmpVec4;
-				vec4.set(d[0], d[1], d[2], light.type);
-				gl.uniform4fv(location, vec4);
+				gl.uniform4f(
+					location, d[0], d[1], d[2], light.type
+				);
 			}
-			location = shader.propertyToID("lights[" + i + "].range");
+			location = shader.propertyToID("lights[" + index + "].range");
 			if (location != null) {
 				gl.uniform1f(location, light.range);
 			}
-			location = shader.propertyToID("lights[" + i + "].spotAngle");
+			location = shader.propertyToID("lights[" + index + "].spotAngle");
 			if (location != null) {
-				gl.uniform1f(location, Tea.radians(light.spotAngle));
+				gl.uniform1f(
+					location,
+					light.spotAngle * Math.PI / 180.0
+				);
 			}
+			lightCount++;
 		}
 		location = shader.propertyToID("lightCount");
 		if (location != null) {

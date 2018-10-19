@@ -487,6 +487,9 @@ export class Object3D {
 		component: {new (app: Tea.App): T},
 		includeInactive: boolean = false): Array<T>
 	{
+		if (this.isActive === false) {
+			return [];
+		}
 		var array = [];
 		var length = this.children.length;
 		for (var i = 0; i < length; i++) {
