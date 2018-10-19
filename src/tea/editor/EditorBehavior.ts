@@ -461,7 +461,13 @@ export class EditorBehavior {
 				object3d = app.createParticleSystem();
 				break;
 			case "Light/Directional Light":
-				object3d = app.createLight();
+				object3d = app.createDirectionalLight();
+				break;
+			case "Light/Point Light":
+				object3d = app.createPointLight();
+				break;
+			case "Light/Spot Light":
+				object3d = app.createSpotLight();
 				break;
 			case "Camera":
 				object3d = app.createCamera();

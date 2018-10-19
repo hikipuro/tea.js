@@ -62,6 +62,14 @@ export class EditorMenu {
 					{
 						id: "Light/Directional Light",
 						label: "Directional Light"
+					},
+					{
+						id: "Light/Point Light",
+						label: "Point Light"
+					},
+					{
+						id: "Light/Spot Light",
+						label: "Spot Light"
 					}
 				]
 			},

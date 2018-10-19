@@ -187,8 +187,10 @@ class SceneComponents {
 
 	sortCameras(): void {
 		this.cameras = this.cameras.sort((a, b) => {
-			var at = a.targetTexture ? 1 : 0;
-			var bt = b.targetTexture ? 1 : 0;
+			var at = a.targetTexture ? 1000 : 0;
+			var bt = b.targetTexture ? 1000 : 0;
+			at -= a.depth;
+			bt -= b.depth;
 			return bt - at;
 		});
 	}
@@ -524,10 +526,7 @@ export class Scene {
 	}
 
 	protected updateObject3D(object3d: Tea.Object3D): void {
-		if (object3d == null || object3d.isActive === false) {
-			return;
-		}
-		if (object3d.id == null) {
+		if (object3d == null || object3d.id == null) {
 			return;
 		}
 		object3d.update();

@@ -157,7 +157,7 @@ export class Main {
 		);
 		scene.postProcessingRenderer.material.shader = shader;
 
-		var light = this.app.createLight();
+		var light = this.app.createDirectionalLight();
 		//light.getComponent(Tea.Light).color.set(1.0,0,0,1);
 		//light.getComponent(Tea.Light).type = Tea.LightType.Point;
 		//light.getComponent(Tea.Light).intensity = 0.5;
@@ -168,7 +168,7 @@ export class Main {
 		//light.addComponent(Rotate);
 		scene.addChild(light);
 
-		var light2 = this.app.createLight();
+		var light2 = this.app.createDirectionalLight();
 		light2.getComponent(Tea.Light).type = Tea.LightType.Point;
 		light2.getComponent(Tea.Light).color.set(1, 0, 0, 1);
 		//light2.getComponent(Tea.Light).intensity = 10;

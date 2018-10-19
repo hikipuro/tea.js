@@ -128,10 +128,12 @@ export class ParticleSystem extends Component {
 
 	update(): void {
 		if (this.isPlaying === false) {
+			this.start();
 			return;
 		}
 		if (this._maxParticles !== this.main.maxParticles) {
 			this._maxParticles = this.main.maxParticles;
+			this.particles.splice(this._maxParticles, this.particles.length);
 			this.createDataBuffer();
 		}
 		var particles = this.particles;
@@ -234,6 +236,7 @@ export class ParticleSystem extends Component {
 		var count = particles.length;
 		var elements = this._dataElements;
 		var data = this._data;
+		count = Math.min(count, this.main.maxParticles);
 		//var data = new Float32Array(count * elements);
 		for (var i = 0; i < count; i++) {
 			var particle = particles[i];

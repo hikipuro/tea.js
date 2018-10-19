@@ -64,9 +64,9 @@ export class ColorPicker extends Vue {
 	a: number;
 
 	protected updated(): void {
-		console.log("updated", this.value);
+		//console.log("updated", this.value);
 		var color = Tea.Color.fromCssColor(this.value);
-		console.log("updated", color.toString());
+		//console.log("updated", color.toString());
 		this.r = Math.floor(color.r * 255);
 		this.g = Math.floor(color.g * 255);
 		this.b = Math.floor(color.b * 255);

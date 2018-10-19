@@ -70,6 +70,12 @@ export class ClippingPlanes extends Vue {
 				ref="rect"
 				:value="rect"
 				@update="onUpdateRect">Viewport Rect</Rectangle>
+			<InputRange
+				ref="depth"
+				:min="-100"
+				:max="100"
+				:value="depth"
+				@update="onUpdateDepth">Depth</InputRange>
 		</div>
 	`,
 	data: () => {
@@ -83,7 +89,8 @@ export class ClippingPlanes extends Vue {
 			fieldOfView: 0,
 			near: 0,
 			far: 0,
-			rect: [0, 0, 0, 0]
+			rect: [0, 0, 0, 0],
+			depth: 0
 		}
 	},
 	watch: {
@@ -108,6 +115,7 @@ export class Camera extends Vue {
 	near: number;
 	far: number;
 	rect: Array<number>;
+	depth: number;
 
 	protected mounted(): void {
 		var component = this._component;
@@ -127,6 +135,7 @@ export class Camera extends Vue {
 		this.near = component.nearClipPlane;
 		this.far = component.farClipPlane;
 		this.rect = component.rect.clone();
+		this.depth = component.depth;
 	}
 
 	protected onUpdateClearFlags(value: string): void {
@@ -186,6 +195,13 @@ export class Camera extends Vue {
 			this._component.rect.set(
 				value[0], value[1], value[2], value[3]
 			);
+		}
+	}
+
+	protected onUpdateDepth(value: number): void {
+		this.depth = value;
+		if (this._component) {
+			this._component.depth = value;
 		}
 	}
 }

@@ -55,6 +55,7 @@ class Prev {
 export class Camera extends Component {
 	static editorView = Tea.Editor.Camera;
 	protected static _skyboxCamera: Camera;
+	depth: number;
 	clearFlags: Tea.CameraClearFlags;
 	fieldOfView: number;
 	nearClipPlane: number;
@@ -94,6 +95,7 @@ export class Camera extends Component {
 			Camera.currentBGColor = Tea.Color.black.clone();
 		}
 		this.gl = app.gl;
+		this.depth = 0;
 		this.clearFlags = Tea.CameraClearFlags.SolidColor;
 		this.fieldOfView = 60.0;
 		this.nearClipPlane = 0.3;
@@ -154,6 +156,7 @@ export class Camera extends Component {
 	}
 
 	destroy(): void {
+		this.depth = undefined;
 		this.clearFlags = undefined;
 		this.fieldOfView = undefined;
 		this.nearClipPlane = undefined;

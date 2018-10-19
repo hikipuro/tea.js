@@ -198,12 +198,31 @@ export class App {
 		return scene;
 	}
 
-	createLight(): Tea.Object3D {
+	createDirectionalLight(): Tea.Object3D {
 		var object3d = new Tea.Object3D(this);
-		object3d.name = "Light";
+		object3d.name = "Directional Light";
 		object3d.localPosition.set(0, 10, 0);
 		object3d.localRotation = Tea.Quaternion.euler(50, -30, 0);
 		object3d.addComponent(Tea.Light);
+		return object3d;
+	}
+
+	createPointLight(): Tea.Object3D {
+		var object3d = new Tea.Object3D(this);
+		object3d.name = "Point Light";
+		object3d.localPosition.set(0, 10, 0);
+		var light = object3d.addComponent(Tea.Light);
+		light.type = Tea.LightType.Point;
+		return object3d;
+	}
+
+	createSpotLight(): Tea.Object3D {
+		var object3d = new Tea.Object3D(this);
+		object3d.name = "Spot Light";
+		object3d.localPosition.set(0, 10, 0);
+		object3d.localRotation = Tea.Quaternion.euler(50, -30, 0);
+		var light = object3d.addComponent(Tea.Light);
+		light.type = Tea.LightType.Spot;
 		return object3d;
 	}
 

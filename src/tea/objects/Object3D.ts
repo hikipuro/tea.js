@@ -632,6 +632,12 @@ export class Object3D {
 	}
 
 	update(): void {
+		if (this.isActiveInHierarchy === false) {
+			if (this._toDestroy) {
+				this._destroy();
+			}
+			return;
+		}
 		this._m.update(this);
 		var components = this._components;
 		var length = components.length;

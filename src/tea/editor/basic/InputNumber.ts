@@ -33,18 +33,29 @@ declare global {
 		</div>
 	`,
 	props: {
-		value: Number
+		value: Number,
+		step: {
+			type: Number,
+			default: 0.03
+		},
+		min: {
+			type: Number,
+			default: Number.NEGATIVE_INFINITY
+		},
+		enablePointerLock: {
+			type: Boolean,
+			default: true
+		}
 	},
 	data: () => {
 		return {
-			step: 0.03,
-			enablePointerLock: true
 		}
 	}
 })
 export class InputNumber extends Vue {
 	value: number;
 	step: number;
+	min: number;
 	enablePointerLock: boolean;
 	protected _prev: number;
 	protected _mouseDownValue: number;
@@ -61,6 +72,7 @@ export class InputNumber extends Vue {
 		if (isNaN(value)) {
 			return;
 		}
+		value = Math.max(value, this.min);
 		if (this._prev === value) {
 			return;
 		}
@@ -83,10 +95,14 @@ export class InputNumber extends Vue {
 		var value = this.value;
 		switch (e.key) {
 			case "ArrowUp":
-				this.$emit("update", value + 1);
+				value++;
+				value = Math.max(value, this.min);
+				this.$emit("update", value);
 				return;
 			case "ArrowDown":
-				this.$emit("update", value - 1);
+				value--;
+				value = Math.max(value, this.min);
+				this.$emit("update", value);
 				return;
 		}
 	}
@@ -138,6 +154,7 @@ export class InputNumber extends Vue {
 			var x = this._mouseDownX;
 			var y = this._mouseDownY;
 			var value = this._mouseDownValue + (x + y) * this.step;
+			value = Math.max(value, this.min);
 			this._prev = value;
 			this.$emit("update", value);
 			return;
@@ -145,6 +162,7 @@ export class InputNumber extends Vue {
 		var x = e.screenX - this._mouseDownX;
 		var y = this._mouseDownY - e.screenY;
 		var value = this._mouseDownValue + (x + y) * this.step;
+		value = Math.max(value, this.min);
 		this._prev = value;
 		this.$emit("update", value);
 	}
