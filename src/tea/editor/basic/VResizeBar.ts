@@ -12,10 +12,9 @@ import Component from "vue-class-component";
 		</div>
 	`,
 	props: {
-		isTop: Boolean
-	},
-	data: () => {
-		return {
+		isTop: {
+			type: Boolean,
+			default: false
 		}
 	}
 })

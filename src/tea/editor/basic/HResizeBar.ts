@@ -12,10 +12,9 @@ import Component from "vue-class-component";
 		</div>
 	`,
 	props: {
-		isLeft: Boolean
-	},
-	data: () => {
-		return {
+		isLeft: {
+			type: Boolean,
+			default: false
 		}
 	}
 })

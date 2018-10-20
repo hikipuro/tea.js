@@ -19,10 +19,9 @@ import Component from "vue-class-component";
 		</div>
 	`,
 	props: {
-		value: String
-	},
-	data: () => {
-		return {
+		value: {
+			type: String,
+			default: ""
 		}
 	}
 })

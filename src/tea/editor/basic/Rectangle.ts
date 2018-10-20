@@ -40,7 +40,10 @@ import Component from "vue-class-component";
 		</div>
 	`,
 	props: {
-		value: Array,
+		value: {
+			type: Array,
+			default: [0, 0, 0, 0]
+		},
 		step: {
 			type: Number,
 			default: 0.001

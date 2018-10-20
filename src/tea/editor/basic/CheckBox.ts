@@ -18,7 +18,10 @@ import Component from "vue-class-component";
 		</div>
 	`,
 	props: {
-		value: Boolean
+		value: {
+			type: Boolean,
+			default: false
+		}
 	}
 })
 export class CheckBox extends Vue {

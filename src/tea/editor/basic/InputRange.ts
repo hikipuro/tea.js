@@ -4,8 +4,7 @@ import Component from "vue-class-component";
 @Component({
 	template: `
 		<div class="InputRange">
-			<div
-				class="title">
+			<div class="title">
 				<slot></slot>
 			</div>
 			<div
@@ -29,12 +28,17 @@ import Component from "vue-class-component";
 		</div>
 	`,
 	props: {
-		min: Number,
-		max: Number,
-		value: Number
-	},
-	data: () => {
-		return {
+		min: {
+			type: Number,
+			default: -100
+		},
+		max: {
+			type: Number,
+			default: 100
+		},
+		value: {
+			type: Number,
+			default: 0
 		}
 	}
 })

@@ -3,9 +3,10 @@ import Component from "vue-class-component";
 
 @Component({
 	template: "<span @click='onClick'>{{ text }}</span>",
-	data: () => {
-		return {
-			text: "Label"
+	props: {
+		text: {
+			type: String,
+			default: ""
 		}
 	}
 })

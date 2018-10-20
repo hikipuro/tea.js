@@ -28,12 +28,33 @@ export class EditorBehavior {
 
 	init(): void {
 		this.editor.$nextTick(() => {
+			this.initEvents();
 			this.initScreenView();
 			this.initHierarchyView();
 			this.initInspectorView();
 			this.initProjectView();
 			this.initContextMenu();
 			this.updateHierarchyView(true);
+		});
+	}
+
+	initEvents(): void {
+		document.addEventListener("keydown", (e: KeyboardEvent) => {
+			var ctrlKey = e.metaKey || e.ctrlKey;
+			var shiftKey = e.shiftKey;
+			if (ctrlKey) {
+				var key = e.key.toLowerCase();
+				switch (key) {
+					case "z":
+						if (shiftKey) {
+							console.log("redo");
+							break;
+						}
+						console.log("undo");
+						break;
+
+				}
+			}
 		});
 	}
 

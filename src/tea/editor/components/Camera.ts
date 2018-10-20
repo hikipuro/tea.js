@@ -38,6 +38,7 @@ export class ClippingPlanes extends Vue {
 		<div class="Camera">
 			<SelectEnum
 				ref="clearFlags"
+				:keys="clearFlagsKeys"
 				:value="clearFlags"
 				@update="onUpdateClearFlags">Clear Flags</SelectEnum>
 			<ColorPicker
@@ -82,6 +83,7 @@ export class ClippingPlanes extends Vue {
 		return {
 			name: "Camera",
 			enabled: false,
+			clearFlagsKeys: [],
 			clearFlags: "",
 			background: "",
 			orthographic: false,
@@ -107,6 +109,7 @@ export class Camera extends Vue {
 	_component: Tea.Camera;
 	name: string;
 	enabled: boolean;
+	clearFlagsKeys: Array<string>;
 	clearFlags: string;
 	background: string;
 	orthographic: boolean;
@@ -123,11 +126,8 @@ export class Camera extends Vue {
 			return;
 		}
 		this.enabled = component.enabled;
-		var clearFlags = this.$refs.clearFlags as Vue;
-		clearFlags.$data.keys = Tea.CameraClearFlags.getKeys();
-		this.$nextTick(() => {
-			this.clearFlags = Tea.CameraClearFlags[component.clearFlags];
-		});
+		this.clearFlagsKeys = Tea.CameraClearFlags.getKeys();
+		this.clearFlags = Tea.CameraClearFlags[component.clearFlags];
 		this.background = component.backgroundColor.toCssColor();
 		this.orthographic = component.orthographic;
 		this.size = component.orthographicSize;

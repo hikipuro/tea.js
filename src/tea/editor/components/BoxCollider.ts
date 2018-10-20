@@ -7,11 +7,17 @@ import * as Tea from "../../Tea";
 		<div class="BoxCollider">
 			<Vector3
 				ref="center"
+				:x="center[0]"
+				:y="center[1]"
+				:z="center[2]"
 				@update="onUpdateCenter">
 				Center
 			</Vector3>
 			<Vector3
 				ref="size"
+				:x="size[0]"
+				:y="size[1]"
+				:z="size[2]"
 				@update="onUpdateSize">
 				Size
 			</Vector3>
@@ -20,7 +26,9 @@ import * as Tea from "../../Tea";
 	data: () => {
 		return {
 			name: "BoxCollider",
-			enabled: false
+			enabled: false,
+			center: [0, 0, 0],
+			size: [0, 0, 0]
 		}
 	},
 	watch: {
@@ -34,27 +42,29 @@ export class BoxCollider extends Vue {
 	_component: Tea.BoxCollider;
 	name: string;
 	enabled: boolean;
+	center: Array<number>;
+	size: Array<number>;
 
 	setCenter(value: Tea.Vector3): void {
-		var center = this.$refs.center as Tea.Editor.Vector3;
 		var x = value[0], y = value[1], z = value[2];
 		x = Math.abs(x) < Tea.Mathf.Epsilon ? 0 : x;
 		y = Math.abs(y) < Tea.Mathf.Epsilon ? 0 : y;
 		z = Math.abs(z) < Tea.Mathf.Epsilon ? 0 : z;
-		center.x = x;
-		center.y = y;
-		center.z = z;
+		var center = this.center;
+		this.$set(center, 0, x);
+		this.$set(center, 1, y);
+		this.$set(center, 2, z);
 	}
 
 	setSize(value: Tea.Vector3): void {
-		var size = this.$refs.size as Tea.Editor.Vector3;
 		var x = value[0], y = value[1], z = value[2];
 		x = Math.abs(x) < Tea.Mathf.Epsilon ? 0 : x;
 		y = Math.abs(y) < Tea.Mathf.Epsilon ? 0 : y;
 		z = Math.abs(z) < Tea.Mathf.Epsilon ? 0 : z;
-		size.x = x;
-		size.y = y;
-		size.z = z;
+		var size = this.size;
+		this.$set(size, 0, x);
+		this.$set(size, 1, y);
+		this.$set(size, 2, z);
 	}
 
 	protected mounted(): void {
@@ -68,12 +78,20 @@ export class BoxCollider extends Vue {
 	}
 
 	protected onUpdateCenter(x: number, y: number, z: number): void {
+		var center = this.center;
+		this.$set(center, 0, x);
+		this.$set(center, 1, y);
+		this.$set(center, 2, z);
 		if (this._component != null) {
 			this._component.center.set(x, y, z);
 		}
 	}
 
 	protected onUpdateSize(x: number, y: number, z: number): void {
+		var size = this.size;
+		this.$set(size, 0, x);
+		this.$set(size, 1, y);
+		this.$set(size, 2, z);
 		if (this._component != null) {
 			this._component.size.set(x, y, z);
 		}

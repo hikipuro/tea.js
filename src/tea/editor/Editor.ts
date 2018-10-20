@@ -81,6 +81,7 @@ Vue.component("TextMesh", TextMesh);
 	template: `
 		<div
 			id="editor"
+			ref="container"
 			@click.capture="onClick">
 			<HLayout
 				:style="{

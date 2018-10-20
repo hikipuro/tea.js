@@ -30,19 +30,25 @@ export class AddComponent extends Vue {
 				@update="onUpdateTitle"></ObjectTitle>
 			<Vector3
 				ref="position"
-				@update="onUpdatePosition">
-				Position
-			</Vector3>
+				:x="position[0]"
+				:y="position[1]"
+				:z="position[2]"
+				@update="onUpdatePosition"
+				@change="onChangePosition">Position</Vector3>
 			<Vector3
 				ref="rotation"
-				@update="onUpdateRotation">
-				Rotation
-			</Vector3>
+				:x="rotation[0]"
+				:y="rotation[1]"
+				:z="rotation[2]"
+				@update="onUpdateRotation"
+				@change="onChangeRotation">Rotation</Vector3>
 			<Vector3
 				ref="scale"
-				@update="onUpdateScale">
-				Scale
-			</Vector3>
+				:x="scale[0]"
+				:y="scale[1]"
+				:z="scale[2]"
+				@update="onUpdateScale"
+				@change="onChangeScale">Scale</Vector3>
 			<ComponentPanel
 				ref="components"
 				v-for="(item, index) in components"
@@ -59,6 +65,9 @@ export class AddComponent extends Vue {
 		isVisible: false,
 		name: "",
 		isActive: false,
+		position: [0, 0, 0],
+		rotation: [0, 0, 0],
+		scale: [0, 0, 0],
 		components: []
 	}},
 	components: {
@@ -71,6 +80,9 @@ export class Inspector extends Vue {
 	isVisible: boolean;
 	name: string;
 	isActive: boolean;
+	position: Array<number>;
+	rotation: Array<number>;
+	scale: Array<number>;
 	components: Array<Vue>;
 	_configComponent: Tea.Component;
 
@@ -108,18 +120,17 @@ export class Inspector extends Vue {
 	}
 
 	setPosition(value: Tea.Vector3): void {
-		var position = this.$refs.position as Tea.Editor.Vector3;
 		var x = value[0], y = value[1], z = value[2];
 		x = Math.abs(x) < Tea.Mathf.Epsilon ? 0 : x;
 		y = Math.abs(y) < Tea.Mathf.Epsilon ? 0 : y;
 		z = Math.abs(z) < Tea.Mathf.Epsilon ? 0 : z;
-		position.x = x;
-		position.y = y;
-		position.z = z;
+		var position = this.position;
+		this.$set(position, 0, x);
+		this.$set(position, 1, y);
+		this.$set(position, 2, z);
 	}
 
 	setRotation(value: Tea.Vector3): void {
-		var rotation = this.$refs.rotation as Tea.Editor.Vector3;
 		var x = value[0], y = value[1], z = value[2];
 		x = Math.abs(x) < Tea.Mathf.Epsilon ? 0 : x;
 		y = Math.abs(y) < Tea.Mathf.Epsilon ? 0 : y;
@@ -129,20 +140,21 @@ export class Inspector extends Vue {
 			y = 0;
 			z = 0;
 		}
-		rotation.x = x;
-		rotation.y = y;
-		rotation.z = z;
+		var rotation = this.rotation;
+		this.$set(rotation, 0, x);
+		this.$set(rotation, 1, y);
+		this.$set(rotation, 2, z);
 	}
 
 	setScale(value: Tea.Vector3): void {
-		var scale = this.$refs.scale as Tea.Editor.Vector3;
 		var x = value[0], y = value[1], z = value[2];
 		x = Math.abs(x) < Tea.Mathf.Epsilon ? 0 : x;
 		y = Math.abs(y) < Tea.Mathf.Epsilon ? 0 : y;
 		z = Math.abs(z) < Tea.Mathf.Epsilon ? 0 : z;
-		scale.x = x;
-		scale.y = y;
-		scale.z = z;
+		var scale = this.scale;
+		this.$set(scale, 0, x);
+		this.$set(scale, 1, y);
+		this.$set(scale, 2, z);
 	}
 
 	show(): void {
@@ -183,16 +195,20 @@ export class Inspector extends Vue {
 	}
 
 	protected onUpdatePosition(x: number, y: number, z: number): void {
-		//var value = new Tea.Vector3(x, y, z)
-		//this.$emit("update", "position", value);
+		var position = this.position;
+		this.$set(position, 0, x);
+		this.$set(position, 1, y);
+		this.$set(position, 2, z);
 		if (this._object3d != null) {
 			this._object3d.localPosition.set(x, y, z);
 		}
 	}
 
 	protected onUpdateRotation(x: number, y: number, z: number): void {
-		//var value = new Tea.Vector3(x, y, z)
-		//this.$emit("update", "rotation", value);
+		var rotation = this.rotation;
+		this.$set(rotation, 0, x);
+		this.$set(rotation, 1, y);
+		this.$set(rotation, 2, z);
 		if (this._object3d != null) {
 			this._object3d.localRotation.setEuler(x, y, z);
 		}
@@ -200,11 +216,25 @@ export class Inspector extends Vue {
 	}
 
 	protected onUpdateScale(x: number, y: number, z: number): void {
-		//var value = new Tea.Vector3(x, y, z)
-		//this.$emit("update", "scale", value);
+		var scale = this.scale;
+		this.$set(scale, 0, x);
+		this.$set(scale, 1, y);
+		this.$set(scale, 2, z);
 		if (this._object3d != null) {
 			this._object3d.localScale.set(x, y, z);
 		}
+	}
+
+	protected onChangePosition(x: number, y: number, z: number): void {
+		console.log("onChangePosition", x, y, z);
+	}
+
+	protected onChangeRotation(x: number, y: number, z: number): void {
+		console.log("onChangeRotation", x, y, z);
+	}
+
+	protected onChangeScale(x: number, y: number, z: number): void {
+		console.log("onChangeScale", x, y, z);
 	}
 
 	protected onConfig(component: Tea.Component): void {

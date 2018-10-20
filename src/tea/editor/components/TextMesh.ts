@@ -21,10 +21,12 @@ import * as Tea from "../../Tea";
 				@update="onUpdateLineSpacing">Line Spacing</InputNumber>
 			<SelectEnum
 				ref="anchor"
+				:keys="anchorKeys"
 				:value="anchor"
 				@update="onUpdateAnchor">Anchor</SelectEnum>
 			<SelectEnum
 				ref="alignment"
+				:keys="alignmentKeys"
 				:value="alignment"
 				@update="onUpdateAlignment">Alignment</SelectEnum>
 			<InputNumber
@@ -34,6 +36,7 @@ import * as Tea from "../../Tea";
 				@update="onUpdateFontSize">Font Size</InputNumber>
 			<SelectEnum
 				ref="fontStyle"
+				:keys="fontStyleKeys"
 				:value="fontStyle"
 				@update="onUpdateFontStyle">Font Style</SelectEnum>
 			<InputText
@@ -53,9 +56,12 @@ import * as Tea from "../../Tea";
 			text: "",
 			characterSize: 0,
 			lineSpacing: 0,
+			anchorKeys: [],
 			anchor: "",
+			alignmentKeys: [],
 			alignment: "",
 			fontSize: 0,
+			fontStyleKeys: [],
 			fontStyle: "",
 			font: "",
 			color: "",
@@ -75,9 +81,12 @@ export class TextMesh extends Vue {
 	text: string;
 	characterSize: number;
 	lineSpacing: number;
+	anchorKeys: Array<string>;
 	anchor: string;
+	alignmentKeys: Array<string>;
 	alignment: string;
 	fontSize: number;
+	fontStyleKeys: Array<string>;
 	fontStyle: string;
 	font: string;
 	color: string;
@@ -91,20 +100,15 @@ export class TextMesh extends Vue {
 		this.text = component.text;
 		this.characterSize = component.characterSize;
 		this.lineSpacing = component.lineSpacing;
-		var anchor = this.$refs.anchor as Vue;
-		anchor.$data.keys = Tea.TextAnchor.getKeys();
-		var alignment = this.$refs.alignment as Vue;
-		alignment.$data.keys = Tea.TextAlignment.getKeys();
+		this.anchorKeys = Tea.TextAnchor.getKeys();
+		this.anchor = Tea.TextAnchor[component.anchor];
+		this.alignmentKeys = Tea.TextAlignment.getKeys();
+		this.alignment = Tea.TextAlignment[component.alignment];
 		this.fontSize = component.fontSize;
-		var fontStyle = this.$refs.fontStyle as Vue;
-		fontStyle.$data.keys = Tea.FontStyle.getKeys();
+		this.fontStyleKeys = Tea.FontStyle.getKeys();
+		this.fontStyle = Tea.FontStyle[component.fontStyle];
 		this.font = component.font;
 		this.color = component.color.toCssColor();
-		this.$nextTick(() => {
-			this.anchor = Tea.TextAnchor[component.anchor];
-			this.alignment = Tea.TextAlignment[component.alignment];
-			this.fontStyle = Tea.FontStyle[component.fontStyle];
-		});
 	}
 
 	protected onUpdateText(value: string): void {

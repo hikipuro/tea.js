@@ -46,10 +46,6 @@ declare global {
 			type: Boolean,
 			default: true
 		}
-	},
-	data: () => {
-		return {
-		}
 	}
 })
 export class InputNumber extends Vue {
@@ -89,6 +85,7 @@ export class InputNumber extends Vue {
 			el.value = String(value);
 		}
 		this.update();
+		this.$emit("change", this._prev);
 	}
 
 	protected onKeyDown(e: KeyboardEvent): void {
@@ -168,6 +165,7 @@ export class InputNumber extends Vue {
 	}
 
 	protected onMouseUpTitle(e: MouseEvent): void {
+		this.$emit("change", this.value);
 		if (this.enablePointerLock) {
 			document.removeEventListener("mousemove", this.onMouseMoveTitle);
 			window.removeEventListener("mouseup", this.onMouseUpTitle);

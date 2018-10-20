@@ -18,23 +18,29 @@ import Component from "vue-class-component";
 		</div>
 	`,
 	props: {
-		value: String
-	},
-	data: () => {
-		return {
-			keys: []
+		keys: {
+			type: Array,
+			default: []
+		},
+		value: {
+			type: String,
+			default: ""
 		}
 	},
 	watch: {
 		value: function (newValue) {
-			var el = this.$refs.select as HTMLSelectElement;
-			var index = this.$data.keys.indexOf(newValue);
-			el.selectedIndex = index;
+			var self = this as SelectEnum;
+			self.$nextTick(() => {
+				var el = this.$refs.select as HTMLSelectElement;
+				var index = self.keys.indexOf(newValue);
+				el.selectedIndex = index;
+			});
 		}
 	}
 })
 export class SelectEnum extends Vue {
 	keys: Array<string>;
+	value: string;
 	
 	protected onChange(e: Event): void {
 		var el = e.target as HTMLSelectElement;

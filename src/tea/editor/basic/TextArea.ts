@@ -21,10 +21,6 @@ import Component from "vue-class-component";
 			type: String,
 			default: ""
 		}
-	},
-	data: () => {
-		return {
-		}
 	}
 })
 export class TextArea extends Vue {

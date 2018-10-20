@@ -21,11 +21,13 @@ import Component from "vue-class-component";
 		</div>
 	`,
 	props: {
-		isActive: Boolean,
-		name: String
-	},
-	data: () => {
-		return {
+		isActive: {
+			type: Boolean,
+			default: false
+		},
+		name: {
+			type: String,
+			default: ""
 		}
 	}
 })

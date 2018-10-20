@@ -7,6 +7,7 @@ import * as Tea from "../../Tea";
 		<div class="Light">
 			<SelectEnum
 				ref="type"
+				:keys="typeKeys"
 				:value="type"
 				@update="onUpdateType">Type</SelectEnum>
 			<ColorPicker
@@ -24,6 +25,7 @@ import * as Tea from "../../Tea";
 		return {
 			name: "Light",
 			enabled: false,
+			typeKeys: [],
 			type: "",
 			color: "",
 			intensity: 0,
@@ -40,6 +42,7 @@ export class Light extends Vue {
 	_component: Tea.Light;
 	name: string;
 	enabled: boolean;
+	typeKeys: Array<string>;
 	type: string;
 	color: string;
 	intensity: number;
@@ -50,11 +53,8 @@ export class Light extends Vue {
 			return;
 		}
 		this.enabled = component.enabled;
-		var type = this.$refs.type as Vue;
-		type.$data.keys = Tea.LightType.getKeys();
-		this.$nextTick(() => {
-			this.type = Tea.LightType[component.type];
-		});
+		this.typeKeys = Tea.LightType.getKeys();
+		this.type = Tea.LightType[component.type];
 		this.color = component.color.toCssColor();
 		this.intensity = component.intensity;
 	}

@@ -8,18 +8,34 @@ import Component from "vue-class-component";
 				<slot></slot>
 			</div>
 			<div class="value">
-				<InputNumber :value="x" @update="onUpdateX">X</InputNumber>
-				<InputNumber :value="y" @update="onUpdateY">Y</InputNumber>
-				<InputNumber :value="z" @update="onUpdateZ">Z</InputNumber>
+				<InputNumber
+					:value="x"
+					@update="onUpdateX"
+					@change="onChangeX">X</InputNumber>
+				<InputNumber
+					:value="y"
+					@update="onUpdateY"
+					@change="onChangeY">Y</InputNumber>
+				<InputNumber
+					:value="z"
+					@update="onUpdateZ"
+					@change="onChangeZ">Z</InputNumber>
 			</div>
 		</div>
 	`,
-	data: () => {
-		return {
-			x: 0,
-			y: 0,
-			z: 0
-		};
+	props: {
+		x: {
+			type: Number,
+			default: 0
+		},
+		y: {
+			type: Number,
+			default: 0
+		},
+		z: {
+			type: Number,
+			default: 0
+		}
 	}
 })
 export class Vector3 extends Vue {
@@ -28,17 +44,26 @@ export class Vector3 extends Vue {
 	z: number;
 
 	protected onUpdateX(value: number): void {
-		this.x = value;
 		this.$emit("update", value, this.y, this.z);
 	}
 
 	protected onUpdateY(value: number): void {
-		this.y = value;
 		this.$emit("update", this.x, value, this.z);
 	}
 
 	protected onUpdateZ(value: number): void {
-		this.z = value;
 		this.$emit("update", this.x, this.y, value);
+	}
+
+	protected onChangeX(value: number): void {
+		this.$emit("change", value, this.y, this.z);
+	}
+
+	protected onChangeY(value: number): void {
+		this.$emit("change", this.x, value, this.z);
+	}
+
+	protected onChangeZ(value: number): void {
+		this.$emit("change", this.x, this.y, value);
 	}
 }
