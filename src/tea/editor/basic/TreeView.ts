@@ -406,18 +406,24 @@ export class TreeView extends Vue {
 
 	select(item: Item): void {
 		if (item == null) {
+			this.unselect();
 			return;
 		}
-		//this.onSelectItem(item);
+		this.onSelectItem(item);
+		/*
 		this.forEachChild((item: Item) => {
 			item.select(false);
 		});
 		item.select();
 		this.selectedItem = item;
 		this.$emit("select", item);
+		//*/
 	}
 
 	unselect(): void {
+		if (this.selectedItem == null) {
+			return;
+		}
 		this.forEachChild((item: Item) => {
 			item.select(false);
 		});
@@ -426,6 +432,9 @@ export class TreeView extends Vue {
 	}
 
 	selectNext(): void {
+		if (this.$children.length <= 0) {
+			return;
+		}
 		if (this.selectedItem == null) {
 			this.onSelectItem(this.$children[0] as Item);
 			return;
@@ -470,6 +479,9 @@ export class TreeView extends Vue {
 	}
 
 	selectPrev(): void {
+		if (this.$children.length <= 0) {
+			return;
+		}
 		if (this.selectedItem == null) {
 			var length = this.$children.length;
 			var item = this.$children[length - 1] as Item;

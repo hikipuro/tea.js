@@ -1,6 +1,7 @@
 $parent: "#editor";
 @import "Theme.scss";
-@import "Inspector.scss";
+@import "HierarchyView.scss";
+@import "InspectorView.scss";
 
 @import "../basic/css/Button.scss";
 @import "../basic/css/CheckBox.scss";

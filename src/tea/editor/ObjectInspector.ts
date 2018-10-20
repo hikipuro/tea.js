@@ -2,6 +2,7 @@ import Vue from "vue";
 import Component from "vue-class-component";
 import * as Tea from "../Tea";
 import { ComponentPanel } from "./components/ComponentPanel";
+import { UICommands } from "./commands/UICommands";
 
 @Component({
 	template: `
@@ -20,9 +21,7 @@ export class AddComponent extends Vue {
 
 @Component({
 	template: `
-		<div
-			class="Inspector">
-			<template v-if="isVisible">
+		<div class="ObjectInspector">
 			<ObjectTitle
 				ref="title"
 				:isActive="isActive"
@@ -58,26 +57,26 @@ export class AddComponent extends Vue {
 			</ComponentPanel>
 			<AddComponent
 				@click="onClickAddComponent">Add Component</AddComponent>
-			</template>
 		</div>
 	`,
-	data: () => { return {
-		isVisible: false,
-		name: "",
-		isActive: false,
-		position: [0, 0, 0],
-		rotation: [0, 0, 0],
-		scale: [0, 0, 0],
-		components: []
-	}},
+	data: () => {
+		return {
+			name: "",
+			isActive: false,
+			position: [0, 0, 0],
+			rotation: [0, 0, 0],
+			scale: [0, 0, 0],
+			components: []
+		}
+	},
 	components: {
 		AddComponent: AddComponent,
 		ComponentPanel: ComponentPanel
 	}
 })
-export class Inspector extends Vue {
+export class ObjectInspector extends Vue {
+	_commands: UICommands;
 	_object3d: Tea.Object3D;
-	isVisible: boolean;
 	name: string;
 	isActive: boolean;
 	position: Array<number>;
@@ -85,11 +84,6 @@ export class Inspector extends Vue {
 	scale: Array<number>;
 	components: Array<Vue>;
 	_configComponent: Tea.Component;
-
-	get lastComponent(): Vue {
-		var components = this.$refs.components as Vue[];
-		return components[components.length - 1];
-	}
 
 	setObject3D(object3d: Tea.Object3D): void {
 		if (object3d == null) {
@@ -157,14 +151,6 @@ export class Inspector extends Vue {
 		this.$set(scale, 2, z);
 	}
 
-	show(): void {
-		this.isVisible = true;
-	}
-
-	hide(): void {
-		this.isVisible = false;
-	}
-
 	hasFocus(): boolean {
 		return this.$el.querySelector(":focus") != null;
 	}
@@ -185,11 +171,22 @@ export class Inspector extends Vue {
 				break;
 			case "name":
 				var sValue = value as string;
+				this._commands.addInspectorViewCommand("name", {
+					object3d: this._object3d,
+					name: this.name
+				});
+				this._commands.addInspectorViewCommand("name", {
+					object3d: this._object3d,
+					name: sValue
+				});
+				this._commands.runLastCommand();
 				this.name = sValue;
+				/*
 				if (this._object3d != null) {
 					this._object3d.name = sValue;
 				}
 				this.$emit("update", "name", sValue);
+				*/
 				break;
 		}
 	}

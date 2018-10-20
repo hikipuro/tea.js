@@ -2,6 +2,10 @@ import Vue from "vue";
 import Component from "vue-class-component";
 import * as Tea from "../Tea";
 import { EditorBehavior } from "./EditorBehavior";
+import { HierarchyView } from "./HierarchyView";
+import { InspectorView } from "./InspectorView";
+import { ObjectInspector } from "./ObjectInspector";
+
 import { Button } from "./basic/Button";
 import { CheckBox } from "./basic/CheckBox";
 import { ColorPicker } from "./basic/ColorPicker";
@@ -10,7 +14,6 @@ import { HResizeBar } from "./basic/HResizeBar";
 import { InputNumber } from "./basic/InputNumber";
 import { InputRange } from "./basic/InputRange";
 import { InputText } from "./basic/InputText";
-import { Inspector } from "./Inspector";
 import { Label } from "./basic/Label";
 import { ListView } from "./basic/ListView";
 import { NativeContextMenu } from "./basic/NativeContextMenu";
@@ -28,6 +31,9 @@ import { HLayout } from "./containers/HLayout";
 import { VLayout } from "./containers/VLayout";
 import { Window } from "./containers/Window";
 
+//import { Command } from "./commands/Command";
+//import { CommandHistory } from "./commands/CommandHistory";
+
 import { BoxCollider } from "./components/BoxCollider";
 import { Camera } from "./components/Camera";
 import { Light } from "./components/Light";
@@ -40,6 +46,8 @@ import { Script } from "./components/Script";
 import { TextMesh } from "./components/TextMesh";
 
 //*
+Vue.component("ObjectInspector", ObjectInspector);
+
 Vue.component("Button", Button);
 Vue.component("CheckBox", CheckBox);
 Vue.component("ColorPicker", ColorPicker);
@@ -48,7 +56,6 @@ Vue.component("HResizeBar", HResizeBar);
 Vue.component("InputNumber", InputNumber);
 Vue.component("InputRange", InputRange);
 Vue.component("InputText", InputText);
-Vue.component("Inspector", Inspector);
 Vue.component("Label", Label);
 Vue.component("ListView", ListView);
 Vue.component("ObjectTitle", ObjectTitle);
@@ -90,7 +97,7 @@ Vue.component("TextMesh", TextMesh);
 				<VLayout class="LeftLayout">
 					<HLayout class="TopLeftLayout">
 						<Panel ref="left" class="LeftPanel">
-							<TreeView ref="hierarchy" tabindex="0"></TreeView>
+							<HierarchyView ref="hierarchy"></HierarchyView>
 							<HResizeBar ref="hierarchyResize"></HResizeBar>
 						</Panel>
 						<Panel ref="main" class="MainPanel">
@@ -121,7 +128,7 @@ Vue.component("TextMesh", TextMesh);
 					</HLayout>
 				</VLayout>
 				<Panel ref="right" class="RightPanel">
-					<Inspector ref="inspector"></Inspector>
+					<InspectorView ref="inspector"></InspectorView>
 					<HResizeBar ref="inspectorResize" :isLeft="true"></HResizeBar>
 				</Panel>
 			</HLayout>
@@ -132,16 +139,10 @@ Vue.component("TextMesh", TextMesh);
 			<ContextMenu ref="menu"></ContextMenu>
 		</div>
 	`,
-	data: () => { return {
-	}},
-	/*
 	components: {
-		Button: Button,
-		Label: Label,
-		ListView: ListView,
-		Pane: Pane
+		HierarchyView: HierarchyView,
+		InspectorView: InspectorView
 	}
-	//*/
 })
 export class Editor extends Vue {
 	static instance: Editor;
@@ -158,12 +159,12 @@ export class Editor extends Vue {
 	}
 	//*/
 
-	get hierarchyView(): TreeView {
-		return this.$refs.hierarchy as TreeView;
+	get hierarchyView(): HierarchyView {
+		return this.$refs.hierarchy as HierarchyView;
 	}
 
-	get inspectorView(): Inspector {
-		return this.$refs.inspector as Inspector;
+	get inspectorView(): InspectorView {
+		return this.$refs.inspector as InspectorView;
 	}
 
 	get projectView(): TreeView {
@@ -210,8 +211,6 @@ var  _ContextMenu = ContextMenu;
 type _ContextMenu = ContextMenu;
 var  _InputNumber = InputNumber;
 type _InputNumber = InputNumber;
-var  _Inspector = Inspector;
-type _Inspector = Inspector;
 var  _Label = Label;
 type _Label = Label;
 var  _ListView = ListView;
@@ -266,8 +265,6 @@ export module Editor {
 	export type ContextMenuItem = ContextMenu.Item;
 	export var  InputNumber = _InputNumber;
 	export type InputNumber = _InputNumber;
-	export var  Inspector = _Inspector;
-	export type Inspector = _Inspector;
 	export var  Label = _Label;
 	export type Label = _Label;
 	export var  ListView = _ListView;

@@ -1,9 +1,10 @@
 import * as Tea from "../Tea";
 import { NativeContextMenu } from "./basic/NativeContextMenu";
+import { HierarchyView } from "./HierarchyView";
 
 export class EditorMenu {
 	static getHierarchyViewMenu(
-		hierarchyView: Tea.Editor.TreeView,
+		hierarchyView: HierarchyView,
 		handler: (menuItem: Electron.MenuItem, browserWindow: Electron.BrowserWindow, event: Event) => void
 	): NativeContextMenu {
 		var template: Electron.MenuItemConstructorOptions[] = [
@@ -78,7 +79,7 @@ export class EditorMenu {
 				label: "Camera"
 			}
 		];
-		if (hierarchyView.selectedItem != null) {
+		if (hierarchyView.getSelectedItem() != null) {
 			template.unshift(
 				{
 					id: "Delete",

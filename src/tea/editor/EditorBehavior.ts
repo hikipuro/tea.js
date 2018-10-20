@@ -4,11 +4,14 @@ import * as Tea from "../Tea";
 import { Editor } from "./Editor";
 import { EditorMenu } from "./EditorMenu";
 import { SelectAspect } from "./basic/SelectAspect";
+import { UICommands } from "./commands/UICommands";
+import { ObjectInspector } from "./ObjectInspector";
 
 export class EditorBehavior {
 	editor: Editor;
 	scene: Tea.Scene;
 	inspectorViewTimer: Timer;
+	commands: UICommands;
 
 	constructor(editor: Editor) {
 		this.editor = editor;
@@ -19,16 +22,18 @@ export class EditorBehavior {
 
 	get hierarchyViewItem(): Tea.Object3D {
 		var hierarchyView = this.editor.hierarchyView;
-		if (hierarchyView.selectedItem == null) {
+		var item = hierarchyView.getSelectedItem();
+		if (item == null) {
 			return null;
 		}
-		var id = hierarchyView.selectedItem.tag as number;
+		var id = item.tag as number;
 		return this.scene.findChildById(id);
 	}
 
 	init(): void {
 		this.editor.$nextTick(() => {
 			this.initEvents();
+			this.initUICommands();
 			this.initScreenView();
 			this.initHierarchyView();
 			this.initInspectorView();
@@ -39,23 +44,22 @@ export class EditorBehavior {
 	}
 
 	initEvents(): void {
-		document.addEventListener("keydown", (e: KeyboardEvent) => {
-			var ctrlKey = e.metaKey || e.ctrlKey;
-			var shiftKey = e.shiftKey;
-			if (ctrlKey) {
-				var key = e.key.toLowerCase();
-				switch (key) {
-					case "z":
-						if (shiftKey) {
-							console.log("redo");
-							break;
-						}
-						console.log("undo");
-						break;
-
-				}
+		var keyDownHandler = this.onDocumentKeyDown;
+		if (process && process.platform) {
+			if (process.platform === "darwin") {
+				keyDownHandler = this.onDocumentKeyDownMac;
 			}
-		});
+		}
+		document.addEventListener("keydown", keyDownHandler);
+	}
+
+	initUICommands(): void {
+		var hierarchyView = this.editor.hierarchyView;
+		var inspectorView = this.editor.inspectorView;
+		this.commands = new UICommands();
+		this.commands.behavior = this;
+		this.commands.hierarchyView = hierarchyView;
+		this.commands.inspectorView = inspectorView;
 	}
 
 	initScreenView(): void {
@@ -86,83 +90,24 @@ export class EditorBehavior {
 		var hierarchyView = this.editor.hierarchyView;
 		var inspectorView = this.editor.inspectorView;
 		//var contextMenu = this.editor.contextMenu;
-		hierarchyView.openIcon = "⏏️";
-		hierarchyView.closeIcon = "▶️";
-		hierarchyView.draggable = true;
 
-		var dragImages = this.editor.dragImages;
-		var dragSource: Tea.Editor.TreeViewItem = null;
-		var dragEvents = hierarchyView.dragEvents;
-		dragEvents.dragStart = (e: DragEvent, item: Tea.Editor.TreeViewItem) => {
-			//console.log("onDragStart");
-			dragSource = item;
-			e.dataTransfer.effectAllowed = "move";
-			//e.dataTransfer.dropEffect = "move";
-
-			var dragImage = this.createDragImage(item.model.text);
-			while (dragImages.firstChild) {
-				dragImages.removeChild(dragImages.firstChild);
-			}
-			dragImages.appendChild(dragImage);
-			e.dataTransfer.setDragImage(dragImage, 0, 0);
-		};
-		dragEvents.dragOver = (e: DragEvent, item: Tea.Editor.TreeViewItem) => {
+		hierarchyView.$on("menu", (e: MouseEvent) => {
 			e.preventDefault();
-			e.dataTransfer.dropEffect = "move";
-			var el = e.currentTarget as HTMLElement;
-			var text = el.querySelector(".text");
-			var clientHeight = el.clientHeight;
-			var borderSize = el.clientHeight * 0.3;
-			var offsetY = e.offsetY;
-			//console.log(e.offsetY, el.clientHeight);
-			if (offsetY < borderSize) {
-				el.classList.remove("dragEnter");
-				text.classList.remove("dragOverBottom");
-				text.classList.add("dragOverTop");
-			} else if (clientHeight - offsetY < borderSize) {
-				el.classList.remove("dragEnter");
-				text.classList.remove("dragOverTop");
-				text.classList.add("dragOverBottom");
-			} else {
-				el.classList.add("dragEnter");
-				text.classList.remove("dragOverTop");
-				text.classList.remove("dragOverBottom");
-			}
-
-		}
-		dragEvents.dragEnter = (e: DragEvent, item: Tea.Editor.TreeViewItem) => {
-			//console.log("dragEnter", item.model.text);
-			var el = e.currentTarget as HTMLElement;
-			el.classList.add("dragEnter");
-		}
-		dragEvents.dragLeave = (e: DragEvent, item: Tea.Editor.TreeViewItem) => {
-			//console.log("dragLeave", this, e);
-			var el = e.currentTarget as HTMLElement;
-			var text = el.querySelector(".text");
-			el.classList.remove("dragEnter");
-			text.classList.remove("dragOverTop");
-			text.classList.remove("dragOverBottom");
-		}
-		dragEvents.drop = (e: DragEvent, item: Tea.Editor.TreeViewItem) => {
-			var mode = 0;
-			var el = e.currentTarget as HTMLElement;
-			var text = el.querySelector(".text");
-			if (text.classList.contains("dragOverTop")) {
-				mode = 1;
-			} else if (text.classList.contains("dragOverBottom")) {
-				mode = 2;
-			}
-			el.classList.remove("dragEnter");
-			text.classList.remove("dragOverTop");
-			text.classList.remove("dragOverBottom");
-			var idSrc = dragSource.model.tag as number;
-			var idDst = item.model.tag as number;
-			if (idSrc == null || idDst == null) {
+			this.showHierarchyViewMenu();
+		});
+		hierarchyView.$on("select", (item: Tea.Editor.TreeViewItem) => {
+			console.log("hierarchyView.select");
+			if (item == null) {
+				this.commands.addHierarchyViewCommand("select", null);
+				this.commands.runLastCommand();
 				return;
 			}
-			if (idSrc == idDst) {
-				return;
-			}
+			console.log("select", item.tag);
+			this.commands.addHierarchyViewCommand("select", item.tag);
+			this.commands.runLastCommand();
+			this.inspectorViewTimer.start();
+		});
+		hierarchyView.$on("drop", (mode: number, idSrc: number, idDst: number) => {
 			//console.log("drop", idSrc, idDst, item.model.text);
 			var object3dSrc = this.scene.findChildById(idSrc);
 			var object3dDst = this.scene.findChildById(idDst);
@@ -170,6 +115,7 @@ export class EditorBehavior {
 				return;
 			}
 			//console.log(mode);
+			var item: Tea.Editor.TreeViewItem = null;
 			switch (mode) {
 				case 0:
 					object3dSrc.parent = object3dDst;
@@ -204,26 +150,6 @@ export class EditorBehavior {
 					});
 					break;
 			}
-		}
-
-		hierarchyView.$on("menu", (e: MouseEvent) => {
-			e.preventDefault();
-			this.showHierarchyViewMenu();
-		});
-
-		hierarchyView.$on("select", (item: Tea.Editor.TreeViewItem) => {
-			if (item == null) {
-				inspectorView.hide();
-				return;
-			}
-			console.log("select", item.tag);
-			var object3d = this.hierarchyViewItem;
-			if (object3d == null) {
-				return;
-			}
-			inspectorView.setObject3D(object3d);
-			inspectorView.show();
-			this.inspectorViewTimer.start();
 		});
 	}
 
@@ -231,8 +157,9 @@ export class EditorBehavior {
 		var hierarchyView = this.editor.hierarchyView;
 		var inspectorView = this.editor.inspectorView;
 
+		inspectorView._commands = this.commands;
 		inspectorView.$on("update", (key: string, value: any) => {
-			if (hierarchyView.selectedItem == null) {
+			if (hierarchyView.getSelectedItem() == null) {
 				return;
 			}
 			var object3d = this.hierarchyViewItem;
@@ -241,7 +168,7 @@ export class EditorBehavior {
 			}
 			switch (key) {
 				case "name":
-					hierarchyView.selectedItem.model.text = value;
+					//hierarchyView.getSelectedItem().model.text = value;
 					break;
 				case "rotation":
 					this.inspectorViewTimer.snooze(1000);
@@ -260,13 +187,13 @@ export class EditorBehavior {
 			}
 		});
 		inspectorView.$on("config", (component: Tea.Component) => {
-			if (hierarchyView.selectedItem == null) {
+			if (hierarchyView.getSelectedItem() == null) {
 				return;
 			}
 			this.showInspectorViewComponentMenu();
 		});
 		inspectorView.$on("addComponent", () => {
-			if (hierarchyView.selectedItem == null) {
+			if (hierarchyView.getSelectedItem() == null) {
 				return;
 			}
 			this.showInspectorViewAddComponentMenu();
@@ -422,13 +349,44 @@ export class EditorBehavior {
 		hierarchyView.select(item);
 	}
 
-	createDragImage(text: string): HTMLElement {
-		var dragImage = document.createElement("div");
-		var imageText = document.createElement("div");
-		dragImage.classList.add("dragImage");
-		imageText.innerText = text;
-		dragImage.appendChild(imageText);
-		return dragImage;
+	onDocumentKeyDown = (e: KeyboardEvent): void => {
+		var ctrlKey = e.ctrlKey;
+		if (ctrlKey === false) {
+			return;
+		}
+		var shiftKey = e.shiftKey;
+		var key = e.key.toLowerCase();
+		switch (key) {
+			case "z":
+				e.preventDefault();
+				if (shiftKey) {
+					this.commands.redo();
+					break;
+				}
+				this.commands.undo();
+				break;
+
+		}
+	}
+
+	onDocumentKeyDownMac = (e: KeyboardEvent): void => {
+		var ctrlKey = e.metaKey;
+		if (ctrlKey === false) {
+			return;
+		}
+		var shiftKey = e.shiftKey;
+		var key = e.key.toLowerCase();
+		switch (key) {
+			case "z":
+				e.preventDefault();
+				if (shiftKey) {
+					this.commands.redo();
+					break;
+				}
+				this.commands.undo();
+				break;
+
+		}
 	}
 
 	onUpdateAspect(): void {
@@ -496,10 +454,10 @@ export class EditorBehavior {
 			case "Delete":
 				var hierarchyView = this.editor.hierarchyView;
 				var inspectorView = this.editor.inspectorView;
-				if (hierarchyView.selectedItem == null) {
+				if (hierarchyView.getSelectedItem() == null) {
 					return;
 				}
-				var id = hierarchyView.selectedItem.tag as number;
+				var id = hierarchyView.getSelectedItem().tag as number;
 				var object3d = scene.findChildById(id);
 				console.log(object3d);
 				inspectorView.hide();
@@ -517,6 +475,7 @@ export class EditorBehavior {
 	}
 
 	onSelectInspectorViewComponentMenu = (item: Electron.MenuItem): void => {
+		/*
 		var inspectorView = this.editor.inspectorView;
 		var component = inspectorView._configComponent;
 		//console.log(item.id, component);
@@ -531,6 +490,7 @@ export class EditorBehavior {
 				this.selectHierarchyViewItem(object3d);
 				break;
 		}
+		*/
 	}
 
 	onSelectInspectorViewAddComponentMenu = (item: Electron.MenuItem): void => {
@@ -662,7 +622,7 @@ export class EditorBehavior {
 		var hierarchyView = this.editor.hierarchyView;
 		var inspectorView = this.editor.inspectorView;
 
-		if (hierarchyView.selectedItem == null) {
+		if (hierarchyView.getSelectedItem() == null) {
 			this.inspectorViewTimer.stop();
 			return;
 		}
@@ -676,9 +636,11 @@ export class EditorBehavior {
 		var position = object3d.localPosition;
 		var rotation = object3d.localEulerAngles;
 		var scale = object3d.localScale;
+		/*
 		inspectorView.setPosition(position);
 		inspectorView.setRotation(rotation);
 		inspectorView.setScale(scale);
+		*/
 	}
 }
 
