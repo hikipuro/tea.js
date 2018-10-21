@@ -38,6 +38,7 @@ export class ClippingPlanes extends Vue {
 		<div class="Camera">
 			<SelectEnum
 				ref="clearFlags"
+				name="clearFlags"
 				:keys="clearFlagsKeys"
 				:value="clearFlags"
 				@update="onUpdateClearFlags">Clear Flags</SelectEnum>
@@ -64,8 +65,8 @@ export class ClippingPlanes extends Vue {
 				@update="onUpdateFov">Field of View</InputRange>
 			<ClippingPlanes
 				ref="clippingPlanes"
-				:near="near"
-				:far="far"
+				:near="nearClipPlane"
+				:far="farClipPlane"
 				@update="onUpdateClippingPlanes">Clipping Planes</ClippingPlanes>
 			<Rectangle
 				ref="rect"
@@ -89,8 +90,8 @@ export class ClippingPlanes extends Vue {
 			orthographic: false,
 			size: 0,
 			fieldOfView: 0,
-			near: 0,
-			far: 0,
+			nearClipPlane: 0,
+			farClipPlane: 0,
 			rect: [0, 0, 0, 0],
 			depth: 0
 		}
@@ -115,8 +116,8 @@ export class Camera extends Vue {
 	orthographic: boolean;
 	size: number;
 	fieldOfView: number;
-	near: number;
-	far: number;
+	nearClipPlane: number;
+	farClipPlane: number;
 	rect: Array<number>;
 	depth: number;
 
@@ -132,8 +133,8 @@ export class Camera extends Vue {
 		this.orthographic = component.orthographic;
 		this.size = component.orthographicSize;
 		this.fieldOfView = component.fieldOfView;
-		this.near = component.nearClipPlane;
-		this.far = component.farClipPlane;
+		this.nearClipPlane = component.nearClipPlane;
+		this.farClipPlane = component.farClipPlane;
 		this.rect = component.rect.clone();
 		this.depth = component.depth;
 	}
@@ -177,13 +178,13 @@ export class Camera extends Vue {
 	protected onUpdateClippingPlanes(type: string, value: number): void {
 		switch (type) {
 			case "near":
-				this.near = value;
+				this.nearClipPlane = value;
 				if (this._component) {
 					this._component.nearClipPlane = value;
 				}
 				break;
 			case "far":
-				this.far = value;
+				this.farClipPlane = value;
 				this._component.farClipPlane = value;
 				break;
 		}

@@ -6,21 +6,6 @@ import { UICommands } from "./commands/UICommands";
 
 @Component({
 	template: `
-		<div class="AddComponent">
-			<button
-				@click="$emit('click', $event)">
-				<slot></slot>
-			</button>
-		</div>
-	`,
-	props: {
-	}
-})
-export class AddComponent extends Vue {
-}
-
-@Component({
-	template: `
 		<div class="ObjectInspector">
 			<ObjectTitle
 				ref="title"
@@ -53,10 +38,15 @@ export class AddComponent extends Vue {
 				v-for="(item, index) in components"
 				:type="item"
 				:key="index"
-				@config="onConfig">
+				@change="onChangeComponent"
+				@config="onComponentMenu">
 			</ComponentPanel>
-			<AddComponent
-				@click="onClickAddComponent">Add Component</AddComponent>
+			<div class="AddComponent">
+				<button
+					@click="onClickAddComponent">
+					Add Component
+				</button>
+			</div>
 		</div>
 	`,
 	data: () => {
@@ -70,7 +60,6 @@ export class AddComponent extends Vue {
 		}
 	},
 	components: {
-		AddComponent: AddComponent,
 		ComponentPanel: ComponentPanel
 	}
 })
@@ -92,6 +81,9 @@ export class ObjectInspector extends Vue {
 		this._object3d = object3d;
 		this.name = object3d.name;
 		this.isActive = object3d.isActive;
+		this.setPosition(object3d.localPosition);
+		this.setRotation(object3d.localRotation.eulerAngles);
+		this.setScale(object3d.localScale);
 		this.clearComponents();
 		var components = object3d.getComponents(Tea.Component);
 		components.forEach((component: Tea.Component) => {
@@ -171,6 +163,7 @@ export class ObjectInspector extends Vue {
 				break;
 			case "name":
 				var sValue = value as string;
+				/*
 				this._commands.addInspectorViewCommand("name", {
 					object3d: this._object3d,
 					name: this.name
@@ -180,13 +173,12 @@ export class ObjectInspector extends Vue {
 					name: sValue
 				});
 				this._commands.runLastCommand();
+				*/
 				this.name = sValue;
-				/*
 				if (this._object3d != null) {
 					this._object3d.name = sValue;
 				}
 				this.$emit("update", "name", sValue);
-				*/
 				break;
 		}
 	}
@@ -224,25 +216,44 @@ export class ObjectInspector extends Vue {
 
 	protected onChangePosition(x: number, y: number, z: number): void {
 		console.log("onChangePosition", x, y, z);
+		this.$emit("change", "position", {
+			x: x,
+			y: y,
+			z: z
+		});
 	}
 
 	protected onChangeRotation(x: number, y: number, z: number): void {
 		console.log("onChangeRotation", x, y, z);
+		this.$emit("change", "rotation", {
+			x: x,
+			y: y,
+			z: z
+		});
 	}
 
 	protected onChangeScale(x: number, y: number, z: number): void {
 		console.log("onChangeScale", x, y, z);
+		this.$emit("change", "scale", {
+			x: x,
+			y: y,
+			z: z
+		});
 	}
 
-	protected onConfig(component: Tea.Component): void {
+	protected onChangeComponent(type: any, property: string, value: any): void {
+		this.$emit("change", type, property, value);
+	}
+
+	protected onComponentMenu(component: Tea.Component): void {
 		if (component == null) {
 			return;
 		}
 		this._configComponent = component;
-		this.$emit("config", component);
+		this.$emit("menu", "component", component);
 	}
 
 	protected onClickAddComponent(): void {
-		this.$emit("addComponent");
+		this.$emit("menu", "addComponent");
 	}
 }

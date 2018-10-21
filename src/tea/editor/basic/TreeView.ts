@@ -409,15 +409,12 @@ export class TreeView extends Vue {
 			this.unselect();
 			return;
 		}
-		this.onSelectItem(item);
-		/*
 		this.forEachChild((item: Item) => {
 			item.select(false);
 		});
 		item.select();
 		this.selectedItem = item;
 		this.$emit("select", item);
-		//*/
 	}
 
 	unselect(): void {

@@ -8,7 +8,10 @@ import { UICommands } from "./commands/UICommands";
 			<component
 				ref="component"
 				v-if="isVisible"
-				:is="component"></component>
+				:is="component"
+				@update="onUpdate"
+				@change="onChange"
+				@menu="onMenu"></component>
 		</div>
 	`,
 	data: () => {
@@ -31,11 +34,27 @@ export class InspectorView extends Vue {
 		this.clear();
 	}
 
+	getComponent(): Vue {
+		return this.$refs.component as Vue;
+	}
+
 	hasFocus(): boolean {
 		return this.$el.querySelector(":focus") != null;
 	}
 
 	clear(): void {
 		this.component = null;
+	}
+
+	protected onUpdate(...args: Array<any>): void {
+		this.$emit.apply(this, ["update"].concat(args));
+	}
+
+	protected onChange(...args: Array<any>): void {
+		this.$emit.apply(this, ["change"].concat(args));
+	}
+
+	protected onMenu(...args: Array<any>): void {
+		this.$emit.apply(this, ["menu"].concat(args));
 	}
 }

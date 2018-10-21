@@ -1,6 +1,5 @@
 import Vue from "vue";
 import Component from "vue-class-component";
-import * as Tea from "../../Tea";
 import { TitleBar } from "./TitleBar";
 
 @Component({
@@ -12,7 +11,8 @@ import { TitleBar } from "./TitleBar";
 				@config="onClickConfig">{{ name }}</TitleBar>
 			<component
 				ref="component"
-				:is="type"></component>
+				:is="type"
+				@change="onChange"></component>
 		</div>
 	`,
 	props: {
@@ -29,6 +29,7 @@ import { TitleBar } from "./TitleBar";
 	}
 })
 export class ComponentPanel extends Vue {
+	type: Function;
 	name: string;
 	enabled: boolean;
 
@@ -55,5 +56,14 @@ export class ComponentPanel extends Vue {
 	protected onClickConfig(): void {
 		var component = this.$refs.component as any;
 		this.$emit("config", component._component);
+	}
+
+	protected onChange(property: string, value: any): void {
+		var component = (this.$refs.component as any)._component;
+		var type = null;
+		if (component != null) {
+			type = component.constructor;
+		}
+		this.$emit("change", type, property, value);
 	}
 }

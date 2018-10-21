@@ -7,6 +7,7 @@ import * as Tea from "../../Tea";
 		<div class="Light">
 			<SelectEnum
 				ref="type"
+				name="type"
 				:keys="typeKeys"
 				:value="type"
 				@update="onUpdateType">Type</SelectEnum>

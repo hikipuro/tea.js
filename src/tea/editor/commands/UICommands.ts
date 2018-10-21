@@ -4,7 +4,6 @@ import { UICommandTarget } from "./UICommandTarget";
 import { HierarchyView } from "../HierarchyView";
 import { InspectorView } from "../InspectorView";
 import { ObjectInspector } from "../ObjectInspector";
-import { EditorBehavior } from "../EditorBehavior";
 
 export class UICommands {
 	static readonly DefaultMaxCommands: number = 100;
@@ -12,7 +11,7 @@ export class UICommands {
 	items: Array<UICommand>;
 	index: number;
 	isUndoOrRedo: boolean;
-	behavior: EditorBehavior;
+	scene: Tea.Scene;
 	hierarchyView: HierarchyView;
 	inspectorView: InspectorView;
 
@@ -30,7 +29,7 @@ export class UICommands {
 			return null;
 		}
 		var id = item.tag as number;
-		return this.behavior.scene.findChildById(id);
+		return this.scene.findChildById(id);
 	}
 
 	add(command: UICommand): void {
@@ -71,7 +70,7 @@ export class UICommands {
 			return;
 		}
 		var command = new UICommand(
-			UICommandTarget.InspectorView,
+			UICommandTarget.ObjectInspector,
 			type, value
 		);
 		this.add(command);
@@ -125,7 +124,7 @@ export class UICommands {
 					command.type, command.value, isUndo
 				);
 				break;
-			case UICommandTarget.InspectorView:
+			case UICommandTarget.ObjectInspector:
 				this.runInspectorViewCommand(
 					command.type, command.value, isUndo
 				);

@@ -31,9 +31,6 @@ import { HLayout } from "./containers/HLayout";
 import { VLayout } from "./containers/VLayout";
 import { Window } from "./containers/Window";
 
-//import { Command } from "./commands/Command";
-//import { CommandHistory } from "./commands/CommandHistory";
-
 import { BoxCollider } from "./components/BoxCollider";
 import { Camera } from "./components/Camera";
 import { Light } from "./components/Light";
@@ -149,7 +146,7 @@ export class Editor extends Vue {
 	static readonly el = "#editor";
 	protected _behavior: EditorBehavior;
 
-	created(): void {
+	mounted(): void {
 		this._behavior = new EditorBehavior(this);
 	}
 
@@ -183,12 +180,12 @@ export class Editor extends Vue {
 		return this.$refs.menu as ContextMenu;
 	}
 
-	setScene(value: Tea.Scene) {
-		this._behavior.scene = value;
+	setScene(scene: Tea.Scene) {
+		this._behavior.setScene(scene);
 	}
 
 	protected onUpdateAspect(): void {
-		this._behavior.onUpdateAspect();
+		this._behavior.updateScreenSize();
 	}
 
 	protected onClick(e: MouseEvent): void {

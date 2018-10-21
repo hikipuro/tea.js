@@ -22,6 +22,10 @@ import Component from "vue-class-component";
 			type: Array,
 			default: []
 		},
+		name: {
+			type: String,
+			default: null
+		},
 		value: {
 			type: String,
 			default: ""
@@ -40,10 +44,19 @@ import Component from "vue-class-component";
 })
 export class SelectEnum extends Vue {
 	keys: Array<string>;
+	name: string;
 	value: string;
 	
 	protected onChange(e: Event): void {
 		var el = e.target as HTMLSelectElement;
 		this.$emit("update", el.value);
+		if (this.name != null) {
+			this.$parent.$emit(
+				"change", this.name, {
+					current: this.value,
+					new: el.value
+				}
+			);
+		}
 	}
 }
