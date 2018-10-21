@@ -89,6 +89,7 @@ export class Camera extends Component {
 			var camera = new Camera(app);
 			camera.clearFlags = Tea.CameraClearFlags.Nothing;
 			camera.object3d = new Tea.Object3D(app);
+			camera.object3d.name = "Skybox Camera";
 			Camera._skyboxCamera = camera;
 		}
 		if (Camera.currentBGColor == null) {
@@ -591,16 +592,24 @@ export class Camera extends Component {
 	}
 
 	protected clear(): void {
+		var gl = this.gl;
 		switch (this.clearFlags) {
 			case Tea.CameraClearFlags.Nothing:
 				//this.clearNothing();
 				break;
 			case Tea.CameraClearFlags.SolidColor:
 				this.updateClearColor();
-				this.clearSolidColor();
+				gl.clear(
+					gl.COLOR_BUFFER_BIT |
+					gl.DEPTH_BUFFER_BIT |
+					gl.STENCIL_BUFFER_BIT
+				);
 				break;
 			case Tea.CameraClearFlags.Depth:
-				this.clearDepth();
+				gl.clear(
+					gl.DEPTH_BUFFER_BIT |
+					gl.STENCIL_BUFFER_BIT
+				);
 				break;
 			case Tea.CameraClearFlags.Skybox:
 				this.drawSkybox();

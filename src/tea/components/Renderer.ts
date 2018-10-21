@@ -333,17 +333,23 @@ export class Renderer extends Component {
 		u.uniformMatrix4fv("TEA_MATRIX_VP", vpMatrix);
 		*/
 
+		var enableMV = false;
 		var mvMatrix = this._mvMatrix;
-		mvMatrix.copy(view);
-		mvMatrix.mul$(model);
 		location = shader.propertyToID("TEA_MATRIX_MV");
 		if (location != null) {
+			enableMV = true;
+			mvMatrix.copy(view);
+			mvMatrix.mul$(model);
 			gl.uniformMatrix4fv(location, false, mvMatrix);
 		}
 		//u.uniformMatrix4fv("TEA_MATRIX_MV", mvMatrix);
 
 		location = shader.propertyToID("TEA_MATRIX_MVP");
 		if (location != null) {
+			if (enableMV === false) {
+				mvMatrix.copy(view);
+				mvMatrix.mul$(model);
+			}
 			var mvpMatrix = this._mvpMatrix;
 			mvpMatrix.copy(projection);
 			mvpMatrix.mul$(mvMatrix);

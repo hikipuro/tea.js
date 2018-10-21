@@ -17,15 +17,15 @@ export module ShaderSources {
 		attribute vec2 texcoord;
 		attribute vec4 color;
 
-		uniform mat4 TEA_MATRIX_MVP;
-		uniform mat4 TEA_MATRIX_MV;
+		//uniform mat4 TEA_MATRIX_MVP;
+		//uniform mat4 TEA_MATRIX_MV;
 		uniform mat4 TEA_MATRIX_P;
 		uniform mat4 TEA_MATRIX_V;
 		uniform mat4 TEA_MATRIX_I_V;
 		uniform mat4 TEA_OBJECT_TO_WORLD;
-		uniform mat4 TEA_WORLD_TO_OBJECT;
+		//uniform mat4 TEA_WORLD_TO_OBJECT;
 		uniform mat4 _LightCamera;
-		uniform mat4 tMatrix;
+		//uniform mat4 tMatrix;
 		uniform int lightCount;
 		uniform TLight lights[4];
 		uniform bool receiveShadows;
@@ -53,6 +53,7 @@ export module ShaderSources {
 		}
 
 		void main() {
+			mat4 TEA_MATRIX_MVP = TEA_MATRIX_P * TEA_MATRIX_V * TEA_OBJECT_TO_WORLD;
 			vec4 vert = TEA_OBJECT_TO_WORLD * vertex;
 			vec3 norm = getNormal(normal);
 			vec3 viewDirection = getViewDirection(vertex);

@@ -268,6 +268,7 @@ export class Scene {
 	enablePostProcessing: boolean;
 	renderTexture: Tea.RenderTexture;
 	postProcessingRenderer: Tea.PostProcessingRenderer;
+	protected _isCleared: boolean;
 	protected _children: Array<Tea.Object3D>;
 	protected _components: SceneComponents;
 
@@ -278,6 +279,7 @@ export class Scene {
 		this.enablePostProcessing = false;
 		this.refreshRenderTexture();
 		this.postProcessingRenderer = new Tea.PostProcessingRenderer(app);
+		this._isCleared = false;
 		this._children = [];
 		this._components = new SceneComponents();
 		this.app.renderer.on("resize", () => {
@@ -507,11 +509,12 @@ export class Scene {
 			var texture = this.renderTexture;
 			this.postProcessingRenderer.renderTexture = texture;
 			texture.bindFramebuffer();
-			this.postProcessingRenderer.clear();
+			//this.postProcessingRenderer.clear();
 		}
 		Tea.Renderer.drawCallCount = 0;
 		var cameraCount = cameras.length;
 		var haveNormalCamera = false;
+		var light = false;
 		for (var n = 0; n < cameraCount; n++) {
 			var camera = cameras[n];
 			if (haveNormalCamera === false && camera.constructor.name === "Camera") {
@@ -544,15 +547,24 @@ export class Scene {
 				renderTexture.unbindFramebuffer();
 			}
 		}
-		var rendererCount = renderers.length;
-		for (var i = 0; i < rendererCount; i++) {
-			renderers[i].material.setTexture("_ShadowTex", null);
-		}
+
 		if (this.enablePostProcessing) {
 			this.renderTexture.unbindFramebuffer();
-			this.postProcessingRenderer.render();
-		} else if (haveNormalCamera === false) {
-			this.clear();
+			if (haveNormalCamera) {
+				this.postProcessingRenderer.render();
+			}
+		}
+		if (haveNormalCamera) {
+			this._isCleared = false;
+			var rendererCount = renderers.length;
+			for (var i = 0; i < rendererCount; i++) {
+				renderers[i].material.setTexture("_ShadowTex", null);
+			}
+		} else {
+			if (this._isCleared === false) {
+				this.clear();
+				this._isCleared = true;
+			}
 		}
 		//this._renderers.length = 0;
 		//console.log("drawCallCount", Tea.Renderer.drawCallCount);
@@ -683,8 +695,8 @@ export class Scene {
 			gl.clearColor(color[0], color[1], color[2], color[3]);
 			Tea.Camera.currentBGColor.copy(color);
 		}
-		gl.viewport(0.0, 0.0, this.app.width, this.app.height);
-		gl.scissor(0.0, 0.0, this.app.width, this.app.height);
+		gl.viewport(0, 0, this.app.width, this.app.height);
+		gl.scissor(0, 0, this.app.width, this.app.height);
 		gl.clear(
 			gl.COLOR_BUFFER_BIT |
 			gl.DEPTH_BUFFER_BIT |
