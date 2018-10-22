@@ -6,6 +6,7 @@ class Movement {
 	scale: Tea.Vector3;
 	localToWorldMatrix: Tea.Matrix4x4;
 	worldToLocalMatrix: Tea.Matrix4x4;
+	isMovedPrevFrame: boolean;
 
 	constructor() {
 		this.position = new Tea.Vector3(0.001, 0.002, 0.003);
@@ -24,7 +25,9 @@ class Movement {
 	}
 
 	update(object3d: Object3D): void {
-		if (this.isMoved(object3d)) {
+		var isMoved = this.isMoved(object3d);
+		this.isMovedPrevFrame = isMoved;
+		if (isMoved) {
 			this.trs();
 		}
 	}
@@ -139,6 +142,10 @@ export class Object3D {
 		var renderer = object3d.addComponent(Tea.MeshRenderer);
 		renderer.material.shader = shader;
 		return object3d;
+	}
+
+	get isMoved(): boolean {
+		return this._m.isMovedPrevFrame;
 	}
 
 	get isActiveInHierarchy(): boolean {

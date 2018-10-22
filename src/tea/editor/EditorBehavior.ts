@@ -7,17 +7,20 @@ import { SelectAspect } from "./basic/SelectAspect";
 import { UICommands } from "./commands/UICommands";
 import { HierarchyViewCommand } from "./commands/HierarchyViewCommand";
 import { ObjectInspectorCommand } from "./commands/ObjectInspectorCommand";
+import { EditorCommand } from "./commands/EditorCommand";
 
 export class EditorBehavior {
 	editor: Editor;
 	scene: Tea.Scene;
 	commands: UICommands;
+	editorCommand: EditorCommand;
 	hierarchyViewCommand: HierarchyViewCommand;
 	objectInspectorCommand: ObjectInspectorCommand;
 
 	constructor(editor: Editor) {
 		this.editor = editor;
 		this.initEvents();
+		this.initMainMenu();
 		this.initUICommands();
 		this.initScreenView();
 		this.initHierarchyView();
@@ -35,6 +38,13 @@ export class EditorBehavior {
 		document.addEventListener("keydown", keyDownHandler);
 	}
 
+	initMainMenu(): void {
+		var menu = EditorMenu.getMainMenu(
+			this.onSelectMainMenu
+		);
+		EditorMenu.setMainMenu(menu);
+	}
+
 	initUICommands(): void {
 		var hierarchyView = this.editor.hierarchyView;
 		var inspectorView = this.editor.inspectorView;
@@ -42,6 +52,11 @@ export class EditorBehavior {
 		this.commands = new UICommands();
 		this.commands.hierarchyView = hierarchyView;
 		this.commands.inspectorView = inspectorView;
+
+		this.editorCommand = new EditorCommand();
+		this.editorCommand.editor = this.editor;
+		this.editorCommand.hierarchyView = hierarchyView;
+		this.editorCommand.inspectorView = inspectorView;
 
 		this.hierarchyViewCommand = new HierarchyViewCommand();
 		this.hierarchyViewCommand.hierarchyView = hierarchyView;
@@ -264,13 +279,16 @@ export class EditorBehavior {
 		var renderer = scene.app.renderer;
 		renderer.removeListener("resize", onResize);
 		renderer.on("resize", onResize);
-		this.scene = scene;
-		this.commands.scene = scene;
-		this.hierarchyViewCommand.scene = scene;
-		this.objectInspectorCommand.scene = scene;
 		renderer.once("update", () => {
 			this.hierarchyViewCommand.update(true);
 		});
+
+		this.scene = scene;
+		this.commands.scene = scene;
+		this.editorCommand.app = scene.app;
+		this.editorCommand.scene = scene;
+		this.hierarchyViewCommand.scene = scene;
+		this.objectInspectorCommand.scene = scene;
 	}
 
 	updateScreenSize(): void {
@@ -332,6 +350,19 @@ export class EditorBehavior {
 					break;
 				}
 				this.commands.undo();
+				break;
+		}
+	}
+
+	protected onSelectMainMenu = (item: Electron.MenuItem): void => {
+		console.log(item.id);
+
+		switch (item.id) {
+			case "File/New Scene":
+				this.editorCommand.newScene();
+				break;
+			case "File/Save Scene":
+				this.editorCommand.saveScene();
 				break;
 		}
 	}

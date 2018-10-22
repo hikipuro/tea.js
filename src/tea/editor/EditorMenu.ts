@@ -1,8 +1,117 @@
+import * as Electron from "electron";
+const remote = Electron.remote;
+const Menu = remote.Menu;
+const MenuItem = remote.MenuItem;
+
 import * as Tea from "../Tea";
 import { NativeContextMenu } from "./basic/NativeContextMenu";
 import { HierarchyView } from "./HierarchyView";
 
 export class EditorMenu {
+	static setMainMenu(menu: Electron.Menu): void {
+		Menu.setApplicationMenu(menu);
+	}
+
+	static getMainMenu(
+		handler: (menuItem: Electron.MenuItem, browserWindow: Electron.BrowserWindow, event: Event) => void
+	): Electron.Menu {
+		var template: Electron.MenuItemConstructorOptions[] = [
+			{
+				label: "File",
+				submenu: [
+					{
+						id: "File/New Scene",
+						label: "New Scene",
+						accelerator: "CmdOrCtrl+N"
+					},
+					{
+						id: "File/Open Scene",
+						label: "Open Scene",
+						accelerator: "CmdOrCtrl+O"
+					},
+					{
+						type: "separator"
+					},
+					{
+						id: "File/Save Scene",
+						label: "Save Scene",
+						accelerator: "CmdOrCtrl+S"
+					},
+				]
+			},
+			{
+				label: "Edit",
+				submenu: [
+					{
+						id: "Edit/Undo",
+						label: "Undo",
+						accelerator: "CmdOrCtrl+Z"
+					},
+					{
+						id: "Edit/Redo",
+						label: "Redo",
+						accelerator: "CmdOrCtrl+Shift+Z"
+					}
+				]
+			},
+			{
+				label: "View",
+				submenu: [
+					{ role: "reload" },
+					{ role: "forcereload" },
+					{ role: "toggledevtools" },
+					{ type: "separator" },
+					{ role: "resetzoom" },
+					{ role: "zoomin" },
+					{ role: "zoomout" },
+					{ type: "separator" },
+					{ role: "togglefullscreen" }
+				]
+			},
+			{
+				role: "window",
+				submenu: [
+					{ role: "minimize" }
+				]
+			},
+			{
+				role: "help",
+				submenu: [
+				]
+			}
+		];
+		if (process && process.platform) {
+			if (process.platform === "darwin") {
+				template[3].submenu = [
+					{ role: "minimize" },
+					{ role: "zoom" },
+					{ type: "separator" },
+					{ role: "front" }
+				];
+				template.unshift(
+					{
+						label: Electron.remote.app.getName(),
+						submenu: [
+							{ role: "about" },
+							{ type: "separator" },
+							{ role: "services", submenu: [] },
+							{ type: "separator" },
+							{ role: "hide" },
+							{ role: "hideothers" },
+							{ role: "unhide" },
+							{ type: "separator" },
+							{ role: "quit" }
+						]
+					}
+				);
+			}
+		}
+		Tea.Editor.NativeContextMenu.setMenuItemHandler(
+			template, handler
+		);
+		return Menu.buildFromTemplate(template);
+	}
+
 	static getHierarchyViewMenu(
 		hierarchyView: HierarchyView,
 		handler: (menuItem: Electron.MenuItem, browserWindow: Electron.BrowserWindow, event: Event) => void

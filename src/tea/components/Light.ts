@@ -30,6 +30,7 @@ export class Light extends Component {
 		this.range = undefined;
 		this.spotAngle = undefined;
 		this.type = undefined;
+		this._direction = undefined;
 		super.destroy();
 	}
 
