@@ -40,10 +40,19 @@ export class AudioSource extends Component {
 	}
 
 	destroy(): void {
+		if (this.clip != null) {
+			this.clip.destroy();
+			this.clip = undefined;
+		}
 		if (this._gainNode != null) {
 			this._gainNode.disconnect();
 			this._gainNode = undefined;
 		}
+		if (this._sourceNode != null) {
+			this._sourceNode.disconnect();
+			this._sourceNode = undefined;
+		}
+		this._audio = undefined;
 	}
 	
 	play(delay: number = 0.0): void {

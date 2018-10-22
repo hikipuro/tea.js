@@ -276,6 +276,7 @@ export class App {
 			Tea.ShaderSources.lineVS,
 			Tea.ShaderSources.lineFS
 		);
+		renderer.material = Tea.Material.getDefault(this);
 		renderer.material.shader = shader;
 		return renderer;
 	}
@@ -311,6 +312,7 @@ export class App {
 		shader.settings.blend.dstAlpha = Tea.ShaderBlendFunc.One;
 		object3d.addComponent(Tea.ParticleSystem);
 		var renderer = object3d.addComponent(Tea.ParticleSystemRenderer);
+		renderer.material = Tea.Material.getDefault(this);
 		renderer.material.shader = shader;
 		renderer.material.mainTexture = Tea.Texture.getDefaultParticle(this);
 		object3d.name = "ParticleSystem";
@@ -352,6 +354,7 @@ export class App {
 		var meshFilter = object3d.addComponent(Tea.MeshFilter);
 		meshFilter.mesh = textMesh.mesh;
 		var renderer = object3d.addComponent(Tea.MeshRenderer);
+		renderer.material = Tea.Material.getDefault(this);
 		renderer.material.renderQueue = 3000;
 		renderer.material.setFloat("_Cutoff", 0.0);
 		renderer.material.mainTexture = textMesh.texture;

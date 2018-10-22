@@ -439,6 +439,7 @@ export class Main {
 
 		var lines = this.app.createObject3D();
 		var lineRenderer = lines.addComponent(Tea.LineRenderer);
+		lineRenderer.material = Tea.Material.getDefault(this.app);
 		//lines.position.x = 3;
 		lineRenderer.add(0, 0, 0);
 		lineRenderer.add(2, 1, 0);

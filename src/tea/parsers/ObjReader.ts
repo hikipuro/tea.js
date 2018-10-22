@@ -523,6 +523,7 @@ export class ObjReader {
 		);
 		var renderer = object3d.addComponent(Tea.MeshRenderer);
 		//renderer.wireframe = true;
+		renderer.material = Tea.Material.getDefault(this.app);
 		renderer.material.shader = shader;
 		if (obj.materials != null) {
 			var image = obj.materials[obj.usemtl].map_Kd;

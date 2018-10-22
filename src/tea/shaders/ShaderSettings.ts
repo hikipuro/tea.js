@@ -35,6 +35,25 @@ export class ShaderSettings {
 		this.stencil = new Tea.ShaderStencil();
 	}
 
+	static fromJSON(json: any): ShaderSettings {
+		if (json == null || json._type !== "ShaderSettings") {
+			return null;
+		}
+		var shaderSettings = new ShaderSettings();
+		shaderSettings.enableBlend = json.enableBlend;
+		shaderSettings.enableCullFace = json.enableCullFace;
+		shaderSettings.enableDither = json.enableDither;
+		shaderSettings.enableDepthTest = json.enableDepthTest;
+		shaderSettings.enableStencilTest = json.enableStencilTest;
+		shaderSettings.colorWriteMask = Tea.ShaderColorMask.fromJSON(json.colorWriteMask);
+		shaderSettings.depthWriteMask = json.depthWriteMask;
+		shaderSettings.cullFaceMode = Tea.ShaderFace[json.cullFaceMode as string];
+		shaderSettings.depthFunc = Tea.ShaderTestFunc[json.depthFunc as string];
+		shaderSettings.blend = Tea.ShaderBlend.fromJSON(json.blend);
+		shaderSettings.stencil = Tea.ShaderStencil.fromJSON(json.stencil);
+		return shaderSettings;
+	}
+
 	toJSON(): Object {
 		var json = {
 			_type: "ShaderSettings",
@@ -43,12 +62,12 @@ export class ShaderSettings {
 			enableDither: this.enableDither,
 			enableDepthTest: this.enableDepthTest,
 			enableStencilTest: this.enableStencilTest,
-			colorWriteMask: this.colorWriteMask,
+			colorWriteMask: this.colorWriteMask.toJSON(),
 			depthWriteMask: this.depthWriteMask,
-			cullFaceMode: this.cullFaceMode,
-			depthFunc: this.depthFunc,
-			blend: this.blend,
-			stencil: this.stencil
+			cullFaceMode: Tea.ShaderFace.toString(this.cullFaceMode),
+			depthFunc: Tea.ShaderTestFunc.toString(this.depthFunc),
+			blend: this.blend.toJSON(),
+			stencil: this.stencil.toJSON()
 		};
 		return json;
 	}

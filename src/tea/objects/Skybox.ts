@@ -23,6 +23,8 @@ export class Skybox {
 		var meshFilter = object3d.addComponent(Tea.MeshFilter);
 		meshFilter.mesh = mesh;
 		var renderer = object3d.addComponent(Tea.MeshRenderer);
+		renderer.receiveShadows = false;
+		renderer.material = Tea.Material.getDefault(app);
 		renderer.material.renderQueue = 1000;
 		renderer.material.shader = shader;
 		this.object3d = object3d;

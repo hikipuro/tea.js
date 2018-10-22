@@ -65,6 +65,20 @@ export class MeshRenderer extends Renderer {
 	}
 
 	get bounds(): Tea.Bounds {
+		if (this._mesh == null) {
+			return null;
+		}
+		this._bounds.copy(this._mesh.bounds);
+		var bounds = this._bounds;
+		bounds.center.add$(this.object3d.position);
+		
+		var rotation = this.object3d.rotation;
+		bounds.extents.applyQuaternion(rotation);
+		var extents = bounds.extents;
+		extents[0] = Math.abs(extents[0]);
+		extents[1] = Math.abs(extents[1]);
+		extents[2] = Math.abs(extents[2]);
+		bounds.extents.scale$(this.object3d.scale);
 		return this._bounds;
 	}
 
@@ -106,18 +120,6 @@ export class MeshRenderer extends Renderer {
 		var component = this.object3d.getComponent(Tea.MeshFilter);
 		if (component != null && component.mesh != null) {
 			var mesh = component.mesh;
-			this._bounds.copy(mesh.bounds);
-			var bounds = this._bounds;
-			bounds.center.add$(this.object3d.position);
-			
-			var rotation = this.object3d.rotation;
-			bounds.extents.applyQuaternion(rotation);
-			var extents = bounds.extents;
-			extents[0] = Math.abs(extents[0]);
-			extents[1] = Math.abs(extents[1]);
-			extents[2] = Math.abs(extents[2]);
-			bounds.extents.scale$(this.object3d.scale);
-			
 			this._mesh = mesh;
 			if (mesh instanceof Tea.TextMesh) {
 				if (this.material != null) {
@@ -180,7 +182,9 @@ export class MeshRenderer extends Renderer {
 		}
 		var meshRenderer = new MeshRenderer(app);
 		meshRenderer.receiveShadows = json.receiveShadows;
-		meshRenderer.wireframe = json.wireframe;
+		meshRenderer._wireframe = json.wireframe;
+		meshRenderer.material = Tea.Material.fromJSON(app, json.material);
+		//meshRenderer.material.shader = Tea.Shader.fromJSON(app, json);
 		return meshRenderer;
 	}
 
@@ -359,6 +363,9 @@ export class MeshRenderer extends Renderer {
 	}
 
 	protected getDrawFunc(mesh: Tea.Mesh): Function {
+		if (mesh == null) {
+			return this.draw;
+		}
 		var use32BitIndex = false;
 		use32BitIndex = mesh.vertices.length > 0xFFFF &&
 			this.app.status.OES_element_index_uint != null;

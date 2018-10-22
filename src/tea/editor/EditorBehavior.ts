@@ -356,6 +356,7 @@ export class EditorBehavior {
 
 	protected onSelectMainMenu = (item: Electron.MenuItem): void => {
 		console.log(item.id);
+		//this.editorCommand.isChanged = true;
 
 		switch (item.id) {
 			case "File/New Scene":

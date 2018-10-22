@@ -58,4 +58,43 @@ export class ShaderStencil {
 		this.frontZpass = value;
 		this.backZpass = value;
 	}
+
+	static fromJSON(json: any): ShaderStencil {
+		if (json == null || json._type !== "ShaderStencil") {
+			return null;
+		}
+		var shaderStencil = new ShaderStencil();
+		shaderStencil.frontFunc = Tea.ShaderTestFunc[json.frontFunc as string];
+		shaderStencil.frontRef = json.frontRef;
+		shaderStencil.frontMask = json.frontMask;
+		shaderStencil.backFunc = Tea.ShaderTestFunc[json.backFunc as string];
+		shaderStencil.backRef = json.backRef;
+		shaderStencil.backMask = json.backMask;
+		shaderStencil.frontFail = Tea.ShaderStencilOp[json.frontFail as string];
+		shaderStencil.frontZfail = Tea.ShaderStencilOp[json.frontZfail as string];
+		shaderStencil.frontZpass = Tea.ShaderStencilOp[json.frontZpass as string];
+		shaderStencil.backFail = Tea.ShaderStencilOp[json.backFail as string];
+		shaderStencil.backZfail = Tea.ShaderStencilOp[json.backZfail as string];
+		shaderStencil.backZpass = Tea.ShaderStencilOp[json.backZpass as string];
+		return shaderStencil;
+	}
+
+	toJSON(): Object {
+		var json = {
+			_type: "ShaderStencil",
+			frontFunc: Tea.ShaderTestFunc.toString(this.frontFunc),
+			frontRef: this.frontRef,
+			frontMask: this.frontMask,
+			backFunc: Tea.ShaderTestFunc.toString(this.backFunc),
+			backRef: this.backRef,
+			backMask: this.backMask,
+			frontFail: Tea.ShaderStencilOp.toString(this.frontFail),
+			frontZfail: Tea.ShaderStencilOp.toString(this.frontZfail),
+			frontZpass: Tea.ShaderStencilOp.toString(this.frontZpass),
+			backFail: Tea.ShaderStencilOp.toString(this.backFail),
+			backZfail: Tea.ShaderStencilOp.toString(this.backZfail),
+			backZpass: Tea.ShaderStencilOp.toString(this.backZpass)
+		};
+		return json;
+	}
 }

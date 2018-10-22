@@ -100,36 +100,8 @@ export class Object3D {
 	}
 
 	static createPrimitive(app: Tea.App, type: Tea.PrimitiveType): Object3D {
-		var name: string = "";
-		var mesh: Tea.Mesh = null;
-		switch (type) {
-			case Tea.PrimitiveType.Sphere:
-				name = "Sphere";
-				mesh = Tea.Primitives.createSphereMesh(10, 10);
-				break;
-			case Tea.PrimitiveType.Capsule:
-				name = "Capsule";
-				mesh = Tea.Primitives.createCapsuleMesh(10, 10);
-				break;
-			case Tea.PrimitiveType.Cylinder:
-				name = "Cylinder";
-				mesh = Tea.Primitives.createCylinderMesh(20);
-				break;
-			case Tea.PrimitiveType.Cube:
-				name = "Cube";
-				mesh = Tea.Primitives.createCubeMesh();
-				break;
-			case Tea.PrimitiveType.Plane:
-				name = "Plane";
-				mesh = Tea.Primitives.createPlaneMesh(10);
-				break;
-			case Tea.PrimitiveType.Quad:
-				name = "Quad";
-				mesh = Tea.Primitives.createQuadMesh();
-				break;
-			default:
-				return null;
-		}
+		var name = Tea.PrimitiveType.toString(type);
+		var mesh = Tea.Mesh.createPrimitive(type);
 		var object3d = new Tea.Object3D(app);
 		object3d.name = name;
 		var shader = new Tea.Shader(app);
@@ -140,6 +112,7 @@ export class Object3D {
 		var meshFilter = object3d.addComponent(Tea.MeshFilter);
 		meshFilter.mesh = mesh;
 		var renderer = object3d.addComponent(Tea.MeshRenderer);
+		renderer.material = Tea.Material.getDefault(app);
 		renderer.material.shader = shader;
 		return object3d;
 	}
@@ -429,7 +402,11 @@ export class Object3D {
 		var length = json.components.length;
 		for (var i = 0; i < length; i++) {
 			var item = json.components[i];
-			var component = Tea.Component.fromComponentJSON(app, item);
+			var componentClass = Tea[item._type];
+			if (componentClass == null) {
+				continue;
+			}
+			var component = componentClass.fromJSON(app, item);
 			if (component == null) {
 				continue;
 			}

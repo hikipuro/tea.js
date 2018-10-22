@@ -30,3 +30,19 @@ export enum ShaderBlendFunc {
 	/** gl.SRC_ALPHA_SATURATE */
 	SrcAlphaSaturate
 }
+
+export module ShaderBlendFunc {
+	export function toString(value: number): string {
+		return ShaderBlendFunc[value];
+	}
+
+	export function getKeys(): Array<string> {
+		var keys = [];
+		for (var n in ShaderBlendFunc) {
+			if (typeof ShaderBlendFunc[n] === "number") {
+				keys.push(n);
+			}
+		}
+		return keys;
+	}
+}

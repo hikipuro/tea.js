@@ -13,6 +13,22 @@ export enum UniformType {
 	ColorArray
 }
 
+export module UniformType {
+	export function toString(value: number): string {
+		return UniformType[value];
+	}
+
+	export function getKeys(): Array<string> {
+		var keys = [];
+		for (var n in UniformType) {
+			if (typeof UniformType[n] === "number") {
+				keys.push(n);
+			}
+		}
+		return keys;
+	}
+}
+
 type UniformValue = (
 	number |
 	Tea.Vector2 |
@@ -34,38 +50,58 @@ class UniformItem {
 		this.value = value;
 	}
 
+	static fromJSON(json: any): UniformItem {
+		if (json == null) {
+			return null;
+		}
+		var type = UniformType[json.type as string];
+		var value = null;
+		switch (type) {
+			case UniformType.Int:
+			case UniformType.Float:
+			case UniformType.FloatArray:
+				value = json.value;
+				break;
+			case UniformType.Vector2:
+				value = Tea.Vector2.fromArray(json.value);
+				break;
+			case UniformType.Vector4:
+				value = Tea.Vector4.fromArray(json.value);
+				break;
+			case UniformType.Matrix:
+				value = Tea.Matrix4x4.fromArray(json.value);
+				break;
+			case UniformType.Color:
+				value = Tea.Color.fromArray(json.value);
+				break;
+			case UniformType.Vector4Array:
+				value = [];
+				for (var i = 0; i < json.value.length; i++) {
+					value.push(Tea.Vector4.fromArray(json.value[i]));
+				}
+				break;
+			case UniformType.MatrixArray:
+				value = [];
+				for (var i = 0; i < json.value.length; i++) {
+					value.push(Tea.Matrix4x4.fromArray(json.value[i]));
+				}
+				break;
+			case UniformType.ColorArray:
+				value = [];
+				for (var i = 0; i < json.value.length; i++) {
+					value.push(Tea.Color.fromArray(json.value[i]));
+				}
+				break;
+		}
+		return new UniformItem(type, value);
+	}
+
 	toJSON(): Object {
 		var json = {
-			type: this.getTypeString(),
+			type: UniformType.toString(this.type),
 			value: this.value
 		};
 		return json;
-	}
-
-	protected getTypeString(): string {
-		switch (this.type) {
-			case UniformType.Int:
-				return "Int";
-			case UniformType.Float:
-				return "Float";
-			case UniformType.Vector2:
-				return "Vector2";
-			case UniformType.Vector4:
-				return "Vector4";
-			case UniformType.Matrix:
-				return "Matrix";
-			case UniformType.Color:
-				return "Color";
-			case UniformType.FloatArray:
-				return "FloatArray";
-			case UniformType.Vector4Array:
-				return "Vector4Array";
-			case UniformType.MatrixArray:
-				return "MatrixArray";
-			case UniformType.ColorArray:
-				return "ColorArray";
-		}
-		return "";
 	}
 }
 
@@ -331,7 +367,7 @@ export class Material {
 			var key = keys[i];
 			json.uniforms.push({
 				key: key,
-				value: this._uniforms[key]
+				value: this._uniforms[key].toJSON()
 			});
 		}
 		keys = Object.keys(this._textures);
@@ -343,6 +379,29 @@ export class Material {
 			});
 		}
 		return json;
+	}
+
+	static fromJSON(app: Tea.App, json: any): Material {
+		if (json == null || json._type !== "Material") {
+			return null;
+		}
+		var material = new Material(app);
+		material.renderQueue = json.renderQueue;
+		var length = json.uniforms.length;
+		for (var i = 0; i < length; i++) {
+			var uniform = json.uniforms[i];
+			material._uniforms[uniform.key] = UniformItem.fromJSON(uniform.value);
+		}
+		length = json.textures.length;
+		for (var i = 0; i < length; i++) {
+			var texture = json.textures[i];
+			material.setTexture(
+				texture.key,
+				Tea.Texture.fromJSON(app, texture.value)
+			);
+		}
+		material.shader = Tea.Shader.fromJSON(app, json.shader);
+		return material;
 	}
 
 	protected getValue(name: string, type: UniformType): UniformValue {

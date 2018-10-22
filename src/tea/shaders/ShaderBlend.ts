@@ -24,4 +24,39 @@ export class ShaderBlend {
 		this.blue = 0;
 		this.alpha = 0;
 	}
+
+	static fromJSON(json: any): ShaderBlend {
+		if (json == null || json._type !== "ShaderBlend") {
+			return null;
+		}
+		var shaderBlend = new ShaderBlend();
+		shaderBlend.srcRGB = Tea.ShaderBlendFunc[json.srcRGB as string];
+		shaderBlend.dstRGB = Tea.ShaderBlendFunc[json.dstRGB as string];
+		shaderBlend.srcAlpha = Tea.ShaderBlendFunc[json.srcAlpha as string];
+		shaderBlend.dstAlpha = Tea.ShaderBlendFunc[json.dstAlpha as string];
+		shaderBlend.equationRGB = Tea.ShaderBlendEquation[json.equationRGB as string];
+		shaderBlend.equationAlpha = Tea.ShaderBlendEquation[json.equationAlpha as string];
+		shaderBlend.red = json.red;
+		shaderBlend.green = json.green;
+		shaderBlend.blue = json.blue;
+		shaderBlend.alpha = json.alpha;
+		return shaderBlend;
+	}
+
+	toJSON(): Object {
+		var json = {
+			_type: "ShaderBlend",
+			srcRGB: Tea.ShaderBlendFunc.toString(this.srcRGB),
+			dstRGB: Tea.ShaderBlendFunc.toString(this.dstRGB),
+			srcAlpha: Tea.ShaderBlendFunc.toString(this.srcAlpha),
+			dstAlpha: Tea.ShaderBlendFunc.toString(this.dstAlpha),
+			equationRGB: Tea.ShaderBlendEquation.toString(this.equationRGB),
+			equationAlpha: Tea.ShaderBlendEquation.toString(this.equationAlpha),
+			red: this.red,
+			green: this.green,
+			blue: this.blue,
+			alpha: this.alpha
+		};
+		return json;
+	}
 }

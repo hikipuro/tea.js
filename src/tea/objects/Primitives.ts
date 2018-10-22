@@ -43,6 +43,8 @@ export class Primitives {
 		]
 		*/
 		var mesh = new Tea.Mesh();
+		mesh.isPrimitive = true;
+		mesh.primitiveType = Tea.PrimitiveType.Quad;
 		mesh.vertices = vertices;
 		mesh.triangles = triangles;
 		mesh.normals = normals;
@@ -173,6 +175,8 @@ export class Primitives {
 			vec2(1, 0),
 		];
 		var mesh = new Tea.Mesh();
+		mesh.isPrimitive = true;
+		mesh.primitiveType = Tea.PrimitiveType.Cube;
 		mesh.vertices = vertices;
 		mesh.triangles = triangles;
 		mesh.normals = normals;
@@ -227,6 +231,8 @@ export class Primitives {
 			}
 		}
 		var mesh = new Tea.Mesh();
+		mesh.isPrimitive = true;
+		mesh.primitiveType = Tea.PrimitiveType.Sphere;
 		mesh.vertices = vertices;
 		mesh.triangles = triangles;
 		mesh.normals = normals;
@@ -296,6 +302,8 @@ export class Primitives {
 		}
 
 		var mesh = new Tea.Mesh();
+		mesh.isPrimitive = true;
+		mesh.primitiveType = Tea.PrimitiveType.Cylinder;
 		mesh.vertices = vertices;
 		mesh.triangles = triangles;
 		mesh.normals = normals;
@@ -330,6 +338,8 @@ export class Primitives {
 		}
 
 		var mesh = new Tea.Mesh();
+		mesh.isPrimitive = true;
+		mesh.primitiveType = Tea.PrimitiveType.Plane;
 		mesh.vertices = vertices;
 		mesh.triangles = triangles;
 		mesh.normals = normals;
@@ -428,6 +438,8 @@ export class Primitives {
 		}
 
 		var mesh = new Tea.Mesh();
+		mesh.isPrimitive = true;
+		mesh.primitiveType = Tea.PrimitiveType.Capsule;
 		mesh.vertices = vertices;
 		mesh.triangles = triangles;
 		mesh.normals = normals;
@@ -589,6 +601,7 @@ export class Primitives {
 			normals[i].normalize$();
 		}
 		var mesh = new Tea.Mesh();
+		mesh.isPrimitive = true;
 		mesh.vertices = vertices;
 		mesh.triangles = triangles;
 		mesh.normals = normals;
@@ -616,6 +629,7 @@ export class Primitives {
 			vec2(0.0, 1.0)
 		];
 		var mesh = new Tea.Mesh();
+		mesh.isPrimitive = true;
 		mesh.vertices = vertices;
 		mesh.triangles = triangles;
 		mesh.uv = uv;

@@ -20,7 +20,8 @@ export class MeshFilter extends Component {
 	toJSON(): Object {
 		var json = super.toJSON();
 		Object.assign(json, {
-			_type: "MeshFilter"
+			_type: "MeshFilter",
+			mesh: this.mesh.toJSON()
 		});
 		return json;
 	}
@@ -30,6 +31,7 @@ export class MeshFilter extends Component {
 			return null;
 		}
 		var meshFilter = new MeshFilter(app);
+		meshFilter.mesh = Tea.Mesh.fromJSON(app, json.mesh);
 		return meshFilter;
 	}
 }

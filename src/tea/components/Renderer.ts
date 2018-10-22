@@ -49,7 +49,7 @@ export class Renderer extends Component {
 		super(app);
 		this.gl = app.gl;
 		this.enabled = true;
-		this.material = Tea.Material.getDefault(app);
+		//this.material = Tea.Material.getDefault(app);
 	}
 
 	get localToWorldMatrix(): Tea.Matrix4x4 {

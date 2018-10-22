@@ -9,6 +9,8 @@ export class Shader {
 	protected gl: WebGLRenderingContext;
 	protected _locationsCache: object;
 	protected _attribLocationsCache: object;
+	protected _vsSource: string;
+	protected _fsSource: string;
 
 	constructor(app: Tea.App) {
 		this.app = app;
@@ -190,6 +192,8 @@ export class Shader {
 	}
 
 	attach(vsSource: string, fsSource: string): void {
+		this._vsSource = vsSource;
+		this._fsSource = fsSource;
 		//var gl = this.gl;
 		this.compile(this.vertexShader, vsSource);
 		this.compile(this.fragmentShader, fsSource);
@@ -202,9 +206,21 @@ export class Shader {
 	toJSON(): Object {
 		var json = {
 			_type: "Shader",
-			settings: this.settings.toJSON()
+			settings: this.settings.toJSON(),
+			vsSource: this._vsSource,
+			fsSource: this._fsSource
 		};
 		return json;
+	}
+
+	static fromJSON(app: Tea.App, json: any): Shader {
+		if (json == null || json._type !== "Shader") {
+			return null;
+		}
+		var shader = new Shader(app);
+		shader.settings = Tea.ShaderSettings.fromJSON(json.settings);
+		shader.attach(json.vsSource, json.fsSource);
+		return shader;
 	}
 
 	protected compile(shader: WebGLShader, source: string): void {

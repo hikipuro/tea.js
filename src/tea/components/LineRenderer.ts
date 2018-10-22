@@ -5,19 +5,18 @@ export class LineRenderer extends Renderer {
 	static editorView = Tea.Editor.LineRenderer;
 	points: Array<Tea.Vector3>;
 	vertexBuffer: WebGLBuffer;
+	shader: Tea.Shader;
 
 	constructor(app: Tea.App) {
 		super(app);
 		this.points = [];
 		var gl = this.gl;
 		this.vertexBuffer = gl.createBuffer();
-
-		var shader = new Tea.Shader(this.app);
-		shader.attach(
+		this.shader = new Tea.Shader(this.app);
+		this.shader.attach(
 			Tea.ShaderSources.lineVS,
 			Tea.ShaderSources.lineFS
 		);
-		this.material.shader = shader;
 	}
 
 	destroy(): void {
@@ -28,6 +27,15 @@ export class LineRenderer extends Renderer {
 			this.vertexBuffer = undefined;
 		}
 		super.destroy();
+	}
+
+	update(): void {
+		if (this.material == null) {
+			return;
+		}
+		if (this.material.shader == null) {
+			this.material.shader = this.shader;
+		}
 	}
 
 	add(x: number, y: number, z: number): void;

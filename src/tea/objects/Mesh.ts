@@ -9,9 +9,29 @@ export class Mesh {
 
 	bounds: Tea.Bounds;
 	isModified: boolean;
+	isPrimitive: boolean;
+	primitiveType: Tea.PrimitiveType;
 
 	constructor() {
 		this.clear();
+	}
+
+	static createPrimitive(type: Tea.PrimitiveType): Mesh {
+		switch (type) {
+			case Tea.PrimitiveType.Sphere:
+				return Tea.Primitives.createSphereMesh(10, 10);
+			case Tea.PrimitiveType.Capsule:
+				return Tea.Primitives.createCapsuleMesh(10, 10);
+			case Tea.PrimitiveType.Cylinder:
+				return Tea.Primitives.createCylinderMesh(20);
+			case Tea.PrimitiveType.Cube:
+				return Tea.Primitives.createCubeMesh();
+			case Tea.PrimitiveType.Plane:
+				return Tea.Primitives.createPlaneMesh(10);
+			case Tea.PrimitiveType.Quad:
+				return Tea.Primitives.createQuadMesh();
+		}
+		return null;
 	}
 
 	get vertexCount(): number {
@@ -77,6 +97,8 @@ export class Mesh {
 		this.colors = [];
 		this.bounds = new Tea.Bounds();
 		this.isModified = true;
+		this.isPrimitive = false;
+		this.primitiveType = Tea.PrimitiveType.Null;
 	}
 
 	clone(): Mesh {
@@ -98,6 +120,8 @@ export class Mesh {
 		}
 		mesh.bounds = this.bounds.clone();
 		mesh.isModified = true;
+		mesh.isPrimitive = this.isPrimitive;
+		mesh.primitiveType = this.primitiveType;
 		return mesh;
 	}
 
@@ -277,6 +301,29 @@ export class Mesh {
 			}
 		}
 		return new Float32Array(data.buffer, 0);
+	}
+
+	toJSON(): Object {
+		var json = {
+			_type: "Mesh",
+			isPrimitive: this.isPrimitive,
+			primitiveType: Tea.PrimitiveType.toString(this.primitiveType)
+		};
+		return json;
+	}
+
+	static fromJSON(app: Tea.App, json: any): Mesh {
+		if (json == null || json._type !== "Mesh") {
+			return null;
+		}
+		if (json.isPrimitive) {
+			var type = Tea.PrimitiveType[json.primitiveType as string];
+			var mesh = Mesh.createPrimitive(type);
+			mesh.isPrimitive = true;
+			return mesh;
+		}
+		var mesh = new Mesh();
+		return mesh;
 	}
 
 	protected convertToVec2Array(array: Array<number>): Array<Tea.Vector2> {

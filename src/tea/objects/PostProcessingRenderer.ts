@@ -21,6 +21,7 @@ export class PostProcessingRenderer extends Renderer {
 			Tea.ShaderSources.simplePostProcessingVS,
 			Tea.ShaderSources.simplePostProcessingFS
 		);
+		this.material = Tea.Material.getDefault(app);
 		this.material.shader = shader;
 		this.backgroundColor = Tea.Color.black.clone();
 	}

@@ -16,3 +16,19 @@ export enum ShaderStencilOp {
 	/** gl.INVERT */
 	Invert
 }
+
+export module ShaderStencilOp {
+	export function toString(value: number): string {
+		return ShaderStencilOp[value];
+	}
+
+	export function getKeys(): Array<string> {
+		var keys = [];
+		for (var n in ShaderStencilOp) {
+			if (typeof ShaderStencilOp[n] === "number") {
+				keys.push(n);
+			}
+		}
+		return keys;
+	}
+}

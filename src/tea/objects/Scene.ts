@@ -70,6 +70,16 @@ class SceneComponents {
 		return lights;
 	}
 
+	destroy(): void {
+		this.mainCamera = undefined;
+		this.cameras = undefined;
+		this.renderers = undefined;
+		this.lights = undefined;
+		this._cameras = undefined;
+		this._renderers = undefined;
+		this._lights = undefined;
+	}
+
 	add(object3d: Tea.Object3D): void {
 		if (object3d == null) {
 			return;
@@ -297,6 +307,34 @@ export class Scene {
 		return this._components.mainCamera;
 	}
 
+	destroy(): void {
+		var children = this.children;
+		var length = children.length;
+		for (var i = length - 1; i >= 0 ; i--) {
+			var child = this._children[i];
+			child.destroy();
+			child.update();
+		}
+		children = undefined;
+		length = undefined;
+		this.app = undefined;
+		this.renderSettings = undefined;
+		this.physics = undefined;
+		this.enablePostProcessing = undefined;
+		if (this.renderTexture) {
+			this.renderTexture.destroy();
+			this.renderTexture = undefined;
+		}
+		if (this.postProcessingRenderer) {
+			this.postProcessingRenderer.destroy();
+			this.postProcessingRenderer = undefined;
+		}
+		this._isCleared = undefined;
+		this._children = undefined;
+		this._components.destroy();
+		this._components = undefined;
+	}
+
 	childIndex(object3d: Tea.Object3D): number {
 		return this._children.indexOf(object3d);
 	}
@@ -489,6 +527,9 @@ export class Scene {
 	}
 
 	update(): void {
+		if (this.app == null) {
+			return;
+		}
 		var children = this.children;
 		var childCount = children.length;
 		for (var i = childCount - 1; i >= 0 ; i--) {

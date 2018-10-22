@@ -1,4 +1,5 @@
 export enum PrimitiveType {
+	Null,
 	Sphere,
 	Capsule,
 	Cylinder,
