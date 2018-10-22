@@ -174,6 +174,16 @@ export class MeshRenderer extends Renderer {
 		return json;
 	}
 
+	static fromJSON(app: Tea.App, json: any): MeshRenderer {
+		if (json == null || json._type !== "MeshRenderer") {
+			return null;
+		}
+		var meshRenderer = new MeshRenderer(app);
+		meshRenderer.receiveShadows = json.receiveShadows;
+		meshRenderer.wireframe = json.wireframe;
+		return meshRenderer;
+	}
+
 	protected get isRenderable(): boolean {
 		return (
 			this.object3d != null &&

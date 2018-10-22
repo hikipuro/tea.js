@@ -12,6 +12,24 @@ export class Component {
 		this.object3d = null;
 	}
 
+	static fromComponentJSON(app: Tea.App, json: any): Tea.Component {
+		if (json == null) {
+			return null;
+		}
+		var componentClass = Tea[json._type];
+		if (componentClass == null) {
+			return null;
+		}
+		if (componentClass.fromJSON == null) {
+			return null;
+		}
+		return componentClass.fromJSON(app, json);
+	}
+
+	static getInstance(app: Tea.App, name: string): Tea.Component {
+		return new Tea[name](app);
+	}
+
 	get className(): string {
 		return this.constructor.name;
 	}

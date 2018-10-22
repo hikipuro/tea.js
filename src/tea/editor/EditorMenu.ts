@@ -1,7 +1,6 @@
 import * as Electron from "electron";
 const remote = Electron.remote;
 const Menu = remote.Menu;
-const MenuItem = remote.MenuItem;
 
 import * as Tea from "../Tea";
 import { NativeContextMenu } from "./basic/NativeContextMenu";
@@ -36,6 +35,11 @@ export class EditorMenu {
 						id: "File/Save Scene",
 						label: "Save Scene",
 						accelerator: "CmdOrCtrl+S"
+					},
+					{
+						id: "File/Save Scene as",
+						label: "Save Scene as...",
+						accelerator: "CmdOrCtrl+Shift+S"
 					},
 				]
 			},

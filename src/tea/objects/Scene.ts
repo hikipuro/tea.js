@@ -577,6 +577,12 @@ export class Scene {
 		var scene = new Scene(app);
 		scene.physics = Tea.Physics.fromJSON(app, json.physics);
 		scene.renderSettings = Tea.RenderSettings.fromJSON(app, json.renderSettings);
+		var length = json.children.length;
+		for (var i = 0; i < length; i++) {
+			var child = json.children[i];
+			var object3d = Tea.Object3D.fromJSON(app, child);
+			scene.addChild(object3d);
+		}
 		return scene;
 	}
 

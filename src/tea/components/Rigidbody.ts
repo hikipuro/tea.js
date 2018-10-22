@@ -314,6 +314,14 @@ export class Rigidbody extends Component {
 		return json;
 	}
 
+	static fromJSON(app: Tea.App, json: any): Rigidbody {
+		if (json == null || json._type !== "Rigidbody") {
+			return null;
+		}
+		var rigidbody = new Rigidbody(app);
+		return rigidbody;
+	}
+
 	protected addPosition(position: Tea.Vector3): void {
 		var p = this._tmpVec3[0];
 		p.copy(position);

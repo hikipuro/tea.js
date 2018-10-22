@@ -199,6 +199,11 @@ export class App {
 		return scene;
 	}
 
+	createSceneFromJSON(data: any): Tea.Scene {
+		var scene = Tea.Scene.fromJSON(this, data);
+		return scene;
+	}
+
 	createDirectionalLight(): Tea.Object3D {
 		var object3d = new Tea.Object3D(this);
 		object3d.name = "Directional Light";

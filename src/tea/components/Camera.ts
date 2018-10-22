@@ -406,9 +406,45 @@ export class Camera extends Component {
 	toJSON(): Object {
 		var json = super.toJSON();
 		Object.assign(json, {
-			_type: "Camera"
+			_type: "Camera",
+			depth: this.depth,
+			clearFlags: Tea.CameraClearFlags.toString(this.clearFlags),
+			fieldOfView: this.fieldOfView,
+			nearClipPlane: this.nearClipPlane,
+			farClipPlane: this.farClipPlane,
+			backgroundColor: this.backgroundColor,
+			orthographic: this._orthographic,
+			orthographicSize: this.orthographicSize,
+			rect: this.rect,
+			//targetTexture: this.targetTexture,
+			enableStereo: this.enableStereo,
+			stereoDistance: this.stereoDistance,
+			stereoMode: this.stereoMode,
+			isStereoLeft: this.isStereoLeft,
 		});
 		return json;
+	}
+
+	static fromJSON(app: Tea.App, json: any): Camera {
+		if (json == null || json._type !== "Camera") {
+			return null;
+		}
+		var camera = new Camera(app);
+		camera.depth = json.depth;
+		camera.clearFlags = Tea.CameraClearFlags[json.clearFlags as string];
+		camera.fieldOfView = json.fieldOfView;
+		camera.nearClipPlane = json.nearClipPlane;
+		camera.farClipPlane = json.farClipPlane;
+		camera.backgroundColor = Tea.Color.fromArray(json.backgroundColor);
+		camera.orthographic = json.orthographic;
+		camera.orthographicSize = json.orthographicSize;
+		camera.rect = Tea.Rect.fromArray(json.rect);
+		//camera.targetTexture = json.targetTexture;
+		camera.enableStereo = json.enableStereo;
+		camera.stereoDistance = json.stereoDistance;
+		camera.stereoMode = json.stereoMode;
+		camera.isStereoLeft = json.isStereoLeft;
+		return camera;
 	}
 
 	protected getViewportRect(): Tea.Rect {

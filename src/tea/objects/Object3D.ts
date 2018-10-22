@@ -397,14 +397,16 @@ export class Object3D {
 			components: [],
 			children: []
 		};
-		for (var i = 0; i < this._components.length; i++) {
+		var length = this._components.length;
+		for (var i = 0; i < length; i++) {
 			var component = this._components[i];
 			if (component == null) {
 				continue;
 			}
 			json.components.push(component.toJSON());
 		}
-		for (var i = 0; i < this.children.length; i++) {
+		length = this.children.length;
+		for (var i = 0; i < length; i++) {
 			var child = this.children[i];
 			if (child == null) {
 				continue;
@@ -412,6 +414,30 @@ export class Object3D {
 			json.children.push(child.toJSON());
 		}
 		return json;
+	}
+
+	static fromJSON(app: Tea.App, json: any): Object3D {
+		if (json == null || json._type !== "Object3D") {
+			return null;
+		}
+		var object3d = new Object3D(app);
+		object3d.name = json.name;
+		object3d.isActive = json.isActive;
+		object3d.localPosition = Tea.Vector3.fromArray(json.localPosition);
+		object3d.localRotation = Tea.Quaternion.fromArray(json.localRotation);
+		object3d.localScale = Tea.Vector3.fromArray(json.localScale);
+		var length = json.components.length;
+		for (var i = 0; i < length; i++) {
+			var item = json.components[i];
+			var component = Tea.Component.fromComponentJSON(app, item);
+			if (component == null) {
+				continue;
+			}
+			component.object3d = object3d;
+			object3d._components.push(component);
+			
+		}
+		return object3d;
 	}
 
 	addChild(object3d: Object3D): void {

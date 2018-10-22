@@ -51,8 +51,21 @@ export class Light extends Component {
 			intensity: this.intensity,
 			range: this.range,
 			spotAngle: this.spotAngle,
-			type: this.type,
+			type: Tea.LightType.toString(this.type),
 		});
 		return json;
+	}
+
+	static fromJSON(app: Tea.App, json: any): Light {
+		if (json == null || json._type !== "Light") {
+			return null;
+		}
+		var light = new Light(app);
+		light.color = Tea.Color.fromArray(json.color);
+		light.intensity = json.intensity;
+		light.range = json.range;
+		light.spotAngle = json.spotAngle;
+		light.type = Tea.LightType[json.type as string];
+		return light;
 	}
 }

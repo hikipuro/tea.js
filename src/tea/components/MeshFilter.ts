@@ -24,4 +24,12 @@ export class MeshFilter extends Component {
 		});
 		return json;
 	}
+
+	static fromJSON(app: Tea.App, json: any): MeshFilter {
+		if (json == null || json._type !== "MeshFilter") {
+			return null;
+		}
+		var meshFilter = new MeshFilter(app);
+		return meshFilter;
+	}
 }

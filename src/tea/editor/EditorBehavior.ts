@@ -361,8 +361,14 @@ export class EditorBehavior {
 			case "File/New Scene":
 				this.editorCommand.newScene();
 				break;
+			case "File/Open Scene":
+				this.editorCommand.openScene();
+				break;
 			case "File/Save Scene":
 				this.editorCommand.saveScene();
+				break;
+			case "File/Save Scene as":
+				this.editorCommand.saveSceneAs();
 				break;
 		}
 	}

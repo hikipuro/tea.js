@@ -40,6 +40,16 @@ export class BoxCollider extends Collider {
 		return json;
 	}
 
+	static fromJSON(app: Tea.App, json: any): BoxCollider {
+		if (json == null || json._type !== "BoxCollider") {
+			return null;
+		}
+		var boxCollider = new BoxCollider(app);
+		boxCollider.center = Tea.Vector3.fromArray(json.center);
+		boxCollider.size = Tea.Vector3.fromArray(json.size);
+		return boxCollider;
+	}
+
 	testRay(ray: Tea.Ray): boolean {
 		var r = this.object3d.rotation.inversed;
 		var p = ray.origin.clone();

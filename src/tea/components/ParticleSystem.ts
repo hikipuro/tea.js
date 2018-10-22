@@ -285,6 +285,14 @@ export class ParticleSystem extends Component {
 		return json;
 	}
 
+	static fromJSON(app: Tea.App, json: any): ParticleSystem {
+		if (json == null || json._type !== "ParticleSystem") {
+			return null;
+		}
+		var particleSystem = new ParticleSystem(app);
+		return particleSystem;
+	}
+
 	protected get isTimeOver(): boolean {
 		var main = this.main;
 		if (main.loop === true) {

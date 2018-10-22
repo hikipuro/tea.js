@@ -71,6 +71,14 @@ export class LineRenderer extends Renderer {
 		return json;
 	}
 
+	static fromJSON(app: Tea.App, json: any): LineRenderer {
+		if (json == null || json._type !== "LineRenderer") {
+			return null;
+		}
+		var lineRenderer = new LineRenderer(app);
+		return lineRenderer;
+	}
+
 	protected get isRenderable(): boolean {
 		return (
 			this.object3d != null &&

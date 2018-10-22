@@ -1,6 +1,7 @@
 import Vue from "vue";
 import Component from "vue-class-component";
 import * as Tea from "../Tea";
+
 import { EditorBehavior } from "./EditorBehavior";
 import { HierarchyView } from "./HierarchyView";
 import { InspectorView } from "./InspectorView";

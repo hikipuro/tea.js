@@ -1,3 +1,5 @@
+import * as fs from "fs";
+
 export class File {
 	static readFile(url: string, callback: (err: any, data: ArrayBuffer) => void): void {
 		if (callback == null) {
@@ -42,6 +44,17 @@ export class File {
 		var xhr = this.createXHR(callback);
 		xhr.responseType = "arraybuffer";
 		xhr.open("get", url, true);
+	}
+
+	static writeText(path: string, data: any, callback: (err: any) => void): void {
+		if (fs == null) {
+			console.warn("File.writeText() not supported.");
+		}
+		fs.writeFile(path, data, "utf-8", (err) => {
+			if (callback) {
+				callback(err);
+			}
+		});
 	}
 
 	protected static createXHR(callback: (err: any, data: any) => void): XMLHttpRequest {

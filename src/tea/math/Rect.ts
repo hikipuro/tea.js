@@ -16,6 +16,16 @@ export class Rect extends Array<number> {
 		Object.freeze(Rect.zero);
 	}
 
+	static fromArray(array: Array<number>): Rect {
+		var x = array[0], y = array[1];
+		var width = array[2], height = array[3];
+		x = x != null ? x : 0.0;
+		y = y != null ? y : 0.0;
+		width = width != null ? width : 0.0;
+		height = height != null ? height : 0.0;
+		return new Rect(x, y, width, height);
+	}
+
 	get x(): number {
 		return this[0];
 	}

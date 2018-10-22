@@ -201,6 +201,44 @@ export class TextMesh extends Component {
 		);
 	}
 
+	toJSON(): Object {
+		var json = super.toJSON();
+		Object.assign(json, {
+			_type: "TextMesh",
+			material: this.material.toJSON(),
+			characterSize: this._characterSize,
+			lineSpacing: this._lineSpacing,
+			anchor: Tea.TextAnchor.toString(this._anchor),
+			alignment: Tea.TextAlignment.toString(this._alignment),
+			color: this._color,
+			font: this._font,
+			fontSize: this._fontSize,
+			fontStyle: Tea.FontStyle.toString(this._fontStyle),
+			text: this._text,
+			padding: this._padding
+		});
+		return json;
+	}
+
+	static fromJSON(app: Tea.App, json: any): TextMesh {
+		if (json == null || json._type !== "TextMesh") {
+			return null;
+		}
+		var textMesh = new TextMesh(app);
+		//textMesh.material = Tea.Material.fromJSON(json.material);
+		textMesh._characterSize = json.characterSize;
+		textMesh._lineSpacing = json.lineSpacing;
+		textMesh._anchor = Tea.TextAnchor[json.anchor as string];
+		textMesh._alignment = Tea.TextAlignment[json.alignment as string];
+		textMesh._color = Tea.Color.fromArray(json.color);
+		textMesh._font = json.font;
+		textMesh._fontSize = json.fontSize;
+		textMesh._fontStyle = Tea.FontStyle[json.fontStyle as string];
+		textMesh._text = json.text;
+		textMesh._padding = json.padding;
+		return textMesh;
+	}
+
 	protected clearRect(): void {
 		var w = this._canvas.width;
 		var h = this._canvas.height;
