@@ -43,6 +43,7 @@ export class Main {
 		this.app.enableUint32Index();
 		this.app.width = this.app.canvas.parentElement.clientWidth;
 		this.app.height = this.app.canvas.parentElement.clientHeight;
+		//this.app.setPixelRatio(window.devicePixelRatio);
 		//this.app.canvas.style.background = "#000";
 		//this.app.width = 400;
 		//this.app.height = 400;

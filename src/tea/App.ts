@@ -20,6 +20,7 @@ export class App {
 	readonly cursor: Tea.Cursor;
 	protected _canvasAttributes: WebGLContextAttributes;
 	protected _renderer: AppRenderer;
+	protected _pixelRatio: number = 1.0;
 
 	constructor(id: string, attributes?: WebGLContextAttributes) {
 		this._canvasAttributes = attributes;
@@ -58,7 +59,7 @@ export class App {
 		return this.canvas.width;
 	}
 	set width(value: number) {
-		this.canvas.width = value;
+		this.canvas.width = value * this._pixelRatio;
 		this.onResize();
 	}
 
@@ -66,7 +67,7 @@ export class App {
 		return this.canvas.height;
 	}
 	set height(value: number) {
-		this.canvas.height = value;
+		this.canvas.height = value * this._pixelRatio;
 		this.onResize();
 	}
 
@@ -186,6 +187,12 @@ export class App {
 			}
 			callback(buffer.buffer);
 		});
+	}
+
+	setPixelRatio(ratio: number): void {
+		this._pixelRatio = ratio;
+		this.width = this.width;
+		this.height = this.height;
 	}
 
 	createObject3D(): Tea.Object3D {
