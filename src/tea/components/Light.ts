@@ -61,6 +61,7 @@ export class Light extends Component {
 			return null;
 		}
 		var light = new Light(app);
+		light.enabled = json.enabled;
 		light.color = Tea.Color.fromArray(json.color);
 		light.intensity = json.intensity;
 		light.range = json.range;

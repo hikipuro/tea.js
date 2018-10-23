@@ -430,6 +430,7 @@ export class Camera extends Component {
 			return null;
 		}
 		var camera = new Camera(app);
+		camera.enabled = json.enabled;
 		camera.depth = json.depth;
 		camera.clearFlags = Tea.CameraClearFlags[json.clearFlags as string];
 		camera.fieldOfView = json.fieldOfView;

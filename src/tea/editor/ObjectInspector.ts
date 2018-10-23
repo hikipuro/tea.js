@@ -2,7 +2,6 @@ import Vue from "vue";
 import Component from "vue-class-component";
 import * as Tea from "../Tea";
 import { ComponentPanel } from "./components/ComponentPanel";
-import { UICommands } from "./commands/UICommands";
 
 @Component({
 	template: `
@@ -38,6 +37,7 @@ import { UICommands } from "./commands/UICommands";
 				v-for="(item, index) in components"
 				:type="item"
 				:key="index"
+				@update="onUpdateComponent"
 				@change="onChangeComponent"
 				@config="onComponentMenu">
 			</ComponentPanel>
@@ -64,7 +64,6 @@ import { UICommands } from "./commands/UICommands";
 	}
 })
 export class ObjectInspector extends Vue {
-	_commands: UICommands;
 	_object3d: Tea.Object3D;
 	name: string;
 	isActive: boolean;
@@ -160,6 +159,7 @@ export class ObjectInspector extends Vue {
 				if (this._object3d != null) {
 					this._object3d.isActive = bValue;
 				}
+				this.$emit("update", "ObjectInspector", "isActive", bValue);
 				break;
 			case "name":
 				var sValue = value as string;
@@ -178,7 +178,7 @@ export class ObjectInspector extends Vue {
 				if (this._object3d != null) {
 					this._object3d.name = sValue;
 				}
-				this.$emit("update", "name", sValue);
+				this.$emit("update", "ObjectInspector", "name", sValue);
 				break;
 		}
 	}
@@ -191,6 +191,7 @@ export class ObjectInspector extends Vue {
 		if (this._object3d != null) {
 			this._object3d.localPosition.set(x, y, z);
 		}
+		this.$emit("update", "ObjectInspector", "position", position);
 	}
 
 	protected onUpdateRotation(x: number, y: number, z: number): void {
@@ -201,7 +202,7 @@ export class ObjectInspector extends Vue {
 		if (this._object3d != null) {
 			this._object3d.localRotation.setEuler(x, y, z);
 		}
-		this.$emit("update", "rotation");
+		this.$emit("update", "ObjectInspector", "rotation", rotation);
 	}
 
 	protected onUpdateScale(x: number, y: number, z: number): void {
@@ -212,6 +213,7 @@ export class ObjectInspector extends Vue {
 		if (this._object3d != null) {
 			this._object3d.localScale.set(x, y, z);
 		}
+		this.$emit("update", "ObjectInspector", "rotation", scale);
 	}
 
 	protected onChangePosition(x: number, y: number, z: number): void {
@@ -239,6 +241,10 @@ export class ObjectInspector extends Vue {
 			y: y,
 			z: z
 		});
+	}
+
+	protected onUpdateComponent(property: string, value: any): void {
+		this.$emit("update", "ObjectInspector", property, value);
 	}
 
 	protected onChangeComponent(type: any, property: string, value: any): void {

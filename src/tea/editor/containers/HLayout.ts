@@ -6,8 +6,7 @@ type Panel = Tea.Editor.Panel;
 
 @Component({
 	template: `
-		<div
-			class="HLayout">
+		<div class="HLayout">
 			<Panel
 				v-for="(child, index) in children"
 				:key="index">

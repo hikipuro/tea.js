@@ -157,21 +157,24 @@ export class EditorBehavior {
 		var inspectorView = this.editor.inspectorView;
 
 		inspectorView._commands = this.commands;
-		inspectorView.$on("update", (key: string, value: any) => {
-			if (hierarchyView.getSelectedItem() == null) {
-				return;
-			}
-			var object3d = this.hierarchyViewCommand.getSelectedObject();
-			if (object3d == null) {
-				return;
-			}
-			switch (key) {
-				case "name":
-					hierarchyView.getSelectedItem().model.text = value;
-					break;
-				case "rotation":
-					this.objectInspectorCommand.snoozeUpdateTimer(1000);
-					break;
+		inspectorView.$on("update", (type: string, key: string, value: any) => {
+			if (type === "ObjectInspector") {
+				if (hierarchyView.getSelectedItem() == null) {
+					return;
+				}
+				var object3d = this.hierarchyViewCommand.getSelectedObject();
+				if (object3d == null) {
+					return;
+				}
+				this.editorCommand.isChanged = true;
+				switch (key) {
+					case "name":
+						hierarchyView.getSelectedItem().model.text = value;
+						break;
+					case "rotation":
+						this.objectInspectorCommand.snoozeUpdateTimer(1000);
+						break;
+				}
 			}
 		});
 		inspectorView.$on("change", (type: any, property: string, value: any) => {
@@ -273,12 +276,9 @@ export class EditorBehavior {
 	}
 
 	setScene(scene: Tea.Scene) {
-		var onResize = () => {
-			this.updateScreenSize();
-		};
 		var renderer = scene.app.renderer;
-		renderer.removeListener("resize", onResize);
-		renderer.on("resize", onResize);
+		renderer.off("resize", this.updateScreenSize);
+		renderer.on("resize", this.updateScreenSize);
 		renderer.once("update", () => {
 			this.hierarchyViewCommand.update(true);
 		});
@@ -291,7 +291,7 @@ export class EditorBehavior {
 		this.objectInspectorCommand.scene = scene;
 	}
 
-	updateScreenSize(): void {
+	updateScreenSize = (): void => {
 		var app = this.scene.app;
 		var aspect = this.editor.$refs.aspect as SelectAspect;
 		var canvas = this.editor.$refs.canvas as HTMLCanvasElement;

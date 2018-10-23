@@ -319,6 +319,7 @@ export class Rigidbody extends Component {
 			return null;
 		}
 		var rigidbody = new Rigidbody(app);
+		rigidbody.enabled = json.enabled;
 		return rigidbody;
 	}
 

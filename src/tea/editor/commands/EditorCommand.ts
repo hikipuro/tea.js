@@ -16,18 +16,29 @@ export class EditorCommand {
 	inspectorView: InspectorView;
 
 	filename: string;
-	isChanged: boolean;
-
+	protected _isChanged: boolean;
 	protected eventHandler: EventDispatcher;
 
 	constructor() {
 		this.filename = null;
-		this.isChanged = false;
+		this._isChanged = false;
 		this.eventHandler = new EventDispatcher();
+		this.updateWindowTitle();
 	}
 
-	newScene(): void {
-		if (this.isChanged) {
+	get isChanged(): boolean {
+		return this._isChanged;
+	}
+	set isChanged(value: boolean) {
+		if (this._isChanged === value) {
+			return;
+		}
+		this._isChanged = value;
+		this.updateWindowTitle();
+	}
+
+	newScene(force: boolean = false): void {
+		if (force === false && this._isChanged) {
 			this.showConfirmSaveDialog((response: string) => {
 				switch (response) {
 					case "Save":
@@ -39,8 +50,7 @@ export class EditorCommand {
 						this.saveScene();
 						break;
 					case "Don't Save":
-						this.isChanged = false;
-						this.newScene();
+						this.newScene(true);
 						break;
 				}
 			});
@@ -59,9 +69,9 @@ export class EditorCommand {
 		this.editor.setScene(scene);
 	}
 
-	openScene(): void {
+	openScene(force: boolean = false): void {
 		console.log("openScene");
-		if (this.isChanged) {
+		if (force === false && this._isChanged) {
 			this.showConfirmSaveDialog((response: string) => {
 				switch (response) {
 					case "Save":
@@ -73,8 +83,7 @@ export class EditorCommand {
 						this.saveScene();
 						break;
 					case "Don't Save":
-						this.isChanged = false;
-						this.openScene();
+						this.openScene(true);
 						break;
 				}
 			});
@@ -96,7 +105,7 @@ export class EditorCommand {
 
 	saveScene(): void {
 		console.log("saveScene");
-		if (this.isChanged === false) {
+		if (this._isChanged === false) {
 			this.eventHandler.emit("save", null);
 			return;
 		}
@@ -141,6 +150,26 @@ export class EditorCommand {
 				callback(buttons[response]);
 			}
 		);
+	}
+
+	protected updateWindowTitle(): void {
+		if (remote == null || remote.getCurrentWindow == null) {
+			return;
+		}
+		var window = remote.getCurrentWindow();
+		var title = window.getTitle();
+		var suffix = title.substr(-2);
+		if (this._isChanged) {
+			if (suffix !== " *") {
+				title += " *";
+				window.setTitle(title);
+			}
+		} else {
+			if (suffix === " *") {
+				title = title.substr(0, title.length - 2);
+				window.setTitle(title);
+			}
+		}
 	}
 
 	protected save(): void {

@@ -225,6 +225,7 @@ export class TextMesh extends Component {
 			return null;
 		}
 		var textMesh = new TextMesh(app);
+		textMesh.enabled = json.enabled;
 		//textMesh.material = Tea.Material.fromJSON(json.material);
 		textMesh._characterSize = json.characterSize;
 		textMesh._lineSpacing = json.lineSpacing;

@@ -30,6 +30,7 @@ import { VResizeBar } from "./basic/VResizeBar";
 import { Panel } from "./containers/Panel";
 import { HLayout } from "./containers/HLayout";
 import { VLayout } from "./containers/VLayout";
+import { Tabs, TabItem } from "./containers/Tabs";
 import { Window } from "./containers/Window";
 
 import { BoxCollider } from "./components/BoxCollider";
@@ -68,6 +69,8 @@ Vue.component("VResizeBar", VResizeBar);
 Vue.component("Panel", Panel);
 Vue.component("HLayout", HLayout);
 Vue.component("VLayout", VLayout);
+Vue.component("Tabs", Tabs);
+Vue.component("TabItem", TabItem);
 Vue.component("Window", Window);
 
 Vue.component("BoxCollider", BoxCollider);
@@ -115,15 +118,22 @@ Vue.component("TextMesh", TextMesh);
 							</VLayout>
 						</Panel>
 					</HLayout>
-					<HLayout class="BottomLayout">
-						<Panel class="BottomPanel">
-							<TreeView ref="project" tabindex="1"></TreeView>
-						</Panel>
-						<Panel class="FileList">
-							<TreeView ref="fileList" tabindex="2"></TreeView>
-						</Panel>
+					<Tabs class="Bottom">
+						<TabItem name="Project">
+							<HLayout class="BottomLayout">
+								<Panel class="BottomPanel">
+									<TreeView ref="project" tabindex="1"></TreeView>
+								</Panel>
+								<Panel class="FileList">
+									<TreeView ref="fileList" tabindex="2"></TreeView>
+								</Panel>
+							</HLayout>
+						</TabItem>
+						<TabItem>
+							test
+						</TabItem>
 						<VResizeBar ref="projectResize" :isTop="true"></VResizeBar>
-					</HLayout>
+					</Tabs>
 				</VLayout>
 				<Panel ref="right" class="RightPanel">
 					<InspectorView ref="inspector"></InspectorView>

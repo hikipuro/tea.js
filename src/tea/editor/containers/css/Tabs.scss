@@ -1,0 +1,37 @@
+#{$parent} {
+	div.Tabs {
+		display: flex;
+		flex-direction: column;
+		position: relative;
+		box-sizing: border-box;
+		background-color: theme("background");
+		overflow: hidden;
+
+		> ul.TabBar {
+			display: flex;
+			flex-direction: row;
+			justify-content: flex-start;
+			margin: 0;
+			padding: 0;
+			list-style-type: none;
+
+			> li {
+				margin-right: 0.1em;
+				padding: 2px 5px 1px 5px;
+			}
+			> li.selected {
+				padding: 1px 4px 1px 4px;
+				border-top: 1px solid gray;
+				border-left: 1px solid gray;
+				border-right: 1px solid gray;
+				border-radius: 0.3em 0.3em 0 0;
+			}
+		}
+
+		div.TabItem {
+			flex: 1;
+			width: 100%;
+			overflow: hidden;
+		}
+	}
+}

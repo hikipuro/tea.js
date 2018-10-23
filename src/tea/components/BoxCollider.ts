@@ -45,6 +45,7 @@ export class BoxCollider extends Collider {
 			return null;
 		}
 		var boxCollider = new BoxCollider(app);
+		boxCollider.enabled = json.enabled;
 		boxCollider.center = Tea.Vector3.fromArray(json.center);
 		boxCollider.size = Tea.Vector3.fromArray(json.size);
 		return boxCollider;

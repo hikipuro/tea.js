@@ -181,6 +181,7 @@ export class MeshRenderer extends Renderer {
 			return null;
 		}
 		var meshRenderer = new MeshRenderer(app);
+		meshRenderer.enabled = json.enabled;
 		meshRenderer.receiveShadows = json.receiveShadows;
 		meshRenderer._wireframe = json.wireframe;
 		meshRenderer.material = Tea.Material.fromJSON(app, json.material);

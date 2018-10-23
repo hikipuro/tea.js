@@ -292,11 +292,7 @@ export class Scene {
 		this._isCleared = false;
 		this._children = [];
 		this._components = new SceneComponents();
-		this.app.renderer.on("resize", () => {
-			//console.log("resize");
-			this.renderTexture.destroy();
-			this.refreshRenderTexture();
-		})
+		this.app.renderer.on("resize", this.onResize);
 	}
 
 	get children(): Array<Tea.Object3D> {
@@ -308,6 +304,7 @@ export class Scene {
 	}
 
 	destroy(): void {
+		this.app.renderer.off("resize", this.onResize);
 		var children = this.children;
 		var length = children.length;
 		for (var i = length - 1; i >= 0 ; i--) {
@@ -766,5 +763,11 @@ export class Scene {
 		this.renderTexture = new Tea.RenderTexture(app, app.width, app.height);
 		//this.renderTexture.filterMode = Tea.FilterMode.Bilinear;
 		//this.renderTexture.wrapMode = Tea.TextureWrapMode.Mirror;
+	}
+
+	protected onResize = () => {
+		//console.log("resize");
+		this.renderTexture.destroy();
+		this.refreshRenderTexture();
 	}
 }

@@ -84,6 +84,7 @@ export class LineRenderer extends Renderer {
 			return null;
 		}
 		var lineRenderer = new LineRenderer(app);
+		lineRenderer.enabled = json.enabled;
 		return lineRenderer;
 	}
 

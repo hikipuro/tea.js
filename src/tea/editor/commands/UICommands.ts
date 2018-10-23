@@ -152,15 +152,15 @@ export class UICommands {
 				}
 				inspectorView.hide();
 				//setTimeout(() => {
-					var commands = this;
+					//var commands = this;
 					inspectorView.component = ObjectInspector.extend({
 						created: function () {
 							//(this as any)._object3d = object3d;
 							var self = this as ObjectInspector;
-							self._commands = commands;
+							//self._commands = commands;
 							self.setObject3D(object3d);
 							object3d = undefined;
-							commands = undefined;
+							//commands = undefined;
 						}
 					});
 					//inspectorView.setObject3D(object3d);

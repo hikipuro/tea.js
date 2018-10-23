@@ -290,6 +290,7 @@ export class ParticleSystem extends Component {
 			return null;
 		}
 		var particleSystem = new ParticleSystem(app);
+		particleSystem.enabled = json.enabled;
 		return particleSystem;
 	}
 

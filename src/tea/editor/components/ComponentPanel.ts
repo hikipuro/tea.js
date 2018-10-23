@@ -12,6 +12,7 @@ import { TitleBar } from "./TitleBar";
 			<component
 				ref="component"
 				:is="type"
+				@update="onUpdate"
 				@change="onChange"></component>
 		</div>
 	`,
@@ -51,11 +52,16 @@ export class ComponentPanel extends Vue {
 		this.enabled = value;
 		var component = this.$refs.component as Vue;
 		component.$data.enabled = value;
+		this.$emit("update", "enabled", value);
 	}
 
 	protected onClickConfig(): void {
 		var component = this.$refs.component as any;
 		this.$emit("config", component._component);
+	}
+
+	protected onUpdate(property: string, value: any): void {
+		this.$emit("update", property, value);
 	}
 
 	protected onChange(property: string, value: any): void {

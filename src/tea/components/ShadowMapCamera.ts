@@ -39,6 +39,7 @@ export class ShadowMapCamera extends Camera {
 			return null;
 		}
 		var shadowMapCamera = new ShadowMapCamera(app);
+		shadowMapCamera.enabled = json.enabled;
 		return shadowMapCamera;
 	}
 }

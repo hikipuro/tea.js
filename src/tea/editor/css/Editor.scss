@@ -23,6 +23,7 @@ $parent: "#editor";
 @import "../containers/css/Panel.scss";
 @import "../containers/css/HLayout.scss";
 @import "../containers/css/VLayout.scss";
+@import "../containers/css/Tabs.scss";
 @import "../containers/css/Window.scss";
 
 @import "../components/css/Camera.scss";
@@ -74,10 +75,13 @@ $parent: "#editor";
 	div.CanvasPanel::-webkit-scrollbar {
 		display: none;
 	}
-	div.BottomLayout {
-		position: relative;
+
+	div.Tabs.Bottom {
 		height: 200px;
 		border-top: 1px solid theme("border");
+	}
+	div.BottomLayout {
+		position: relative;
 
 		.Panel {
 			overflow: auto;
@@ -99,8 +103,8 @@ $parent: "#editor";
 
 	div.dragImages {
 		position: absolute;
-		left: -300px;
-		top: 0;
+		left: 0;
+		top: 101%;
 
 		> .dragImage {
 			opacity: 0.6;
