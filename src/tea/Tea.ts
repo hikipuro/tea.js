@@ -202,6 +202,16 @@ export function openDownloadDialog(data: ArrayBuffer, type: string, filename: st
 	URL.revokeObjectURL(url);
 }
 
+export function debounce(func: Function, interval: number): () => any {
+	var timer = null;
+	return function (...args: any[]) {
+		clearTimeout(timer);
+		timer = setTimeout(() => {
+			func.apply(func, args);
+		}, interval);
+	};
+}
+
 
 import { Vector2 } from "./math/Vector2";
 import { Vector3 } from "./math/Vector3";

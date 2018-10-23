@@ -482,9 +482,9 @@ class AppRenderer extends Tea.EventDispatcher {
 			this.isPaused = false;
 			this.emit("resume");
 		});
-		window.addEventListener("resize", () => {
+		window.addEventListener("resize", Tea.debounce(() => {
 			this.dispatchResizeEvent();
-		});
+		}, 250));
 		if (Electron && Electron.remote) {
 			var browserWindow = Electron.remote.getCurrentWindow();
 			browserWindow.on("enter-full-screen", () => {
@@ -506,7 +506,9 @@ class AppRenderer extends Tea.EventDispatcher {
 
 	dispatchResizeEvent(): void {
 		this.emit("resize");
-		this.stats.updateSize();
+		this.once("update", () => {
+			this.stats.updateSize();
+		});
 	}
 
 	start(): void {

@@ -72,19 +72,19 @@ export class EditorBehavior {
 		var hierarchyResize = this.editor.$refs.hierarchyResize as Vue;
 		var inspectorResize = this.editor.$refs.inspectorResize as Vue;
 		var projectResize = this.editor.$refs.projectResize as Vue;
-		hierarchyResize.$on("resize", () => {
+		hierarchyResize.$on("resize", Tea.debounce(() => {
 			this.scene.app.renderer.dispatchResizeEvent();
 			//this.updateScreenSize();
-		});
-		inspectorResize.$on("resize", () => {
+		}, 100));
+		inspectorResize.$on("resize", Tea.debounce(() => {
 			this.scene.app.renderer.dispatchResizeEvent();
 			//this.updateScreenSize();
 			//this.scene.app.renderer.stats.updateSize();
-		});
-		projectResize.$on("resize", () => {
+		}, 100));
+		projectResize.$on("resize", Tea.debounce(() => {
 			this.scene.app.renderer.dispatchResizeEvent();
 			//this.updateScreenSize();
-		});
+		}, 100));
 	}
 
 	initHierarchyView(): void {
