@@ -101,22 +101,28 @@ Vue.component("TextMesh", TextMesh);
 							<HierarchyView ref="hierarchy"></HierarchyView>
 							<HResizeBar ref="hierarchyResize"></HResizeBar>
 						</Panel>
-						<Panel ref="main" class="MainPanel">
-							<VLayout
-								:style="{
-									height: '100%'
-								}">
-								<Panel class="Toolbar">
-									<SelectAspect
-										ref="aspect"
-										@update="onUpdateAspect">
-									</SelectAspect>
+						<Tabs ref="mainTabs" class="Top">
+							<TabItem name="Player" class="MainPanel">
+								<VLayout
+									:style="{
+										height: '100%'
+									}">
+									<Panel class="Toolbar">
+										<SelectAspect
+											ref="aspect"
+											@update="onUpdateAspect">
+										</SelectAspect>
+									</Panel>
+									<Panel ref="playerPanel" class="PlayerPanel">
+										<canvas ref="canvas" id="canvas"></canvas>
+									</Panel>
+								</VLayout>
+							</TabItem>
+							<TabItem name="Scene">
+								<Panel ref="scenePanel" class="ScenePanel">
 								</Panel>
-								<Panel class="CanvasPanel">
-									<canvas ref="canvas" id="canvas"></canvas>
-								</Panel>
-							</VLayout>
-						</Panel>
+							</TabItem>
+						</Tabs>
 					</HLayout>
 					<Tabs class="Bottom">
 						<TabItem name="Project">

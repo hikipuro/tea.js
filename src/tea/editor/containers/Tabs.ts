@@ -208,5 +208,9 @@ export class Tabs extends Vue {
 			return;
 		}
 		this.select(index);
+		var item = this.getItem(index);
+		if (item != null) {
+			this.$emit("select", item);
+		}
 	}
 }

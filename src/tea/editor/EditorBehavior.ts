@@ -8,6 +8,7 @@ import { UICommands } from "./commands/UICommands";
 import { HierarchyViewCommand } from "./commands/HierarchyViewCommand";
 import { ObjectInspectorCommand } from "./commands/ObjectInspectorCommand";
 import { EditorCommand } from "./commands/EditorCommand";
+import { Tabs } from "./containers/Tabs";
 
 export class EditorBehavior {
 	editor: Editor;
@@ -22,6 +23,7 @@ export class EditorBehavior {
 		this.initEvents();
 		this.initMainMenu();
 		this.initUICommands();
+		this.initTabs();
 		this.initScreenView();
 		this.initHierarchyView();
 		this.initInspectorView();
@@ -66,6 +68,26 @@ export class EditorBehavior {
 		this.objectInspectorCommand.hierarchyView = hierarchyView;
 		this.objectInspectorCommand.inspectorView = inspectorView;
 		this.objectInspectorCommand.hierarchyViewCommand = this.hierarchyViewCommand;
+	}
+
+	initTabs(): void {
+		var mainTabs = this.editor.$refs.mainTabs as Tabs;
+		var playerPanel = this.editor.$refs.playerPanel as Vue;
+		var scenePanel = this.editor.$refs.scenePanel as Vue;
+		var canvas = this.editor.$refs.canvas as HTMLElement;
+		mainTabs.$on("select", (item) => {
+			switch (item.name) {
+				case "Player":
+					playerPanel.$el.appendChild(canvas);
+					this.scene.app.isSceneView = false;
+					break;
+				case "Scene":
+					scenePanel.$el.appendChild(canvas);
+					this.scene.app.isSceneView = true;
+					break;
+			}
+			this.updateScreenSize();
+		});
 	}
 
 	initScreenView(): void {

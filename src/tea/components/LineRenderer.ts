@@ -122,6 +122,6 @@ export class LineRenderer extends Renderer {
 			return;
 		}
 		var gl = this.gl;
-		gl.drawArrays(gl.LINE_STRIP, 0, count);
+		gl.drawArrays(gl.LINES, 0, count);
 	}
 }

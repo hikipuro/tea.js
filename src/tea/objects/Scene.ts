@@ -1,4 +1,6 @@
 import * as Tea from "../Tea";
+import { SceneGrid } from "./SceneGrid";
+import { SceneMovement } from "./SceneMovement";
 
 class SceneComponents {
 	mainCamera: Tea.Camera;
@@ -281,6 +283,7 @@ export class Scene {
 	protected _isCleared: boolean;
 	protected _children: Array<Tea.Object3D>;
 	protected _components: SceneComponents;
+	protected _sceneRenderer: SceneRenderer;
 
 	constructor(app: Tea.App) {
 		this.app = app;
@@ -292,6 +295,7 @@ export class Scene {
 		this._isCleared = false;
 		this._children = [];
 		this._components = new SceneComponents();
+		this._sceneRenderer = new SceneRenderer(this);
 		this.app.renderer.on("resize", this.onResize);
 	}
 
@@ -608,6 +612,16 @@ export class Scene {
 		//console.log("drawCallCount", Tea.Renderer.drawCallCount);
 	}
 
+	updateScene(): void {
+		if (this.app == null) {
+			return;
+		}
+		this._components.sortRenderers();
+		var renderers = this._components.availableRenderers;
+		var lights = this._components.availableLights;
+		this._sceneRenderer.render(renderers, lights);
+	}
+
 	static fromJSON(app: Tea.App, json: any): Scene {
 		if (json == null || json._type !== "Scene") {
 			return null;
@@ -769,5 +783,60 @@ export class Scene {
 		//console.log("resize");
 		this.renderTexture.destroy();
 		this.refreshRenderTexture();
+	}
+}
+
+class SceneRenderer {
+	scene: Scene;
+	cameraObject: Tea.Object3D;
+	camera: Tea.Camera;
+	grid: SceneGrid;
+
+	constructor(scene: Scene) {
+		this.scene = scene;
+		this.cameraObject = scene.app.createCamera();
+		this.cameraObject.localPosition.set(10, 10, -10);
+		this.cameraObject.localEulerAngles = new Tea.Vector3(45, -45, 0);
+		this.cameraObject.addComponent(SceneMovement);
+		this.camera = this.cameraObject.getComponent(Tea.Camera);
+		this.camera.backgroundColor.set(0.5, 0.5, 0.5, 1.0);
+		this.grid = new SceneGrid(scene.app);
+	}
+
+	render(renderers: Array<Tea.Renderer>, lights: Array<Tea.Light>): void {
+		this.update();
+		Tea.Renderer.drawCallCount = 0;
+		var camera = this.camera;
+		renderers.unshift(this.grid.renderer);
+		var renderSettings = this.scene.renderSettings;
+		var rendererCount = renderers.length;
+		for (var i = 0; i < rendererCount; i++) {
+			var renderer = renderers[i];
+			renderer.material.setTexture("_ShadowTex", null);
+			renderer.render(camera, lights, renderSettings);
+		}
+	}
+
+	protected update(): void {
+		var children = this.scene.children;
+		var childCount = children.length;
+		for (var i = childCount - 1; i >= 0 ; i--) {
+			this.updateObject3D(children[i]);
+		}
+		this.cameraObject.update();
+		this.camera.update();
+		this.grid.object3d.update();
+	}
+
+	protected updateObject3D(object3d: Tea.Object3D): void {
+		if (object3d == null || object3d.id == null) {
+			return;
+		}
+		object3d.updateScene();
+		var children = object3d.children;
+		var length = children.length;
+		for (var i = 0; i < length; i++) {
+			this.updateObject3D(children[i]);
+		}
 	}
 }

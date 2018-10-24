@@ -157,7 +157,6 @@ export class Mouse {
 	}
 }
 
-
 export module Mouse {
 	export class Button {
 		static readonly Left: number = 0;

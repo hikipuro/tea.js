@@ -680,6 +680,40 @@ export class Object3D {
 		}
 	}
 
+	updateScene(): void {
+		if (this.isActiveInHierarchy === false) {
+			if (this._toDestroy) {
+				this._destroy();
+			}
+			return;
+		}
+		this._m.update(this);
+		var components = this._components;
+		var length = components.length;
+		for (var i = 0; i < length; i++) {
+			var component = components[i];
+			if (component instanceof Tea.Camera) {
+				continue;
+			}
+			if (component instanceof Tea.Script) {
+				continue;
+			}
+			if (component instanceof Tea.Rigidbody) {
+				continue;
+			}
+			if (component.enabled) {
+				try {
+					component.update();
+				} catch (err) {
+					console.error(err);
+				}
+			}
+		}
+		if (this._toDestroy) {
+			this._destroy();
+		}
+	}
+
 	protected reverseScale$(scale: Tea.Vector3): Tea.Vector3 {
 		scale[0] = scale[0] !== 0.0 ? 1.0 / scale[0] : 0.0;
 		scale[1] = scale[1] !== 0.0 ? 1.0 / scale[1] : 0.0;

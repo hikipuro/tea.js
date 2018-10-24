@@ -29,13 +29,13 @@ export class TestScript extends Tea.Script {
 
 		var keyboard = this.app.keyboard;
 		//console.log(keyboard.isDown(Keyboard.Keys.ArrowLeft));
-		if (keyboard.isDown(Tea.Keyboard.Codes.Space)) {
+		if (keyboard.isDown(Tea.Keyboard.Code.Space)) {
 			console.log("down");
 		}
-		if (keyboard.isUp(Tea.Keyboard.Codes.Space)) {
+		if (keyboard.isUp(Tea.Keyboard.Code.Space)) {
 			console.log("up");
 		}
-		if (keyboard.isHeld(Tea.Keyboard.Codes.Space)) {
+		if (keyboard.isHeld(Tea.Keyboard.Code.Space)) {
 			console.log("held");
 		}
 

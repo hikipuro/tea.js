@@ -55,20 +55,29 @@ export class App {
 		return "0.1.0";
 	}
 
+	get isSceneView(): boolean {
+		return this._renderer.isSceneView;
+	}
+	set isSceneView(value: boolean) {
+		this._renderer.isSceneView = value;
+	}
+
 	get width(): number {
 		return this.canvas.width;
 	}
 	set width(value: number) {
-		this.canvas.width = value * this._pixelRatio;
-		this.onResize();
+		var canvas = this.canvas;
+		canvas.width = value * this._pixelRatio;
+		canvas.style.width = value + "px";
 	}
 
 	get height(): number {
 		return this.canvas.height;
 	}
 	set height(value: number) {
-		this.canvas.height = value * this._pixelRatio;
-		this.onResize();
+		var canvas = this.canvas;
+		canvas.height = value * this._pixelRatio;
+		canvas.style.height = value + "px";
 	}
 
 	get drawingBufferWidth(): number {
@@ -276,16 +285,22 @@ export class App {
 		return renderer;
 	}
 
-	createLineRenderer(): Tea.LineRenderer {
-		var renderer = new Tea.LineRenderer(this);
+	createLineRenderer(): Tea.Object3D {
+		var object3d = new Tea.Object3D(this);
+		var renderer = object3d.addComponent(Tea.LineRenderer);
 		var shader = new Tea.Shader(this);
 		shader.attach(
 			Tea.ShaderSources.lineVS,
 			Tea.ShaderSources.lineFS
 		);
+		shader.settings.enableBlend = true;
+		shader.settings.blend.srcRGB = Tea.ShaderBlendFunc.SrcAlpha;
+		shader.settings.blend.dstRGB = Tea.ShaderBlendFunc.OneMinusSrcAlpha;
+		shader.settings.blend.srcAlpha = Tea.ShaderBlendFunc.One;
+		shader.settings.blend.dstAlpha = Tea.ShaderBlendFunc.One;
 		renderer.material = Tea.Material.getDefault(this);
 		renderer.material.shader = shader;
-		return renderer;
+		return object3d;
 	}
 
 	createTexture(image: HTMLImageElement): Tea.Texture {
@@ -424,13 +439,6 @@ export class App {
 		return context;
 	}
 
-	protected onResize() {
-		//var gl = this.gl;
-		//gl.viewport(100 / 2, 0, this.width, this.height);
-		//gl.scissor(100, 0, this.width, this.height);
-	}
-
-
 	protected onContextCreationError = (event: WebGLContextEvent) => {
 		console.error("webglcontextcreationerror", event);
 	}
@@ -454,6 +462,11 @@ class AppRenderer extends Tea.EventDispatcher {
 	time: Tea.Time;
 	stats: Tea.Stats;
 	runInBackground: boolean;
+	protected _fps: number;
+	protected _interval: number;
+	protected _isSceneView: boolean;
+	protected _lastTime: number;
+	protected _update: FrameRequestCallback;
 	protected _handle: number;
 
 	constructor(app: App) {
@@ -465,6 +478,11 @@ class AppRenderer extends Tea.EventDispatcher {
 		this.mouse = new Tea.Mouse(app, this.app.canvas);
 		this.time = new Tea.Time();
 		this.runInBackground = false;
+		this._fps = 60.0;
+		this._interval = 1000.0 / this._fps;
+		this._isSceneView = false;
+		this._lastTime = 0.0;
+		this._update = this.update;
 		this._handle = 0;
 		this.createStats();
 
@@ -484,7 +502,8 @@ class AppRenderer extends Tea.EventDispatcher {
 				return;
 			}
 			if (this.isStarted && this.isPaused) {
-				this._handle = requestAnimationFrame(this.update);
+				this._lastTime = performance.now();
+				this._handle = requestAnimationFrame(this._update);
 			}
 			this.isPaused = false;
 			this.emit("resume");
@@ -511,6 +530,29 @@ class AppRenderer extends Tea.EventDispatcher {
 		}
 	}
 
+	get fps(): number {
+		return this._fps;
+	}
+	set fps(value: number) {
+		this._fps = value;
+		this._interval = 1000.0 / value;
+	}
+
+	get isSceneView(): boolean {
+		return this._isSceneView;
+	}
+	set isSceneView(value: boolean) {
+		if (this._isSceneView === value) {
+			return;
+		}
+		this._isSceneView = value;
+		if (value) {
+			this._update = this.updateScene;
+		} else {
+			this._update = this.update;
+		}
+	}
+
 	dispatchResizeEvent(): void {
 		this.emit("resize");
 		this.once("update", () => {
@@ -526,7 +568,8 @@ class AppRenderer extends Tea.EventDispatcher {
 		this.time.start();
 		if (this.isPaused === false) {
 			this.stats.updateSize();
-			this._handle = requestAnimationFrame(this.update);
+			this._lastTime = performance.now();
+			this._handle = requestAnimationFrame(this._update);
 		}
 	}
 
@@ -542,6 +585,11 @@ class AppRenderer extends Tea.EventDispatcher {
 	}
 
 	protected update = (time: number): void => {
+		if (time < this._lastTime + this._interval) {
+			this._handle = requestAnimationFrame(this._update);
+			return;
+		}
+		this._lastTime += this._interval;
 		//Tea.Vector3.newCount = 0;
 		//Tea.Quaternion.newCount = 0;
 		//Tea.Matrix4x4.newCount = 0;
@@ -553,10 +601,27 @@ class AppRenderer extends Tea.EventDispatcher {
 		}
 		this.stats.update();
 		this.emit("update");
-		this._handle = requestAnimationFrame(this.update);
+		this._handle = requestAnimationFrame(this._update);
 		//console.log("Tea.Vector3.newCount", Tea.Vector3.newCount);
 		//console.log("Tea.Quaternion.newCount", Tea.Quaternion.newCount);
 		//console.log("Tea.Matrix4x4.newCount", Tea.Matrix4x4.newCount);
+	}
+
+	protected updateScene = (time: number): void => {
+		if (time < this._lastTime + this._interval) {
+			this._handle = requestAnimationFrame(this._update);
+			return;
+		}
+		this._lastTime += this._interval;
+		this.time.update();
+		if (this.currentScene != null) {
+			this.currentScene.updateScene();
+			this.keyboard.update();
+			this.mouse.update();
+		}
+		this.stats.update();
+		this.emit("update");
+		this._handle = requestAnimationFrame(this._update);
 	}
 
 	protected createStats(): void {

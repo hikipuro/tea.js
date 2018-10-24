@@ -94,7 +94,7 @@ export class Keyboard {
 }
 
 export module Keyboard {
-	export class Codes {
+	export class Code {
 		static readonly Backspace: string = "Backspace";
 		static readonly Delete: string = "Delete";
 		static readonly Tab: string = "Tab";
