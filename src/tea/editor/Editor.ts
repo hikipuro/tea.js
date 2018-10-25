@@ -3,6 +3,7 @@ import Component from "vue-class-component";
 import * as Tea from "../Tea";
 
 import { EditorBehavior } from "./EditorBehavior";
+import { ConsoleView } from "./ConsoleView";
 import { HierarchyView } from "./HierarchyView";
 import { InspectorView } from "./InspectorView";
 import { ObjectInspector } from "./ObjectInspector";
@@ -135,8 +136,8 @@ Vue.component("TextMesh", TextMesh);
 								</Panel>
 							</HLayout>
 						</TabItem>
-						<TabItem>
-							test
+						<TabItem name="Console">
+							<ConsoleView ref="console"></ConsoleView>
 						</TabItem>
 						<VResizeBar ref="projectResize" :isTop="true"></VResizeBar>
 					</Tabs>
@@ -154,6 +155,7 @@ Vue.component("TextMesh", TextMesh);
 		</div>
 	`,
 	components: {
+		ConsoleView: ConsoleView,
 		HierarchyView: HierarchyView,
 		InspectorView: InspectorView
 	}
@@ -172,6 +174,10 @@ export class Editor extends Vue {
 		Vue.component(name, component);
 	}
 	//*/
+
+	get consoleView(): ConsoleView {
+		return this.$refs.console as ConsoleView;
+	}
 
 	get hierarchyView(): HierarchyView {
 		return this.$refs.hierarchy as HierarchyView;

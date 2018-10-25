@@ -24,6 +24,7 @@ export class EditorBehavior {
 		this.initMainMenu();
 		this.initUICommands();
 		this.initTabs();
+		this.initConsoleView();
 		this.initScreenView();
 		this.initHierarchyView();
 		this.initInspectorView();
@@ -88,6 +89,30 @@ export class EditorBehavior {
 			}
 			this.updateScreenSize();
 		});
+	}
+
+	initConsoleView(): void {
+		var consoleView = this.editor.consoleView;
+		var log = console.log;
+		var info = console.info;
+		var warn = console.warn;
+		var error = console.error;
+		console.log = (message: any, ...optionalParams: any[]) => {
+			log(message, optionalParams);
+			consoleView.log(message, optionalParams);
+		};
+		console.info = (message: any, ...optionalParams: any[]) => {
+			info(message, optionalParams);
+			consoleView.info(message, optionalParams);
+		};
+		console.warn = (message: any, ...optionalParams: any[]) => {
+			warn(message, optionalParams);
+			consoleView.warn(message, optionalParams);
+		};
+		console.error = (message: any, ...optionalParams: any[]) => {
+			error(message, optionalParams);
+			consoleView.error(message, optionalParams);
+		};
 	}
 
 	initScreenView(): void {

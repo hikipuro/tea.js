@@ -1,0 +1,35 @@
+#{$parent} {
+	div.ConsoleView {
+		height: 100%;
+		overflow: auto;
+
+		> .item {
+			display: flex;
+			align-items: center;
+			padding: 0 0.2em;
+			> .icon {
+				display: inline;
+				margin-right: 0.1em;
+			}
+			> .time {
+				display: inline;
+				margin-right: 0.5em;
+			}
+			> .text {
+				display: inline;
+				flex: 1;
+				padding: 0.2em 0;
+			}
+		}
+
+		> .item.warn {
+			background-color: #888070;
+		}
+		> .item.error {
+			background-color: #887070;
+		}
+		> .item.info {
+			background-color: #607060;
+		}
+	}
+}
