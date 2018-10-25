@@ -6,6 +6,7 @@ import { Keyboard } from "../Keyboard";
 export class SceneMovement extends Script {
 	moveSpeed: number = 0.2;
 	rotateSpeed: number = 0.2;
+	wheelSpeed: number = 0.05;
 
 	constructor(app: Tea.App) {
 		super(app);
@@ -18,15 +19,15 @@ export class SceneMovement extends Script {
 			window.addEventListener("mouseup", this.onMouseUp);
 			document.body.requestPointerLock();
 		}
+		if (mouse.isHeld(Mouse.Button.Right)) {
+			this.move();
+		}
 		var wheelY = mouse.wheelY;
 		if (wheelY !== 0) {
 			var object3d = this.object3d;
 			object3d.translate(
-				object3d.forward.mul$(wheelY * 0.05)
+				object3d.forward.mul$(wheelY * -this.wheelSpeed)
 			);
-		}
-		if (mouse.isHeld(Mouse.Button.Right)) {
-			this.move();
 		}
 	}
 

@@ -655,6 +655,16 @@ export class Scene {
 		return json;
 	}
 
+	lockViewToSelected(object3d: Tea.Object3D): void {
+		if (object3d == null) {
+			return;
+		}
+		if (this.app.isSceneView === false) {
+			return;
+		}
+		this._sceneRenderer.lockViewToSelected(object3d);
+	}
+
 	protected updateObject3D(object3d: Tea.Object3D): void {
 		if (object3d == null || object3d.id == null) {
 			return;
@@ -815,6 +825,16 @@ class SceneRenderer {
 			renderer.material.setTexture("_ShadowTex", null);
 			renderer.render(camera, lights, renderSettings);
 		}
+	}
+
+	lockViewToSelected(object3d: Tea.Object3D): void {
+		if (object3d == null) {
+			return;
+		}
+		var position = object3d.position.clone();
+		var camera = this.cameraObject;
+		position.add$(camera.forward.mul$(-5.0));
+		this.cameraObject.localPosition.copy(position);
 	}
 
 	protected update(): void {

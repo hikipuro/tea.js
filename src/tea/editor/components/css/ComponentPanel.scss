@@ -9,6 +9,10 @@
 		margin-top: 2px;
 		width: 100%;
 
+		> .spacer {
+			width: 1.5em;
+		}
+
 		> .title {
 			flex: 1;
 			white-space: nowrap;

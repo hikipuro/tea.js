@@ -9,27 +9,18 @@ import * as Tea from "../../Tea";
 	`,
 	data: () => {
 		return {
-			name: "MeshFilter",
-			enabled: false
-		}
-	},
-	watch: {
-		enabled: function (value: boolean) {
-			var self = this as MeshFilter;
-			self._component.enabled = value;
+			name: "MeshFilter"
 		}
 	}
 })
 export class MeshFilter extends Vue {
 	_component: Tea.MeshFilter;
 	name: string;
-	enabled: boolean;
 
 	protected mounted(): void {
 		var component = this._component;
 		if (component == null) {
 			return;
 		}
-		this.enabled = component.enabled;
 	}
 }

@@ -7,8 +7,12 @@ import Component from "vue-class-component";
 			<input
 				ref="checkbox"
 				type="checkbox"
+				v-if="enabled != null"
 				:checked="enabled"
 				@change="onChange"></input>
+			<div
+				class="spacer"
+				v-if="enabled == null"></div>
 			<div class="title"><slot></slot></div>
 			<div
 				ref="config"
@@ -17,15 +21,14 @@ import Component from "vue-class-component";
 		</div>
 	`,
 	props: {
-		enabled: Boolean
-	},
-	data: () => {
-		return {
+		enabled: {
+			type: Boolean,
+			default: null
 		}
 	}
 })
 export class TitleBar extends Vue {
-	enable: boolean;
+	enabled: boolean;
 
 	protected onChange(): void {
 		var checkbox = this.$refs.checkbox as HTMLInputElement;

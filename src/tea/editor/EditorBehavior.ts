@@ -319,7 +319,7 @@ export class EditorBehavior {
 		var canvas = this.editor.$refs.canvas as HTMLCanvasElement;
 		var width = canvas.parentElement.clientWidth;
 		var height = canvas.parentElement.clientHeight;
-		if (aspect.x != 0 && aspect.y != 0) {
+		if (app.isSceneView === false && aspect.x != 0 && aspect.y != 0) {
 			if (width / height < aspect.x / aspect.y) {
 				height = width * aspect.y / aspect.x;
 			} else {
@@ -340,39 +340,49 @@ export class EditorBehavior {
 
 	protected onDocumentKeyDown = (e: KeyboardEvent): void => {
 		var ctrlKey = e.ctrlKey;
-		if (ctrlKey === false) {
-			return;
-		}
 		var shiftKey = e.shiftKey;
-		var key = e.key.toLowerCase();
-		switch (key) {
-			case "z":
-				e.preventDefault();
-				if (shiftKey) {
-					this.commands.redo();
+		if (ctrlKey) {
+			var key = e.key.toLowerCase();
+			switch (key) {
+				case "z":
+					e.preventDefault();
+					if (shiftKey) {
+						this.commands.redo();
+						break;
+					}
+					this.commands.undo();
 					break;
-				}
-				this.commands.undo();
-				break;
+			}
+			return;
 		}
 	}
 
 	protected onDocumentKeyDownMac = (e: KeyboardEvent): void => {
 		var ctrlKey = e.metaKey;
-		if (ctrlKey === false) {
+		var shiftKey = e.shiftKey;
+		if (ctrlKey) {
+			var key = e.key.toLowerCase();
+			switch (key) {
+				case "z":
+					e.preventDefault();
+					if (shiftKey) {
+						this.commands.redo();
+						break;
+					}
+					this.commands.undo();
+					break;
+			}
 			return;
 		}
-		var shiftKey = e.shiftKey;
-		var key = e.key.toLowerCase();
-		switch (key) {
-			case "z":
-				e.preventDefault();
-				if (shiftKey) {
-					this.commands.redo();
+		if (shiftKey) {
+			var key = e.key.toLowerCase();
+			switch (key) {
+				case "f":
+					var object3d = this.hierarchyViewCommand.getSelectedObject();
+					this.scene.lockViewToSelected(object3d);
 					break;
-				}
-				this.commands.undo();
-				break;
+			}
+			return;
 		}
 	}
 

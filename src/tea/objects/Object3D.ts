@@ -723,9 +723,10 @@ export class Object3D {
 
 	protected adjustChildPosition(child: Tea.Object3D, isAppend: boolean): void {
 		if (isAppend) {
-			child.localPosition.sub$(this.position);
 			var rotation = this.rotation.clone();
-			child.localRotation = rotation.inversed.mul(child.localRotation);
+			child.localPosition.sub$(this.position);
+			child.localPosition.applyQuaternion(rotation.inverse$());
+			child.localRotation = rotation.mul(child.localRotation);
 			var scale = this.scale.clone();
 			this.reverseScale$(scale);
 			child.localPosition.scale$(scale);
