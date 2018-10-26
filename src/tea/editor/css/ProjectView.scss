@@ -1,0 +1,15 @@
+#{$parent} {
+	div.ProjectView {
+		display: flex;
+		flex-direction: row;
+		height: 100%;
+
+		> .folderList {
+			width: 200px;
+		}
+
+		> .fileList {
+			flex: 1;
+		}
+	}
+}

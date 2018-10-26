@@ -1,5 +1,6 @@
 import Vue from "vue";
 import Component from "vue-class-component";
+import { NoCache } from "./NoCache";
 
 @Component({
 	template: `
@@ -23,6 +24,7 @@ import Component from "vue-class-component";
 			<ul v-show="isOpen" v-if="isFolder">
 				<item
 					v-for="(model, index) in model.children"
+					ref="items"
 					:key="index"
 					:model="model"
 					:depth="depth + 1"
@@ -65,14 +67,17 @@ export class Item extends Vue {
 	draggable: boolean;
 	dragEvents: TreeView.DragEvents;
 
+	@NoCache
 	get text(): string {
 		return this.model.text;
 	}
 
+	@NoCache
 	get tag(): any {
 		return this.model.tag;
 	}
 
+	@NoCache
 	get isFolder(): boolean {
 		return this.model.isFolder;
 	}
@@ -85,10 +90,14 @@ export class Item extends Vue {
 	}
 	//*/
 
+	@NoCache
 	get index(): number {
-		return this.$parent.$children.indexOf(this);
+		var parent = this.$parent as Item | TreeView;
+		var items = parent.getItems();
+		return items.indexOf(this);
 	}
 
+	@NoCache
 	get folderIcon(): string {
 		if (this.isFolder === false) {
 			return "";
@@ -99,25 +108,40 @@ export class Item extends Vue {
 		return this.closeIcon;
 	}
 
+	@NoCache
 	get firstChild(): Item {
-		return this.$children[0] as Item;
+		return this.getItems()[0];
 	}
 
+	@NoCache
 	get lastChild(): Item {
-		var length = this.$children.length;
-		return this.$children[length - 1] as Item;
+		var items = this.getItems();
+		var length = items.length;
+		return items[length - 1];
 	}
 
+	@NoCache
 	get nextSibling(): Item {
-		var parent = this.$parent;
-		var index = parent.$children.indexOf(this);
-		return parent.$children[index + 1] as Item;
+		var parent = this.$parent as Item | TreeView;
+		var items = parent.getItems();
+		var index = items.indexOf(this);
+		return items[index + 1];
 	}
 
+	@NoCache
 	get prevSibling(): Item {
-		var parent = this.$parent;
-		var index = parent.$children.indexOf(this);
-		return parent.$children[index - 1] as Item;
+		var parent = this.$parent as Item | TreeView;
+		var items = parent.getItems();
+		var index = items.indexOf(this);
+		return items[index - 1];
+	}
+
+	getItems(): Array<Item> {
+		var items = this.$refs.items as Array<Item>;
+		if (items == null) {
+			return [];
+		}
+		return items;
 	}
 
 	expand(): void {
@@ -300,11 +324,13 @@ export class Item extends Vue {
 			class="TreeView"
 			@keydown="onKeyDown"
 			@click="onClick"
+			@focus="onFocus"
 			@contextmenu="onContextMenu">
 			<slot name="before"></slot>
 			<ul ref="root">
 				<item
 					v-for="(item, index) in items"
+					ref="items"
 					:key="index"
 					:model="item"
 					:depth="0"
@@ -333,8 +359,17 @@ export class TreeView extends Vue {
 	dragEvents: TreeView.DragEvents;
 	tag: any;
 
+	@NoCache
 	get childCount(): number {
-		return this.$children.length;
+		return this.getItems().length;
+	}
+
+	getItems(): Array<Item> {
+		var items = this.$refs.items as Array<Item>;
+		if (items == null) {
+			return [];
+		}
+		return items;
 	}
 
 	expandAll(): void {
@@ -345,7 +380,7 @@ export class TreeView extends Vue {
 			});
 		};
 		this.$children.forEach((item: Item) => {
-			if (item instanceof Item === false) {
+			if ((item instanceof Item) === false) {
 				return;
 			}
 			expand(item);
@@ -360,7 +395,7 @@ export class TreeView extends Vue {
 			});
 		};
 		this.$children.forEach((item: Item) => {
-			if (item instanceof Item === false) {
+			if ((item instanceof Item) === false) {
 				return;
 			}
 			collapse(item);
@@ -429,11 +464,15 @@ export class TreeView extends Vue {
 	}
 
 	selectNext(): void {
-		if (this.$children.length <= 0) {
+		var items = this.getItems();
+		if (items.length <= 0) {
 			return;
 		}
 		if (this.selectedItem == null) {
-			this.onSelectItem(this.$children[0] as Item);
+			this.onSelectItem(items[0]);
+			return;
+		}
+		if (items.length <= 1) {
 			return;
 		}
 		var item = this.selectedItem;
@@ -462,26 +501,28 @@ export class TreeView extends Vue {
 		}
 		var next = item;
 		for (var i = 0; i < TreeView.maxDepth; i++) {
-			if (next.nextSibling == null) {
+			var nextSibling = next.nextSibling;
+			if (nextSibling == null) {
 				next = next.$parent as Item;
 				if (next == null) {
 					break;
 				}
 				continue;
 			}
-			next = next.nextSibling;
+			next = nextSibling;
 			break;
 		}
 		this.onSelectItem(next);
 	}
 
 	selectPrev(): void {
-		if (this.$children.length <= 0) {
+		var items = this.getItems();
+		if (items.length <= 0) {
 			return;
 		}
 		if (this.selectedItem == null) {
-			var length = this.$children.length;
-			var item = this.$children[length - 1] as Item;
+			var length = items.length;
+			var item = items[length - 1] as Item;
 			for (var i = 0; i < TreeView.maxDepth; i++) {
 				if (item.isFolder && item.isOpen) {
 					item = item.lastChild;
@@ -553,6 +594,10 @@ export class TreeView extends Vue {
 		this.$emit("select", null);
 	}
 
+	protected onFocus(e: Event): void {
+		this.$emit("focus", e);
+	}
+
 	protected onContextMenu(e: MouseEvent): void {
 		this.$emit("menu", e);
 	}
@@ -598,7 +643,7 @@ export class TreeView extends Vue {
 			var itemChildEl = itemEl.querySelector(".item") as HTMLElement;
 
 			var top = el.scrollTop;
-			var itemTop = itemEl.offsetTop;
+			var itemTop = itemEl.offsetTop - el.offsetTop;
 			if (top > itemTop) {
 				el.scrollTo(0, itemTop);
 				return;
@@ -638,15 +683,15 @@ export class TreeView extends Vue {
 
 	protected forEachChild(callback: (item: Item) => void) {
 		var forEach = (item: Item) => {
-			if (item instanceof Item === false) {
+			if ((item instanceof Item) === false) {
 				return;
 			}
 			callback(item);
-			item.$children.forEach((item: Item) => {
+			item.getItems().forEach((item: Item) => {
 				forEach(item);
 			});
 		};
-		this.$children.forEach((item: Item) => {
+		this.getItems().forEach((item: Item) => {
 			forEach(item);
 		});
 	}

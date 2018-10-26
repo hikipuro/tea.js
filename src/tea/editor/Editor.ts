@@ -5,6 +5,7 @@ import * as Tea from "../Tea";
 import { EditorBehavior } from "./EditorBehavior";
 import { ConsoleView } from "./ConsoleView";
 import { HierarchyView } from "./HierarchyView";
+import { ProjectView } from "./ProjectView";
 import { InspectorView } from "./InspectorView";
 import { ObjectInspector } from "./ObjectInspector";
 
@@ -127,14 +128,7 @@ Vue.component("TextMesh", TextMesh);
 					</HLayout>
 					<Tabs class="Bottom">
 						<TabItem name="Project">
-							<HLayout class="BottomLayout">
-								<Panel class="BottomPanel">
-									<TreeView ref="project" tabindex="1"></TreeView>
-								</Panel>
-								<Panel class="FileList">
-									<TreeView ref="fileList" tabindex="2"></TreeView>
-								</Panel>
-							</HLayout>
+							<ProjectView ref="project"></ProjectView>
 						</TabItem>
 						<TabItem name="Console">
 							<ConsoleView ref="console"></ConsoleView>
@@ -157,6 +151,7 @@ Vue.component("TextMesh", TextMesh);
 	components: {
 		ConsoleView: ConsoleView,
 		HierarchyView: HierarchyView,
+		ProjectView: ProjectView,
 		InspectorView: InspectorView
 	}
 })
@@ -187,8 +182,8 @@ export class Editor extends Vue {
 		return this.$refs.inspector as InspectorView;
 	}
 
-	get projectView(): TreeView {
-		return this.$refs.project as TreeView;
+	get projectView(): ProjectView {
+		return this.$refs.project as ProjectView;
 	}
 
 	get fileList(): TreeView {

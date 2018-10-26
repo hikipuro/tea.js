@@ -98,19 +98,19 @@ export class EditorBehavior {
 		var warn = console.warn;
 		var error = console.error;
 		console.log = (message: any, ...optionalParams: any[]) => {
-			log(message, optionalParams);
+			log.apply(console, [message].concat(optionalParams));
 			consoleView.log(message, optionalParams);
 		};
 		console.info = (message: any, ...optionalParams: any[]) => {
-			info(message, optionalParams);
+			info.apply(console, [message].concat(optionalParams));
 			consoleView.info(message, optionalParams);
 		};
 		console.warn = (message: any, ...optionalParams: any[]) => {
-			warn(message, optionalParams);
+			warn.apply(console, [message].concat(optionalParams));
 			consoleView.warn(message, optionalParams);
 		};
 		console.error = (message: any, ...optionalParams: any[]) => {
-			error(message, optionalParams);
+			error.apply(console, [message].concat(optionalParams));
 			consoleView.error(message, optionalParams);
 		};
 	}
@@ -241,85 +241,10 @@ export class EditorBehavior {
 
 	initProjectView(): void {
 		var projectView = this.editor.projectView;
-		var fileList = this.editor.fileList;
-		projectView.$on("expand", (item: Tea.Editor.TreeViewItem) => {
-			//console.log("expand", item);
-			var i = item.model;
-			if (i == null || i.children.length > 0) {
-				return;
-			}
-			var items = [];
-			var files = Tea.Directory.getFilesSync(item.tag);
-			files.forEach(file => {
-				var item = createItems(file);
-				if (item == null) {
-					return;
-				}
-				items.push(item);
-			});
-			i.children = items;
-		});
-		projectView.$on("collapse", (item: Tea.Editor.TreeViewItem) => {
-			//console.log("collapse", item);
-		});
-		projectView.$on("select", (item: Tea.Editor.TreeViewItem) => {
-			if (item == null) {
-				return;
-			}
-			//console.log("select", item.tag);
-			var path = item.tag;
-			Tea.Directory.getFiles(path, (files: Tea.FileInfo[]) => {
-				var items = [];
-				files.forEach((file) => {
-					if (file.isDirectory) {
-						return;
-					}
-					if (file.name === ".DS_Store") {
-						return;
-					}
-					var item = {
-						text: file.name,
-						children: [],
-						isFolder: false,
-						tag: file.fullName
-					};
-					//console.log(file.fullName);
-					items.push(item);
-				});
-				fileList.items = items;
-			});
-		});
 		projectView.$on("menu", (e: MouseEvent) => {
 			e.preventDefault();
 			this.showProjectViewMenu();
 		});
-
-		var createItems = (file: Tea.FileInfo): any => {
-			if (file == null || file.exists === false) {
-				return null;
-			}
-			if (file.isDirectory === false) {
-				return null;
-			}
-			var item = {
-				text: file.name,
-				children: [],
-				isFolder: file.hasChildDirectory,
-				tag: file.fullName
-			};
-			return item;
-		};
-		var items = [];
-		Tea.Directory.getFiles(".", (files) => {
-			files.forEach(file => {
-				var item = createItems(file);
-				if (item == null) {
-					return;
-				}
-				items.push(item);
-			});
-		});
-		projectView.items = items;
 	}
 
 	setScene(scene: Tea.Scene) {
@@ -433,12 +358,12 @@ export class EditorBehavior {
 
 	protected onSelectProjectViewMenu = (item: Electron.MenuItem): void => {
 		var projectView = this.editor.projectView;
-		var menuItem = projectView.selectedItem;
+		var path = projectView.getSelectedFolderPath();
 
 		switch (item.id) {
 			case "Reveal in Finder":
-				Electron.shell.openItem(menuItem.tag);
-				console.log("Reveal in Finder", menuItem);
+				Electron.shell.openItem(path);
+				console.log("Reveal in Finder", path);
 				break;
 		}
 	}
