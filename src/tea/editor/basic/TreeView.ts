@@ -183,6 +183,21 @@ export class Item extends Vue {
 		this.isSelected = value;
 	}
 
+	findTreeView(): TreeView {
+		var treeView = this.$parent;
+		var length = TreeView.maxDepth;
+		for (var i = 0; i < length; i++) {
+			if (treeView == null) {
+				return null;
+			}
+			if (treeView instanceof TreeView) {
+				return treeView;
+			}
+			treeView = treeView.$parent;
+		}
+		return null;
+	}
+
 	protected created(): void {
 		this.$emit("create", this);
 		if (this.dragEvents == null) {
@@ -233,21 +248,6 @@ export class Item extends Vue {
 			item.removeEventListener("dragover", this.onDragOver);
 			item.removeEventListener("drop", this.onDrop);
 		}
-	}
-
-	protected findTreeView(): TreeView {
-		var treeView = this.$parent;
-		var length = TreeView.maxDepth;
-		for (var i = 0; i < length; i++) {
-			if (treeView == null) {
-				return null;
-			}
-			if (treeView instanceof TreeView) {
-				return treeView;
-			}
-			treeView = treeView.$parent;
-		}
-		return null;
 	}
 
 	protected onClick(): void {

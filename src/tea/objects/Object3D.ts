@@ -447,6 +447,20 @@ export class Object3D {
 		return c;
 	}
 
+	addComponentInstance(component: Tea.Component): void {
+		if (component == null) {
+			return;
+		}
+		if ((component instanceof Tea.Component) === false) {
+			return;
+		}
+		component.object3d = this;
+		this._components.push(component);
+		if (this.scene != null) {
+			this.scene.addComponent(component);
+		}
+	}
+
 	removeComponent(component: Tea.Component): void {
 		if (component == null) {
 			return;

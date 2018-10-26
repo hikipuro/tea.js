@@ -30,7 +30,11 @@ export class Script extends Vue {
 		if (component == null) {
 			return;
 		}
-		this.name = component.className + " (Script)";
+		if (component.name === "Script") {
+			this.name = component.className + " (Script)";
+		} else {
+			this.name = component.name + " (Script)";
+		}
 		this.enabled = component.enabled;
 	}
 }

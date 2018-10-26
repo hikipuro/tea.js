@@ -113,6 +113,9 @@ export class EditorBehavior {
 			error.apply(console, [message].concat(optionalParams));
 			consoleView.error(message, optionalParams);
 		};
+		window.addEventListener("error", (e: ErrorEvent) => {
+			consoleView.error(e.message);
+		});
 	}
 
 	initScreenView(): void {
@@ -137,6 +140,7 @@ export class EditorBehavior {
 	initHierarchyView(): void {
 		var hierarchyView = this.editor.hierarchyView;
 		var inspectorView = this.editor.inspectorView;
+		var projectView = this.editor.projectView;
 		//var contextMenu = this.editor.contextMenu;
 
 		hierarchyView.$on("menu", (e: MouseEvent) => {
@@ -195,6 +199,35 @@ export class EditorBehavior {
 						}
 					});
 					break;
+			}
+		});
+		hierarchyView.$on("dropFromProjectView", (item: Tea.Editor.TreeViewItem) => {
+			var dragSource = projectView.getDragSource();
+			//console.log("dropFromProjectView", item, dragSource.tag);
+			var id = item.tag as number;
+			var object3d = this.scene.findChildById(id);
+			if (object3d == null) {
+				return;
+			}
+			var filename = dragSource.tag;
+			var ext = Tea.File.extension(filename);
+			if (ext.toLowerCase() === "js") {
+				Tea.File.readText(filename, (err, data) => {
+					if (err) {
+						return;
+					}
+					var check = data.indexOf("class");
+					if (check < 0 || check > 64) {
+						console.warn("class not found [" + filename + "]");
+						return;
+					}
+					var factory = new Function("return " + data);
+					var classRef = factory();
+					var app = this.scene.app;
+					Object.setPrototypeOf(classRef.prototype, new Tea.Script(app));
+					var instance = new classRef();
+					object3d.addComponentInstance(instance)
+				});
 			}
 		});
 	}

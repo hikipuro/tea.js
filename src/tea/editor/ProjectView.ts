@@ -1,6 +1,7 @@
 import Vue from "vue";
 import Component from "vue-class-component";
 import * as Tea from "../Tea";
+import { Editor } from "./Editor";
 import { TreeView } from "./basic/TreeView";
 
 @Component({
@@ -19,6 +20,8 @@ import { TreeView } from "./basic/TreeView";
 	`
 })
 export class ProjectView extends Vue {
+	protected _dragSource: Tea.Editor.TreeViewItem;
+
 	getSelectedFolderPath(): string {
 		var folderList = this.$refs.folderList as TreeView;
 		var item = folderList.selectedItem;
@@ -35,6 +38,10 @@ export class ProjectView extends Vue {
 			return null;
 		}
 		return item.tag;
+	}
+
+	getDragSource(): Tea.Editor.TreeViewItem {
+		return this._dragSource;
 	}
 
 	protected mounted(): void {
@@ -92,6 +99,26 @@ export class ProjectView extends Vue {
 			this.$emit("menu");
 		});
 
+		fileList.draggable = true;
+		var dragImages = (this.$root as Editor).dragImages;
+		var dragEvents = fileList.dragEvents;
+		dragEvents.dragStart = (e: DragEvent, item: Tea.Editor.TreeViewItem) => {
+			//console.log("onDragStart");
+			this._dragSource = item;
+			e.dataTransfer.effectAllowed = "move";
+			//e.dataTransfer.dropEffect = "move";
+
+			var dragImage = this.createDragImage(item.model.text);
+			while (dragImages.firstChild) {
+				dragImages.removeChild(dragImages.firstChild);
+			}
+			dragImages.appendChild(dragImage);
+			e.dataTransfer.setDragImage(dragImage, 0, 0);
+		};
+		dragEvents.dragEnd = (e: DragEvent, item: Tea.Editor.TreeViewItem) => {
+			this._dragSource = null;
+		};
+
 		var items = [];
 		Tea.Directory.getFiles(".", (files) => {
 			files.forEach(file => {
@@ -119,6 +146,15 @@ export class ProjectView extends Vue {
 			tag: file.fullName
 		};
 		return item;
+	}
+
+	protected createDragImage(text: string): HTMLElement {
+		var dragImage = document.createElement("div");
+		var imageText = document.createElement("div");
+		dragImage.classList.add("dragImage");
+		imageText.innerText = text;
+		dragImage.appendChild(imageText);
+		return dragImage;
 	}
 
 	protected onFocusFileList(): void {

@@ -3,11 +3,13 @@ import { Component } from "./Component";
 
 export class Script extends Component {
 	static editorView = Tea.Editor.Script;
+	name: string;
 	isStarted: boolean;
 
 	constructor(app: Tea.App) {
 		super(app);
 		this.enabled = true;
+		this.name = "Script";
 		this.isStarted = false;
 		this.awake();
 	}

@@ -1,8 +1,46 @@
 import * as fs from "fs";
 
 export class File {
+	static exists(path: string, callback: (exists: boolean) => void): void {
+		fs.exists(path, (exists: boolean) => {
+			callback(exists);
+		});
+	}
+
+	static extension(path: string): string {
+		if (path == null || path === "") {
+			return "";
+		}
+		var index = path.lastIndexOf(".");
+		if (index <= 0) {
+			return "";
+		}
+		return path.substr(index + 1);
+	}
+
+	static basename(path: string): string {
+		if (path == null || path === "") {
+			return "";
+		}
+		var index = path.lastIndexOf("/");
+		if (index < 0) {
+			index = path.lastIndexOf("\\");
+		}
+		if (index < 0) {
+			return "";
+		}
+		return path.substr(index + 1);
+	}
+
 	static readFile(url: string, callback: (err: any, data: ArrayBuffer) => void): void {
 		if (callback == null) {
+			return;
+		}
+		if (fs) {
+			fs.readFile(url, (err: any, data: Buffer) => {
+				var buffer = new Uint8Array(data).buffer;
+				callback(err, buffer);
+			});
 			return;
 		}
 		var xhr = this.createXHR(callback);
@@ -12,6 +50,12 @@ export class File {
 
 	static readText(url: string, callback: (err: any, data: string) => void): void {
 		if (callback == null) {
+			return;
+		}
+		if (fs) {
+			fs.readFile(url, (err: any, data: Buffer) => {
+				callback(err, data.toString());
+			});
 			return;
 		}
 		var xhr = this.createXHR(callback);

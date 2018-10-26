@@ -73,7 +73,14 @@ export class HierarchyView extends Vue {
 			dragImages.appendChild(dragImage);
 			e.dataTransfer.setDragImage(dragImage, 0, 0);
 		};
+		dragEvents.dragEnd = (e: DragEvent, item: Tea.Editor.TreeViewItem) => {
+			dragSource = null;
+		};
 		dragEvents.dragOver = (e: DragEvent, item: Tea.Editor.TreeViewItem) => {
+			if (dragSource == null) {
+				e.preventDefault();
+				return;
+			}
 			e.preventDefault();
 			e.dataTransfer.dropEffect = "move";
 			var el = e.currentTarget as HTMLElement;
@@ -95,13 +102,12 @@ export class HierarchyView extends Vue {
 				text.classList.remove("dragOverTop");
 				text.classList.remove("dragOverBottom");
 			}
-
-		}
+		};
 		dragEvents.dragEnter = (e: DragEvent, item: Tea.Editor.TreeViewItem) => {
 			//console.log("dragEnter", item.model.text);
 			var el = e.currentTarget as HTMLElement;
 			el.classList.add("dragEnter");
-		}
+		};
 		dragEvents.dragLeave = (e: DragEvent, item: Tea.Editor.TreeViewItem) => {
 			//console.log("dragLeave", this, e);
 			var el = e.currentTarget as HTMLElement;
@@ -109,8 +115,9 @@ export class HierarchyView extends Vue {
 			el.classList.remove("dragEnter");
 			text.classList.remove("dragOverTop");
 			text.classList.remove("dragOverBottom");
-		}
+		};
 		dragEvents.drop = (e: DragEvent, item: Tea.Editor.TreeViewItem) => {
+			//console.log("drop", item);
 			var mode = 0;
 			var el = e.currentTarget as HTMLElement;
 			var text = el.querySelector(".text");
@@ -122,8 +129,13 @@ export class HierarchyView extends Vue {
 			el.classList.remove("dragEnter");
 			text.classList.remove("dragOverTop");
 			text.classList.remove("dragOverBottom");
+			if (dragSource == null) {
+				this.$emit("dropFromProjectView", item);
+				return;
+			}
 			var idSrc = dragSource.model.tag as number;
 			var idDst = item.model.tag as number;
+			dragSource = null;
 			if (idSrc == null || idDst == null) {
 				return;
 			}
@@ -131,7 +143,7 @@ export class HierarchyView extends Vue {
 				return;
 			}
 			this.$emit("drop", mode, idSrc, idDst);
-		}
+		};
 
 		treeView.$on("menu", (e: MouseEvent) => {
 			this.$emit("menu", e);

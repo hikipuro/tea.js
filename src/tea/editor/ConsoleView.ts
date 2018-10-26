@@ -115,11 +115,18 @@ export class ConsoleView extends Vue {
 	}
 
 	protected getText(message: any, ...optionalParams: any[]): string {
-		var text = `${message}`;
+		var text = "";
+		try {
+			text += `${message}`;
+		} catch (err) {
+		}
 		var length = optionalParams.length;
 		for (var i = 0; i < length; i++) {
 			var param = optionalParams[i];
-			text += `\t${param}`;
+			try {
+				text += `\t${param}`;
+			} catch (err) {
+			}
 		}
 		return text;
 	}

@@ -90,6 +90,11 @@ export class ObjectInspector extends Vue {
 			var componentClass = component.constructor as any;
 			var editorView = componentClass.editorView;
 			if (editorView == null) {
+				if (component instanceof Tea.Script) {
+					editorView = Tea.Script.editorView;
+				}
+			}
+			if (editorView == null) {
 				return;
 			}
 			componentClass = undefined;
