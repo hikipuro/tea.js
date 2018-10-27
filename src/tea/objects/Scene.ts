@@ -284,6 +284,7 @@ export class Scene {
 	protected _children: Array<Tea.Object3D>;
 	protected _components: SceneComponents;
 	protected _sceneRenderer: SceneRenderer;
+	protected _stats: Tea.Stats;
 
 	constructor(app: Tea.App) {
 		this.app = app;
@@ -296,6 +297,7 @@ export class Scene {
 		this._children = [];
 		this._components = new SceneComponents();
 		this._sceneRenderer = new SceneRenderer(this);
+		this._stats = new Tea.Stats(app);
 		this.app.renderer.on("resize", this.onResize);
 	}
 
@@ -595,6 +597,10 @@ export class Scene {
 			if (haveNormalCamera) {
 				this.postProcessingRenderer.render();
 			}
+		}
+		if (haveNormalCamera && this._stats.enabled) {
+			this._stats.update();
+			this._stats.renderer.render2d();
 		}
 		if (haveNormalCamera) {
 			this._isCleared = false;

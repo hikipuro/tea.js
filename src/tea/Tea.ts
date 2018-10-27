@@ -21,6 +21,7 @@ export * from "./components/Renderer";
 export * from "./components/Rigidbody";
 export * from "./components/Script";
 export * from "./components/ShadowMapCamera";
+export * from "./components/SpriteRenderer";
 export * from "./components/TextMesh";
 //export * from "./components/Transform";
 

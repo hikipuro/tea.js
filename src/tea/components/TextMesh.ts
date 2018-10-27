@@ -1,5 +1,4 @@
 import * as Tea from "../Tea";
-import { Primitives } from "../objects/Primitives";
 import { Component } from "./Component";
 
 export class TextMesh extends Component {
@@ -24,7 +23,7 @@ export class TextMesh extends Component {
 
 	constructor(app: Tea.App) {
 		super(app);
-		this._mesh = Primitives.createQuadMesh();
+		this._mesh = Tea.Primitives.createQuadMesh();
 
 		this._canvas = document.createElement("canvas");
 		//this._canvas.width = 1;

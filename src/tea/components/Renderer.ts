@@ -82,7 +82,9 @@ export class Renderer extends Component {
 		this.setShaderSettings();
 		this.setIntrinsicUniforms(camera);
 		this.setMaterialUniforms();
-		this.setLightUniforms(lights, renderSettings);
+		if (lights != null && renderSettings != null) {
+			this.setLightUniforms(lights, renderSettings);
+		}
 		this.setTextures();
 	}
 

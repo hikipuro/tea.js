@@ -635,4 +635,38 @@ export class Primitives {
 		mesh.uv = uv;
 		return mesh;
 	}
+
+	static createQuad2DMesh(): Tea.Mesh {
+		var vertices = [
+			vec3(-1.0, -1.0, 0),
+			vec3( 1.0, -1.0, 0),
+			vec3( 1.0,  1.0, 0),
+			vec3(-1.0,  1.0, 0)
+		];
+		var triangles = [
+			vec3(0, 1, 2),
+			vec3(0, 2, 3)
+		];
+		var normals = [
+			vec3(0, 0, 1),
+			vec3(0, 0, 1),
+			vec3(0, 0, 1),
+			vec3(0, 0, 1)
+		];
+		var uv = [
+			vec2(0, 0),
+			vec2(1, 0),
+			vec2(1, 1),
+			vec2(0, 1)
+		];
+		var mesh = new Tea.Mesh();
+		mesh.isPrimitive = true;
+		mesh.primitiveType = Tea.PrimitiveType.Quad;
+		mesh.vertices = vertices;
+		mesh.triangles = triangles;
+		mesh.normals = normals;
+		mesh.uv = uv;
+		mesh.calculateBounds();
+		return mesh;
+	}
 }

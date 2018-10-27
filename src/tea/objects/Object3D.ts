@@ -479,9 +479,15 @@ export class Object3D {
 	}
 
 	getComponent<T extends Tea.Component>(component: {new (app: Tea.App): T}): T {
-		return this._components.find((c) => {
-			return c instanceof component;
-		}) as T;
+		var components = this._components;
+		var length = components.length;
+		for (var i = 0; i < length; i++) {
+			var c = components[i];
+			if (c instanceof component) {
+				return c;
+			}
+		}
+		return null;
 	}
 
 	getComponents<T extends Tea.Component>(component: {new (app: Tea.App): T}): Array<T> {

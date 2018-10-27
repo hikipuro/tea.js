@@ -41,11 +41,10 @@ class BufferAttribute {
 	}
 }
 
-export class MeshRenderer extends Renderer {
-	static editorView = Tea.Editor.MeshRenderer;
-	receiveShadows: boolean;
+export class SpriteRenderer extends Renderer {
 	vertexBuffer: WebGLBuffer;
 	indexBuffer: WebGLBuffer;
+	mvpMatrix: Tea.Matrix4x4;
 	protected _mesh: Tea.Mesh;
 	protected _bounds: Tea.Bounds;
 	protected _wireframe: boolean;
@@ -54,7 +53,6 @@ export class MeshRenderer extends Renderer {
 
 	constructor(app: Tea.App) {
 		super(app);
-		this.receiveShadows = true;
 		this._bounds = new Tea.Bounds();
 		this._wireframe = false;
 		this._draw = this.draw;
@@ -62,6 +60,7 @@ export class MeshRenderer extends Renderer {
 		var gl = this.gl;
 		this.vertexBuffer = gl.createBuffer();
 		this.indexBuffer = gl.createBuffer();
+		this.mvpMatrix = Tea.Matrix4x4.identity.clone();
 	}
 
 	get bounds(): Tea.Bounds {
@@ -107,7 +106,6 @@ export class MeshRenderer extends Renderer {
 			gl.deleteBuffer(this.indexBuffer);
 			this.indexBuffer = undefined;
 		}
-		this.receiveShadows = undefined;
 		this._mesh = undefined;
 		this._bounds = undefined;
 		this._wireframe = undefined;
@@ -125,14 +123,20 @@ export class MeshRenderer extends Renderer {
 		}
 	}
 
-	render(camera: Tea.Camera, lights: Array<Tea.Light>, renderSettings: Tea.RenderSettings): void {
-		if (camera == null) {
-			return;
-		}
+	render2d(): void {
 		if (this.isRenderable === false) {
 			return;
 		}
-		super.render(camera, lights, renderSettings);
+		//super.render(camera, lights, renderSettings);
+		var shader = this.material.shader;
+		if (shader == null) {
+			return;
+		}
+		this.gl.useProgram(this.material.shader.program);
+		this.setShaderSettings();
+		this.setIntrinsicUniforms(null);
+		this.setMaterialUniforms();
+		this.setTextures();
 
 		var mesh = this._mesh;
 		if (mesh.isModified === true) {
@@ -148,20 +152,18 @@ export class MeshRenderer extends Renderer {
 	toJSON(): Object {
 		var json = super.toJSON();
 		Object.assign(json, {
-			_type: "MeshRenderer",
-			receiveShadows: this.receiveShadows,
+			_type: "SpriteRenderer",
 			wireframe: this._wireframe
 		});
 		return json;
 	}
 
-	static fromJSON(app: Tea.App, json: any): MeshRenderer {
+	static fromJSON(app: Tea.App, json: any): SpriteRenderer {
 		if (json == null || json._type !== "MeshRenderer") {
 			return null;
 		}
-		var meshRenderer = new MeshRenderer(app);
+		var meshRenderer = new SpriteRenderer(app);
 		meshRenderer.enabled = json.enabled;
-		meshRenderer.receiveShadows = json.receiveShadows;
 		meshRenderer._wireframe = json.wireframe;
 		meshRenderer.material = Tea.Material.fromJSON(app, json.material);
 		//meshRenderer.material.shader = Tea.Shader.fromJSON(app, json);
@@ -405,5 +407,49 @@ export class MeshRenderer extends Renderer {
 		gl.drawArrays(
 			gl.LINES, 0, mesh.vertices.length
 		);
+	}
+
+	protected setIntrinsicUniforms(camera: Tea.Camera): void {
+		var gl = this.gl;
+		var shader = this.material.shader;
+		var model = this.object3d.localToWorldMatrix;
+		var inverseModel = this.object3d.worldToLocalMatrix;
+		var identity = Tea.Matrix4x4.identity;
+		var location: WebGLUniformLocation = null;
+
+		location = shader.propertyToID("TEA_MATRIX_V");
+		if (location != null) {
+			gl.uniformMatrix4fv(location, false, identity);
+		}
+		location = shader.propertyToID("TEA_MATRIX_I_V");
+		if (location != null) {
+			gl.uniformMatrix4fv(location, false, identity);
+		}
+		location = shader.propertyToID("TEA_MATRIX_P");
+		if (location != null) {
+			gl.uniformMatrix4fv(location, false, identity);
+		}
+		location = shader.propertyToID("TEA_OBJECT_TO_WORLD");
+		if (location != null) {
+			gl.uniformMatrix4fv(location, false, model);
+		}
+		location = shader.propertyToID("TEA_WORLD_TO_OBJECT");
+		if (location != null) {
+			gl.uniformMatrix4fv(location, false, inverseModel);
+		}
+		location = shader.propertyToID("TEA_MATRIX_VP");
+		if (location != null) {
+			gl.uniformMatrix4fv(location, false, identity);
+		}
+
+		location = shader.propertyToID("TEA_MATRIX_MV");
+		if (location != null) {
+			gl.uniformMatrix4fv(location, false, identity);
+		}
+
+		location = shader.propertyToID("TEA_MATRIX_MVP");
+		if (location != null) {
+			gl.uniformMatrix4fv(location, false, this.mvpMatrix);
+		}
 	}
 }

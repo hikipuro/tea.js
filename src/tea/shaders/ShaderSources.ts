@@ -528,6 +528,40 @@ export module ShaderSources {
 		}
 	`;
 
+	export const statsVS = `
+		attribute vec3 vertex;
+		attribute vec2 texcoord;
+		uniform mat4 TEA_MATRIX_MVP;
+		varying vec2 vTexCoord;
+		void main() {
+			vTexCoord = texcoord;
+			gl_Position = TEA_MATRIX_MVP * vec4(vertex, 1.0);
+		}
+	`;
+
+	export const statsFS = `
+		precision mediump float;
+		uniform sampler2D _MainTex;
+		uniform int TEA_CAMERA_STEREO;
+		uniform float _Cutoff;
+		uniform vec2 uv_MainTex;
+		uniform vec2 _MainTex_ST;
+		varying vec2 vTexCoord;
+		void main() {
+			if (TEA_CAMERA_STEREO != 0) {
+				float stereoMod = float(TEA_CAMERA_STEREO - 1);
+				if (mod(floor(gl_FragCoord.y), 2.0) == stereoMod) {
+					discard;
+				}
+			}
+			vec4 color = texture2D(_MainTex, (uv_MainTex + vTexCoord) / _MainTex_ST);
+			if (color.a <= _Cutoff) {
+				discard;
+			}
+			gl_FragColor = color;
+		}
+	`;
+
 	export const particleVS = `
 		attribute vec3 vertex;
 		attribute vec2 texcoord;

@@ -460,7 +460,6 @@ class AppRenderer extends Tea.EventDispatcher {
 	keyboard: Tea.Keyboard;
 	mouse: Tea.Mouse;
 	time: Tea.Time;
-	stats: Tea.Stats;
 	runInBackground: boolean;
 	protected _fps: number;
 	protected _interval: number;
@@ -484,7 +483,6 @@ class AppRenderer extends Tea.EventDispatcher {
 		this._lastTime = 0.0;
 		this._update = this.update;
 		this._handle = 0;
-		this.createStats();
 
 		window.addEventListener("blur", () => {
 			if (this.runInBackground) {
@@ -555,9 +553,6 @@ class AppRenderer extends Tea.EventDispatcher {
 
 	dispatchResizeEvent(): void {
 		this.emit("resize");
-		this.once("update", () => {
-			this.stats.updateSize();
-		});
 	}
 
 	start(): void {
@@ -567,7 +562,6 @@ class AppRenderer extends Tea.EventDispatcher {
 		this.isStarted = true;
 		this.time.start();
 		if (this.isPaused === false) {
-			this.stats.updateSize();
 			this._lastTime = performance.now();
 			this._handle = requestAnimationFrame(this._update);
 		}
@@ -599,7 +593,6 @@ class AppRenderer extends Tea.EventDispatcher {
 			this.keyboard.update();
 			this.mouse.update();
 		}
-		this.stats.update();
 		this.emit("update");
 		this._handle = requestAnimationFrame(this._update);
 		//console.log("Tea.Vector3.newCount", Tea.Vector3.newCount);
@@ -619,14 +612,7 @@ class AppRenderer extends Tea.EventDispatcher {
 			this.keyboard.update();
 			this.mouse.update();
 		}
-		this.stats.update();
 		this.emit("update");
 		this._handle = requestAnimationFrame(this._update);
-	}
-
-	protected createStats(): void {
-		var stats = new Tea.Stats(this.app);
-		document.body.appendChild(stats.canvas);
-		this.stats = stats;
 	}
 }
