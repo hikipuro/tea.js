@@ -1,14 +1,19 @@
 import * as Tea from "../../Tea";
+import { EventDispatcher } from "../../utils/EventDispatcher";
 import { EditorMenu } from "../EditorMenu";
 import { HierarchyView } from "../HierarchyView";
 import { InspectorView } from "../InspectorView";
 import { NativeContextMenu } from "../basic/NativeContextMenu";
 
-export class HierarchyViewCommand {
+export class HierarchyViewCommand extends EventDispatcher {
 	scene: Tea.Scene;
 	hierarchyView: HierarchyView;
 	inspectorView: InspectorView;
 	contextMenu: NativeContextMenu;
+
+	constructor() {
+		super();
+	}
 
 	getSelectedObject(): Tea.Object3D {
 		var hierarchyView = this.hierarchyView;
@@ -123,7 +128,7 @@ export class HierarchyViewCommand {
 	protected onSelectMenu = (item: Electron.MenuItem): void => {
 		var scene = this.scene;
 		var app = scene.app;
-		console.log(item.id);
+		//console.log(item.id);
 		var object3d: Tea.Object3D;
 
 		switch (item.id) {
@@ -189,5 +194,7 @@ export class HierarchyViewCommand {
 				this.selectItem(object3d);
 			});
 		}
+
+		this.emit("menu", item.id);
 	}
 }

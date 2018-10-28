@@ -651,8 +651,10 @@ export class Scene {
 			renderSettings: this.renderSettings.toJSON(),
 			children: []
 		};
-		for (var i = 0; i < this.children.length; i++) {
-			var child = this.children[i];
+		var children = this.children;
+		var length = children.length;
+		for (var i = length; i >= 0; i--) {
+			var child = children[i];
 			if (child == null) {
 				continue;
 			}

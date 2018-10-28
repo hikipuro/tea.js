@@ -1,17 +1,45 @@
+import * as fs from "fs";
 import * as Tea from "../Tea";
 import { Component } from "./Component";
 
 export class Script extends Component {
 	static editorView = Tea.Editor.Script;
+	path: string;
 	name: string;
 	isStarted: boolean;
 
 	constructor(app: Tea.App) {
 		super(app);
-		this.enabled = true;
+		this.path = "";
 		this.name = "Script";
 		this.isStarted = false;
 		this.awake();
+	}
+
+	static fromJSON(app: Tea.App, json: any): Script {
+		if (json == null || json._type !== "Script") {
+			return null;
+		}
+		if (json.path == null || json.path === "") {
+			return null;
+		}
+		var buffer = fs.readFileSync(json.path);
+		if (buffer == null) {
+			return null;
+		}
+		var data = buffer.toString();
+		var check = data.indexOf("class");
+		if (check < 0 || check > 64) {
+			console.warn("class not found [" + json.path + "]");
+			return;
+		}
+		var factory = new Function("return " + data);
+		var classRef = factory();
+		Object.setPrototypeOf(classRef.prototype, new Script(app));
+		var instance = new classRef() as Script;
+		instance.enabled = json.enabled;
+		instance.path = json.path;
+		return instance;
 	}
 
 	get keyboard(): Tea.Keyboard {
@@ -136,7 +164,8 @@ export class Script extends Component {
 		var json = super.toJSON() as any;
 		Object.assign(json, {
 			_type: "Script",
-			class: this.constructor.name,
+			//class: this.constructor.name,
+			path: this.path,
 			members: []
 		});
 		var keys1 = Object.keys(new Script(null));

@@ -9,6 +9,7 @@ import { HierarchyViewCommand } from "./commands/HierarchyViewCommand";
 import { ObjectInspectorCommand } from "./commands/ObjectInspectorCommand";
 import { EditorCommand } from "./commands/EditorCommand";
 import { Tabs } from "./containers/Tabs";
+import { SceneInspector } from "./SceneInspector";
 
 export class EditorBehavior {
 	editor: Editor;
@@ -64,6 +65,9 @@ export class EditorBehavior {
 		this.hierarchyViewCommand = new HierarchyViewCommand();
 		this.hierarchyViewCommand.hierarchyView = hierarchyView;
 		this.hierarchyViewCommand.inspectorView = inspectorView;
+		this.hierarchyViewCommand.on("menu", (id: string) => {
+			this.editorCommand.isChanged = true;
+		});
 
 		this.objectInspectorCommand = new ObjectInspectorCommand();
 		this.objectInspectorCommand.hierarchyView = hierarchyView;
@@ -154,7 +158,18 @@ export class EditorBehavior {
 				return;
 			}
 			//console.log("select", item.tag);
-			this.objectInspectorCommand.update();
+
+			if (item.tag == -1) {
+				//console.log("select scene");
+				inspectorView.hide();
+				inspectorView.component = SceneInspector.extend({
+					created: function () {
+					}
+				});
+				inspectorView.show();
+			} else {
+				this.objectInspectorCommand.update();
+			}
 		});
 		hierarchyView.$on("drop", (mode: number, idSrc: number, idDst: number) => {
 			//console.log("drop", idSrc, idDst, item.model.text);
@@ -226,8 +241,15 @@ export class EditorBehavior {
 					var classRef = factory();
 					var app = this.scene.app;
 					Object.setPrototypeOf(classRef.prototype, new Tea.Script(app));
-					var instance = new classRef();
-					object3d.addComponentInstance(instance)
+					var instance = new classRef() as Tea.Script;
+					instance.path = filename;
+					object3d.addComponentInstance(instance);
+
+					var selectedObject = this.hierarchyViewCommand.getSelectedObject();
+					if (selectedObject != null) {
+						this.hierarchyViewCommand.selectItem(selectedObject);
+					}
+					this.editorCommand.isChanged = true;
 				});
 			}
 		});

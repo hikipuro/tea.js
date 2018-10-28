@@ -69,6 +69,8 @@ export class ProjectView extends Vue {
 		});
 		folderList.$on("select", (item: Tea.Editor.TreeViewItem) => {
 			if (item == null) {
+				fileList.unselect();
+				fileList.items = [];
 				return;
 			}
 			//console.log("select", item.tag);

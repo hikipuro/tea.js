@@ -38,14 +38,16 @@ import { NoCache } from "./NoCache";
 		model: Object,
 		depth: Number
 	},
-	data: () => { return {
-		isOpen: false,
-		isSelected: false,
-		title: null,
-		openIcon: "📂",
-		closeIcon: "📁",
-		draggable: false,
-	}},
+	data: () => {
+		return {
+			isOpen: false,
+			isSelected: false,
+			title: null,
+			openIcon: "📂",
+			closeIcon: "📁",
+			draggable: false,
+		}
+	},
 	computed: {
 		/*
 		isFolder: function (): boolean {
@@ -342,9 +344,12 @@ export class Item extends Vue {
 			<slot name="after"></slot>
 		</div>
 	`,
-	data: () => { return {
-		items: []
-	}},
+	data: () => {
+		return {
+			items: [],
+			draggable: false
+		}
+	},
 	components: {
 		item: Item
 	}
@@ -355,9 +360,10 @@ export class TreeView extends Vue {
 	selectedItem: Item;
 	openIcon: string;
 	closeIcon: string;
-	draggable: boolean = false;
+	draggable: boolean;
 	dragEvents: TreeView.DragEvents;
 	tag: any;
+	protected _preventSelectEvent: boolean;
 
 	@NoCache
 	get childCount(): number {
@@ -465,7 +471,7 @@ export class TreeView extends Vue {
 
 	selectNext(): void {
 		var items = this.getItemComponents();
-		console.log("select next", items);
+		//console.log("select next", items);
 		if (items.length <= 0) {
 			return;
 		}
@@ -523,16 +529,7 @@ export class TreeView extends Vue {
 			return;
 		}
 		if (this.selectedItem == null) {
-			var length = items.length;
-			var item = items[length - 1] as Item;
-			for (var i = 0; i < TreeView.maxDepth; i++) {
-				if (item.isFolder && item.isOpen) {
-					item = item.lastChild;
-					continue;
-				}
-				break;
-			}
-			this.onSelectItem(item);
+			this.selectEnd();
 			return;
 		}
 		var item = this.selectedItem;
@@ -566,7 +563,47 @@ export class TreeView extends Vue {
 		this.onSelectItem(prev);
 	}
 
+	selectParent(): void {
+		var items = this.getItemComponents();
+		if (items.length <= 0) {
+			return;
+		}
+		var item = this.selectedItem;
+		if (item == null) {
+			return;
+		}
+		if (item.$parent instanceof Item) {
+			this.onSelectItem(item.$parent);
+		}
+	}
+
+	selectHome(): void {
+		var items = this.getItemComponents();
+		if (items.length <= 0) {
+			return;
+		}
+		this.onSelectItem(items[0]);
+	}
+
+	selectEnd(): void {
+		var items = this.getItemComponents();
+		if (items.length <= 0) {
+			return;
+		}
+		var length = items.length;
+		var item = items[length - 1] as Item;
+		for (var i = 0; i < TreeView.maxDepth; i++) {
+			if (item.isFolder && item.isOpen) {
+				item = item.lastChild;
+				continue;
+			}
+			break;
+		}
+		this.onSelectItem(item);
+	}
+
 	protected created(): void {
+		this._preventSelectEvent = false;
 		this.dragEvents = new TreeView.DragEvents();
 	}
 
@@ -583,6 +620,61 @@ export class TreeView extends Vue {
 				removeIsOpen(item);
 			});
 		});
+	}
+
+	protected scrollTo(item: Item): void {
+		if (item == null) {
+			return;
+		}
+		var el = this.$el as HTMLElement;
+		var itemEl = item.$el as HTMLElement;
+		var itemChildEl = itemEl.querySelector(".item") as HTMLElement;
+
+		var top = el.scrollTop;
+		var itemTop = itemEl.offsetTop - el.offsetTop;
+		if (top > itemTop) {
+			el.scrollTo(0, itemTop);
+			return;
+		}
+		var bottom = top + el.clientHeight;
+		var itemBottom = itemTop + itemChildEl.offsetHeight;
+		if (bottom < itemBottom) {
+			el.scrollTo(0, itemBottom - el.clientHeight);
+		}
+	}
+
+	protected pageUp(): void {
+		var item = this.selectedItem;
+		if (item == null) {
+			return;
+		}
+		var el = this.$el as HTMLElement;
+		var itemEl = item.$el as HTMLElement;
+		itemEl = itemEl.querySelector(".item");
+		var itemsPerPage = Math.floor(el.clientHeight / itemEl.clientHeight);
+		this._preventSelectEvent = true;
+		for (var i = 1; i < itemsPerPage; i++) {
+			this.selectPrev();
+		}
+		this._preventSelectEvent = false;
+		this.$emit("select", this.selectedItem);
+	}
+
+	protected pageDown(): void {
+		var item = this.selectedItem;
+		if (item == null) {
+			return;
+		}
+		var el = this.$el as HTMLElement;
+		var itemEl = item.$el as HTMLElement;
+		itemEl = itemEl.querySelector(".item");
+		var itemsPerPage = Math.floor(el.clientHeight / itemEl.clientHeight);
+		this._preventSelectEvent = true;
+		for (var i = 1; i < itemsPerPage; i++) {
+			this.selectNext();
+		}
+		this._preventSelectEvent = false;
+		this.$emit("select", this.selectedItem);
 	}
 
 	protected onClick(): void {
@@ -605,56 +697,59 @@ export class TreeView extends Vue {
 	}
 
 	protected onKeyDown(e: KeyboardEvent): void {
-		var isArrow = false;
+		var scrollFlag = false;
+		var item = this.selectedItem;
 		switch (e.key) {
 			case "Escape":
-				if (this.selectedItem != null) {
-					this.forEachChild((item: Item) => {
-						item.select(false);
-					});
-					this.selectedItem = null;
-					this.$emit("select", null);
-				}
+				this.unselect();
 				break;
 			case "ArrowUp":
-				isArrow = true;
+				scrollFlag = true;
 				this.selectPrev();
 				break;
 			case "ArrowDown":
-				isArrow = true;
+				scrollFlag = true;
 				this.selectNext();
 				break;
 			case "ArrowLeft":
-				isArrow = true;
-				this.collapse();
+				if (item != null) {
+					scrollFlag = true;
+					if (item.isFolder) {
+						if (item.isOpen) {
+							this.collapse();
+						} else {
+							this.selectParent();
+						}
+					} else {
+						this.selectParent();
+					}
+				}
 				break;
 			case "ArrowRight":
-				isArrow = true;
+				scrollFlag = true;
 				this.expand();
+				break;
+			case "Home":
+				scrollFlag = true;
+				this.selectHome();
+				break;
+			case "End":
+				scrollFlag = true;
+				this.selectEnd();
+				break;
+			case "PageUp":
+				scrollFlag = true;
+				this.pageUp();
+				break;
+			case "PageDown":
+				scrollFlag = true;
+				this.pageDown();
 				break;
 		}
 
-		if (isArrow) {
+		if (scrollFlag) {
 			e.preventDefault();
-			var item = this.selectedItem;
-			if (item == null) {
-				return;
-			}
-			var el = this.$el as HTMLElement;
-			var itemEl = item.$el as HTMLElement;
-			var itemChildEl = itemEl.querySelector(".item") as HTMLElement;
-
-			var top = el.scrollTop;
-			var itemTop = itemEl.offsetTop - el.offsetTop;
-			if (top > itemTop) {
-				el.scrollTo(0, itemTop);
-				return;
-			}
-			var bottom = top + el.clientHeight;
-			var itemBottom = itemTop + itemChildEl.offsetHeight;
-			if (bottom < itemBottom) {
-				el.scrollTo(0, itemBottom - el.clientHeight);
-			}
+			this.scrollTo(this.selectedItem);
 		}
 	}
 
@@ -680,7 +775,9 @@ export class TreeView extends Vue {
 		});
 		item.select();
 		this.selectedItem = item;
-		this.$emit("select", item);
+		if (this._preventSelectEvent === false) {
+			this.$emit("select", item);
+		}
 	}
 
 	protected forEachChild(callback: (item: Item) => void) {
