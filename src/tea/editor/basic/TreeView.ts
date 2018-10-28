@@ -166,6 +166,19 @@ export class Item extends Vue {
 			return;
 		}
 		this.isOpen = false;
+		var treeView = this.findTreeView();
+		if (treeView != null) {
+			var selectedItem = treeView.selectedItem;
+			if (selectedItem != null) {
+				this.forEachChild((item: Item): boolean => {
+					if (selectedItem === item) {
+						treeView.unselect();
+						return true;
+					}
+					return false;
+				});
+			}
+		}
 		var parent = this.findTreeView();
 		parent.$emit("collapse", this);
 	}
@@ -250,6 +263,25 @@ export class Item extends Vue {
 			item.removeEventListener("dragover", this.onDragOver);
 			item.removeEventListener("drop", this.onDrop);
 		}
+	}
+
+	protected forEachChild(callback: (item: Item) => boolean) {
+		var forEach = (item: Item): boolean => {
+			if ((item instanceof Item) === false) {
+				return false;
+			}
+			var result = callback(item);
+			if (result) {
+				return true;
+			}
+			item.getItemComponents().some((item: Item) => {
+				return forEach(item);
+			});
+			return false;
+		};
+		this.getItemComponents().some((item: Item) => {
+			return forEach(item);
+		});
 	}
 
 	protected onClick(): void {

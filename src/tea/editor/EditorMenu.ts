@@ -192,7 +192,8 @@ export class EditorMenu {
 				label: "Camera"
 			}
 		];
-		if (hierarchyView.getSelectedItem() != null) {
+		var item = hierarchyView.getSelectedItem();
+		if (item != null && item.tag >= 0) {
 			template.unshift(
 				{
 					id: "Delete",

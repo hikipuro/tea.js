@@ -98,7 +98,7 @@ export class ProjectView extends Vue {
 			});
 		});
 		folderList.$on("menu", (e: MouseEvent) => {
-			this.$emit("menu");
+			this.$emit("menu", e);
 		});
 
 		fileList.draggable = true;
