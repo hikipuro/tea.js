@@ -52,6 +52,7 @@ export class MeshRenderer extends Vue {
 		if (this._component) {
 			this._component.receiveShadows = value;
 		}
+		this.$emit("update", "receiveShadows");
 	}
 
 	protected onUpdateWireframe(value: boolean): void {
@@ -59,5 +60,6 @@ export class MeshRenderer extends Vue {
 		if (this._component) {
 			this._component.wireframe = value;
 		}
+		this.$emit("update", "wireframe");
 	}
 }

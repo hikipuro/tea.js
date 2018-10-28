@@ -116,6 +116,7 @@ export class TextMesh extends Vue {
 		if (this._component) {
 			this._component.text = value;
 		}
+		this.$emit("update", "text");
 	}
 
 	protected onUpdateCharacterSize(value: number): void {
@@ -127,6 +128,7 @@ export class TextMesh extends Vue {
 			this._component.characterSize = value;
 			//this._component.update();
 		}
+		this.$emit("update", "characterSize");
 	}
 
 	protected onUpdateLineSpacing(value: number): void {
@@ -134,6 +136,7 @@ export class TextMesh extends Vue {
 		if (this._component) {
 			this._component.lineSpacing = value;
 		}
+		this.$emit("update", "lineSpacing");
 	}
 
 	protected onUpdateAnchor(value: string): void {
@@ -141,6 +144,7 @@ export class TextMesh extends Vue {
 		if (this._component) {
 			this._component.anchor = Tea.TextAnchor[value];
 		}
+		this.$emit("update", "anchor");
 	}
 
 	protected onUpdateAlignment(value: string): void {
@@ -148,6 +152,7 @@ export class TextMesh extends Vue {
 		if (this._component) {
 			this._component.alignment = Tea.TextAlignment[value];
 		}
+		this.$emit("update", "alignment");
 	}
 
 	protected onUpdateFontSize(value: number): void {
@@ -155,6 +160,7 @@ export class TextMesh extends Vue {
 		if (this._component) {
 			this._component.fontSize = value;
 		}
+		this.$emit("update", "fontSize");
 	}
 
 	protected onUpdateFontStyle(value: string): void {
@@ -162,6 +168,7 @@ export class TextMesh extends Vue {
 		if (this._component) {
 			this._component.fontStyle = Tea.FontStyle[value];
 		}
+		this.$emit("update", "fontStyle");
 	}
 
 	protected onUpdateFont(value: string): void {
@@ -169,6 +176,7 @@ export class TextMesh extends Vue {
 		if (this._component) {
 			this._component.font = value;
 		}
+		this.$emit("update", "font");
 	}
 
 	protected onUpdateColor(value: Tea.Color): void {
@@ -176,5 +184,6 @@ export class TextMesh extends Vue {
 		if (this._component) {
 			this._component.color = value.clone();
 		}
+		this.$emit("update", "color");
 	}
 }

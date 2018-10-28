@@ -85,6 +85,7 @@ export class BoxCollider extends Vue {
 		if (this._component != null) {
 			this._component.center.set(x, y, z);
 		}
+		this.$emit("update", "center");
 	}
 
 	protected onUpdateSize(x: number, y: number, z: number): void {
@@ -95,5 +96,6 @@ export class BoxCollider extends Vue {
 		if (this._component != null) {
 			this._component.size.set(x, y, z);
 		}
+		this.$emit("update", "size");
 	}
 }

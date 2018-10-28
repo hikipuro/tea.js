@@ -4,6 +4,7 @@ import Component from "vue-class-component";
 @Component({
 	template: `
 		<select
+			class="SelectAspect"
 			@change="onChange">
 			<option value="free">Free Aspect</option>
 			<option value="4:3">4:3</option>

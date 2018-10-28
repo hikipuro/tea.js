@@ -101,6 +101,7 @@ export class ParticleSystem extends Vue {
 		if (this._component) {
 			this._component.main.duration = value;
 		}
+		this.$emit("update", "duration");
 	}
 
 	protected onUpdateLooping(value: boolean): void {
@@ -108,6 +109,7 @@ export class ParticleSystem extends Vue {
 		if (this._component) {
 			this._component.main.loop = value;
 		}
+		this.$emit("update", "looping");
 	}
 
 	protected onUpdateStartLifetime(value: number): void {
@@ -115,6 +117,7 @@ export class ParticleSystem extends Vue {
 		if (this._component) {
 			this._component.main.startLifetime.constant = value;
 		}
+		this.$emit("update", "startLifetime");
 	}
 
 	protected onUpdateStartSpeed(value: number): void {
@@ -122,6 +125,7 @@ export class ParticleSystem extends Vue {
 		if (this._component) {
 			this._component.main.startSpeed.constant = value;
 		}
+		this.$emit("update", "startSpeed");
 	}
 
 	protected onUpdateStartColor(value: Tea.Color): void {
@@ -129,6 +133,7 @@ export class ParticleSystem extends Vue {
 		if (this._component) {
 			this._component.main.startColor.color.copy(value);
 		}
+		this.$emit("update", "startColor");
 	}
 
 	protected onUpdateGravityModifier(value: number): void {
@@ -136,6 +141,7 @@ export class ParticleSystem extends Vue {
 		if (this._component) {
 			this._component.main.gravityModifier.constant = value;
 		}
+		this.$emit("update", "gravityModifier");
 	}
 
 	protected onUpdateMaxParticles(value: number): void {
@@ -143,5 +149,6 @@ export class ParticleSystem extends Vue {
 		if (this._component) {
 			this._component.main.maxParticles = value;
 		}
+		this.$emit("update", "maxParticles");
 	}
 }

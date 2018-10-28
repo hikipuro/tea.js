@@ -77,7 +77,15 @@ export class HierarchyViewCommand {
 				var child = children[i];
 				createItems(items, child);
 			}
-			hierarchyView.items = items;
+			var sceneItem = {
+				text: "Scene",
+				children: items,
+				isFolder: true,
+				isOpen: null,
+				tag: "-1"
+			};
+			hierarchyView.items = [sceneItem];
+			//hierarchyView.items = items;
 			hierarchyView.unselect();
 			if (expand) {
 				hierarchyView.$nextTick(() => {

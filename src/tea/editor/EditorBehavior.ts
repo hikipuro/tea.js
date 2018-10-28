@@ -200,6 +200,7 @@ export class EditorBehavior {
 					});
 					break;
 			}
+			this.editorCommand.isChanged = true;
 		});
 		hierarchyView.$on("dropFromProjectView", (item: Tea.Editor.TreeViewItem) => {
 			var dragSource = projectView.getDragSource();

@@ -16,6 +16,7 @@ $parent: "#editor";
 @import "../basic/css/Label.scss";
 @import "../basic/css/ListView.scss";
 @import "../basic/css/Rectangle.scss";
+@import "../basic/css/SelectAspect.scss";
 @import "../basic/css/SelectEnum.scss";
 @import "../basic/css/TextArea.scss";
 @import "../basic/css/TreeView.scss";
@@ -34,10 +35,16 @@ $parent: "#editor";
 @import "../components/css/ParticleSystem.scss";
 @import "../components/css/TextMesh.scss";
 
+body {
+	background-color: theme("background");
+}
+
 #{$parent} {
 	width: 100%;
 	height: 100%;
 	color: theme("font");
+	//padding: 2px;
+	box-sizing: border-box;
 
 	.LeftLayout {
 		flex: 1;

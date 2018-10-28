@@ -2,6 +2,21 @@
 	div.InspectorView {
 		width: 100%;
 		line-height: 1.5;
+
+		input[type="checkbox"]:focus {
+			outline: 1px solid orange;
+			outline-offset: 1px;
+		}
+
+		select:focus {
+			outline: 1px solid orange;
+			outline-offset: 1px;
+		}
+
+		button:focus {
+			outline: 1px solid orange;
+			outline-offset: 1px;
+		}
 	}
 
 	div.ObjectTitle {

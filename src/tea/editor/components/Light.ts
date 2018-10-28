@@ -65,6 +65,7 @@ export class Light extends Vue {
 		if (this._component) {
 			this._component.type = Tea.LightType[value];
 		}
+		this.$emit("update", "type");
 	}
 
 	protected onUpdateColor(value: Tea.Color): void {
@@ -72,6 +73,7 @@ export class Light extends Vue {
 		if (this._component) {
 			this._component.color.copy(value);
 		}
+		this.$emit("update", "color");
 	}
 
 	protected onUpdateIntensity(value: number): void {
@@ -82,5 +84,6 @@ export class Light extends Vue {
 		if (this._component) {
 			this._component.intensity = value;
 		}
+		this.$emit("update", "intensity");
 	}
 }

@@ -9,7 +9,7 @@ import { NoCache } from "./NoCache";
 				class="item"
 				ref="item"
 				:class="{ selected: isSelected }"
-				:style="{ paddingLeft: (depth * 1.3) + 'em' }"
+				:style="{ paddingLeft: (0.2 + (depth * 1.3)) + 'em' }"
 				:title="model.title"
 				:draggable="draggable"
 				@click.stop="onClick"
@@ -93,7 +93,7 @@ export class Item extends Vue {
 	@NoCache
 	get index(): number {
 		var parent = this.$parent as Item | TreeView;
-		var items = parent.getItems();
+		var items = parent.getItemComponents();
 		return items.indexOf(this);
 	}
 
@@ -110,12 +110,12 @@ export class Item extends Vue {
 
 	@NoCache
 	get firstChild(): Item {
-		return this.getItems()[0];
+		return this.getItemComponents()[0];
 	}
 
 	@NoCache
 	get lastChild(): Item {
-		var items = this.getItems();
+		var items = this.getItemComponents();
 		var length = items.length;
 		return items[length - 1];
 	}
@@ -123,7 +123,7 @@ export class Item extends Vue {
 	@NoCache
 	get nextSibling(): Item {
 		var parent = this.$parent as Item | TreeView;
-		var items = parent.getItems();
+		var items = parent.getItemComponents();
 		var index = items.indexOf(this);
 		return items[index + 1];
 	}
@@ -131,12 +131,12 @@ export class Item extends Vue {
 	@NoCache
 	get prevSibling(): Item {
 		var parent = this.$parent as Item | TreeView;
-		var items = parent.getItems();
+		var items = parent.getItemComponents();
 		var index = items.indexOf(this);
 		return items[index - 1];
 	}
 
-	getItems(): Array<Item> {
+	getItemComponents(): Array<Item> {
 		var items = this.$refs.items as Array<Item>;
 		if (items == null) {
 			return [];
@@ -361,10 +361,10 @@ export class TreeView extends Vue {
 
 	@NoCache
 	get childCount(): number {
-		return this.getItems().length;
+		return this.getItemComponents().length;
 	}
 
-	getItems(): Array<Item> {
+	getItemComponents(): Array<Item> {
 		var items = this.$refs.items as Array<Item>;
 		if (items == null) {
 			return [];
@@ -464,7 +464,8 @@ export class TreeView extends Vue {
 	}
 
 	selectNext(): void {
-		var items = this.getItems();
+		var items = this.getItemComponents();
+		console.log("select next", items);
 		if (items.length <= 0) {
 			return;
 		}
@@ -472,7 +473,8 @@ export class TreeView extends Vue {
 			this.onSelectItem(items[0]);
 			return;
 		}
-		if (items.length <= 1) {
+		if (items.length <= 1
+		&& items[0].isFolder === false) {
 			return;
 		}
 		var item = this.selectedItem;
@@ -516,7 +518,7 @@ export class TreeView extends Vue {
 	}
 
 	selectPrev(): void {
-		var items = this.getItems();
+		var items = this.getItemComponents();
 		if (items.length <= 0) {
 			return;
 		}
@@ -687,11 +689,11 @@ export class TreeView extends Vue {
 				return;
 			}
 			callback(item);
-			item.getItems().forEach((item: Item) => {
+			item.getItemComponents().forEach((item: Item) => {
 				forEach(item);
 			});
 		};
-		this.getItems().forEach((item: Item) => {
+		this.getItemComponents().forEach((item: Item) => {
 			forEach(item);
 		});
 	}

@@ -144,6 +144,7 @@ export class Camera extends Vue {
 		if (this._component) {
 			this._component.clearFlags = Tea.CameraClearFlags[value];
 		}
+		this.$emit("update", "clearFlags");
 	}
 
 	protected onUpdateBackground(value: Tea.Color): void {
@@ -152,6 +153,7 @@ export class Camera extends Vue {
 		if (this._component) {
 			this._component.backgroundColor.copy(value);
 		}
+		this.$emit("update", "background");
 	}
 
 	protected onUpdateOrthographic(value: boolean): void {
@@ -159,6 +161,7 @@ export class Camera extends Vue {
 		if (this._component) {
 			this._component.orthographic = value;
 		}
+		this.$emit("update", "orthographic");
 	}
 
 	protected onUpdateSize(value: number): void {
@@ -166,6 +169,7 @@ export class Camera extends Vue {
 		if (this._component) {
 			this._component.orthographicSize = value;
 		}
+		this.$emit("update", "size");
 	}
 
 	protected onUpdateFov(value: number): void {
@@ -173,6 +177,7 @@ export class Camera extends Vue {
 		if (this._component) {
 			this._component.fieldOfView = value;
 		}
+		this.$emit("update", "fieldOfView");
 	}
 
 	protected onUpdateClippingPlanes(type: string, value: number): void {
@@ -182,10 +187,12 @@ export class Camera extends Vue {
 				if (this._component) {
 					this._component.nearClipPlane = value;
 				}
+				this.$emit("update", "nearClipPlane");
 				break;
 			case "far":
 				this.farClipPlane = value;
 				this._component.farClipPlane = value;
+				this.$emit("update", "farClipPlane");
 				break;
 		}
 	}
@@ -197,6 +204,7 @@ export class Camera extends Vue {
 				value[0], value[1], value[2], value[3]
 			);
 		}
+		this.$emit("update", "rect");
 	}
 
 	protected onUpdateDepth(value: number): void {
@@ -204,5 +212,6 @@ export class Camera extends Vue {
 		if (this._component) {
 			this._component.depth = value;
 		}
+		this.$emit("update", "depth");
 	}
 }
