@@ -231,30 +231,55 @@ export class EditorBehavior {
 			}
 			var filename = dragSource.tag;
 			var ext = Tea.File.extension(filename);
-			if (ext.toLowerCase() === "js") {
-				Tea.File.readText(filename, (err, data) => {
-					if (err) {
-						return;
-					}
-					var check = data.indexOf("class");
-					if (check < 0 || check > 64) {
-						console.warn("class not found [" + filename + "]");
-						return;
-					}
-					var factory = new Function("return " + data);
-					var classRef = factory();
-					var app = this.scene.app;
-					Object.setPrototypeOf(classRef.prototype, new Tea.Script(app));
-					var instance = new classRef() as Tea.Script;
-					instance.path = filename;
-					object3d.addComponentInstance(instance);
+			ext = ext.toLowerCase();
+			switch (ext) {
+				case "js":
+					Tea.File.readText(filename, (err, data) => {
+						if (err) {
+							return;
+						}
+						var check = data.indexOf("class");
+						if (check < 0 || check > 64) {
+							console.warn("class not found [" + filename + "]");
+							return;
+						}
+						var factory = new Function("return " + data);
+						var classRef = factory();
+						var app = this.scene.app;
+						Object.setPrototypeOf(classRef.prototype, new Tea.Script(app));
+						var instance = new classRef() as Tea.Script;
+						instance.path = filename;
+						object3d.addComponentInstance(instance);
 
+						var selectedObject = this.hierarchyViewCommand.getSelectedObject();
+						if (selectedObject != null) {
+							this.hierarchyViewCommand.selectItem(selectedObject);
+						}
+						this.editorCommand.isChanged = true;
+					});
+					break;
+				case "jpg":
+				case "png":
 					var selectedObject = this.hierarchyViewCommand.getSelectedObject();
-					if (selectedObject != null) {
-						this.hierarchyViewCommand.selectItem(selectedObject);
+					if (selectedObject == null) {
+						return;
 					}
-					this.editorCommand.isChanged = true;
-				});
+					var renderer = selectedObject.getComponent(Tea.MeshRenderer);
+					if (renderer == null) {
+						return;
+					}
+					Tea.File.exists(filename, (exists: boolean) => {
+						if (exists === false) {
+							return;
+						}
+						renderer.material.mainTexture.load(filename, (err, url) => {
+							if (err) {
+								return;
+							}
+							this.objectInspectorCommand.update();
+						});
+					});
+					break;
 			}
 		});
 	}

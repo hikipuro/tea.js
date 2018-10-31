@@ -1,4 +1,5 @@
 import * as fs from "fs";
+import * as nodePath from "path";
 
 export class File {
 	static exists(path: string, callback: (exists: boolean) => void): void {
@@ -64,21 +65,40 @@ export class File {
 	}
 
 	static readImage(url: string, callback: (err: any, image: HTMLImageElement, path: string) => void): void {
-		var image = new Image();
-		var onLoad = () => {
-			image.removeEventListener("load", onLoad);
-			image.removeEventListener("error", onError);
-			callback(null, image, url);
+		var load = (url: string) => {
+			var image = new Image();
+			var onLoad = () => {
+				image.removeEventListener("load", onLoad);
+				image.removeEventListener("error", onError);
+				callback(null, image, url);
+			};
+			var onError = () => {
+				image.removeEventListener("load", onLoad);
+				image.removeEventListener("error", onError);
+				console.error("File.readImage", url);
+				callback("error", image, url);
+			};
+			image.addEventListener("load", onLoad);
+			image.addEventListener("error", onError);
+			image.src = url;
 		};
-		var onError = () => {
-			image.removeEventListener("load", onLoad);
-			image.removeEventListener("error", onError);
-			console.error("File.readImage", url);
-			callback("error", image, url);
-		};
-		image.addEventListener("load", onLoad);
-		image.addEventListener("error", onError);
-		image.src = url;
+		if (fs == null) {
+			load(url);
+			load = undefined;
+			return;
+		}
+		fs.readFile(url, (err: any, data: Buffer) => {
+			if (err) {
+				callback("error", null, url);
+				return;
+			}
+			var base64image = data.toString("base64");
+			//var base64image = btoa(String.fromCharCode.apply(null, data));
+			var mimeType = "image/" + nodePath.extname(url).substr(1);
+			var dataImage = "data:" + mimeType + ";base64," + base64image;
+			load(dataImage);
+			load = undefined;
+		});
 	}
 
 	static readArrayBuffer(url: string, callback: (err: any, data: ArrayBuffer) => void): void {

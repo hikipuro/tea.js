@@ -62,6 +62,7 @@ export class Directory {
 				}
 				files.forEach(file => {
 					file = nodePath.join(path, file);
+					//file = nodePath.resolve(file);
 					var fileInfo = new FileInfo(file);
 					fileInfoList.push(fileInfo);
 				});
@@ -78,6 +79,7 @@ export class Directory {
 		var files = fs.readdirSync(path);
 		files.forEach(file => {
 			file = nodePath.join(path, file);
+			//file = nodePath.resolve(file);
 			var fileInfo = new FileInfo(file);
 			fileInfoList.push(fileInfo);
 		});

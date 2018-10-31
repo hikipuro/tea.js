@@ -14,6 +14,7 @@ import { CheckBox } from "./basic/CheckBox";
 import { ColorPicker } from "./basic/ColorPicker";
 import { ContextMenu } from "./basic/ContextMenu";
 import { HResizeBar } from "./basic/HResizeBar";
+import { ImageSelector } from "./basic/ImageSelector";
 import { InputNumber } from "./basic/InputNumber";
 import { InputRange } from "./basic/InputRange";
 import { InputText } from "./basic/InputText";
@@ -35,6 +36,7 @@ import { VLayout } from "./containers/VLayout";
 import { Tabs, TabItem } from "./containers/Tabs";
 import { Window } from "./containers/Window";
 
+import { AudioSource } from "./components/AudioSource";
 import { BoxCollider } from "./components/BoxCollider";
 import { Camera } from "./components/Camera";
 import { Light } from "./components/Light";
@@ -54,6 +56,7 @@ Vue.component("CheckBox", CheckBox);
 Vue.component("ColorPicker", ColorPicker);
 Vue.component("ContextMenu", ContextMenu);
 Vue.component("HResizeBar", HResizeBar);
+Vue.component("ImageSelector", ImageSelector);
 Vue.component("InputNumber", InputNumber);
 Vue.component("InputRange", InputRange);
 Vue.component("InputText", InputText);
@@ -75,6 +78,7 @@ Vue.component("Tabs", Tabs);
 Vue.component("TabItem", TabItem);
 Vue.component("Window", Window);
 
+Vue.component("AudioSource", AudioSource);
 Vue.component("BoxCollider", BoxCollider);
 Vue.component("Camera", Camera);
 Vue.component("Light", Light);
@@ -248,6 +252,8 @@ type _VLayout = VLayout;
 var  _Window = Window;
 type _Window = Window;
 
+var  _AudioSource = AudioSource;
+type _AudioSource = AudioSource;
 var  _BoxCollider = BoxCollider;
 type _BoxCollider = BoxCollider;
 var  _Camera = Camera;
@@ -304,6 +310,8 @@ export module Editor {
 	export var  Window = _Window;
 	export type Window = _Window;
 
+	export var  AudioSource = _AudioSource;
+	export type AudioSource = _AudioSource;
 	export var  BoxCollider = _BoxCollider;
 	export type BoxCollider = _BoxCollider;
 	export var  Camera = _Camera;

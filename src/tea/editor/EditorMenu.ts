@@ -230,6 +230,15 @@ export class EditorMenu {
 	): NativeContextMenu {
 		var template: Electron.MenuItemConstructorOptions[] = [
 			{
+				label: "Audio",
+				submenu: [
+					{
+						id: "Audio/Audio Source",
+						label: "Audio Source"
+					}
+				]
+			},
+			{
 				label: "Effects",
 				submenu: [
 					{

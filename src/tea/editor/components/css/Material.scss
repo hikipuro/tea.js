@@ -1,0 +1,21 @@
+#{$parent} {
+	div.Material {
+		padding: 1px;
+
+		.ImageSelector {
+			box-sizing: border-box;
+			align-items: center;
+			padding: 2px 0;
+
+			> .title {
+				flex: 1;
+			}
+			> .value {
+				justify-content: flex-end;
+				margin-right: 2px;
+				width: 64px;
+				border: 1px solid gray;
+			}
+		}
+	}
+}

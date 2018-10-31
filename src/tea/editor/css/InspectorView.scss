@@ -17,6 +17,11 @@
 			outline: 1px solid orange;
 			outline-offset: 1px;
 		}
+
+		.ColorPicker > .color:focus {
+			outline: 1px solid orange;
+			outline-offset: 1px;
+		}
 	}
 
 	div.ObjectTitle {

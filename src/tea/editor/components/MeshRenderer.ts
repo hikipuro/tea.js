@@ -52,8 +52,8 @@ export class MeshRenderer extends Vue {
 		this.wireframe = component.wireframe;
 		this.receiveShadows = component.receiveShadows;
 		var material = this.$refs.material as Material;
-		material._component = component.material;
-		material.$forceUpdate();
+		material.setMaterial(component.material);
+		//material.$forceUpdate();
 	}
 
 	protected onUpdateReceiveShadows(value: boolean): void {

@@ -1,0 +1,20 @@
+#{$parent} {
+	div.ImageSelector {
+		display: inline-flex;
+		width: 100%;
+
+		> .title {
+			display: inline-block;
+		}
+
+		> .value {
+			display: inline-flex;
+			height: 64px;
+			> img {
+				object-fit: contain;
+				max-width: 100%;
+				max-height: 100%;
+			}
+		}
+	}
+}

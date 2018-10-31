@@ -12,9 +12,11 @@ import * as Tea from "../../Tea";
 			<div
 				ref="color"
 				class="color"
+				tabindex="0"
 				:style="{
 					backgroundColor: value
 				}"
+				@keydown="onKeyDown"
 				@click="onClick"
 				@change="onChange"></div>
 			<Window ref="window">
@@ -63,6 +65,30 @@ export class ColorPicker extends Vue {
 	b: number;
 	a: number;
 
+	show(x: number = null, y: number = null): void {
+		var window = this.$refs.window as Tea.Editor.Window;
+		window.isForm = true;
+		if (x == null || y == null) {
+			var el = this.$el;
+			var rect = el.getBoundingClientRect();
+			if (x == null) {
+				var color = this.$refs.color as HTMLElement;
+				console.log(color.clientLeft, color.offsetLeft);
+				x = rect.left + color.offsetLeft;
+			}
+			if (y == null) {
+				y = rect.bottom;
+			}
+		}
+		window.move(x, y);
+		window.show(true);
+	}
+
+	hide(): void {
+		var window = this.$refs.window as Tea.Editor.Window;
+		window.hide();
+	}
+
 	protected updated(): void {
 		//console.log("updated", this.value);
 		var color = Tea.Color.fromCssColor(this.value);
@@ -79,13 +105,21 @@ export class ColorPicker extends Vue {
 		this.$emit("update", color);
 	}
 
+	protected onKeyDown(e: KeyboardEvent): void {
+		switch (e.key) {
+			case " ":
+			case "Enter":
+				this.show();
+				break;
+			case "Escape":
+				this.hide();
+				break;
+		}
+	}
+
 	protected onClick(e: MouseEvent): void {
 		e.preventDefault();
-		var window = this.$refs.window as Tea.Editor.Window;
-		window.isForm = true;
-		var y = this.$el.offsetTop + this.$el.clientHeight;
-		window.move(e.clientX, y);
-		window.show(true);
+		this.show();
 	}
 
 	protected onChange(): void {

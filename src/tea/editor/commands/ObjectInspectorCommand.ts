@@ -161,6 +161,9 @@ export class ObjectInspectorCommand {
 
 		var component = null;
 		switch (item.id) {
+			case "Audio/Audio Source":
+				component = Tea.AudioSource;
+				break;
 			case "Effects/Line Renderer":
 				component = Tea.LineRenderer;
 				break;
