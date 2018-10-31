@@ -161,9 +161,13 @@ export class EditorBehavior {
 
 			if (item.tag == -1) {
 				//console.log("select scene");
+				var scene = this.scene;
 				inspectorView.hide();
 				inspectorView.component = SceneInspector.extend({
 					created: function () {
+						var self = this as SceneInspector;
+						self._scene = scene;
+						scene = undefined;
 					}
 				});
 				inspectorView.show();
@@ -297,9 +301,19 @@ export class EditorBehavior {
 
 	initProjectView(): void {
 		var projectView = this.editor.projectView;
-		projectView.$on("menu", (e: MouseEvent) => {
+		projectView.$on("folderListMenu", (e: MouseEvent) => {
+			if (projectView.getSelectedFolderPath() == null) {
+				return;
+			}
 			e.preventDefault();
 			this.showProjectViewMenu();
+		});
+		projectView.$on("fileListMenu", (e: MouseEvent) => {
+			if (projectView.getSelectedFolderPath() == null) {
+				return;
+			}
+			e.preventDefault();
+			this.showProjectViewFileMenu();
 		});
 	}
 
@@ -340,6 +354,13 @@ export class EditorBehavior {
 	showProjectViewMenu(): void {
 		var contextMenu = EditorMenu.getProjectViewMenu(
 			this.onSelectProjectViewMenu
+		);
+		contextMenu.show();
+	}
+
+	showProjectViewFileMenu(): void {
+		var contextMenu = EditorMenu.getProjectViewFileMenu(
+			this.onSelectProjectViewFileMenu
 		);
 		contextMenu.show();
 	}
@@ -420,6 +441,18 @@ export class EditorBehavior {
 			case "Reveal in Finder":
 				Electron.shell.openItem(path);
 				console.log("Reveal in Finder", path);
+				break;
+		}
+	}
+
+	protected onSelectProjectViewFileMenu = (item: Electron.MenuItem): void => {
+		var projectView = this.editor.projectView;
+		var path = projectView.getSelectedFilePath();
+
+		switch (item.id) {
+			case "Open":
+				Electron.shell.openItem(path);
+				console.log("Open", path);
 				break;
 		}
 	}

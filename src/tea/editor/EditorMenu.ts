@@ -110,7 +110,7 @@ export class EditorMenu {
 				);
 			}
 		}
-		Tea.Editor.NativeContextMenu.setMenuItemHandler(
+		EditorMenu.setMenuItemHandler(
 			template, handler
 		);
 		return Menu.buildFromTemplate(template);
@@ -204,7 +204,7 @@ export class EditorMenu {
 				}
 			);
 		}
-		Tea.Editor.NativeContextMenu.setMenuItemHandler(
+		EditorMenu.setMenuItemHandler(
 			template, handler
 		);
 		return Tea.Editor.NativeContextMenu.create(template);
@@ -219,7 +219,7 @@ export class EditorMenu {
 				label: "Remove Component"
 			}
 		];
-		Tea.Editor.NativeContextMenu.setMenuItemHandler(
+		EditorMenu.setMenuItemHandler(
 			template, handler
 		);
 		return Tea.Editor.NativeContextMenu.create(template);
@@ -278,7 +278,7 @@ export class EditorMenu {
 				]
 			}
 		];
-		Tea.Editor.NativeContextMenu.setMenuItemHandler(
+		EditorMenu.setMenuItemHandler(
 			template, handler
 		);
 		return Tea.Editor.NativeContextMenu.create(template);
@@ -293,9 +293,55 @@ export class EditorMenu {
 				label: "Reveal in Finder"
 			}
 		];
-		Tea.Editor.NativeContextMenu.setMenuItemHandler(
+		EditorMenu.setMenuItemHandler(
 			template, handler
 		);
 		return Tea.Editor.NativeContextMenu.create(template);
+	}
+
+	static getProjectViewFileMenu(
+		handler: (menuItem: Electron.MenuItem, browserWindow: Electron.BrowserWindow, event: Event) => void
+	): NativeContextMenu {
+		var template: Electron.MenuItemConstructorOptions[] = [
+			{
+				id: "Open",
+				label: "Open"
+			},
+			{
+				id: "Delete",
+				label: "Delete",
+				enabled: false
+			},
+			{
+				id: "Rename",
+				label: "Rename",
+				enabled: false
+			}
+		];
+		EditorMenu.setMenuItemHandler(
+			template, handler
+		);
+		return Tea.Editor.NativeContextMenu.create(template);
+	}
+
+	static setMenuItemHandler(
+		template: Electron.MenuItemConstructorOptions[],
+		handler: (menuItem: Electron.MenuItem, browserWindow: Electron.BrowserWindow, event: Event) => void
+	): void {
+		if (template == null) {
+			return;
+		}
+		var setHandler = (item: Electron.MenuItemConstructorOptions) => {
+			item.click = handler
+			if (item.submenu) {
+				var submenu = item.submenu as Electron.MenuItemConstructorOptions[];
+				submenu.forEach(item => {
+					setHandler(item);
+				});
+			}
+		};
+		template.forEach(item => {
+			setHandler(item);
+		});
 	}
 }

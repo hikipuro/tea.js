@@ -1,6 +1,7 @@
 import Vue from "vue";
 import Component from "vue-class-component";
 import * as Tea from "../../Tea";
+import { Material } from "./Material";
 
 @Component({
 	template: `
@@ -13,6 +14,8 @@ import * as Tea from "../../Tea";
 				ref="wireframe"
 				:value="wireframe"
 				@update="onUpdateWireframe">Wireframe</CheckBox>
+			<Material
+				ref="material"></Material>
 		</div>
 	`,
 	data: () => {
@@ -28,6 +31,9 @@ import * as Tea from "../../Tea";
 			var self = this as MeshRenderer;
 			self._component.enabled = value;
 		}
+	},
+	components: {
+		Material: Material
 	}
 })
 export class MeshRenderer extends Vue {
@@ -45,6 +51,9 @@ export class MeshRenderer extends Vue {
 		this.enabled = component.enabled;
 		this.wireframe = component.wireframe;
 		this.receiveShadows = component.receiveShadows;
+		var material = this.$refs.material as Material;
+		material._component = component.material;
+		material.$forceUpdate();
 	}
 
 	protected onUpdateReceiveShadows(value: boolean): void {

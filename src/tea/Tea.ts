@@ -111,6 +111,7 @@ export * from "./particles/enums/ParticleSystemSimulationSpace";
 export * from "./particles/enums/ParticleSystemStopAction";
 
 export * from "./shaders/Shader";
+export * from "./shaders/ShaderActiveInfo";
 export * from "./shaders/ShaderBlend";
 export * from "./shaders/ShaderBlendEquation";
 export * from "./shaders/ShaderBlendFunc";

@@ -582,9 +582,14 @@ export class Main {
 			r.material.setTexture("_NormalTex", texture);
 		});
 
-		Tea.File.readImage("./models/google.jpg", (err, image) => {
+		var texture = new Tea.Texture(this.app);
+		texture.load("./models/google.jpg", (err, url) => {
+			if (err) {
+				return;
+			}
+		//Tea.File.readImage("./models/google.jpg", (err, image) => {
 			//document.body.appendChild(image);
-			var texture = this.app.createTexture(image);
+			//var texture = this.app.createTexture(image);
 			//texture.filterMode = Tea.FilterMode.Bilinear;
 			/*
 			cube.renderer.shader.texture = texture;

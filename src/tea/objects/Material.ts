@@ -108,11 +108,13 @@ class UniformItem {
 export class Material {
 	shader: Tea.Shader;
 	renderQueue: number;
+	protected _isDefault: boolean;
 	protected _uniforms: {[key: string]: UniformItem};
 	protected _textures: {[key: string]: Tea.Texture};
 
 	constructor(app: Tea.App) {
 		this.renderQueue = 2000;
+		this._isDefault = false;
 		this._uniforms = {};
 		this._textures = {};
 		this.color = Tea.Color.white.clone();
@@ -131,6 +133,7 @@ export class Material {
 
 	static getDefault(app: Tea.App): Material {
 		var material = new Material(app);
+		material._isDefault = true;
 		return material;
 	}
 
@@ -194,6 +197,7 @@ export class Material {
 			this.shader = undefined;
 		}
 		this.renderQueue = undefined;
+		this._isDefault = undefined;
 		this._uniforms = undefined;
 		var keys = Object.keys(this._textures);
 		for (var i = 0; i < keys.length; i++) {
@@ -353,17 +357,19 @@ export class Material {
 	toJSON(): Object {
 		var json = {
 			_type: "Material",
-			renderQueue: this.renderQueue,
-			//color: this.color,
-			//mainTexture: this.mainTexture.toJSON(),
-			//mainTextureOffset: this.mainTextureOffset,
-			//mainTextureScale: this.mainTextureScale,
-			uniforms: [],
-			textures: [],
-			shader: this.shader.toJSON()
-		};
+			isDefault: false
+		} as any;
+		if (this._isDefault) {
+			json.isDefault = true;
+			return json;
+		}
+		json.renderQueue = this.renderQueue;
+		json.uniforms = [];
+		json.textures = [];
+		json.shader = this.shader.toJSON();
 		var keys = Object.keys(this._uniforms);
-		for (var i = 0; i < keys.length; i++) {
+		var length = keys.length;
+		for (var i = 0; i < length; i++) {
 			var key = keys[i];
 			json.uniforms.push({
 				key: key,
@@ -371,7 +377,8 @@ export class Material {
 			});
 		}
 		keys = Object.keys(this._textures);
-		for (var i = 0; i < keys.length; i++) {
+		length = keys.length;
+		for (var i = 0; i < length; i++) {
 			var key = keys[i];
 			json.textures.push({
 				key: key,
@@ -386,6 +393,9 @@ export class Material {
 			return null;
 		}
 		var material = new Material(app);
+		if (json.isDefault) {
+			return material;
+		}
 		material.renderQueue = json.renderQueue;
 		var length = json.uniforms.length;
 		for (var i = 0; i < length; i++) {

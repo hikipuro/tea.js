@@ -21,27 +21,6 @@ export class NativeContextMenu {
 		return menu;
 	}
 
-	static setMenuItemHandler(
-		template: Electron.MenuItemConstructorOptions[],
-		handler: (menuItem: Electron.MenuItem, browserWindow: Electron.BrowserWindow, event: Event) => void
-	): void {
-		if (template == null) {
-			return;
-		}
-		var setHandler = (item: Electron.MenuItemConstructorOptions) => {
-			item.click = handler
-			if (item.submenu) {
-				var submenu = item.submenu as Electron.MenuItemConstructorOptions[];
-				submenu.forEach(item => {
-					setHandler(item);
-				});
-			}
-		};
-		template.forEach(item => {
-			setHandler(item);
-		});
-	}
-
 	add(options: Electron.MenuItemConstructorOptions): void {
 		var item = new MenuItem(options);
 		this.menu.append(item);

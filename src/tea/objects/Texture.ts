@@ -184,17 +184,28 @@ export class Texture {
 		this._updateCount++;
 	}
 
-	load(url: string): void {
+	load(url: string, callback: (err: string, url: string) => void = null): void {
 		if (url == null || url === "") {
+			var err = "invalid url";
+			console.error("Texture.load()", err);
+			if (callback) {
+				callback(err, url);
+			}
 			return;
 		}
 		Tea.File.readImage(url, (err, image) => {
 			if (err) {
 				console.error("Texture.load()", err);
+				if (callback) {
+					callback(err, url);
+				}
 				return;
 			}
 			this.url = url;
 			this.image = image;
+			if (callback) {
+				callback(null, url);
+			}
 		});
 	}
 

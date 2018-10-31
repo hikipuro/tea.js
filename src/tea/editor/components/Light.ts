@@ -11,6 +11,19 @@ import * as Tea from "../../Tea";
 				:keys="typeKeys"
 				:value="type"
 				@update="onUpdateType">Type</SelectEnum>
+			<InputNumber
+				v-if="type !== 'Directional'"
+				ref="range"
+				class="range"
+				:value="range"
+				@update="onUpdateRange">Range</InputNumber>
+			<InputRange
+				v-if="type === 'Spot'"
+				ref="spotAngle"
+				:min="1"
+				:max="179"
+				:value="spotAngle"
+				@update="onUpdateSpotAngle">Spot Angle</InputRange>
 			<ColorPicker
 				ref="color"
 				:value="color"
@@ -28,6 +41,8 @@ import * as Tea from "../../Tea";
 			enabled: false,
 			typeKeys: [],
 			type: "",
+			range: 0,
+			spotAngle: 0,
 			color: "",
 			intensity: 0,
 		}
@@ -45,6 +60,8 @@ export class Light extends Vue {
 	enabled: boolean;
 	typeKeys: Array<string>;
 	type: string;
+	range: number;
+	spotAngle: number;
 	color: string;
 	intensity: number;
 
@@ -56,6 +73,8 @@ export class Light extends Vue {
 		this.enabled = component.enabled;
 		this.typeKeys = Tea.LightType.getKeys();
 		this.type = Tea.LightType[component.type];
+		this.range = component.range;
+		this.spotAngle = component.spotAngle;
 		this.color = component.color.toCssColor();
 		this.intensity = component.intensity;
 	}
@@ -66,6 +85,22 @@ export class Light extends Vue {
 			this._component.type = Tea.LightType[value];
 		}
 		this.$emit("update", "type");
+	}
+
+	protected onUpdateRange(value: number): void {
+		this.range = value;
+		if (this._component) {
+			this._component.range = value;
+		}
+		this.$emit("update", "range");
+	}
+
+	protected onUpdateSpotAngle(value: number): void {
+		this.spotAngle = value;
+		if (this._component) {
+			this._component.spotAngle = value;
+		}
+		this.$emit("update", "spotAngle");
 	}
 
 	protected onUpdateColor(value: Tea.Color): void {

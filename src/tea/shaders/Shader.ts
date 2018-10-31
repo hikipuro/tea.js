@@ -6,6 +6,8 @@ export class Shader {
 	vertexShader: WebGLShader;
 	fragmentShader: WebGLShader;
 	settings: Tea.ShaderSettings;
+	uniforms: Array<Tea.ShaderActiveInfo>;
+	attributes: Array<Tea.ShaderActiveInfo>;
 	protected gl: WebGLRenderingContext;
 	protected _locationsCache: object;
 	protected _attribLocationsCache: object;
@@ -22,6 +24,8 @@ export class Shader {
 		this.vertexShader = gl.createShader(gl.VERTEX_SHADER);
 		this.fragmentShader = gl.createShader(gl.FRAGMENT_SHADER);
 		this.settings = new Tea.ShaderSettings();
+		this.uniforms = [];
+		this.attributes = [];
 	}
 
 	static getBlendEquationValue(gl: WebGLRenderingContext, value: Tea.ShaderBlendEquation): number {
@@ -198,6 +202,7 @@ export class Shader {
 		this.compile(this.vertexShader, vsSource);
 		this.compile(this.fragmentShader, fsSource);
 		this.link(this.program, this.vertexShader, this.fragmentShader);
+		this.collectActiveInfo(this.program);
 		this._locationsCache = {};
 		this._attribLocationsCache = {};
 		//gl.useProgram(this.program);
@@ -239,6 +244,32 @@ export class Shader {
 		gl.linkProgram(program);
 		if (!gl.getProgramParameter(program, gl.LINK_STATUS)) {
 			console.error(gl.getProgramInfoLog(program));
+		}
+	}
+
+	protected collectActiveInfo(program: WebGLProgram): void {
+		var gl = this.gl;
+		this.uniforms = [];
+		this.attributes = [];
+		var activeUniforms = gl.getProgramParameter(program, gl.ACTIVE_UNIFORMS);
+		for (var i = 0; i < activeUniforms; i++) {
+			var uniform = gl.getActiveUniform(program, i);
+			if (uniform == null) {
+				continue;
+			}
+			var info = new Tea.ShaderActiveInfo(uniform);
+			this.uniforms.push(info);
+			//console.log(info);
+		}
+		var activeAttributes = gl.getProgramParameter(program, gl.ACTIVE_ATTRIBUTES);
+		for (var i = 0; i < activeAttributes; i++) {
+			var attribute = gl.getActiveAttrib(program, i);
+			if (attribute == null) {
+				continue;
+			}
+			var info = new Tea.ShaderActiveInfo(attribute);
+			this.attributes.push(info);
+			//console.log(info);
 		}
 	}
 }

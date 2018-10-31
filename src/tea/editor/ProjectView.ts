@@ -31,7 +31,7 @@ export class ProjectView extends Vue {
 		return item.tag;
 	}
 
-	getSelectedFilePath(): void {
+	getSelectedFilePath(): string {
 		var fileList = this.$refs.fileList as TreeView;
 		var item = fileList.selectedItem;
 		if (item == null) {
@@ -98,7 +98,10 @@ export class ProjectView extends Vue {
 			});
 		});
 		folderList.$on("menu", (e: MouseEvent) => {
-			this.$emit("menu", e);
+			this.$emit("folderListMenu", e);
+		});
+		fileList.$on("menu", (e: MouseEvent) => {
+			this.$emit("fileListMenu", e);
 		});
 
 		fileList.draggable = true;
