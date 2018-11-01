@@ -1,6 +1,12 @@
+import * as fs from "fs";
+import * as nodePath from "path";
 import * as Electron from "electron";
-const remote = Electron.remote;
-const Dialog = remote.dialog;
+var remote = null;
+var Dialog = null;
+if (Electron) {
+	remote = Electron.remote;
+	Dialog = remote.dialog;
+}
 
 import * as Tea from "../../Tea";
 import { Editor } from "../Editor";
@@ -131,6 +137,19 @@ export class EditorCommand {
 		);
 	}
 
+	build(): void {
+		console.log("build");
+		var browserWindow = remote.getCurrentWindow();
+		var options: Electron.OpenDialogOptions = {
+			defaultPath: ".",
+			properties: ["openDirectory", "createDirectory"]
+		};
+		Dialog.showOpenDialog(
+			browserWindow, options,
+			this.onCloseOpenDialogBuild
+		);
+	}
+
 	protected showConfirmSaveDialog(callback: (response: string) => void): void {
 		console.log("showConfirmSaveDialog");
 		var browserWindow = remote.getCurrentWindow();
@@ -220,5 +239,19 @@ export class EditorCommand {
 		this.filename = filename;
 		this.save();
 		console.log(filename);
+	}
+
+	protected onCloseOpenDialogBuild = (filePaths: string[]): void => {
+		if (filePaths == null || filePaths.length < 1) {
+			return;
+		}
+		var directoryName = filePaths[0];
+		console.log(directoryName);
+
+		var path = nodePath.join(directoryName, "index.html");
+		fs.copyFileSync("html/build.html", path);
+
+		path = nodePath.join(directoryName, "main.js");
+		fs.copyFileSync("html/build.js", path);
 	}
 }

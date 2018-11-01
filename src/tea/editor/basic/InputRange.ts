@@ -22,7 +22,11 @@ import Component from "vue-class-component";
 					type="text"
 					ref="text"
 					size="1"
-					:value="value">
+					:value="value"
+					@focus="onFocus"
+					@blur="onBlur"
+					@keyup="onKeyUp"
+					@keypress="onKeyPress">
 				</input>
 			</div>
 		</div>
@@ -47,6 +51,22 @@ export class InputRange extends Vue {
 	max: number;
 	value: number;
 
+	protected update(): void {
+		var el = this.$refs.text as HTMLInputElement;
+		var text = el.value;
+		if (text === "-0" || text === "-0.") {
+			return;
+		}
+		var value = parseFloat(text);
+		if (isNaN(value)) {
+			return;
+		}
+		value = Math.max(value, this.min);
+		value = Math.min(value, this.max);
+		//el.value = String(value);
+		this.$emit("update", value);
+	}
+
 	protected onInput(e: Event): void {
 		var el = this.$refs.range as HTMLInputElement;
 		var value = parseFloat(el.value);
@@ -57,5 +77,34 @@ export class InputRange extends Vue {
 		var el = this.$refs.range as HTMLInputElement;
 		var value = parseFloat(el.value);
 		this.$emit("update", value);
+	}
+
+	protected onFocus(e: FocusEvent): void {
+		var el = this.$refs.text as HTMLInputElement;
+		el.setSelectionRange(0, el.value.length);
+	}
+
+	protected onBlur(): void {
+		var range = this.$refs.range as HTMLInputElement;
+		var text = this.$refs.text as HTMLInputElement;
+		text.value = range.value;
+	}
+
+	protected onKeyUp(e: KeyboardEvent): void {
+		this.update();
+	}
+
+	protected onKeyPress(e: KeyboardEvent): void {
+		if (e.type === "paste") {
+			e.returnValue = false;
+			e.preventDefault();
+			return;
+		}
+		var regex = /[0-9]|\.|\-/;
+		if (!regex.test(e.key)) {
+			e.returnValue = false;
+			e.preventDefault();
+			return;
+		}
 	}
 }

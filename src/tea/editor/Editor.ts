@@ -338,9 +338,12 @@ var loaded = () => {
 	document.removeEventListener(
 		"DOMContentLoaded", loaded
 	);
-	Editor.instance = new Editor({
-		el: Editor.el
-	});
+	var editor = document.querySelector("#editor");
+	if (editor) {
+		Editor.instance = new Editor({
+			el: Editor.el
+		});
+	}
 };
 document.addEventListener(
 	"DOMContentLoaded", loaded

@@ -8,6 +8,7 @@ import { TitleBar } from "./TitleBar";
 			<TitleBar
 				:enabled="enabled"
 				@update="onUpdateEnabled"
+				@clickTitle="onClickTitle"
 				@config="onClickConfig">{{ name }}</TitleBar>
 			<component
 				ref="component"
@@ -53,6 +54,16 @@ export class ComponentPanel extends Vue {
 		var component = this.$refs.component as Vue;
 		component.$data.enabled = value;
 		this.$emit("update", "enabled", value);
+	}
+
+	protected onClickTitle(): void {
+		var component = this.$refs.component as Vue;
+		var style = component.$el.style;
+		if (style.display == "none") {
+			style.display = "block";
+		} else {
+			style.display = "none";
+		}
 	}
 
 	protected onClickConfig(): void {

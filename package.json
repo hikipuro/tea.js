@@ -7,6 +7,7 @@
     "clean": "rimraf html/main.js dist",
     "watchTsc": "./node_modules/.bin/tsc -p . --watch",
     "watch": "./node_modules/.bin/webpack -w",
+    "buildPlayer": "./node_modules/.bin/webpack --config webpack.build.config.js",
     "test": "mocha -r jsdom-global/register ./dist/tea/test/",
     "typedoc": "typedoc --out ./docs",
     "start": "webpack-dev-server --mode=development"

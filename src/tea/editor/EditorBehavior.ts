@@ -455,6 +455,9 @@ export class EditorBehavior {
 			case "File/Save Scene as":
 				this.editorCommand.saveSceneAs();
 				break;
+			case "File/Build":
+				this.editorCommand.build();
+				break;
 		}
 	}
 

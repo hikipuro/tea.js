@@ -13,7 +13,9 @@ import Component from "vue-class-component";
 			<div
 				class="spacer"
 				v-if="enabled == null"></div>
-			<div class="title"><slot></slot></div>
+			<div
+				class="title"
+				@click="onClickTitle"><slot></slot></div>
 			<div
 				ref="config"
 				class="config"
@@ -35,7 +37,11 @@ export class TitleBar extends Vue {
 		this.$emit("update", checkbox.checked);
 	}
 
-	protected onClickConfig(): void {
-		this.$emit("config");
+	protected onClickTitle(e: MouseEvent): void {
+		this.$emit("clickTitle", e);
+	}
+
+	protected onClickConfig(e: MouseEvent): void {
+		this.$emit("config", e);
 	}
 }

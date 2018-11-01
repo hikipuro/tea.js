@@ -1,7 +1,12 @@
 import * as Electron from "electron";
-const remote = Electron.remote;
-const Menu = remote.Menu;
-const MenuItem = remote.MenuItem;
+var remote = null;
+var Menu = null;
+var MenuItem = null;
+if (Electron) {
+	remote = Electron.remote;
+	Menu = remote.Menu;
+	MenuItem = remote.MenuItem;
+}
 
 export class NativeContextMenu {
 	menu: Electron.Menu;

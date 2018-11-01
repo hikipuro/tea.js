@@ -201,6 +201,7 @@ export class Texture {
 				}
 				return;
 			}
+			this._isEmpty = false;
 			this.url = url;
 			this.image = image;
 			if (callback) {
@@ -247,7 +248,7 @@ export class Texture {
 			);
 		} else {
 			texture = new Texture(app);
-			texture.url = json.url;
+			texture.load(json.url);
 		}
 		return texture;
 	}
