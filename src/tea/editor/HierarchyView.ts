@@ -53,8 +53,8 @@ export class HierarchyView extends Vue {
 
 	protected mounted(): void {
 		var treeView = this.$refs.hierarchy as TreeView;
-		treeView.openIcon = "⏏️";
-		treeView.closeIcon = "▶️";
+		treeView.openIcon = "<img src='../images/folder-open.svg' />";
+		treeView.closeIcon = "<img src='../images/folder-close.svg' />";
 		treeView.draggable = true;
 
 		var dragImages = (this.$root as Editor).dragImages;

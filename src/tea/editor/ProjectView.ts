@@ -47,6 +47,10 @@ export class ProjectView extends Vue {
 	protected mounted(): void {
 		var folderList = this.$refs.folderList as TreeView;
 		var fileList = this.$refs.fileList as TreeView;
+
+		folderList.openIcon = "<img src='../images/folder-open.svg' />";
+		folderList.closeIcon = "<img src='../images/folder-close.svg' />";
+
 		folderList.$on("expand", (item: Tea.Editor.TreeViewItem) => {
 			//console.log("expand", item);
 			var i = item.model;
