@@ -407,6 +407,16 @@ export class EditorBehavior {
 			}
 			return;
 		}
+		if (shiftKey) {
+			var key = e.key.toLowerCase();
+			switch (key) {
+				case "f":
+					var object3d = this.hierarchyViewCommand.getSelectedObject();
+					this.scene.lockViewToSelected(object3d);
+					break;
+			}
+			return;
+		}
 	}
 
 	protected onDocumentKeyDownMac = (e: KeyboardEvent): void => {
