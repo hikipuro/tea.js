@@ -1,10 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- Generator: Adobe Illustrator 15.1.0, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
 <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
-<svg version="1.1" id="camera" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
-	 width="64px" height="64px" viewBox="0 0 64 64" enable-background="new 0 0 64 64" xml:space="preserve">
-<g>
-	<path d="M46,45c0,1.104-0.896,2-2,2H8c-1.104,0-2-0.896-2-2V19c0-1.104,0.896-2,2-2h36c1.104,0,2,0.896,2,2V45z"/>
-	<polygon points="51.806,23 42.615,32 51.806,41 57,41 57,23 	"/>
+<svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="64px"
+	 height="64px" viewBox="0 0 64 64" enable-background="new 0 0 64 64" xml:space="preserve">
+<g id="camera" display="none">
+	<g display="inline">
+		<path d="M46,45c0,1.104-0.896,2-2,2H8c-1.104,0-2-0.896-2-2V19c0-1.104,0.896-2,2-2h36c1.104,0,2,0.896,2,2V45z"/>
+		<polygon points="51.807,23 42.615,32 51.807,41 57,41 57,23 		"/>
+	</g>
+</g>
+<g id="light">
+	<g>
+		<path d="M32,10.307c-11.045,0-20,8.955-20,20h40C52,19.262,43.045,10.307,32,10.307z"/>
+		<path d="M31.847,36.807"/>
+		<g>
+			<path d="M34,51.693c0,1.104-0.896,2-2,2l0,0c-1.104,0-2-0.896-2-2v-14c0-1.104,0.896-2,2-2l0,0c1.104,0,2,0.896,2,2V51.693z"/>
+			<path d="M51.178,48.817c0.553,0.957,0.225,2.18-0.73,2.732l0,0c-0.957,0.552-2.182,0.224-2.734-0.732l-7-12.124
+				c-0.553-0.956-0.225-2.181,0.732-2.732l0,0c0.957-0.552,2.18-0.224,2.732,0.732L51.178,48.817z"/>
+			<path d="M12.821,48.817c-0.552,0.957-0.224,2.18,0.731,2.732l0,0c0.957,0.552,2.181,0.224,2.734-0.732l6.999-12.124
+				c0.553-0.956,0.226-2.181-0.731-2.732l0,0c-0.957-0.552-2.181-0.224-2.732,0.732L12.821,48.817z"/>
+		</g>
+	</g>
 </g>
 </svg>

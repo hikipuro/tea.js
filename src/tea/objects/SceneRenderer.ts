@@ -1,12 +1,107 @@
 import * as Tea from "../Tea";
+import { Object3D } from "./Object3D";
 import { SceneGrid } from "./SceneGrid";
 import { SceneMovement } from "./SceneMovement";
 
+class SceneIcon extends Object3D {
+	target: Tea.Object3D;
+	renderer: Tea.MeshRenderer;
+	material: Tea.Material;
+
+	constructor(app: Tea.App) {
+		super(app);
+		this.name = "SceneIcon";
+		var meshFilter = this.addComponent(Tea.MeshFilter);
+		var mesh = Tea.Primitives.createQuadMesh();
+		mesh.normals = [
+			new Tea.Vector3(0, 0, -1),
+			new Tea.Vector3(0, 0, -1),
+			new Tea.Vector3(0, 0, -1),
+			new Tea.Vector3(0, 0, -1)
+		];
+		meshFilter.mesh = mesh;
+		var shader = new Tea.Shader(app);
+		shader.attach(
+			Tea.ShaderSources.sceneIconVS,
+			Tea.ShaderSources.sceneIconFS
+		);
+		//shader.settings.enableDepthTest = false;
+		shader.settings.enableBlend = true;
+		shader.settings.blend.srcRGB = Tea.ShaderBlendFunc.SrcAlpha;
+		shader.settings.blend.dstRGB = Tea.ShaderBlendFunc.OneMinusSrcAlpha;
+		shader.settings.blend.srcAlpha = Tea.ShaderBlendFunc.One;
+		shader.settings.blend.dstAlpha = Tea.ShaderBlendFunc.One;
+		var renderer = this.addComponent(Tea.MeshRenderer);
+		renderer.material = Tea.Material.getDefault(app);
+		renderer.material.shader = shader;
+		this.renderer = renderer;
+		this.material = renderer.material;
+	}
+
+	update(camera: Tea.Camera = null): void {
+		if (this.target == null) {
+			return;
+		}
+		super.update();
+
+		var material = this.material;
+		var view = camera.cameraToWorldMatrix;
+		material.setVector("CameraRight", new Tea.Vector4(view[0], view[1], view[2], 0.0));
+		material.setVector("CameraUp", new Tea.Vector4(view[4], view[5], view[6], 0.0));
+		material.setVector("position", this.target.position.toVector4());
+	}
+}
+
 class SceneIcons {
 	scene: Tea.Scene;
+	icons: Array<SceneIcon>;
+	renderers: Array<Tea.MeshRenderer>;
 
 	constructor(scene: Tea.Scene) {
 		this.scene = scene;
+		this.icons = [];
+		this.renderers = [];
+	}
+
+	addCameraIcon(object3d: Tea.Object3D): void {
+		if (object3d == null || this.contains(object3d)) {
+			return;
+		}
+		var icon = new SceneIcon(this.scene.app);
+		icon.target = object3d;
+		icon.material.mainTexture.load("images/camera-icon.png");
+		this.icons.push(icon);
+		this.renderers.push(icon.renderer);
+	}
+
+	addLightIcon(object3d: Tea.Object3D): void {
+		if (object3d == null || this.contains(object3d)) {
+			return;
+		}
+		var icon = new SceneIcon(this.scene.app);
+		icon.target = object3d;
+		icon.material.mainTexture.load("images/light-icon.png");
+		this.icons.push(icon);
+		this.renderers.push(icon.renderer);
+	}
+
+	contains(object3d: Tea.Object3D): boolean {
+		var length = this.icons.length;
+		for (var i = 0; i < length; i++) {
+			var icon = this.icons[i];
+			if (icon.target == object3d) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	update(camera: Tea.Camera): void {
+		var length = this.icons.length;
+		for (var i = 0; i < length; i++) {
+			var icon = this.icons[i];
+			icon.update(camera);
+		}
 	}
 }
 
@@ -15,11 +110,13 @@ export class SceneRenderer {
 	cameraObject: Tea.Object3D;
 	camera: Tea.Camera;
 	grid: SceneGrid;
+	icons: SceneIcons;
 
 	constructor(scene: Tea.Scene) {
 		this.scene = scene;
 		this.createCamera();
 		this.grid = new SceneGrid(scene.app);
+		this.icons = new SceneIcons(scene);
 	}
 
 	render(renderers: Array<Tea.Renderer>, lights: Array<Tea.Light>): void {
@@ -27,6 +124,7 @@ export class SceneRenderer {
 		Tea.Renderer.drawCallCount = 0;
 		var camera = this.camera;
 		renderers.unshift(this.grid.renderer);
+		renderers.push.apply(renderers, this.icons.renderers);
 		var renderSettings = this.scene.renderSettings;
 		var rendererCount = renderers.length;
 		for (var i = 0; i < rendererCount; i++) {
@@ -64,6 +162,17 @@ export class SceneRenderer {
 		for (var i = childCount - 1; i >= 0 ; i--) {
 			this.updateObject3D(children[i]);
 		}
+		var cameras = this.scene.availableCameras;
+		for (var i = 0; i < cameras.length; i++) {
+			var camera = cameras[i];
+			this.icons.addCameraIcon(camera.object3d);
+		}
+		var lights = this.scene.availableLights;
+		for (var i = 0; i < lights.length; i++) {
+			var light = lights[i];
+			this.icons.addLightIcon(light.object3d);
+		}
+		this.icons.update(this.camera);
 		this.cameraObject.update();
 		this.camera.update();
 		var position = this.cameraObject.localPosition.clone();

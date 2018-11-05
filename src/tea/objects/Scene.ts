@@ -308,6 +308,14 @@ export class Scene {
 		return this._components.mainCamera;
 	}
 
+	get availableCameras(): Array<Tea.Camera> {
+		return this._components.availableCameras;
+	}
+
+	get availableLights(): Array<Tea.Light> {
+		return this._components.availableLights;
+	}
+
 	destroy(): void {
 		this.app.renderer.off("resize", this.onResize);
 		var children = this.children;

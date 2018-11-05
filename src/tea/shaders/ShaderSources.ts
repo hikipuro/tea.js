@@ -562,6 +562,37 @@ export module ShaderSources {
 		}
 	`;
 
+	export const sceneIconVS = `
+		attribute vec3 vertex;
+		attribute vec2 texcoord;
+		//uniform mat4 TEA_MATRIX_MVP;
+		uniform mat4 TEA_MATRIX_VP;
+		uniform vec4 CameraRight;
+		uniform vec4 CameraUp;
+		uniform vec4 position;
+		varying vec2 vTexCoord;
+		void main() {
+			vec3 v = vec3(CameraRight) * vertex.x + vec3(CameraUp) * vertex.y;
+			gl_Position = TEA_MATRIX_VP * vec4(vec3(position) + v, 1.0);
+			vTexCoord = texcoord;
+		}
+	`;
+
+	export const sceneIconFS = `
+		precision mediump float;
+		uniform sampler2D _MainTex;
+		uniform vec2 uv_MainTex;
+		uniform vec2 _MainTex_ST;
+		varying vec2 vTexCoord;
+		void main() {
+			vec4 color = texture2D(_MainTex, (uv_MainTex + vTexCoord) / _MainTex_ST);
+			if (color.a <= 0.0) {
+				discard;
+			}
+			gl_FragColor = color;
+		}
+	`;
+
 	export const particleVS = `
 		attribute vec3 vertex;
 		attribute vec2 texcoord;
