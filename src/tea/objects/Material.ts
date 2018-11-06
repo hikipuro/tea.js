@@ -394,6 +394,7 @@ export class Material {
 		}
 		var material = new Material(app);
 		if (json.isDefault) {
+			material.shader = app.createDefaultShader();
 			return material;
 		}
 		material.renderQueue = json.renderQueue;

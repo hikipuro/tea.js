@@ -10,7 +10,8 @@
     "buildPlayer": "./node_modules/.bin/webpack --config webpack.build.config.js",
     "test": "mocha -r jsdom-global/register ./dist/tea/test/",
     "typedoc": "typedoc --out ./docs",
-    "start": "webpack-dev-server --mode=development"
+	"start": "webpack-dev-server --mode=development",
+	"packageMac": "electron-packager . tea --platform=darwin --arch=x64"
   },
   "author": "",
   "license": "",

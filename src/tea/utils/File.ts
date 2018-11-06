@@ -55,6 +55,10 @@ export class File {
 		}
 		if (fs) {
 			fs.readFile(url, (err: any, data: Buffer) => {
+				if (data == null) {
+					callback(err, null);
+					return;
+				}
 				callback(err, data.toString());
 			});
 			return;

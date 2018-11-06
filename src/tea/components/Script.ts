@@ -16,13 +16,36 @@ export class Script extends Component {
 		this.awake();
 	}
 
-	static fromJSON(app: Tea.App, json: any): Script {
+	static fromJSON(app: Tea.App, json: any, callback: (script: Tea.Script) => void): Script {
 		if (json == null || json._type !== "Script") {
 			return null;
 		}
 		if (json.path == null || json.path === "") {
 			return null;
 		}
+		Tea.File.readText(json.path, (err, data) => {
+			if (err) {
+				console.error(err);
+				return;
+			}
+			var check = data.indexOf("class");
+			if (check < 0 || check > 64) {
+				console.warn("class not found [" + json.path + "]");
+				return;
+			}
+			var factory = new Function("return " + data);
+			var classRef = factory();
+			Object.setPrototypeOf(classRef.prototype, new Script(app));
+			var instance = new classRef() as Script;
+			if (instance == null) {
+				console.warn("cannot instantiate [" + json.path + "]");
+				return;
+			}
+			instance.enabled = json.enabled;
+			instance.path = json.path;
+			callback(instance);
+		});
+		/*
 		var buffer = fs.readFileSync(json.path);
 		if (buffer == null) {
 			return null;
@@ -40,6 +63,7 @@ export class Script extends Component {
 		instance.enabled = json.enabled;
 		instance.path = json.path;
 		return instance;
+		//*/
 	}
 
 	get keyboard(): Tea.Keyboard {

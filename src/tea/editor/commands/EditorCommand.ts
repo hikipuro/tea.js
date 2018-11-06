@@ -8,6 +8,10 @@ if (Electron) {
 	Dialog = remote.dialog;
 }
 
+declare module "fs" {
+	function mkdirSync(path: string, mode?: any | number | string | null): void;
+}
+
 import * as Tea from "../../Tea";
 import { Editor } from "../Editor";
 import { HierarchyView } from "../HierarchyView";
@@ -246,12 +250,61 @@ export class EditorCommand {
 			return;
 		}
 		var directoryName = filePaths[0];
-		console.log(directoryName);
+		//console.log(directoryName);
 
 		var path = nodePath.join(directoryName, "index.html");
 		fs.copyFileSync("html/build.html", path);
 
 		path = nodePath.join(directoryName, "main.js");
 		fs.copyFileSync("html/build.js", path);
+
+		path = nodePath.join(directoryName, "scene.json");
+		var sceneData = this.scene.toJSON();
+		fs.writeFileSync(path, JSON.stringify(sceneData, null, "\t"));
+
+		var scripts = this.findScriptPaths(sceneData);
+		//console.log(scripts);
+		scripts.forEach((scriptPath: string) => {
+			var path = nodePath.join(directoryName, scriptPath);
+			var dirname = nodePath.dirname(path);
+			if (fs.existsSync(dirname) === false) {
+				fs.mkdirSync(dirname, { recursive: true });
+			}
+			fs.copyFileSync(scriptPath, path);
+		});
+	}
+
+	protected findScriptPaths(data: any): Array<string> {
+		var find = (children: Array<any>): Array<string> => {
+			if (children == null || children.length <= 0) {
+				return [];
+			}
+			var scripts = [];
+			var length = children.length;
+			for (var i = 0; i < length; i++) {
+				var child = children[i];
+				if (child._type !== "Object3D") {
+					continue;
+				}
+				var components = child.components as Array<any>;
+				if (components == null || components.length <= 0) {
+					continue;
+				}
+				scripts.push.apply(scripts,
+					components.filter((component: any) => {
+						return component._type === "Script";
+					}
+				));
+			}
+			var paths = scripts.map((script: any) => {
+				return script.path;
+			});
+			for (var i = 0; i < length; i++) {
+				var child = children[i];
+				paths.push.apply(paths, find(child.children));
+			}
+			return paths;
+		};
+		return find(data.children);
 	}
 }

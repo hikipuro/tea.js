@@ -2,15 +2,24 @@
 <html>
 <head>
 <meta charset="utf-8">
+<style>
+html, body {
+	height: 100%;
+}
+</style>
 <script>
 var fs = null;
 var path = null;
 var electron = null;
+if (window["Tea"] == null) {
+	window["Tea"] = {};
+}
+Tea.width = 400;
+Tea.height = 400;
 </script>
+<script src="main.js"></script>
 </head>
 <body>
-build test
 <canvas id="canvas"></canvas>
-<script src="main.js"></script>
 </body>
 </html>

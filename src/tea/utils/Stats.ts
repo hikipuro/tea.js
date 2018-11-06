@@ -11,6 +11,7 @@ export class Stats {
 	protected _context: CanvasRenderingContext2D;
 	protected _time: number;
 	protected _frameCount: number;
+	protected _width: number = 64;
 
 	constructor(app: Tea.App) {
 		this.app = app;
@@ -20,7 +21,7 @@ export class Stats {
 		this._enabled = true;
 		this._time = Tea.now();
 		this._frameCount = 0;
-		this.clearRect(0, 0, 60, 36);
+		this.clearRect(0, 0, this._width, 36);
 		this.draw();
 	}
 
@@ -78,7 +79,7 @@ export class Stats {
 		this._canvas = document.createElement("canvas");
 		//this._canvas.width = 60;
 		//this._canvas.height = 36;
-		this._canvas.width = 64;
+		this._canvas.width = this._width;
 		this._canvas.height = 64;
 		this._canvas.style.pointerEvents = "none";
 		this._context = this._canvas.getContext("2d");
@@ -129,7 +130,7 @@ export class Stats {
 	}
 
 	protected draw(): void {
-		var width = 60;//this._canvas.width;
+		var width = this._width;//this._canvas.width;
 		var fps = this._frameCount;
 		this._frameCount = 0;
 		this.clearRect(0, 0, width, this.barY);
@@ -141,7 +142,7 @@ export class Stats {
 	}
 
 	protected drawGraph(fps: number): void {
-		var width = 60;//this._canvas.width;
+		var width = this._width;//this._canvas.width;
 		var barY = this.barY;
 		var barHeight = 20;
 		var context = this._context;

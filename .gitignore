@@ -8,6 +8,9 @@ html/models
 html/css/editor.css
 test/
 
+# Build
+tea-darwin-x64/
+
 # Logs
 logs
 *.log

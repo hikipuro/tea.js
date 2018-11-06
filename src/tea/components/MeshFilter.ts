@@ -31,7 +31,7 @@ export class MeshFilter extends Component {
 			return null;
 		}
 		var meshFilter = new MeshFilter(app);
-		meshFilter.enabled = json.enabled;
+		//meshFilter.enabled = json.enabled;
 		meshFilter.mesh = Tea.Mesh.fromJSON(app, json.mesh);
 		return meshFilter;
 	}

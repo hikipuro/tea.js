@@ -406,6 +406,16 @@ export class Object3D {
 			if (componentClass == null) {
 				continue;
 			}
+			if (item._type === "Script") {
+				componentClass.fromJSON(app, item, (script: Tea.Script) => {
+					if (script == null) {
+						return;
+					}
+					script.object3d = object3d;
+					object3d._components.push(script);
+				});
+				continue;
+			}
 			var component = componentClass.fromJSON(app, item);
 			if (component == null) {
 				continue;
