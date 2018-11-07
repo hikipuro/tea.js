@@ -81,12 +81,12 @@ export class EditorBehavior {
 		var scenePanel = this.editor.$refs.scenePanel as Vue;
 		var canvas = this.editor.$refs.canvas as HTMLElement;
 		mainTabs.$on("select", (item) => {
-			switch (item.name) {
-				case "Player":
+			switch (item.tabId) {
+				case "player":
 					playerPanel.$el.appendChild(canvas);
 					this.scene.app.isSceneView = false;
 					break;
-				case "Scene":
+				case "scene":
 					scenePanel.$el.appendChild(canvas);
 					this.scene.app.isSceneView = true;
 					break;

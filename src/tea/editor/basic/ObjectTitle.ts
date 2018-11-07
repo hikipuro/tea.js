@@ -47,7 +47,7 @@ export class ObjectTitle extends Vue {
 	}
 
 	protected onChangeName(): void {
-		console.log("onChangeName");
+		//console.log("onChangeName");
 		var name = this.$refs.name as HTMLInputElement;
 		if (name.value === "") {
 			name.value = this._prevName;

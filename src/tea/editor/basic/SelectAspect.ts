@@ -1,24 +1,34 @@
 import Vue from "vue";
 import Component from "vue-class-component";
+import { Translator } from "../Translator";
 
 @Component({
 	template: `
 		<select
 			class="SelectAspect"
 			@change="onChange">
-			<option value="free">Free Aspect</option>
+			<option value="free">{{ translator.free }}</option>
 			<option value="4:3">4:3</option>
 			<option value="16:9">16:9</option>
 		</select>
-	`
+	`,
+	data: () => {
+		return {
+			translator: {}
+		}
+	},
 })
 export class SelectAspect extends Vue {
+	translator: any;
 	x: number;
 	y: number;
 
 	protected created(): void {
 		this.x = 0;
 		this.y = 0;
+		var translator = Translator.getInstance();
+		translator.basePath = "SelectAspect";
+		this.translator.free = translator.getText("Free Aspect");
 	}
 	
 	protected onChange(e: Event): void {

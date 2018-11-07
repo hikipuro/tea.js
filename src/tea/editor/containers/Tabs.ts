@@ -97,6 +97,10 @@ export class TabBar extends Vue {
 		</div>
 	`,
 	props: {
+		tabId: {
+			type: String,
+			default: ""
+		},
 		name: {
 			type: String,
 			default: ""
@@ -108,6 +112,7 @@ export class TabBar extends Vue {
 	}
 })
 export class TabItem extends Vue {
+	tabId: string;
 	name: string;
 
 	show(): void {
@@ -138,7 +143,7 @@ export class TabItem extends Vue {
 })
 export class Tabs extends Vue {
 	select(index: number): void {
-		console.log("select", index);
+		//console.log("select", index);
 		var item = this.getItem(index);
 		if (item == null) {
 			return;

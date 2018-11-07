@@ -2,6 +2,7 @@ import Vue from "vue";
 import Component from "vue-class-component";
 import * as Tea from "../Tea";
 import { ComponentPanel } from "./components/ComponentPanel";
+import { Translator } from "./Translator";
 
 @Component({
 	template: `
@@ -17,21 +18,21 @@ import { ComponentPanel } from "./components/ComponentPanel";
 				:y="position[1]"
 				:z="position[2]"
 				@update="onUpdatePosition"
-				@change="onChangePosition">Position</Vector3>
+				@change="onChangePosition">{{ translator.position }}</Vector3>
 			<Vector3
 				ref="rotation"
 				:x="rotation[0]"
 				:y="rotation[1]"
 				:z="rotation[2]"
 				@update="onUpdateRotation"
-				@change="onChangeRotation">Rotation</Vector3>
+				@change="onChangeRotation">{{ translator.rotation }}</Vector3>
 			<Vector3
 				ref="scale"
 				:x="scale[0]"
 				:y="scale[1]"
 				:z="scale[2]"
 				@update="onUpdateScale"
-				@change="onChangeScale">Scale</Vector3>
+				@change="onChangeScale">{{ translator.scale }}</Vector3>
 			<ComponentPanel
 				ref="components"
 				v-for="(item, index) in components"
@@ -44,13 +45,14 @@ import { ComponentPanel } from "./components/ComponentPanel";
 			<div class="AddComponent">
 				<button
 					@click="onClickAddComponent">
-					Add Component
+					{{ translator.addComponent }}
 				</button>
 			</div>
 		</div>
 	`,
 	data: () => {
 		return {
+			translator: {},
 			name: "",
 			isActive: false,
 			position: [0, 0, 0],
@@ -65,6 +67,7 @@ import { ComponentPanel } from "./components/ComponentPanel";
 })
 export class ObjectInspector extends Vue {
 	_object3d: Tea.Object3D;
+	translator: any;
 	name: string;
 	isActive: boolean;
 	position: Array<number>;
@@ -154,6 +157,15 @@ export class ObjectInspector extends Vue {
 	clearComponents(): void {
 		var components = this.components;
 		components.splice(0, components.length);
+	}
+
+	protected created(): void {
+		var translator = Translator.getInstance();
+		translator.basePath = "ObjectInspector";
+		this.translator.position = translator.getText("Position");
+		this.translator.rotation = translator.getText("Rotation");
+		this.translator.scale = translator.getText("Scale");
+		this.translator.addComponent = translator.getText("Add Component");
 	}
 
 	protected onUpdateTitle(type: string, value: string | boolean): void {

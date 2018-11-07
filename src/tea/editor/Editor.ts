@@ -2,6 +2,7 @@ import Vue from "vue";
 import Component from "vue-class-component";
 import * as Tea from "../Tea";
 
+import { Translator } from "./Translator";
 import { EditorBehavior } from "./EditorBehavior";
 import { ConsoleView } from "./ConsoleView";
 import { HierarchyView } from "./HierarchyView";
@@ -108,7 +109,7 @@ Vue.component("TextMesh", TextMesh);
 							<HResizeBar ref="hierarchyResize"></HResizeBar>
 						</Panel>
 						<Tabs ref="mainTabs" class="Top">
-							<TabItem name="Player" class="MainPanel">
+							<TabItem tabId="player" :name="translator.player" class="MainPanel">
 								<VLayout
 									:style="{
 										height: '100%'
@@ -124,17 +125,17 @@ Vue.component("TextMesh", TextMesh);
 									</Panel>
 								</VLayout>
 							</TabItem>
-							<TabItem name="Scene">
+							<TabItem tabId="scene" :name="translator.scene">
 								<Panel ref="scenePanel" class="ScenePanel">
 								</Panel>
 							</TabItem>
 						</Tabs>
 					</HLayout>
 					<Tabs class="Bottom">
-						<TabItem name="Project">
+						<TabItem tabId="project" :name="translator.project">
 							<ProjectView ref="project"></ProjectView>
 						</TabItem>
-						<TabItem name="Console">
+						<TabItem tabId="console" :name="translator.console">
 							<ConsoleView ref="console"></ConsoleView>
 						</TabItem>
 						<VResizeBar ref="projectResize" :isTop="true"></VResizeBar>
@@ -152,6 +153,11 @@ Vue.component("TextMesh", TextMesh);
 			<ContextMenu ref="menu"></ContextMenu>
 		</div>
 	`,
+	data: () => {
+		return {
+			translator: {}
+		}
+	},
 	components: {
 		ConsoleView: ConsoleView,
 		HierarchyView: HierarchyView,
@@ -162,7 +168,18 @@ Vue.component("TextMesh", TextMesh);
 export class Editor extends Vue {
 	static instance: Editor;
 	static readonly el = "#editor";
+	translator: any;
 	protected _behavior: EditorBehavior;
+
+	created(): void {
+		var translator = Translator.getInstance();
+		translator.basePath = "Tabs";
+		//translator.loadResource("ja");
+		this.translator.player = translator.getText("Player");
+		this.translator.scene = translator.getText("Scene");
+		this.translator.project = translator.getText("Project");
+		this.translator.console = translator.getText("Console");
+	}
 
 	mounted(): void {
 		this._behavior = new EditorBehavior(this);
