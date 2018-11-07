@@ -90,11 +90,6 @@ export class EditorMenu {
 				submenu: [
 					{ role: "minimize" }
 				]
-			},
-			{
-				role: "help",
-				submenu: [
-				]
 			}
 		];
 		if (process && process.platform) {
@@ -119,6 +114,12 @@ export class EditorMenu {
 							{ type: "separator" },
 							{ role: "quit" }
 						]
+					}
+				);
+				template.push(
+					{
+						role: "help",
+						submenu: []
 					}
 				);
 			}
@@ -317,12 +318,25 @@ export class EditorMenu {
 	static getProjectViewMenu(
 		handler: (menuItem: Electron.MenuItem, browserWindow: Electron.BrowserWindow, event: Event) => void
 	): NativeContextMenu {
-		var template: Electron.MenuItemConstructorOptions[] = [
-			{
-				id: "Reveal in Finder",
-				label: "Reveal in Finder"
+		var template: Electron.MenuItemConstructorOptions[] = [];
+		if (process && process.platform) {
+			console.log("process.platform", process.platform);
+			if (process.platform === "win32") {
+				template.push(
+					{
+						id: "Show in Explorer",
+						label: "Show in Explorer"
+					}
+				);
+			} else if (process.platform === "darwin") {
+				template.push(
+					{
+						id: "Reveal in Finder",
+						label: "Reveal in Finder"
+					}
+				);
 			}
-		];
+		}
 		EditorMenu.setMenuItemHandler(
 			template, handler
 		);

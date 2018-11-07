@@ -1,3 +1,4 @@
+import * as nodePath from "path";
 import Vue from "vue";
 import * as Electron from "electron";
 import * as Tea from "../Tea";
@@ -474,11 +475,15 @@ export class EditorBehavior {
 	protected onSelectProjectViewMenu = (item: Electron.MenuItem): void => {
 		var projectView = this.editor.projectView;
 		var path = projectView.getSelectedFolderPath();
+		path = nodePath.resolve(path);
 
 		switch (item.id) {
-			case "Reveal in Finder":
+			case "Show in Explorer":
 				Electron.shell.openItem(path);
+				break;
+			case "Reveal in Finder":
 				console.log("Reveal in Finder", path);
+				Electron.shell.openItem(path);
 				break;
 		}
 	}
@@ -486,6 +491,7 @@ export class EditorBehavior {
 	protected onSelectProjectViewFileMenu = (item: Electron.MenuItem): void => {
 		var projectView = this.editor.projectView;
 		var path = projectView.getSelectedFilePath();
+		path = nodePath.resolve(path);
 
 		switch (item.id) {
 			case "Open":
