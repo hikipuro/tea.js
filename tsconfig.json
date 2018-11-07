@@ -3,6 +3,7 @@
 		"target": "es6",
 		"module": "es2015",
 		"moduleResolution": "node",
+		//"resolveJsonModule": true,
 		"esModuleInterop": true,
 		"experimentalDecorators": true,
 		"sourceMap": true,

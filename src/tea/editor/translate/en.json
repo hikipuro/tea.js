@@ -1,0 +1,142 @@
+{
+	"Tabs": {
+		"Player": "Player",
+		"Scene": "Scene",
+		"Project": "Project",
+		"Console": "Console"
+	},
+	"SelectAspect": {
+		"FreeAspect": "Free Aspect"
+	},
+	"HierarchyView": {
+		"ContextMenu": {
+			"Delete": "Delete",
+			"CreateEmpty": "Create Empty",
+			"3DObject": {
+				"Title": "3D Object",
+				"Cube": "Cube",
+				"Sphere": "Sphere",
+				"Capsule": "Capsule",
+				"Cylinder": "Cylinder",
+				"Plane": "Plane",
+				"Quad": "Quad",
+				"Text": "Text"
+			},
+			"Effects": {
+				"Title": "Effects",
+				"ParticleSystem": "Particle System"
+			},
+			"Light": {
+				"Title": "Light",
+				"DirectionalLight": "Directional Light",
+				"PointLight": "Point Light",
+				"SpotLight": "Spot Light"
+			},
+			"Camera": {
+				"Title": "Camera"
+			}
+		}
+	},
+	"ObjectInspector": {
+		"Position": "Position",
+		"Rotation": "Rotation",
+		"Scale": "Scale",
+		"AddComponent": "Add Component",
+		"ComponentMenu": {
+			"RemoveComponent": "Remove Component"
+		},
+		"AddComponentMenu": {
+			"Audio": {
+				"Title": "Audio",
+				"AudioSource": "Audio Source"
+			},
+			"Effects": {
+				"Title": "Effects",
+				"LineRenderer": "Line Renderer"
+			},
+			"Mesh": {
+				"Title": "Mesh",
+				"MeshFilter": "Mesh Filter",
+				"MeshRenderer": "Mesh Renderer"
+			},
+			"Physics": {
+				"Title": "Physics",
+				"BoxCollider": "Box Collider",
+				"Rigidbody": "Rigidbody"
+			},
+			"Rendering": {
+				"Title": "Rendering",
+				"Camera": "Camera",
+				"Light": "Light"
+			}
+		}
+	},
+	"SceneInspector": {
+		"Title": "Scene Settings",
+		"Gravity": "Gravity",
+		"AmbientLight": "Ambient Light"
+	},
+	"Components": {
+		"AudioSource": {
+			"Title": "Audio Source"
+		},
+		"BoxCollider": {
+			"Title": "Box Collider",
+			"Center": "Center",
+			"Size": "Size"
+		},
+		"Camera": {
+			"Title": "Camera",
+			"ClearFlags": "Clear Flags",
+			"Background": "Background",
+			"Orthographic": "Orthographic",
+			"Size": "Size",
+			"FieldOfView": "Field of View",
+			"ClippingPlanes": "Clipping Planes",
+			"Near": "Near",
+			"Far": "Far",
+			"ViewportRect": "Viewport Rect",
+			"Depth": "Depth"
+		},
+		"Light": {
+			"Title": "Light",
+			"Type": "Type",
+			"Color": "Color",
+			"Intensity": "Intensity",
+			"Range": "Range",
+			"SpotAngle": "Spot Angle"
+		},
+		"LineRenderer": {
+			"Title": "Line Renderer"
+		},
+		"MeshFilter": {
+			"Title": "Mesh Filter"
+		},
+		"MeshRenderer": {
+			"Title": "Mesh Renderer",
+			"ReceiveShadows": "Receive Shadows",
+			"Wireframe": "Wireframe"
+		},
+		"ParticleSystem": {
+			"Title": "Particle System"
+		},
+		"Rigidbody": {
+			"Title": "Rigidbody"
+		},
+		"Script": {
+			"Title": "Script"
+		},
+		"TextMesh": {
+			"Title": "Text Mesh",
+			"Text": "Text",
+			"CharacterSize": "Character Size",
+			"LineSpacing": "Line Spacing",
+			"Anchor": "Anchor",
+			"Alignment": "Alignment",
+			"FontSize": "Font Size",
+			"FontStyle": "Font Style",
+			"Font": "Font",
+			"Color": "Color"
+		}
+	}
+}

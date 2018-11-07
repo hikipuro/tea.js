@@ -1,6 +1,7 @@
 import Vue from "vue";
 import Component from "vue-class-component";
 import * as Tea from "../../Tea";
+import { Translator } from "../translate/Translator";
 
 @Component({
 	template: `
@@ -11,7 +12,7 @@ import * as Tea from "../../Tea";
 				:y="center[1]"
 				:z="center[2]"
 				@update="onUpdateCenter">
-				Center
+				{{ translator.center }}
 			</Vector3>
 			<Vector3
 				ref="size"
@@ -19,12 +20,13 @@ import * as Tea from "../../Tea";
 				:y="size[1]"
 				:z="size[2]"
 				@update="onUpdateSize">
-				Size
+				{{ translator.size }}
 			</Vector3>
 		</div>
 	`,
 	data: () => {
 		return {
+			translator: {},
 			name: "BoxCollider",
 			enabled: false,
 			center: [0, 0, 0],
@@ -40,6 +42,7 @@ import * as Tea from "../../Tea";
 })
 export class BoxCollider extends Vue {
 	_component: Tea.BoxCollider;
+	translator: any;
 	name: string;
 	enabled: boolean;
 	center: Array<number>;
@@ -65,6 +68,14 @@ export class BoxCollider extends Vue {
 		this.$set(size, 0, x);
 		this.$set(size, 1, y);
 		this.$set(size, 2, z);
+	}
+
+	protected created(): void {
+		var translator = Translator.getInstance();
+		translator.basePath = "Components/BoxCollider";
+		this.name = translator.getText("Title");
+		this.translator.center = translator.getText("Center");
+		this.translator.size = translator.getText("Size");
 	}
 
 	protected mounted(): void {

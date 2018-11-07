@@ -2,7 +2,7 @@ import Vue from "vue";
 import Component from "vue-class-component";
 import * as Tea from "../Tea";
 
-import { Translator } from "./Translator";
+import { Translator } from "./translate/Translator";
 import { EditorBehavior } from "./EditorBehavior";
 import { ConsoleView } from "./ConsoleView";
 import { HierarchyView } from "./HierarchyView";
@@ -173,8 +173,8 @@ export class Editor extends Vue {
 
 	created(): void {
 		var translator = Translator.getInstance();
+		//translator.loadResource(navigator.language);
 		translator.basePath = "Tabs";
-		//translator.loadResource("ja");
 		this.translator.player = translator.getText("Player");
 		this.translator.scene = translator.getText("Scene");
 		this.translator.project = translator.getText("Project");

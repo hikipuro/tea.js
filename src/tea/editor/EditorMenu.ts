@@ -7,9 +7,9 @@ if (Electron) {
 }
 
 import * as Tea from "../Tea";
+import { Translator } from "./translate/Translator";
 import { NativeContextMenu } from "./basic/NativeContextMenu";
 import { HierarchyView } from "./HierarchyView";
-import { Translator } from "./Translator";
 
 export class EditorMenu {
 	static setMainMenu(menu: Electron.Menu): void {
@@ -139,41 +139,41 @@ export class EditorMenu {
 		var template: Electron.MenuItemConstructorOptions[] = [
 			{
 				id: "Create Empty",
-				label: translator.getText("Create Empty")
+				label: translator.getText("CreateEmpty")
 			},
 			{
-				label: translator.getText("3D Object/Title"),
+				label: translator.getText("3DObject/Title"),
 				submenu: [
 					{
 						id: "3D Object/Cube",
-						label: translator.getText("3D Object/Cube"),
+						label: translator.getText("3DObject/Cube"),
 					},
 					{
 						id: "3D Object/Sphere",
-						label: translator.getText("3D Object/Sphere"),
+						label: translator.getText("3DObject/Sphere"),
 					},
 					{
 						id: "3D Object/Capsule",
-						label: translator.getText("3D Object/Capsule"),
+						label: translator.getText("3DObject/Capsule"),
 					},
 					{
 						id: "3D Object/Cylinder",
-						label: translator.getText("3D Object/Cylinder"),
+						label: translator.getText("3DObject/Cylinder"),
 					},
 					{
 						id: "3D Object/Plane",
-						label: translator.getText("3D Object/Plane"),
+						label: translator.getText("3DObject/Plane"),
 					},
 					{
 						id: "3D Object/Quad",
-						label: translator.getText("3D Object/Quad"),
+						label: translator.getText("3DObject/Quad"),
 					},
 					{
 						type: "separator"
 					},
 					{
 						id: "3D Object/Text",
-						label: translator.getText("3D Object/Text"),
+						label: translator.getText("3DObject/Text"),
 					},
 				]
 			},
@@ -182,7 +182,7 @@ export class EditorMenu {
 				submenu: [
 					{
 						id: "Effects/Particle System",
-						label: translator.getText("Effects/Particle System"),
+						label: translator.getText("Effects/ParticleSystem"),
 					}
 				]
 			},
@@ -191,15 +191,15 @@ export class EditorMenu {
 				submenu: [
 					{
 						id: "Light/Directional Light",
-						label: translator.getText("Light/Directional Light"),
+						label: translator.getText("Light/DirectionalLight"),
 					},
 					{
 						id: "Light/Point Light",
-						label: translator.getText("Light/Point Light"),
+						label: translator.getText("Light/PointLight"),
 					},
 					{
 						id: "Light/Spot Light",
-						label: translator.getText("Light/Spot Light"),
+						label: translator.getText("Light/SpotLight"),
 					}
 				]
 			},
@@ -234,7 +234,7 @@ export class EditorMenu {
 		var template: Electron.MenuItemConstructorOptions[] = [
 			{
 				id: "Remove Component",
-				label: translator.getText("Remove Component")
+				label: translator.getText("RemoveComponent")
 			}
 		];
 		EditorMenu.setMenuItemHandler(
@@ -255,7 +255,7 @@ export class EditorMenu {
 				submenu: [
 					{
 						id: "Audio/Audio Source",
-						label: translator.getText("Audio/Audio Source")
+						label: translator.getText("Audio/AudioSource")
 					}
 				]
 			},
@@ -264,7 +264,7 @@ export class EditorMenu {
 				submenu: [
 					{
 						id: "Effects/Line Renderer",
-						label: "Line Renderer"
+						label: translator.getText("Effects/LineRenderer")
 					}
 				]
 			},
@@ -273,11 +273,11 @@ export class EditorMenu {
 				submenu: [
 					{
 						id: "Mesh/Mesh Filter",
-						label: "Mesh Filter"
+						label: translator.getText("Mesh/MeshFilter")
 					},
 					{
 						id: "Mesh/Mesh Renderer",
-						label: "Mesh Renderer"
+						label: translator.getText("Mesh/MeshRenderer")
 					}
 				]
 			},
@@ -286,11 +286,11 @@ export class EditorMenu {
 				submenu: [
 					{
 						id: "Physics/BoxCollider",
-						label: "BoxCollider"
+						label: translator.getText("Physics/BoxCollider")
 					},
 					{
 						id: "Physics/Rigidbody",
-						label: "Rigidbody"
+						label: translator.getText("Physics/Rigidbody")
 					}
 				]
 			},
@@ -299,11 +299,11 @@ export class EditorMenu {
 				submenu: [
 					{
 						id: "Rendering/Camera",
-						label: "Camera"
+						label: translator.getText("Rendering/Camera")
 					},
 					{
 						id: "Rendering/Light",
-						label: "Light"
+						label: translator.getText("Rendering/Light")
 					}
 				]
 			}

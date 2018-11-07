@@ -1,0 +1,132 @@
+{
+	"Tabs": {
+		"Player": "再生",
+		"Scene": "シーン編集",
+		"Project": "プロジェクト",
+		"Console": "コンソール"
+	},
+	"SelectAspect": {
+		"FreeAspect": "アスペクト比可変"
+	},
+	"HierarchyView": {
+		"ContextMenu": {
+			"Delete": "削除",
+			"CreateEmpty": "空オブジェクト",
+			"3DObject": {
+				"Title": "3Dオブジェクト",
+				"Cube": "立方体",
+				"Sphere": "球",
+				"Capsule": "カプセル",
+				"Cylinder": "円柱",
+				"Plane": "平面 (Plane)",
+				"Quad": "平面 (Quad)",
+				"Text": "テキスト"
+			},
+			"Effects": {
+				"Title": "エフェクト",
+				"ParticleSystem": "パーティクルシステム"
+			},
+			"Light": {
+				"Title": "ライト",
+				"DirectionalLight": "平行光源",
+				"PointLight": "点光源",
+				"SpotLight": "スポットライト"
+			},
+			"Camera": {
+				"Title": "カメラ"
+			}
+		}
+	},
+	"ObjectInspector": {
+		"Position": "位置",
+		"Rotation": "回転",
+		"Scale": "拡大率",
+		"AddComponent": "コンポーネントの追加",
+		"ComponentMenu": {
+			"RemoveComponent": "コンポーネントの削除"
+		},
+		"AddComponentMenu": {
+			"Audio": {
+				"Title": "オーディオ"
+			},
+			"Effects": {
+				"Title": "エフェクト"
+			},
+			"Mesh": {
+				"Title": "メッシュ"
+			},
+			"Physics": {
+				"Title": "物理"
+			},
+			"Rendering": {
+				"Title": "レンダリング"
+			}
+		}
+	},
+	"SceneInspector": {
+		"Title": "シーン設定",
+		"Gravity": "重力",
+		"AmbientLight": "環境光"
+	},
+	"Components": {
+		"AudioSource": {
+			"Title": "オーディオソース"
+		},
+		"BoxCollider": {
+			"Title": "ボックスコライダ",
+			"Center": "中心",
+			"Size": "サイズ"
+		},
+		"Camera": {
+			"Title": "カメラ",
+			"ClearFlags": "画面クリア",
+			"Background": "背景色",
+			"Orthographic": "平行投影",
+			"Size": "縦幅",
+			"FieldOfView": "視野角",
+			"ClippingPlanes": "クリッピング平面",
+			"ViewportRect": "ビューポート",
+			"Depth": "深度"
+		},
+		"Light": {
+			"Title": "ライト",
+			"Type": "種類",
+			"Color": "色",
+			"Intensity": "強さ",
+			"Range": "範囲",
+			"SpotAngle": "角度"
+		},
+		"LineRenderer": {
+			"Title": "ラインレンダラ"
+		},
+		"MeshFilter": {
+			"Title": "メッシュフィルタ"
+		},
+		"MeshRenderer": {
+			"Title": "メッシュレンダラ",
+			"ReceiveShadows": "影を映す",
+			"Wireframe": "ワイヤーフレーム"
+		},
+		"ParticleSystem": {
+			"Title": "パーティクルシステム"
+		},
+		"Rigidbody": {
+			"Title": "剛体"
+		},
+		"Script": {
+			"Title": "スクリプト"
+		},
+		"TextMesh": {
+			"Title": "テキストメッシュ",
+			"Text": "テキスト",
+			"CharacterSize": "文字サイズ",
+			"LineSpacing": "行間隔",
+			"Anchor": "アンカー",
+			"Alignment": "行揃え",
+			"FontSize": "フォントサイズ",
+			"FontStyle": "フォントスタイル",
+			"Font": "フォント",
+			"Color": "色"
+		}
+	}
+}

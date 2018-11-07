@@ -1,6 +1,7 @@
 import Vue from "vue";
 import Component from "vue-class-component";
 import * as Tea from "../../Tea";
+import { Translator } from "../translate/Translator";
 
 @Component({
 	template: `
@@ -10,19 +11,32 @@ import * as Tea from "../../Tea";
 				<slot></slot>
 			</div>
 			<div class="value">
-				<InputNumber :value="near" @update="onUpdateNear">Near</InputNumber>
-				<InputNumber :value="far" @update="onUpdateFar">Far</InputNumber>
+				<InputNumber :value="near" @update="onUpdateNear">{{ translator.near }}</InputNumber>
+				<InputNumber :value="far" @update="onUpdateFar">{{ translator.far }}</InputNumber>
 			</div>
 		</div>
 	`,
 	props: {
 		near: Number,
 		far: Number
-	}
+	},
+	data: () => {
+		return {
+			translator: {}
+		}
+	},
 })
 export class ClippingPlanes extends Vue {
+	translator: any;
 	near: number;
 	far: number;
+
+	protected created(): void {
+		var translator = Translator.getInstance();
+		translator.basePath = "Components/Camera";
+		this.translator.near = translator.getText("Near");
+		this.translator.far = translator.getText("Far");
+	}
 
 	protected onUpdateNear(value: number): void {
 		this.$emit("update", "near", value);
@@ -41,47 +55,48 @@ export class ClippingPlanes extends Vue {
 				name="clearFlags"
 				:keys="clearFlagsKeys"
 				:value="clearFlags"
-				@update="onUpdateClearFlags">Clear Flags</SelectEnum>
+				@update="onUpdateClearFlags">{{ translator.clearFlags }}</SelectEnum>
 			<ColorPicker
 				ref="background"
 				:value="background"
-				@update="onUpdateBackground">Background</ColorPicker>
+				@update="onUpdateBackground">{{ translator.background }}</ColorPicker>
 			<CheckBox
 				ref="orthographic"
 				:value="orthographic"
-				@update="onUpdateOrthographic">Orthographic</CheckBox>
+				@update="onUpdateOrthographic">{{ translator.orthographic }}</CheckBox>
 			<InputNumber
 				v-if="orthographic"
 				ref="size"
 				class="Size"
 				:value="size"
-				@update="onUpdateSize">Size</InputNumber>
+				@update="onUpdateSize">{{ translator.size }}</InputNumber>
 			<InputRange
 				v-else
 				ref="fieldOfView"
 				:min="1"
 				:max="179"
 				:value="fieldOfView"
-				@update="onUpdateFov">Field of View</InputRange>
+				@update="onUpdateFov">{{ translator.fieldOfView }}</InputRange>
 			<ClippingPlanes
 				ref="clippingPlanes"
 				:near="nearClipPlane"
 				:far="farClipPlane"
-				@update="onUpdateClippingPlanes">Clipping Planes</ClippingPlanes>
+				@update="onUpdateClippingPlanes">{{ translator.clippingPlanes }}</ClippingPlanes>
 			<Rectangle
 				ref="rect"
 				:value="rect"
-				@update="onUpdateRect">Viewport Rect</Rectangle>
+				@update="onUpdateRect">{{ translator.viewportRect }}</Rectangle>
 			<InputRange
 				ref="depth"
 				:min="-100"
 				:max="100"
 				:value="depth"
-				@update="onUpdateDepth">Depth</InputRange>
+				@update="onUpdateDepth">{{ translator.depth }}</InputRange>
 		</div>
 	`,
 	data: () => {
 		return {
+			translator: {},
 			name: "Camera",
 			enabled: false,
 			clearFlagsKeys: [],
@@ -108,6 +123,7 @@ export class ClippingPlanes extends Vue {
 })
 export class Camera extends Vue {
 	_component: Tea.Camera;
+	translator: any;
 	name: string;
 	enabled: boolean;
 	clearFlagsKeys: Array<string>;
@@ -120,6 +136,22 @@ export class Camera extends Vue {
 	farClipPlane: number;
 	rect: Array<number>;
 	depth: number;
+
+	protected created(): void {
+		var translator = Translator.getInstance();
+		translator.basePath = "Components/Camera";
+		this.name = translator.getText("Title");
+		this.translator.clearFlags = translator.getText("ClearFlags");
+		this.translator.background = translator.getText("Background");
+		this.translator.orthographic = translator.getText("Orthographic");
+		this.translator.size = translator.getText("Size");
+		this.translator.fieldOfView = translator.getText("FieldOfView");
+		this.translator.clippingPlanes = translator.getText("ClippingPlanes");
+		this.translator.near = translator.getText("Near");
+		this.translator.far = translator.getText("Far");
+		this.translator.viewportRect = translator.getText("ViewportRect");
+		this.translator.depth = translator.getText("Depth");
+	}
 
 	protected mounted(): void {
 		var component = this._component;

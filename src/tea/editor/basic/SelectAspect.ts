@@ -1,6 +1,6 @@
 import Vue from "vue";
 import Component from "vue-class-component";
-import { Translator } from "../Translator";
+import { Translator } from "../translate/Translator";
 
 @Component({
 	template: `
@@ -28,7 +28,7 @@ export class SelectAspect extends Vue {
 		this.y = 0;
 		var translator = Translator.getInstance();
 		translator.basePath = "SelectAspect";
-		this.translator.free = translator.getText("Free Aspect");
+		this.translator.free = translator.getText("FreeAspect");
 	}
 	
 	protected onChange(e: Event): void {

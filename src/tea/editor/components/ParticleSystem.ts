@@ -2,6 +2,7 @@ import Vue from "vue";
 import Component from "vue-class-component";
 import * as Tea from "../../Tea";
 import { ShapeModule } from "./particles/ShapeModule";
+import { Translator } from "../translate/Translator";
 
 @Component({
 	template: `
@@ -46,6 +47,7 @@ import { ShapeModule } from "./particles/ShapeModule";
 	`,
 	data: () => {
 		return {
+			translator: {},
 			name: "ParticleSystem",
 			enabled: false,
 			duration: 0,
@@ -69,6 +71,7 @@ import { ShapeModule } from "./particles/ShapeModule";
 })
 export class ParticleSystem extends Vue {
 	_component: Tea.ParticleSystem;
+	translator: any;
 	name: string;
 	enabled: boolean;
 	duration: number;
@@ -78,6 +81,12 @@ export class ParticleSystem extends Vue {
 	startColor: string;
 	gravityModifier: number;
 	maxParticles: number;
+
+	protected created(): void {
+		var translator = Translator.getInstance();
+		translator.basePath = "Components/ParticleSystem";
+		this.name = translator.getText("Title");
+	}
 
 	protected mounted(): void {
 		var component = this._component;

@@ -1,6 +1,7 @@
 import Vue from "vue";
 import Component from "vue-class-component";
 import * as Tea from "../../Tea";
+import { Translator } from "../translate/Translator";
 
 @Component({
 	template: `
@@ -10,33 +11,34 @@ import * as Tea from "../../Tea";
 				name="type"
 				:keys="typeKeys"
 				:value="type"
-				@update="onUpdateType">Type</SelectEnum>
+				@update="onUpdateType">{{ translator.type }}</SelectEnum>
 			<InputNumber
 				v-if="type !== 'Directional'"
 				ref="range"
 				class="range"
 				:value="range"
-				@update="onUpdateRange">Range</InputNumber>
+				@update="onUpdateRange">{{ translator.range }}</InputNumber>
 			<InputRange
 				v-if="type === 'Spot'"
 				ref="spotAngle"
 				:min="1"
 				:max="179"
 				:value="spotAngle"
-				@update="onUpdateSpotAngle">Spot Angle</InputRange>
+				@update="onUpdateSpotAngle">{{ translator.spotAngle }}</InputRange>
 			<ColorPicker
 				ref="color"
 				:value="color"
-				@update="onUpdateColor">Color</ColorPicker>
+				@update="onUpdateColor">{{ translator.color }}</ColorPicker>
 			<InputNumber
 				ref="intensity"
 				class="Intensity"
 				:value="intensity"
-				@update="onUpdateIntensity">Intensity</InputNumber>
+				@update="onUpdateIntensity">{{ translator.intensity }}</InputNumber>
 		</div>
 	`,
 	data: () => {
 		return {
+			translator: {},
 			name: "Light",
 			enabled: false,
 			typeKeys: [],
@@ -56,6 +58,7 @@ import * as Tea from "../../Tea";
 })
 export class Light extends Vue {
 	_component: Tea.Light;
+	translator: any;
 	name: string;
 	enabled: boolean;
 	typeKeys: Array<string>;
@@ -64,6 +67,17 @@ export class Light extends Vue {
 	spotAngle: number;
 	color: string;
 	intensity: number;
+
+	protected created(): void {
+		var translator = Translator.getInstance();
+		translator.basePath = "Components/Light";
+		this.name = translator.getText("Title");
+		this.translator.type = translator.getText("Type");
+		this.translator.color = translator.getText("Color");
+		this.translator.intensity = translator.getText("Intensity");
+		this.translator.range = translator.getText("Range");
+		this.translator.spotAngle = translator.getText("SpotAngle");
+	}
 
 	protected mounted(): void {
 		var component = this._component;

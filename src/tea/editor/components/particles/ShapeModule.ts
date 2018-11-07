@@ -7,6 +7,7 @@ import * as Tea from "../../../Tea";
 		<div class="ShapeModule">
 			<SelectEnum
 				ref="shape"
+				:keys="shapeKeys"
 				:value="shape"
 				@update="onUpdateShape">Shape</SelectEnum>
 			<InputNumber
@@ -23,6 +24,7 @@ import * as Tea from "../../../Tea";
 	`,
 	data: () => {
 		return {
+			shapeKeys: [],
 			shape: "",
 			angle: 0,
 			radius: 0,
@@ -37,6 +39,7 @@ import * as Tea from "../../../Tea";
 })
 export class ShapeModule extends Vue {
 	_module: Tea.ParticleSystem.ShapeModule;
+	shapeKeys: Array<string>;
 	shape: string;
 	angle: number;
 	radius: number;
@@ -46,13 +49,10 @@ export class ShapeModule extends Vue {
 		if (module == null) {
 			return;
 		}
-		var shape = this.$refs.shape as Vue;
-		shape.$data.keys = Tea.ParticleSystemShapeType.getKeys();
+		this.shapeKeys = Tea.ParticleSystemShapeType.getKeys();
+		this.shape = Tea.ParticleSystemShapeType[module.shapeType];
 		this.angle = module.angle;
 		this.radius = module.radius;
-		this.$nextTick(() => {
-			this.shape = Tea.ParticleSystemShapeType[module.shapeType];
-		});
 	}
 
 	protected onUpdateShape(value: string): void {

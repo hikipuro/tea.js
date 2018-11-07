@@ -1,6 +1,7 @@
 import Vue from "vue";
 import Component from "vue-class-component";
 import * as Tea from "../../Tea";
+import { Translator } from "../translate/Translator";
 
 @Component({
 	template: `
@@ -9,6 +10,7 @@ import * as Tea from "../../Tea";
 	`,
 	data: () => {
 		return {
+			translator: {},
 			name: "Rigidbody",
 			enabled: false
 		}
@@ -22,8 +24,15 @@ import * as Tea from "../../Tea";
 })
 export class Rigidbody extends Vue {
 	_component: Tea.Rigidbody;
+	translator: any;
 	name: string;
 	enabled: boolean;
+
+	protected created(): void {
+		var translator = Translator.getInstance();
+		translator.basePath = "Components/Rigidbody";
+		this.name = translator.getText("Title");
+	}
 
 	protected mounted(): void {
 		var component = this._component;

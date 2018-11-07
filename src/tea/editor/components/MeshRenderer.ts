@@ -2,6 +2,7 @@ import Vue from "vue";
 import Component from "vue-class-component";
 import * as Tea from "../../Tea";
 import { Material } from "./Material";
+import { Translator } from "../translate/Translator";
 
 @Component({
 	template: `
@@ -9,17 +10,18 @@ import { Material } from "./Material";
 			<CheckBox
 				ref="receiveShadows"
 				:value="receiveShadows"
-				@update="onUpdateReceiveShadows">ReceiveShadows</CheckBox>
+				@update="onUpdateReceiveShadows">{{ translator.receiveShadows }}</CheckBox>
 			<CheckBox
 				ref="wireframe"
 				:value="wireframe"
-				@update="onUpdateWireframe">Wireframe</CheckBox>
+				@update="onUpdateWireframe">{{ translator.wireframe }}</CheckBox>
 			<Material
 				ref="material"></Material>
 		</div>
 	`,
 	data: () => {
 		return {
+			translator: {},
 			name: "MeshRenderer",
 			enabled: false,
 			receiveShadows: true,
@@ -38,10 +40,19 @@ import { Material } from "./Material";
 })
 export class MeshRenderer extends Vue {
 	_component: Tea.MeshRenderer;
+	translator: any;
 	name: string;
 	enabled: boolean;
 	receiveShadows: boolean;
 	wireframe: boolean;
+
+	protected created(): void {
+		var translator = Translator.getInstance();
+		translator.basePath = "Components/MeshRenderer";
+		this.name = translator.getText("Title");
+		this.translator.receiveShadows = translator.getText("ReceiveShadows");
+		this.translator.wireframe = translator.getText("Wireframe");
+	}
 
 	protected mounted(): void {
 		var component = this._component;

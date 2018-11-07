@@ -1,27 +1,30 @@
 import Vue from "vue";
 import Component from "vue-class-component";
 import * as Tea from "../Tea";
+import { Translator } from "./translate/Translator";
 
 @Component({
 	template: `
 		<div class="SceneInspector">
-			Scene Settings
+			{{ title }}
 			<Vector3
 				ref="gravity"
 				:x="gravity[0]"
 				:y="gravity[1]"
 				:z="gravity[2]"
 				@update="onUpdateGravity">
-				Gravity
+				{{ translator.gravity }}
 			</Vector3>
 			<ColorPicker
 				ref="ambientLight"
 				:value="ambientLight"
-				@update="onUpdateAmbientLight">Ambient Light</ColorPicker>
+				@update="onUpdateAmbientLight">{{ translator.ambientLight }}</ColorPicker>
 		</div>
 	`,
 	data: () => {
 		return {
+			translator: {},
+			title: "",
 			gravity: [0, 0, 0],
 			ambientLight: ""
 		}
@@ -29,8 +32,18 @@ import * as Tea from "../Tea";
 })
 export class SceneInspector extends Vue {
 	_scene: Tea.Scene;
+	translator: any;
+	title: string;
 	gravity: Array<number>;
 	ambientLight: string;
+
+	protected created(): void {
+		var translator = Translator.getInstance();
+		translator.basePath = "SceneInspector";
+		this.title = translator.getText("Title");
+		this.translator.gravity = translator.getText("Gravity");
+		this.translator.ambientLight = translator.getText("AmbientLight");
+	}
 
 	protected mounted(): void {
 		var scene = this._scene;

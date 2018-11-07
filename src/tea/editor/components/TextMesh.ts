@@ -1,6 +1,7 @@
 import Vue from "vue";
 import Component from "vue-class-component";
 import * as Tea from "../../Tea";
+import { Translator } from "../translate/Translator";
 
 @Component({
 	template: `
@@ -8,49 +9,50 @@ import * as Tea from "../../Tea";
 			<TextArea
 				ref="text"
 				:value="text"
-				@update="onUpdateText">Text</TextArea>
+				@update="onUpdateText">{{ translator.text }}</TextArea>
 			<InputNumber
 				ref="characterSize"
 				class="number"
 				:value="characterSize"
-				@update="onUpdateCharacterSize">Character Size</InputNumber>
+				@update="onUpdateCharacterSize">{{ translator.characterSize }}</InputNumber>
 			<InputNumber
 				ref="lineSpacing"
 				class="number"
 				:value="lineSpacing"
-				@update="onUpdateLineSpacing">Line Spacing</InputNumber>
+				@update="onUpdateLineSpacing">{{ translator.lineSpacing }}</InputNumber>
 			<SelectEnum
 				ref="anchor"
 				:keys="anchorKeys"
 				:value="anchor"
-				@update="onUpdateAnchor">Anchor</SelectEnum>
+				@update="onUpdateAnchor">{{ translator.anchor }}</SelectEnum>
 			<SelectEnum
 				ref="alignment"
 				:keys="alignmentKeys"
 				:value="alignment"
-				@update="onUpdateAlignment">Alignment</SelectEnum>
+				@update="onUpdateAlignment">{{ translator.alignment }}</SelectEnum>
 			<InputNumber
 				ref="fontSize"
 				class="number"
 				:value="fontSize"
-				@update="onUpdateFontSize">Font Size</InputNumber>
+				@update="onUpdateFontSize">{{ translator.fontSize }}</InputNumber>
 			<SelectEnum
 				ref="fontStyle"
 				:keys="fontStyleKeys"
 				:value="fontStyle"
-				@update="onUpdateFontStyle">Font Style</SelectEnum>
+				@update="onUpdateFontStyle">{{ translator.fontStyle }}</SelectEnum>
 			<InputText
 				ref="font"
 				:value="font"
-				@update="onUpdateFont">Font</InputText>
+				@update="onUpdateFont">{{ translator.font }}</InputText>
 			<ColorPicker
 				ref="color"
 				:value="color"
-				@update="onUpdateColor">Color</ColorPicker>
+				@update="onUpdateColor">{{ translator.color }}</ColorPicker>
 		</div>
 	`,
 	data: () => {
 		return {
+			translator: {},
 			name: "TextMesh",
 			enabled: false,
 			text: "",
@@ -76,6 +78,7 @@ import * as Tea from "../../Tea";
 })
 export class TextMesh extends Vue {
 	_component: Tea.TextMesh;
+	translator: any;
 	name: string;
 	enabled: boolean;
 	text: string;
@@ -90,6 +93,21 @@ export class TextMesh extends Vue {
 	fontStyle: string;
 	font: string;
 	color: string;
+
+	protected created(): void {
+		var translator = Translator.getInstance();
+		translator.basePath = "Components/TextMesh";
+		this.name = translator.getText("Title");
+		this.translator.text = translator.getText("Text");
+		this.translator.characterSize = translator.getText("CharacterSize");
+		this.translator.lineSpacing = translator.getText("LineSpacing");
+		this.translator.anchor = translator.getText("Anchor");
+		this.translator.alignment = translator.getText("Alignment");
+		this.translator.fontSize = translator.getText("FontSize");
+		this.translator.fontStyle = translator.getText("FontStyle");
+		this.translator.font = translator.getText("Font");
+		this.translator.color = translator.getText("Color");
+	}
 
 	protected mounted(): void {
 		var component = this._component;

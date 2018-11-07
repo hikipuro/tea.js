@@ -258,7 +258,7 @@ export class App {
 
 	createShadowMapCamera(): Tea.Object3D {
 		var object3d = new Tea.Object3D(this);
-		object3d.name = "ShadowMapCamera";
+		object3d.name = "Shadow Map Camera";
 		object3d.localPosition.set(0, 1, -10);
 		object3d.addComponent(Tea.ShadowMapCamera);
 		return object3d;
@@ -337,7 +337,7 @@ export class App {
 		renderer.material = Tea.Material.getDefault(this);
 		renderer.material.shader = shader;
 		renderer.material.mainTexture = Tea.Texture.getDefaultParticle(this);
-		object3d.name = "ParticleSystem";
+		object3d.name = "Particle System";
 		return object3d;
 	}
 
@@ -383,7 +383,7 @@ export class App {
 		renderer.material.shader = shader;
 		//renderer.material.color.set(1,0,0,1);
 		textMesh.material = renderer.material;
-		object3d.name = "TextMesh";
+		object3d.name = "Text Mesh";
 		return object3d;
 	}
 
