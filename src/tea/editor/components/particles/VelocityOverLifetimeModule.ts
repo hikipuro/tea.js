@@ -11,7 +11,12 @@ import { TitleBar } from "../TitleBar";
 				:enableConfig="false"
 				@update="onUpdateEnabled"
 				@clickTitle="onClickTitle">{{ name }}</TitleBar>
-			<div class="Items" ref="items">
+			<div
+				ref="items"
+				class="Items"
+				:style="{
+					display: 'none'
+				}">
 			</div>
 		</div>
 	`,

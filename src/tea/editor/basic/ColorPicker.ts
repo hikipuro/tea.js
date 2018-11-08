@@ -9,16 +9,20 @@ import * as Tea from "../../Tea";
 				class="title">
 				<slot></slot>
 			</div>
-			<div
-				ref="color"
-				class="color"
+			<div 
+				class="container"
 				tabindex="0"
-				:style="{
-					backgroundColor: value
-				}"
 				@keydown="onKeyDown"
 				@click="onClick"
-				@change="onChange"></div>
+				@change="onChange">
+				<div class="bg"></div>
+				<div
+					ref="color"
+					class="color"
+					:style="{
+						backgroundColor: value
+					}"></div>
+			</div>
 			<Window ref="window">
 				<InputRange
 					:min="0"

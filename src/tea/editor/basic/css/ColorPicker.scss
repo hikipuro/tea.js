@@ -13,15 +13,54 @@
 			overflow: hidden;
 		}
 
-		> .color {
+		> .container {
 			flex: 1;
 			box-sizing: border-box;
+			position: relative;
 			margin: 0 2px;
 			padding: 0;
 			width: 100%;
 			height: 1.5em;
 			border: 2px solid white;
 			border-radius: 0.3em;
+			background-color: #fff;
+
+			> .color {
+				position: absolute;
+				width: 100%;
+				height: 100%;
+				border-radius: 0.2em;
+			}
+	
+			> .bg {
+				$gridColor1: #fff;
+				$gridColor2: #eee;
+				$gridSize: 8px;
+				position: absolute;
+				width: 100%;
+				height: 100%;
+				background-color: $gridColor1;
+				background-image:
+					linear-gradient(
+						45deg,
+						$gridColor2 25%,
+						$gridColor2 25%,
+						transparent 25%,
+						transparent 75%,
+						$gridColor2 75%,
+						$gridColor2 75%),
+					linear-gradient(
+						-135deg,
+						$gridColor2 25%,
+						$gridColor2 25%,
+						transparent 25%,
+						transparent 75%,
+						$gridColor2 75%,
+						$gridColor2 75%);
+				background-size: $gridSize $gridSize;
+				background-position: 0 0, $gridSize / 2 $gridSize / 2;
+				border-radius: 0.2em;
+			}
 		}
 
 		> .Window {
