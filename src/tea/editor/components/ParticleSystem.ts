@@ -1,8 +1,11 @@
 import Vue from "vue";
 import Component from "vue-class-component";
 import * as Tea from "../../Tea";
-import { ShapeModule } from "./particles/ShapeModule";
 import { Translator } from "../translate/Translator";
+import { EmissionModule } from "./particles/EmissionModule";
+import { ShapeModule } from "./particles/ShapeModule";
+import { ColorOverLifetimeModule } from "./particles/ColorOverLifetimeModule";
+import { VelocityOverLifetimeModule } from "./particles/VelocityOverLifetimeModule";
 
 @Component({
 	template: `
@@ -42,7 +45,10 @@ import { Translator } from "../translate/Translator";
 				:step="1"
 				:min="0"
 				@update="onUpdateMaxParticles">Max Particles</InputNumber>
+			<EmissionModule ref="emission"></EmissionModule>
 			<ShapeModule ref="shape"></ShapeModule>
+			<ColorOverLifetimeModule ref="colorOverLifetime"></ColorOverLifetimeModule>
+			<VelocityOverLifetimeModule ref="velocityOverLifetime"></VelocityOverLifetimeModule>
 		</div>
 	`,
 	data: () => {
@@ -66,7 +72,11 @@ import { Translator } from "../translate/Translator";
 		}
 	},
 	components: {
-		ShapeModule: ShapeModule
+		EmissionModule: EmissionModule,
+		ShapeModule: ShapeModule,
+		ColorOverLifetimeModule: ColorOverLifetimeModule,
+		VelocityOverLifetimeModule: VelocityOverLifetimeModule
+
 	}
 })
 export class ParticleSystem extends Vue {
@@ -101,8 +111,22 @@ export class ParticleSystem extends Vue {
 		this.startColor = component.main.startColor.color.toCssColor();
 		this.gravityModifier = component.main.gravityModifier.constant;
 		this.maxParticles = component.main.maxParticles;
-		(this.$refs.shape as ShapeModule)._module = component.shape;
-		(this.$refs.shape as ShapeModule).update();
+
+		var shape = this.$refs.shape as ShapeModule;
+		shape._module = component.shape;
+		shape.update();
+
+		var emission = this.$refs.emission as EmissionModule;
+		emission._module = component.emission;
+		emission.update();
+
+		var colorOverLifetime = this.$refs.colorOverLifetime as ColorOverLifetimeModule;
+		colorOverLifetime._module = component.colorOverLifetime;
+		colorOverLifetime.update();
+
+		var velocityOverLifetime = this.$refs.velocityOverLifetime as VelocityOverLifetimeModule;
+		velocityOverLifetime._module = component.velocityOverLifetime;
+		velocityOverLifetime.update();
 	}
 
 	protected onUpdateDuration(value: number): void {

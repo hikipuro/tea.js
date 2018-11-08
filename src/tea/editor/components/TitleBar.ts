@@ -17,6 +17,7 @@ import Component from "vue-class-component";
 				class="title"
 				@click="onClickTitle"><slot></slot></div>
 			<div
+				v-if="enableConfig"
 				ref="config"
 				class="config"
 				@click="onClickConfig">⚙️</div>
@@ -26,6 +27,10 @@ import Component from "vue-class-component";
 		enabled: {
 			type: Boolean,
 			default: null
+		},
+		enableConfig: {
+			type: Boolean,
+			default: true
 		}
 	}
 })

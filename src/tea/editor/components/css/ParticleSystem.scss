@@ -12,5 +12,24 @@
 				width: 60%;
 			}
 		}
+
+		> .Module {
+			display: flex;
+			flex-direction: column;
+			margin: 2px;
+			padding: 0;
+			border: thin solid #444;
+			border-radius: 3px;
+
+			> .TitleBar {
+				margin: 0;
+				background-color: #444;
+			}
+
+			> .Items {
+				display: none;
+				margin: 2px 0;
+			}
+		}
 	}
 }
