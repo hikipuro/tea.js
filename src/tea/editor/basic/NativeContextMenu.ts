@@ -31,11 +31,16 @@ export class NativeContextMenu {
 		this.menu.append(item);
 	}
 
-	show(): void {
+	show(x: number = null, y: number = null): void {
 		var window = remote.getCurrentWindow();
-		this.menu.popup({
+		var options: Electron.PopupOptions = {
 			window: window
-		});
+		};
+		if (x != null && y != null) {
+			options.x = x;
+			options.y = y;
+		}
+		this.menu.popup(options);
 	}
 
 	hide(): void {
