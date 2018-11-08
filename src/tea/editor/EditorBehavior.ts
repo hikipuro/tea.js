@@ -1,6 +1,6 @@
 import * as nodePath from "path";
-import Vue from "vue";
 import * as Electron from "electron";
+import Vue from "vue";
 import * as Tea from "../Tea";
 import { Editor } from "./Editor";
 import { EditorMenu } from "./EditorMenu";

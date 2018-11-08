@@ -195,7 +195,7 @@ export class Texture {
 		}
 		Tea.File.readImage(url, (err, image) => {
 			if (err) {
-				console.error("Texture.load()", err);
+				console.error("Texture.load()", url, err);
 				if (callback) {
 					callback(err, url);
 				}

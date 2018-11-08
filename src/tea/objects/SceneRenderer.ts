@@ -1,3 +1,4 @@
+import * as nodePath from "path";
 import * as Tea from "../Tea";
 import { Object3D } from "./Object3D";
 import { SceneGrid } from "./SceneGrid";
@@ -67,9 +68,10 @@ class SceneIcons {
 		if (object3d == null || this.contains(object3d)) {
 			return;
 		}
+		var path = nodePath.join(__dirname, "../images/camera-icon.png");
 		var icon = new SceneIcon(this.scene.app);
 		icon.target = object3d;
-		icon.material.mainTexture.load("images/camera-icon.png");
+		icon.material.mainTexture.load(path);
 		this.icons.push(icon);
 		this.renderers.push(icon.renderer);
 	}
@@ -78,9 +80,10 @@ class SceneIcons {
 		if (object3d == null || this.contains(object3d)) {
 			return;
 		}
+		var path = nodePath.join(__dirname, "../images/light-icon.png");
 		var icon = new SceneIcon(this.scene.app);
 		icon.target = object3d;
-		icon.material.mainTexture.load("images/light-icon.png");
+		icon.material.mainTexture.load(path);
 		this.icons.push(icon);
 		this.renderers.push(icon.renderer);
 	}
