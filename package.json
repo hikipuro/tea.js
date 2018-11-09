@@ -1,7 +1,7 @@
 {
   "name": "tea",
   "version": "1.0.0",
-  "description": "",
+  "description": "WebGL 3D Rendering Engine",
   "main": "./dist/NodeMain.js",
   "scripts": {
     "clean": "rimraf html/main.js dist",
@@ -12,14 +12,35 @@
     "typedoc": "typedoc --out ./docs",
     "start": "webpack-dev-server --mode=development",
     "package-win": "electron-packager . tea --platform=win32 --arch=ia32 --overwrite",
-    "package-mac": "electron-packager . tea --platform=darwin --arch=x64 --overwrite"
+    "package-mac": "electron-packager . tea --platform=darwin --arch=x64 --overwrite",
+    "pack-win-ia32": "electron-builder --win --ia32",
+    "pack-win": "electron-builder --win --x64",
+    "pack-mac": "electron-builder --mac --x64"
   },
   "author": "",
   "license": "",
+  "build": {
+    "asar": false,
+    "productName": "tea",
+    "directories": {
+      "output": "build"
+    },
+    "files": [
+      "dist/**/*",
+      "html/**/*",
+      "images/**/*"
+    ],
+    "appId": "tea",
+    "mac": {
+      "category": "tea"
+    }
+  },
   "devDependencies": {
     "@types/mocha": "^5.2.5",
     "@types/node": "^8.10.37",
     "css-loader": "^1.0.1",
+    "electron": "^3.0.8",
+    "electron-builder": "^20.33.2",
     "electron-packager": "^12.2.0",
     "espower-typescript": "^9.0.1",
     "express": "^4.16.4",
@@ -43,7 +64,6 @@
     "webpack-node-externals": "^1.7.2"
   },
   "dependencies": {
-    "electron": "^3.0.8",
     "vue": "^2.5.17",
     "vue-class-component": "^6.3.2"
   }

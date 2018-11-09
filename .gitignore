@@ -9,6 +9,7 @@ html/css/editor.css
 test/
 
 # Build
+build/
 tea-win32-ia32/
 tea-win32-x64/
 tea-darwin-x64/
