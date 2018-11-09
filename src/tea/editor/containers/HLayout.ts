@@ -1,8 +1,8 @@
 import Vue from "vue";
 import Component from "vue-class-component";
-import * as Tea from "../../Tea";
+import { Editor } from "../Editor";
 
-type Panel = Tea.Editor.Panel;
+type Panel = Editor.Panel;
 
 @Component({
 	template: `

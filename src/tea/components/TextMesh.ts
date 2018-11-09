@@ -2,7 +2,6 @@ import * as Tea from "../Tea";
 import { Component } from "./Component";
 
 export class TextMesh extends Component {
-	static editorView = Tea.Editor.TextMesh;
 	protected static readonly DefaultFontSize: number = 14;
 	material: Tea.Material;
 	texture: Tea.Texture;

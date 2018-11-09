@@ -27,7 +27,6 @@ import { PSTriggerModule } from "../particles/modules/TriggerModule";
 import { PSVelocityOverLifetimeModule } from "../particles/modules/VelocityOverLifetimeModule";
 
 export class ParticleSystem extends Component {
-	static editorView = Tea.Editor.ParticleSystem;
 	//automaticCullingEnabled: boolean;
 	//collision: ParticleSystem.CollisionModule;
 	//colorBySpeed: ParticleSystem.ColorBySpeedModule;

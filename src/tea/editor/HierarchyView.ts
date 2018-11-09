@@ -58,9 +58,9 @@ export class HierarchyView extends Vue {
 		treeView.draggable = true;
 
 		var dragImages = (this.$root as Editor).dragImages;
-		var dragSource: Tea.Editor.TreeViewItem = null;
+		var dragSource: Editor.TreeViewItem = null;
 		var dragEvents = treeView.dragEvents;
-		dragEvents.dragStart = (e: DragEvent, item: Tea.Editor.TreeViewItem) => {
+		dragEvents.dragStart = (e: DragEvent, item: Editor.TreeViewItem) => {
 			//console.log("onDragStart");
 			dragSource = item;
 			e.dataTransfer.effectAllowed = "move";
@@ -73,10 +73,10 @@ export class HierarchyView extends Vue {
 			dragImages.appendChild(dragImage);
 			e.dataTransfer.setDragImage(dragImage, 0, 0);
 		};
-		dragEvents.dragEnd = (e: DragEvent, item: Tea.Editor.TreeViewItem) => {
+		dragEvents.dragEnd = (e: DragEvent, item: Editor.TreeViewItem) => {
 			dragSource = null;
 		};
-		dragEvents.dragOver = (e: DragEvent, item: Tea.Editor.TreeViewItem) => {
+		dragEvents.dragOver = (e: DragEvent, item: Editor.TreeViewItem) => {
 			if (dragSource == null) {
 				e.preventDefault();
 				return;
@@ -103,12 +103,12 @@ export class HierarchyView extends Vue {
 				text.classList.remove("dragOverBottom");
 			}
 		};
-		dragEvents.dragEnter = (e: DragEvent, item: Tea.Editor.TreeViewItem) => {
+		dragEvents.dragEnter = (e: DragEvent, item: Editor.TreeViewItem) => {
 			//console.log("dragEnter", item.model.text);
 			var el = e.currentTarget as HTMLElement;
 			el.classList.add("dragEnter");
 		};
-		dragEvents.dragLeave = (e: DragEvent, item: Tea.Editor.TreeViewItem) => {
+		dragEvents.dragLeave = (e: DragEvent, item: Editor.TreeViewItem) => {
 			//console.log("dragLeave", this, e);
 			var el = e.currentTarget as HTMLElement;
 			var text = el.querySelector(".text");
@@ -116,7 +116,7 @@ export class HierarchyView extends Vue {
 			text.classList.remove("dragOverTop");
 			text.classList.remove("dragOverBottom");
 		};
-		dragEvents.drop = (e: DragEvent, item: Tea.Editor.TreeViewItem) => {
+		dragEvents.drop = (e: DragEvent, item: Editor.TreeViewItem) => {
 			//console.log("drop", item);
 			var mode = 0;
 			var el = e.currentTarget as HTMLElement;
@@ -149,7 +149,7 @@ export class HierarchyView extends Vue {
 			this.$emit("menu", e);
 		});
 
-		treeView.$on("select", (item: Tea.Editor.TreeViewItem) => {
+		treeView.$on("select", (item: Editor.TreeViewItem) => {
 			this.$emit("select", item);
 		});
 	}

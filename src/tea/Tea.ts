@@ -1,4 +1,4 @@
-export * from "./editor/Editor";
+//export * from "./editor/Editor";
 
 export * from "./collisions/AABB";
 export * from "./collisions/Line";

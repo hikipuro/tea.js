@@ -2,7 +2,6 @@ import * as Tea from "../Tea";
 import { Collider } from "./Collider";
 
 export class BoxCollider extends Collider {
-	static editorView = Tea.Editor.BoxCollider;
 	center: Tea.Vector3;
 	size: Tea.Vector3;
 

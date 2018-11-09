@@ -2,7 +2,6 @@ import * as Tea from "../Tea";
 import { Component } from "../components/Component";
 
 export class AudioSource extends Component {
-	static editorView = Tea.Editor.AudioSource;
 	clip: Tea.AudioClip;
 	protected _audio: Tea.AppAudio;
 	protected _gainNode: GainNode;

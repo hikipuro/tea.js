@@ -6,7 +6,7 @@ if (Electron) {
 	Menu = remote.Menu;
 }
 
-import * as Tea from "../Tea";
+import { Editor } from "./Editor";
 import { Translator } from "./translate/Translator";
 import { NativeContextMenu } from "./basic/NativeContextMenu";
 import { HierarchyView } from "./HierarchyView";
@@ -224,7 +224,7 @@ export class EditorMenu {
 		EditorMenu.setMenuItemHandler(
 			template, handler
 		);
-		return Tea.Editor.NativeContextMenu.create(template);
+		return Editor.NativeContextMenu.create(template);
 	}
 
 	static getInspectorViewComponentMenu(
@@ -241,7 +241,7 @@ export class EditorMenu {
 		EditorMenu.setMenuItemHandler(
 			template, handler
 		);
-		return Tea.Editor.NativeContextMenu.create(template);
+		return Editor.NativeContextMenu.create(template);
 	}
 
 	static getInspectorViewAddComponentMenu(
@@ -312,7 +312,7 @@ export class EditorMenu {
 		EditorMenu.setMenuItemHandler(
 			template, handler
 		);
-		return Tea.Editor.NativeContextMenu.create(template);
+		return Editor.NativeContextMenu.create(template);
 	}
 
 	static getProjectViewMenu(
@@ -340,7 +340,7 @@ export class EditorMenu {
 		EditorMenu.setMenuItemHandler(
 			template, handler
 		);
-		return Tea.Editor.NativeContextMenu.create(template);
+		return Editor.NativeContextMenu.create(template);
 	}
 
 	static getProjectViewFileMenu(
@@ -365,7 +365,7 @@ export class EditorMenu {
 		EditorMenu.setMenuItemHandler(
 			template, handler
 		);
-		return Tea.Editor.NativeContextMenu.create(template);
+		return Editor.NativeContextMenu.create(template);
 	}
 
 	static setMenuItemHandler(

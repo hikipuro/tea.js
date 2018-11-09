@@ -20,7 +20,7 @@ import { TreeView } from "./basic/TreeView";
 	`
 })
 export class ProjectView extends Vue {
-	protected _dragSource: Tea.Editor.TreeViewItem;
+	protected _dragSource: Editor.TreeViewItem;
 
 	getSelectedFolderPath(): string {
 		var folderList = this.$refs.folderList as TreeView;
@@ -40,7 +40,7 @@ export class ProjectView extends Vue {
 		return item.tag;
 	}
 
-	getDragSource(): Tea.Editor.TreeViewItem {
+	getDragSource(): Editor.TreeViewItem {
 		return this._dragSource;
 	}
 
@@ -51,7 +51,7 @@ export class ProjectView extends Vue {
 		folderList.openIcon = "<img src='../images/folder-open.svg' />";
 		folderList.closeIcon = "<img src='../images/folder-close.svg' />";
 
-		folderList.$on("expand", (item: Tea.Editor.TreeViewItem) => {
+		folderList.$on("expand", (item: Editor.TreeViewItem) => {
 			//console.log("expand", item);
 			var i = item.model;
 			if (i == null || i.children.length > 0) {
@@ -68,10 +68,10 @@ export class ProjectView extends Vue {
 			});
 			i.children = items;
 		});
-		folderList.$on("collapse", (item: Tea.Editor.TreeViewItem) => {
+		folderList.$on("collapse", (item: Editor.TreeViewItem) => {
 			//console.log("collapse", item);
 		});
-		folderList.$on("select", (item: Tea.Editor.TreeViewItem) => {
+		folderList.$on("select", (item: Editor.TreeViewItem) => {
 			if (item == null) {
 				fileList.unselect();
 				fileList.items = [];
@@ -111,7 +111,7 @@ export class ProjectView extends Vue {
 		fileList.draggable = true;
 		var dragImages = (this.$root as Editor).dragImages;
 		var dragEvents = fileList.dragEvents;
-		dragEvents.dragStart = (e: DragEvent, item: Tea.Editor.TreeViewItem) => {
+		dragEvents.dragStart = (e: DragEvent, item: Editor.TreeViewItem) => {
 			//console.log("onDragStart");
 			this._dragSource = item;
 			e.dataTransfer.effectAllowed = "move";
@@ -124,7 +124,7 @@ export class ProjectView extends Vue {
 			dragImages.appendChild(dragImage);
 			e.dataTransfer.setDragImage(dragImage, 0, 0);
 		};
-		dragEvents.dragEnd = (e: DragEvent, item: Tea.Editor.TreeViewItem) => {
+		dragEvents.dragEnd = (e: DragEvent, item: Editor.TreeViewItem) => {
 			this._dragSource = null;
 		};
 

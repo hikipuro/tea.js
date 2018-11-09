@@ -2,7 +2,6 @@ import * as Tea from "../Tea";
 import { Renderer } from "./Renderer";
 
 export class LineRenderer extends Renderer {
-	static editorView = Tea.Editor.LineRenderer;
 	points: Array<Tea.Vector3>;
 	vertexBuffer: WebGLBuffer;
 	shader: Tea.Shader;

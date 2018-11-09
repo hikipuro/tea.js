@@ -2,7 +2,6 @@ import * as Tea from "../Tea";
 import { Component } from "./Component";
 
 export class Rigidbody extends Component {
-	static editorView = Tea.Editor.Rigidbody;
 	useGravity: boolean;
 	mass: number;
 	velocity: Tea.Vector3;

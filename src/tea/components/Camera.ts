@@ -53,7 +53,6 @@ class Prev {
 }
 
 export class Camera extends Component {
-	static editorView = Tea.Editor.Camera;
 	protected static _skyboxCamera: Camera;
 	depth: number;
 	clearFlags: Tea.CameraClearFlags;

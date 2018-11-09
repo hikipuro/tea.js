@@ -1,6 +1,7 @@
 import Vue from "vue";
 import Component from "vue-class-component";
 import * as Tea from "../../Tea";
+import { Editor } from "../Editor";
 
 @Component({
 	template: `
@@ -70,7 +71,7 @@ export class ColorPicker extends Vue {
 	a: number;
 
 	show(x: number = null, y: number = null): void {
-		var window = this.$refs.window as Tea.Editor.Window;
+		var window = this.$refs.window as Editor.Window;
 		window.isForm = true;
 		if (x == null || y == null) {
 			var el = this.$el;
@@ -89,7 +90,7 @@ export class ColorPicker extends Vue {
 	}
 
 	hide(): void {
-		var window = this.$refs.window as Tea.Editor.Window;
+		var window = this.$refs.window as Editor.Window;
 		window.hide();
 	}
 

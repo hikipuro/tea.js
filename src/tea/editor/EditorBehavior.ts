@@ -152,7 +152,7 @@ export class EditorBehavior {
 			e.preventDefault();
 			this.hierarchyViewCommand.showContextMenu();
 		});
-		hierarchyView.$on("select", (item: Tea.Editor.TreeViewItem) => {
+		hierarchyView.$on("select", (item: Editor.TreeViewItem) => {
 			if (item == null) {
 				hierarchyView.unselect();
 				inspectorView.hide();
@@ -185,7 +185,7 @@ export class EditorBehavior {
 				return;
 			}
 			//console.log(mode);
-			var item: Tea.Editor.TreeViewItem = null;
+			var item: Editor.TreeViewItem = null;
 			switch (mode) {
 				case 0:
 					object3dSrc.parent = object3dDst;
@@ -222,7 +222,7 @@ export class EditorBehavior {
 			}
 			this.editorCommand.isChanged = true;
 		});
-		hierarchyView.$on("dropFromProjectView", (item: Tea.Editor.TreeViewItem) => {
+		hierarchyView.$on("dropFromProjectView", (item: Editor.TreeViewItem) => {
 			var dragSource = projectView.getDragSource();
 			//console.log("dropFromProjectView", item, dragSource.tag);
 			var id = item.tag as number;

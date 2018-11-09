@@ -2,7 +2,6 @@ import * as Tea from "../Tea";
 import { Component } from "./Component";
 
 export class Light extends Component {
-	static editorView = Tea.Editor.Light;
 	color: Tea.Color;
 	intensity: number;
 	range: number;

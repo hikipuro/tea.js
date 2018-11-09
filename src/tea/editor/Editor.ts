@@ -351,6 +351,18 @@ export module Editor {
 	export type TextMesh = _TextMesh;
 }
 
+Tea.BoxCollider.editorView = Editor.BoxCollider;
+Tea.Camera.editorView = Editor.Camera;
+Tea.Light.editorView = Editor.Light;
+Tea.LineRenderer.editorView = Editor.LineRenderer;
+Tea.MeshFilter.editorView = Editor.MeshFilter;
+Tea.MeshRenderer.editorView = Editor.MeshRenderer;
+Tea.ParticleSystem.editorView = Editor.ParticleSystem;
+Tea.Rigidbody.editorView = Editor.Rigidbody;
+Tea.Script.editorView = Editor.Script;
+Tea.TextMesh.editorView = Editor.TextMesh;
+Tea.AudioSource.editorView = Editor.AudioSource;
+
 var loaded = () => {
 	document.removeEventListener(
 		"DOMContentLoaded", loaded
