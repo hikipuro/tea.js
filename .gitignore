@@ -4,8 +4,8 @@ models
 html/main.js
 html/build.js
 html/media
-html/models
 html/css/editor.css
+models/
 test/
 
 # Build

@@ -234,12 +234,12 @@ export class Main {
 		//var script = new TestScript();
 
 		var skybox = scene.renderSettings.skybox;
-		skybox.front.load("html/models/skybox/Sunny_01A_front.jpg");
-		skybox.back.load("html/models/skybox/Sunny_01A_back.jpg");
-		skybox.up.load("html/models/skybox/Sunny_01A_up.jpg");
-		skybox.down.load("html/models/skybox/Sunny_01A_down.jpg");
-		skybox.left.load("html/models/skybox/Sunny_01A_left.jpg");
-		skybox.right.load("html/models/skybox/Sunny_01A_right.jpg");
+		skybox.front.load("models/skybox/Sunny_01A_front.jpg");
+		skybox.back.load("models/skybox/Sunny_01A_back.jpg");
+		skybox.up.load("models/skybox/Sunny_01A_up.jpg");
+		skybox.down.load("models/skybox/Sunny_01A_down.jpg");
+		skybox.left.load("models/skybox/Sunny_01A_left.jpg");
+		skybox.right.load("models/skybox/Sunny_01A_right.jpg");
 
 		var cube = Tea.Object3D.createPrimitive(this.app, Tea.PrimitiveType.Cube);
 		//cube.name = "cube";
@@ -574,7 +574,7 @@ export class Main {
 		});
 		//*/
 
-		Tea.File.readImage("html/models/texture.png", (err, image) => {
+		Tea.File.readImage("models/texture.png", (err, image) => {
 			var texture = this.app.createTexture(image);
 			let r = plane.getComponent(Tea.Renderer);
 			r.material.setTexture("_NormalTex", texture);
@@ -583,7 +583,7 @@ export class Main {
 		});
 
 		var texture = new Tea.Texture(this.app);
-		texture.load("html/models/google.jpg", (err, url) => {
+		texture.load("models/google.jpg", (err, url) => {
 			if (err) {
 				return;
 			}
@@ -612,7 +612,7 @@ export class Main {
 			r.material.mainTexture = texture;
 		});
 
-		Tea.File.readImage("html/models/earth.jpg", (err, image) => {
+		Tea.File.readImage("models/earth.jpg", (err, image) => {
 			//document.body.appendChild(image);
 			var texture = this.app.createTexture(image);
 			//sphere.renderer.shader.texture = texture;
