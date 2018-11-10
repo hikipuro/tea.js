@@ -45,6 +45,9 @@ export class HierarchyViewCommand extends EventDispatcher {
 	}
 
 	selectItem(object3d: Tea.Object3D): void {
+		if (object3d == null) {
+			return;
+		}
 		var hierarchyView = this.hierarchyView;
 		var item = hierarchyView.findItemByTag(object3d.id);
 		hierarchyView.select(item);

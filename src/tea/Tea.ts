@@ -73,6 +73,7 @@ export * from "./utils/Keyframe";
 export * from "./utils/MatrixChecker";
 export * from "./utils/Random";
 export * from "./utils/Screen";
+export * from "./utils/ScriptLoader";
 export * from "./utils/Stats";
 export * from "./utils/StringUtil";
 export * from "./utils/Time";

@@ -1,4 +1,3 @@
-import * as fs from "fs";
 import * as Tea from "../Tea";
 import { Component } from "./Component";
 
@@ -22,28 +21,17 @@ export class Script extends Component {
 		if (json.path == null || json.path === "") {
 			return null;
 		}
-		Tea.File.readText(json.path, (err, data) => {
-			if (err) {
-				console.error(err);
-				return;
+		Tea.ScriptLoader.load(
+			app, json.path,
+			(script: Tea.Script) => {
+				if (script == null) {
+					callback(script);
+					return;
+				}
+				script.enabled = json.enabled;
+				callback(script);
 			}
-			var check = data.indexOf("class");
-			if (check < 0 || check > 64) {
-				console.warn("class not found [" + json.path + "]");
-				return;
-			}
-			var factory = new Function("return " + data);
-			var classRef = factory();
-			Object.setPrototypeOf(classRef.prototype, new Script(app));
-			var instance = new classRef() as Script;
-			if (instance == null) {
-				console.warn("cannot instantiate [" + json.path + "]");
-				return;
-			}
-			instance.enabled = json.enabled;
-			instance.path = json.path;
-			callback(instance);
-		});
+		);
 		/*
 		var buffer = fs.readFileSync(json.path);
 		if (buffer == null) {

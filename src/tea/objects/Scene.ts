@@ -1,5 +1,6 @@
 import * as Tea from "../Tea";
 import { SceneRenderer } from "./SceneRenderer";
+import { EventDispatcher } from "../utils/EventDispatcher";
 
 class SceneComponents {
 	mainCamera: Tea.Camera;
@@ -272,7 +273,7 @@ class SceneComponents {
 	}
 }
 
-export class Scene {
+export class Scene extends EventDispatcher {
 	app: Tea.App;
 	renderSettings: Tea.RenderSettings;
 	physics: Tea.Physics;
@@ -286,6 +287,7 @@ export class Scene {
 	protected _stats: Tea.Stats;
 
 	constructor(app: Tea.App) {
+		super();
 		this.app = app;
 		this.renderSettings = new Tea.RenderSettings(app);
 		this.physics = new Tea.Physics();
@@ -370,6 +372,7 @@ export class Scene {
 			child.scene = this;
 			this._components.add(child);
 		}
+		this.emit("addChild");
 	}
 
 	removeChild(object3d: Tea.Object3D): void {
@@ -393,6 +396,7 @@ export class Scene {
 			child.scene = null;
 			this._components.remove(child);
 		}
+		this.emit("removeChild");
 	}
 
 	swapChildren(child1: Tea.Object3D, child2: Tea.Object3D): void {

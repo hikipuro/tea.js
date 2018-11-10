@@ -1,14 +1,12 @@
 import * as Electron from "electron";
 import * as path from "path";
 import * as url from "url";
-import * as fs from "fs";
-
-//import { MenuItem, ipcMain, IpcMessageEvent, MenuItemConstructorOptions } from "electron";
+//import * as fs from "fs";
 
 module Settings {
 	export const Title: string = "WebGL Test";
 	export const Content: string = "../html/index.html";
-	export const DevTools: boolean = true;
+	export const DevTools: boolean = false;
 }
 
 declare module "electron" {

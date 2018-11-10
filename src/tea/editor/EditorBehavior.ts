@@ -235,29 +235,21 @@ export class EditorBehavior {
 			ext = ext.toLowerCase();
 			switch (ext) {
 				case "js":
-					Tea.File.readText(filename, (err, data) => {
-						if (err) {
-							return;
+					Tea.ScriptLoader.load(
+						this.scene.app, filename,
+						(script: Tea.Script) => {
+							if (script == null) {
+								return;
+							}
+							object3d.addComponentInstance(script);
+	
+							var selectedObject = this.hierarchyViewCommand.getSelectedObject();
+							if (selectedObject != null) {
+								this.hierarchyViewCommand.selectItem(selectedObject);
+							}
+							this.editorCommand.isChanged = true;
 						}
-						var check = data.indexOf("class");
-						if (check < 0 || check > 64) {
-							console.warn("class not found [" + filename + "]");
-							return;
-						}
-						var factory = new Function("return " + data);
-						var classRef = factory();
-						var app = this.scene.app;
-						Object.setPrototypeOf(classRef.prototype, new Tea.Script(app));
-						var instance = new classRef() as Tea.Script;
-						instance.path = filename;
-						object3d.addComponentInstance(instance);
-
-						var selectedObject = this.hierarchyViewCommand.getSelectedObject();
-						if (selectedObject != null) {
-							this.hierarchyViewCommand.selectItem(selectedObject);
-						}
-						this.editorCommand.isChanged = true;
-					});
+					);
 					break;
 				case "jpg":
 				case "png":
@@ -357,6 +349,11 @@ export class EditorBehavior {
 		this.editorCommand.scene = scene;
 		this.hierarchyViewCommand.scene = scene;
 		this.objectInspectorCommand.scene = scene;
+
+		scene.off("addChild", this.onAddChild);
+		scene.on("addChild", this.onAddChild);
+		scene.off("removeChild", this.onRemoveChild);
+		scene.on("removeChild", this.onRemoveChild);
 	}
 
 	updateScreenSize = (): void => {
@@ -447,6 +444,22 @@ export class EditorBehavior {
 			}
 			return;
 		}
+	}
+
+	protected onAddChild = (): void => {
+		var item = this.hierarchyViewCommand.getSelectedObject();
+		this.editor.$nextTick(() => {
+			this.hierarchyViewCommand.update();
+			this.hierarchyViewCommand.selectItem(item);
+		});
+	}
+
+	protected onRemoveChild = (): void => {
+		var item = this.hierarchyViewCommand.getSelectedObject();
+		this.editor.$nextTick(() => {
+			this.hierarchyViewCommand.update();
+			this.hierarchyViewCommand.selectItem(item);
+		});
 	}
 
 	protected onSelectMainMenu = (item: Electron.MenuItem): void => {
