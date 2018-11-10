@@ -77,7 +77,7 @@ export class ParticleSystemRenderer extends Renderer {
 		}
 		this.setVertexBuffer(mesh, particleSystem);
 		this.setFrontFace();
-		this._draw(particleSystem, mesh);
+		this._draw(camera, particleSystem, mesh);
 		this.disableAllAttributes();
 	}
 
@@ -264,14 +264,14 @@ export class ParticleSystemRenderer extends Renderer {
 		return scene.mainCamera;
 	}
 
-	protected drawInstances(particleSystem: Tea.ParticleSystem, mesh: Tea.Mesh): void {
+	protected drawInstances(camera: Tea.Camera, particleSystem: Tea.ParticleSystem, mesh: Tea.Mesh): void {
 		var gl = this.gl;
 		var ext = this.app.status.ANGLE_instanced_arrays;
 
-		var camera = this.getCamera();
-		if (camera == null) {
-			return;
-		}
+		//var camera = this.getCamera();
+		//if (camera == null) {
+		//	return;
+		//}
 		var right = this.material.shader.propertyToID("CameraRight");
 		var up = this.material.shader.propertyToID("CameraUp");
 		var view = camera.cameraToWorldMatrix;
@@ -288,7 +288,7 @@ export class ParticleSystemRenderer extends Renderer {
 		//console.log("drawElementsInstancedANGLE");
 	}
 
-	protected draw(particleSystem: Tea.ParticleSystem, mesh: Tea.Mesh): void {
+	protected draw(camera: Tea.Camera, particleSystem: Tea.ParticleSystem, mesh: Tea.Mesh): void {
 		var gl = this.gl;
 		var position = this.material.shader.propertyToID("position");
 		var color = this.material.shader.propertyToID("color");
@@ -296,10 +296,10 @@ export class ParticleSystemRenderer extends Renderer {
 		if (position == null || color == null || size == null) {
 			return;
 		}
-		var camera = this.getCamera();
-		if (camera == null) {
-			return;
-		}
+		//var camera = this.getCamera();
+		//if (camera == null) {
+		//	return;
+		//}
 		var right = this.material.shader.propertyToID("CameraRight");
 		var up = this.material.shader.propertyToID("CameraUp");
 		var view = camera.cameraToWorldMatrix;
