@@ -4,6 +4,7 @@ import * as Tea from "../Tea";
 
 import { Translator } from "./translate/Translator";
 import { EditorBehavior } from "./EditorBehavior";
+import { ToolBox } from "./ToolBox";
 import { ConsoleView } from "./ConsoleView";
 import { HierarchyView } from "./HierarchyView";
 import { ProjectView } from "./ProjectView";
@@ -98,54 +99,54 @@ Vue.component("TextMesh", TextMesh);
 			id="editor"
 			ref="container"
 			@click.capture="onClick">
-			<HLayout
-				:style="{
-					height: '100%'
-				}">
-				<VLayout class="LeftLayout">
-					<HLayout class="TopLeftLayout">
-						<Panel ref="left" class="LeftPanel">
-							<HierarchyView ref="hierarchy"></HierarchyView>
-							<HResizeBar ref="hierarchyResize"></HResizeBar>
-						</Panel>
-						<Tabs ref="mainTabs" class="Top">
-							<TabItem tabId="player" :name="translator.player" class="MainPanel">
-								<VLayout
-									:style="{
-										height: '100%'
-									}">
-									<Panel class="Toolbar">
-										<SelectAspect
-											ref="aspect"
-											@update="onUpdateAspect">
-										</SelectAspect>
+			<VLayout style="height: 100%">
+				<ToolBox ref="toolBox"></ToolBox>
+				<HLayout>
+					<VLayout class="LeftLayout">
+						<HLayout class="TopLeftLayout">
+							<Panel ref="left" class="LeftPanel">
+								<HierarchyView ref="hierarchy"></HierarchyView>
+								<HResizeBar ref="hierarchyResize"></HResizeBar>
+							</Panel>
+							<Tabs ref="mainTabs" class="Top">
+								<TabItem tabId="player" :name="translator.player" class="MainPanel">
+									<VLayout
+										:style="{
+											height: '100%'
+										}">
+										<Panel class="Toolbar">
+											<SelectAspect
+												ref="aspect"
+												@update="onUpdateAspect">
+											</SelectAspect>
+										</Panel>
+										<Panel ref="playerPanel" class="PlayerPanel">
+											<canvas ref="canvas" id="canvas"></canvas>
+										</Panel>
+									</VLayout>
+								</TabItem>
+								<TabItem tabId="scene" :name="translator.scene">
+									<Panel ref="scenePanel" class="ScenePanel">
 									</Panel>
-									<Panel ref="playerPanel" class="PlayerPanel">
-										<canvas ref="canvas" id="canvas"></canvas>
-									</Panel>
-								</VLayout>
+								</TabItem>
+							</Tabs>
+						</HLayout>
+						<Tabs class="Bottom">
+							<TabItem tabId="project" :name="translator.project">
+								<ProjectView ref="project"></ProjectView>
 							</TabItem>
-							<TabItem tabId="scene" :name="translator.scene">
-								<Panel ref="scenePanel" class="ScenePanel">
-								</Panel>
+							<TabItem tabId="console" :name="translator.console">
+								<ConsoleView ref="console"></ConsoleView>
 							</TabItem>
+							<VResizeBar ref="projectResize" :isTop="true"></VResizeBar>
 						</Tabs>
-					</HLayout>
-					<Tabs class="Bottom">
-						<TabItem tabId="project" :name="translator.project">
-							<ProjectView ref="project"></ProjectView>
-						</TabItem>
-						<TabItem tabId="console" :name="translator.console">
-							<ConsoleView ref="console"></ConsoleView>
-						</TabItem>
-						<VResizeBar ref="projectResize" :isTop="true"></VResizeBar>
-					</Tabs>
-				</VLayout>
-				<Panel ref="right" class="RightPanel">
-					<InspectorView ref="inspector"></InspectorView>
-					<HResizeBar ref="inspectorResize" :isLeft="true"></HResizeBar>
-				</Panel>
-			</HLayout>
+					</VLayout>
+					<Panel ref="right" class="RightPanel">
+						<InspectorView ref="inspector"></InspectorView>
+						<HResizeBar ref="inspectorResize" :isLeft="true"></HResizeBar>
+					</Panel>
+				</HLayout>
+			</VLayout>
 			<div
 				ref="dragImages"
 				class="dragImages">
@@ -159,6 +160,7 @@ Vue.component("TextMesh", TextMesh);
 		}
 	},
 	components: {
+		ToolBox: ToolBox,
 		ConsoleView: ConsoleView,
 		HierarchyView: HierarchyView,
 		ProjectView: ProjectView,
@@ -190,6 +192,10 @@ export class Editor extends Vue {
 		Vue.component(name, component);
 	}
 	//*/
+
+	get toolBox(): ToolBox {
+		return this.$refs.toolBox as ToolBox;
+	}
 
 	get consoleView(): ConsoleView {
 		return this.$refs.console as ConsoleView;

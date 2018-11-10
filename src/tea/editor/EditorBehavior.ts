@@ -26,6 +26,7 @@ export class EditorBehavior {
 		this.initMainMenu();
 		this.initUICommands();
 		this.initTabs();
+		this.initToolBox();
 		this.initConsoleView();
 		this.initScreenView();
 		this.initHierarchyView();
@@ -93,6 +94,16 @@ export class EditorBehavior {
 					break;
 			}
 			this.updateScreenSize();
+		});
+	}
+
+	initToolBox(): void {
+		var toolBox = this.editor.toolBox;
+		toolBox.$on("play", () => {
+			console.log("play");
+		});
+		toolBox.$on("stop", () => {
+			console.log("stop");
 		});
 	}
 

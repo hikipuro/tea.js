@@ -1,5 +1,6 @@
 $parent: "#editor";
 @import "Theme.scss";
+@import "ToolBox.scss";
 @import "ConsoleView.scss";
 @import "HierarchyView.scss";
 @import "ProjectView.scss";
@@ -57,7 +58,7 @@ body {
 	div.LeftPanel {
 		width: 200px;
 		height: 100%;
-		border-right: 1px solid theme("border");
+		border-right: thin solid theme("border");
 		overflow-x: hidden;
 		overflow-y: auto;
 	}
@@ -110,7 +111,7 @@ body {
 
 	div.Tabs.Bottom {
 		height: 200px;
-		border-top: 1px solid theme("border");
+		border-top: thin solid theme("border");
 	}
 	div.BottomLayout {
 		position: relative;
@@ -128,7 +129,7 @@ body {
 	div.RightPanel {
 		width: 200px;
 		height: 100%;
-		border-left: 1px solid theme("border");
+		border-left: thin solid theme("border");
 		overflow-x: hidden;
 		overflow-y: auto;
 	}
