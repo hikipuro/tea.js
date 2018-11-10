@@ -31,6 +31,9 @@ const buildConfig = {
 	devServer: {
 		contentBase: path.join(__dirname, "/html")
 	},
+	optimization: {
+		minimize: true
+	},
 	module: {
 		rules: [
 			{
