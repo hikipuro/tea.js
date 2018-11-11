@@ -3,16 +3,21 @@ import Component from "vue-class-component";
 
 @Component({
 	template: `
-		<li @click="onClick"><slot></slot></li>
+		<li @click="onClick">{{ name }}</li>
 	`,
 	props: {
-		name: {
+		/*name: {
 			type: String,
 			default: ""
-		},
+		},*/
 		index: {
 			type: Number,
 			default: -1
+		}
+	},
+	data: () => {
+		return {
+			name: ""
 		}
 	}
 })
@@ -38,22 +43,23 @@ export class TabBarItem extends Vue {
 		<ul class="TabBar">
 			<TabBarItem
 				v-for="(name, index) in names"
+				ref="items"
 				:key="index"
 				:index="index"
-				:name="name"
-				@select="onSelect">{{ name }}</TabBarItem>
+				@select="onSelect"></TabBarItem>
 		</ul>
 	`,
 	props: {
-		names: {
+		/*names: {
 			type: Array,
 			default: function () {
 				return [];
 			}
-		}
+		}*/
 	},
 	data: () => {
 		return {
+			names: [],
 			selectedIndex: -1
 		}
 	},
@@ -75,6 +81,17 @@ export class TabBar extends Vue {
 		});
 		item.select();
 		this.selectedIndex = index;
+	}
+
+	getItems(): Array<TabBarItem> {
+		return this.$refs.items as Array<TabBarItem>;
+	}
+
+	protected updated(): void {
+		var items = this.getItems();
+		items.forEach((item: TabBarItem, index: number) => {
+			item.name = this.names[index];
+		});
 	}
 
 	protected onSelect(item: TabBarItem): void {
@@ -158,11 +175,28 @@ export class Tabs extends Vue {
 		item.show();
 	}
 
+	protected updated(): void {
+		var bar = this.$refs.bar as TabBar;
+		var items = bar.getItems();
+		var defaultSlot = this.$slots.default;
+		var index = 0;
+		defaultSlot.forEach((node: VNode) => {
+			var child = node.componentInstance as TabItem;
+			if ((child instanceof TabItem) === false) {
+				return;
+			}
+			var name = this.getName(child.name, index);
+			items[index].name = name;
+			index++;
+		});
+	}
+
 	protected mounted(): void {
 		var bar = this.$refs.bar as TabBar;
 		var firstTab = true;
 		var defaultSlot = this.$slots.default;
-		defaultSlot.forEach((node: VNode, index: number) => {
+		var index = 0;
+		defaultSlot.forEach((node: VNode) => {
 			var child = node.componentInstance as TabItem;
 			if ((child instanceof TabItem) === false) {
 				return;
@@ -171,7 +205,7 @@ export class Tabs extends Vue {
 				child.hide();
 			}
 			firstTab = false;
-			var name = this.getName(child.name, index);
+			var name = this.getName(child.name, index++);
 			bar.names.push(name);
 		});
 		this.$nextTick(() => {

@@ -137,7 +137,7 @@ export class Camera extends Vue {
 	rect: Array<number>;
 	depth: number;
 
-	protected created(): void {
+	translate(): void {
 		var translator = Translator.getInstance();
 		translator.basePath = "Components/Camera";
 		this.name = translator.getText("Title");
@@ -151,6 +151,11 @@ export class Camera extends Vue {
 		this.translator.far = translator.getText("Far");
 		this.translator.viewportRect = translator.getText("ViewportRect");
 		this.translator.depth = translator.getText("Depth");
+		this.$forceUpdate();
+	}
+
+	protected created(): void {
+		this.translate();
 	}
 
 	protected mounted(): void {

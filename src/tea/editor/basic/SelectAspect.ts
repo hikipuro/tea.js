@@ -23,12 +23,16 @@ export class SelectAspect extends Vue {
 	x: number;
 	y: number;
 
-	protected created(): void {
-		this.x = 0;
-		this.y = 0;
+	translate(): void {
 		var translator = Translator.getInstance();
 		translator.basePath = "SelectAspect";
 		this.translator.free = translator.getText("FreeAspect");
+	}
+
+	protected created(): void {
+		this.x = 0;
+		this.y = 0;
+		this.translate();
 	}
 	
 	protected onChange(e: Event): void {

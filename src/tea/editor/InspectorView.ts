@@ -46,6 +46,13 @@ export class InspectorView extends Vue {
 		this.component = null;
 	}
 
+	translate(): void {
+		var component = this.getComponent();
+		if (component && component["translate"]) {
+			component["translate"]();
+		}
+	}
+
 	protected onUpdate(...args: Array<any>): void {
 		this.$emit.apply(this, ["update"].concat(args));
 	}

@@ -4,6 +4,7 @@ import Vue from "vue";
 import * as Tea from "../Tea";
 import { Editor } from "./Editor";
 import { EditorSettings } from "./EditorSettings";
+import { Translator } from "./translate/Translator";
 import { EditorMenu } from "./EditorMenu";
 import { SelectAspect } from "./basic/SelectAspect";
 import { UICommands } from "./commands/UICommands";
@@ -37,6 +38,7 @@ export class EditorBehavior {
 
 	initEvents(): void {
 		window.addEventListener("beforeunload", this.onBeforeUnload);
+		window.addEventListener("message", this.onWindowMessage);
 		var keyDownHandler = this.onDocumentKeyDown;
 		if (process && process.platform) {
 			if (process.platform === "darwin") {
@@ -406,6 +408,29 @@ export class EditorBehavior {
 		settings.save();
 	}
 
+	protected onWindowMessage = (e: MessageEvent) => {
+		var json = JSON.parse(e.data);
+		if (json.type === "preferences") {
+			var translator = Translator.getInstance();
+			switch (json.key) {
+				case "ready":
+					var source = e.source as any;
+					var data = {
+						key: "language",
+						value: translator.lang
+					}
+					source.postMessage(JSON.stringify(data), "*");
+					break;
+				case "language":
+					translator.loadResource(json.value);
+					this.editor.translate();
+					this.editor.$forceUpdate();
+					console.log("language", json.value);
+					break;
+			}
+		}
+	}
+
 	protected onDocumentKeyDown = (e: KeyboardEvent): void => {
 		var ctrlKey = e.ctrlKey;
 		var shiftKey = e.shiftKey;
@@ -485,6 +510,9 @@ export class EditorBehavior {
 		//this.editorCommand.isChanged = true;
 
 		switch (item.id) {
+			case "App/Preferences":
+				this.editorCommand.showPreferences();
+				break;
 			case "File/New Scene":
 				this.editorCommand.newScene();
 				break;

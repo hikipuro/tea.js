@@ -159,13 +159,27 @@ export class ObjectInspector extends Vue {
 		components.splice(0, components.length);
 	}
 
-	protected created(): void {
+	translate(): void {
 		var translator = Translator.getInstance();
 		translator.basePath = "ObjectInspector";
 		this.translator.position = translator.getText("Position");
 		this.translator.rotation = translator.getText("Rotation");
 		this.translator.scale = translator.getText("Scale");
 		this.translator.addComponent = translator.getText("AddComponent");
+
+		var components = this.$refs.components as Vue[];
+		if (components == null) {
+			return;
+		}
+		components.forEach((component: any) => {
+			if (component["translate"]) {
+				component["translate"]();
+			}
+		})
+	}
+
+	protected created(): void {
+		this.translate();
 	}
 
 	protected onUpdateTitle(type: string, value: string | boolean): void {

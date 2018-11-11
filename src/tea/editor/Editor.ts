@@ -2,6 +2,7 @@ import Vue from "vue";
 import Component from "vue-class-component";
 import * as Tea from "../Tea";
 
+import { EditorSettings } from "./EditorSettings";
 import { Translator } from "./translate/Translator";
 import { EditorBehavior } from "./EditorBehavior";
 import { ToolBox } from "./ToolBox";
@@ -173,20 +174,6 @@ export class Editor extends Vue {
 	translator: any;
 	protected _behavior: EditorBehavior;
 
-	created(): void {
-		var translator = Translator.getInstance();
-		//translator.loadResource(navigator.language);
-		translator.basePath = "Tabs";
-		this.translator.player = translator.getText("Player");
-		this.translator.scene = translator.getText("Scene");
-		this.translator.project = translator.getText("Project");
-		this.translator.console = translator.getText("Console");
-	}
-
-	mounted(): void {
-		this._behavior = new EditorBehavior(this);
-	}
-
 	/*
 	addComponent(name: string, component: Vue): void {
 		Vue.component(name, component);
@@ -227,6 +214,38 @@ export class Editor extends Vue {
 
 	setScene(scene: Tea.Scene) {
 		this._behavior.setScene(scene);
+	}
+
+	translate(): void {
+		var translator = Translator.getInstance();
+		translator.basePath = "Tabs";
+		this.translator.player = translator.getText("Player");
+		this.translator.scene = translator.getText("Scene");
+		this.translator.project = translator.getText("Project");
+		this.translator.console = translator.getText("Console");
+		var inspectorView = this.$refs.inspector;
+		if (inspectorView != null) {
+			inspectorView["translate"]();
+		}
+		var selectAspect = this.$refs.aspect;
+		if (selectAspect != null) {
+			selectAspect["translate"]();
+			(selectAspect as Vue).$forceUpdate();
+		}
+	}
+
+	protected created(): void {
+		var settings = EditorSettings.getInstance();
+		settings.load();
+		if (settings.language) {
+			var translator = Translator.getInstance();
+			translator.loadResource(settings.language);
+		}
+		this.translate();
+	}
+
+	protected mounted(): void {
+		this._behavior = new EditorBehavior(this);
 	}
 
 	protected onUpdateAspect(): void {

@@ -11,6 +11,11 @@ if (Electron) {
 declare module "fs" {
 	function mkdirSync(path: string, mode?: any | number | string | null): void;
 }
+declare global {
+	interface Window {
+		open(url: string, frameName?: string, features?: string): Electron.BrowserWindowProxy;
+	}
+}
 
 import * as Tea from "../../Tea";
 import { Editor } from "../Editor";
@@ -45,6 +50,10 @@ export class EditorCommand {
 		}
 		this._isChanged = value;
 		this.updateWindowTitle();
+	}
+
+	showPreferences(): void {
+		window.open("", "preferences");
 	}
 
 	newScene(force: boolean = false): void {

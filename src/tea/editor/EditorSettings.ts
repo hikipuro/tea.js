@@ -1,13 +1,16 @@
 import * as fs from "fs";
 import * as Electron from "electron";
+import { Translator } from "./translate/Translator";
 
 export class EditorSettings {
 	static readonly FileName = "settings.json";
 	protected static _instance: EditorSettings;
 	window: EditorSettings.Window;
+	language: string;
 
 	protected constructor() {
 		this.window = new EditorSettings.Window();
+		this.language = "en";
 	}
 
 	static getInstance(): EditorSettings {
@@ -22,8 +25,10 @@ export class EditorSettings {
 	}
 
 	save(): void {
-		var currentWindow = Electron.remote.getCurrentWindow();
-		this.window.setData(currentWindow);
+		var browserWindow = Electron.remote.getCurrentWindow();
+		this.window.setData(browserWindow);
+		var translator = Translator.getInstance();
+		this.language = translator.lang;
 		var data = JSON.stringify(this, null, "\t");
 		fs.writeFileSync(EditorSettings.FileName, data);
 	}
@@ -33,8 +38,17 @@ export class EditorSettings {
 			return;
 		}
 		var data = fs.readFileSync(EditorSettings.FileName, "utf8");
-		var json = JSON.parse(data);
+		var json = null;
+		try {
+			json = JSON.parse(data);
+		} catch (e) {
+			console.error(e);
+			return;
+		}
 		this.window.setJSON(json.window);
+		if (json.language) {
+			this.language = json.language;
+		}
 	}
 }
 
@@ -46,10 +60,10 @@ export module EditorSettings {
 		height: number;
 
 		constructor() {
-			this.x = 0;
-			this.y = 0;
-			this.width = 0;
-			this.height = 0;
+			this.x = null;
+			this.y = null;
+			this.width = null;
+			this.height = null;
 		}
 
 		setJSON(json: any): void {
@@ -63,12 +77,12 @@ export module EditorSettings {
 			}
 		}
 
-		setData(window: Electron.BrowserWindow): void {
-			if (window == null) {
+		setData(browserWindow: Electron.BrowserWindow): void {
+			if (browserWindow == null) {
 				return;
 			}
-			var position = window.getPosition();
-			var size = window.getContentSize();
+			var position = browserWindow.getPosition();
+			var size = browserWindow.getContentSize();
 			this.x = position[0];
 			this.y = position[1];
 			this.width = size[0];

@@ -35,6 +35,14 @@ export class ComponentPanel extends Vue {
 	name: string;
 	enabled: boolean;
 
+	translate(): void {
+		var component = this.$refs.component as Vue;
+		if (component && component["translate"]) {
+			component["translate"]();
+			this.updateTitleBar();
+		}
+	}
+
 	protected mounted(): void {
 		this.updateTitleBar();
 	}

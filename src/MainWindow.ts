@@ -1,13 +1,14 @@
 import * as Electron from "electron";
-import * as path from "path";
+import * as nodePath from "path";
 import * as url from "url";
+import * as fs from "fs";
 import { EditorSettings } from "./tea/editor/EditorSettings";
-//import * as fs from "fs";
 
 module Settings {
 	export const Title: string = "WebGL Test";
 	export const Content: string = "../html/index.html";
 	export const DevTools: boolean = false;
+	export const Preferences: string = "../html/preferences.html";
 }
 
 declare module "electron" {
@@ -19,7 +20,8 @@ declare module "electron" {
 
 export class MainWindow {
 	public static Settings = Settings;
-	public browserWindow: Electron.BrowserWindow = null;
+	browserWindow: Electron.BrowserWindow;
+	preferencesWindow: Electron.BrowserWindow;
 
 	constructor(parent: Electron.BrowserWindow = null) {
 		this.initWindow(parent);
@@ -51,7 +53,6 @@ export class MainWindow {
 	}
 
 	protected initWindow(parent: Electron.BrowserWindow): void {
-		var settings = EditorSettings.getInstance();
 		var options: Electron.BrowserWindowConstructorOptions = {
 			title: Settings.Title,
 			useContentSize: true,
@@ -67,6 +68,7 @@ export class MainWindow {
 			}
 		};
 
+		var settings = EditorSettings.getInstance();
 		if (settings.exists()) {
 			settings.load();
 			var window = settings.window;
@@ -78,7 +80,7 @@ export class MainWindow {
 
 		this.browserWindow = new Electron.BrowserWindow(options);
 		this.browserWindow.loadURL(url.format({
-			pathname: path.join(__dirname, Settings.Content),
+			pathname: nodePath.join(__dirname, Settings.Content),
 			protocol: "file:",
 			slashes: true,
 		}));
@@ -96,6 +98,22 @@ export class MainWindow {
 		this.browserWindow.once("close", () => {
 			this.removeIpcEvents();
 		});
+
+		this.browserWindow.webContents.on("new-window", (
+			event: any, url: string, frameName: string, disposition: string,
+			options: any, additionalFeatures: string[], referrer: Electron.Referrer): void =>
+		{
+			//console.log("new-window", url, frameName, disposition, options, additionalFeatures, referrer);
+			if (frameName === "preferences") {
+				event.preventDefault();
+				if (this.preferencesWindow == null) {
+					this.showPreferencesWindow(options);
+					event.newGuest = this.preferencesWindow;
+				} else {
+					this.preferencesWindow.focus();
+				}
+			}
+		});
 	}
 
 	protected initMenu(): void {
@@ -111,4 +129,33 @@ export class MainWindow {
 		this.browserWindow.setContentSize(width, height, false);
 	}
 
+	protected showPreferencesWindow(options: Electron.BrowserWindowConstructorOptions): void {
+		Object.assign(options, {
+			//modal: true,
+			parent: this.browserWindow,
+			width: 400,
+			height: 200,
+			center: true,
+			resizable: false,
+			maximizable: false,
+			minimizable: false,
+			fullscreenable: false,
+			skipTaskbar: true,
+			useContentSize: true,
+			show: false
+		});
+		var window = new Electron.BrowserWindow(options);
+		window.once("ready-to-show", () => {
+			window.show();
+		});
+		window.once("close", () => {
+			this.preferencesWindow = null;
+		});
+		window.loadURL(url.format({
+			pathname: nodePath.join(__dirname, Settings.Preferences),
+			protocol: "file:",
+			slashes: true,
+		}));
+		this.preferencesWindow = window;
+	}
 }

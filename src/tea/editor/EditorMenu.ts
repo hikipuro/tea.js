@@ -105,6 +105,11 @@ export class EditorMenu {
 						label: Electron.remote.app.getName(),
 						submenu: [
 							{ role: "about" },
+							{
+								id: "App/Preferences",
+								label: "Preferences",
+								accelerator: "CmdOrCtrl+,"
+							},
 							{ type: "separator" },
 							{ role: "services", submenu: [] },
 							{ type: "separator" },
