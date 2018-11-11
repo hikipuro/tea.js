@@ -8,7 +8,7 @@ export class Translator {
 	protected _defaultResource: any;
 	protected _resource: any;
 
-	constructor() {
+	protected constructor() {
 		this.lang = "en";
 		this.basePath = null;
 		this._defaultResource = Translator.en;

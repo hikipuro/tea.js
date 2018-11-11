@@ -3,6 +3,7 @@ import * as Electron from "electron";
 import Vue from "vue";
 import * as Tea from "../Tea";
 import { Editor } from "./Editor";
+import { EditorSettings } from "./EditorSettings";
 import { EditorMenu } from "./EditorMenu";
 import { SelectAspect } from "./basic/SelectAspect";
 import { UICommands } from "./commands/UICommands";
@@ -35,6 +36,7 @@ export class EditorBehavior {
 	}
 
 	initEvents(): void {
+		window.addEventListener("beforeunload", this.onBeforeUnload);
 		var keyDownHandler = this.onDocumentKeyDown;
 		if (process && process.platform) {
 			if (process.platform === "darwin") {
@@ -397,6 +399,11 @@ export class EditorBehavior {
 			this.onSelectProjectViewFileMenu
 		);
 		contextMenu.show();
+	}
+
+	protected onBeforeUnload = (e: Event): void => {
+		var settings = EditorSettings.getInstance();
+		settings.save();
 	}
 
 	protected onDocumentKeyDown = (e: KeyboardEvent): void => {

@@ -26,7 +26,7 @@ export class Component {
 		return componentClass.fromJSON(app, json);
 	}
 
-	static getInstance(app: Tea.App, name: string): Tea.Component {
+	static createInstance(app: Tea.App, name: string): Tea.Component {
 		return new Tea[name](app);
 	}
 

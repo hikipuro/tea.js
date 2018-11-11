@@ -1,5 +1,18 @@
 import * as Tea from "../Tea";
 
+/*
+declare global {
+	interface Document {
+		fullscreenElement: Element;
+		webkitFullscreenElement: Element;
+		webkitExitFullscreen(): void;
+	}
+	interface HTMLElement {
+		webkitRequestFullscreen(): void;
+	}
+}
+//*/
+
 export class Screen {
 	static get dpi(): number {
 		return window.devicePixelRatio;

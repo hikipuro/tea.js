@@ -1,6 +1,7 @@
 import * as Electron from "electron";
 import * as path from "path";
 import * as url from "url";
+import { EditorSettings } from "./tea/editor/EditorSettings";
 //import * as fs from "fs";
 
 module Settings {
@@ -50,15 +51,10 @@ export class MainWindow {
 	}
 
 	protected initWindow(parent: Electron.BrowserWindow): void {
-		this.browserWindow = new Electron.BrowserWindow({
+		var settings = EditorSettings.getInstance();
+		var options: Electron.BrowserWindowConstructorOptions = {
 			title: Settings.Title,
 			useContentSize: true,
-			//width: this._config.window.width,
-			//height: this._config.window.height,
-			//x: this._config.window.x,
-			//y: this._config.window.y,
-			//minWidth: Constants.ScreenWidth,
-			//minHeight: Constants.ScreenHeight,
 			acceptFirstMouse: true,
 			//titleBarStyle: "hidden",
 			show: false,
@@ -69,32 +65,24 @@ export class MainWindow {
 				//experimentalCanvasFeatures: true
 				//nodeIntegration: false
 			}
-		});
+		};
 
+		if (settings.exists()) {
+			settings.load();
+			var window = settings.window;
+			options.x = window.x;
+			options.y = window.y;
+			options.width = window.width;
+			options.height = window.height;
+		}
+
+		this.browserWindow = new Electron.BrowserWindow(options);
 		this.browserWindow.loadURL(url.format({
 			pathname: path.join(__dirname, Settings.Content),
 			protocol: "file:",
 			slashes: true,
-		}), {
-			/*
-			postData: [{
-				type: "rawData",
-				bytes: Buffer.from("hello=world")
-			}],
-			*/
-		});
-
-		// resize
-		this.browserWindow.on("resize", () => {
-			if (this.browserWindow.isFullScreen()) {
-				return;
-			}
-			if (this.browserWindow.isMaximized()) {
-				return;
-			}
-			const size = this.browserWindow.getContentSize();
-		});
-
+		}));
+		
 		// fullscreen
 		this.browserWindow.on("enter-full-screen", () => {
 			this.browserWindow.setAutoHideMenuBar(true);

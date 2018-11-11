@@ -5,8 +5,10 @@
 			"type": "node",
 			"request": "launch",
 			"name": "Launch Program",
+			"cwd": "${workspaceRoot}",
 			"runtimeExecutable": "${workspaceFolder}/node_modules/.bin/electron",
-			"program": "${workspaceFolder}/dist/NodeMain.js"
+			"args": ["."],
+			"outputCapture": "std"
 		}
 	]
 }
