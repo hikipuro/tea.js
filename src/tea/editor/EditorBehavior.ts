@@ -369,6 +369,8 @@ export class EditorBehavior {
 		scene.on("addChild", this.onAddChild);
 		scene.off("removeChild", this.onRemoveChild);
 		scene.on("removeChild", this.onRemoveChild);
+
+		this.editor.consoleView.clear();
 	}
 
 	updateScreenSize = (): void => {
