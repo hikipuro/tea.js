@@ -128,6 +128,17 @@ export class EditorMenu {
 					}
 				);
 			}
+			if (process.platform === "win32") {
+				var editMenu = template[1].submenu as Electron.MenuItemConstructorOptions[];
+				editMenu.push(
+					{ type: "separator" },
+					{
+						id: "App/Preferences",
+						label: "Preferences",
+						accelerator: "CmdOrCtrl+,"
+					}
+				);
+			}
 		}
 		EditorMenu.setMenuItemHandler(
 			template, handler
