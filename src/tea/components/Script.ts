@@ -61,6 +61,10 @@ export class Script extends Component {
 		return this.app.mouse;
 	}
 
+	get gamepad(): Tea.Gamepad {
+		return this.app.gamepad;
+	}
+
 	get scene(): Tea.Scene {
 		return this.object3d.scene;
 	}

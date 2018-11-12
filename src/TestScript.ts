@@ -83,6 +83,16 @@ export class TestScript extends Tea.Script {
 			rotation.rotateEuler(mouse.wheelY / 10, 0, 0);
 		}
 
+		var gamepad = this.gamepad;
+		var axisX = gamepad.axis(0, 0);
+		if (Math.abs(axisX) > 0.2) {
+			this.object3d.translate(axisX / 10, 0, 0);
+		}
+		var axisY = gamepad.axis(0, 1);
+		if (Math.abs(axisY) > 0.2) {
+			this.object3d.translate(0, -axisY / 10, 0);
+		}
+
 		var box1 = this.object3d.getComponent(Tea.BoxCollider);
 		var box2 = this.cube.getComponent(Tea.BoxCollider);
 		if (box2 != null) {

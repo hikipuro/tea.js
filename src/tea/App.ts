@@ -124,6 +124,10 @@ export class App {
 		return this._renderer.mouse;
 	}
 
+	get gamepad(): Tea.Gamepad {
+		return this._renderer.gamepad;
+	}
+
 	get time(): Tea.Time {
 		return this._renderer.time;
 	}
@@ -459,6 +463,7 @@ class AppRenderer extends Tea.EventDispatcher {
 	currentScene: Tea.Scene;
 	keyboard: Tea.Keyboard;
 	mouse: Tea.Mouse;
+	gamepad: Tea.Gamepad;
 	time: Tea.Time;
 	runInBackground: boolean;
 	protected _fps: number;
@@ -475,6 +480,7 @@ class AppRenderer extends Tea.EventDispatcher {
 		this.isPaused = false;
 		this.keyboard = new Tea.Keyboard(document.body);
 		this.mouse = new Tea.Mouse(app, this.app.canvas);
+		this.gamepad = new Tea.Gamepad();
 		this.time = new Tea.Time();
 		this.runInBackground = false;
 		this._fps = 60.0;
@@ -592,6 +598,7 @@ class AppRenderer extends Tea.EventDispatcher {
 			this.currentScene.update();
 			this.keyboard.update();
 			this.mouse.update();
+			this.gamepad.update();
 		}
 		this.emit("update");
 		this._handle = requestAnimationFrame(this._update);

@@ -132,6 +132,9 @@ export * from "./GLExtensions";
 export * from "./GLParameters";
 export * from "./Keyboard";
 export * from "./Mouse";
+import { TeaGamepad } from "./Gamepad";
+export var  Gamepad = TeaGamepad;
+export type Gamepad = TeaGamepad;
 
 /**
  * degrees to radians.
