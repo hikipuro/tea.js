@@ -299,6 +299,11 @@ export class Scene extends EventDispatcher {
 		this._components = new SceneComponents();
 		this._sceneRenderer = new SceneRenderer(this);
 		this._stats = new Tea.Stats(app);
+		var shader = this.app.createShader(
+			Tea.ShaderSources.antialiasPostProcessingVS,
+			Tea.ShaderSources.antialiasPostProcessingFS
+		);
+		this.postProcessingRenderer.material.shader = shader;
 		this.app.renderer.on("resize", this.onResize);
 	}
 

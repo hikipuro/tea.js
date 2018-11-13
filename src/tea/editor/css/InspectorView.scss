@@ -4,6 +4,27 @@
 		width: 100%;
 		line-height: 1.5;
 
+		div.ObjectTitle {
+			display: inline-flex;
+			box-sizing: border-box;
+			align-items: center;
+			margin-top: 2px;
+			padding: 1px;
+			width: 100%;
+
+			> input[type="text"] {
+				flex: 1;
+				margin: 0 2px;
+				height: 1em;
+			}
+		}
+
+		> div.SceneInspector {
+			> .title {
+				padding: 2px 1px 4px 1px;
+			}
+		}
+
 		input[type="checkbox"]:focus {
 			outline: 1px solid orange;
 			outline-offset: 1px;
@@ -22,21 +43,6 @@
 		.ColorPicker > .container:focus {
 			outline: 1px solid orange;
 			outline-offset: 1px;
-		}
-	}
-
-	div.ObjectTitle {
-		display: inline-flex;
-		box-sizing: border-box;
-		align-items: center;
-		margin-top: 2px;
-		padding: 1px;
-		width: 100%;
-
-		> input[type="text"] {
-			flex: 1;
-			margin: 0 2px;
-			height: 1em;
 		}
 	}
 }

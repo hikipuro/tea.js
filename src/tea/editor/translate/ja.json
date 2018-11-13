@@ -65,6 +65,7 @@
 	},
 	"SceneInspector": {
 		"Title": "シーン設定",
+		"Antialias": "アンチエイリアス",
 		"Gravity": "重力",
 		"AmbientLight": "環境光"
 	},

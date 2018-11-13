@@ -6,7 +6,11 @@ import { Translator } from "./translate/Translator";
 @Component({
 	template: `
 		<div class="SceneInspector">
-			{{ title }}
+			<div class="title">{{ title }}</div>
+			<CheckBox
+				ref="antialias"
+				:value="antialias"
+				@update="onUpdateAntialias">{{ translator.antialias }}</CheckBox>
 			<Vector3
 				ref="gravity"
 				:x="gravity[0]"
@@ -25,6 +29,7 @@ import { Translator } from "./translate/Translator";
 		return {
 			translator: {},
 			title: "",
+			antialias: false,
 			gravity: [0, 0, 0],
 			ambientLight: ""
 		}
@@ -34,6 +39,7 @@ export class SceneInspector extends Vue {
 	_scene: Tea.Scene;
 	translator: any;
 	title: string;
+	antialias: boolean;
 	gravity: Array<number>;
 	ambientLight: string;
 
@@ -41,6 +47,7 @@ export class SceneInspector extends Vue {
 		var translator = Translator.getInstance();
 		translator.basePath = "SceneInspector";
 		this.title = translator.getText("Title");
+		this.translator.antialias = translator.getText("Antialias");
 		this.translator.gravity = translator.getText("Gravity");
 		this.translator.ambientLight = translator.getText("AmbientLight");
 	}
@@ -50,6 +57,7 @@ export class SceneInspector extends Vue {
 		if (scene == null) {
 			return;
 		}
+		this.antialias = scene.enablePostProcessing;
 		this.setGravity(scene.physics.gravity);
 		this.ambientLight = scene.renderSettings.ambientLight.toCssColor();
 	}
@@ -63,6 +71,14 @@ export class SceneInspector extends Vue {
 		this.$set(gravity, 0, x);
 		this.$set(gravity, 1, y);
 		this.$set(gravity, 2, z);
+	}
+
+	protected onUpdateAntialias(value: boolean): void {
+		this.antialias = value;
+		if (this._scene) {
+			this._scene.enablePostProcessing = value;
+		}
+		this.$emit("update", "antialias");
 	}
 
 	protected onUpdateGravity(x: number, y: number, z: number): void {

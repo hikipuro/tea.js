@@ -153,11 +153,6 @@ export class Main {
 		this.app.setScene(scene);
 		editor.setScene(scene);
 		scene.enablePostProcessing = true;
-		var shader = this.app.createShader(
-			Tea.ShaderSources.antialiasPostProcessingVS,
-			Tea.ShaderSources.antialiasPostProcessingFS
-		);
-		scene.postProcessingRenderer.material.shader = shader;
 
 		var light = this.app.createDirectionalLight();
 		//light.getComponent(Tea.Light).color.set(1.0,0,0,1);

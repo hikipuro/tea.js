@@ -73,6 +73,7 @@
 	},
 	"SceneInspector": {
 		"Title": "Scene Settings",
+		"Antialias": "Antialias",
 		"Gravity": "Gravity",
 		"AmbientLight": "Ambient Light"
 	},
