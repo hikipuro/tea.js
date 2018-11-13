@@ -51,10 +51,29 @@ export class Skybox {
 		renderer.material.setTexture("_Right", this.right);
 	}
 
+	static fromJSON(app: Tea.App, json: any): Skybox {
+		if (json == null || json._type !== "Skybox") {
+			return null;
+		}
+		var skybox = new Skybox(app);
+		skybox.front = Tea.Texture.fromJSON(app, json.front);
+		skybox.back = Tea.Texture.fromJSON(app, json.back);
+		skybox.up = Tea.Texture.fromJSON(app, json.up);
+		skybox.down = Tea.Texture.fromJSON(app, json.down);
+		skybox.left = Tea.Texture.fromJSON(app, json.left);
+		skybox.right = Tea.Texture.fromJSON(app, json.right);
+		return skybox;
+	}
+
 	toJSON(): Object {
 		var json = {
 			_type: "Skybox",
-			object3d: this.object3d.toJSON(),
+			front: this.front.toJSON(),
+			back: this.back.toJSON(),
+			up: this.up.toJSON(),
+			down: this.down.toJSON(),
+			left: this.left.toJSON(),
+			right: this.right.toJSON()
 		};
 		return json;
 	}
