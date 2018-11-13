@@ -92,6 +92,25 @@ export class ClippingPlanes extends Vue {
 				:max="100"
 				:value="depth"
 				@update="onUpdateDepth">{{ translator.depth }}</InputRange>
+			<CheckBox
+				ref="enableStereo"
+				:value="enableStereo"
+				@update="onUpdateEnableStereo">{{ translator.enableStereo }}</CheckBox>
+			<InputRange
+				v-if="enableStereo"
+				ref="stereoDistance"
+				:min="-1"
+				:max="1"
+				:step="0.01"
+				:value="stereoDistance"
+				@update="onUpdateStereoDistance">{{ translator.stereoDistance }}</InputRange>
+			<SelectEnum
+				v-if="enableStereo"
+				ref="stereoMode"
+				name="stereoMode"
+				:keys="stereoModeKeys"
+				:value="stereoMode"
+				@update="onUpdateStereoMode">{{ translator.stereoMode }}</SelectEnum>
 		</div>
 	`,
 	data: () => {
@@ -108,7 +127,11 @@ export class ClippingPlanes extends Vue {
 			nearClipPlane: 0,
 			farClipPlane: 0,
 			rect: [0, 0, 0, 0],
-			depth: 0
+			depth: 0,
+			enableStereo: false,
+			stereoDistance: 0,
+			stereoModeKeys: [],
+			stereoMode: "",
 		}
 	},
 	watch: {
@@ -136,6 +159,10 @@ export class Camera extends Vue {
 	farClipPlane: number;
 	rect: Array<number>;
 	depth: number;
+	enableStereo: boolean;
+	stereoDistance: number;
+	stereoModeKeys: Array<string>;
+	stereoMode: string;
 
 	translate(): void {
 		var translator = Translator.getInstance();
@@ -151,6 +178,9 @@ export class Camera extends Vue {
 		this.translator.far = translator.getText("Far");
 		this.translator.viewportRect = translator.getText("ViewportRect");
 		this.translator.depth = translator.getText("Depth");
+		this.translator.enableStereo = translator.getText("EnableStereo");
+		this.translator.stereoDistance = translator.getText("StereoDistance");
+		this.translator.stereoMode = translator.getText("StereoMode");
 		this.$forceUpdate();
 	}
 
@@ -174,6 +204,12 @@ export class Camera extends Vue {
 		this.farClipPlane = component.farClipPlane;
 		this.rect = component.rect.clone();
 		this.depth = component.depth;
+		this.enableStereo = component.enableStereo;
+		this.stereoDistance = component.stereoDistance;
+		this.stereoModeKeys = Tea.CameraStereoMode.getKeys();
+		this.$nextTick(() => {
+			this.stereoMode = Tea.CameraStereoMode[component.stereoMode];
+		});
 	}
 
 	protected onUpdateClearFlags(value: string): void {
@@ -250,5 +286,36 @@ export class Camera extends Vue {
 			this._component.depth = value;
 		}
 		this.$emit("update", "depth");
+	}
+
+	protected onUpdateEnableStereo(value: boolean): void {
+		this.enableStereo = value;
+		if (this._component) {
+			this._component.enableStereo = value;
+		}
+		this.$emit("update", "enableStereo");
+		this.stereoMode = "";
+		this.$nextTick(() => {
+			if (this._component) {
+				var mode = Tea.CameraStereoMode[this._component.stereoMode];
+				this.stereoMode = mode;
+			}
+		});
+	}
+
+	protected onUpdateStereoDistance(value: number): void {
+		this.stereoDistance = value;
+		if (this._component) {
+			this._component.stereoDistance = value;
+		}
+		this.$emit("update", "stereoDistance");
+	}
+
+	protected onUpdateStereoMode(value: string): void {
+		this.stereoMode = value;
+		if (this._component) {
+			this._component.stereoMode = Tea.CameraStereoMode[value];
+		}
+		this.$emit("update", "stereoMode");
 	}
 }

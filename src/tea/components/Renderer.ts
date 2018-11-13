@@ -365,8 +365,9 @@ export class Renderer extends Component {
 		//u.uniformMatrix4fv("invMatrix", invMatrix);
 
 		location = shader.propertyToID("TEA_CAMERA_STEREO");
-		if (location != null && camera.enableStereo) {
-			if (camera.stereoMode === Tea.CameraStereoMode.LineByLine) {
+		if (location != null) {
+			if (camera.enableStereo
+			&&  camera.stereoMode === Tea.CameraStereoMode.LineByLine) {
 				var stereoMod = 2;
 				if (camera.isStereoLeft) {
 					stereoMod--;

@@ -97,7 +97,10 @@
 			"Near": "Near",
 			"Far": "Far",
 			"ViewportRect": "Viewport Rect",
-			"Depth": "Depth"
+			"Depth": "Depth",
+			"EnableStereo": "Stereo",
+			"StereoDistance": "Stereo Distance",
+			"StereoMode": "Stereo Mode"
 		},
 		"Light": {
 			"Title": "Light",

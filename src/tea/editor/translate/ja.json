@@ -87,7 +87,10 @@
 			"FieldOfView": "視野角",
 			"ClippingPlanes": "クリッピング平面",
 			"ViewportRect": "ビューポート",
-			"Depth": "深度"
+			"Depth": "深度",
+			"EnableStereo": "ステレオ",
+			"StereoDistance": "ステレオ距離",
+			"StereoMode": "ステレオモード"
 		},
 		"Light": {
 			"Title": "ライト",

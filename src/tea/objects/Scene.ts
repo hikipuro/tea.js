@@ -573,6 +573,7 @@ export class Scene extends EventDispatcher {
 		}
 		Tea.Renderer.drawCallCount = 0;
 		var cameraCount = cameras.length;
+		var rendererCount = renderers.length;
 		var haveNormalCamera = false;
 		var light = false;
 		for (var n = 0; n < cameraCount; n++) {
@@ -588,20 +589,32 @@ export class Scene extends EventDispatcher {
 			} else if (this.enablePostProcessing) {
 				this.renderTexture.bindFramebuffer();
 			}
-			camera.update();
-			var rendererCount = renderers.length;
-			for (var i = 0; i < rendererCount; i++) {
-				var renderer = renderers[i];
-				//if (renderer.object3d.isActiveInHierarchy === false) {
-				//	continue;
-				//}
-				/*
-				if (camera.orthographic === false
-				&& this.frustumCulling(renderer, camera.frustumPlanes)) {
-					continue;
+			if (camera.enableStereo) {
+				camera.updateLeft();
+				for (var i = 0; i < rendererCount; i++) {
+					var renderer = renderers[i];
+					this.renderCamera(camera, lights, renderer);
 				}
-				//*/
-				this.renderCamera(camera, lights, renderer);
+				camera.updateRight();
+				for (var i = 0; i < rendererCount; i++) {
+					var renderer = renderers[i];
+					this.renderCamera(camera, lights, renderer);
+				}
+			} else {
+				camera.update();
+				for (var i = 0; i < rendererCount; i++) {
+					var renderer = renderers[i];
+					//if (renderer.object3d.isActiveInHierarchy === false) {
+					//	continue;
+					//}
+					/*
+					if (camera.orthographic === false
+					&& this.frustumCulling(renderer, camera.frustumPlanes)) {
+						continue;
+					}
+					//*/
+					this.renderCamera(camera, lights, renderer);
+				}
 			}
 			if (renderTexture != null) {
 				renderTexture.unbindFramebuffer();
@@ -727,14 +740,7 @@ export class Scene extends EventDispatcher {
 		//if (this.enablePostProcessing) {
 		//	this.renderTexture.bindFramebuffer();
 		//}
-		if (camera.enableStereo) {
-			camera.updateLeft();
-			renderer.render(camera, lights, this.renderSettings);
-			camera.updateRight();
-			renderer.render(camera, lights, this.renderSettings);
-		} else {
-			renderer.render(camera, lights, this.renderSettings);
-		}
+		renderer.render(camera, lights, this.renderSettings);
 		//if (this.enablePostProcessing) {
 		//	this.renderTexture.unbindFramebuffer();
 		//}

@@ -711,6 +711,7 @@ export module ShaderSources {
 
 	export const skyboxFS = `
 		precision mediump float;
+
 		const float Front = 0.0;
 		const float Back = 1.0;
 		const float Left = 2.0;
@@ -728,13 +729,19 @@ export module ShaderSources {
 		varying vec2 vTexCoord;
 		varying float direction;
 
-		void main() {
-			if (TEA_CAMERA_STEREO != 0) {
-				float stereoMod = float(TEA_CAMERA_STEREO - 1);
-				if (mod(floor(gl_FragCoord.y), 2.0) == stereoMod) {
-					discard;
-				}
+		void checkStereoCamera() {
+			if (TEA_CAMERA_STEREO == 0) {
+				return;
 			}
+			float stereoMod = float(TEA_CAMERA_STEREO - 1);
+			if (mod(floor(gl_FragCoord.y), 2.0) == stereoMod) {
+				discard;
+			}
+		}
+
+		void main() {
+			checkStereoCamera();
+
 			float d = floor(direction);
 			vec4 tex = vec4(0.0);
 			if (d == Front) {

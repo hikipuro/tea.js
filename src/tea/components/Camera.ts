@@ -63,7 +63,6 @@ export class Camera extends Component {
 	orthographicSize: number;
 	rect: Tea.Rect;
 	targetTexture: Tea.RenderTexture;
-	enableStereo: boolean;
 	stereoDistance: number;
 	stereoMode: Tea.CameraStereoMode;
 	isStereoLeft: boolean;
@@ -79,6 +78,7 @@ export class Camera extends Component {
 	protected _inverseViewProjectionMatrix: Tea.Matrix4x4;
 	protected _prev: Prev;
 	protected _viewportRect: Tea.Rect;
+	protected _enableStereo: boolean;
 	static currentBGColor: Tea.Color;
 
 	constructor(app: Tea.App) {
@@ -104,7 +104,6 @@ export class Camera extends Component {
 		this._orthographic = false;
 		this.orthographicSize = 5.0;
 		this.rect = new Tea.Rect(0.0, 0.0, 1.0, 1.0);
-		this.enableStereo = false;
 		this.stereoDistance = 0.1;
 		this.stereoMode = Tea.CameraStereoMode.SideBySide;
 		this.isStereoLeft = true;
@@ -115,6 +114,7 @@ export class Camera extends Component {
 		this._inverseViewProjectionMatrix = new Tea.Matrix4x4();
 		this._prev = new Prev();
 		this._viewportRect = new Tea.Rect();
+		this._enableStereo = false;
 		//this.update();
 	}
 
@@ -155,6 +155,15 @@ export class Camera extends Component {
 		return this._viewProjectionMatrix;
 	}
 
+	get enableStereo(): boolean {
+		return this._enableStereo;
+	}
+	set enableStereo(value: boolean) {
+		this._prev.aspect = 0.0;
+		this._prev.position.set(0.0001, 0.0002, 0.0003);
+		this._enableStereo = value;
+	}
+
 	destroy(): void {
 		this.depth = undefined;
 		this.clearFlags = undefined;
@@ -166,7 +175,6 @@ export class Camera extends Component {
 		this.orthographicSize = undefined;
 		this.rect = undefined;
 		this.targetTexture = undefined;
-		this.enableStereo = undefined;
 		this.stereoDistance = undefined;
 		this.stereoMode = undefined;
 		this.isStereoLeft = undefined;
@@ -181,6 +189,7 @@ export class Camera extends Component {
 		this._prev.destroy();
 		this._prev = undefined;
 		this._cameraToWorldMatrix = undefined;
+		this._enableStereo = undefined;
 		super.destroy();
 	}
 
@@ -262,38 +271,100 @@ export class Camera extends Component {
 		}
 	}
 
-	updateLeft(): void {
+	updateLeft(setViewport: boolean = true): void {
 		var position = this.object3d.position.clone();
 		position.x -= this.stereoDistance;
 
-		var view = Tea.Matrix4x4.tr(
+		this._cameraToWorldMatrix.setTR(
 			position,
 			this.object3d.rotation
 		);
-		view.toggleHand();
-		this._cameraToWorldMatrix = view;
+		this._cameraToWorldMatrix.toggleHand();
+		this._worldToCameraMatrix = this._cameraToWorldMatrix.inverse;
 
-		view = view.inverse;
-		this._worldToCameraMatrix = view;
-		this.setViewportLeft();
+		if (this.orthographic) {
+			var aspect = this.aspect;
+			var h = this.orthographicSize;
+			var w = h * aspect;
+			this._projectionMatrix.ortho(
+				-w, w, -h, h,
+				this.nearClipPlane,
+				this.farClipPlane
+			);
+		} else {
+			this._projectionMatrix.perspective(
+				this.fieldOfView,
+				this.aspect,
+				this.nearClipPlane,
+				this.farClipPlane
+			);
+		}
+
+		this._viewProjectionMatrix = this._projectionMatrix.mul(
+			this._worldToCameraMatrix
+		);
+		this._inverseViewProjectionMatrix = this._viewProjectionMatrix.inverse;
+		//this.frustumPlanes = Tea.GeometryUtil.calculateFrustumPlanes(this);
+		
 		this.isStereoLeft = true;
+		if (setViewport) {
+			var scene = this.object3d.scene;
+			if (scene != null && scene.enablePostProcessing) {
+				this.setViewportLeft(scene);
+				this.clear();
+			} else {
+				this.setViewportLeft();
+				this.clear();
+			}
+		}
 	}
 
-	updateRight(): void {
+	updateRight(setViewport: boolean = true): void {
 		var position = this.object3d.position.clone();
 		position.x += this.stereoDistance;
 
-		var view = Tea.Matrix4x4.tr(
+		this._cameraToWorldMatrix.setTR(
 			position,
 			this.object3d.rotation
 		);
-		view.toggleHand();
-		this._cameraToWorldMatrix = view;
+		this._cameraToWorldMatrix.toggleHand();
+		this._worldToCameraMatrix = this._cameraToWorldMatrix.inverse;
 
-		view = view.inverse;
-		this._worldToCameraMatrix = view;
-		this.setViewportRight();
+		if (this.orthographic) {
+			var aspect = this.aspect;
+			var h = this.orthographicSize;
+			var w = h * aspect;
+			this._projectionMatrix.ortho(
+				-w, w, -h, h,
+				this.nearClipPlane,
+				this.farClipPlane
+			);
+		} else {
+			this._projectionMatrix.perspective(
+				this.fieldOfView,
+				this.aspect,
+				this.nearClipPlane,
+				this.farClipPlane
+			);
+		}
+
+		this._viewProjectionMatrix = this._projectionMatrix.mul(
+			this._worldToCameraMatrix
+		);
+		this._inverseViewProjectionMatrix = this._viewProjectionMatrix.inverse;
+		//this.frustumPlanes = Tea.GeometryUtil.calculateFrustumPlanes(this);
+		
 		this.isStereoLeft = false;
+		if (setViewport) {
+			var scene = this.object3d.scene;
+			if (scene != null && scene.enablePostProcessing) {
+				this.setViewportRight(scene);
+				this.clear();
+			} else {
+				this.setViewportRight();
+				this.clear();
+			}
+		}
 	}
 
 	screenPointToRay(position: Tea.Vector3): Tea.Ray {
@@ -416,10 +487,9 @@ export class Camera extends Component {
 			orthographicSize: this.orthographicSize,
 			rect: this.rect,
 			//targetTexture: this.targetTexture,
-			enableStereo: this.enableStereo,
+			enableStereo: this._enableStereo,
 			stereoDistance: this.stereoDistance,
-			stereoMode: this.stereoMode,
-			isStereoLeft: this.isStereoLeft,
+			stereoMode: Tea.CameraStereoMode.toString(this.stereoMode)
 		});
 		return json;
 	}
@@ -440,10 +510,9 @@ export class Camera extends Component {
 		camera.orthographicSize = json.orthographicSize;
 		camera.rect = Tea.Rect.fromArray(json.rect);
 		//camera.targetTexture = json.targetTexture;
-		camera.enableStereo = json.enableStereo;
+		camera._enableStereo = json.enableStereo;
 		camera.stereoDistance = json.stereoDistance;
-		camera.stereoMode = json.stereoMode;
-		camera.isStereoLeft = json.isStereoLeft;
+		camera.stereoMode = Tea.CameraStereoMode[json.stereoMode as string];
 		return camera;
 	}
 
@@ -526,42 +595,54 @@ export class Camera extends Component {
 		gl.scissor(x, y, w, h);
 	}
 	
-	protected setViewportLeft(): void {
-		var gl = this.gl;
-		var rect = this.rect.clone();
-		if (rect.x < 0) {
-			rect.width += rect.x;
-			rect.x = 0;
+	protected setViewportLeft(scene: Tea.Scene = null): void {
+		var rx = this.rect[0];
+		var ry = this.rect[1];
+		var rw = this.rect[2];
+		var rh = this.rect[3];
+		
+		if (rx < 0.0) {
+			rw += rx;
+			rx = 0.0;
 		}
-		if (rect.y < 0) {
-			rect.height += rect.y;
-			rect.y = 0;
+		if (ry < 0.0) {
+			rh += ry;
+			ry = 0.0;
 		}
-		if (rect.xMax > 1) {
-			rect.width = 1 - rect.x;
+		if (rx + rw > 1.0) {
+			rw = 1.0 - rx;
 		}
-		if (rect.yMax > 1) {
-			rect.height = 1 - rect.y;
+		if (ry + rh > 1.0) {
+			rh = 1.0 - ry;
+		}
+
+		var width: number = 0.0;
+		var height: number = 0.0;
+
+		if (scene != null && scene.enablePostProcessing) {
+			width = scene.renderTexture.width;
+			height = scene.renderTexture.height;
+		} else {
+			width = this.app.width;
+			height = this.app.height;
 		}
 
 		switch (this.stereoMode) {
 			case Tea.CameraStereoMode.SideBySide:
-				rect.width /= 2;
+				rw /= 2;
 				break;
 			case Tea.CameraStereoMode.TopAndBottom:
-				rect.height /= 2;
-				rect.y += rect.height;
+				rh /= 2;
+				ry += rh;
 				break;
 			case Tea.CameraStereoMode.LineByLine:
 				break;
 		}
 
-		var width = this.app.width;
-		var height = this.app.height;
-		var x = rect.x * width;
-		var y = rect.y * height;
-		var w = rect.width * width;
-		var h = rect.height * height;
+		var x = rx * width;
+		var y = ry * height;
+		var w = rw * width;
+		var h = rh * height;
 
 		if (w < 0.0) {
 			w = 0.0;
@@ -569,47 +650,65 @@ export class Camera extends Component {
 		if (h < 0.0) {
 			h = 0.0;
 		}
+
+		x = Math.round(x);
+		y = Math.round(y);
+		w = Math.round(w);
+		h = Math.round(h);
 		
+		var gl = this.gl;
 		gl.viewport(x, y, w, h);
 		gl.scissor(x, y, w, h);
 	}
 	
-	protected setViewportRight(): void {
-		var gl = this.gl;
-		var rect = this.rect.clone();
-		if (rect.x < 0) {
-			rect.width += rect.x;
-			rect.x = 0;
+	protected setViewportRight(scene: Tea.Scene = null): void {
+		var rx = this.rect[0];
+		var ry = this.rect[1];
+		var rw = this.rect[2];
+		var rh = this.rect[3];
+		
+		if (rx < 0.0) {
+			rw += rx;
+			rx = 0.0;
 		}
-		if (rect.y < 0) {
-			rect.height += rect.y;
-			rect.y = 0;
+		if (ry < 0.0) {
+			rh += ry;
+			ry = 0.0;
 		}
-		if (rect.xMax > 1) {
-			rect.width = 1 - rect.x;
+		if (rx + rw > 1.0) {
+			rw = 1.0 - rx;
 		}
-		if (rect.yMax > 1) {
-			rect.height = 1 - rect.y;
+		if (ry + rh > 1.0) {
+			rh = 1.0 - ry;
+		}
+
+		var width: number = 0.0;
+		var height: number = 0.0;
+
+		if (scene != null && scene.enablePostProcessing) {
+			width = scene.renderTexture.width;
+			height = scene.renderTexture.height;
+		} else {
+			width = this.app.width;
+			height = this.app.height;
 		}
 
 		switch (this.stereoMode) {
 			case Tea.CameraStereoMode.SideBySide:
-				rect.width /= 2;
-				rect.x += rect.width;
+				rw /= 2;
+				rx += rw;
 				break;
 			case Tea.CameraStereoMode.TopAndBottom:
-				rect.height /= 2;
+				rh /= 2;
 				break;
 			case Tea.CameraStereoMode.LineByLine:
 				break;
 		}
 
-		var width = this.app.width;
-		var height = this.app.height;
-		var x = rect.x * width;
-		var y = rect.y * height;
-		var w = rect.width * width;
-		var h = rect.height * height;
+		var x = rx * width;
+		var y = ry * height;
+		var w = rw * width;
+		var h = rh * height;
 
 		if (w < 0.0) {
 			w = 0.0;
@@ -618,13 +717,14 @@ export class Camera extends Component {
 			h = 0.0;
 		}
 
-		var viewport = this.app.status.viewport;
-		if (viewport[0] !== x && viewport[1] !== y &&
-			viewport[2] !== w && viewport[3] !== h) {
-			gl.viewport(x, y, w, h);
-			gl.scissor(x, y, w, h);
-			viewport.set(x, y, w, h);
-		}
+		x = Math.round(x);
+		y = Math.round(y);
+		w = Math.round(w);
+		h = Math.round(h);
+		
+		var gl = this.gl;
+		gl.viewport(x, y, w, h);
+		gl.scissor(x, y, w, h);
 	}
 
 	protected clear(): void {
@@ -634,6 +734,19 @@ export class Camera extends Component {
 				//this.clearNothing();
 				break;
 			case Tea.CameraClearFlags.SolidColor:
+				if (this._enableStereo) {
+					if (this.stereoMode === Tea.CameraStereoMode.LineByLine) {
+						if (this.isStereoLeft) {
+							this.updateClearColor();
+							gl.clear(
+								gl.COLOR_BUFFER_BIT |
+								gl.DEPTH_BUFFER_BIT |
+								gl.STENCIL_BUFFER_BIT
+							);
+						}
+						return;
+					}
+				}
 				this.updateClearColor();
 				gl.clear(
 					gl.COLOR_BUFFER_BIT |
@@ -715,10 +828,20 @@ export class Camera extends Component {
 			} else {
 				camera.fieldOfView = 60.0;
 			}
-			camera.object3d.scene = this.object3d.scene;
+			camera._enableStereo = this._enableStereo;
+			camera.stereoMode = this.stereoMode;
+			camera.object3d.scene = scene;
 			camera.rect.copy(this.rect);
 			camera.object3d.localRotation.copy(this.object3d.rotation);
-			camera.update();
+			if (this._enableStereo) {
+				if (this.isStereoLeft) {
+					camera.updateLeft(false);
+				} else {
+					camera.updateRight(false);
+				}
+			} else {
+				camera.update();
+			}
 			skybox.object3d.localPosition.set(0.0, 0.0, 0.0);
 			skybox.object3d.update();
 			skybox.renderer.render(

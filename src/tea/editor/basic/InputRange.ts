@@ -14,6 +14,7 @@ import Component from "vue-class-component";
 					ref="range"
 					:min="min"
 					:max="max"
+					:step="step"
 					:value="value"
 					@input="onInput"
 					@change="onChange">
@@ -39,6 +40,10 @@ import Component from "vue-class-component";
 		max: {
 			type: Number,
 			default: 100
+		},
+		step: {
+			type: Number,
+			default: 1
 		},
 		value: {
 			type: Number,
