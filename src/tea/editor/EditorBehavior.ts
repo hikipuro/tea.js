@@ -37,6 +37,17 @@ export class EditorBehavior {
 	}
 
 	initEvents(): void {
+		if (Electron && Electron.remote) {
+			var browserWindow = Electron.remote.getCurrentWindow();
+			browserWindow.removeListener("enter-full-screen", this.onResizeWindow);
+			browserWindow.removeListener("leave-full-screen", this.onResizeWindow);
+			browserWindow.removeListener("maximize", this.onResizeWindow);
+			browserWindow.removeListener("unmaximize", this.onResizeWindow);
+			browserWindow.on("enter-full-screen", this.onResizeWindow);
+			browserWindow.on("leave-full-screen", this.onResizeWindow);
+			browserWindow.on("maximize", this.onResizeWindow);
+			browserWindow.on("unmaximize", this.onResizeWindow);
+		}
 		window.addEventListener("beforeunload", this.onBeforeUnload);
 		window.addEventListener("message", this.onWindowMessage);
 		var keyDownHandler = this.onDocumentKeyDown;
@@ -371,6 +382,16 @@ export class EditorBehavior {
 		scene.on("removeChild", this.onRemoveChild);
 
 		this.editor.consoleView.clear();
+	}
+
+	onResizeWindow = (): void => {
+		if (this.scene == null) {
+			return;
+		}
+		var renderer = this.scene.app.renderer;
+		setTimeout(() => {
+			renderer.dispatchResizeEvent();
+		}, 250);
 	}
 
 	updateScreenSize = (): void => {

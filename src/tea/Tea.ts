@@ -43,6 +43,12 @@ export * from "./enums/TextureWrapMode";
 export * from "./enums/WeightedMode";
 export * from "./enums/WrapMode";
 
+export * from "./input/Keyboard";
+export * from "./input/Mouse";
+import { TeaGamepad } from "./input/Gamepad";
+export var  Gamepad = TeaGamepad;
+export type Gamepad = TeaGamepad;
+
 export * from "./math/Bounds";
 export * from "./math/Mathf";
 export * from "./math/Matrix4x4";
@@ -126,15 +132,10 @@ export * from "./shaders/ShaderStencilMask";
 export * from "./shaders/ShaderStencilOp";
 export * from "./shaders/ShaderTestFunc";
 
-export * from "./App";
-export * from "./GLCapabilities";
-export * from "./GLExtensions";
-export * from "./GLParameters";
-export * from "./Keyboard";
-export * from "./Mouse";
-import { TeaGamepad } from "./Gamepad";
-export var  Gamepad = TeaGamepad;
-export type Gamepad = TeaGamepad;
+export * from "./app/App";
+export * from "./app/GLCapabilities";
+export * from "./app/GLExtensions";
+export * from "./app/GLParameters";
 
 /**
  * degrees to radians.

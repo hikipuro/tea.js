@@ -1,7 +1,7 @@
 import * as Tea from "../Tea";
-import { Mouse } from "../Mouse";
+import { Keyboard } from "../input/Keyboard";
+import { Mouse } from "../input/Mouse";
 import { Script } from "../components/Script";
-import { Keyboard } from "../Keyboard";
 
 export class SceneMovement extends Script {
 	moveSpeed: number = 0.2;

@@ -1,13 +1,6 @@
-import * as Electron from "electron";
-import * as Tea from "./Tea";
-
-class Status {
-	frontFace: number;
-	viewport: Tea.Rect;
-	frameBuffer: WebGLFramebuffer;
-	OES_element_index_uint: any;
-	ANGLE_instanced_arrays: ANGLE_instanced_arrays;
-}
+import * as Tea from "../Tea";
+import { AppRenderer } from "./AppRenderer";
+import { AppStatus } from "./AppStatus";
 
 export class App {
 	static useStencil: boolean = true;
@@ -16,7 +9,7 @@ export class App {
 	audio: Tea.AppAudio;
 	capabilities: Tea.GLCapabilities;
 	parameters: Tea.GLParameters;
-	readonly status: Status;
+	readonly status: AppStatus;
 	readonly cursor: Tea.Cursor;
 	protected _canvasAttributes: WebGLContextAttributes;
 	protected _renderer: AppRenderer;
@@ -30,10 +23,9 @@ export class App {
 		this.canvas.addEventListener("webglcontextrestored", this.onContextRestored);
 		this.init();
 
+		this.capabilities = new Tea.GLCapabilities(this.gl);
 		this.parameters = new Tea.GLParameters(this.gl);
-		this.status = new Status();
-		this.status.frontFace = this.gl.CCW;
-		this.status.viewport = new Tea.Rect(0.0, 0.0, 1.0, 1.0);
+		this.status = new AppStatus(this.gl);
 		this.cursor = new Tea.Cursor(this);
 		this._renderer = new AppRenderer(this);
 		this.audio = new Tea.AppAudio(this);
@@ -67,8 +59,8 @@ export class App {
 	}
 	set width(value: number) {
 		var canvas = this.canvas;
-		canvas.width = value * this._pixelRatio;
 		canvas.style.width = value + "px";
+		canvas.width = value * this._pixelRatio;
 	}
 
 	get height(): number {
@@ -76,8 +68,8 @@ export class App {
 	}
 	set height(value: number) {
 		var canvas = this.canvas;
-		canvas.height = value * this._pixelRatio;
 		canvas.style.height = value + "px";
+		canvas.height = value * this._pixelRatio;
 	}
 
 	get drawingBufferWidth(): number {
@@ -206,6 +198,18 @@ export class App {
 		this._pixelRatio = ratio;
 		this.width = this.width;
 		this.height = this.height;
+	}
+
+	setScene(scene: Tea.Scene): void {
+		this._renderer.currentScene = scene;
+	}
+
+	start(): void {
+		this._renderer.start();
+	}
+
+	stop(): void {
+		this._renderer.stop();
 	}
 
 	createObject3D(): Tea.Object3D {
@@ -345,24 +349,6 @@ export class App {
 		return object3d;
 	}
 
-	setScene(scene: Tea.Scene): void {
-		this._renderer.currentScene = scene;
-	}
-
-	drawArrays(): void {
-		var gl = this.gl;
-		gl.drawArrays(gl.TRIANGLES, 0, 3);
-		gl.flush();
-	}
-
-	start(): void {
-		this._renderer.start();
-	}
-
-	stop(): void {
-		this._renderer.stop();
-	}
-
 	createTextMesh(): Tea.Object3D {
 		var object3d = new Tea.Object3D(this);
 		var shader = new Tea.Shader(this);
@@ -453,173 +439,5 @@ export class App {
 
 	protected onContextRestored = (event: WebGLContextEvent) => {
 		console.warn("webglcontextrestored", event);
-	}
-}
-
-class AppRenderer extends Tea.EventDispatcher {
-	app: App;
-	isStarted: boolean;
-	isPaused: boolean;
-	currentScene: Tea.Scene;
-	keyboard: Tea.Keyboard;
-	mouse: Tea.Mouse;
-	gamepad: Tea.Gamepad;
-	time: Tea.Time;
-	runInBackground: boolean;
-	protected _fps: number;
-	protected _interval: number;
-	protected _isSceneView: boolean;
-	protected _lastTime: number;
-	protected _update: FrameRequestCallback;
-	protected _handle: number;
-
-	constructor(app: App) {
-		super();
-		this.app = app;
-		this.isStarted = false;
-		this.isPaused = false;
-		this.keyboard = new Tea.Keyboard(document.body);
-		this.mouse = new Tea.Mouse(app, this.app.canvas);
-		this.gamepad = new Tea.Gamepad();
-		this.time = new Tea.Time();
-		this.runInBackground = false;
-		this._fps = 60.0;
-		this._interval = 1000.0 / this._fps;
-		this._isSceneView = false;
-		this._lastTime = 0.0;
-		this._update = this.update;
-		this._handle = 0;
-
-		window.addEventListener("blur", () => {
-			if (this.runInBackground) {
-				return;
-			}
-			if (this.isStarted && this.isPaused === false) {
-				cancelAnimationFrame(this._handle);
-				this._handle = 0;
-			}
-			this.isPaused = true;
-			this.emit("pause");
-		});
-		window.addEventListener("focus", () => {
-			if (this.runInBackground) {
-				return;
-			}
-			if (this.isStarted && this.isPaused) {
-				this._lastTime = performance.now();
-				this._handle = requestAnimationFrame(this._update);
-			}
-			this.isPaused = false;
-			this.emit("resume");
-		});
-		window.addEventListener("resize", Tea.debounce(() => {
-			this.dispatchResizeEvent();
-		}, 250));
-		if (Electron && Electron.remote) {
-			var browserWindow = Electron.remote.getCurrentWindow();
-			browserWindow.on("enter-full-screen", () => {
-				setTimeout(() => {
-					this.dispatchResizeEvent();
-				}, 100);
-			});
-			browserWindow.on("leave-full-screen", () => {
-				this.dispatchResizeEvent();
-			});
-			browserWindow.on("maximize", () => {
-				this.dispatchResizeEvent();
-			});
-			browserWindow.on("unmaximize", () => {
-				this.dispatchResizeEvent();
-			});
-		}
-	}
-
-	get fps(): number {
-		return this._fps;
-	}
-	set fps(value: number) {
-		this._fps = value;
-		this._interval = 1000.0 / value;
-	}
-
-	get isSceneView(): boolean {
-		return this._isSceneView;
-	}
-	set isSceneView(value: boolean) {
-		if (this._isSceneView === value) {
-			return;
-		}
-		this._isSceneView = value;
-		if (value) {
-			this._update = this.updateScene;
-		} else {
-			this._update = this.update;
-		}
-	}
-
-	dispatchResizeEvent(): void {
-		this.emit("resize");
-	}
-
-	start(): void {
-		if (this.isStarted === true) {
-			return;
-		}
-		this.isStarted = true;
-		this.time.start();
-		if (this.isPaused === false) {
-			this._lastTime = performance.now();
-			this._handle = requestAnimationFrame(this._update);
-		}
-	}
-
-	stop(): void {
-		if (this.isStarted === false) {
-			return;
-		}
-		this.isStarted = false;
-		if (this.isPaused === false) {
-			cancelAnimationFrame(this._handle);
-			this._handle = 0;
-		}
-	}
-
-	protected update = (time: number): void => {
-		if (time < this._lastTime + this._interval) {
-			this._handle = requestAnimationFrame(this._update);
-			return;
-		}
-		this._lastTime += this._interval;
-		//Tea.Vector3.newCount = 0;
-		//Tea.Quaternion.newCount = 0;
-		//Tea.Matrix4x4.newCount = 0;
-		this.time.update();
-		if (this.currentScene != null) {
-			this.currentScene.update();
-			this.keyboard.update();
-			this.mouse.update();
-			this.gamepad.update();
-		}
-		this.emit("update");
-		this._handle = requestAnimationFrame(this._update);
-		//console.log("Tea.Vector3.newCount", Tea.Vector3.newCount);
-		//console.log("Tea.Quaternion.newCount", Tea.Quaternion.newCount);
-		//console.log("Tea.Matrix4x4.newCount", Tea.Matrix4x4.newCount);
-	}
-
-	protected updateScene = (time: number): void => {
-		if (time < this._lastTime + this._interval) {
-			this._handle = requestAnimationFrame(this._update);
-			return;
-		}
-		this._lastTime += this._interval;
-		this.time.update();
-		if (this.currentScene != null) {
-			this.currentScene.updateScene();
-			this.keyboard.update();
-			this.mouse.update();
-		}
-		this.emit("update");
-		this._handle = requestAnimationFrame(this._update);
 	}
 }

@@ -1,4 +1,3 @@
-
 export class Keyboard {
 	protected _element: HTMLElement;
 	protected _keys: object;
