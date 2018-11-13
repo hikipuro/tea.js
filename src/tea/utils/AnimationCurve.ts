@@ -102,6 +102,36 @@ export class AnimationCurve {
 
 	}
 
+	static fromJSON(app: Tea.App, json: any): AnimationCurve {
+		if (json == null || json._type !== "AnimationCurve") {
+			return null;
+		}
+		var keys = [];
+		for (var i = 0; i < json.keys.length; i++) {
+			var key = json.keys[i];
+			keys.push(Tea.Keyframe.fromJSON(app, key));
+		}
+		var animationCurve = new AnimationCurve();
+		animationCurve.keys = keys;
+		animationCurve.preWrapMode = Tea.WrapMode[json.preWrapMode as string];
+		animationCurve.postWrapMode = Tea.WrapMode[json.postWrapMode as string];
+		return animationCurve;
+	}
+
+	toJSON(): Object {
+		var keys = [];
+		this.keys.forEach((keyFrame: Tea.Keyframe) => {
+			keys.push(keyFrame.toJSON());
+		});
+		var json = {
+			_type: "AnimationCurve",
+			keys: keys,
+			preWrapMode: Tea.WrapMode.toString(this.preWrapMode),
+			postWrapMode: Tea.WrapMode.toString(this.postWrapMode)
+		};
+		return json;
+	}
+
 	protected get first(): Tea.Keyframe {
 		return this.keys[0];
 	}

@@ -106,9 +106,9 @@ class UniformItem {
 }
 
 export class Material {
-	shader: Tea.Shader;
 	renderQueue: number;
 	protected _isDefault: boolean;
+	protected _shader: Tea.Shader;
 	protected _uniforms: {[key: string]: UniformItem};
 	protected _textures: {[key: string]: Tea.Texture};
 
@@ -135,6 +135,14 @@ export class Material {
 		var material = new Material(app);
 		material._isDefault = true;
 		return material;
+	}
+
+	get shader(): Tea.Shader {
+		return this._shader;
+	}
+	set shader(value: Tea.Shader) {
+		this._isDefault = false;
+		this._shader = value;
 	}
 
 	get color(): Tea.Color {
@@ -192,9 +200,9 @@ export class Material {
 	}
 
 	destroy(): void {
-		if (this.shader != null) {
-			this.shader.destroy();
-			this.shader = undefined;
+		if (this._shader != null) {
+			this._shader.destroy();
+			this._shader = undefined;
 		}
 		this.renderQueue = undefined;
 		this._isDefault = undefined;
@@ -366,7 +374,7 @@ export class Material {
 		json.renderQueue = this.renderQueue;
 		json.uniforms = [];
 		json.textures = [];
-		json.shader = this.shader.toJSON();
+		json.shader = this._shader.toJSON();
 		var keys = Object.keys(this._uniforms);
 		var length = keys.length;
 		for (var i = 0; i < length; i++) {
@@ -395,7 +403,7 @@ export class Material {
 		var material = new Material(app);
 		if (json.isDefault) {
 			material._isDefault = true;
-			material.shader = app.createDefaultShader();
+			material._shader = app.createDefaultShader();
 			return material;
 		}
 		material.renderQueue = json.renderQueue;
@@ -412,7 +420,7 @@ export class Material {
 				Tea.Texture.fromJSON(app, texture.value)
 			);
 		}
-		material.shader = Tea.Shader.fromJSON(app, json.shader);
+		material._shader = Tea.Shader.fromJSON(app, json.shader);
 		return material;
 	}
 

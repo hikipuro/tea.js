@@ -62,4 +62,59 @@ export class PSMinMaxCurve {
 				return (min + Math.random() * (max - min)) * this.curveMultiplier;
 		}
 	}
+
+	static fromJSON(app: Tea.App, json: any): PSMinMaxCurve {
+		if (json == null || json._type !== "MinMaxCurve") {
+			return null;
+		}
+		var minMaxCurve: PSMinMaxCurve = null;
+		var mode = Tea.ParticleSystemCurveMode[json.mode as string];
+		switch (mode) {
+			case Tea.ParticleSystemCurveMode.Constant:
+				minMaxCurve = new PSMinMaxCurve(json.constant);
+				minMaxCurve.curveMultiplier = json.curveMultiplier;
+				break;
+			case Tea.ParticleSystemCurveMode.TwoConstants:
+				minMaxCurve = new PSMinMaxCurve(json.curveMin, json.curveMax);
+				minMaxCurve.curveMultiplier = json.curveMultiplier;
+				break;
+			case Tea.ParticleSystemCurveMode.Curve:
+				var curve = Tea.AnimationCurve.fromJSON(app, json.curve);
+				minMaxCurve = new PSMinMaxCurve(json.curveMultiplier, curve);
+				break;
+			case Tea.ParticleSystemCurveMode.TwoCurves:
+				var curveMin = Tea.AnimationCurve.fromJSON(app, json.curveMin);
+				var curveMax = Tea.AnimationCurve.fromJSON(app, json.curveMax);
+				minMaxCurve = new PSMinMaxCurve(json.curveMultiplier, curveMin, curveMax);
+				break;
+		}
+		return minMaxCurve;
+	}
+
+	toJSON(): Object {
+		var curve = null;
+		var curveMax = null;
+		var curveMin = null;
+		if (this.curve != null) {
+			curve = this.curve.toJSON();
+		}
+		if (this.curveMax != null) {
+			curveMax = this.curveMax.toJSON();
+		}
+		if (this.curveMin != null) {
+			curveMin = this.curveMin.toJSON();
+		}
+		var json = {
+			_type: "MinMaxCurve",
+			constant: this.constant,
+			constantMax: this.constantMax,
+			constantMin: this.constantMin,
+			curve: curve,
+			curveMax: curveMax,
+			curveMin: curveMin,
+			curveMultiplier: this.curveMultiplier,
+			mode: Tea.ParticleSystemCurveMode.toString(this.mode)
+		};
+		return json;
+	}
 }

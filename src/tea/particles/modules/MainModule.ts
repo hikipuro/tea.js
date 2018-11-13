@@ -86,4 +86,39 @@ export class PSMainModule {
 	set startSpeedMultiplier(value: number) {
 		this.startSpeed.curveMultiplier = value;
 	}
+
+	static fromJSON(app: Tea.App, json: any): PSMainModule {
+		if (json == null || json._type !== "MainModule") {
+			return null;
+		}
+		var module = new PSMainModule();
+		module.duration = json.duration;
+		module.flipRotation = json.flipRotation;
+		module.gravityModifier = Tea.ParticleSystem.MinMaxCurve.fromJSON(app, json.gravityModifier);
+		module.loop = json.loop;
+		module.maxParticles = json.maxParticles;
+		module.startColor = Tea.ParticleSystem.MinMaxGradient.fromJSON(app, json.startColor);
+		module.startLifetime = Tea.ParticleSystem.MinMaxCurve.fromJSON(app, json.startLifetime);
+		module.startRotation = Tea.ParticleSystem.MinMaxCurve.fromJSON(app, json.startRotation);
+		module.startSize = Tea.ParticleSystem.MinMaxCurve.fromJSON(app, json.startSize);
+		module.startSpeed = Tea.ParticleSystem.MinMaxCurve.fromJSON(app, json.startSpeed);
+		return module;
+	}
+
+	toJSON(): Object {
+		var json = {
+			_type: "MainModule",
+			duration: this.duration,
+			flipRotation: this.flipRotation,
+			gravityModifier: this.gravityModifier.toJSON(),
+			loop: this.loop,
+			maxParticles: this.maxParticles,
+			startColor: this.startColor.toJSON(),
+			startLifetime: this.startLifetime.toJSON(),
+			startRotation: this.startRotation.toJSON(),
+			startSize: this.startSize.toJSON(),
+			startSpeed: this.startSpeed.toJSON(),
+		};
+		return json;
+	}
 }

@@ -75,6 +75,7 @@ export class ParticleSystem extends Component {
 		this.time = 0.0;
 		this.velocityOverLifetime = new ParticleSystem.VelocityOverLifetimeModule();
 		this.isPlaying = false;
+		this._startTime = 0.0;
 		this._maxParticles = this.main.maxParticles;
 		this.createDataBuffer();
 	}
@@ -100,7 +101,11 @@ export class ParticleSystem extends Component {
 
 	destroy(): void {
 		this.particles = undefined;
+		this.colorOverLifetime = undefined;
+		this.emission = undefined;
 		this.main = undefined;
+		this.shape = undefined;
+		this.velocityOverLifetime = undefined;
 		super.destroy();
 	}
 
@@ -276,21 +281,30 @@ export class ParticleSystem extends Component {
 	//triggerSubEmitter(): void {
 	//}
 
-	toJSON(): Object {
-		var json = super.toJSON();
-		Object.assign(json, {
-			_type: "ParticleSystem"
-		});
-		return json;
-	}
-
 	static fromJSON(app: Tea.App, json: any): ParticleSystem {
 		if (json == null || json._type !== "ParticleSystem") {
 			return null;
 		}
+		app.enableInstancedArrays();
 		var particleSystem = new ParticleSystem(app);
 		particleSystem.enabled = json.enabled;
+		particleSystem.colorOverLifetime = PSColorOverLifetimeModule.fromJSON(app, json.colorOverLifetime);
+		particleSystem.emission = PSEmissionModule.fromJSON(app, json.emission);
+		particleSystem.shape = PSShapeModule.fromJSON(app, json.shape);
+		particleSystem.main = PSMainModule.fromJSON(app, json.main);
 		return particleSystem;
+	}
+	
+	toJSON(): Object {
+		var json = super.toJSON();
+		Object.assign(json, {
+			_type: "ParticleSystem",
+			colorOverLifetime: this.colorOverLifetime.toJSON(),
+			emission: this.emission.toJSON(),
+			shape: this.shape.toJSON(),
+			main: this.main.toJSON()
+		});
+		return json;
 	}
 
 	protected get isTimeOver(): boolean {

@@ -14,6 +14,12 @@ export class PSMinMaxGradient {
 	constructor(min: Tea.Color, max: Tea.Color);
 	constructor(min: Tea.Gradient, max: Tea.Gradient);
 	constructor(a: Tea.Color | Tea.Gradient, b?: Tea.Color | Tea.Gradient) {
+		this.color = null;
+		this.colorMax = null;
+		this.colorMin = null;
+		this.gradient = null;
+		this.gradientMax = null;
+		this.gradientMin = null;
 		if (b == null) {
 			if (a instanceof Tea.Color) {
 				this.color = a;
@@ -33,7 +39,6 @@ export class PSMinMaxGradient {
 		this.gradientMin = a;
 		this.gradientMax = b as Tea.Gradient;
 		this.mode = Tea.ParticleSystemGradientMode.TwoGradients;
-		return;
 	}
 
 	evaluate(time: number, lerpFactor?: number): Tea.Color {
@@ -58,5 +63,70 @@ export class PSMinMaxGradient {
 				return Tea.Random.colorHSV();
 		}
 		return Tea.Color.white.clone();
+	}
+
+	static fromJSON(app: Tea.App, json: any): PSMinMaxGradient {
+		if (json == null || json._type !== "MinMaxGradient") {
+			return null;
+		}
+		var minMaxGradient = null;
+		var mode = Tea.ParticleSystemGradientMode[json.mode as string];
+		switch (mode) {
+			case Tea.ParticleSystemGradientMode.Color:
+				minMaxGradient = new PSMinMaxGradient(
+					Tea.Color.fromArray(json.color)
+				);
+				break;
+			case Tea.ParticleSystemGradientMode.TwoColors:
+				minMaxGradient = new PSMinMaxGradient(
+					Tea.Color.fromArray(json.colorMin),
+					Tea.Color.fromArray(json.colorMax)
+				);
+				break;
+			case Tea.ParticleSystemGradientMode.Gradient:
+				minMaxGradient = new PSMinMaxGradient(
+					Tea.Gradient.fromJSON(app, json.gradient)
+				);
+				break;
+			case Tea.ParticleSystemGradientMode.TwoGradients:
+				minMaxGradient = new PSMinMaxGradient(
+					Tea.Gradient.fromJSON(app, json.gradientMin),
+					Tea.Gradient.fromJSON(app, json.gradientMax)
+				);
+				break;
+			case Tea.ParticleSystemGradientMode.RandomColor:
+				minMaxGradient = new PSMinMaxGradient(
+					new Tea.Color()
+				);
+				minMaxGradient.mode = Tea.ParticleSystemGradientMode.RandomColor;
+				break;
+		}
+		return minMaxGradient;
+	}
+
+	toJSON(): Object {
+		var gradient = null;
+		var gradientMax = null;
+		var gradientMin = null;
+		if (this.gradient != null) {
+			gradient = this.gradient.toJSON();
+		}
+		if (this.gradientMax != null) {
+			gradientMax = this.gradientMax.toJSON();
+		}
+		if (this.gradientMin != null) {
+			gradientMin = this.gradientMin.toJSON();
+		}
+		var json = {
+			_type: "MinMaxGradient",
+			color: this.color,
+			colorMax: this.colorMax,
+			colorMin: this.colorMin,
+			gradient: gradient,
+			gradientMax: gradientMax,
+			gradientMin: gradientMin,
+			mode: Tea.ParticleSystemGradientMode.toString(this.mode)
+		};
+		return json;
 	}
 }

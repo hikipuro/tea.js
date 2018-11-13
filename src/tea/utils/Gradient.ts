@@ -43,6 +43,45 @@ export class Gradient {
 		this.sortColorKeys();
 	}
 
+	static fromJSON(app: Tea.App, json: any): Gradient {
+		if (json == null || json._type !== "Gradient") {
+			return null;
+		}
+		var alphaKeys = [];
+		var colorKeys = [];
+		for (var i = 0; i < json.alphaKeys.length; i++) {
+			var alphaKey = json.alphaKeys[i];
+			alphaKeys.push(Tea.GradientAlphaKey.fromJSON(app, alphaKey));
+		}
+		for (var i = 0; i < json.colorKeys.length; i++) {
+			var colorKey = json.colorKeys[i];
+			colorKeys.push(Tea.GradientColorKey.fromJSON(app, colorKey));
+		}
+		var gradient = new Gradient();
+		gradient.alphaKeys = alphaKeys;
+		gradient.colorKeys = colorKeys;
+		gradient.mode = Tea.GradientMode[json.mode as string];
+		return gradient;
+	}
+
+	toJSON(): Object {
+		var alphaKeys = [];
+		var colorKeys = [];
+		this.alphaKeys.forEach((alphaKey: Tea.GradientAlphaKey) => {
+			alphaKeys.push(alphaKey.toJSON());
+		});
+		this.colorKeys.forEach((colorKey: Tea.GradientColorKey) => {
+			colorKeys.push(colorKey.toJSON());
+		});
+		var json = {
+			_type: "Gradient",
+			alphaKeys: alphaKeys,
+			colorKeys: colorKeys,
+			mode: Tea.GradientMode.toString(this.mode)
+		};
+		return json;
+	}
+
 	protected createDefaultAlphaKeys(): Array<Tea.GradientAlphaKey> {
 		var keys = [];
 		keys.push(new Tea.GradientAlphaKey(1.0, 0.0));
@@ -54,7 +93,7 @@ export class Gradient {
 		var keys = [];
 		var color = Tea.Color.white;
 		keys.push(new Tea.GradientColorKey(color.clone(), 0.0));
-		keys.push(new Tea.GradientColorKey(color.clone(), 1.1));
+		keys.push(new Tea.GradientColorKey(color.clone(), 1.0));
 		return keys;
 	}
 

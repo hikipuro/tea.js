@@ -47,14 +47,36 @@ export class PSShapeModule {
 		this.arcMode = Tea.ParticleSystemShapeMultiModeValue.Random;
 		this.arcSpeed = new Tea.ParticleSystem.MinMaxCurve(1.0);
 		this.arcSpread = 0.0;
+		this.boxThickness = new Tea.Vector3();
+		this.donutRadius = 0.0;
 		this.length = 5.0;
-		this.shapeType = Tea.ParticleSystemShapeType.Cone;
+		this.mesh = null;
+		this.meshMaterialIndex = 0;
+		this.meshRenderer = null;
+		this.meshShapeType = Tea.ParticleSystemMeshShapeType.Triangle;
+		this.normalOffset = 0.0;
 		this.position = new Tea.Vector3();
 		this.radius = 1.0;
 		this.radiusMode = Tea.ParticleSystemShapeMultiModeValue.Loop;
+		this.radiusSpeed = new Tea.ParticleSystem.MinMaxCurve(1.0);
+		this.radiusSpread = 0.0;
 		this.radiusThickness = 1.0;
+		this.randomDirectionAmount = 0.0;
+		this.randomPositionAmount = 0.0;
 		this.rotation = new Tea.Vector3();
 		this.scale = Tea.Vector3.one.clone();
+		this.shapeType = Tea.ParticleSystemShapeType.Cone;
+		//this.skinnedMeshRenderer = new Tea.SkinnedMeshRenderer();
+		this.sphericalDirectionAmount = 0.0;
+		this.texture = null;
+		this.textureAlphaAffectsParticles = false;
+		this.textureBilinearFiltering = false;
+		this.textureClipChannel = Tea.ParticleSystemShapeTextureChannel.Alpha;
+		this.textureClipThreshold = 0.0;
+		this.textureColorAffectsParticles = false;
+		this.textureUVChannel = 0;
+		this.useMeshColors = false;
+		this.useMeshMaterialIndex = false;
 	}
 
 	get arcSpeedMultiplier(): number {
@@ -116,6 +138,94 @@ export class PSShapeModule {
 				this.rectangle(time, particle);
 				break;
 		}
+	}
+
+	static fromJSON(app: Tea.App, json: any): PSShapeModule {
+		if (json == null || json._type !== "ShapeModule") {
+			return null;
+		}
+		var module = new PSShapeModule();
+		module.enabled = json.enabled;
+		module.alignToDirection = json.alignToDirection;
+		module.angle = json.angle;
+		module.arc = json.arc;
+		module.arcMode = Tea.ParticleSystemShapeMultiModeValue[json.arcMode as string];
+		module.arcSpeed = Tea.ParticleSystem.MinMaxCurve.fromJSON(app, json.arcSpeed);
+		module.arcSpread = json.arcSpread;
+		module.boxThickness = Tea.Vector3.fromArray(json.boxThickness);
+		module.donutRadius = json.donutRadius;
+		module.length = json.length;
+		//module.mesh = Tea.Mesh.fromJSON(app, json.mesh);
+		module.meshMaterialIndex = json.meshMaterialIndex;
+		//module.meshRenderer = Tea.MeshRenderer.fromJSON(app, json.meshRenderer);
+		module.meshShapeType = Tea.ParticleSystemMeshShapeType[json.meshShapeType as string];
+		module.normalOffset = json.normalOffset;
+		module.position = Tea.Vector3.fromArray(json.position);
+		module.radius = json.radius;
+		module.radiusMode = Tea.ParticleSystemShapeMultiModeValue[json.radiusMode as string];
+		module.radiusSpeed = Tea.ParticleSystem.MinMaxCurve.fromJSON(app, json.radiusSpeed);
+		module.radiusThickness = json.radiusThickness;
+		module.randomDirectionAmount = json.randomDirectionAmount;
+		module.randomPositionAmount = json.randomPositionAmount;
+		module.rotation = Tea.Vector3.fromArray(json.rotation);
+		module.scale = Tea.Vector3.fromArray(json.scale);
+		module.shapeType = Tea.ParticleSystemShapeType[json.shapeType as string];
+		//module.skinnedMeshRenderer = Tea.SkinnedMeshRenderer.fromJSON(app, json.skinnedMeshRenderer);
+		module.sphericalDirectionAmount = json.sphericalDirectionAmount;
+		module.texture = Tea.Texture.fromJSON(app, json.texture);
+		module.textureAlphaAffectsParticles = json.textureAlphaAffectsParticles;
+		module.textureBilinearFiltering = json.textureBilinearFiltering;
+		module.textureClipChannel = Tea.ParticleSystemShapeTextureChannel[json.textureClipChannel as string];
+		module.textureClipThreshold = json.textureClipThreshold;
+		module.textureColorAffectsParticles = json.textureColorAffectsParticles;
+		module.textureUVChannel = json.textureUVChannel;
+		module.useMeshColors = json.useMeshColors;
+		module.useMeshMaterialIndex = json.useMeshMaterialIndex;
+		return module;
+	}
+
+	toJSON(): Object {
+		var json = {
+			_type: "ShapeModule",
+			enabled: this.enabled,
+			alignToDirection: this.alignToDirection,
+			angle: this.angle,
+			arc: this.arc,
+			arcMode: Tea.ParticleSystemShapeMultiModeValue.toString(this.arcMode),
+			arcSpeed: this.arcSpeed.toJSON(),
+			arcSpread: this.arcSpread,
+			boxThickness: this.boxThickness,
+			donutRadius: this.donutRadius,
+			length: this.length,
+			//mesh: this.mesh.toJSON(),
+			meshMaterialIndex: this.meshMaterialIndex,
+			//meshRenderer: this.meshRenderer.toJSON(),
+			meshShapeType: Tea.ParticleSystemMeshShapeType.toString(this.meshShapeType),
+			normalOffset: this.normalOffset,
+			position: this.position,
+			radius: this.radius,
+			radiusMode: Tea.ParticleSystemShapeMultiModeValue.toString(this.radiusMode),
+			radiusSpeed: this.radiusSpeed.toJSON(),
+			radiusSpread: this.radiusSpread,
+			radiusThickness: this.radiusThickness,
+			randomDirectionAmount: this.randomDirectionAmount,
+			randomPositionAmount: this.randomPositionAmount,
+			rotation: this.rotation,
+			scale: this.scale,
+			shapeType: Tea.ParticleSystemShapeType.toString(this.shapeType),
+			//skinnedMeshRenderer: this.skinnedMeshRenderer.toJSON(),
+			sphericalDirectionAmount: this.sphericalDirectionAmount,
+			//texture: this.texture.toJSON(),
+			textureAlphaAffectsParticles: this.textureAlphaAffectsParticles,
+			textureBilinearFiltering: this.textureBilinearFiltering,
+			textureClipChannel: Tea.ParticleSystemShapeTextureChannel.toString(this.textureClipChannel),
+			textureClipThreshold: this.textureClipThreshold,
+			textureColorAffectsParticles: this.textureColorAffectsParticles,
+			textureUVChannel: this.textureUVChannel,
+			useMeshColors: this.useMeshColors,
+			useMeshMaterialIndex: this.useMeshMaterialIndex
+		};
+		return json;
 	}
 
 	protected getSpeed(): number {
