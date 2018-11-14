@@ -1,6 +1,7 @@
 #{$parent} {
 	div.ConsoleView {
-		width: max-content;
+		width: 100%;
+		min-width: max-content;
 		padding: 0.2em 0;
 
 		> .item {
