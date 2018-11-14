@@ -130,9 +130,15 @@ export class MainWindow {
 	}
 
 	protected showPreferencesWindow(options: Electron.BrowserWindowConstructorOptions): void {
+		var rect = this.browserWindow.getBounds();
+		var x = rect.x + rect.width / 2;
+		var y = rect.y + rect.height / 2;
+
 		Object.assign(options, {
 			//modal: true,
 			parent: this.browserWindow,
+			x: x,
+			y: y,
 			width: 400,
 			height: 200,
 			center: true,
@@ -142,8 +148,13 @@ export class MainWindow {
 			fullscreenable: false,
 			skipTaskbar: true,
 			useContentSize: true,
+			type: "toolbar",
 			show: false
 		});
+		
+		options.x -= options.width / 2;
+		options.y -= options.height / 2;
+		
 		var window = new Electron.BrowserWindow(options);
 		window.once("ready-to-show", () => {
 			window.show();
@@ -151,6 +162,7 @@ export class MainWindow {
 		window.once("close", () => {
 			this.preferencesWindow = null;
 		});
+		window.setMenu(null);
 		window.loadURL(url.format({
 			pathname: nodePath.join(__dirname, Settings.Preferences),
 			protocol: "file:",
