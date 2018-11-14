@@ -127,6 +127,9 @@ export class TextMesh extends Component {
 		if (this._font === value) {
 			return;
 		}
+		if (value === "") {
+			value = "sans-serif";
+		}
 		this._font = value;
 		this._isChanged = true;
 	}
@@ -241,6 +244,9 @@ export class TextMesh extends Component {
 		textMesh._alignment = Tea.TextAlignment[json.alignment as string];
 		textMesh._color = Tea.Color.fromArray(json.color);
 		textMesh._font = json.font;
+		if (textMesh._font === "") {
+			textMesh._font = "sans-serif";
+		}
 		textMesh._fontSize = json.fontSize;
 		textMesh._fontStyle = Tea.FontStyle[json.fontStyle as string];
 		textMesh._text = json.text;
