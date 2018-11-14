@@ -4,14 +4,16 @@ import { HierarchyView } from "../HierarchyView";
 import { InspectorView } from "../InspectorView";
 import { NativeContextMenu } from "../basic/NativeContextMenu";
 import { Timer } from "../Timer";
+import { EditorCommand } from "./EditorCommand";
 import { HierarchyViewCommand } from "./HierarchyViewCommand";
 import { ObjectInspector } from "../ObjectInspector";
 
 export class ObjectInspectorCommand {
 	scene: Tea.Scene;
+	editorCommand: EditorCommand;
+	hierarchyViewCommand: HierarchyViewCommand;
 	hierarchyView: HierarchyView;
 	inspectorView: InspectorView;
-	hierarchyViewCommand: HierarchyViewCommand;
 	updateTimer: Timer;
 	componentMenu: NativeContextMenu;
 	addComponentMenu: NativeContextMenu;
@@ -159,6 +161,7 @@ export class ObjectInspectorCommand {
 			case "Remove Component":
 				object3d.removeComponent(component);
 				this.update();
+				this.editorCommand.isChanged = true;
 				break;
 		}
 	}
@@ -200,6 +203,7 @@ export class ObjectInspectorCommand {
 			object3d.addComponent(component);
 			this.hierarchyViewCommand.selectItem(object3d);
 			//this.selectHierarchyViewItem(object3d);
+			this.editorCommand.isChanged = true;
 		}
 	}
 }

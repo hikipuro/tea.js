@@ -80,6 +80,7 @@ export class EditorBehavior {
 		this.editorCommand.inspectorView = inspectorView;
 
 		this.hierarchyViewCommand = new HierarchyViewCommand();
+		this.hierarchyViewCommand.editorCommand = this.editorCommand;
 		this.hierarchyViewCommand.hierarchyView = hierarchyView;
 		this.hierarchyViewCommand.inspectorView = inspectorView;
 		this.hierarchyViewCommand.on("menu", (id: string) => {
@@ -87,9 +88,10 @@ export class EditorBehavior {
 		});
 
 		this.objectInspectorCommand = new ObjectInspectorCommand();
+		this.objectInspectorCommand.editorCommand = this.editorCommand;
+		this.objectInspectorCommand.hierarchyViewCommand = this.hierarchyViewCommand;
 		this.objectInspectorCommand.hierarchyView = hierarchyView;
 		this.objectInspectorCommand.inspectorView = inspectorView;
-		this.objectInspectorCommand.hierarchyViewCommand = this.hierarchyViewCommand;
 	}
 
 	initTabs(): void {
@@ -343,6 +345,9 @@ export class EditorBehavior {
 						this.objectInspectorCommand.snoozeUpdateTimer(1000);
 						break;
 				}
+			}
+			if (type === "SceneInspector") {
+				this.editorCommand.isChanged = true;
 			}
 		});
 		inspectorView.$on("change", (type: any, property: string, value: any) => {

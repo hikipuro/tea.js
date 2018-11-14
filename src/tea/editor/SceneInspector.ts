@@ -78,7 +78,7 @@ export class SceneInspector extends Vue {
 		if (this._scene) {
 			this._scene.enablePostProcessing = value;
 		}
-		this.$emit("update", "antialias");
+		this.$emit("update", "SceneInspector", "antialias");
 	}
 
 	protected onUpdateGravity(x: number, y: number, z: number): void {
@@ -89,7 +89,7 @@ export class SceneInspector extends Vue {
 		if (this._scene != null) {
 			this._scene.physics.gravity.set(x, y, z);
 		}
-		this.$emit("update", "gravity");
+		this.$emit("update", "SceneInspector", "gravity");
 	}
 
 	protected onUpdateAmbientLight(value: Tea.Color): void {
@@ -97,6 +97,6 @@ export class SceneInspector extends Vue {
 		if (this._scene) {
 			this._scene.renderSettings.ambientLight.copy(value);
 		}
-		this.$emit("update", "ambientLight");
+		this.$emit("update", "SceneInspector", "ambientLight");
 	}
 }
