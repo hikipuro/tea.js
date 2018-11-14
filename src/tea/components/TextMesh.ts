@@ -25,14 +25,15 @@ export class TextMesh extends Component {
 		this._mesh = Tea.Primitives.createQuadMesh();
 
 		this._canvas = document.createElement("canvas");
-		//this._canvas.width = 1;
-		//this._canvas.height = 1;
+		this._canvas.width = 2;
+		this._canvas.height = 2;
 		//this._canvas.style["-webkit-font-smoothing"] = "none";
 		//this._canvas.style["image-rendering"] = "pixelated";
 		this._context = this._canvas.getContext("2d");
 
 		this.texture = new Tea.Texture(app);
-		this.texture.image = this._canvas;
+		this.texture.filterMode = Tea.FilterMode.Point;
+		//this.texture.image = this._canvas;
 
 		this._isChanged = true;
 		this._color = Tea.Color.white.clone();
@@ -188,6 +189,15 @@ export class TextMesh extends Component {
 		if (this._isChanged === false) {
 			return;
 		}
+		var renderer = this.object3d.getComponent(Tea.MeshRenderer);
+		if (renderer && renderer.material) {
+			renderer.material.mainTexture = this.texture;
+			this.material = renderer.material;
+		}
+		var meshFilter = this.object3d.getComponent(Tea.MeshFilter);
+		if (meshFilter) {
+			meshFilter.mesh = this.mesh;
+		}
 		this.updateContext();
 		this.draw();
 		this._isChanged = false;
@@ -203,7 +213,7 @@ export class TextMesh extends Component {
 		var json = super.toJSON();
 		Object.assign(json, {
 			_type: "TextMesh",
-			material: this.material.toJSON(),
+			//material: this.material.toJSON(),
 			characterSize: this._characterSize,
 			lineSpacing: this._lineSpacing,
 			anchor: Tea.TextAnchor.toString(this._anchor),
@@ -235,6 +245,7 @@ export class TextMesh extends Component {
 		textMesh._fontStyle = Tea.FontStyle[json.fontStyle as string];
 		textMesh._text = json.text;
 		textMesh._padding = json.padding;
+		//textMesh._isChanged = true;
 		return textMesh;
 	}
 

@@ -248,7 +248,9 @@ export class Texture {
 			);
 		} else {
 			texture = new Texture(app);
-			texture.load(json.url);
+			if (json.url) {
+				texture.load(json.url);
+			}
 		}
 		return texture;
 	}

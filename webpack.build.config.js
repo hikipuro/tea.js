@@ -11,9 +11,9 @@ const buildConfig = {
 		__dirname: false
 	},
 	externals: {
-		fs: "root fs",
-		path: "root path",
-		electron: "root electron",
+		fs: "null",
+		path: "null",
+		electron: "null",
 	},
 	entry: {
 		"html/build": "./src/Build.ts",

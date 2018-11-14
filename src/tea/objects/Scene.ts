@@ -669,6 +669,7 @@ export class Scene extends EventDispatcher {
 		var scene = new Scene(app);
 		scene.physics = Tea.Physics.fromJSON(app, json.physics);
 		scene.renderSettings = Tea.RenderSettings.fromJSON(app, json.renderSettings);
+		scene.enablePostProcessing = json.enablePostProcessing;
 		var length = json.children.length;
 		for (var i = 0; i < length; i++) {
 			var child = json.children[i];
@@ -683,6 +684,7 @@ export class Scene extends EventDispatcher {
 			_type: "Scene",
 			physics: this.physics.toJSON(),
 			renderSettings: this.renderSettings.toJSON(),
+			enablePostProcessing: this.enablePostProcessing,
 			children: []
 		};
 		var children = this.children;
