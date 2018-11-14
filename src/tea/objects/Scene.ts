@@ -628,6 +628,11 @@ export class Scene extends EventDispatcher {
 			}
 		}
 		if (haveNormalCamera && this._stats.enabled) {
+			var app = this.app;
+			var gl = this.app.gl;
+			gl.viewport(0, 0, app.width, app.height);
+			gl.scissor(0, 0, app.width, app.height);
+			app.status.viewport.set(0, 0, app.width, app.height);
 			this._stats.update();
 			this._stats.renderer.render2d();
 		}
