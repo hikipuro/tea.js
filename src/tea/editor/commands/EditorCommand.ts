@@ -264,7 +264,7 @@ export class EditorCommand {
 		var path = nodePath.join(directoryName, "index.html");
 		fs.copyFileSync("html/build.html", path);
 
-		path = nodePath.join(directoryName, "main.js");
+		path = nodePath.join(directoryName, "tea.js");
 		fs.copyFileSync("html/build.js", path);
 
 		path = nodePath.join(directoryName, "scene.json");
