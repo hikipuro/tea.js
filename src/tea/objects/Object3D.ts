@@ -416,6 +416,10 @@ export class Object3D {
 				});
 				continue;
 			}
+			if (componentClass.fromJSON == null) {
+				console.error("componentClass.fromJSON not found:", componentClass);
+				continue;
+			}
 			var component = componentClass.fromJSON(app, item);
 			if (component == null) {
 				continue;
