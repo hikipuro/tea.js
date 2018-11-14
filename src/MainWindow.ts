@@ -154,6 +154,8 @@ export class MainWindow {
 		
 		options.x -= options.width / 2;
 		options.y -= options.height / 2;
+		options.x = Math.floor(options.x);
+		options.y = Math.floor(options.y);
 		
 		var window = new Electron.BrowserWindow(options);
 		window.once("ready-to-show", () => {
