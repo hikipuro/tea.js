@@ -1,23 +1,33 @@
 import * as Tea from "./tea/Tea";
 
+class Settings {
+	width: number = 400;
+	height: number = 400;
+	canvasId: string = "canvas";
+	sceneFile: string = "scene.json";
+
+	constructor(json: any) {
+		if (json == null || json.settings == null) {
+			return;
+		}
+		Object.assign(this, json.settings);
+	}
+}
+
 export class Main {
 	app: Tea.App;
 	constructor() {
-		var app = new Tea.App("canvas", {
+		var tea = window["Tea"];
+		var settings = new Settings(tea);
+		var app = new Tea.App(settings.canvasId, {
 			antialias: false,
 			alpha: false,
 			//premultipliedAlpha: false
 		});
 		this.app = app;
-		//app.width = this.app.canvas.parentElement.clientWidth;
-		//app.height = this.app.canvas.parentElement.clientHeight;
-		if (window["Tea"].width) {
-			app.width = window["Tea"].width;
-		}
-		if (window["Tea"].height) {
-			app.height = window["Tea"].height;
-		}
-		Tea.File.readText("scene.json", (err, data) => {
+		app.width = settings.width;
+		app.height = settings.height;
+		Tea.File.readText(settings.sceneFile, (err, data) => {
 			if (err) {
 				console.log(err);
 				return;

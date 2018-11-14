@@ -6,8 +6,13 @@
 if (window["Tea"] == null) {
 	Tea = {};
 }
-Tea.width = 400;
-Tea.height = 400;
+var settings = {
+	width: 400,
+	height: 400,
+	canvasId: "canvas",
+	sceneFile: "scene.json"
+};
+Tea.settings = settings;
 </script>
 <script src="main.js"></script>
 </head>
