@@ -112,6 +112,10 @@ body {
 	div.Tabs.Bottom {
 		height: 200px;
 		border-top: thin solid theme("border");
+
+		> div.ConsoleViewTab {
+			overflow: auto;
+		}
 	}
 	div.BottomLayout {
 		position: relative;

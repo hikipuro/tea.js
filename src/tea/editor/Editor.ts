@@ -136,7 +136,7 @@ Vue.component("TextMesh", TextMesh);
 							<TabItem tabId="project" :name="translator.project">
 								<ProjectView ref="project"></ProjectView>
 							</TabItem>
-							<TabItem tabId="console" :name="translator.console">
+							<TabItem tabId="console" :name="translator.console" class="ConsoleViewTab">
 								<ConsoleView ref="console"></ConsoleView>
 							</TabItem>
 							<VResizeBar ref="projectResize" :isTop="true"></VResizeBar>

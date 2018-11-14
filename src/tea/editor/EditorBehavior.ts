@@ -4,15 +4,15 @@ import Vue from "vue";
 import * as Tea from "../Tea";
 import { Editor } from "./Editor";
 import { EditorSettings } from "./EditorSettings";
-import { Translator } from "./translate/Translator";
 import { EditorMenu } from "./EditorMenu";
+import { SceneInspector } from "./SceneInspector";
+import { Translator } from "./translate/Translator";
 import { SelectAspect } from "./basic/SelectAspect";
 import { UICommands } from "./commands/UICommands";
 import { HierarchyViewCommand } from "./commands/HierarchyViewCommand";
 import { ObjectInspectorCommand } from "./commands/ObjectInspectorCommand";
 import { EditorCommand } from "./commands/EditorCommand";
 import { Tabs } from "./containers/Tabs";
-import { SceneInspector } from "./SceneInspector";
 
 export class EditorBehavior {
 	editor: Editor;
@@ -124,6 +124,7 @@ export class EditorBehavior {
 
 	initConsoleView(): void {
 		var consoleView = this.editor.consoleView;
+		//*
 		var log = console.log;
 		var info = console.info;
 		var warn = console.warn;
@@ -147,6 +148,22 @@ export class EditorBehavior {
 		window.addEventListener("error", (e: ErrorEvent) => {
 			consoleView.error(e.message);
 		});
+		/*
+		var webContents = Electron.remote.getCurrentWebContents();
+		webContents.on("console-message", (e: Electron.Event, level: number, message: string, line: number, sourceId: string) => {
+			switch (level) {
+				case 0:
+					consoleView.log(message, line, sourceId);
+					break;
+				case 1:
+					consoleView.warn(message, line, sourceId);
+					break;
+				case 2:
+					consoleView.error(message, line, sourceId);
+					break;
+			}
+		});
+		*/
 	}
 
 	initScreenView(): void {

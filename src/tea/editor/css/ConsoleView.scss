@@ -1,12 +1,13 @@
 #{$parent} {
 	div.ConsoleView {
-		height: 100%;
-		overflow: auto;
+		width: max-content;
+		padding: 0.2em 0;
 
 		> .item {
 			display: flex;
-			align-items: center;
-			padding: 0 0.2em;
+			align-items: flex-start;
+			padding: 0.2em 0 0 0.2em;
+			border-bottom: thin solid rgba(100, 100, 100, 0.5);
 			> .icon {
 				display: inline;
 				margin-right: 0.1em;
@@ -15,10 +16,20 @@
 				display: inline;
 				margin-right: 0.5em;
 			}
-			> .text {
+			> .toggle {
+				display: inline;
+			}
+			> .message {
 				display: inline;
 				flex: 1;
-				padding: 0.2em 0;
+				> .text {
+					display: inline;
+					white-space: pre;
+				}
+				> .stack {
+					font-family: monospace;
+					white-space: pre;
+				}
 			}
 		}
 
