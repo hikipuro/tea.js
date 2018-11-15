@@ -81,6 +81,10 @@ export module EditorSettings {
 			if (browserWindow == null) {
 				return;
 			}
+			if (browserWindow.isMaximized()
+			||  browserWindow.isMinimized()) {
+				browserWindow.restore();
+			}
 			var position = browserWindow.getPosition();
 			var size = browserWindow.getContentSize();
 			this.x = position[0];

@@ -476,7 +476,7 @@ export class EditorBehavior {
 		contextMenu.show();
 	}
 
-	protected onBeforeUnload = (e: Event): void => {
+	protected onBeforeUnload = (e: BeforeUnloadEvent): void => {
 		var settings = EditorSettings.getInstance();
 		settings.save();
 	}
