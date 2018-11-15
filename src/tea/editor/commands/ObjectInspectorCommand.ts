@@ -91,10 +91,11 @@ export class ObjectInspectorCommand {
 		var button = this.inspectorView.$el.querySelector("div.AddComponent button");
 		if (button) {
 			var rect = button.getBoundingClientRect();
-			console.log(rect);
+			//console.log(rect);
 			//contextMenu.show(rect.left, rect.top);
-			var x = Math.floor(rect.left);
-			var y = Math.floor(rect.bottom + 10);
+			var zoom = window.outerWidth / window.innerWidth;
+			var x = Math.floor(rect.left * zoom);
+			var y = Math.floor(rect.bottom * zoom + 10);
 			contextMenu.show(x, y);
 		} else {
 			contextMenu.show();
