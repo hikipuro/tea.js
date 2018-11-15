@@ -19,6 +19,30 @@
 			}
 		}
 
+		div.InputNumber {
+			box-sizing: border-box;
+			align-items: center;
+			padding: 1px;
+
+			> .title {
+				min-width: 40%;
+				white-space: nowrap;
+				overflow: hidden;
+			}
+
+			> .value {
+				flex: 1;
+			}
+		}
+
+		div.Vector3 {
+			> .value > .InputNumber {
+				> .title {
+					min-width: auto;
+				}
+			}
+		}
+
 		> div.SceneInspector {
 			> .title {
 				padding: 2px 1px 4px 1px;

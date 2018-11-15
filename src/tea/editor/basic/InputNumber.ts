@@ -33,7 +33,10 @@ declare global {
 		</div>
 	`,
 	props: {
-		value: Number,
+		value: {
+			type: Number,
+			default: 0
+		},
 		step: {
 			type: Number,
 			default: 0.03

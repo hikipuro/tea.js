@@ -5,6 +5,7 @@ import Component from "vue-class-component";
 	template: `
 		<div class="Rectangle">
 			<div
+				ref="title"
 				class="title">
 				<slot></slot>
 			</div>

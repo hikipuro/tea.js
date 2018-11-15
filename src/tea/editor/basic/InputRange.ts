@@ -4,7 +4,9 @@ import Component from "vue-class-component";
 @Component({
 	template: `
 		<div class="InputRange">
-			<div class="title">
+			<div
+				ref="title"
+				class="title">
 				<slot></slot>
 			</div>
 			<div
