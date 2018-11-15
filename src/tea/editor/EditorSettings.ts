@@ -81,6 +81,9 @@ export module EditorSettings {
 			if (browserWindow == null) {
 				return;
 			}
+			if (browserWindow.isFullScreen()) {
+				browserWindow.setFullScreen(false);
+			}
 			if (browserWindow.isMaximized()
 			||  browserWindow.isMinimized()) {
 				browserWindow.restore();
