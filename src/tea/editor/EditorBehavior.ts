@@ -415,6 +415,7 @@ export class EditorBehavior {
 		scene.on("removeChild", this.onRemoveChild);
 
 		this.editor.consoleView.clear();
+		this.updateScreenSize();
 	}
 
 	play(): void {
@@ -455,8 +456,9 @@ export class EditorBehavior {
 				width = height * aspect.x / aspect.y;
 			}
 		}
-		app.width = width;
-		app.height = height;
+		var zoom = window.outerWidth / window.innerWidth;
+		app.width = width * zoom;
+		app.height = height * zoom;
 		//console.log("updateScreenSize", width, height);
 	}
 
