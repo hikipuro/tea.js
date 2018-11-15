@@ -194,6 +194,9 @@ export class ParticleSystem extends Component {
 		var startSpeed = main.startSpeed.evaluate(t);
 		var startColor = main.startColor.evaluate(t);
 
+		var position = this.object3d.position;
+		var rotation = this.object3d.rotation;
+
 		for (var i = 0; i < count; i++) {
 			var particle = new Tea.Particle();
 			if (this.shape.enabled) {
@@ -229,8 +232,9 @@ export class ParticleSystem extends Component {
 			particle.lifetime = lifetime;
 			particle.maxLifetime = lifetime;
 
-			particle.position.applyQuaternion(this.object3d.rotation);
-			particle.velocity.applyQuaternion(this.object3d.rotation);
+			particle.position.applyQuaternion(rotation);
+			particle.position.add$(position);
+			particle.velocity.applyQuaternion(rotation);
 			this.particles.push(particle);
 		}
 	}

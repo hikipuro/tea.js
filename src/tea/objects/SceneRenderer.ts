@@ -132,7 +132,9 @@ export class SceneRenderer {
 		var rendererCount = renderers.length;
 		for (var i = 0; i < rendererCount; i++) {
 			var renderer = renderers[i];
-			renderer.material.setTexture("_ShadowTex", null);
+			if (renderer.material != null) {
+				renderer.material.setTexture("_ShadowTex", null);
+			}
 			renderer.render(camera, lights, renderSettings);
 		}
 	}
