@@ -41,6 +41,7 @@ export class Main {
 			//premultipliedAlpha: false
 		});
 		global["app"] = this.app;
+		this.app.isEditing = true;
 		this.app.enableUint32Index();
 		this.app.width = this.app.canvas.parentElement.clientWidth;
 		this.app.height = this.app.canvas.parentElement.clientHeight;

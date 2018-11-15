@@ -54,6 +54,13 @@ export class App {
 		this._renderer.isSceneView = value;
 	}
 
+	get isEditing(): boolean {
+		return this._renderer.isEditing;
+	}
+	set isEditing(value: boolean) {
+		this._renderer.isEditing = value;
+	}
+
 	get width(): number {
 		return this.canvas.width;
 	}

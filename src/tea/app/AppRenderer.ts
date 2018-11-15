@@ -13,6 +13,7 @@ export class AppRenderer extends Tea.EventDispatcher {
 	protected _fps: number;
 	protected _interval: number;
 	protected _isSceneView: boolean;
+	protected _isEditing: boolean;
 	protected _lastTime: number;
 	protected _update: FrameRequestCallback;
 	protected _handle: number;
@@ -30,6 +31,7 @@ export class AppRenderer extends Tea.EventDispatcher {
 		this._fps = 60.0;
 		this._interval = 1000.0 / this._fps;
 		this._isSceneView = false;
+		this._isEditing = false;
 		this._lastTime = 0.0;
 		this._update = this.update;
 		this._handle = 0;
@@ -84,6 +86,16 @@ export class AppRenderer extends Tea.EventDispatcher {
 		}
 	}
 
+	get isEditing(): boolean {
+		return this._isEditing;
+	}
+	set isEditing(value: boolean) {
+		if (this._isEditing === value) {
+			return;
+		}
+		this._isEditing = value;
+	}
+
 	dispatchResizeEvent(): void {
 		this.emit("resize");
 	}
@@ -122,7 +134,7 @@ export class AppRenderer extends Tea.EventDispatcher {
 		//Tea.Matrix4x4.newCount = 0;
 		this.time.update();
 		if (this.currentScene != null) {
-			this.currentScene.update();
+			this.currentScene.update(this._isEditing);
 			this.keyboard.update();
 			this.mouse.update();
 			this.gamepad.update();
@@ -142,7 +154,7 @@ export class AppRenderer extends Tea.EventDispatcher {
 		this._lastTime += this._interval;
 		this.time.update();
 		if (this.currentScene != null) {
-			this.currentScene.updateScene();
+			this.currentScene.updateScene(this._isEditing);
 			this.keyboard.update();
 			this.mouse.update();
 		}

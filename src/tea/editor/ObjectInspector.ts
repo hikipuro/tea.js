@@ -175,7 +175,7 @@ export class ObjectInspector extends Vue {
 			if (component["translate"]) {
 				component["translate"]();
 			}
-		})
+		});
 	}
 
 	protected created(): void {

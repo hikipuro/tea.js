@@ -60,7 +60,7 @@ export class EditorBehavior {
 	}
 
 	initMainMenu(): void {
-		var menu = EditorMenu.getMainMenu(
+		var menu = EditorMenu.createMainMenu(
 			this.onSelectMainMenu
 		);
 		EditorMenu.setMainMenu(menu);
@@ -118,9 +118,20 @@ export class EditorBehavior {
 		var toolBox = this.editor.toolBox;
 		toolBox.$on("play", () => {
 			console.log("play");
+			if (this.editorCommand.isChanged) {
+				this.editorCommand.once("save", (path: string) => {
+					if (path != null) {
+						this.play();
+					}
+				});
+				this.editorCommand.saveScene();
+			} else {
+				this.play();
+			}
 		});
 		toolBox.$on("stop", () => {
 			console.log("stop");
+			this.stop();
 		});
 	}
 
@@ -406,14 +417,29 @@ export class EditorBehavior {
 		this.editor.consoleView.clear();
 	}
 
-	onResizeWindow = (): void => {
-		if (this.scene == null) {
-			return;
-		}
-		var renderer = this.scene.app.renderer;
-		setTimeout(() => {
-			renderer.dispatchResizeEvent();
-		}, 250);
+	play(): void {
+		var menu = EditorMenu.getMainMenu();
+		var fileMenu = menu.getMenuItemById("File");
+		fileMenu.submenu.items.forEach((item: Electron.MenuItem) => {
+			item.enabled = false;
+		});
+
+		var toolBox = this.editor.toolBox;
+		this.scene.app.isEditing = false;
+		toolBox.play();
+	}
+
+	stop(): void {
+		var menu = EditorMenu.getMainMenu();
+		var fileMenu = menu.getMenuItemById("File");
+		fileMenu.submenu.items.forEach((item: Electron.MenuItem) => {
+			item.enabled = true;
+		});
+
+		var toolBox = this.editor.toolBox;
+		this.scene.app.isEditing = true;
+		this.editorCommand.reloadScene();
+		toolBox.stop();
 	}
 
 	updateScreenSize = (): void => {
@@ -435,14 +461,14 @@ export class EditorBehavior {
 	}
 
 	showProjectViewMenu(): void {
-		var contextMenu = EditorMenu.getProjectViewMenu(
+		var contextMenu = EditorMenu.createProjectViewMenu(
 			this.onSelectProjectViewMenu
 		);
 		contextMenu.show();
 	}
 
 	showProjectViewFileMenu(): void {
-		var contextMenu = EditorMenu.getProjectViewFileMenu(
+		var contextMenu = EditorMenu.createProjectViewFileMenu(
 			this.onSelectProjectViewFileMenu
 		);
 		contextMenu.show();
@@ -451,6 +477,16 @@ export class EditorBehavior {
 	protected onBeforeUnload = (e: Event): void => {
 		var settings = EditorSettings.getInstance();
 		settings.save();
+	}
+
+	protected onResizeWindow = (): void => {
+		if (this.scene == null) {
+			return;
+		}
+		var renderer = this.scene.app.renderer;
+		setTimeout(() => {
+			renderer.dispatchResizeEvent();
+		}, 250);
 	}
 
 	protected onWindowMessage = (e: MessageEvent) => {

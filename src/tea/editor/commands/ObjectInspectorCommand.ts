@@ -60,7 +60,7 @@ export class ObjectInspectorCommand {
 		if (this.hierarchyView.getSelectedItem() == null) {
 			return;
 		}
-		var contextMenu = EditorMenu.getInspectorViewComponentMenu(
+		var contextMenu = EditorMenu.createInspectorViewComponentMenu(
 			this.onSelectComponentMenu
 		);
 		this.componentMenu = contextMenu;
@@ -81,7 +81,7 @@ export class ObjectInspectorCommand {
 		if (this.hierarchyView.getSelectedItem() == null) {
 			return;
 		}
-		var contextMenu = EditorMenu.getInspectorViewAddComponentMenu(
+		var contextMenu = EditorMenu.createInspectorViewAddComponentMenu(
 			this.onSelectAddComponentMenu
 		);
 		this.addComponentMenu = contextMenu;

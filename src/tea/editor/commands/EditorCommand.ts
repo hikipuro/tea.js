@@ -23,21 +23,20 @@ import { HierarchyView } from "../HierarchyView";
 import { InspectorView } from "../InspectorView";
 import { EventDispatcher } from "../../utils/EventDispatcher";
 
-export class EditorCommand {
+export class EditorCommand extends EventDispatcher {
 	editor: Editor;
 	app: Tea.App;
 	scene: Tea.Scene;
 	hierarchyView: HierarchyView;
 	inspectorView: InspectorView;
 
-	filename: string;
+	scenePath: string;
 	protected _isChanged: boolean;
-	protected eventHandler: EventDispatcher;
 
 	constructor() {
-		this.filename = null;
+		super();
+		this.scenePath = null;
 		this._isChanged = false;
-		this.eventHandler = new EventDispatcher();
 		this.updateWindowTitle();
 	}
 
@@ -45,6 +44,9 @@ export class EditorCommand {
 		return this._isChanged;
 	}
 	set isChanged(value: boolean) {
+		if (this.app.isEditing === false) {
+			return;
+		}
 		if (this._isChanged === value) {
 			return;
 		}
@@ -61,7 +63,7 @@ export class EditorCommand {
 			this.showConfirmSaveDialog((response: string) => {
 				switch (response) {
 					case "Save":
-						this.eventHandler.once("save", (filename: string) => {
+						this.once("save", (filename: string) => {
 							if (filename != null) {
 								this.newScene();
 							}
@@ -76,7 +78,7 @@ export class EditorCommand {
 			return;
 		}
 		this.scene.destroy();
-		this.filename = null;
+		this.scenePath = null;
 		this.isChanged = false;
 		var app = this.app;
 		var scene = app.createScene();
@@ -94,7 +96,7 @@ export class EditorCommand {
 			this.showConfirmSaveDialog((response: string) => {
 				switch (response) {
 					case "Save":
-						this.eventHandler.once("save", (filename: string) => {
+						this.once("save", (filename: string) => {
 							if (filename != null) {
 								this.openScene();
 							}
@@ -125,14 +127,14 @@ export class EditorCommand {
 	saveScene(): void {
 		console.log("saveScene");
 		if (this._isChanged === false) {
-			this.eventHandler.emit("save", null);
+			this.emit("save", null);
 			return;
 		}
-		if (this.filename == null) {
+		if (this.scenePath == null) {
 			this.saveSceneAs();
 			return;
 		}
-		this.save();
+		this.saveSceneFile();
 	}
 
 	saveSceneAs(): void {
@@ -150,6 +152,13 @@ export class EditorCommand {
 		);
 	}
 
+	reloadScene(): void {
+		if (this.scenePath == null) {
+			return;
+		}
+		this.loadScene(this.scenePath);
+	}
+
 	build(): void {
 		console.log("build");
 		var browserWindow = remote.getCurrentWindow();
@@ -161,6 +170,55 @@ export class EditorCommand {
 			browserWindow, options,
 			this.onCloseOpenDialogBuild
 		);
+	}
+
+	loadScene(path: string): void {
+		Tea.File.readText(path, (err, data) => {
+			if (err) {
+				console.error("EditorCommand.openScene(): " + path);
+				console.error(err);
+				return;
+			}
+			var json = null;
+			try {
+				json = JSON.parse(data);
+			} catch (err) {
+				console.error("EditorCommand.openScene(): " + path);
+				console.error(err);
+				return;
+			}
+			this.scenePath = path;
+			this.isChanged = false;
+			var app = this.app;
+			var scene = app.createSceneFromJSON(json);
+			app.setScene(scene);
+			this.editor.setScene(scene);
+
+			console.log("onload", app.isEditing, scene.isEditing);
+		});
+	}
+
+	protected buildApp(targetPath: string): void {
+		var path = nodePath.join(targetPath, "index.html");
+		fs.copyFileSync("html/build.html", path);
+
+		path = nodePath.join(targetPath, "tea.js");
+		fs.copyFileSync("html/build.js", path);
+
+		path = nodePath.join(targetPath, "scene.json");
+		var sceneData = this.scene.toJSON();
+		fs.writeFileSync(path, JSON.stringify(sceneData, null, "\t"));
+
+		var scripts = this.findScriptPaths(sceneData);
+		//console.log(scripts);
+		scripts.forEach((scriptPath: string) => {
+			var path = nodePath.join(targetPath, scriptPath);
+			var dirname = nodePath.dirname(path);
+			if (fs.existsSync(dirname) === false) {
+				fs.mkdirSync(dirname, { recursive: true });
+			}
+			fs.copyFileSync(scriptPath, path);
+		});
 	}
 
 	protected showConfirmSaveDialog(callback: (response: string) => void): void {
@@ -204,8 +262,8 @@ export class EditorCommand {
 		}
 	}
 
-	protected save(): void {
-		var filename = this.filename;
+	protected saveSceneFile(): void {
+		var filename = this.scenePath;
 		var json = this.scene.toJSON();
 		var text = JSON.stringify(json, null, "\t");
 		if (text.indexOf("\r\n") <= 0) {
@@ -213,44 +271,23 @@ export class EditorCommand {
 		}
 		Tea.File.writeText(filename, text, null);
 		this.isChanged = false;
-		this.eventHandler.emit("save", filename);
+		this.emit("save", filename);
 	}
 
 	protected onCloseOpenDialog = (filePaths: string[]): void => {
 		if (filePaths == null || filePaths.length < 1) {
 			return;
 		}
-		var filename = filePaths[0];
-		Tea.File.readText(filename, (err, data) => {
-			if (err) {
-				console.error("EditorCommand.openScene(): " + filename);
-				console.error(err);
-				return;
-			}
-			var json = null;
-			try {
-				json = JSON.parse(data);
-			} catch (err) {
-				console.error("EditorCommand.openScene(): " + filename);
-				console.error(err);
-				return;
-			}
-			this.filename = filename;
-			this.isChanged = false;
-			var app = this.app;
-			var scene = app.createSceneFromJSON(json);
-			app.setScene(scene);
-			this.editor.setScene(scene);
-		});
+		this.loadScene(filePaths[0]);
 	}
 
 	protected onCloseSaveDialog = (filename: string): void => {
 		if (filename == null) {
-			this.eventHandler.emit("save", null);
+			this.emit("save", null);
 			return;
 		}
-		this.filename = filename;
-		this.save();
+		this.scenePath = filename;
+		this.saveSceneFile();
 		console.log(filename);
 	}
 
@@ -258,29 +295,7 @@ export class EditorCommand {
 		if (filePaths == null || filePaths.length < 1) {
 			return;
 		}
-		var directoryName = filePaths[0];
-		//console.log(directoryName);
-
-		var path = nodePath.join(directoryName, "index.html");
-		fs.copyFileSync("html/build.html", path);
-
-		path = nodePath.join(directoryName, "tea.js");
-		fs.copyFileSync("html/build.js", path);
-
-		path = nodePath.join(directoryName, "scene.json");
-		var sceneData = this.scene.toJSON();
-		fs.writeFileSync(path, JSON.stringify(sceneData, null, "\t"));
-
-		var scripts = this.findScriptPaths(sceneData);
-		//console.log(scripts);
-		scripts.forEach((scriptPath: string) => {
-			var path = nodePath.join(directoryName, scriptPath);
-			var dirname = nodePath.dirname(path);
-			if (fs.existsSync(dirname) === false) {
-				fs.mkdirSync(dirname, { recursive: true });
-			}
-			fs.copyFileSync(scriptPath, path);
-		});
+		this.buildApp(filePaths[0]);
 	}
 
 	protected findScriptPaths(data: any): Array<string> {

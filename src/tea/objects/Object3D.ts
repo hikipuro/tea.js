@@ -676,7 +676,7 @@ export class Object3D {
 		this.localRotation = q;
 	}
 
-	update(): void {
+	update(isEditing: boolean = false): void {
 		if (this.isActiveInHierarchy === false) {
 			if (this._toDestroy) {
 				this._destroy();
@@ -684,6 +684,19 @@ export class Object3D {
 			return;
 		}
 		this._m.update(this);
+
+		if (isEditing) {
+			this.updateComponentsEditor();
+		} else {
+			this.updateComponents();
+		}
+
+		if (this._toDestroy) {
+			this._destroy();
+		}
+	}
+
+	protected updateComponents(): void {
 		var components = this._components;
 		var length = components.length;
 		for (var i = 0; i < length; i++) {
@@ -709,19 +722,9 @@ export class Object3D {
 				}
 			}
 		}
-		if (this._toDestroy) {
-			this._destroy();
-		}
 	}
 
-	updateScene(): void {
-		if (this.isActiveInHierarchy === false) {
-			if (this._toDestroy) {
-				this._destroy();
-			}
-			return;
-		}
-		this._m.update(this);
+	protected updateComponentsEditor(): void {
 		var components = this._components;
 		var length = components.length;
 		for (var i = 0; i < length; i++) {
@@ -742,9 +745,6 @@ export class Object3D {
 					console.error(err);
 				}
 			}
-		}
-		if (this._toDestroy) {
-			this._destroy();
 		}
 	}
 

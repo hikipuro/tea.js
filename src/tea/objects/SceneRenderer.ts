@@ -39,7 +39,7 @@ class SceneIcon extends Object3D {
 		this.material = renderer.material;
 	}
 
-	update(camera: Tea.Camera = null): void {
+	update(isEditing: boolean, camera: Tea.Camera = null): void {
 		if (this.target == null) {
 			return;
 		}
@@ -103,7 +103,7 @@ class SceneIcons {
 		var length = this.icons.length;
 		for (var i = 0; i < length; i++) {
 			var icon = this.icons[i];
-			icon.update(camera);
+			icon.update(this.scene.isEditing, camera);
 		}
 	}
 }
@@ -195,7 +195,7 @@ export class SceneRenderer {
 		if (object3d == null || object3d.id == null) {
 			return;
 		}
-		object3d.updateScene();
+		object3d.update(this.scene.isEditing);
 		var children = object3d.children;
 		var length = children.length;
 		for (var i = 0; i < length; i++) {

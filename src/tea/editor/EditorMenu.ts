@@ -12,15 +12,20 @@ import { NativeContextMenu } from "./basic/NativeContextMenu";
 import { HierarchyView } from "./HierarchyView";
 
 export class EditorMenu {
+	static getMainMenu(): Electron.Menu {
+		return Menu.getApplicationMenu();
+	}
+
 	static setMainMenu(menu: Electron.Menu): void {
 		Menu.setApplicationMenu(menu);
 	}
 
-	static getMainMenu(
+	static createMainMenu(
 		handler: (menuItem: Electron.MenuItem, browserWindow: Electron.BrowserWindow, event: Event) => void
 	): Electron.Menu {
 		var template: Electron.MenuItemConstructorOptions[] = [
 			{
+				id: "File",
 				label: "File",
 				submenu: [
 					{
@@ -146,7 +151,7 @@ export class EditorMenu {
 		return Menu.buildFromTemplate(template);
 	}
 
-	static getHierarchyViewMenu(
+	static createHierarchyViewMenu(
 		hierarchyView: HierarchyView,
 		handler: (menuItem: Electron.MenuItem, browserWindow: Electron.BrowserWindow, event: Event) => void
 	): NativeContextMenu {
@@ -243,7 +248,7 @@ export class EditorMenu {
 		return Editor.NativeContextMenu.create(template);
 	}
 
-	static getInspectorViewComponentMenu(
+	static createInspectorViewComponentMenu(
 		handler: (menuItem: Electron.MenuItem, browserWindow: Electron.BrowserWindow, event: Event) => void
 	): NativeContextMenu {
 		var translator = Translator.getInstance();
@@ -260,7 +265,7 @@ export class EditorMenu {
 		return Editor.NativeContextMenu.create(template);
 	}
 
-	static getInspectorViewAddComponentMenu(
+	static createInspectorViewAddComponentMenu(
 		handler: (menuItem: Electron.MenuItem, browserWindow: Electron.BrowserWindow, event: Event) => void
 	): NativeContextMenu {
 		var translator = Translator.getInstance();
@@ -331,7 +336,7 @@ export class EditorMenu {
 		return Editor.NativeContextMenu.create(template);
 	}
 
-	static getProjectViewMenu(
+	static createProjectViewMenu(
 		handler: (menuItem: Electron.MenuItem, browserWindow: Electron.BrowserWindow, event: Event) => void
 	): NativeContextMenu {
 		var template: Electron.MenuItemConstructorOptions[] = [];
@@ -359,7 +364,7 @@ export class EditorMenu {
 		return Editor.NativeContextMenu.create(template);
 	}
 
-	static getProjectViewFileMenu(
+	static createProjectViewFileMenu(
 		handler: (menuItem: Electron.MenuItem, browserWindow: Electron.BrowserWindow, event: Event) => void
 	): NativeContextMenu {
 		var template: Electron.MenuItemConstructorOptions[] = [

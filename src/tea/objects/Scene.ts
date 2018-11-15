@@ -280,6 +280,7 @@ export class Scene extends EventDispatcher {
 	enablePostProcessing: boolean;
 	renderTexture: Tea.RenderTexture;
 	postProcessingRenderer: Tea.PostProcessingRenderer;
+	protected _isEditing: boolean;
 	protected _isCleared: boolean;
 	protected _children: Array<Tea.Object3D>;
 	protected _components: SceneComponents;
@@ -294,6 +295,7 @@ export class Scene extends EventDispatcher {
 		this.enablePostProcessing = false;
 		this.refreshRenderTexture();
 		this.postProcessingRenderer = new Tea.PostProcessingRenderer(app);
+		this._isEditing = false;
 		this._isCleared = false;
 		this._children = [];
 		this._components = new SceneComponents();
@@ -305,6 +307,10 @@ export class Scene extends EventDispatcher {
 		);
 		this.postProcessingRenderer.material.shader = shader;
 		this.app.renderer.on("resize", this.onResize);
+	}
+
+	get isEditing(): boolean {
+		return this._isEditing;
 	}
 
 	get children(): Array<Tea.Object3D> {
@@ -338,6 +344,7 @@ export class Scene extends EventDispatcher {
 		this.renderSettings = undefined;
 		this.physics = undefined;
 		this.enablePostProcessing = undefined;
+		this._isEditing = undefined;
 		if (this.renderTexture) {
 			this.renderTexture.destroy();
 			this.renderTexture = undefined;
@@ -545,10 +552,11 @@ export class Scene extends EventDispatcher {
 		this._components.remove(object3d);
 	}
 
-	update(): void {
+	update(isEditing: boolean = false): void {
 		if (this.app == null) {
 			return;
 		}
+		this._isEditing = isEditing;
 		var children = this.children;
 		var childCount = children.length;
 		for (var i = childCount - 1; i >= 0 ; i--) {
@@ -652,10 +660,11 @@ export class Scene extends EventDispatcher {
 		//console.log("drawCallCount", Tea.Renderer.drawCallCount);
 	}
 
-	updateScene(): void {
+	updateScene(isEditing: boolean = false): void {
 		if (this.app == null) {
 			return;
 		}
+		this._isEditing = isEditing;
 		this._components.sortRenderers();
 		var renderers = this._components.availableRenderers;
 		var lights = this._components.availableLights;
@@ -713,7 +722,7 @@ export class Scene extends EventDispatcher {
 		if (object3d == null || object3d.id == null) {
 			return;
 		}
-		object3d.update();
+		object3d.update(this._isEditing);
 		var children = object3d.children;
 		var length = children.length;
 		for (var i = 0; i < length; i++) {

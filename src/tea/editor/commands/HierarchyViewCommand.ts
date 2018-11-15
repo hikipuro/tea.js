@@ -28,7 +28,7 @@ export class HierarchyViewCommand extends EventDispatcher {
 	}
 	
 	showContextMenu(): void {
-		var contextMenu = EditorMenu.getHierarchyViewMenu(
+		var contextMenu = EditorMenu.createHierarchyViewMenu(
 			this.hierarchyView,
 			this.onSelectMenu
 		)
