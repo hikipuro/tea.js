@@ -1,43 +1,46 @@
 import * as Electron from "electron";
 import * as nodePath from "path";
 import * as url from "url";
-import * as fs from "fs";
-import { EditorSettings } from "./tea/editor/EditorSettings";
+import { EditorSettings } from "../tea/editor/EditorSettings";
 
 module Settings {
-	export const Title: string = "WebGL Test";
+	export const Title: string = "Tea.js";
 	export const Content: string = "../html/index.html";
-	export const DevTools: boolean = false;
+	export const DevTools: boolean = true;
 	export const Preferences: string = "../html/preferences.html";
-}
-
-declare module "electron" {
-	interface MenuItem {
-		id: string;
-		submenu: Electron.Menu;
-	}
+	export const NewProject: string = "../html/newproject.html";
 }
 
 export class MainWindow {
 	public static Settings = Settings;
 	browserWindow: Electron.BrowserWindow;
+	isReady: boolean;
 	preferencesWindow: Electron.BrowserWindow;
+	newProjectWindow: Electron.BrowserWindow;
 
 	constructor(parent: Electron.BrowserWindow = null) {
+		this.isReady = false;
 		this.initWindow(parent);
-		this.initMenu();
-		this.addIpcEvents();
 	}
 
-	public show(): void {
-		this.browserWindow.show();
-		if (Settings.DevTools) {
-			this.browserWindow.webContents.openDevTools();
+	show(): void {
+		if (this.browserWindow.isDestroyed()) {
+			return;
 		}
+		if (this.isReady) {
+			this.browserWindow.show();
+			return;
+		}
+		this.browserWindow.once("ready-to-show", () => {
+			this.browserWindow.show();
+		});
 	}
 
-	public destroy(): void {
-		this.browserWindow.destroy();
+	focus(): void {
+		if (this.browserWindow.isDestroyed()) {
+			return;
+		}
+		this.browserWindow.focus();
 	}
 
 	public log(...args: any[]): void {
@@ -71,35 +74,36 @@ export class MainWindow {
 		var settings = EditorSettings.getInstance();
 		if (settings.exists()) {
 			settings.load();
-			var window = settings.window;
-			options.x = window.x;
-			options.y = window.y;
-			options.width = window.width;
-			options.height = window.height;
+			options.x = settings.window.x;
+			options.y = settings.window.y;
+			options.width = settings.window.width;
+			options.height = settings.window.height;
 		}
 
 		this.browserWindow = new Electron.BrowserWindow(options);
-		this.browserWindow.loadURL(url.format({
-			pathname: nodePath.join(__dirname, Settings.Content),
-			protocol: "file:",
-			slashes: true,
-		}));
-		
+		var window = this.browserWindow;
+		window.once("ready-to-show", () => {
+			this.isReady = true;
+		});
+		window.once("show", () => {
+			if (Settings.DevTools) {
+				this.browserWindow.webContents.openDevTools();
+			}
+		});
+		window.once("closed", () => {
+			this.browserWindow.destroy();
+			//this.browserWindow = null;
+		});
 		// fullscreen
-		this.browserWindow.on("enter-full-screen", () => {
+		window.on("enter-full-screen", () => {
 			this.browserWindow.setAutoHideMenuBar(true);
 			//this.browserWindow.setMenuBarVisibility(false);
 		});
-		this.browserWindow.on("leave-full-screen", () => {
+		window.on("leave-full-screen", () => {
 			this.browserWindow.setAutoHideMenuBar(false);
 			this.browserWindow.setMenuBarVisibility(true);
 		});
-
-		this.browserWindow.once("close", () => {
-			this.removeIpcEvents();
-		});
-
-		this.browserWindow.webContents.on("new-window", (
+		window.webContents.on("new-window", (
 			event: any, url: string, frameName: string, disposition: string,
 			options: any, additionalFeatures: string[], referrer: Electron.Referrer): void =>
 		{
@@ -112,17 +116,21 @@ export class MainWindow {
 				} else {
 					this.preferencesWindow.focus();
 				}
+			} else if (frameName === "newProject") {
+				event.preventDefault();
+				if (this.newProjectWindow == null) {
+					this.showNewProjectWindow(options);
+					event.newGuest = this.newProjectWindow;
+				} else {
+					this.newProjectWindow.focus();
+				}
 			}
 		});
-	}
-
-	protected initMenu(): void {
-	}
-
-	protected addIpcEvents(): void {
-	}
-
-	protected removeIpcEvents(): void {
+		window.loadURL(url.format({
+			pathname: nodePath.join(__dirname, Settings.Content),
+			protocol: "file:",
+			slashes: true,
+		}));
 	}
 
 	protected setWindowSize(width: number, height: number): void {
@@ -132,7 +140,7 @@ export class MainWindow {
 	protected showPreferencesWindow(options: Electron.BrowserWindowConstructorOptions): void {
 		var rect = this.browserWindow.getBounds();
 		var x = rect.x + rect.width / 2;
-		var y = rect.y + rect.height / 2;
+		var y = rect.y + rect.height / 3;
 
 		Object.assign(options, {
 			//modal: true,
@@ -171,5 +179,49 @@ export class MainWindow {
 			slashes: true,
 		}));
 		this.preferencesWindow = window;
+	}
+	
+	protected showNewProjectWindow(options: Electron.BrowserWindowConstructorOptions): void {
+		var rect = this.browserWindow.getBounds();
+		var x = rect.x + rect.width / 2;
+		var y = rect.y + rect.height / 3;
+
+		Object.assign(options, {
+			//modal: true,
+			parent: this.browserWindow,
+			title: Settings.Title,
+			x: x,
+			y: y,
+			width: 420,
+			height: 200,
+			center: true,
+			resizable: false,
+			maximizable: false,
+			minimizable: false,
+			fullscreenable: false,
+			//skipTaskbar: true,
+			useContentSize: true,
+			show: false
+		});
+		
+		options.x -= options.width / 2;
+		options.y -= options.height / 2;
+		options.x = Math.floor(options.x);
+		options.y = Math.floor(options.y);
+		
+		var window = new Electron.BrowserWindow(options);
+		window.once("ready-to-show", () => {
+			window.show();
+		});
+		window.once("close", () => {
+			this.newProjectWindow = null;
+		});
+		window.setMenu(null);
+		window.loadURL(url.format({
+			pathname: nodePath.join(__dirname, Settings.NewProject),
+			protocol: "file:",
+			slashes: true,
+		}));
+		this.newProjectWindow = window;
 	}
 }

@@ -58,70 +58,49 @@ export class EditorCommand extends EventDispatcher {
 		window.open("", "preferences");
 	}
 
-	newScene(force: boolean = false): void {
-		if (force === false && this._isChanged) {
-			this.showConfirmSaveDialog((response: string) => {
-				switch (response) {
-					case "Save":
-						this.once("save", (filename: string) => {
-							if (filename != null) {
-								this.newScene();
-							}
-						});
-						this.saveScene();
-						break;
-					case "Don't Save":
-						this.newScene(true);
-						break;
-				}
-			});
+	newScene(): void {
+		if (this._isChanged === false) {
+			this.createNewScene();
 			return;
 		}
-		this.scene.destroy();
-		this.scenePath = null;
-		this.isChanged = false;
-		var app = this.app;
-		var scene = app.createScene();
-		var camera = app.createCamera();
-		var light = app.createDirectionalLight();
-		scene.addChild(camera);
-		scene.addChild(light);
-		app.setScene(scene);
-		this.editor.setScene(scene);
+		this.showConfirmSaveDialog((response: string) => {
+			switch (response) {
+				case "Save":
+					this.once("save", (filename: string) => {
+						if (filename != null) {
+							this.createNewScene();
+						}
+					});
+					this.saveScene();
+					break;
+				case "Don't Save":
+					this.createNewScene();
+					break;
+			}
+		});
 	}
 
-	openScene(force: boolean = false): void {
+	openScene(): void {
 		console.log("openScene");
-		if (force === false && this._isChanged) {
-			this.showConfirmSaveDialog((response: string) => {
-				switch (response) {
-					case "Save":
-						this.once("save", (filename: string) => {
-							if (filename != null) {
-								this.openScene();
-							}
-						});
-						this.saveScene();
-						break;
-					case "Don't Save":
-						this.openScene(true);
-						break;
-				}
-			});
+		if (this._isChanged === false) {
+			this.showOpenSceneDialog();
 			return;
 		}
-		var browserWindow = remote.getCurrentWindow();
-		var options: Electron.OpenDialogOptions = {
-			defaultPath: ".",
-			properties: ["openFile"],
-			filters: [
-				{ name: "Scene File", extensions: ["json"] }
-			]
-		};
-		Dialog.showOpenDialog(
-			browserWindow, options,
-			this.onCloseOpenDialog
-		);
+		this.showConfirmSaveDialog((response: string) => {
+			switch (response) {
+				case "Save":
+					this.once("save", (filename: string) => {
+						if (filename != null) {
+							this.showOpenSceneDialog();
+						}
+					});
+					this.saveScene();
+					break;
+				case "Don't Save":
+					this.showOpenSceneDialog();
+					break;
+			}
+		});
 	}
 
 	saveScene(): void {
@@ -139,17 +118,66 @@ export class EditorCommand extends EventDispatcher {
 
 	saveSceneAs(): void {
 		console.log("saveSceneAs");
+		var defaultPath = nodePath.resolve("./assets/scene.json");
 		var browserWindow = remote.getCurrentWindow();
 		var options: Electron.SaveDialogOptions = {
-			defaultPath: ".",
+			defaultPath: defaultPath,
+			title: "Save scene file",
+			message: "Save scene file",
 			filters: [
 				{ name: "Scene File", extensions: ["json"] }
 			]
 		};
 		Dialog.showSaveDialog(
 			browserWindow, options,
-			this.onCloseSaveDialog
+			this.onCloseSaveSceneDialog
 		);
+	}
+
+	newProject(): void {
+		console.log("newProject");
+		if (this._isChanged === false) {
+			window.open("", "newProject");
+			return;
+		}
+		this.showConfirmSaveDialog((response: string) => {
+			switch (response) {
+				case "Save":
+					this.once("save", (filename: string) => {
+						if (filename != null) {
+							window.open("", "newProject");
+						}
+					});
+					this.saveScene();
+					break;
+				case "Don't Save":
+					window.open("", "newProject");
+					break;
+			}
+		});
+	}
+
+	openProject(): void {
+		console.log("openProject");
+		if (this._isChanged === false) {
+			this.showOpenProjectDialog();
+			return;
+		}
+		this.showConfirmSaveDialog((response: string) => {
+			switch (response) {
+				case "Save":
+					this.once("save", (filename: string) => {
+						if (filename != null) {
+							this.showOpenProjectDialog();
+						}
+					});
+					this.saveScene();
+					break;
+				case "Don't Save":
+					this.showOpenProjectDialog();
+					break;
+			}
+		});
 	}
 
 	reloadScene(): void {
@@ -164,6 +192,8 @@ export class EditorCommand extends EventDispatcher {
 		var browserWindow = remote.getCurrentWindow();
 		var options: Electron.OpenDialogOptions = {
 			defaultPath: ".",
+			title: "Select output folder",
+			message: "Select output folder",
 			properties: ["openDirectory", "createDirectory"]
 		};
 		Dialog.showOpenDialog(
@@ -198,12 +228,29 @@ export class EditorCommand extends EventDispatcher {
 		});
 	}
 
-	protected buildApp(targetPath: string): void {
-		var path = nodePath.join(targetPath, "index.html");
-		fs.copyFileSync("html/build.html", path);
+	protected createNewScene(): void {
+		this.scene.destroy();
+		this.scenePath = null;
+		this.isChanged = false;
+		var app = this.app;
+		var scene = app.createScene();
+		var camera = app.createCamera();
+		var light = app.createDirectionalLight();
+		scene.addChild(camera);
+		scene.addChild(light);
+		app.setScene(scene);
+		this.editor.setScene(scene);
+	}
 
+	protected buildApp(targetPath: string): void {
+		var appPath = Electron.remote.app.getAppPath();
+		var srcPath = nodePath.join(appPath, "html/build.html");
+		var path = nodePath.join(targetPath, "index.html");
+		fs.copyFileSync(srcPath, path);
+
+		srcPath = nodePath.join(appPath, "html/build.js");
 		path = nodePath.join(targetPath, "tea.js");
-		fs.copyFileSync("html/build.js", path);
+		fs.copyFileSync(srcPath, path);
 
 		path = nodePath.join(targetPath, "scene.json");
 		var sceneData = this.scene.toJSON();
@@ -219,6 +266,39 @@ export class EditorCommand extends EventDispatcher {
 			}
 			fs.copyFileSync(scriptPath, path);
 		});
+	}
+
+	protected showOpenSceneDialog(): void {
+		var browserWindow = remote.getCurrentWindow();
+		var options: Electron.OpenDialogOptions = {
+			defaultPath: ".",
+			title: "Open scene file",
+			message: "Open scene file",
+			properties: ["openFile"],
+			filters: [
+				{ name: "Scene File", extensions: ["json"] }
+			]
+		};
+		Dialog.showOpenDialog(
+			browserWindow, options,
+			this.onCloseOpenSceneDialog
+		);
+	}
+
+	protected showOpenProjectDialog(): void {
+		var browserWindow = remote.getCurrentWindow();
+		var options: Electron.OpenDialogOptions = {
+			defaultPath: ".",
+			title: "Open project folder",
+			message: "Open project folder",
+			properties: ["openDirectory"],
+			filters: [
+			]
+		};
+		Dialog.showOpenDialog(
+			browserWindow, options,
+			this.onCloseOpenSceneDialog
+		);
 	}
 
 	protected showConfirmSaveDialog(callback: (response: string) => void): void {
@@ -274,14 +354,14 @@ export class EditorCommand extends EventDispatcher {
 		this.emit("save", filename);
 	}
 
-	protected onCloseOpenDialog = (filePaths: string[]): void => {
+	protected onCloseOpenSceneDialog = (filePaths: string[]): void => {
 		if (filePaths == null || filePaths.length < 1) {
 			return;
 		}
 		this.loadScene(filePaths[0]);
 	}
 
-	protected onCloseSaveDialog = (filename: string): void => {
+	protected onCloseSaveSceneDialog = (filename: string): void => {
 		if (filename == null) {
 			this.emit("save", null);
 			return;

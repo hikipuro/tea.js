@@ -38,6 +38,15 @@ $parent: "#editor";
 @import "../components/css/ParticleSystem.scss";
 @import "../components/css/TextMesh.scss";
 
+html, body {
+	margin: 0;
+	width: 100%;
+	height: 100%;
+	overflow: hidden;
+	font-family: sans-serif;
+	font-size: 12px;
+	user-select: none;
+}
 body {
 	background-color: theme("background");
 }

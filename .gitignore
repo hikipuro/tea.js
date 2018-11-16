@@ -4,8 +4,10 @@ dist
 models
 html/main.js
 html/build.js
+html/newProject.js
 html/media
 html/css/editor.css
+html/css/newProject.css
 models/
 test/
 

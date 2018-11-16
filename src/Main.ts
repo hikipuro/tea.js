@@ -30,10 +30,50 @@ export class Main {
 		//editor.panes.main.content = `<canvas id="canvas"></canvas>`;
 		editor.$nextTick(() => {
 			this.init();
+			//this.debug();
 		});
 	}
 
 	init(): void {
+		var app = new Tea.App("canvas", {
+			antialias: false,
+			alpha: false,
+			//premultipliedAlpha: false
+		});
+		this.app = app;
+		global["app"] = app;
+		app.isEditing = true;
+		app.width = app.canvas.parentElement.clientWidth;
+		app.height = app.canvas.parentElement.clientHeight;
+
+		var scenePath = "./assets/scene.json";
+		Tea.File.readText(scenePath, (err, data) => {
+			if (err) {
+				console.log(err);
+				this.setNewScene();
+				app.start();
+				return;
+			}
+			var json = JSON.parse(data);
+			var scene = app.createSceneFromJSON(json);
+			app.setScene(scene);
+			editor.setScene(scene);
+			app.start();
+		});
+	}
+
+	setNewScene(): void {
+		var app = this.app;
+		var scene = app.createScene();
+		var camera = app.createCamera();
+		var light = app.createDirectionalLight();
+		scene.addChild(camera);
+		scene.addChild(light);
+		app.setScene(scene);
+		editor.setScene(scene);
+	}
+
+	debug(): void {
 		this.count = 0;
 		this.app = new Tea.App("canvas", {
 			antialias: false,

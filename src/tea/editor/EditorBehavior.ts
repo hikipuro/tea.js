@@ -392,6 +392,7 @@ export class EditorBehavior {
 			e.preventDefault();
 			this.showProjectViewFileMenu();
 		});
+		projectView.openFolder(process.cwd());
 	}
 
 	setScene(scene: Tea.Scene) {
@@ -478,7 +479,12 @@ export class EditorBehavior {
 
 	protected onBeforeUnload = (e: BeforeUnloadEvent): void => {
 		var settings = EditorSettings.getInstance();
+		var browserWindow = Electron.remote.getCurrentWindow();
+		var translator = Translator.getInstance();
+		settings.window.setData(browserWindow);
+		settings.language = translator.lang;
 		settings.save();
+		//e.returnValue = false;
 	}
 
 	protected onResizeWindow = (): void => {
@@ -607,6 +613,12 @@ export class EditorBehavior {
 				break;
 			case "File/Save Scene as":
 				this.editorCommand.saveSceneAs();
+				break;
+			case "File/New Project":
+				this.editorCommand.newProject();
+				break;
+			case "File/Open Project":
+				this.editorCommand.openProject();
 				break;
 			case "File/Build":
 				this.editorCommand.build();

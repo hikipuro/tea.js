@@ -55,6 +55,17 @@ export class EditorMenu {
 						type: "separator"
 					},
 					{
+						id: "File/New Project",
+						label: "New Project"
+					},
+					{
+						id: "File/Open Project",
+						label: "Open Project"
+					},
+					{
+						type: "separator"
+					},
+					{
 						id: "File/Build",
 						label: "Build",
 						accelerator: "CmdOrCtrl+B"
@@ -67,12 +78,14 @@ export class EditorMenu {
 					{
 						id: "Edit/Undo",
 						label: "Undo",
-						accelerator: "CmdOrCtrl+Z"
+						accelerator: "CmdOrCtrl+Z",
+						enabled: false
 					},
 					{
 						id: "Edit/Redo",
 						label: "Redo",
-						accelerator: "CmdOrCtrl+Shift+Z"
+						accelerator: "CmdOrCtrl+Shift+Z",
+						enabled: false
 					}
 				]
 			},

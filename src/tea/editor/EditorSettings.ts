@@ -1,3 +1,4 @@
+import * as nodePath from "path";
 import * as fs from "fs";
 import * as Electron from "electron";
 import { Translator } from "./translate/Translator";
@@ -13,6 +14,18 @@ export class EditorSettings {
 		this.language = "en";
 	}
 
+	static get path(): string {
+		var path = ".";
+		if (process.type === "browser") {
+			// main process
+			path = Electron.app.getAppPath();
+		} else {
+			// renderer process
+			path = Electron.remote.app.getAppPath();
+		}
+		return nodePath.join(path, EditorSettings.FileName);
+	}
+
 	static getInstance(): EditorSettings {
 		if (this._instance == null) {
 			this._instance = new EditorSettings();
@@ -21,23 +34,21 @@ export class EditorSettings {
 	}
 
 	exists(): boolean {
-		return fs.existsSync(EditorSettings.FileName);
+		return fs.existsSync(EditorSettings.path);
 	}
 
 	save(): void {
-		var browserWindow = Electron.remote.getCurrentWindow();
-		this.window.setData(browserWindow);
-		var translator = Translator.getInstance();
-		this.language = translator.lang;
+		var path = EditorSettings.path;
 		var data = JSON.stringify(this, null, "\t");
-		fs.writeFileSync(EditorSettings.FileName, data);
+		fs.writeFileSync(path, data);
 	}
 
 	load(): void {
-		if (fs.existsSync(EditorSettings.FileName) === false) {
+		var path = EditorSettings.path;
+		if (fs.existsSync(path) === false) {
 			return;
 		}
-		var data = fs.readFileSync(EditorSettings.FileName, "utf8");
+		var data = fs.readFileSync(path, "utf8");
 		var json = null;
 		try {
 			json = JSON.parse(data);

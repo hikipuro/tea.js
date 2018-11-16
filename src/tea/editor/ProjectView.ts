@@ -44,6 +44,26 @@ export class ProjectView extends Vue {
 		return this._dragSource;
 	}
 
+	openFolder(path: string): void {
+		Tea.File.exists(path, (exists: boolean) => {
+			if (exists === false) {
+				return;
+			}
+			var items = [];
+			Tea.Directory.getFiles(path, (files) => {
+				files.forEach(file => {
+					var item = this.createItems(file);
+					if (item == null) {
+						return;
+					}
+					items.push(item);
+				});
+			});
+			var folderList = this.$refs.folderList as TreeView;
+			folderList.items = items;
+		});
+	}
+
 	protected mounted(): void {
 		var folderList = this.$refs.folderList as TreeView;
 		var fileList = this.$refs.fileList as TreeView;
@@ -127,18 +147,6 @@ export class ProjectView extends Vue {
 		dragEvents.dragEnd = (e: DragEvent, item: Editor.TreeViewItem) => {
 			this._dragSource = null;
 		};
-
-		var items = [];
-		Tea.Directory.getFiles(".", (files) => {
-			files.forEach(file => {
-				var item = this.createItems(file);
-				if (item == null) {
-					return;
-				}
-				items.push(item);
-			});
-		});
-		folderList.items = items;
 	}
 
 	protected createItems(file: Tea.FileInfo): any {

@@ -14,7 +14,7 @@ const nodeConfig = {
 		__dirname: false
 	},
 	entry: {
-		"dist/NodeMain": "./src/NodeMain.ts",
+		"dist/NodeMain": "./src/node/NodeMain.ts",
 	},
 	output: {
 		path: path.join(__dirname, "/"),
@@ -47,6 +47,7 @@ const teaConfig = {
 	},
 	entry: {
 		"html/main": "./src/Main.ts",
+		"html/newProject": "./src/tea/editor/windows/NewProject.ts",
 	},
 	output: {
 		path: path.join(__dirname, "/"),
@@ -75,6 +76,7 @@ const scssConfig = {
 	context: path.join(__dirname, "./src/tea/editor/css"),
 	entry: {
 		"html/css/editor": "./Editor.scss",
+		"html/css/newProject": "../windows/css/NewProject.scss",
 	},
 	output: {
 		path: path.join(__dirname, "/"),
