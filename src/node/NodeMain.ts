@@ -5,8 +5,9 @@ import { ipcMain, IpcMessageEvent } from "electron";
 import { MainWindow } from "./MainWindow";
 import { NewProjectWindow } from "./NewProjectWindow";
 
-class Config {
-	static runElectron = true;
+module Config {
+	export const runElectron: boolean = true;
+	export const isDebug: boolean = false;
 }
 
 declare module "electron" {
@@ -60,11 +61,15 @@ class NodeMain {
 			}
 			event.returnValue = null;
 		});
+		ipcMain.on("getConfig", (event: IpcMessageEvent) => {
+			event.returnValue = Config;
+		});
 	}
 
 	protected removeIpcEvents(): void {
 		ipcMain.removeAllListeners("chdir");
 		ipcMain.removeAllListeners("showWindow");
+		ipcMain.removeAllListeners("getConfig");
 	}
 
 	protected showMainWindow(): void {
@@ -118,6 +123,10 @@ class NodeMain {
 
 	protected onReady = () => {
 		this.addIpcEvents();
+		if (Config.isDebug) {
+			this.showMainWindow();
+			return;
+		}
 		var menu = this.createProjectMenu();
 		Electron.Menu.setApplicationMenu(menu);
 		this.showNewProjectWindow();

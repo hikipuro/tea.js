@@ -1,3 +1,4 @@
+import * as Electron from "electron";
 import * as Tea from "./tea/Tea";
 import { TestScript } from "./TestScript";
 import { TestScript2 } from "./TestScript2";
@@ -24,13 +25,15 @@ export class Main {
 		//console.log("width", Tea.Screen.width);
 		//console.log("height", Tea.Screen.height);
 		//console.log(Tea.Screen.fullscreen);
-		
+
+		var config = Electron.ipcRenderer.sendSync("getConfig");
 		editor = Editor.instance;
-		//editor.panes.left.component = "TreeView";
-		//editor.panes.main.content = `<canvas id="canvas"></canvas>`;
 		editor.$nextTick(() => {
+			if (config.isDebug) {
+				this.debug();
+				return;
+			}
 			this.init();
-			//this.debug();
 		});
 	}
 
