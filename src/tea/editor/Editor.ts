@@ -5,6 +5,7 @@ import * as Tea from "../Tea";
 import { EditorSettings } from "./EditorSettings";
 import { Translator } from "./translate/Translator";
 import { EditorBehavior } from "./EditorBehavior";
+import { EditorStatus } from "./EditorStatus";
 import { ToolBox } from "./ToolBox";
 import { ConsoleView } from "./ConsoleView";
 import { HierarchyView } from "./HierarchyView";
@@ -172,6 +173,7 @@ export class Editor extends Vue {
 	static instance: Editor;
 	static readonly el = "#editor";
 	translator: any;
+	protected _status: EditorStatus;
 	protected _behavior: EditorBehavior;
 
 	/*
@@ -212,6 +214,10 @@ export class Editor extends Vue {
 		return this.$refs.menu as ContextMenu;
 	}
 
+	setApp(app: Tea.App) {
+		this._status.app = app;
+	}
+
 	setScene(scene: Tea.Scene) {
 		this._behavior.setScene(scene);
 	}
@@ -234,7 +240,12 @@ export class Editor extends Vue {
 		}
 	}
 
+	get status(): EditorStatus {
+		return this._status;
+	}
+
 	protected created(): void {
+		this._status = new EditorStatus();
 		var settings = EditorSettings.getInstance();
 		settings.load();
 		if (settings.language) {
@@ -393,11 +404,12 @@ var loaded = () => {
 		"DOMContentLoaded", loaded
 	);
 	var editor = document.querySelector("#editor");
-	if (editor) {
-		Editor.instance = new Editor({
-			el: Editor.el
-		});
+	if (editor == null) {
+		return;
 	}
+	Editor.instance = new Editor({
+		el: Editor.el
+	});
 };
 document.addEventListener(
 	"DOMContentLoaded", loaded

@@ -80,18 +80,24 @@ export class EditorBehavior {
 		this.editorCommand.inspectorView = inspectorView;
 
 		this.hierarchyViewCommand = new HierarchyViewCommand();
+		this.hierarchyViewCommand.editor = this.editor;
 		this.hierarchyViewCommand.editorCommand = this.editorCommand;
 		this.hierarchyViewCommand.hierarchyView = hierarchyView;
 		this.hierarchyViewCommand.inspectorView = inspectorView;
 		this.hierarchyViewCommand.on("menu", (id: string) => {
-			this.editorCommand.isChanged = true;
+			this.editor.status.isChanged = true;
 		});
 
 		this.objectInspectorCommand = new ObjectInspectorCommand();
+		this.objectInspectorCommand.editor = this.editor;
 		this.objectInspectorCommand.editorCommand = this.editorCommand;
 		this.objectInspectorCommand.hierarchyViewCommand = this.hierarchyViewCommand;
 		this.objectInspectorCommand.hierarchyView = hierarchyView;
 		this.objectInspectorCommand.inspectorView = inspectorView;
+
+		this.editor.status.on("isChanged", (value: boolean) => {
+			this.updateWindowTitle();
+		});
 	}
 
 	initTabs(): void {
@@ -118,20 +124,20 @@ export class EditorBehavior {
 		var toolBox = this.editor.toolBox;
 		toolBox.$on("play", () => {
 			console.log("play");
-			if (this.editorCommand.isChanged) {
+			if (this.editor.status.isChanged) {
 				this.editorCommand.once("save", (path: string) => {
 					if (path != null) {
-						this.play();
+						this.editorCommand.play();
 					}
 				});
 				this.editorCommand.saveScene();
 			} else {
-				this.play();
+				this.editorCommand.play();
 			}
 		});
 		toolBox.$on("stop", () => {
 			console.log("stop");
-			this.stop();
+			this.editorCommand.stop();
 		});
 	}
 
@@ -276,7 +282,7 @@ export class EditorBehavior {
 					});
 					break;
 			}
-			this.editorCommand.isChanged = true;
+			this.editor.status.isChanged = true;
 		});
 		hierarchyView.$on("dropFromProjectView", (item: Editor.TreeViewItem) => {
 			var dragSource = projectView.getDragSource();
@@ -303,7 +309,7 @@ export class EditorBehavior {
 							if (selectedObject != null) {
 								this.hierarchyViewCommand.selectItem(selectedObject);
 							}
-							this.editorCommand.isChanged = true;
+							this.editor.status.isChanged = true;
 						}
 					);
 					break;
@@ -347,7 +353,7 @@ export class EditorBehavior {
 				if (object3d == null) {
 					return;
 				}
-				this.editorCommand.isChanged = true;
+				this.editor.status.isChanged = true;
 				switch (key) {
 					case "name":
 						hierarchyView.getSelectedItem().model.text = value;
@@ -358,7 +364,7 @@ export class EditorBehavior {
 				}
 			}
 			if (type === "SceneInspector") {
-				this.editorCommand.isChanged = true;
+				this.editor.status.isChanged = true;
 			}
 		});
 		inspectorView.$on("change", (type: any, property: string, value: any) => {
@@ -419,29 +425,25 @@ export class EditorBehavior {
 		this.updateScreenSize();
 	}
 
-	play(): void {
-		var menu = EditorMenu.getMainMenu();
-		var fileMenu = menu.getMenuItemById("File");
-		fileMenu.submenu.items.forEach((item: Electron.MenuItem) => {
-			item.enabled = false;
-		});
-
-		var toolBox = this.editor.toolBox;
-		this.scene.app.isEditing = false;
-		toolBox.play();
-	}
-
-	stop(): void {
-		var menu = EditorMenu.getMainMenu();
-		var fileMenu = menu.getMenuItemById("File");
-		fileMenu.submenu.items.forEach((item: Electron.MenuItem) => {
-			item.enabled = true;
-		});
-
-		var toolBox = this.editor.toolBox;
-		this.scene.app.isEditing = true;
-		this.editorCommand.reloadScene();
-		toolBox.stop();
+	updateWindowTitle(): void {
+		var remote = Electron.remote;
+		if (remote == null || remote.getCurrentWindow == null) {
+			return;
+		}
+		var window = remote.getCurrentWindow();
+		var title = window.getTitle();
+		var suffix = title.substr(-2);
+		if (this.editor.status.isChanged) {
+			if (suffix !== " *") {
+				title += " *";
+				window.setTitle(title);
+			}
+		} else {
+			if (suffix === " *") {
+				title = title.substr(0, title.length - 2);
+				window.setTitle(title);
+			}
+		}
 	}
 
 	updateScreenSize = (): void => {

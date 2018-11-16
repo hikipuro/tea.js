@@ -44,22 +44,27 @@ class NodeMain {
 	protected addIpcEvents(): void {
 		ipcMain.on("chdir", (event: IpcMessageEvent, path: string) => {
 			console.log("ipcMain.chdir", path);
-			event.returnValue = null;
 			if (fs.existsSync(path) === false) {
+				event.returnValue = null;
 				return;
 			}
 			process.chdir(path);
-		});
-		ipcMain.on("showMainWindow", (event: IpcMessageEvent) => {
-			console.log("ipcMain.showMainWindow");
 			event.returnValue = null;
-			this.showMainWindow();
+		});
+		ipcMain.on("showWindow", (event: IpcMessageEvent, name: string) => {
+			console.log("ipcMain.showWindow", name);
+			switch (name) {
+				case "main":
+					this.showMainWindow();
+					break;
+			}
+			event.returnValue = null;
 		});
 	}
 
 	protected removeIpcEvents(): void {
 		ipcMain.removeAllListeners("chdir");
-		ipcMain.removeAllListeners("showMainWindow");
+		ipcMain.removeAllListeners("showWindow");
 	}
 
 	protected showMainWindow(): void {

@@ -87,6 +87,17 @@ export class NewProject extends Vue {
 		return Electron.remote.app.getPath("documents");
 	}
 
+	protected createProjectFolder(path: string): void {
+		//console.log(path);
+		if (fs.existsSync(path) === false) {
+			fs.mkdirSync(path, { recursive: true });
+		}
+		var assetsPath = nodePath.join(path, "assets");
+		if (fs.existsSync(assetsPath) === false) {
+			fs.mkdirSync(assetsPath, { recursive: true });
+		}
+	}
+
 	protected showSelectFolderDialog(): void {
 		var defaultPath = this.getDocumentsPath();
 		var location = this.$refs.location as HTMLInputElement;
@@ -140,19 +151,14 @@ export class NewProject extends Vue {
 
 	protected onClickCreateButton(): void {
 		console.log("onClickCreateButton");
+		var createButton = this.$refs.createButton as HTMLButtonElement;
+		createButton.disabled = true;
 		var name = this.$refs.name as HTMLInputElement;
 		var location = this.$refs.location as HTMLInputElement;
 		var path = nodePath.join(location.value, name.value);
-		console.log(path);
-		if (fs.existsSync(path) === false) {
-			fs.mkdirSync(path, { recursive: true });
-		}
-		var assetsPath = nodePath.join(path, "assets");
-		if (fs.existsSync(assetsPath) === false) {
-			fs.mkdirSync(assetsPath, { recursive: true });
-		}
+		this.createProjectFolder(path);
 		Electron.ipcRenderer.sendSync("chdir", path);
-		Electron.ipcRenderer.sendSync("showMainWindow");
+		Electron.ipcRenderer.sendSync("showWindow", "main");
 		window.close();
 	}
 
@@ -173,11 +179,12 @@ var loaded = () => {
 	);
 	var id = "#NewProject";
 	var main = document.querySelector(id);
-	if (main) {
-		NewProject.instance = new NewProject({
-			el: id
-		});
+	if (main == null) {
+		return;
 	}
+	NewProject.instance = new NewProject({
+		el: id
+	});
 };
 document.addEventListener(
 	"DOMContentLoaded", loaded

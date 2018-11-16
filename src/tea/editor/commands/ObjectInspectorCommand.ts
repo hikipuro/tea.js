@@ -1,4 +1,5 @@
 import * as Tea from "../../Tea";
+import { Editor } from "../Editor";
 import { EditorMenu } from "../EditorMenu";
 import { HierarchyView } from "../HierarchyView";
 import { InspectorView } from "../InspectorView";
@@ -10,6 +11,7 @@ import { ObjectInspector } from "../ObjectInspector";
 
 export class ObjectInspectorCommand {
 	scene: Tea.Scene;
+	editor: Editor;
 	editorCommand: EditorCommand;
 	hierarchyViewCommand: HierarchyViewCommand;
 	hierarchyView: HierarchyView;
@@ -162,7 +164,7 @@ export class ObjectInspectorCommand {
 			case "Remove Component":
 				object3d.removeComponent(component);
 				this.update();
-				this.editorCommand.isChanged = true;
+				this.editor.status.isChanged = true;
 				break;
 		}
 	}
@@ -204,7 +206,7 @@ export class ObjectInspectorCommand {
 			object3d.addComponent(component);
 			this.hierarchyViewCommand.selectItem(object3d);
 			//this.selectHierarchyViewItem(object3d);
-			this.editorCommand.isChanged = true;
+			this.editor.status.isChanged = true;
 		}
 	}
 }

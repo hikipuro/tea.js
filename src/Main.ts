@@ -42,6 +42,7 @@ export class Main {
 		});
 		this.app = app;
 		global["app"] = app;
+		editor.setApp(app);
 		app.isEditing = true;
 		app.width = app.canvas.parentElement.clientWidth;
 		app.height = app.canvas.parentElement.clientHeight;
@@ -58,6 +59,7 @@ export class Main {
 			var scene = app.createSceneFromJSON(json);
 			app.setScene(scene);
 			editor.setScene(scene);
+			editor.status.scenePath = scenePath;
 			app.start();
 		});
 	}

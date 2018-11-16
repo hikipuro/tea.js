@@ -1,5 +1,6 @@
 import * as Tea from "../../Tea";
 import { EventDispatcher } from "../../utils/EventDispatcher";
+import { Editor } from "../Editor";
 import { EditorMenu } from "../EditorMenu";
 import { EditorCommand } from "./EditorCommand";
 import { HierarchyView } from "../HierarchyView";
@@ -8,6 +9,7 @@ import { NativeContextMenu } from "../basic/NativeContextMenu";
 
 export class HierarchyViewCommand extends EventDispatcher {
 	scene: Tea.Scene;
+	editor: Editor;
 	editorCommand: EditorCommand;
 	hierarchyView: HierarchyView;
 	inspectorView: InspectorView;
@@ -190,7 +192,7 @@ export class HierarchyViewCommand extends EventDispatcher {
 				break;
 			case "Delete":
 				this.deleteSelectedItem();
-				this.editorCommand.isChanged = true;
+				this.editor.status.isChanged = true;
 				return;
 		}
 
@@ -199,7 +201,7 @@ export class HierarchyViewCommand extends EventDispatcher {
 			this.update(false, () => {
 				this.selectItem(object3d);
 			});
-			this.editorCommand.isChanged = true;
+			this.editor.status.isChanged = true;
 		}
 
 		this.emit("menu", item.id);

@@ -18,10 +18,11 @@ declare global {
 }
 
 import * as Tea from "../../Tea";
+import { EventDispatcher } from "../../utils/EventDispatcher";
 import { Editor } from "../Editor";
+import { EditorMenu } from "../EditorMenu";
 import { HierarchyView } from "../HierarchyView";
 import { InspectorView } from "../InspectorView";
-import { EventDispatcher } from "../../utils/EventDispatcher";
 
 export class EditorCommand extends EventDispatcher {
 	editor: Editor;
@@ -30,36 +31,41 @@ export class EditorCommand extends EventDispatcher {
 	hierarchyView: HierarchyView;
 	inspectorView: InspectorView;
 
-	scenePath: string;
-	protected _isChanged: boolean;
-
 	constructor() {
 		super();
-		this.scenePath = null;
-		this._isChanged = false;
-		this.updateWindowTitle();
-	}
-
-	get isChanged(): boolean {
-		return this._isChanged;
-	}
-	set isChanged(value: boolean) {
-		if (this.app.isEditing === false) {
-			return;
-		}
-		if (this._isChanged === value) {
-			return;
-		}
-		this._isChanged = value;
-		this.updateWindowTitle();
 	}
 
 	showPreferences(): void {
 		window.open("", "preferences");
 	}
 
+	play(): void {
+		var menu = EditorMenu.getMainMenu();
+		var fileMenu = menu.getMenuItemById("File");
+		fileMenu.submenu.items.forEach((item: Electron.MenuItem) => {
+			item.enabled = false;
+		});
+
+		var toolBox = this.editor.toolBox;
+		this.scene.app.isEditing = false;
+		toolBox.play();
+	}
+
+	stop(): void {
+		var menu = EditorMenu.getMainMenu();
+		var fileMenu = menu.getMenuItemById("File");
+		fileMenu.submenu.items.forEach((item: Electron.MenuItem) => {
+			item.enabled = true;
+		});
+
+		var toolBox = this.editor.toolBox;
+		this.scene.app.isEditing = true;
+		this.reloadScene();
+		toolBox.stop();
+	}
+
 	newScene(): void {
-		if (this._isChanged === false) {
+		if (this.editor.status.isChanged === false) {
 			this.createNewScene();
 			return;
 		}
@@ -82,7 +88,7 @@ export class EditorCommand extends EventDispatcher {
 
 	openScene(): void {
 		console.log("openScene");
-		if (this._isChanged === false) {
+		if (this.editor.status.isChanged === false) {
 			this.showOpenSceneDialog();
 			return;
 		}
@@ -105,11 +111,11 @@ export class EditorCommand extends EventDispatcher {
 
 	saveScene(): void {
 		console.log("saveScene");
-		if (this._isChanged === false) {
+		if (this.editor.status.isChanged === false) {
 			this.emit("save", null);
 			return;
 		}
-		if (this.scenePath == null) {
+		if (this.editor.status.scenePath == null) {
 			this.saveSceneAs();
 			return;
 		}
@@ -136,7 +142,7 @@ export class EditorCommand extends EventDispatcher {
 
 	newProject(): void {
 		console.log("newProject");
-		if (this._isChanged === false) {
+		if (this.editor.status.isChanged === false) {
 			window.open("", "newProject");
 			return;
 		}
@@ -159,7 +165,7 @@ export class EditorCommand extends EventDispatcher {
 
 	openProject(): void {
 		console.log("openProject");
-		if (this._isChanged === false) {
+		if (this.editor.status.isChanged === false) {
 			this.showOpenProjectDialog();
 			return;
 		}
@@ -181,10 +187,11 @@ export class EditorCommand extends EventDispatcher {
 	}
 
 	reloadScene(): void {
-		if (this.scenePath == null) {
+		console.log("reloadScene", this.editor.status.scenePath);
+		if (this.editor.status.scenePath == null) {
 			return;
 		}
-		this.loadScene(this.scenePath);
+		this.loadScene(this.editor.status.scenePath);
 	}
 
 	build(): void {
@@ -217,8 +224,8 @@ export class EditorCommand extends EventDispatcher {
 				console.error(err);
 				return;
 			}
-			this.scenePath = path;
-			this.isChanged = false;
+			this.editor.status.scenePath = path;
+			this.editor.status.isChanged = false;
 			var app = this.app;
 			var scene = app.createSceneFromJSON(json);
 			app.setScene(scene);
@@ -230,8 +237,8 @@ export class EditorCommand extends EventDispatcher {
 
 	protected createNewScene(): void {
 		this.scene.destroy();
-		this.scenePath = null;
-		this.isChanged = false;
+		this.editor.status.scenePath = null;
+		this.editor.status.isChanged = false;
 		var app = this.app;
 		var scene = app.createScene();
 		var camera = app.createCamera();
@@ -322,35 +329,15 @@ export class EditorCommand extends EventDispatcher {
 		);
 	}
 
-	protected updateWindowTitle(): void {
-		if (remote == null || remote.getCurrentWindow == null) {
-			return;
-		}
-		var window = remote.getCurrentWindow();
-		var title = window.getTitle();
-		var suffix = title.substr(-2);
-		if (this._isChanged) {
-			if (suffix !== " *") {
-				title += " *";
-				window.setTitle(title);
-			}
-		} else {
-			if (suffix === " *") {
-				title = title.substr(0, title.length - 2);
-				window.setTitle(title);
-			}
-		}
-	}
-
 	protected saveSceneFile(): void {
-		var filename = this.scenePath;
+		var filename = this.editor.status.scenePath;
 		var json = this.scene.toJSON();
 		var text = JSON.stringify(json, null, "\t");
 		if (text.indexOf("\r\n") <= 0) {
 			text = text.replace(/\n/g, "\r\n");
 		}
 		Tea.File.writeText(filename, text, null);
-		this.isChanged = false;
+		this.editor.status.isChanged = false;
 		this.emit("save", filename);
 	}
 
@@ -366,7 +353,7 @@ export class EditorCommand extends EventDispatcher {
 			this.emit("save", null);
 			return;
 		}
-		this.scenePath = filename;
+		this.editor.status.scenePath = filename;
 		this.saveSceneFile();
 		console.log(filename);
 	}
