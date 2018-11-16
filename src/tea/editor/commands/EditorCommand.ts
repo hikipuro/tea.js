@@ -69,7 +69,7 @@ export class EditorCommand extends EventDispatcher {
 			this.createNewScene();
 			return;
 		}
-		this.showConfirmSaveDialog((response: string) => {
+		this.showConfirmSaveSceneDialog((response: string) => {
 			switch (response) {
 				case "Save":
 					this.once("save", (filename: string) => {
@@ -92,7 +92,7 @@ export class EditorCommand extends EventDispatcher {
 			this.showOpenSceneDialog();
 			return;
 		}
-		this.showConfirmSaveDialog((response: string) => {
+		this.showConfirmSaveSceneDialog((response: string) => {
 			switch (response) {
 				case "Save":
 					this.once("save", (filename: string) => {
@@ -146,7 +146,7 @@ export class EditorCommand extends EventDispatcher {
 			window.open("", "newProject");
 			return;
 		}
-		this.showConfirmSaveDialog((response: string) => {
+		this.showConfirmSaveSceneDialog((response: string) => {
 			switch (response) {
 				case "Save":
 					this.once("save", (filename: string) => {
@@ -169,7 +169,7 @@ export class EditorCommand extends EventDispatcher {
 			this.showOpenProjectDialog();
 			return;
 		}
-		this.showConfirmSaveDialog((response: string) => {
+		this.showConfirmSaveSceneDialog((response: string) => {
 			switch (response) {
 				case "Save":
 					this.once("save", (filename: string) => {
@@ -233,6 +233,27 @@ export class EditorCommand extends EventDispatcher {
 
 			console.log("onload", app.isEditing, scene.isEditing);
 		});
+	}
+
+	showConfirmSaveSceneDialog(callback: (response: string) => void): void {
+		console.log("showConfirmSaveSceneDialog");
+		var browserWindow = remote.getCurrentWindow();
+		var buttons = [
+			"Save", "Cancel", "Don't Save"
+		];
+		var options: Electron.MessageBoxOptions = {
+			type: "info",
+			message: "Scene have been modified",
+			detail: "Do you want to save?",
+			buttons: buttons,
+			defaultId: 0
+		};
+		Dialog.showMessageBox(
+			browserWindow, options,
+			(response: number) => {
+				callback(buttons[response]);
+			}
+		);
 	}
 
 	protected createNewScene(): void {
@@ -305,27 +326,6 @@ export class EditorCommand extends EventDispatcher {
 		Dialog.showOpenDialog(
 			browserWindow, options,
 			this.onCloseOpenSceneDialog
-		);
-	}
-
-	protected showConfirmSaveDialog(callback: (response: string) => void): void {
-		console.log("showConfirmSaveDialog");
-		var browserWindow = remote.getCurrentWindow();
-		var buttons = [
-			"Save", "Cancel", "Don't Save"
-		];
-		var options: Electron.MessageBoxOptions = {
-			type: "info",
-			message: "Scene have been modified",
-			detail: "Do you want to save?",
-			buttons: buttons,
-			defaultId: 0
-		};
-		Dialog.showMessageBox(
-			browserWindow, options,
-			(response: number) => {
-				callback(buttons[response]);
-			}
 		);
 	}
 

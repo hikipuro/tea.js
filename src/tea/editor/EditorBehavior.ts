@@ -480,6 +480,27 @@ export class EditorBehavior {
 	}
 
 	protected onBeforeUnload = (e: BeforeUnloadEvent): void => {
+		if (this.editor.status.isChanged) {
+			e.returnValue = false;
+			this.editorCommand.showConfirmSaveSceneDialog((response: string) => {
+				switch (response) {
+					case "Save":
+						this.editorCommand.once("save", (path: string) => {
+							if (path != null) {
+								window.close();
+							}
+						});
+						this.editorCommand.saveScene();
+						//window.close();
+						break;
+					case "Don't Save":
+						this.editor.status.isChanged = false;
+						window.close();
+						break;
+				}
+			});
+			return;
+		}
 		var settings = EditorSettings.getInstance();
 		var browserWindow = Electron.remote.getCurrentWindow();
 		var translator = Translator.getInstance();
