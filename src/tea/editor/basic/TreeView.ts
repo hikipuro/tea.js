@@ -13,6 +13,7 @@ import { NoCache } from "./NoCache";
 				:title="model.title"
 				:draggable="draggable"
 				@click.stop="onClick"
+				@dblclick.stop="onDoubleClick"
 				@contextmenu="onContextMenu">
 				<div
 					class="folder"
@@ -29,7 +30,8 @@ import { NoCache } from "./NoCache";
 					:model="model"
 					:depth="depth + 1"
 					@create="onCreate"
-					@select="onSelect">
+					@select="onSelect"
+					@doubleClick="$emit('doubleClick', $event)">
 				</item>
 			</ul>
 		</li>
@@ -288,6 +290,10 @@ export class Item extends Vue {
 		this.$emit("select", this);
 	}
 
+	protected onDoubleClick(): void {
+		this.$emit("doubleClick", this);
+	}
+
 	protected onContextMenu(): void {
 		this.$emit("select", this);
 	}
@@ -369,7 +375,8 @@ export class Item extends Vue {
 					:model="item"
 					:depth="0"
 					@create="onCreateItem"
-					@select="onSelectItem">
+					@select="onSelectItem"
+					@doubleClick="onDoubleClickItem">
 				</item>
 			</ul>
 			<slot></slot>
@@ -810,6 +817,10 @@ export class TreeView extends Vue {
 		if (this._preventSelectEvent === false) {
 			this.$emit("select", item);
 		}
+	}
+
+	protected onDoubleClickItem(item: Item): void {
+		this.$emit("doubleClick", item);
 	}
 
 	protected forEachChild(callback: (item: Item) => void) {

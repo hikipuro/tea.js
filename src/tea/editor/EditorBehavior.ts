@@ -239,6 +239,10 @@ export class EditorBehavior {
 				this.objectInspectorCommand.update();
 			}
 		});
+		hierarchyView.$on("doubleClick", (item: Editor.TreeViewItem) => {
+			var object3d = this.hierarchyViewCommand.getSelectedObject();
+			this.scene.lockViewToSelected(object3d);
+		});
 		hierarchyView.$on("drop", (mode: number, idSrc: number, idDst: number) => {
 			//console.log("drop", idSrc, idDst, item.model.text);
 			var scene = this.scene;

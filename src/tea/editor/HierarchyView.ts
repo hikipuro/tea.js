@@ -152,6 +152,10 @@ export class HierarchyView extends Vue {
 		treeView.$on("select", (item: Editor.TreeViewItem) => {
 			this.$emit("select", item);
 		});
+
+		treeView.$on("doubleClick", (item: Editor.TreeViewItem) => {
+			this.$emit("doubleClick", item);
+		});
 	}
 
 	createDragImage(text: string): HTMLElement {
