@@ -69,12 +69,7 @@ const teaConfig = {
 				test: /\.ts$/, loader: "ts-loader"
 			}
 		]
-	},
-	plugins: [
-		new webpack.DefinePlugin({
-			"process.env.NODE_ENV": JSON.stringify("production")
-		})
-	]
+	}
 };
 
 const scssConfig = {
