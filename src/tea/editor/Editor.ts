@@ -52,6 +52,7 @@ import { Rigidbody } from "./components/Rigidbody";
 import { Script } from "./components/Script";
 import { TextMesh } from "./components/TextMesh";
 
+Vue.config.devtools = false;
 //*
 Vue.component("ObjectInspector", ObjectInspector);
 
