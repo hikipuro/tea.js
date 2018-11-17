@@ -21,6 +21,7 @@ export class EditorBehavior {
 	editorCommand: EditorCommand;
 	hierarchyViewCommand: HierarchyViewCommand;
 	objectInspectorCommand: ObjectInspectorCommand;
+	protected _willReload: boolean = false;
 
 	constructor(editor: Editor) {
 		this.editor = editor;
@@ -486,7 +487,12 @@ export class EditorBehavior {
 				switch (response) {
 					case "Save":
 						this.editorCommand.once("save", (path: string) => {
-							if (path != null) {
+							if (path == null) {
+								return;
+							}
+							if (this._willReload) {
+								location.reload();
+							} else {
 								window.close();
 							}
 						});
@@ -495,7 +501,11 @@ export class EditorBehavior {
 						break;
 					case "Don't Save":
 						this.editor.status.isChanged = false;
-						window.close();
+						if (this._willReload) {
+							location.reload();
+						} else {
+							window.close();
+						}
 						break;
 				}
 			});
@@ -549,6 +559,9 @@ export class EditorBehavior {
 		if (ctrlKey) {
 			var key = e.key.toLowerCase();
 			switch (key) {
+				case "r":
+					this._willReload = true;
+					break;
 				case "z":
 					e.preventDefault();
 					if (shiftKey) {
@@ -578,6 +591,9 @@ export class EditorBehavior {
 		if (ctrlKey) {
 			var key = e.key.toLowerCase();
 			switch (key) {
+				case "r":
+					this._willReload = true;
+					break;
 				case "z":
 					e.preventDefault();
 					if (shiftKey) {

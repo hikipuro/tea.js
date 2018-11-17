@@ -19,8 +19,8 @@ export class Main {
 	public count: number;
 
 	constructor() {
-		console.log(Tea.App.systemLanguage);
-		console.log(Tea.App.absoluteURL);
+		//console.log(Tea.App.systemLanguage);
+		//console.log(Tea.App.absoluteURL);
 		//console.log("devicePixelRatio", Tea.Screen.dpi);
 		//console.log("width", Tea.Screen.width);
 		//console.log("height", Tea.Screen.height);
