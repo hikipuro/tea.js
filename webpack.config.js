@@ -49,6 +49,7 @@ const teaConfig = {
 	entry: {
 		"html/main": "./src/Main.ts",
 		"html/newProject": "./src/tea/editor/windows/NewProject.ts",
+		"html/preferences": "./src/tea/editor/windows/Preferences.ts",
 	},
 	output: {
 		path: path.join(__dirname, "/"),
@@ -78,6 +79,7 @@ const scssConfig = {
 	entry: {
 		"html/css/editor": "./Editor.scss",
 		"html/css/newProject": "../windows/css/NewProject.scss",
+		"html/css/preferences": "../windows/css/Preferences.scss",
 	},
 	output: {
 		path: path.join(__dirname, "/"),

@@ -5,9 +5,11 @@ models
 html/main.js
 html/build.js
 html/newProject.js
+html/preferences.js
 html/media
 html/css/editor.css
 html/css/newProject.css
+html/css/preferences.css
 models/
 test/
 

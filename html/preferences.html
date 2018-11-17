@@ -4,51 +4,9 @@
 <meta charset="utf-8">
 <title>Preferences</title>
 <link rel="stylesheet" href="css/preferences.css">
-<script>
-const Electron = require("electron");
-//console.log(Electron);
-var okButton;
-var language;
-window.addEventListener("message", (e) => {
-	console.log(e);
-	var json = JSON.parse(e.data);
-	switch (json.key) {
-		case "language":
-			language.value = json.value;
-			break;
-	}
-});
-function emitToParent(key, value) {
-	var data = {
-		type: "preferences",
-		key: key,
-		value: value
-	}
-	var json = JSON.stringify(data);
-	window.opener.postMessage(json, "*");
-}
-document.addEventListener("DOMContentLoaded", () => {
-	okButton = document.querySelector("#okButton");
-	okButton.addEventListener("click", () => {
-		window.close();
-	});
-	language = document.querySelector("#language");
-	language.addEventListener("change", () => {
-		console.log(language.value);
-		emitToParent("language", language.value);
-	});
-	emitToParent("ready", null);
-});
-</script>
+<script src="preferences.js"></script>
 </head>
 <body>
-<div class="language">
-	Language:
-	<select id="language">
-		<option value="en">English</option>
-		<option value="ja">Japanese</option>
-	</select>
-</div>
-<button id="okButton">OK</button>
+<div id="Preferences"></div>
 </body>
 </html>

@@ -543,7 +543,7 @@ export class EditorBehavior {
 	}
 
 	protected onWindowMessage = (e: MessageEvent) => {
-		var json = JSON.parse(e.data);
+		var json = e.data;
 		if (json.type === "preferences") {
 			var translator = Translator.getInstance();
 			switch (json.key) {
@@ -553,7 +553,7 @@ export class EditorBehavior {
 						key: "language",
 						value: translator.lang
 					}
-					source.postMessage(JSON.stringify(data), "*");
+					source.postMessage(data, "*");
 					break;
 				case "language":
 					translator.loadResource(json.value);

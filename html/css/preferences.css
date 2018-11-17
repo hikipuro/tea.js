@@ -1,12 +1,10 @@
 html, body {
-	color: white;
-	font-family: sans-serif;
-	font-size: 12px;
-	user-select: none;
-	background-color: #1e1f21;
-	overflow: hidden;
-}
+  color: white;
+  font-family: sans-serif;
+  font-size: 12px;
+  user-select: none;
+  background-color: #1e1f21;
+  overflow: hidden; }
 
 div.language {
-	margin-bottom: 10px;
-}
+  margin-bottom: 10px; }
