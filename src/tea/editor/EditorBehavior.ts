@@ -517,6 +517,15 @@ export class EditorBehavior {
 		var settings = EditorSettings.getInstance();
 		var browserWindow = Electron.remote.getCurrentWindow();
 		var translator = Translator.getInstance();
+		if (browserWindow.isFullScreen()) {
+			browserWindow.setFullScreen(false);
+		}
+		if (browserWindow.isMaximized()) {
+			browserWindow.hide();
+			browserWindow.unmaximize();
+		} else if (browserWindow.isMinimized()) {
+			browserWindow.restore();
+		}
 		settings.window.setData(browserWindow);
 		settings.language = translator.lang;
 		settings.save();
