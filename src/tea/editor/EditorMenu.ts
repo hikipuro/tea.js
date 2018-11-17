@@ -151,6 +151,11 @@ export class EditorMenu {
 				);
 			}
 			if (process.platform === "win32") {
+				var fileMenu = template[0].submenu as Electron.MenuItemConstructorOptions[];
+				fileMenu.push(
+					{ type: "separator" },
+					{ role: "quit" }
+				);
 				var editMenu = template[1].submenu as Electron.MenuItemConstructorOptions[];
 				editMenu.push(
 					{ type: "separator" },
