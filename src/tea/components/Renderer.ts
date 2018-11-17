@@ -74,6 +74,9 @@ export class Renderer extends Component {
 	}
 
 	render(camera: Tea.Camera, lights: Array<Tea.Light>, renderSettings: Tea.RenderSettings): void {
+		if (this.material == null) {
+			return;
+		}
 		var shader = this.material.shader;
 		if (shader == null) {
 			return;

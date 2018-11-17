@@ -49,7 +49,9 @@ class SceneIcon extends Object3D {
 		var view = camera.cameraToWorldMatrix;
 		material.setVector("CameraRight", new Tea.Vector4(view[0], view[1], view[2], 0.0));
 		material.setVector("CameraUp", new Tea.Vector4(view[4], view[5], view[6], 0.0));
-		material.setVector("position", this.target.position.toVector4());
+		if (this.target.position) {
+			material.setVector("position", this.target.position.toVector4());
+		}
 	}
 }
 

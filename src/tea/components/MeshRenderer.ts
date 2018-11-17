@@ -134,6 +134,9 @@ export class MeshRenderer extends Renderer {
 		super.render(camera, lights, renderSettings);
 
 		var mesh = this._mesh;
+		if (mesh == null) {
+			return;
+		}
 		if (mesh.isModified === true) {
 			this.setMeshData(mesh);
 		}
