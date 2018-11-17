@@ -8,42 +8,90 @@ import { Translator } from "../translate/Translator";
 @Component({
 	template: `
 		<div id="NewProject">
-			<h1>New Project</h1>
-			<div class="form">
-				<div class="item">
-					<div class="label">
-						Project name
+			<div class="type">
+				<input
+					ref="radioNew"
+					id="radioTypeNew"
+					type="radio"
+					name="type"
+					value="new"
+					checked="checked"
+					@change="onChangeType">
+				<label for="radioTypeNew">New</label>
+				<input
+					ref="radioOpen"
+					id="radioTypeOpen"
+					type="radio"
+					name="type"
+					value="open"
+					@change="onChangeType">
+				<label for="radioTypeOpen">Open</label>
+			</div>
+			<div v-if="type === 'new'">
+				<h1>New Project</h1>
+				<div class="form">
+					<div class="item">
+						<div class="label">
+							Project name
+						</div>
+						<div class="value">
+							<input
+								ref="name"
+								type="text"
+								placeholder="Project name"
+								:value="projectName"
+								@input="onInputProjectName">
+						</div>
 					</div>
-					<div class="value">
-						<input
-							ref="name"
-							type="text"
-							placeholder="Project name"
-							:value="projectName"
-							@input="onInputProjectName">
+					<div class="item">
+						<div class="label">
+							Location
+						</div>
+						<div class="value">
+							<input
+								ref="location"
+								type="text"
+								placeholder="Location"
+								:value="location"
+								@input="onInputLocation">
+							<button
+								@click="onClickSelectFolderButton">...</button>
+						</div>
 					</div>
-				</div>
-				<div class="item">
-					<div class="label">
-						Location
-					</div>
-					<div class="value">
-						<input
-							ref="location"
-							type="text"
-							placeholder="Location"
-							:value="location"
-							@input="onInputLocation">
+					<div class="item createButton">
 						<button
-							@click="onClickSelectFolderButton">...</button>
+							ref="createButton"
+							@click="onClickCreateButton">
+							Create Project
+						</button>
 					</div>
 				</div>
-				<div class="item createButton">
-					<button
-						ref="createButton"
-						@click="onClickCreateButton">
-						Create Project
-					</button>
+			</div>
+			<div v-if="type === 'open'">
+				<h1>Open Project</h1>
+				<div class="form">
+					<div class="item">
+						<div class="label">
+							Location
+						</div>
+						<div class="value">
+							<input
+								ref="locationOpen"
+								type="text"
+								placeholder="Location"
+								:value="location"
+								@input="onInputLocationOpen">
+							<button
+								@click="onClickSelectFolderButton">...</button>
+						</div>
+					</div>
+					<div class="item createButton">
+						<button
+							ref="openButton"
+							@click="onClickOpenButton">
+							Open Project
+						</button>
+					</div>
 				</div>
 			</div>
 		</div>
@@ -51,6 +99,7 @@ import { Translator } from "../translate/Translator";
 	data: () => {
 		return {
 			translator: {},
+			type: "new",
 			projectName: "New Project",
 			location: ""
 		}
@@ -59,6 +108,7 @@ import { Translator } from "../translate/Translator";
 export class NewProject extends Vue {
 	static instance: NewProject;
 	translator: any;
+	type: string;
 	projectName: string;
 	location: string;
 
@@ -72,6 +122,14 @@ export class NewProject extends Vue {
 		this.translate();
 		var path = this.getDocumentsPath();
 		this.location = nodePath.resolve(path);
+	}
+
+	protected updated(): void {
+		if (this.type === "new") {
+			this.onInputLocation();
+		} else {
+			this.onInputLocationOpen();
+		}
 	}
 
 	protected emitToParent(key: string, value: any): void {
@@ -101,6 +159,9 @@ export class NewProject extends Vue {
 	protected showSelectFolderDialog(): void {
 		var defaultPath = this.getDocumentsPath();
 		var location = this.$refs.location as HTMLInputElement;
+		if (this.type === "open") {
+			location = this.$refs.locationOpen as HTMLInputElement;
+		}
 		var path = location.value;
 		if (fs.existsSync(path)) {
 			defaultPath = path;
@@ -119,6 +180,16 @@ export class NewProject extends Vue {
 			browserWindow, options,
 			this.onCloseSelectFolderDialog
 		);
+	}
+
+	protected onChangeType(): void {
+		var radioNew = this.$refs.radioNew as HTMLInputElement;
+		//var radioOpen = this.$refs.radioOpen as HTMLInputElement;
+		if (radioNew.checked) {
+			this.type = "new";
+		} else {
+			this.type = "open";
+		}
 	}
 
 	protected onInputProjectName(): void {
@@ -142,6 +213,19 @@ export class NewProject extends Vue {
 		} else {
 			createButton.disabled = false;
 		}
+		this.location = path;
+	}
+
+	protected onInputLocationOpen(): void {
+		var location = this.$refs.locationOpen as HTMLInputElement;
+		var openButton = this.$refs.openButton as HTMLButtonElement;
+		var path = location.value;
+		if (path === "" || fs.existsSync(path) === false) {
+			openButton.disabled = true;
+		} else {
+			openButton.disabled = false;
+		}
+		this.location = path;
 	}
 
 	protected onClickSelectFolderButton(): void {
@@ -162,13 +246,26 @@ export class NewProject extends Vue {
 		window.close();
 	}
 
-	protected onCloseSelectFolderDialog = (filePaths: string[]): void => {
+	protected onClickOpenButton(): void {
+		var openButton = this.$refs.openButton as HTMLButtonElement;
+		openButton.disabled = true;
+		var location = this.$refs.locationOpen as HTMLInputElement;
+		var path = nodePath.join(location.value);
+		Electron.ipcRenderer.sendSync("chdir", path);
+		Electron.ipcRenderer.sendSync("showWindow", "main");
+		window.close();
+	}
+
+	protected onCloseSelectFolderDialog(filePaths: string[]): void {
 		if (filePaths == null || filePaths.length < 1) {
 			return;
 		}
 		var path = filePaths[0];
 		this.location = path;
 		var location = this.$refs.location as HTMLInputElement;
+		if (this.type === "open") {
+			location = this.$refs.locationOpen as HTMLInputElement;
+		}
 		location.value = path;
 	}
 }
