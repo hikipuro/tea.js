@@ -507,6 +507,9 @@ export class EditorBehavior {
 							window.close();
 						}
 						break;
+					default:
+						this._willReload = false;
+						break;
 				}
 			});
 			return;
@@ -661,6 +664,10 @@ export class EditorBehavior {
 				break;
 			case "File/Build":
 				this.editorCommand.build();
+				break;
+			case "View/Reload":
+				this._willReload = true;
+				location.reload();
 				break;
 		}
 	}

@@ -92,8 +92,12 @@ export class EditorMenu {
 			{
 				label: "View",
 				submenu: [
-					{ role: "reload" },
-					{ role: "forcereload" },
+					{
+						id: "View/Reload",
+						label: "Reload",
+						accelerator: "CmdOrCtrl+R",
+					},
+					//{ role: "forcereload" },
 					{ role: "toggledevtools" },
 					{ type: "separator" },
 					{ role: "resetzoom" },
