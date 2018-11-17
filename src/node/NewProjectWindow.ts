@@ -13,9 +13,11 @@ module Settings {
 export class NewProjectWindow {
 	browserWindow: Electron.BrowserWindow;
 	isReady: boolean;
+	defaultTab: string;
 
-	constructor(parent: Electron.BrowserWindow = null) {
+	constructor(parent: Electron.BrowserWindow = null, defaultTab: string = "new") {
 		this.isReady = false;
+		this.defaultTab = defaultTab;
 		this.initWindow(parent);
 	}
 
@@ -85,6 +87,7 @@ export class NewProjectWindow {
 			pathname: nodePath.join(__dirname, Settings.Content),
 			protocol: "file:",
 			slashes: true,
+			hash: this.defaultTab
 		}));
 	}
 }

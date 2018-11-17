@@ -52,11 +52,20 @@ class NodeMain {
 			process.chdir(path);
 			event.returnValue = null;
 		});
-		ipcMain.on("showWindow", (event: IpcMessageEvent, name: string) => {
+		ipcMain.on("showWindow", (event: IpcMessageEvent, name: string, ...args: string[]) => {
 			console.log("ipcMain.showWindow", name);
 			switch (name) {
 				case "main":
 					this.showMainWindow();
+					break;
+				case "newProject":
+					var menu = this.createProjectMenu();
+					Electron.Menu.setApplicationMenu(menu);
+					var tab = "new";
+					if (args[0]) {
+						tab = args[0];
+					}
+					this.showNewProjectWindow(tab);
 					break;
 			}
 			event.returnValue = null;
@@ -85,12 +94,14 @@ class NodeMain {
 		this.mainWindow.show();
 	}
 
-	protected showNewProjectWindow(): void {
+	protected showNewProjectWindow(tab: string = null): void {
 		if (this.newProjectWindow != null) {
 			this.newProjectWindow.focus();
 			return;
 		}
-		this.newProjectWindow = new NewProjectWindow();
+		this.newProjectWindow = new NewProjectWindow(
+			null, tab
+		);
 		this.newProjectWindow.browserWindow.once("close", () => {
 			console.log("close newProjectWindow");
 			this.newProjectWindow = null;

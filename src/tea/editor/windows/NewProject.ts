@@ -122,6 +122,13 @@ export class NewProject extends Vue {
 		this.translate();
 		var path = this.getDocumentsPath();
 		this.location = nodePath.resolve(path);
+		if (location.hash === "#open") {
+			this.$nextTick(() => {
+				var radioOpen = this.$refs.radioOpen as HTMLInputElement;
+				radioOpen.checked = true;
+			});
+			this.type = "open";
+		}
 	}
 
 	protected updated(): void {

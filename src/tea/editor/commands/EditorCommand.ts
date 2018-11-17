@@ -143,21 +143,22 @@ export class EditorCommand extends EventDispatcher {
 	newProject(): void {
 		console.log("newProject");
 		if (this.editor.status.isChanged === false) {
-			window.open("", "newProject");
+			this.openNewProjectWindow();
 			return;
 		}
 		this.showConfirmSaveSceneDialog((response: string) => {
 			switch (response) {
 				case "Save":
 					this.once("save", (filename: string) => {
-						if (filename != null) {
-							window.open("", "newProject");
+						if (filename == null) {
+							return;
 						}
+						this.openNewProjectWindow();
 					});
 					this.saveScene();
 					break;
 				case "Don't Save":
-					window.open("", "newProject");
+					this.openNewProjectWindow();
 					break;
 			}
 		});
@@ -166,21 +167,25 @@ export class EditorCommand extends EventDispatcher {
 	openProject(): void {
 		console.log("openProject");
 		if (this.editor.status.isChanged === false) {
-			this.showOpenProjectDialog();
+			//this.showOpenProjectDialog();
+			this.openNewProjectWindow("open");
 			return;
 		}
 		this.showConfirmSaveSceneDialog((response: string) => {
 			switch (response) {
 				case "Save":
 					this.once("save", (filename: string) => {
-						if (filename != null) {
-							this.showOpenProjectDialog();
+						if (filename == null) {
+							return;
 						}
+						//this.showOpenProjectDialog();
+						this.openNewProjectWindow("open");
 					});
 					this.saveScene();
 					break;
 				case "Don't Save":
-					this.showOpenProjectDialog();
+					//this.showOpenProjectDialog();
+					this.openNewProjectWindow("open");
 					break;
 			}
 		});
@@ -339,6 +344,15 @@ export class EditorCommand extends EventDispatcher {
 		Tea.File.writeText(filename, text, null);
 		this.editor.status.isChanged = false;
 		this.emit("save", filename);
+	}
+
+	protected openNewProjectWindow(tab: string = null): void {
+		//window.open("", "newProject");
+		Electron.ipcRenderer.sendSync(
+			"showWindow", "newProject", tab
+		);
+		this.editor.status.isChanged = false;
+		window.close();
 	}
 
 	protected onCloseOpenSceneDialog = (filePaths: string[]): void => {

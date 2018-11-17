@@ -16,7 +16,6 @@ export class MainWindow {
 	browserWindow: Electron.BrowserWindow;
 	isReady: boolean;
 	preferencesWindow: Electron.BrowserWindow;
-	newProjectWindow: Electron.BrowserWindow;
 
 	constructor(parent: Electron.BrowserWindow = null) {
 		this.isReady = false;
@@ -116,14 +115,6 @@ export class MainWindow {
 				} else {
 					this.preferencesWindow.focus();
 				}
-			} else if (frameName === "newProject") {
-				event.preventDefault();
-				if (this.newProjectWindow == null) {
-					this.showNewProjectWindow(options);
-					event.newGuest = this.newProjectWindow;
-				} else {
-					this.newProjectWindow.focus();
-				}
 			}
 		});
 		window.loadURL(url.format({
@@ -179,49 +170,5 @@ export class MainWindow {
 			slashes: true,
 		}));
 		this.preferencesWindow = window;
-	}
-	
-	protected showNewProjectWindow(options: Electron.BrowserWindowConstructorOptions): void {
-		var rect = this.browserWindow.getBounds();
-		var x = rect.x + rect.width / 2;
-		var y = rect.y + rect.height / 3;
-
-		Object.assign(options, {
-			//modal: true,
-			parent: this.browserWindow,
-			title: Settings.Title,
-			x: x,
-			y: y,
-			width: 420,
-			height: 200,
-			center: true,
-			resizable: false,
-			maximizable: false,
-			minimizable: false,
-			fullscreenable: false,
-			//skipTaskbar: true,
-			useContentSize: true,
-			show: false
-		});
-		
-		options.x -= options.width / 2;
-		options.y -= options.height / 2;
-		options.x = Math.floor(options.x);
-		options.y = Math.floor(options.y);
-		
-		var window = new Electron.BrowserWindow(options);
-		window.once("ready-to-show", () => {
-			window.show();
-		});
-		window.once("close", () => {
-			this.newProjectWindow = null;
-		});
-		window.setMenu(null);
-		window.loadURL(url.format({
-			pathname: nodePath.join(__dirname, Settings.NewProject),
-			protocol: "file:",
-			slashes: true,
-		}));
-		this.newProjectWindow = window;
 	}
 }
