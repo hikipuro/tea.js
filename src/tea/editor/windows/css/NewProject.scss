@@ -25,6 +25,19 @@ body {
 		margin-bottom: 1em;
 	}
 
+	div.type {
+		display: flex;
+		align-items: center;
+
+		> input[type="radio"] {
+			margin: 0;
+		}
+
+		> label {
+			margin: 0 1em 0 0.3em;
+		}
+	}
+
 	div.form {
 		> .item {
 			display: flex;
