@@ -23,19 +23,27 @@ export class EditorMenu {
 	static createMainMenu(
 		handler: (menuItem: Electron.MenuItem, browserWindow: Electron.BrowserWindow, event: Event) => void
 	): Electron.Menu {
+		var appName = "";
+		if (process.type === "browser") {
+			appName = Electron.app.getName();
+		} else {
+			appName = Electron.remote.app.getName();
+		}
+		var translator = Translator.getInstance();
+		translator.basePath = "MainMenu";
 		var template: Electron.MenuItemConstructorOptions[] = [
 			{
 				id: "File",
-				label: "File",
+				label: translator.getText("File/Title"),
 				submenu: [
 					{
 						id: "File/New Scene",
-						label: "New Scene",
+						label: translator.getText("File/NewScene"),
 						accelerator: "CmdOrCtrl+N"
 					},
 					{
 						id: "File/Open Scene",
-						label: "Open Scene",
+						label: translator.getText("File/OpenScene"),
 						accelerator: "CmdOrCtrl+O"
 					},
 					{
@@ -43,12 +51,12 @@ export class EditorMenu {
 					},
 					{
 						id: "File/Save Scene",
-						label: "Save Scene",
+						label: translator.getText("File/SaveScene"),
 						accelerator: "CmdOrCtrl+S"
 					},
 					{
 						id: "File/Save Scene as",
-						label: "Save Scene as...",
+						label: translator.getText("File/SaveSceneAs"),
 						accelerator: "CmdOrCtrl+Shift+S"
 					},
 					{
@@ -56,96 +64,144 @@ export class EditorMenu {
 					},
 					{
 						id: "File/New Project",
-						label: "New Project"
+						label: translator.getText("File/NewProject")
 					},
 					{
 						id: "File/Open Project",
-						label: "Open Project"
+						label: translator.getText("File/OpenProject")
 					},
 					{
 						type: "separator"
 					},
 					{
 						id: "File/Build",
-						label: "Build",
+						label: translator.getText("File/Build"),
 						accelerator: "CmdOrCtrl+B"
 					},
 				]
 			},
 			{
-				label: "Edit",
+				label: translator.getText("Edit/Title"),
 				submenu: [
 					{
 						id: "Edit/Undo",
-						label: "Undo",
+						label: translator.getText("Edit/Undo"),
 						accelerator: "CmdOrCtrl+Z",
 						enabled: false
 					},
 					{
 						id: "Edit/Redo",
-						label: "Redo",
+						label: translator.getText("Edit/Redo"),
 						accelerator: "CmdOrCtrl+Shift+Z",
 						enabled: false
 					}
 				]
 			},
 			{
-				label: "View",
+				label: translator.getText("View/Title"),
 				submenu: [
 					{
 						id: "View/Reload",
-						label: "Reload",
+						label: translator.getText("View/Reload"),
 						accelerator: "CmdOrCtrl+R",
 					},
 					//{ role: "forcereload" },
-					{ role: "toggledevtools" },
+					{
+						role: "toggledevtools",
+						label: translator.getText("View/ToggleDevTools")
+					},
 					{ type: "separator" },
-					{ role: "resetzoom" },
-					{ role: "zoomin" },
-					{ role: "zoomout" },
+					{
+						role: "resetzoom",
+						label: translator.getText("View/ResetZoom")
+					},
+					{
+						role: "zoomin",
+						label: translator.getText("View/ZoomIn")
+					},
+					{
+						role: "zoomout",
+						label: translator.getText("View/ZoomOut")
+					},
 					{ type: "separator" },
-					{ role: "togglefullscreen" }
+					{
+						role: "togglefullscreen",
+						label: translator.getText("View/ToggleFullScreen")
+					}
 				]
 			},
 			{
 				role: "window",
+				label: translator.getText("Window/Title"),
 				submenu: [
-					{ role: "minimize" }
+					{
+						role: "minimize",
+						label: translator.getText("Window/Minimize")
+					}
 				]
 			}
 		];
 		if (process && process.platform) {
 			if (process.platform === "darwin") {
 				template[3].submenu = [
-					{ role: "minimize" },
-					{ role: "zoom" },
+					{
+						role: "minimize",
+						label: translator.getText("Window/Minimize")
+					},
+					{
+						role: "zoom",
+						label: translator.getText("Window/Zoom")
+					},
 					{ type: "separator" },
-					{ role: "front" }
+					{
+						role: "front",
+						label: translator.getText("Window/Front")
+					}
 				];
 				template.unshift(
 					{
 						label: Electron.remote.app.getName(),
 						submenu: [
-							{ role: "about" },
+							{
+								role: "about",
+								label: translator.getText("App/About").replace("{{App}}", appName)
+							},
 							{
 								id: "App/Preferences",
-								label: "Preferences",
+								label: translator.getText("App/Preferences"),
 								accelerator: "CmdOrCtrl+,"
 							},
 							{ type: "separator" },
-							{ role: "services", submenu: [] },
+							{
+								role: "services",
+								label: translator.getText("App/Services"),
+								submenu: []
+							},
 							{ type: "separator" },
-							{ role: "hide" },
-							{ role: "hideothers" },
-							{ role: "unhide" },
+							{
+								role: "hide",
+								label: translator.getText("App/Hide").replace("{{App}}", appName)
+							},
+							{
+								role: "hideothers",
+								label: translator.getText("App/HideOthers")
+							},
+							{
+								role: "unhide",
+								label: translator.getText("App/Unhide")
+							},
 							{ type: "separator" },
-							{ role: "quit" }
+							{
+								role: "quit",
+								label: translator.getText("App/Quit")
+							}
 						]
 					}
 				);
 				template.push(
 					{
 						role: "help",
+						label: translator.getText("Help/Title"),
 						submenu: []
 					}
 				);
@@ -154,14 +210,17 @@ export class EditorMenu {
 				var fileMenu = template[0].submenu as Electron.MenuItemConstructorOptions[];
 				fileMenu.push(
 					{ type: "separator" },
-					{ role: "quit" }
+					{
+						role: "quit",
+						label: translator.getText("App/Quit")
+					}
 				);
 				var editMenu = template[1].submenu as Electron.MenuItemConstructorOptions[];
 				editMenu.push(
 					{ type: "separator" },
 					{
 						id: "App/Preferences",
-						label: "Preferences",
+						label: translator.getText("App/Preferences"),
 						accelerator: "CmdOrCtrl+,"
 					}
 				);

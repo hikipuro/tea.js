@@ -606,6 +606,7 @@ export class EditorBehavior {
 					translator.loadResource(json.value);
 					this.editor.translate();
 					this.editor.$forceUpdate();
+					this.initMainMenu();
 					console.log("language", json.value);
 					break;
 			}

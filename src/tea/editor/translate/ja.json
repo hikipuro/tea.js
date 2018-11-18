@@ -1,4 +1,48 @@
 {
+	"MainMenu": {
+		"File": {
+			"Title": "ファイル",
+			"NewScene": "新規シーン",
+			"OpenScene": "シーンを開く",
+			"SaveScene": "シーンを保存",
+			"SaveSceneAs": "名前を付けてシーンを保存",
+			"NewProject": "新規プロジェクト",
+			"OpenProject": "プロジェクトを開く",
+			"Build": "ビルド"
+		},
+		"Edit": {
+			"Title": "編集",
+			"Undo": "元に戻す",
+			"Redo": "やり直し"
+		},
+		"View": {
+			"Title": "ビュー",
+			"Reload": "再読み込み",
+			"ToggleDevTools": "開発者ツールの切り替え",
+			"ResetZoom": "ズームのリセット",
+			"ZoomIn": "拡大",
+			"ZoomOut": "縮小",
+			"ToggleFullScreen": "全画面表示の切り替え"
+		},
+		"Window": {
+			"Title": "ウインドウ",
+			"Minimize": "最小化",
+			"Zoom": "ズーム",
+			"Front": "すべてを手前に移動"
+		},
+		"Help": {
+			"Title": "ヘルプ"
+		},
+		"App": {
+			"About": "{{App}} について",
+			"Preferences": "環境設定",
+			"Services": "サービス",
+			"Hide": "{{App}} を隠す",
+			"HideOthers": "ほかを隠す",
+			"Unhide": "すべてを表示",
+			"Quit": "終了"
+		}
+	},
 	"Tabs": {
 		"Player": "再生",
 		"Scene": "シーン編集",

@@ -1,4 +1,48 @@
 {
+	"MainMenu": {
+		"File": {
+			"Title": "File",
+			"NewScene": "New Scene",
+			"OpenScene": "Open Scene",
+			"SaveScene": "Save Scene",
+			"SaveSceneAs": "Save Scene as...",
+			"NewProject": "New Project",
+			"OpenProject": "Open Project",
+			"Build": "Build"
+		},
+		"Edit": {
+			"Title": "Edit",
+			"Undo": "Undo",
+			"Redo": "Redo"
+		},
+		"View": {
+			"Title": "View",
+			"Reload": "Reload",
+			"ToggleDevTools": "Toggle Developer Tools",
+			"ResetZoom": "Actual Size",
+			"ZoomIn": "Zoom In",
+			"ZoomOut": "Zoom Out",
+			"ToggleFullScreen": "Toggle Full Screen"
+		},
+		"Window": {
+			"Title": "Window",
+			"Minimize": "Minimize",
+			"Zoom": "Zoom",
+			"Front": "Bring All to Front"
+		},
+		"Help": {
+			"Title": "Help"
+		},
+		"App": {
+			"About": "About {{App}}",
+			"Preferences": "Preferences",
+			"Services": "Services",
+			"Hide": "Hide {{App}}",
+			"HideOthers": "Hide Others",
+			"Unhide": "Show All",
+			"Quit": "Quit"
+		}
+	},
 	"Tabs": {
 		"Player": "Player",
 		"Scene": "Scene",
