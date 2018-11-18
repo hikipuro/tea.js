@@ -209,9 +209,9 @@ export class NewProject extends Vue {
 		if (name.value === ""
 		||  path === ""
 		||  fs.existsSync(path) === false) {
-			return true;
+			return false;
 		}
-		return false;
+		return true;
 	}
 
 	protected onChangeType(): void {
@@ -229,9 +229,9 @@ export class NewProject extends Vue {
 		var name = this.$refs.name as HTMLInputElement;
 		var createButton = this.$refs.createButton as HTMLButtonElement;
 		if (this.isValidProjectNameAndLocation()) {
-			createButton.disabled = true;
-		} else {
 			createButton.disabled = false;
+		} else {
+			createButton.disabled = true;
 		}
 		this.projectName = name.value;
 	}
@@ -241,9 +241,9 @@ export class NewProject extends Vue {
 		var location = this.$refs.location as HTMLInputElement;
 		var createButton = this.$refs.createButton as HTMLButtonElement;
 		if (this.isValidProjectNameAndLocation()) {
-			createButton.disabled = true;
-		} else {
 			createButton.disabled = false;
+		} else {
+			createButton.disabled = true;
 		}
 		this.location = location.value;
 	}
