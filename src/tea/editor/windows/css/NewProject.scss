@@ -27,14 +27,15 @@ body {
 
 	div.type {
 		display: flex;
-		align-items: center;
+		align-items: end;
 
 		> input[type="radio"] {
 			margin: 0;
 		}
 
 		> label {
-			margin: 0 1em 0 0.3em;
+			margin-right: 1em;
+			padding-left: 0.5em;
 		}
 	}
 
