@@ -144,7 +144,7 @@ export class ConsoleView extends Vue {
 
 	protected getTime(): string {
 		var date = new Date();
-		return date.toLocaleTimeString("en-US", {
+		return date.toLocaleTimeString(undefined, {
 			hour12: false,
 			hour: "numeric",
 			minute: "numeric",

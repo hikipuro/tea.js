@@ -11,6 +11,7 @@ import { ConsoleView } from "./ConsoleView";
 import { HierarchyView } from "./HierarchyView";
 import { ProjectView } from "./ProjectView";
 import { InspectorView } from "./InspectorView";
+import { FileInspector } from "./FileInspector";
 import { ObjectInspector } from "./ObjectInspector";
 
 import { Button } from "./basic/Button";
@@ -55,6 +56,7 @@ import { TextMesh } from "./components/TextMesh";
 Vue.config.devtools = false;
 Vue.config.productionTip = false;
 //*
+Vue.component("FileInspector", FileInspector);
 Vue.component("ObjectInspector", ObjectInspector);
 
 Vue.component("Button", Button);

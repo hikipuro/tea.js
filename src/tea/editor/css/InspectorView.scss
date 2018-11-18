@@ -43,6 +43,25 @@
 			}
 		}
 
+		> div.FileInspector {
+			> .title {
+				padding: 2px 1px 4px 1px;
+			}
+
+			> .textContainer {
+				display: flex;
+				padding: 2px;
+				width: 100%;
+				box-sizing: border-box;
+
+				> textarea {
+					flex: 1;
+					height: 300px;
+					background-color: #eee;
+				}
+			}
+		}
+
 		> div.SceneInspector {
 			> .title {
 				padding: 2px 1px 4px 1px;

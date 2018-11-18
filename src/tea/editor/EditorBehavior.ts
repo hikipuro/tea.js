@@ -1,10 +1,12 @@
 import * as nodePath from "path";
+import * as fs from "fs";
 import * as Electron from "electron";
 import Vue from "vue";
 import * as Tea from "../Tea";
 import { Editor } from "./Editor";
 import { EditorSettings } from "./EditorSettings";
 import { EditorMenu } from "./EditorMenu";
+import { FileInspector } from "./FileInspector";
 import { SceneInspector } from "./SceneInspector";
 import { Translator } from "./translate/Translator";
 import { SelectAspect } from "./basic/SelectAspect";
@@ -391,6 +393,7 @@ export class EditorBehavior {
 
 	initProjectView(): void {
 		var projectView = this.editor.projectView;
+		var inspectorView = this.editor.inspectorView;
 		projectView.$on("folderListMenu", (e: MouseEvent) => {
 			if (projectView.getSelectedFolderPath() == null) {
 				return;
@@ -404,6 +407,50 @@ export class EditorBehavior {
 			}
 			e.preventDefault();
 			this.showProjectViewFileMenu();
+		});
+		projectView.$on("selectFile", (item: Editor.TreeViewItem) => {
+			if (item == null) {
+				return;
+			}
+			var path = item.tag;
+			if (fs.existsSync(path) === false) {
+				return;
+			}
+			var ext = Tea.File.extension(path);
+			ext = ext.toLowerCase();
+			switch (ext) {
+				case "json":
+				case "html":
+				case "css":
+				case "js":
+				case "ts":
+				case "md":
+				case "txt":
+					Tea.File.readText(path, (err, data) => {
+						if (err) {
+							return;
+						}
+						inspectorView.hide();
+						inspectorView.component = FileInspector;
+						inspectorView.show();
+						inspectorView.$nextTick(() => {
+							var component = inspectorView.getComponent() as FileInspector;
+							var stat = fs.statSync(path);
+							component.text = data;
+							component.size = String(stat.size);
+							var options: Intl.DateTimeFormatOptions = {
+								year: "numeric",
+								month: "numeric",
+								day: "numeric",
+								hour: "numeric",
+								minute: "numeric"
+							};
+							component.create = stat.birthtime.toLocaleString(undefined, options);
+							component.update = stat.mtime.toLocaleString(undefined, options);
+						});
+					});
+					break;
+			}
 		});
 		projectView.openFolder(process.cwd());
 	}

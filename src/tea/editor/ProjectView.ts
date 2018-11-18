@@ -124,6 +124,10 @@ export class ProjectView extends Vue {
 		folderList.$on("menu", (e: MouseEvent) => {
 			this.$emit("folderListMenu", e);
 		});
+
+		fileList.$on("select", (item: Editor.TreeViewItem) => {
+			this.$emit("selectFile", item);
+		});
 		fileList.$on("menu", (e: MouseEvent) => {
 			this.$emit("fileListMenu", e);
 		});
