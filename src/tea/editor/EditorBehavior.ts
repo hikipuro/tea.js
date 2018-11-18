@@ -436,17 +436,11 @@ export class EditorBehavior {
 						inspectorView.$nextTick(() => {
 							var component = inspectorView.getComponent() as FileInspector;
 							var stat = fs.statSync(path);
+							component.fileType = ext.toUpperCase();
 							component.text = data;
-							component.size = String(stat.size);
-							var options: Intl.DateTimeFormatOptions = {
-								year: "numeric",
-								month: "numeric",
-								day: "numeric",
-								hour: "numeric",
-								minute: "numeric"
-							};
-							component.create = stat.birthtime.toLocaleString(undefined, options);
-							component.update = stat.mtime.toLocaleString(undefined, options);
+							component.setSize(stat.size);
+							component.setCreatedTime(stat.birthtime);
+							component.setModifiedTime(stat.mtime);
 						});
 					});
 					break;
