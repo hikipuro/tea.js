@@ -32,6 +32,10 @@
 				"PointLight": "Point Light",
 				"SpotLight": "Spot Light"
 			},
+			"Audio": {
+				"Title": "Audio",
+				"AudioSource": "Audio Source"
+			},
 			"Camera": {
 				"Title": "Camera"
 			}

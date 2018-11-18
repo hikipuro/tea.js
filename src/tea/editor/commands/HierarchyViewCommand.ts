@@ -187,6 +187,9 @@ export class HierarchyViewCommand extends EventDispatcher {
 			case "Light/Spot Light":
 				object3d = app.createSpotLight();
 				break;
+			case "Audio/Audio Source":
+				object3d = app.createAudioSource();
+				break;
 			case "Camera":
 				object3d = app.createCamera();
 				break;

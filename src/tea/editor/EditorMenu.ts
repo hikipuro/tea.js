@@ -248,6 +248,15 @@ export class EditorMenu {
 				]
 			},
 			{
+				label: translator.getText("Audio/Title"),
+				submenu: [
+					{
+						id: "Audio/Audio Source",
+						label: translator.getText("Audio/AudioSource"),
+					}
+				]
+			},
+			{
 				id: "Camera",
 				label: translator.getText("Camera/Title"),
 			}

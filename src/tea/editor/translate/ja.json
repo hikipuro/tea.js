@@ -32,6 +32,10 @@
 				"PointLight": "点光源",
 				"SpotLight": "スポットライト"
 			},
+			"Audio": {
+				"Title": "オーディオ",
+				"AudioSource": "オーディオソース"
+			},
 			"Camera": {
 				"Title": "カメラ"
 			}

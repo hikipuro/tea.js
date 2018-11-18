@@ -48,6 +48,8 @@ export class EditorBehavior {
 			browserWindow.on("leave-full-screen", this.onResizeWindow);
 			browserWindow.on("maximize", this.onResizeWindow);
 			browserWindow.on("unmaximize", this.onResizeWindow);
+			browserWindow.webContents.removeListener("devtools-reload-page", this.onDevtoolsReloadPage);
+			browserWindow.webContents.on("devtools-reload-page", this.onDevtoolsReloadPage);
 		}
 		window.addEventListener("beforeunload", this.onBeforeUnload);
 		window.addEventListener("message", this.onWindowMessage);
@@ -712,5 +714,9 @@ export class EditorBehavior {
 				console.log("Open", path);
 				break;
 		}
+	}
+
+	protected onDevtoolsReloadPage = (): void => {
+		this._willReload = true;
 	}
 }

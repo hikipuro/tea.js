@@ -263,6 +263,13 @@ export class App {
 		return object3d;
 	}
 
+	createAudioSource(): Tea.Object3D {
+		var object3d = new Tea.Object3D(this);
+		object3d.name = "Audio Source";
+		var audioSource = object3d.addComponent(Tea.AudioSource);
+		return object3d;
+	}
+
 	createCamera(): Tea.Object3D {
 		var object3d = new Tea.Object3D(this);
 		object3d.name = "Camera";
