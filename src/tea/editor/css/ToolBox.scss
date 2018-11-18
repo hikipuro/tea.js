@@ -10,6 +10,15 @@
 		> button {
 			margin: 0 1px;
 			padding: 1px 2px 0;
+			border-radius: 0.4em;
+		}
+		> button:disabled {
+			background-color: darkgray;
+			border-radius: 0.4em;
+		}
+		> button:focus {
+			outline: 1px solid orange;
+			outline-offset: 1px;
 		}
 	}
 }
