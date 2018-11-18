@@ -12,6 +12,7 @@ import { Translator } from "../translate/Translator";
 					@change="onChangeLanguage">
 					<option value="en">English</option>
 					<option value="ja">Japanese</option>
+					<option value="zhCN">Chinese (Simplified)</option>
 				</select>
 			</div>
 			<button

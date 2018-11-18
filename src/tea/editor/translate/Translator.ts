@@ -1,5 +1,6 @@
 import _en from "./en.json";
 import _ja from "./ja.json";
+import _zhCN from "./zh-CN.json";
 
 export class Translator {
 	protected static _instance: Translator;
@@ -75,4 +76,5 @@ export class Translator {
 export module Translator {
 	export var en = _en;
 	export var ja = _ja;
+	export var zhCN = _zhCN;
 }

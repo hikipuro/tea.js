@@ -1,0 +1,205 @@
+{
+	"MainMenu": {
+		"File": {
+			"Title": "文件",
+			"NewScene": "新的场面",
+			"OpenScene": "开演中的场面",
+			"SaveScene": "请保存场面",
+			"SaveSceneAs": "请作为名字保存场面",
+			"NewProject": "新的项目",
+			"OpenProject": "开的项目",
+			"Build": "结构"
+		},
+		"Edit": {
+			"Title": "编辑",
+			"Undo": "还原",
+			"Redo": "重做"
+		},
+		"View": {
+			"Title": "表示",
+			"Reload": "再道路",
+			"ToggleDevTools": "触发器·开发者工具",
+			"ResetZoom": "实际的尺寸",
+			"ZoomIn": "扩大",
+			"ZoomOut": "缩小",
+			"ToggleFullScreen": "触发器·全屏幕"
+		},
+		"Window": {
+			"Title": "橱窗",
+			"Minimize": "最小化",
+			"Zoom": "变焦距镜头",
+			"Front": "请把正面临的全部拿来"
+		},
+		"Help": {
+			"Title": "帮助"
+		},
+		"App": {
+			"About": "关于 {{App}}",
+			"Preferences": "初期设定",
+			"Services": "服务",
+			"Hide": "请遮盖 {{App}}",
+			"HideOthers": "请遮盖其他",
+			"Unhide": "请显示全部",
+			"Quit": "能停止"
+		}
+	},
+	"Windows": {
+		"NewProject": {
+			"New": "新",
+			"Open": "请开",
+			"NewProject": "新的项目",
+			"OpenProject": "开的项目",
+			"CreateProject": "请做项目",
+			"ProjectName": "项目名",
+			"Location": "文件夹"
+		}
+	},
+	"Tabs": {
+		"Player": "播放器",
+		"Scene": "场面",
+		"Project": "项目",
+		"Console": "控制台"
+	},
+	"SelectAspect": {
+		"FreeAspect": "自由方面"
+	},
+	"HierarchyView": {
+		"ContextMenu": {
+			"Delete": "删掉",
+			"CreateEmpty": "在天空请做",
+			"3DObject": {
+				"Title": "3D对象",
+				"Cube": "立方体",
+				"Sphere": "球",
+				"Capsule": "胶囊",
+				"Cylinder": "汽缸",
+				"Plane": "平面 (Plane)",
+				"Quad": "平面 (Quad)",
+				"Text": "原文"
+			},
+			"Effects": {
+				"Title": "影响",
+				"ParticleSystem": "粒子系统"
+			},
+			"Light": {
+				"Title": "照明",
+				"DirectionalLight": "方向指示光亮",
+				"PointLight": "点数照明",
+				"SpotLight": "点数照明"
+			},
+			"Audio": {
+				"Title": "音频",
+				"AudioSource": "音源"
+			},
+			"Camera": {
+				"Title": "照相机"
+			}
+		}
+	},
+	"ObjectInspector": {
+		"Position": "位置",
+		"Rotation": "旋转",
+		"Scale": "规模",
+		"AddComponent": "请加上构成要素",
+		"ComponentMenu": {
+			"RemoveComponent": "请拿出构成要素"
+		},
+		"AddComponentMenu": {
+			"Audio": {
+				"Title": "音频",
+				"AudioSource": "音源"
+			},
+			"Effects": {
+				"Title": "影响",
+				"LineRenderer": "给与线的渲染器"
+			},
+			"Mesh": {
+				"Title": "网丝",
+				"MeshFilter": "网丝·过滤器",
+				"MeshRenderer": "给与网丝的渲染器"
+			},
+			"Physics": {
+				"Title": "物理",
+				"BoxCollider": "箱子冲撞",
+				"Rigidbody": "刚体"
+			},
+			"Rendering": {
+				"Title": "翻译",
+				"Camera": "照相机",
+				"Light": "照明"
+			}
+		}
+	},
+	"SceneInspector": {
+		"Title": "场面设定",
+		"Antialias": "平滑化",
+		"Gravity": "重力",
+		"AmbientLight": "环境照明"
+	},
+	"Components": {
+		"AudioSource": {
+			"Title": "音源"
+		},
+		"BoxCollider": {
+			"Title": "箱子冲撞",
+			"Center": "中心",
+			"Size": "尺寸"
+		},
+		"Camera": {
+			"Title": "照相机",
+			"ClearFlags": "清楚的旗帜",
+			"Background": "背景",
+			"Orthographic": "正字法的",
+			"Size": "尺寸",
+			"FieldOfView": "视野",
+			"ClippingPlanes": "夹平面",
+			"Near": "Near",
+			"Far": "Far",
+			"ViewportRect": "视口长方形",
+			"Depth": "深度",
+			"EnableStereo": "立体",
+			"StereoDistance": "立体距离",
+			"StereoMode": "立体方式"
+		},
+		"Light": {
+			"Title": "照明",
+			"Type": "类型",
+			"Color": "色",
+			"Intensity": "强度",
+			"Range": "范围",
+			"SpotAngle": "点角度"
+		},
+		"LineRenderer": {
+			"Title": "给与线的渲染器"
+		},
+		"MeshFilter": {
+			"Title": "网丝·过滤器"
+		},
+		"MeshRenderer": {
+			"Title": "给与网丝的渲染器",
+			"ReceiveShadows": "请受到影",
+			"Wireframe": "电线架子"
+		},
+		"ParticleSystem": {
+			"Title": "粒子系统"
+		},
+		"Rigidbody": {
+			"Title": "刚体"
+		},
+		"Script": {
+			"Title": "脚本"
+		},
+		"TextMesh": {
+			"Title": "原文·网丝",
+			"Text": "原文",
+			"CharacterSize": "性格尺寸",
+			"LineSpacing": "线间隔",
+			"Anchor": "末棒运动员",
+			"Alignment": "调整",
+			"FontSize": "字体大小",
+			"FontStyle": "字体的样式",
+			"Font": "字体",
+			"Color": "色"
+		}
+	}
+}
