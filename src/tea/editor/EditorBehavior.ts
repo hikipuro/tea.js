@@ -735,11 +735,20 @@ export class EditorBehavior {
 
 		switch (item.id) {
 			case "Show in Explorer":
+				if (fs.existsSync(path) === false) {
+					break;
+				}
 				Electron.shell.openItem(path);
 				break;
 			case "Reveal in Finder":
 				console.log("Reveal in Finder", path);
+				if (fs.existsSync(path) === false) {
+					break;
+				}
 				Electron.shell.openItem(path);
+				break;
+			case "Refresh":
+				projectView.openFolder(process.cwd());
 				break;
 		}
 	}

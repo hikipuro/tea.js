@@ -389,6 +389,13 @@ export class EditorMenu {
 				);
 			}
 		}
+		template.push(
+			{ type: "separator" },
+			{
+				id: "Refresh",
+				label: "Refresh"
+			}
+		)
 		EditorMenu.setMenuItemHandler(
 			template, handler
 		);
