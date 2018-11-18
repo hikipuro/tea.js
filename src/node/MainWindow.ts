@@ -1,17 +1,16 @@
 import * as Electron from "electron";
 import * as nodePath from "path";
 import * as url from "url";
+import { AppConfig } from "./NodeMain";
 import { EditorSettings } from "../tea/editor/EditorSettings";
 
 module Settings {
-	export const Title: string = "Tea.js";
-	export const Content: string = "../html/index.html";
-	export const DevTools: boolean = true;
-	export const Preferences: string = "../html/preferences.html";
+	export const content: string = "../html/index.html";
+	export const devTools: boolean = true;
+	export const preferences: string = "../html/preferences.html";
 }
 
 export class MainWindow {
-	public static Settings = Settings;
 	browserWindow: Electron.BrowserWindow;
 	isReady: boolean;
 	preferencesWindow: Electron.BrowserWindow;
@@ -55,7 +54,7 @@ export class MainWindow {
 
 	protected initWindow(parent: Electron.BrowserWindow): void {
 		var options: Electron.BrowserWindowConstructorOptions = {
-			title: Settings.Title,
+			title: AppConfig.title,
 			useContentSize: true,
 			acceptFirstMouse: true,
 			//titleBarStyle: "hidden",
@@ -84,7 +83,7 @@ export class MainWindow {
 			this.isReady = true;
 		});
 		window.once("show", () => {
-			if (Settings.DevTools) {
+			if (Settings.devTools) {
 				this.browserWindow.webContents.openDevTools();
 			}
 		});
@@ -117,7 +116,7 @@ export class MainWindow {
 			}
 		});
 		window.loadURL(url.format({
-			pathname: nodePath.join(__dirname, Settings.Content),
+			pathname: nodePath.join(__dirname, Settings.content),
 			protocol: "file:",
 			slashes: true,
 		}));
@@ -164,7 +163,7 @@ export class MainWindow {
 		});
 		window.setMenu(null);
 		window.loadURL(url.format({
-			pathname: nodePath.join(__dirname, Settings.Preferences),
+			pathname: nodePath.join(__dirname, Settings.preferences),
 			protocol: "file:",
 			slashes: true,
 		}));

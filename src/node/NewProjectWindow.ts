@@ -1,13 +1,13 @@
 import * as Electron from "electron";
 import * as nodePath from "path";
 import * as url from "url";
+import { AppConfig } from "./NodeMain";
 
 module Settings {
-	export const Title: string = "Tea.js";
-	export const Content: string = "../html/newProject.html";
-	export const DevTools: boolean = false;
-	export const Width: number = 420;
-	export const Height: number = 220;
+	export const content: string = "../html/newProject.html";
+	export const devTools: boolean = false;
+	export const width: number = 420;
+	export const height: number = 220;
 }
 
 export class NewProjectWindow {
@@ -44,9 +44,9 @@ export class NewProjectWindow {
 	protected initWindow(parent: Electron.BrowserWindow): void {
 		var options: Electron.BrowserWindowConstructorOptions = {
 			//modal: true,
-			title: Settings.Title,
-			width: Settings.Width,
-			height: Settings.Height,
+			title: AppConfig.title,
+			width: Settings.width,
+			height: Settings.height,
 			center: true,
 			resizable: false,
 			maximizable: false,
@@ -74,7 +74,7 @@ export class NewProjectWindow {
 			this.isReady = true;
 		});
 		window.once("show", () => {
-			if (Settings.DevTools) {
+			if (Settings.devTools) {
 				this.browserWindow.webContents.openDevTools();
 			}
 		});
@@ -84,7 +84,7 @@ export class NewProjectWindow {
 		});
 		window.setMenu(null);
 		window.loadURL(url.format({
-			pathname: nodePath.join(__dirname, Settings.Content),
+			pathname: nodePath.join(__dirname, Settings.content),
 			protocol: "file:",
 			slashes: true,
 			hash: this.defaultTab

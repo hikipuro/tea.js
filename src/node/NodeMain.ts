@@ -5,7 +5,8 @@ import { ipcMain, IpcMessageEvent } from "electron";
 import { MainWindow } from "./MainWindow";
 import { NewProjectWindow } from "./NewProjectWindow";
 
-module Config {
+export module AppConfig {
+	export const title: string = "Tea.js";
 	export const runElectron: boolean = true;
 	export const isDebug: boolean = false;
 }
@@ -71,7 +72,7 @@ class NodeMain {
 			event.returnValue = null;
 		});
 		ipcMain.on("getConfig", (event: IpcMessageEvent) => {
-			event.returnValue = Config;
+			event.returnValue = AppConfig;
 		});
 	}
 
@@ -134,7 +135,7 @@ class NodeMain {
 
 	protected onReady = () => {
 		this.addIpcEvents();
-		if (Config.isDebug) {
+		if (AppConfig.isDebug) {
 			this.showMainWindow();
 			return;
 		}
@@ -165,7 +166,7 @@ class WebServer {
 	}
 }
 
-if (Config.runElectron) {
+if (AppConfig.runElectron) {
 	let main: NodeMain;
 	main = new NodeMain(Electron.app);
 } else {
