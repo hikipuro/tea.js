@@ -43,6 +43,17 @@
 			"Quit": "終了"
 		}
 	},
+	"Windows": {
+		"NewProject": {
+			"New": "新規",
+			"Open": "開く",
+			"NewProject": "新規プロジェクト",
+			"OpenProject": "プロジェクトを開く",
+			"CreateProject": "プロジェクトを作る",
+			"ProjectName": "プロジェクト名",
+			"Location": "フォルダ"
+		}
+	},
 	"Tabs": {
 		"Player": "再生",
 		"Scene": "シーン編集",

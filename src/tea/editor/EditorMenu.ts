@@ -17,7 +17,16 @@ export class EditorMenu {
 	}
 
 	static setMainMenu(menu: Electron.Menu): void {
-		Menu.setApplicationMenu(menu);
+		if (process && process.platform) {
+			if (process.platform === "darwin") {
+				Menu.setApplicationMenu(menu);
+				return;
+			}
+		}
+		if (process.type !== "browser") {
+			var window = Electron.remote.getCurrentWindow();
+			window.setMenu(menu);
+		}
 	}
 
 	static createMainMenu(

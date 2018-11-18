@@ -3,6 +3,7 @@ import * as fs from "fs";
 import * as Electron from "electron";
 import Vue from "vue";
 import Component from "vue-class-component";
+import { EditorSettings } from "../EditorSettings";
 import { Translator } from "../translate/Translator";
 
 @Component({
@@ -17,7 +18,7 @@ import { Translator } from "../translate/Translator";
 					value="new"
 					checked="checked"
 					@change="onChangeType">
-				<label for="radioTypeNew">New</label>
+				<label for="radioTypeNew">{{ translator.new }}</label>
 				<input
 					ref="radioOpen"
 					id="radioTypeOpen"
@@ -25,33 +26,33 @@ import { Translator } from "../translate/Translator";
 					name="type"
 					value="open"
 					@change="onChangeType">
-				<label for="radioTypeOpen">Open</label>
+				<label for="radioTypeOpen">{{ translator.open }}</label>
 			</div>
 			<div v-if="type === 'new'">
-				<h1>New Project</h1>
+				<h1>{{ translator.newProject }}</h1>
 				<div class="form">
 					<div class="item">
 						<div class="label">
-							Project name
+							{{ translator.projectName }}
 						</div>
 						<div class="value">
 							<input
 								ref="name"
 								type="text"
-								placeholder="Project name"
+								:placeholder="translator.projectName"
 								:value="projectName"
 								@input="onInputProjectName">
 						</div>
 					</div>
 					<div class="item">
 						<div class="label">
-							Location
+							{{ translator.location }}
 						</div>
 						<div class="value">
 							<input
 								ref="location"
 								type="text"
-								placeholder="Location"
+								:placeholder="translator.location"
 								:value="location"
 								@input="onInputLocation">
 							<button
@@ -62,23 +63,23 @@ import { Translator } from "../translate/Translator";
 						<button
 							ref="createButton"
 							@click="onClickCreateButton">
-							Create Project
+							{{ translator.createProject }}
 						</button>
 					</div>
 				</div>
 			</div>
 			<div v-if="type === 'open'">
-				<h1>Open Project</h1>
+				<h1>{{ translator.openProject }}</h1>
 				<div class="form">
 					<div class="item">
 						<div class="label">
-							Location
+							{{ translator.location }}
 						</div>
 						<div class="value">
 							<input
 								ref="locationOpen"
 								type="text"
-								placeholder="Location"
+								:placeholder="translator.location"
 								:value="location"
 								@input="onInputLocationOpen">
 							<button
@@ -89,7 +90,7 @@ import { Translator } from "../translate/Translator";
 						<button
 							ref="openButton"
 							@click="onClickOpenButton">
-							Open Project
+							{{ translator.openProject }}
 						</button>
 					</div>
 				</div>
@@ -113,8 +114,20 @@ export class NewProject extends Vue {
 	location: string;
 
 	translate(): void {
+		var settings = EditorSettings.getInstance();
+		settings.load();
 		var translator = Translator.getInstance();
+		if (settings.language) {
+			translator.loadResource(settings.language);
+		}
 		translator.basePath = "Windows/NewProject";
+		this.translator.new = translator.getText("New");
+		this.translator.open = translator.getText("Open");
+		this.translator.newProject = translator.getText("NewProject");
+		this.translator.openProject = translator.getText("OpenProject");
+		this.translator.createProject = translator.getText("CreateProject");
+		this.translator.projectName = translator.getText("ProjectName");
+		this.translator.location = translator.getText("Location");
 	}
 
 	protected created(): void {
@@ -189,6 +202,18 @@ export class NewProject extends Vue {
 		);
 	}
 
+	protected isValidProjectNameAndLocation(): boolean {
+		var name = this.$refs.name as HTMLInputElement;
+		var location = this.$refs.location as HTMLInputElement;
+		var path = location.value;
+		if (name.value === ""
+		||  path === ""
+		||  fs.existsSync(path) === false) {
+			return true;
+		}
+		return false;
+	}
+
 	protected onChangeType(): void {
 		var radioNew = this.$refs.radioNew as HTMLInputElement;
 		//var radioOpen = this.$refs.radioOpen as HTMLInputElement;
@@ -203,24 +228,24 @@ export class NewProject extends Vue {
 		console.log("onInputProjectName");
 		var name = this.$refs.name as HTMLInputElement;
 		var createButton = this.$refs.createButton as HTMLButtonElement;
-		if (name.value === "") {
+		if (this.isValidProjectNameAndLocation()) {
 			createButton.disabled = true;
 		} else {
 			createButton.disabled = false;
 		}
+		this.projectName = name.value;
 	}
 
 	protected onInputLocation(): void {
 		console.log("onInputLocation");
 		var location = this.$refs.location as HTMLInputElement;
 		var createButton = this.$refs.createButton as HTMLButtonElement;
-		var path = location.value;
-		if (path === "" || fs.existsSync(path) === false) {
+		if (this.isValidProjectNameAndLocation()) {
 			createButton.disabled = true;
 		} else {
 			createButton.disabled = false;
 		}
-		this.location = path;
+		this.location = location.value;
 	}
 
 	protected onInputLocationOpen(): void {

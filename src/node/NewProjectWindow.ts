@@ -7,7 +7,7 @@ module Settings {
 	export const content: string = "../html/newProject.html";
 	export const devTools: boolean = false;
 	export const width: number = 420;
-	export const height: number = 210;
+	export const height: number = 220;
 }
 
 export class NewProjectWindow {

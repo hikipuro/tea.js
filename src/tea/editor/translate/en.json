@@ -43,6 +43,17 @@
 			"Quit": "Quit"
 		}
 	},
+	"Windows": {
+		"NewProject": {
+			"New": "New",
+			"Open": "Open",
+			"NewProject": "New Project",
+			"OpenProject": "Open Project",
+			"CreateProject": "Create Project",
+			"ProjectName": "Project name",
+			"Location": "Location"
+		}
+	},
 	"Tabs": {
 		"Player": "Player",
 		"Scene": "Scene",
