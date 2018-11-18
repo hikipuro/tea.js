@@ -8,7 +8,6 @@ module Settings {
 	export const Content: string = "../html/index.html";
 	export const DevTools: boolean = true;
 	export const Preferences: string = "../html/preferences.html";
-	export const NewProject: string = "../html/newproject.html";
 }
 
 export class MainWindow {

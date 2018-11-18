@@ -6,8 +6,12 @@ html, body {
 	font-family: sans-serif;
 	font-size: 12px;
 	user-select: none;
+	height: 100%;
 }
 body {
+	margin: 0;
+	padding: 1em;
+	box-sizing: border-box;
 	background-color: theme("background");
 }
 
