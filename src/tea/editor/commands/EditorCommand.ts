@@ -224,7 +224,7 @@ export class EditorCommand extends EventDispatcher {
 	loadScene(path: string): void {
 		Tea.File.readText(path, (err, data) => {
 			if (err) {
-				console.error("EditorCommand.openScene(): " + path);
+				console.error("EditorCommand.loadScene(): " + path);
 				console.error(err);
 				return;
 			}
@@ -232,16 +232,20 @@ export class EditorCommand extends EventDispatcher {
 			try {
 				json = JSON.parse(data);
 			} catch (err) {
-				console.error("EditorCommand.openScene(): " + path);
+				console.error("EditorCommand.loadScene(): " + path);
 				console.error(err);
 				return;
 			}
 			this.editor.status.scenePath = path;
 			this.editor.status.isChanged = false;
 			var app = this.app;
+			var prevScene = app.currentScene;
 			var scene = app.createSceneFromJSON(json);
 			app.setScene(scene);
 			this.editor.setScene(scene);
+			if (prevScene) {
+				prevScene.destroy();
+			}
 
 			console.log("onload", app.isEditing, scene.isEditing);
 		});

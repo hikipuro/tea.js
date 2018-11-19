@@ -132,11 +132,13 @@ export class EditorBehavior {
 			if (this.editor.status.isChanged) {
 				this.editorCommand.once("save", (path: string) => {
 					if (path != null) {
+						this.editor.consoleView.clear();
 						this.editorCommand.play();
 					}
 				});
 				this.editorCommand.saveScene();
 			} else {
+				this.editor.consoleView.clear();
 				this.editorCommand.play();
 			}
 		});
@@ -473,6 +475,8 @@ export class EditorBehavior {
 		var renderer = scene.app.renderer;
 		renderer.off("resize", this.updateScreenSize);
 		renderer.on("resize", this.updateScreenSize);
+		renderer.off("setScene", this.onSetScene);
+		renderer.on("setScene", this.onSetScene);
 		renderer.once("update", () => {
 			this.hierarchyViewCommand.update(true);
 		});
@@ -489,7 +493,6 @@ export class EditorBehavior {
 		scene.off("removeChild", this.onRemoveChild);
 		scene.on("removeChild", this.onRemoveChild);
 
-		this.editor.consoleView.clear();
 		this.updateScreenSize();
 	}
 
@@ -711,6 +714,10 @@ export class EditorBehavior {
 			this.hierarchyViewCommand.update();
 			this.hierarchyViewCommand.selectItem(item);
 		});
+	}
+
+	protected onSetScene = (scene: Tea.Scene): void => {
+		this.setScene(scene);
 	}
 
 	protected onSelectMainMenu = (item: Electron.MenuItem): void => {

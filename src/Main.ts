@@ -46,11 +46,12 @@ export class Main {
 		this.app = app;
 		global["app"] = app;
 		editor.setApp(app);
+		app.status.isEditor = true;
 		app.isEditing = true;
 		app.width = app.canvas.parentElement.clientWidth;
 		app.height = app.canvas.parentElement.clientHeight;
 
-		var scenePath = "./assets/scene.json";
+		var scenePath = "scene.json";
 		Tea.File.readText(scenePath, (err, data) => {
 			if (err) {
 				console.log(err);
@@ -86,6 +87,7 @@ export class Main {
 			//premultipliedAlpha: false
 		});
 		global["app"] = this.app;
+		this.app.status.isEditor = true;
 		this.app.isEditing = true;
 		this.app.enableUint32Index();
 		this.app.width = this.app.canvas.parentElement.clientWidth;

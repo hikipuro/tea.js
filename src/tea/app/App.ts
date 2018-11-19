@@ -207,8 +207,31 @@ export class App {
 		this.height = this.height;
 	}
 
+	loadScene(path: string): void {
+		if (this.isEditing) {
+			return;
+		}
+		Tea.File.readText(path, (err, data) => {
+			if (err) {
+				console.log(err);
+				return;
+			}
+			var prevScene = this.currentScene;
+			var json = JSON.parse(data);
+			var scene = this.createSceneFromJSON(json);
+			this.setScene(scene);
+			if (prevScene) {
+				prevScene.destroy();
+			}
+		});
+	}
+
 	setScene(scene: Tea.Scene): void {
+		if (scene == null) {
+			return;
+		}
 		this._renderer.currentScene = scene;
+		this._renderer.emit("setScene", scene);
 	}
 
 	start(): void {

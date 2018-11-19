@@ -1,6 +1,7 @@
 import * as Tea from "../Tea";
 
 export class AppStatus {
+	isEditor: boolean;
 	frontFace: number;
 	viewport: Tea.Rect;
 	frameBuffer: WebGLFramebuffer;
@@ -10,6 +11,7 @@ export class AppStatus {
 
 	constructor(gl: WebGLRenderingContext) {
 		this._gl = gl;
+		this.isEditor = false;
 		this.frontFace = gl.CCW;
 		this.viewport = new Tea.Rect(0.0, 0.0, 1.0, 1.0);
 		this.frameBuffer = null;

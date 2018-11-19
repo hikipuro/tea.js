@@ -299,8 +299,10 @@ export class Scene extends EventDispatcher {
 		this._isCleared = false;
 		this._children = [];
 		this._components = new SceneComponents();
-		this._sceneRenderer = new SceneRenderer(this);
-		this._stats = new Tea.Stats(app);
+		if (app.status.isEditor) {
+			this._sceneRenderer = new SceneRenderer(this);
+			this._stats = new Tea.Stats(app);
+		}
 		var shader = this.app.createShader(
 			Tea.ShaderSources.antialiasPostProcessingVS,
 			Tea.ShaderSources.antialiasPostProcessingFS
@@ -635,7 +637,7 @@ export class Scene extends EventDispatcher {
 				this.postProcessingRenderer.render();
 			}
 		}
-		if (haveNormalCamera && this._stats.enabled) {
+		if (haveNormalCamera && this._stats && this._stats.enabled) {
 			var app = this.app;
 			var gl = this.app.gl;
 			gl.viewport(0, 0, app.width, app.height);

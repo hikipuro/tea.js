@@ -3,12 +3,6 @@ import * as Tea from "../Tea";
 export class ScriptLoader {
 	static load(app: Tea.App, path: string, callback: (script: Tea.Script) => void): void {
 		const maxMatchLength = 2048;
-		if (app.isEditing) {
-			var index = path.indexOf("assets");
-			if (index !== 0) {
-				path = "assets/" + path;
-			}
-		}
 		Tea.File.readText(path, (err: any, data: string) => {
 			if (err) {
 				console.error(err);

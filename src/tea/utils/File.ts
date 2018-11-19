@@ -3,6 +3,11 @@ import * as nodePath from "path";
 
 export class File {
 	static exists(path: string, callback: (exists: boolean) => void): void {
+		if (fs == null) {
+			console.warn("File.exists() is not supported.");
+			callback(false);
+			return;
+		}
 		fs.exists(path, (exists: boolean) => {
 			callback(exists);
 		});
@@ -38,6 +43,7 @@ export class File {
 			return;
 		}
 		if (fs) {
+			url = this.resolvePath(url);
 			fs.readFile(url, (err: any, data: Buffer) => {
 				var buffer = new Uint8Array(data).buffer;
 				callback(err, buffer);
@@ -54,6 +60,7 @@ export class File {
 			return;
 		}
 		if (fs) {
+			url = this.resolvePath(url);
 			fs.readFile(url, (err: any, data: Buffer) => {
 				if (data == null) {
 					callback(err, null);
@@ -91,6 +98,7 @@ export class File {
 			load = undefined;
 			return;
 		}
+		url = this.resolvePath(url);
 		fs.readFile(url, (err: any, data: Buffer) => {
 			if (err) {
 				callback("error", null, url);
@@ -116,13 +124,24 @@ export class File {
 
 	static writeText(path: string, data: any, callback: (err: any) => void): void {
 		if (fs == null) {
-			console.warn("File.writeText() not supported.");
+			console.warn("File.writeText() is not supported.");
 		}
+		path = this.resolvePath(path);
 		fs.writeFile(path, data, "utf-8", (err) => {
 			if (callback) {
 				callback(err);
 			}
 		});
+	}
+
+	protected static resolvePath(path: string): string {
+		if (path == null || path === "") {
+			return "";
+		}
+		if (nodePath.resolve(path) !== path) {
+			path = nodePath.join("assets", path);
+		}
+		return path;
 	}
 
 	protected static createXHR(callback: (err: any, data: any) => void): XMLHttpRequest {

@@ -39,7 +39,7 @@ export class EventDispatcher {
 			this._listeners[eventName] = [];
 		}
 		if (this.isValidListenerCount(eventName) === false) {
-			this.printMaxListenerWarning();
+			this.printMaxListenerWarning(eventName, listener);
 			return this;
 		}
 		var item = new EventListenerItem(listener, false);
@@ -55,7 +55,7 @@ export class EventDispatcher {
 			this._listeners[eventName] = [];
 		}
 		if (this.isValidListenerCount(eventName) === false) {
-			this.printMaxListenerWarning();
+			this.printMaxListenerWarning(eventName, listener);
 			return this;
 		}
 		var item = new EventListenerItem(listener, true);
@@ -114,7 +114,7 @@ export class EventDispatcher {
 			this._listeners[eventName] = [];
 		}
 		if (this.isValidListenerCount(eventName) === false) {
-			this.printMaxListenerWarning();
+			this.printMaxListenerWarning(eventName, listener);
 			return this;
 		}
 		var item = new EventListenerItem(listener, false);
@@ -130,7 +130,7 @@ export class EventDispatcher {
 			this._listeners[eventName] = [];
 		}
 		if (this.isValidListenerCount(eventName) === false) {
-			this.printMaxListenerWarning();
+			this.printMaxListenerWarning(eventName, listener);
 			return this;
 		}
 		var item = new EventListenerItem(listener, true);
@@ -193,7 +193,11 @@ export class EventDispatcher {
 		return listeners.length < this._maxListeners;
 	}
 
-	protected printMaxListenerWarning(): void {
-		console.warn("Maximum listener count of " + this._maxListeners + " has been exceeded.");
+	protected printMaxListenerWarning(eventName: string, listener: EventListener): void {
+		console.warn(
+			"Maximum listener count of " + this._maxListeners + " has been exceeded." +
+			" eventName: '" + eventName + "'"
+		);
+		//console.warn(listener);
 	}
 }
