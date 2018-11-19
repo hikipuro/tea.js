@@ -430,6 +430,10 @@ export class EditorBehavior {
 						if (err) {
 							return;
 						}
+						var maxSize = 1024 * 64;
+						if (data.length > maxSize) {
+							data = data.substr(0, maxSize);
+						}
 						inspectorView.hide();
 						inspectorView.component = FileInspector;
 						inspectorView.show();
