@@ -131,6 +131,9 @@ export class ProjectView extends Vue {
 		fileList.$on("menu", (e: MouseEvent) => {
 			this.$emit("fileListMenu", e);
 		});
+		fileList.$on("doubleClick", (item: Editor.TreeViewItem) => {
+			this.$emit("doubleClickFile", item);
+		});
 
 		fileList.draggable = true;
 		var dragImages = (this.$root as Editor).dragImages;

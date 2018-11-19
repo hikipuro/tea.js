@@ -450,6 +450,14 @@ export class EditorBehavior {
 					break;
 			}
 		});
+		projectView.$on("doubleClickFile", (item: Editor.TreeViewItem) => {
+			if (item == null) {
+				return;
+			}
+			var path = projectView.getSelectedFilePath();
+			path = nodePath.resolve(path);
+			Electron.shell.openItem(path);
+		});
 		projectView.openFolder(process.cwd());
 	}
 
