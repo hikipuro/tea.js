@@ -11,6 +11,7 @@ import { Editor } from "../Editor";
 				<slot></slot>
 			</div>
 			<div 
+				ref="container"
 				class="container"
 				tabindex="0"
 				@keydown="onKeyDown"
@@ -77,9 +78,8 @@ export class ColorPicker extends Vue {
 			var el = this.$el;
 			var rect = el.getBoundingClientRect();
 			if (x == null) {
-				var color = this.$refs.color as HTMLElement;
-				console.log(color.clientLeft, color.offsetLeft);
-				x = rect.left + color.offsetLeft;
+				var container = this.$refs.container as HTMLElement;
+				x = rect.left + container.offsetLeft;
 			}
 			if (y == null) {
 				y = rect.bottom;
