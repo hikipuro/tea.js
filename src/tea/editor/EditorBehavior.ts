@@ -301,7 +301,15 @@ export class EditorBehavior {
 			if (object3d == null) {
 				return;
 			}
-			var filename = dragSource.tag;
+			var currentPath = nodePath.resolve(".");
+			var filename = dragSource.tag as string;
+			if (filename.indexOf(currentPath) !== 0) {
+				return;
+			}
+			filename = filename.substr(currentPath.length + 1);
+			if (filename.indexOf("assets") !== 0) {
+				return;
+			}
 			var ext = Tea.File.extension(filename);
 			ext = ext.toLowerCase();
 			switch (ext) {

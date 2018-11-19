@@ -29,28 +29,22 @@ export class Script extends Component {
 					return;
 				}
 				script.enabled = json.enabled;
+				var members = json.members as Array<any>;
+				if (members && members.length != null) {
+					members.forEach((member: any) => {
+						var key = member.key;
+						var value = member.value;
+						if (typeof value === "object") {
+							// TODO: read object
+							script[key] = member.value;
+							return;
+						}
+						script[key] = member.value;
+					});
+				}
 				callback(script);
 			}
 		);
-		/*
-		var buffer = fs.readFileSync(json.path);
-		if (buffer == null) {
-			return null;
-		}
-		var data = buffer.toString();
-		var check = data.indexOf("class");
-		if (check < 0 || check > 64) {
-			console.warn("class not found [" + json.path + "]");
-			return;
-		}
-		var factory = new Function("return " + data);
-		var classRef = factory();
-		Object.setPrototypeOf(classRef.prototype, new Script(app));
-		var instance = new classRef() as Script;
-		instance.enabled = json.enabled;
-		instance.path = json.path;
-		return instance;
-		//*/
 	}
 
 	get keyboard(): Tea.Keyboard {
@@ -186,24 +180,14 @@ export class Script extends Component {
 		var keys1 = Object.keys(new Script(null));
 		var keys2 = Object.keys(this);
 		var keys = keys2.filter((value) => {
-			var length = keys1.length;
-			for (var i = 0; i < length; i++) {
-				if (keys1[i] === value) {
-					return false;
-				}
-			}
-			return true;
+			return !(keys1 as any).includes(value);
 		});
 		var length = keys.length;
 		for (var i = 0; i < length; i++) {
 			var key = keys[i];
 			var value = this[key];
 			if (value["toJSON"] != null) {
-				json.members.push({
-					key: key,
-					value: value.toJSON()
-				});
-				continue;
+				value = value.toJSON();
 			}
 			json.members.push({
 				key: key,

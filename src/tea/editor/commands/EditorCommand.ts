@@ -8,9 +8,6 @@ if (Electron) {
 	Dialog = remote.dialog;
 }
 
-declare module "fs" {
-	function mkdirSync(path: string, mode?: any | number | string | null): void;
-}
 declare global {
 	interface Window {
 		open(url: string, frameName?: string, features?: string): Electron.BrowserWindowProxy;
@@ -23,6 +20,7 @@ import { Editor } from "../Editor";
 import { EditorMenu } from "../EditorMenu";
 import { HierarchyView } from "../HierarchyView";
 import { InspectorView } from "../InspectorView";
+import { AppBuilder } from "./AppBuilder";
 
 export class EditorCommand extends EventDispatcher {
 	editor: Editor;
@@ -201,17 +199,26 @@ export class EditorCommand extends EventDispatcher {
 
 	build(): void {
 		console.log("build");
-		var browserWindow = remote.getCurrentWindow();
-		var options: Electron.OpenDialogOptions = {
-			defaultPath: ".",
-			title: "Select output folder",
-			message: "Select output folder",
-			properties: ["openDirectory", "createDirectory"]
-		};
-		Dialog.showOpenDialog(
-			browserWindow, options,
-			this.onCloseOpenDialogBuild
-		);
+		if (this.editor.status.isChanged === false) {
+			this.showSelectBuildTargetDialog();
+			return;
+		}
+		this.showConfirmSaveSceneDialog((response: string) => {
+			switch (response) {
+				case "Save":
+					this.once("save", (filename: string) => {
+						if (filename == null) {
+							return;
+						}
+						this.showSelectBuildTargetDialog();
+					});
+					this.saveScene();
+					break;
+				case "Don't Save":
+					this.showSelectBuildTargetDialog();
+					break;
+			}
+		});
 	}
 
 	loadScene(path: string): void {
@@ -275,32 +282,6 @@ export class EditorCommand extends EventDispatcher {
 		this.editor.setScene(scene);
 	}
 
-	protected buildApp(targetPath: string): void {
-		var appPath = Electron.remote.app.getAppPath();
-		var srcPath = nodePath.join(appPath, "html/build.html");
-		var path = nodePath.join(targetPath, "index.html");
-		fs.copyFileSync(srcPath, path);
-
-		srcPath = nodePath.join(appPath, "html/build.js");
-		path = nodePath.join(targetPath, "tea.js");
-		fs.copyFileSync(srcPath, path);
-
-		path = nodePath.join(targetPath, "scene.json");
-		var sceneData = this.scene.toJSON();
-		fs.writeFileSync(path, JSON.stringify(sceneData, null, "\t"));
-
-		var scripts = this.findScriptPaths(sceneData);
-		//console.log(scripts);
-		scripts.forEach((scriptPath: string) => {
-			var path = nodePath.join(targetPath, scriptPath);
-			var dirname = nodePath.dirname(path);
-			if (fs.existsSync(dirname) === false) {
-				fs.mkdirSync(dirname, { recursive: true });
-			}
-			fs.copyFileSync(scriptPath, path);
-		});
-	}
-
 	protected showOpenSceneDialog(): void {
 		var browserWindow = remote.getCurrentWindow();
 		var options: Electron.OpenDialogOptions = {
@@ -355,6 +336,20 @@ export class EditorCommand extends EventDispatcher {
 		window.close();
 	}
 
+	protected showSelectBuildTargetDialog(): void {
+		var browserWindow = remote.getCurrentWindow();
+		var options: Electron.OpenDialogOptions = {
+			defaultPath: ".",
+			title: "Select build target folder",
+			message: "Select build target folder",
+			properties: ["openDirectory", "createDirectory"]
+		};
+		Dialog.showOpenDialog(
+			browserWindow, options,
+			this.onCloseOpenDialogBuild
+		);
+	}
+
 	protected onCloseOpenSceneDialog = (filePaths: string[]): void => {
 		if (filePaths == null || filePaths.length < 1) {
 			return;
@@ -376,40 +371,8 @@ export class EditorCommand extends EventDispatcher {
 		if (filePaths == null || filePaths.length < 1) {
 			return;
 		}
-		this.buildApp(filePaths[0]);
-	}
-
-	protected findScriptPaths(data: any): Array<string> {
-		var find = (children: Array<any>): Array<string> => {
-			if (children == null || children.length <= 0) {
-				return [];
-			}
-			var scripts = [];
-			var length = children.length;
-			for (var i = 0; i < length; i++) {
-				var child = children[i];
-				if (child._type !== "Object3D") {
-					continue;
-				}
-				var components = child.components as Array<any>;
-				if (components == null || components.length <= 0) {
-					continue;
-				}
-				scripts.push.apply(scripts,
-					components.filter((component: any) => {
-						return component._type === "Script";
-					}
-				));
-			}
-			var paths = scripts.map((script: any) => {
-				return script.path;
-			});
-			for (var i = 0; i < length; i++) {
-				var child = children[i];
-				paths.push.apply(paths, find(child.children));
-			}
-			return paths;
-		};
-		return find(data.children);
+		var builder = new AppBuilder();
+		builder.targetPath = filePaths[0];
+		builder.build();
 	}
 }

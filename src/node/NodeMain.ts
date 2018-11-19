@@ -11,6 +11,9 @@ export module AppConfig {
 	export const isDebug: boolean = false;
 }
 
+declare module "fs" {
+	function mkdirSync(path: string, mode?: any | number | string | null): void;
+}
 declare module "electron" {
 	interface MenuItem {
 		id: string;
