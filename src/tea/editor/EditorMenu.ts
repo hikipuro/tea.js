@@ -465,6 +465,10 @@ export class EditorMenu {
 					{
 						id: "Create/Folder",
 						label: "Folder"
+					},
+					{
+						id: "Create/JavaScript",
+						label: "JavaScript"
 					}
 				]
 			},

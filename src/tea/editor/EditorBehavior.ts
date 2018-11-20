@@ -311,10 +311,11 @@ export class EditorBehavior {
 			if (filename.indexOf(currentPath) !== 0) {
 				return;
 			}
-			filename = filename.substr(currentPath.length + 1);
+			filename = nodePath.relative(currentPath, filename);
 			if (filename.indexOf("assets") !== 0) {
 				return;
 			}
+			filename = nodePath.relative("assets", filename);
 			var ext = Tea.File.extension(filename);
 			ext = ext.toLowerCase();
 			switch (ext) {
@@ -470,6 +471,22 @@ export class EditorBehavior {
 			}
 			var path = projectView.getSelectedFilePath();
 			path = nodePath.resolve(path);
+			var ext = nodePath.extname(path);
+			if (ext === ".json") {
+				Tea.File.readText(path, (err: any, data: string) => {
+					if (err) {
+						console.error(err);
+						return;
+					}
+					var json = JSON.parse(data);
+					if (json._type === "Scene") {
+						this.editorCommand.loadScene(path);
+					} else {
+						Electron.shell.openItem(path);
+					}
+				});
+				return;
+			}
 			Electron.shell.openItem(path);
 		});
 		projectView.$on("focusFileList", (item: Editor.TreeViewItem) => {
@@ -793,6 +810,24 @@ export class EditorBehavior {
 				path = nodePath.join(path, "New Folder");
 				fs.mkdirSync(path);
 				projectView.openFolder(process.cwd());
+				break;
+			case "Create/JavaScript":
+				path = nodePath.join(path, "New Script.js");
+				var script = `class NewScript {
+	constructor() {
+	}
+
+	start() {
+	}
+
+	update() {
+	}
+}
+`;
+				fs.writeFileSync(path, script);
+				projectView.updateFileList(
+					projectView.getSelectedFolderPath()
+				);
 				break;
 			case "Delete":
 				projectView.selectParentFolder();

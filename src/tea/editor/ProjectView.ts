@@ -89,6 +89,31 @@ export class ProjectView extends Vue {
 		});
 	}
 
+	updateFileList(path: string): void {
+		var fileList = this.$refs.fileList as TreeView;
+		Tea.Directory.getFiles(path, (files: Tea.FileInfo[]) => {
+			var items = [];
+			files.forEach((file) => {
+				if (file.isDirectory) {
+					return;
+				}
+				if (file.name === ".DS_Store") {
+					return;
+				}
+				var item = {
+					text: file.name,
+					children: [],
+					isFolder: false,
+					tag: file.fullName
+				};
+				//console.log(file.fullName);
+				items.push(item);
+			});
+			fileList.unselect();
+			fileList.items = items;
+		});
+	}
+
 	protected mounted(): void {
 		var folderList = this.$refs.folderList as TreeView;
 		var fileList = this.$refs.fileList as TreeView;
@@ -124,27 +149,7 @@ export class ProjectView extends Vue {
 			}
 			//console.log("select", item.tag);
 			var path = item.tag;
-			Tea.Directory.getFiles(path, (files: Tea.FileInfo[]) => {
-				var items = [];
-				files.forEach((file) => {
-					if (file.isDirectory) {
-						return;
-					}
-					if (file.name === ".DS_Store") {
-						return;
-					}
-					var item = {
-						text: file.name,
-						children: [],
-						isFolder: false,
-						tag: file.fullName
-					};
-					//console.log(file.fullName);
-					items.push(item);
-				});
-				fileList.unselect();
-				fileList.items = items;
-			});
+			this.updateFileList(path);
 		});
 		folderList.$on("menu", (e: MouseEvent) => {
 			this.$emit("folderListMenu", e);
