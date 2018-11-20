@@ -25,6 +25,7 @@ export class Main {
 		//console.log("width", Tea.Screen.width);
 		//console.log("height", Tea.Screen.height);
 		//console.log(Tea.Screen.fullscreen);
+		console.log(Electron.remote.app.getGPUFeatureStatus());
 
 		var config = Electron.ipcRenderer.sendSync("getConfig");
 		editor = Editor.instance;
@@ -61,7 +62,7 @@ export class Main {
 			}
 			var json = JSON.parse(data);
 			var scene = app.createSceneFromJSON(json);
-			app.setScene(scene);
+			app.scene = scene;
 			editor.setScene(scene);
 			editor.status.scenePath = scenePath;
 			app.start();
@@ -75,7 +76,7 @@ export class Main {
 		var light = app.createDirectionalLight();
 		scene.addChild(camera);
 		scene.addChild(light);
-		app.setScene(scene);
+		app.scene = scene;
 		editor.setScene(scene);
 	}
 
@@ -198,7 +199,7 @@ export class Main {
 		//scene.camera.rect.height = 0.6;
 		//scene.camera.position.set(0, 10, 0);
 		//scene.camera.rotation = Tea.Quaternion.euler(90,0,0);
-		this.app.setScene(scene);
+		this.app.scene = scene;
 		editor.setScene(scene);
 		scene.enablePostProcessing = true;
 

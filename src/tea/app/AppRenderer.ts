@@ -4,7 +4,7 @@ export class AppRenderer extends Tea.EventDispatcher {
 	app: Tea.App;
 	isStarted: boolean;
 	isPaused: boolean;
-	currentScene: Tea.Scene;
+	scene: Tea.Scene;
 	keyboard: Tea.Keyboard;
 	mouse: Tea.Mouse;
 	gamepad: Tea.Gamepad;
@@ -13,7 +13,6 @@ export class AppRenderer extends Tea.EventDispatcher {
 	protected _fps: number;
 	protected _interval: number;
 	protected _isSceneView: boolean;
-	protected _isEditing: boolean;
 	protected _lastTime: number;
 	protected _update: FrameRequestCallback;
 	protected _handle: number;
@@ -31,36 +30,11 @@ export class AppRenderer extends Tea.EventDispatcher {
 		this._fps = 60.0;
 		this._interval = 1000.0 / this._fps;
 		this._isSceneView = false;
-		this._isEditing = false;
 		this._lastTime = 0.0;
 		this._update = this.update;
 		this._handle = 0;
-
-		window.addEventListener("blur", () => {
-			if (this.runInBackground) {
-				return;
-			}
-			if (this.isStarted && this.isPaused === false) {
-				cancelAnimationFrame(this._handle);
-				this._handle = 0;
-			}
-			this.isPaused = true;
-			this.emit("pause");
-		});
-		window.addEventListener("focus", () => {
-			if (this.runInBackground) {
-				return;
-			}
-			if (this.isStarted && this.isPaused) {
-				this._lastTime = performance.now();
-				this._handle = requestAnimationFrame(this._update);
-			}
-			this.isPaused = false;
-			this.emit("resume");
-		});
-		window.addEventListener("resize", Tea.debounce(() => {
-			this.dispatchResizeEvent();
-		}, 250));
+		this.initEvents();
+		this.initScreen();
 	}
 
 	get fps(): number {
@@ -84,16 +58,6 @@ export class AppRenderer extends Tea.EventDispatcher {
 		} else {
 			this._update = this.update;
 		}
-	}
-
-	get isEditing(): boolean {
-		return this._isEditing;
-	}
-	set isEditing(value: boolean) {
-		if (this._isEditing === value) {
-			return;
-		}
-		this._isEditing = value;
 	}
 
 	dispatchResizeEvent(): void {
@@ -123,6 +87,30 @@ export class AppRenderer extends Tea.EventDispatcher {
 		}
 	}
 
+	protected initEvents(): void {
+		window.addEventListener("blur", this.onWindowBlur);
+		window.addEventListener("focus", this.onWindowFocus);
+		window.addEventListener("resize", Tea.debounce(() => {
+			this.dispatchResizeEvent();
+		}, 250));
+	}
+
+	protected initScreen(): void {
+		var gl = this.app.gl;
+		gl.clearColor(0.0, 0.0, 0.0, 1.0);
+		gl.clearDepth(1.0);
+
+		gl.enable(gl.DEPTH_TEST);
+		gl.depthFunc(gl.LEQUAL);
+
+		gl.enable(gl.CULL_FACE);
+		gl.cullFace(gl.BACK);
+
+		gl.enable(gl.SCISSOR_TEST);
+		gl.scissor(0.0, 0.0, this.app.width, this.app.height);
+		gl.clearStencil(0);
+	}
+
 	protected update = (time: number): void => {
 		if (time < this._lastTime + this._interval) {
 			this._handle = requestAnimationFrame(this._update);
@@ -133,8 +121,9 @@ export class AppRenderer extends Tea.EventDispatcher {
 		//Tea.Quaternion.newCount = 0;
 		//Tea.Matrix4x4.newCount = 0;
 		this.time.update();
-		if (this.currentScene != null) {
-			this.currentScene.update(this._isEditing);
+		if (this.scene != null) {
+			var isEditing = this.app.status.isEditing;
+			this.scene.update(isEditing);
 			this.keyboard.update();
 			this.mouse.update();
 			this.gamepad.update();
@@ -153,12 +142,37 @@ export class AppRenderer extends Tea.EventDispatcher {
 		}
 		this._lastTime += this._interval;
 		this.time.update();
-		if (this.currentScene != null) {
-			this.currentScene.updateScene(this._isEditing);
+		if (this.scene != null) {
+			var isEditing = this.app.status.isEditing;
+			this.scene.updateScene(isEditing);
 			this.keyboard.update();
 			this.mouse.update();
 		}
 		this.emit("update");
 		this._handle = requestAnimationFrame(this._update);
+	}
+
+	protected onWindowBlur = (): void => {
+		if (this.runInBackground) {
+			return;
+		}
+		if (this.isStarted && this.isPaused === false) {
+			cancelAnimationFrame(this._handle);
+			this._handle = 0;
+		}
+		this.isPaused = true;
+		this.emit("pause");
+	}
+
+	protected onWindowFocus = (): void => {
+		if (this.runInBackground) {
+			return;
+		}
+		if (this.isStarted && this.isPaused) {
+			this._lastTime = performance.now();
+			this._handle = requestAnimationFrame(this._update);
+		}
+		this.isPaused = false;
+		this.emit("resume");
 	}
 }

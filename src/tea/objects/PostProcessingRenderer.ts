@@ -28,14 +28,11 @@ export class PostProcessingRenderer extends Renderer {
 
 	clear(): void {
 		var gl = this.gl;
-		var color = this.backgroundColor;
-		if (Tea.Camera.currentBGColor.equals(color) === false) {
-			gl.clearColor(color[0], color[1], color[2], color[3]);
-			Tea.Camera.currentBGColor.copy(color);
-		}
+		this.app.status.setClearColor(this.backgroundColor);
 		var texture = this.renderTexture;
-		gl.viewport(0.0, 0.0, texture.width, texture.height);
-		gl.scissor(0.0, 0.0, texture.width, texture.height);
+		this.app.status.setViewport(
+			0.0, 0.0, texture.width, texture.height
+		);
 		gl.clear(
 			gl.COLOR_BUFFER_BIT |
 			gl.DEPTH_BUFFER_BIT |
@@ -49,7 +46,6 @@ export class PostProcessingRenderer extends Renderer {
 			return;
 		}
 		var gl = this.gl;
-		var shader = this.material.shader;
 		gl.useProgram(shader.program);
 		var width = this.app.width;
 		var height = this.app.height;
@@ -72,8 +68,9 @@ export class PostProcessingRenderer extends Renderer {
 			gl.enableVertexAttribArray(location);
 			gl.vertexAttribPointer(location, 2, gl.FLOAT, false, 20, 12);
 		}
-		gl.viewport(0, 0, width, height);
-		gl.scissor(0, 0, width, height);
+		this.app.status.setViewport(
+			0.0, 0.0, width, height
+		);
 		/*
 		gl.clear(
 			gl.COLOR_BUFFER_BIT |
@@ -82,12 +79,7 @@ export class PostProcessingRenderer extends Renderer {
 		);
 		*/
 
-		var status = this.app.status;
-		var face = gl.CCW;
-		if (status.frontFace !== face) {
-			gl.frontFace(face);
-			status.frontFace = face;
-		}
+		this.app.status.setFrontFace(gl.CCW);
 
 		var count = 6;//this.mesh.triangles.length * 3;
 		gl.drawElements(gl.TRIANGLES, count, gl.UNSIGNED_SHORT, 0);

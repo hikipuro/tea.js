@@ -639,10 +639,9 @@ export class Scene extends EventDispatcher {
 		}
 		if (haveNormalCamera && this._stats && this._stats.enabled) {
 			var app = this.app;
-			var gl = this.app.gl;
-			gl.viewport(0, 0, app.width, app.height);
-			gl.scissor(0, 0, app.width, app.height);
-			app.status.viewport.set(0, 0, app.width, app.height);
+			this.app.status.setViewport(
+				0.0, 0.0, app.width, app.height
+			);
 			this._stats.update();
 			this._stats.renderer.render2d();
 		}
@@ -805,14 +804,13 @@ export class Scene extends EventDispatcher {
 	}
 
 	protected clear(): void {
-		var gl = this.app.gl;
+		var app = this.app;
+		var gl = app.gl;
 		var color = Tea.Color.black;
-		if (Tea.Camera.currentBGColor.equals(color) === false) {
-			gl.clearColor(color[0], color[1], color[2], color[3]);
-			Tea.Camera.currentBGColor.copy(color);
-		}
-		gl.viewport(0, 0, this.app.width, this.app.height);
-		gl.scissor(0, 0, this.app.width, this.app.height);
+		this.app.status.setClearColor(color);
+		this.app.status.setViewport(
+			0.0, 0.0, app.width, app.height
+		);
 		gl.clear(
 			gl.COLOR_BUFFER_BIT |
 			gl.DEPTH_BUFFER_BIT |

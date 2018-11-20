@@ -46,26 +46,11 @@ export class RenderTexture extends Texture {
 	}
 
 	bindFramebuffer(): void {
-		var status = this.app.status;
-		if (status.frameBuffer === this.frameBuffer) {
-			return;
-		}
-		status.frameBuffer = this.frameBuffer;
-		var gl = this.gl;
-		gl.bindFramebuffer(
-			gl.FRAMEBUFFER,
-			this.frameBuffer
-		);
+		this.app.status.bindFramebuffer(this.frameBuffer);
 	}
 
 	unbindFramebuffer(): void {
-		var status = this.app.status;
-		status.frameBuffer = null;
-		var gl = this.gl;
-		gl.bindFramebuffer(
-			gl.FRAMEBUFFER,
-			null
-		);
+		this.app.status.bindFramebuffer(null);
 	}
 
 	protected setTextureSize(): void {

@@ -79,7 +79,6 @@ export class Camera extends Component {
 	protected _prev: Prev;
 	protected _viewportRect: Tea.Rect;
 	protected _enableStereo: boolean;
-	static currentBGColor: Tea.Color;
 
 	constructor(app: Tea.App) {
 		super(app);
@@ -90,9 +89,6 @@ export class Camera extends Component {
 			camera.object3d = new Tea.Object3D(app);
 			camera.object3d.name = "Skybox Camera";
 			Camera._skyboxCamera = camera;
-		}
-		if (Camera.currentBGColor == null) {
-			Camera.currentBGColor = Tea.Color.black.clone();
 		}
 		this.gl = app.gl;
 		this.depth = 0;
@@ -254,8 +250,7 @@ export class Camera extends Component {
 			var t = this.targetTexture;
 			var w = t.width;
 			var h = t.height;
-			this.gl.viewport(0.0, 0.0, w, h);
-			this.gl.scissor(0.0, 0.0, w, h);
+			this.app.status.setViewport(0.0, 0.0, w, h);
 			this.clear();
 		} else {
 			var scene = this.object3d.scene;
@@ -590,9 +585,7 @@ export class Camera extends Component {
 		w = Math.round(w);
 		h = Math.round(h);
 
-		var gl = this.gl;
-		gl.viewport(x, y, w, h);
-		gl.scissor(x, y, w, h);
+		this.app.status.setViewport(x, y, w, h);
 	}
 	
 	protected setViewportLeft(scene: Tea.Scene = null): void {
@@ -656,9 +649,7 @@ export class Camera extends Component {
 		w = Math.round(w);
 		h = Math.round(h);
 		
-		var gl = this.gl;
-		gl.viewport(x, y, w, h);
-		gl.scissor(x, y, w, h);
+		this.app.status.setViewport(x, y, w, h);
 	}
 	
 	protected setViewportRight(scene: Tea.Scene = null): void {
@@ -722,16 +713,13 @@ export class Camera extends Component {
 		w = Math.round(w);
 		h = Math.round(h);
 		
-		var gl = this.gl;
-		gl.viewport(x, y, w, h);
-		gl.scissor(x, y, w, h);
+		this.app.status.setViewport(x, y, w, h);
 	}
 
 	protected clear(): void {
 		var gl = this.gl;
 		switch (this.clearFlags) {
 			case Tea.CameraClearFlags.Nothing:
-				//this.clearNothing();
 				break;
 			case Tea.CameraClearFlags.SolidColor:
 				if (this._enableStereo) {
@@ -767,25 +755,7 @@ export class Camera extends Component {
 	}
 
 	protected updateClearColor(): void {
-		var color = this.backgroundColor;
-		if (Camera.currentBGColor.equals(color) === false) {
-			this.gl.clearColor(color[0], color[1], color[2], color[3]);
-			Camera.currentBGColor.copy(color);
-		}
-	}
-
-	protected clearNothing(): void {
-		/*
-		var gl = this.gl;
-		var scene = this.object3d.scene;
-		if (scene != null && scene.enablePostProcessing) {
-			scene.renderTexture.bindFramebuffer();
-			var width = scene.renderTexture.width;
-			var height = scene.renderTexture.height;
-			gl.scissor(0.0, 0.0, width, height);
-			gl.viewport(0.0, 0.0, width, height);
-		}
-		//*/
+		this.app.status.setClearColor(this.backgroundColor);
 	}
 
 	protected clearSolidColor(): void {

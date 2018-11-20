@@ -54,7 +54,9 @@ export class ParticleSystemRenderer extends Renderer {
 			return;
 		}
 		var particleSystem = this.object3d.getComponent(Tea.ParticleSystem);
-		if (particleSystem == null || particleSystem.isPlaying === false) {
+		if (particleSystem == null
+		|| particleSystem.enabled === false
+		|| particleSystem.isPlaying === false) {
 			return;
 		}
 		if (particleSystem.particleCount <= 0) {
@@ -76,7 +78,6 @@ export class ParticleSystemRenderer extends Renderer {
 			this.setMeshData(mesh, particleSystem);
 		}
 		this.setVertexBuffer(mesh, particleSystem);
-		this.setFrontFace();
 		this._draw(camera, particleSystem, mesh);
 		this.disableAllAttributes();
 	}
@@ -232,16 +233,6 @@ export class ParticleSystemRenderer extends Renderer {
 		}
 	}
 
-	protected setFrontFace(): void {
-		var gl = this.gl;
-		var status = this.app.status;
-		var face = gl.CCW;
-		if (status.frontFace !== face) {
-			gl.frontFace(face);
-			status.frontFace = face;
-		}
-	}
-
 	protected disableAllAttributes(): void {
 		var ext = this.app.status.ANGLE_instanced_arrays;
 		if (ext == null) {
@@ -279,10 +270,6 @@ export class ParticleSystemRenderer extends Renderer {
 		var gl = this.gl;
 		var ext = this.app.status.ANGLE_instanced_arrays;
 
-		//var camera = this.getCamera();
-		//if (camera == null) {
-		//	return;
-		//}
 		var right = this.material.shader.propertyToID("CameraRight");
 		var up = this.material.shader.propertyToID("CameraUp");
 		var view = camera.cameraToWorldMatrix;
@@ -291,12 +278,12 @@ export class ParticleSystemRenderer extends Renderer {
 
 		var triangles = mesh.triangles.length * 3;
 		var count = particleSystem.particleCount;
+		this.app.status.setFrontFace(gl.CCW);
 		ext.drawElementsInstancedANGLE(
 			gl.TRIANGLES, triangles,
 			gl.UNSIGNED_SHORT, 0, count
 		);
 		Renderer.drawCallCount++;
-		//console.log("drawElementsInstancedANGLE");
 	}
 
 	protected draw(camera: Tea.Camera, particleSystem: Tea.ParticleSystem, mesh: Tea.Mesh): void {
@@ -307,10 +294,7 @@ export class ParticleSystemRenderer extends Renderer {
 		if (position == null || color == null || size == null) {
 			return;
 		}
-		//var camera = this.getCamera();
-		//if (camera == null) {
-		//	return;
-		//}
+		
 		var right = this.material.shader.propertyToID("CameraRight");
 		var up = this.material.shader.propertyToID("CameraUp");
 		var view = camera.cameraToWorldMatrix;
@@ -319,6 +303,7 @@ export class ParticleSystemRenderer extends Renderer {
 		var count = particleSystem.particleCount;
 		var particles = particleSystem.particles;
 		var triangles = mesh.triangles.length * 3;
+		this.app.status.setFrontFace(gl.CCW);
 		for (var i = 0; i < count; i++) {
 			var particle = particles[i];
 			var p = particle.position;

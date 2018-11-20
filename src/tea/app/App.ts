@@ -1,34 +1,23 @@
 import * as Tea from "../Tea";
 import { AppRenderer } from "./AppRenderer";
 import { AppStatus } from "./AppStatus";
+import { ObjectFactory } from "./ObjectFactory";
 
 export class App {
-	static useStencil: boolean = true;
-	canvas: HTMLCanvasElement;
-	gl: WebGLRenderingContext;
-	audio: Tea.AppAudio;
-	capabilities: Tea.GLCapabilities;
-	parameters: Tea.GLParameters;
-	readonly status: AppStatus;
-	readonly cursor: Tea.Cursor;
 	protected _canvasAttributes: WebGLContextAttributes;
+	protected _canvas: HTMLCanvasElement;
+	protected _gl: WebGLRenderingContext;
+	protected _capabilities: Tea.GLCapabilities;
+	protected _parameters: Tea.GLParameters;
+	protected _status: AppStatus;
+	protected _cursor: Tea.Cursor;
 	protected _renderer: AppRenderer;
-	protected _pixelRatio: number = 1.0;
+	protected _audio: Tea.AppAudio;
+	protected _pixelRatio: number;
 
-	constructor(id: string, attributes?: WebGLContextAttributes) {
+	constructor(canvasId: string, attributes?: WebGLContextAttributes) {
 		this._canvasAttributes = attributes;
-		this.canvas = document.getElementById(id) as HTMLCanvasElement;
-		this.canvas.addEventListener("webglcontextcreationerror", this.onContextCreationError);
-		this.canvas.addEventListener("webglcontextlost", this.onContextLost);
-		this.canvas.addEventListener("webglcontextrestored", this.onContextRestored);
-		this.init();
-
-		this.capabilities = new Tea.GLCapabilities(this.gl);
-		this.parameters = new Tea.GLParameters(this.gl);
-		this.status = new AppStatus(this.gl);
-		this.cursor = new Tea.Cursor(this);
-		this._renderer = new AppRenderer(this);
-		this.audio = new Tea.AppAudio(this);
+		this.init(canvasId);
 	}
 
 	static get absoluteURL(): string {
@@ -55,48 +44,64 @@ export class App {
 	}
 
 	get isEditing(): boolean {
-		return this._renderer.isEditing;
+		return this._status.isEditing;
 	}
 	set isEditing(value: boolean) {
-		this._renderer.isEditing = value;
+		this._status.isEditing = value;
 	}
 
 	get width(): number {
-		return this.canvas.width;
+		return this._canvas.width;
 	}
 	set width(value: number) {
-		var canvas = this.canvas;
+		var canvas = this._canvas;
 		canvas.style.width = value + "px";
 		canvas.width = value * this._pixelRatio;
 	}
 
 	get height(): number {
-		return this.canvas.height;
+		return this._canvas.height;
 	}
 	set height(value: number) {
-		var canvas = this.canvas;
+		var canvas = this._canvas;
 		canvas.style.height = value + "px";
 		canvas.height = value * this._pixelRatio;
 	}
 
 	get drawingBufferWidth(): number {
-		return this.gl.drawingBufferWidth;
+		return this._gl.drawingBufferWidth;
 	}
 
 	get drawingBufferHeight(): number {
-		return this.gl.drawingBufferHeight;
+		return this._gl.drawingBufferHeight;
 	}
 
 	get aspectRatio(): number {
 		return this.width / this.height;
 	}
 
+	get canvas(): HTMLCanvasElement {
+		return this._canvas;
+	}
+
+	get gl(): WebGLRenderingContext {
+		return this._gl;
+	}
+
+	get capabilities(): Tea.GLCapabilities {
+		return this._capabilities;
+	}
+
+	get parameters(): Tea.GLParameters {
+		return this.parameters;
+	}
+
 	get contextAttributes(): WebGLContextAttributes {
-		return this.gl.getContextAttributes();
+		return this._gl.getContextAttributes();
 	}
 
 	get supportedExtensions(): Array<string> {
-		return this.gl.getSupportedExtensions();
+		return this._gl.getSupportedExtensions();
 	}
 
 	get isStarted(): boolean {
@@ -107,12 +112,34 @@ export class App {
 		return this._renderer.isPaused;
 	}
 
+	get status(): AppStatus {
+		return this._status;
+	}
+
+	get cursor(): Tea.Cursor {
+		return this._cursor;
+	}
+
 	get renderer(): AppRenderer {
 		return this._renderer;
 	}
 
-	get currentScene(): Tea.Scene {
-		return this._renderer.currentScene;
+	get audio(): Tea.AppAudio {
+		return this._audio;
+	}
+
+	get scene(): Tea.Scene {
+		return this._renderer.scene;
+	}
+	set scene(value: Tea.Scene) {
+		if (value == null) {
+			return;
+		}
+		if (this._renderer.scene === value) {
+			return;
+		}
+		this._renderer.scene = value;
+		this._renderer.emit("setScene", value);
 	}
 	
 	get keyboard(): Tea.Keyboard {
@@ -131,10 +158,6 @@ export class App {
 		return this._renderer.time;
 	}
 
-	set clearStencil(value: number) {
-		this.gl.clearStencil(value);
-	}
-
 	get isOnline(): boolean {
 		return navigator.onLine;
 	}
@@ -146,13 +169,22 @@ export class App {
 		this._renderer.runInBackground = value;
 	}
 
+	get pixelRatio(): number {
+		return this._pixelRatio;
+	}
+	set pixelRatio(ratio: number) {
+		this._pixelRatio = ratio;
+		this.width = this.width;
+		this.height = this.height;
+	}
+
 	isExtensionSupported(name: Tea.GLExtensions | string): boolean {
 		var extensions = this.supportedExtensions;
 		return extensions.indexOf(name) >= 0;
 	}
 
 	getExtension(name: Tea.GLExtensions | string): any {
-		var gl = this.gl;
+		var gl = this._gl;
 		var extension = gl.getExtension(name);
 		if (extension == null) {
 			throw "extension not supported: " + name;
@@ -161,29 +193,11 @@ export class App {
 	}
 
 	enableUint32Index(): void {
-		if (this.status.OES_element_index_uint != null) {
-			return;
-		}
-		var name = "OES_element_index_uint";
-		var ext = this.gl.getExtension(name);
-		if (ext == null) {
-			console.warn("App.enableUint32Index(): " + name + " is not supported");
-			return;
-		}
-		this.status.OES_element_index_uint = ext;
+		this.status.enableUint32Index();
 	}
 
 	enableInstancedArrays(): void {
-		if (this.status.ANGLE_instanced_arrays != null) {
-			return;
-		}
-		var name = "ANGLE_instanced_arrays";
-		var ext = this.gl.getExtension(name);
-		if (ext == null) {
-			console.warn("App.enableInstancedArrays(): " + name + " is not supported");
-			return;
-		}
-		this.status.ANGLE_instanced_arrays = ext;
+		this.status.enableInstancedArrays();
 	}
 
 	captureScreenshot(callback: (data: ArrayBuffer) => void, type: string = "image/png"): void {
@@ -191,7 +205,7 @@ export class App {
 			return;
 		}
 		this._renderer.once("update", () => {
-			var url = this.canvas.toDataURL(type);
+			var url = this._canvas.toDataURL(type);
 			var data = atob(url.split(",")[1]);
 			var buffer = new Uint8Array(data.length);
 			for (var i = 0; i < data.length; i++) {
@@ -199,12 +213,6 @@ export class App {
 			}
 			callback(buffer.buffer);
 		});
-	}
-
-	setPixelRatio(ratio: number): void {
-		this._pixelRatio = ratio;
-		this.width = this.width;
-		this.height = this.height;
 	}
 
 	loadScene(path: string): void {
@@ -216,22 +224,14 @@ export class App {
 				console.log(err);
 				return;
 			}
-			var prevScene = this.currentScene;
+			var prevScene = this.scene;
 			var json = JSON.parse(data);
 			var scene = this.createSceneFromJSON(json);
-			this.setScene(scene);
+			this.scene = scene;
 			if (prevScene) {
 				prevScene.destroy();
 			}
 		});
-	}
-
-	setScene(scene: Tea.Scene): void {
-		if (scene == null) {
-			return;
-		}
-		this._renderer.currentScene = scene;
-		this._renderer.emit("setScene", scene);
 	}
 
 	start(): void {
@@ -243,173 +243,71 @@ export class App {
 	}
 
 	createObject3D(): Tea.Object3D {
-		var object3d = new Tea.Object3D(this);
-		object3d.name = "Empty";
-		return object3d;
+		return ObjectFactory.createObject3D(this);
 	}
 
 	createScene(): Tea.Scene {
-		var scene = new Tea.Scene(this);
-		return scene;
+		return ObjectFactory.createScene(this);
 	}
 
 	createSceneFromJSON(data: any): Tea.Scene {
-		var scene = Tea.Scene.fromJSON(this, data);
-		return scene;
+		return ObjectFactory.createSceneFromJSON(this, data);
+	}
+
+	createPrimitive(type: Tea.PrimitiveType): Tea.Object3D {
+		return Tea.Object3D.createPrimitive(this, type);
 	}
 
 	createDirectionalLight(): Tea.Object3D {
-		var object3d = new Tea.Object3D(this);
-		object3d.name = "Directional Light";
-		object3d.localPosition.set(0, 10, 0);
-		object3d.localRotation = Tea.Quaternion.euler(50, -30, 0);
-		object3d.addComponent(Tea.Light);
-		return object3d;
+		return ObjectFactory.createDirectionalLight(this);
 	}
 
 	createPointLight(): Tea.Object3D {
-		var object3d = new Tea.Object3D(this);
-		object3d.name = "Point Light";
-		object3d.localPosition.set(0, 10, 0);
-		var light = object3d.addComponent(Tea.Light);
-		light.type = Tea.LightType.Point;
-		return object3d;
+		return ObjectFactory.createPointLight(this);
 	}
 
 	createSpotLight(): Tea.Object3D {
-		var object3d = new Tea.Object3D(this);
-		object3d.name = "Spot Light";
-		object3d.localPosition.set(0, 10, 0);
-		object3d.localRotation = Tea.Quaternion.euler(50, -30, 0);
-		var light = object3d.addComponent(Tea.Light);
-		light.type = Tea.LightType.Spot;
-		return object3d;
+		return ObjectFactory.createSpotLight(this);
 	}
 
 	createAudioSource(): Tea.Object3D {
-		var object3d = new Tea.Object3D(this);
-		object3d.name = "Audio Source";
-		var audioSource = object3d.addComponent(Tea.AudioSource);
-		return object3d;
+		return ObjectFactory.createAudioSource(this);
 	}
 
 	createCamera(): Tea.Object3D {
-		var object3d = new Tea.Object3D(this);
-		object3d.name = "Camera";
-		object3d.localPosition.set(0, 1, -10);
-		object3d.addComponent(Tea.Camera);
-		return object3d;
+		return ObjectFactory.createCamera(this);
 	}
 
 	createShadowMapCamera(): Tea.Object3D {
-		var object3d = new Tea.Object3D(this);
-		object3d.name = "Shadow Map Camera";
-		object3d.localPosition.set(0, 1, -10);
-		object3d.addComponent(Tea.ShadowMapCamera);
-		return object3d;
+		return ObjectFactory.createShadowMapCamera(this);
 	}
 
 	createDefaultShader(): Tea.Shader {
-		var shader = new Tea.Shader(this);
-		shader.attach(
-			Tea.ShaderSources.defaultVS,
-			Tea.ShaderSources.defaultFS
-		);
-		return shader;
+		return ObjectFactory.createDefaultShader(this);
 	}
 
 	createShader(vs: string, fs: string): Tea.Shader {
-		var shader = new Tea.Shader(this);
-		shader.attach(vs, fs);
-		return shader;
+		return ObjectFactory.createShader(this, vs, fs);
 	}
 
 	createMeshRenderer(shader: Tea.Shader): Tea.MeshRenderer {
-		var renderer = new Tea.MeshRenderer(this);
-		renderer.material.shader = shader;
-		return renderer;
+		return ObjectFactory.createMeshRenderer(this, shader);
 	}
 
 	createLineRenderer(): Tea.Object3D {
-		var object3d = new Tea.Object3D(this);
-		var renderer = object3d.addComponent(Tea.LineRenderer);
-		var shader = new Tea.Shader(this);
-		shader.attach(
-			Tea.ShaderSources.lineVS,
-			Tea.ShaderSources.lineFS
-		);
-		shader.settings.enableBlend = true;
-		shader.settings.blend.srcRGB = Tea.ShaderBlendFunc.SrcAlpha;
-		shader.settings.blend.dstRGB = Tea.ShaderBlendFunc.OneMinusSrcAlpha;
-		shader.settings.blend.srcAlpha = Tea.ShaderBlendFunc.One;
-		shader.settings.blend.dstAlpha = Tea.ShaderBlendFunc.One;
-		renderer.material = Tea.Material.getDefault(this);
-		renderer.material.shader = shader;
-		return object3d;
+		return ObjectFactory.createLineRenderer(this);
 	}
 
 	createTexture(image: HTMLImageElement): Tea.Texture {
-		var texture = new Tea.Texture(this);
-		texture.image = image;
-		return texture;
+		return ObjectFactory.createTexture(this, image);
 	}
 
 	createParticleSystem(): Tea.Object3D {
-		this.enableInstancedArrays();
-		var object3d = new Tea.Object3D(this);
-		object3d.rotate(-90.0, 0.0, 0.0);
-		var shader = new Tea.Shader(this);
-		if (this.status.ANGLE_instanced_arrays != null) {
-			shader.attach(
-				Tea.ShaderSources.particleInstancingVS,
-				Tea.ShaderSources.particleInstancingFS
-			);
-		} else {
-			shader.attach(
-				Tea.ShaderSources.particleVS,
-				Tea.ShaderSources.particleFS
-			);
-		}
-		//shader.settings.enableDepthTest = false;
-		shader.settings.depthWriteMask = false;
-		shader.settings.enableBlend = true;
-		shader.settings.blend.srcRGB = Tea.ShaderBlendFunc.SrcAlpha;
-		shader.settings.blend.dstRGB = Tea.ShaderBlendFunc.OneMinusSrcAlpha;
-		shader.settings.blend.srcAlpha = Tea.ShaderBlendFunc.One;
-		shader.settings.blend.dstAlpha = Tea.ShaderBlendFunc.One;
-		object3d.addComponent(Tea.ParticleSystem);
-		var renderer = object3d.addComponent(Tea.ParticleSystemRenderer);
-		renderer.material = Tea.Material.getDefault(this);
-		renderer.material.shader = shader;
-		renderer.material.mainTexture = Tea.Texture.getDefaultParticle(this);
-		object3d.name = "Particle System";
-		return object3d;
+		return ObjectFactory.createParticleSystem(this);
 	}
 
 	createTextMesh(): Tea.Object3D {
-		var object3d = new Tea.Object3D(this);
-		var shader = new Tea.Shader(this);
-		shader.attach(
-			Tea.ShaderSources.textVS,
-			Tea.ShaderSources.textFS
-		);
-		shader.settings.enableBlend = true;
-		shader.settings.blend.srcRGB = Tea.ShaderBlendFunc.SrcAlpha;
-		shader.settings.blend.dstRGB = Tea.ShaderBlendFunc.OneMinusSrcAlpha;
-		shader.settings.blend.srcAlpha = Tea.ShaderBlendFunc.One;
-		shader.settings.blend.dstAlpha = Tea.ShaderBlendFunc.One;
-		var textMesh = object3d.addComponent(Tea.TextMesh);
-		var meshFilter = object3d.addComponent(Tea.MeshFilter);
-		meshFilter.mesh = textMesh.mesh;
-		var renderer = object3d.addComponent(Tea.MeshRenderer);
-		renderer.material = Tea.Material.getDefault(this);
-		renderer.material.renderQueue = 3000;
-		renderer.material.setFloat("_Cutoff", 0.0);
-		renderer.material.mainTexture = textMesh.texture;
-		renderer.material.shader = shader;
-		//renderer.material.color.set(1,0,0,1);
-		object3d.name = "Text Mesh";
-		return object3d;
+		return ObjectFactory.createTextMesh(this);
 	}
 
 	readObjFile(url: string, callback: (object3d: Tea.Object3D) => void): void {
@@ -420,43 +318,48 @@ export class App {
 		reader.readFile(url, callback);
 	}
 
-	protected init(): void {
-		this.gl = this.getWebGLContext();
-		var gl = this.gl;
-		gl.clearColor(0.0, 0.0, 0.0, 1.0);
-		gl.clearDepth(1.0);
+	protected init(canvasId: string): void {
+		this._canvas = document.getElementById(canvasId) as HTMLCanvasElement;
+		this._canvas.addEventListener(
+			"webglcontextcreationerror",
+			this.onContextCreationError
+		);
+		this._canvas.addEventListener(
+			"webglcontextlost",
+			this.onContextLost
+		);
+		this._canvas.addEventListener(
+			"webglcontextrestored",
+			this.onContextRestored
+		);
 
-		gl.enable(gl.DEPTH_TEST);
-		gl.depthFunc(gl.LEQUAL);
-
-		gl.enable(gl.CULL_FACE);
-		gl.cullFace(gl.BACK);
-
-		gl.enable(gl.SCISSOR_TEST);
-		gl.scissor(0.0, 0.0, this.width, this.height);
-
-		if (this._canvasAttributes.stencil) {
-			gl.clearStencil(0);
-			//gl.enable(gl.STENCIL_TEST);
-		}
+		this._gl = this.getWebGLContext();
+		var gl = this._gl;
+		this._capabilities = new Tea.GLCapabilities(gl);
+		this._parameters = new Tea.GLParameters(gl);
+		this._status = new AppStatus(gl);
+		this._cursor = new Tea.Cursor(this);
+		this._renderer = new AppRenderer(this);
+		this._audio = new Tea.AppAudio(this);
+		this._pixelRatio = 1.0;
 	}
 
 	protected getWebGLContext(): WebGLRenderingContext {
-		if (this.canvas == null) {
+		if (this._canvas == null) {
 			return;
 		}
 		var attributes: WebGLContextAttributes = {
-			stencil: App.useStencil
+			stencil: true
 		};
 		this._canvasAttributes = Object.assign(
 			attributes, this._canvasAttributes
 		);
-		var context = this.canvas.getContext(
+		var context = this._canvas.getContext(
 			"webgl",
 			this._canvasAttributes
 		) as WebGLRenderingContext;
 		if (context == null) {
-			context = this.canvas.getContext(
+			context = this._canvas.getContext(
 				"experimental-webgl",
 				this._canvasAttributes
 			) as WebGLRenderingContext;

@@ -239,9 +239,9 @@ export class EditorCommand extends EventDispatcher {
 			this.editor.status.scenePath = path;
 			this.editor.status.isChanged = false;
 			var app = this.app;
-			var prevScene = app.currentScene;
+			var prevScene = app.scene;
 			var scene = app.createSceneFromJSON(json);
-			app.setScene(scene);
+			app.scene = scene;
 			this.editor.setScene(scene);
 			if (prevScene) {
 				prevScene.destroy();
@@ -282,7 +282,7 @@ export class EditorCommand extends EventDispatcher {
 		var light = app.createDirectionalLight();
 		scene.addChild(camera);
 		scene.addChild(light);
-		app.setScene(scene);
+		app.scene = scene;
 		this.editor.setScene(scene);
 	}
 

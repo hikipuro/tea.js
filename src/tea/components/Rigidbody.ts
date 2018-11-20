@@ -69,7 +69,7 @@ export class Rigidbody extends Component {
 		if (this._isSleeping) {
 			return;
 		}
-		if (this.app.currentScene == null) {
+		if (this.app.scene == null) {
 			return;
 		}
 		var time = 1.0 / 50.0;
@@ -86,7 +86,7 @@ export class Rigidbody extends Component {
 		}
 		if (this.useGravity) {
 			var gravity = this._tmpVec3[0];
-			gravity.copy(this.app.currentScene.physics.gravity);
+			gravity.copy(this.app.scene.physics.gravity);
 			//gravity.mul$(0.5);
 			//gravity.mul$(time);
 			gravity.mul$(Math.pow(time, 2.0));

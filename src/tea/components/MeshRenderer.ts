@@ -50,17 +50,19 @@ export class MeshRenderer extends Renderer {
 	protected _wireframe: boolean;
 	protected _draw: Function;
 	protected _attributes: BufferAttributes;
+	protected _frontFace: number;
 
 	constructor(app: Tea.App) {
 		super(app);
+		var gl = this.gl;
 		this.receiveShadows = true;
+		this.vertexBuffer = gl.createBuffer();
+		this.indexBuffer = gl.createBuffer();
 		this._bounds = new Tea.Bounds();
 		this._wireframe = false;
 		this._draw = this.draw;
 		this._attributes = new BufferAttributes();
-		var gl = this.gl;
-		this.vertexBuffer = gl.createBuffer();
-		this.indexBuffer = gl.createBuffer();
+		this._frontFace = gl.CCW;
 	}
 
 	get bounds(): Tea.Bounds {
@@ -333,17 +335,18 @@ export class MeshRenderer extends Renderer {
 	}
 
 	protected setFrontFace(): void {
+		if (this.object3d.isMoved === false) {
+			this.app.status.setFrontFace(this._frontFace);
+			return;
+		}
 		var gl = this.gl;
 		var scale = this.object3d.scale;
-		var status = this.app.status;
-		var face = gl.CCW;
 		if (scale[0] * scale[1] * scale[2] < 0.0) {
-			face = gl.CW;
+			this._frontFace = gl.CW;
+		} else {
+			this._frontFace = gl.CCW;
 		}
-		if (status.frontFace !== face) {
-			gl.frontFace(face);
-			status.frontFace = face;
-		}
+		this.app.status.setFrontFace(this._frontFace);
 	}
 
 	protected getDrawFunc(mesh: Tea.Mesh): Function {

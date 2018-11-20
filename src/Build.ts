@@ -34,7 +34,7 @@ export class Main {
 			}
 			var json = JSON.parse(data);
 			var scene = app.createSceneFromJSON(json);
-			app.setScene(scene);
+			app.scene = scene;
 			app.start();
 		});
 	}
