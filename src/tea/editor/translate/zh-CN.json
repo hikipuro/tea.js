@@ -83,16 +83,16 @@
 			},
 			"Light": {
 				"Title": "照明",
-				"DirectionalLight": "方向指示光亮",
-				"PointLight": "点数照明",
-				"SpotLight": "点数照明"
+				"DirectionalLight": "平行光",
+				"PointLight": "点光源",
+				"SpotLight": "聚光灯"
 			},
 			"Audio": {
 				"Title": "音频",
 				"AudioSource": "音源"
 			},
 			"Camera": {
-				"Title": "照相机"
+				"Title": "摄像机"
 			}
 		}
 	},
@@ -111,12 +111,12 @@
 			},
 			"Effects": {
 				"Title": "影响",
-				"LineRenderer": "给与线的渲染器"
+				"LineRenderer": "线渲染器"
 			},
 			"Mesh": {
-				"Title": "网丝",
-				"MeshFilter": "网丝·过滤器",
-				"MeshRenderer": "给与网丝的渲染器"
+				"Title": "网格",
+				"MeshFilter": "网格过滤器",
+				"MeshRenderer": "网格渲染器"
 			},
 			"Physics": {
 				"Title": "物理",
@@ -124,8 +124,8 @@
 				"Rigidbody": "刚体"
 			},
 			"Rendering": {
-				"Title": "翻译",
-				"Camera": "照相机",
+				"Title": "渲染",
+				"Camera": "摄像机",
 				"Light": "照明"
 			}
 		}
@@ -146,16 +146,16 @@
 			"Size": "尺寸"
 		},
 		"Camera": {
-			"Title": "照相机",
-			"ClearFlags": "清楚的旗帜",
+			"Title": "摄像机",
+			"ClearFlags": "清除标记",
 			"Background": "背景",
-			"Orthographic": "正字法的",
-			"Size": "尺寸",
-			"FieldOfView": "视野",
-			"ClippingPlanes": "夹平面",
-			"Near": "Near",
-			"Far": "Far",
-			"ViewportRect": "视口长方形",
+			"Orthographic": "正交",
+			"Size": "大小",
+			"FieldOfView": "视野范围",
+			"ClippingPlanes": "剪裁平面",
+			"Near": "近点",
+			"Far": "远点",
+			"ViewportRect": "化视口矩形",
 			"Depth": "深度",
 			"EnableStereo": "立体",
 			"StereoDistance": "立体距离",
@@ -170,13 +170,13 @@
 			"SpotAngle": "点角度"
 		},
 		"LineRenderer": {
-			"Title": "给与线的渲染器"
+			"Title": "线渲染器"
 		},
 		"MeshFilter": {
-			"Title": "网丝·过滤器"
+			"Title": "网格过滤器"
 		},
 		"MeshRenderer": {
-			"Title": "给与网丝的渲染器",
+			"Title": "网格渲染器",
 			"ReceiveShadows": "请受到影",
 			"Wireframe": "电线架子"
 		},
@@ -190,8 +190,8 @@
 			"Title": "脚本"
 		},
 		"TextMesh": {
-			"Title": "原文·网丝",
-			"Text": "原文",
+			"Title": "文字网格",
+			"Text": "文字",
 			"CharacterSize": "性格尺寸",
 			"LineSpacing": "线间隔",
 			"Anchor": "末棒运动员",
