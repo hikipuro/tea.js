@@ -9,7 +9,7 @@ import { NoCache } from "./NoCache";
 				class="item"
 				ref="item"
 				:class="{ selected: isSelected }"
-				:style="{ paddingLeft: (0.2 + (depth * 1.3)) + 'em' }"
+				:style="{ paddingLeft: indentValue }"
 				:title="model.title"
 				:draggable="draggable"
 				@click.stop="onClick"
@@ -37,8 +37,14 @@ import { NoCache } from "./NoCache";
 		</li>
 	`,
 	props: {
-		model: Object,
-		depth: Number
+		model: {
+			type: Object,
+			default: null
+		},
+		depth: {
+			type: Number,
+			default: 0
+		}
 	},
 	data: () => {
 		return {
@@ -48,6 +54,7 @@ import { NoCache } from "./NoCache";
 			openIcon: "📂",
 			closeIcon: "📁",
 			draggable: false,
+			indent: "1.3em"
 		}
 	},
 	computed: {
@@ -69,6 +76,7 @@ export class Item extends Vue {
 	openIcon: string;
 	closeIcon: string;
 	draggable: boolean;
+	indent: string;
 	dragEvents: TreeView.DragEvents;
 
 	@NoCache
@@ -147,6 +155,10 @@ export class Item extends Vue {
 		var items = parent.getItemComponents();
 		var index = items.indexOf(this);
 		return items[index - 1];
+	}
+
+	get indentValue(): string {
+		return "calc(" + this.indent + " * " + this.depth + ")";
 	}
 
 	getItemComponents(): Array<Item> {
@@ -382,7 +394,6 @@ export class Item extends Vue {
 					ref="items"
 					:key="index"
 					:model="item"
-					:depth="0"
 					@create="onCreateItem"
 					@select="onSelectItem"
 					@doubleClick="onDoubleClickItem">

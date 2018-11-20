@@ -250,6 +250,9 @@ export class EditorBehavior {
 			this.scene.lockViewToSelected(object3d);
 		});
 		hierarchyView.$on("focus", (item: Editor.TreeViewItem) => {
+			if (item == null) {
+				return;
+			}
 			hierarchyView.$emit("select", item);
 		});
 		hierarchyView.$on("drop", (mode: number, idSrc: number, idDst: number) => {
@@ -490,6 +493,9 @@ export class EditorBehavior {
 			Electron.shell.openItem(path);
 		});
 		projectView.$on("focusFileList", (item: Editor.TreeViewItem) => {
+			if (item == null) {
+				return;
+			}
 			projectView.$emit("selectFile", item);
 		});
 		projectView.openFolder(process.cwd());
