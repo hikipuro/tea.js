@@ -12,11 +12,19 @@ import { NativeContextMenu } from "./basic/NativeContextMenu";
 import { HierarchyView } from "./HierarchyView";
 
 export class EditorMenu {
+	static mainMenu: Electron.Menu;
+
 	static getMainMenu(): Electron.Menu {
-		return Menu.getApplicationMenu();
+		if (process && process.platform) {
+			if (process.platform === "darwin") {
+				return Menu.getApplicationMenu();
+			}
+		}
+		return EditorMenu.mainMenu;
 	}
 
 	static setMainMenu(menu: Electron.Menu): void {
+		EditorMenu.mainMenu = menu;
 		if (process && process.platform) {
 			if (process.platform === "darwin") {
 				Menu.setApplicationMenu(menu);
@@ -220,6 +228,7 @@ export class EditorMenu {
 				fileMenu.push(
 					{ type: "separator" },
 					{
+						id: "App/Quit",
 						role: "quit",
 						label: translator.getText("App/Quit")
 					}

@@ -40,9 +40,14 @@ export class EditorCommand extends EventDispatcher {
 	play(): void {
 		var menu = EditorMenu.getMainMenu();
 		var fileMenu = menu.getMenuItemById("File");
-		fileMenu.submenu.items.forEach((item: Electron.MenuItem) => {
-			item.enabled = false;
-		});
+		if (fileMenu) {
+			fileMenu.submenu.items.forEach((item: Electron.MenuItem) => {
+				if (item.id === "App/Quit") {
+					return;
+				}
+				item.enabled = false;
+			});
+		}
 
 		var toolBox = this.editor.toolBox;
 		this.scene.app.isEditing = false;
@@ -52,9 +57,14 @@ export class EditorCommand extends EventDispatcher {
 	stop(): void {
 		var menu = EditorMenu.getMainMenu();
 		var fileMenu = menu.getMenuItemById("File");
-		fileMenu.submenu.items.forEach((item: Electron.MenuItem) => {
-			item.enabled = true;
-		});
+		if (fileMenu) {
+			fileMenu.submenu.items.forEach((item: Electron.MenuItem) => {
+				if (item.id === "App/Quit") {
+					return;
+				}
+				item.enabled = true;
+			});
+		}
 
 		var toolBox = this.editor.toolBox;
 		this.scene.app.isEditing = true;
