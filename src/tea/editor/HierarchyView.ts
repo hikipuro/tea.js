@@ -7,7 +7,10 @@ import { Editor } from "./Editor";
 @Component({
 	template: `
 		<div class="HierarchyView">
-			<TreeView ref="hierarchy" tabindex="0"></TreeView>
+			<TreeView
+				ref="hierarchy"
+				tabindex="0"
+				@focus="onFocus"></TreeView>
 		</div>
 	`
 })
@@ -165,5 +168,10 @@ export class HierarchyView extends Vue {
 		imageText.innerText = text;
 		dragImage.appendChild(imageText);
 		return dragImage;
+	}
+
+	protected onFocus(): void {
+		var treeView = this.$refs.hierarchy as TreeView;
+		this.$emit("focus", treeView.selectedItem);
 	}
 }

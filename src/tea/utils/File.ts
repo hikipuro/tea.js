@@ -125,6 +125,7 @@ export class File {
 	static writeText(path: string, data: any, callback: (err: any) => void): void {
 		if (fs == null) {
 			console.warn("File.writeText() is not supported.");
+			return;
 		}
 		path = this.resolvePath(path);
 		fs.writeFile(path, data, "utf-8", (err) => {
@@ -132,6 +133,25 @@ export class File {
 				callback(err);
 			}
 		});
+	}
+
+	static removeFolder(path: string): void {
+		if (fs == null) {
+			console.warn("File.removeFolder() is not supported.");
+			return;
+		}
+		if (fs.existsSync(path) === false) {
+			return;
+		}
+		fs.readdirSync(path).forEach((file: string) => {
+			file = nodePath.join(path, file);
+			if (fs.lstatSync(file).isDirectory()) {
+				File.removeFolder(file);
+			} else {
+				fs.unlinkSync(file);
+			}
+		});
+		fs.rmdirSync(path);
 	}
 
 	protected static resolvePath(path: string): string {

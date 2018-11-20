@@ -249,6 +249,9 @@ export class EditorBehavior {
 			var object3d = this.hierarchyViewCommand.getSelectedObject();
 			this.scene.lockViewToSelected(object3d);
 		});
+		hierarchyView.$on("focus", (item: Editor.TreeViewItem) => {
+			hierarchyView.$emit("select", item);
+		});
 		hierarchyView.$on("drop", (mode: number, idSrc: number, idDst: number) => {
 			//console.log("drop", idSrc, idDst, item.model.text);
 			var scene = this.scene;
@@ -412,7 +415,7 @@ export class EditorBehavior {
 			this.showProjectViewMenu();
 		});
 		projectView.$on("fileListMenu", (e: MouseEvent) => {
-			if (projectView.getSelectedFolderPath() == null) {
+			if (projectView.getSelectedFilePath() == null) {
 				return;
 			}
 			e.preventDefault();
@@ -420,6 +423,7 @@ export class EditorBehavior {
 		});
 		projectView.$on("selectFile", (item: Editor.TreeViewItem) => {
 			if (item == null) {
+				inspectorView.hide();
 				return;
 			}
 			var path = item.tag;
@@ -467,6 +471,9 @@ export class EditorBehavior {
 			var path = projectView.getSelectedFilePath();
 			path = nodePath.resolve(path);
 			Electron.shell.openItem(path);
+		});
+		projectView.$on("focusFileList", (item: Editor.TreeViewItem) => {
+			projectView.$emit("selectFile", item);
 		});
 		projectView.openFolder(process.cwd());
 	}
@@ -540,6 +547,13 @@ export class EditorBehavior {
 		var contextMenu = EditorMenu.createProjectViewMenu(
 			this.onSelectProjectViewMenu
 		);
+		var projectView = this.editor.projectView;
+		var path = projectView.getSelectedFolderPath();
+		var relativePath = nodePath.relative(process.cwd(), path);
+		if (relativePath.toLowerCase() === "assets") {
+			var deleteItem = contextMenu.getMenuItemById("Delete");
+			deleteItem.enabled = false;
+		}
 		contextMenu.show();
 	}
 
@@ -774,6 +788,16 @@ export class EditorBehavior {
 					break;
 				}
 				Electron.shell.openItem(path);
+				break;
+			case "Create/Folder":
+				path = nodePath.join(path, "New Folder");
+				fs.mkdirSync(path);
+				projectView.openFolder(process.cwd());
+				break;
+			case "Delete":
+				projectView.selectParentFolder();
+				Tea.File.removeFolder(path);
+				projectView.openFolder(process.cwd());
 				break;
 			case "Refresh":
 				projectView.openFolder(process.cwd());

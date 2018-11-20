@@ -44,7 +44,22 @@ export class ProjectView extends Vue {
 		return this._dragSource;
 	}
 
+	selectParentFolder(): void {
+		var folderList = this.$refs.folderList as TreeView;
+		var item = folderList.selectedItem;
+		if (item == null) {
+			return;
+		}
+		var parent = item.parent;
+		if (parent == null) {
+			return;
+		}
+		folderList.select(parent);
+	}
+
 	openFolder(path: string): void {
+		var folderList = this.$refs.folderList as TreeView;
+		var selectedItem = folderList.selectedItem;
 		Tea.File.exists(path, (exists: boolean) => {
 			if (exists === false) {
 				return;
@@ -61,6 +76,16 @@ export class ProjectView extends Vue {
 			});
 			var folderList = this.$refs.folderList as TreeView;
 			folderList.items = items;
+			if (selectedItem == null) {
+				return;
+			}
+			folderList.$nextTick(() => {
+				var tag = selectedItem.tag;
+				var item = folderList.findItemByTag(tag);
+				if (item) {
+					item.select();
+				}
+			});
 		});
 	}
 
@@ -182,11 +207,7 @@ export class ProjectView extends Vue {
 	}
 
 	protected onFocusFileList(): void {
-		/*
 		var fileList = this.$refs.fileList as TreeView;
-		if (fileList.selectedItem == null) {
-			fileList.selectNext();
-		}
-		//*/
+		this.$emit("focusFileList", fileList.selectedItem);
 	}
 }

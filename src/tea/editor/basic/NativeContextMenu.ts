@@ -48,6 +48,10 @@ export class NativeContextMenu {
 		this.menu.closePopup(window);
 	}
 
+	getMenuItemById(id: string): Electron.MenuItem {
+		return this.menu.getMenuItemById(id);
+	}
+
 	protected _onShow = (e: Electron.Event): void => {
 		if (this.onShow != null) {
 			this.onShow(this);

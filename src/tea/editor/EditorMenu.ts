@@ -440,7 +440,7 @@ export class EditorMenu {
 	): NativeContextMenu {
 		var template: Electron.MenuItemConstructorOptions[] = [];
 		if (process && process.platform) {
-			console.log("process.platform", process.platform);
+			//console.log("process.platform", process.platform);
 			if (process.platform === "win32") {
 				template.push(
 					{
@@ -459,6 +459,19 @@ export class EditorMenu {
 		}
 		template.push(
 			{ type: "separator" },
+			{
+				label: "Create",
+				submenu: [
+					{
+						id: "Create/Folder",
+						label: "Folder"
+					}
+				]
+			},
+			{
+				id: "Delete",
+				label: "Delete"
+			},
 			{
 				id: "Refresh",
 				label: "Refresh"

@@ -113,6 +113,15 @@ export class Item extends Vue {
 	}
 
 	@NoCache
+	get parent(): Item {
+		var parent = this.$parent as Item;
+		if (parent instanceof Item) {
+			return parent;
+		}
+		return null;
+	}
+
+	@NoCache
 	get firstChild(): Item {
 		return this.getItemComponents()[0];
 	}
@@ -463,7 +472,7 @@ export class TreeView extends Vue {
 
 	findItemByTag(tag: any): Item {
 		var find = (i: Item): Item => {
-			if (i instanceof Item === false) {
+			if ((i instanceof Item) === false) {
 				return null;
 			}
 			if (i.tag == tag) {
