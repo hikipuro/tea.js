@@ -3,12 +3,12 @@
 		"File": {
 			"Title": "文件",
 			"NewScene": "新的场面",
-			"OpenScene": "开演中的场面",
-			"SaveScene": "请保存场面",
-			"SaveSceneAs": "请作为名字保存场面",
+			"OpenScene": "打开场面",
+			"SaveScene": "保存场面",
+			"SaveSceneAs": "另存为场面",
 			"NewProject": "新的项目",
-			"OpenProject": "开的项目",
-			"Build": "结构"
+			"OpenProject": "打开项目",
+			"Build": "构建"
 		},
 		"Edit": {
 			"Title": "编辑",
@@ -17,12 +17,12 @@
 		},
 		"View": {
 			"Title": "表示",
-			"Reload": "再道路",
-			"ToggleDevTools": "触发器·开发者工具",
+			"Reload": "再裝",
+			"ToggleDevTools": "切换开发者工具",
 			"ResetZoom": "实际的尺寸",
 			"ZoomIn": "扩大",
 			"ZoomOut": "缩小",
-			"ToggleFullScreen": "触发器·全屏幕"
+			"ToggleFullScreen": "切换全屏幕"
 		},
 		"Window": {
 			"Title": "橱窗",
@@ -46,9 +46,9 @@
 	"Windows": {
 		"NewProject": {
 			"New": "新",
-			"Open": "请开",
+			"Open": "打开",
 			"NewProject": "新的项目",
-			"OpenProject": "开的项目",
+			"OpenProject": "打开项目",
 			"CreateProject": "请做项目",
 			"ProjectName": "项目名",
 			"Location": "文件夹"
@@ -66,7 +66,7 @@
 	"HierarchyView": {
 		"ContextMenu": {
 			"Delete": "删掉",
-			"CreateEmpty": "在天空请做",
+			"CreateEmpty": "创建空对象",
 			"3DObject": {
 				"Title": "3D对象",
 				"Cube": "立方体",
@@ -75,7 +75,7 @@
 				"Cylinder": "汽缸",
 				"Plane": "平面 (Plane)",
 				"Quad": "平面 (Quad)",
-				"Text": "原文"
+				"Text": "文本"
 			},
 			"Effects": {
 				"Title": "影响",
@@ -190,11 +190,11 @@
 			"Title": "脚本"
 		},
 		"TextMesh": {
-			"Title": "文字网格",
-			"Text": "文字",
-			"CharacterSize": "性格尺寸",
-			"LineSpacing": "线间隔",
-			"Anchor": "末棒运动员",
+			"Title": "文本网格",
+			"Text": "文本",
+			"CharacterSize": "字元大小",
+			"LineSpacing": "行间距",
+			"Anchor": "文本锚",
 			"Alignment": "调整",
 			"FontSize": "字体大小",
 			"FontStyle": "字体的样式",
