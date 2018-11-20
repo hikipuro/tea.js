@@ -61,7 +61,7 @@ export class LineRenderer extends Renderer {
 		if (this.enabled === false || camera == null) {
 			return;
 		}
-		if (this.isRenderable === false) {
+		if (!this.isRenderable) {
 			return;
 		}
 		super.render(camera, lights, renderSettings);

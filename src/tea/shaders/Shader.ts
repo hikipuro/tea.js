@@ -144,7 +144,7 @@ export class Shader {
 		return gl.ZERO;
 	}
 
-	propertyToID(name: string): WebGLUniformLocation {
+	getUniformLocation(name: string): WebGLUniformLocation {
 		var cache = this._locationsCache[name];
 		if (cache !== undefined) {
 			return cache;

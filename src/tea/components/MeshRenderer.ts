@@ -130,15 +130,12 @@ export class MeshRenderer extends Renderer {
 		if (camera == null) {
 			return;
 		}
-		if (this.isRenderable === false) {
+		if (!this.isRenderable) {
 			return;
 		}
 		super.render(camera, lights, renderSettings);
 
 		var mesh = this._mesh;
-		if (mesh == null) {
-			return;
-		}
 		if (mesh.isModified === true) {
 			this.setMeshData(mesh);
 		}

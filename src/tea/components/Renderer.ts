@@ -304,27 +304,27 @@ export class Renderer extends Component {
 
 		var location: WebGLUniformLocation = null;
 
-		location = shader.propertyToID("TEA_MATRIX_V");
+		location = shader.getUniformLocation("TEA_MATRIX_V");
 		if (location != null) {
 			gl.uniformMatrix4fv(location, false, view);
 		}
-		location = shader.propertyToID("TEA_MATRIX_I_V");
+		location = shader.getUniformLocation("TEA_MATRIX_I_V");
 		if (location != null) {
 			gl.uniformMatrix4fv(location, false, inverseView);
 		}
-		location = shader.propertyToID("TEA_MATRIX_P");
+		location = shader.getUniformLocation("TEA_MATRIX_P");
 		if (location != null) {
 			gl.uniformMatrix4fv(location, false, projection);
 		}
-		location = shader.propertyToID("TEA_OBJECT_TO_WORLD");
+		location = shader.getUniformLocation("TEA_OBJECT_TO_WORLD");
 		if (location != null) {
 			gl.uniformMatrix4fv(location, false, model);
 		}
-		location = shader.propertyToID("TEA_WORLD_TO_OBJECT");
+		location = shader.getUniformLocation("TEA_WORLD_TO_OBJECT");
 		if (location != null) {
 			gl.uniformMatrix4fv(location, false, inverseModel);
 		}
-		location = shader.propertyToID("TEA_MATRIX_VP");
+		location = shader.getUniformLocation("TEA_MATRIX_VP");
 		if (location != null) {
 			gl.uniformMatrix4fv(location, false, vpMatrix);
 		}
@@ -340,7 +340,7 @@ export class Renderer extends Component {
 
 		var enableMV = false;
 		var mvMatrix = this._mvMatrix;
-		location = shader.propertyToID("TEA_MATRIX_MV");
+		location = shader.getUniformLocation("TEA_MATRIX_MV");
 		if (location != null) {
 			enableMV = true;
 			mvMatrix.copy(view);
@@ -349,7 +349,7 @@ export class Renderer extends Component {
 		}
 		//u.uniformMatrix4fv("TEA_MATRIX_MV", mvMatrix);
 
-		location = shader.propertyToID("TEA_MATRIX_MVP");
+		location = shader.getUniformLocation("TEA_MATRIX_MVP");
 		if (location != null) {
 			if (enableMV === false) {
 				mvMatrix.copy(view);
@@ -367,7 +367,7 @@ export class Renderer extends Component {
 		//u.uniformMatrix4fv("TEA_MATRIX_IT_P", projection);
 		//u.uniformMatrix4fv("invMatrix", invMatrix);
 
-		location = shader.propertyToID("TEA_CAMERA_STEREO");
+		location = shader.getUniformLocation("TEA_CAMERA_STEREO");
 		if (location != null) {
 			if (camera.enableStereo
 			&&  camera.stereoMode === Tea.CameraStereoMode.LineByLine) {
@@ -386,7 +386,7 @@ export class Renderer extends Component {
 		var gl = this.gl;
 		var shader = this.material.shader;
 		this.material.eachProperty((name, item) => {
-			var location = shader.propertyToID(name);
+			var location = shader.getUniformLocation(name);
 			if (location == null) {
 				return;
 			}
@@ -452,11 +452,11 @@ export class Renderer extends Component {
 		var location: WebGLUniformLocation = null;
 		
 		if (lights == null && lights.length <= 0) {
-			location = shader.propertyToID("lightCount");
+			location = shader.getUniformLocation("lightCount");
 			if (location != null) {
 				gl.uniform1i(location, 0);
 			}
-			location = shader.propertyToID("ambientColor");
+			location = shader.getUniformLocation("ambientColor");
 			if (location != null) {
 				gl.uniform4fv(location, renderSettings.ambientLight);
 			}
@@ -466,7 +466,7 @@ export class Renderer extends Component {
 		var length = Math.min(lights.length, Renderer.MaxLightCount);
 		for (var i = 0; i < length; i++) {
 			var light = lights[i];
-			location = shader.propertyToID("lights[" + i + "].color");
+			location = shader.getUniformLocation("lights[" + i + "].color");
 			if (location != null) {
 				var color = light.color;
 				var intensity = light.intensity;
@@ -478,25 +478,25 @@ export class Renderer extends Component {
 					color[3]
 				);
 			}
-			location = shader.propertyToID("lights[" + i + "].position");
+			location = shader.getUniformLocation("lights[" + i + "].position");
 			if (location != null) {
 				var p = light.object3d.position;
 				gl.uniform4f(
 					location, p[0], p[1], p[2], 0.0
 				);
 			}
-			location = shader.propertyToID("lights[" + i + "].direction");
+			location = shader.getUniformLocation("lights[" + i + "].direction");
 			if (location != null) {
 				var d = light.direction;
 				gl.uniform4f(
 					location, d[0], d[1], d[2], light.type
 				);
 			}
-			location = shader.propertyToID("lights[" + i + "].range");
+			location = shader.getUniformLocation("lights[" + i + "].range");
 			if (location != null) {
 				gl.uniform1f(location, light.range);
 			}
-			location = shader.propertyToID("lights[" + i + "].spotAngle");
+			location = shader.getUniformLocation("lights[" + i + "].spotAngle");
 			if (location != null) {
 				gl.uniform1f(
 					location,
@@ -504,11 +504,11 @@ export class Renderer extends Component {
 				);
 			}
 		}
-		location = shader.propertyToID("lightCount");
+		location = shader.getUniformLocation("lightCount");
 		if (location != null) {
 			gl.uniform1i(location, length);
 		}
-		location = shader.propertyToID("ambientColor");
+		location = shader.getUniformLocation("ambientColor");
 		if (location != null) {
 			gl.uniform4fv(location, renderSettings.ambientLight);
 		}
@@ -524,7 +524,7 @@ export class Renderer extends Component {
 		var id = 0;
 		for (var i = 0; i < length; i++) {
 			var key = keys[i];
-			var location = shader.propertyToID(key);
+			var location = shader.getUniformLocation(key);
 			if (location == null) {
 				continue;
 			}

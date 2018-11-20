@@ -50,6 +50,7 @@ export class SpriteRenderer extends Renderer {
 	protected _wireframe: boolean;
 	protected _draw: Function;
 	protected _attributes: BufferAttributes;
+	protected _frontFace: number;
 
 	constructor(app: Tea.App) {
 		super(app);
@@ -61,6 +62,7 @@ export class SpriteRenderer extends Renderer {
 		this.vertexBuffer = gl.createBuffer();
 		this.indexBuffer = gl.createBuffer();
 		this.mvpMatrix = Tea.Matrix4x4.identity.clone();
+		this._frontFace = gl.CCW;
 	}
 
 	get bounds(): Tea.Bounds {
@@ -124,7 +126,7 @@ export class SpriteRenderer extends Renderer {
 	}
 
 	render2d(): void {
-		if (this.isRenderable === false) {
+		if (!this.isRenderable) {
 			return;
 		}
 		//super.render(camera, lights, renderSettings);
@@ -333,13 +335,18 @@ export class SpriteRenderer extends Renderer {
 	}
 
 	protected setFrontFace(): void {
+		if (this.object3d.isMoved === false) {
+			this.app.status.setFrontFace(this._frontFace);
+			return;
+		}
 		var gl = this.gl;
 		var scale = this.object3d.scale;
-		var face = gl.CCW;
 		if (scale[0] * scale[1] * scale[2] < 0.0) {
-			face = gl.CW;
+			this._frontFace = gl.CW;
+		} else {
+			this._frontFace = gl.CCW;
 		}
-		this.app.status.setFrontFace(face);
+		this.app.status.setFrontFace(this._frontFace);
 	}
 
 	protected getDrawFunc(mesh: Tea.Mesh): Function {
@@ -413,37 +420,37 @@ export class SpriteRenderer extends Renderer {
 		var identity = Tea.Matrix4x4.identity;
 		var location: WebGLUniformLocation = null;
 
-		location = shader.propertyToID("TEA_MATRIX_V");
+		location = shader.getUniformLocation("TEA_MATRIX_V");
 		if (location != null) {
 			gl.uniformMatrix4fv(location, false, identity);
 		}
-		location = shader.propertyToID("TEA_MATRIX_I_V");
+		location = shader.getUniformLocation("TEA_MATRIX_I_V");
 		if (location != null) {
 			gl.uniformMatrix4fv(location, false, identity);
 		}
-		location = shader.propertyToID("TEA_MATRIX_P");
+		location = shader.getUniformLocation("TEA_MATRIX_P");
 		if (location != null) {
 			gl.uniformMatrix4fv(location, false, identity);
 		}
-		location = shader.propertyToID("TEA_OBJECT_TO_WORLD");
+		location = shader.getUniformLocation("TEA_OBJECT_TO_WORLD");
 		if (location != null) {
 			gl.uniformMatrix4fv(location, false, model);
 		}
-		location = shader.propertyToID("TEA_WORLD_TO_OBJECT");
+		location = shader.getUniformLocation("TEA_WORLD_TO_OBJECT");
 		if (location != null) {
 			gl.uniformMatrix4fv(location, false, inverseModel);
 		}
-		location = shader.propertyToID("TEA_MATRIX_VP");
+		location = shader.getUniformLocation("TEA_MATRIX_VP");
 		if (location != null) {
 			gl.uniformMatrix4fv(location, false, identity);
 		}
 
-		location = shader.propertyToID("TEA_MATRIX_MV");
+		location = shader.getUniformLocation("TEA_MATRIX_MV");
 		if (location != null) {
 			gl.uniformMatrix4fv(location, false, identity);
 		}
 
-		location = shader.propertyToID("TEA_MATRIX_MVP");
+		location = shader.getUniformLocation("TEA_MATRIX_MVP");
 		if (location != null) {
 			gl.uniformMatrix4fv(location, false, this.mvpMatrix);
 		}

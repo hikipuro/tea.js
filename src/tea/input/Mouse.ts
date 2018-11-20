@@ -68,9 +68,10 @@ export class Mouse {
 		this.wheelX = 0;
 		this.wheelY = 0;
 		this._isMoved = false;
+		var buttons = this.buttons;
 		var length = this._buttonCount;
 		for (var i = 0; i < length; i++) {
-			this.prevButtons[i] = this.buttons[i];
+			this.prevButtons[i] = buttons[i];
 		}
 	}
 

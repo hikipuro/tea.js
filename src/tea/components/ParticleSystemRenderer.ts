@@ -50,7 +50,7 @@ export class ParticleSystemRenderer extends Renderer {
 		if (this.enabled === false || camera == null) {
 			return;
 		}
-		if (this.isRenderable === false) {
+		if (!this.isRenderable) {
 			return;
 		}
 		var particleSystem = this.object3d.getComponent(Tea.ParticleSystem);
@@ -269,9 +269,10 @@ export class ParticleSystemRenderer extends Renderer {
 	protected drawInstances(camera: Tea.Camera, particleSystem: Tea.ParticleSystem, mesh: Tea.Mesh): void {
 		var gl = this.gl;
 		var ext = this.app.status.ANGLE_instanced_arrays;
+		var shader = this.material.shader;
 
-		var right = this.material.shader.propertyToID("CameraRight");
-		var up = this.material.shader.propertyToID("CameraUp");
+		var right = shader.getUniformLocation("CameraRight");
+		var up = shader.getUniformLocation("CameraUp");
 		var view = camera.cameraToWorldMatrix;
 		gl.uniform3f(right, view[0], view[1], view[2]);
 		gl.uniform3f(up, view[4], view[5], view[6]);
@@ -288,15 +289,16 @@ export class ParticleSystemRenderer extends Renderer {
 
 	protected draw(camera: Tea.Camera, particleSystem: Tea.ParticleSystem, mesh: Tea.Mesh): void {
 		var gl = this.gl;
-		var position = this.material.shader.propertyToID("position");
-		var color = this.material.shader.propertyToID("color");
-		var size = this.material.shader.propertyToID("size");
+		var shader = this.material.shader;
+		var position = shader.getUniformLocation("position");
+		var color = shader.getUniformLocation("color");
+		var size = shader.getUniformLocation("size");
 		if (position == null || color == null || size == null) {
 			return;
 		}
 		
-		var right = this.material.shader.propertyToID("CameraRight");
-		var up = this.material.shader.propertyToID("CameraUp");
+		var right = shader.getUniformLocation("CameraRight");
+		var up = shader.getUniformLocation("CameraUp");
 		var view = camera.cameraToWorldMatrix;
 		gl.uniform3f(right, view[0], view[1], view[2]);
 		gl.uniform3f(up, view[4], view[5], view[6]);

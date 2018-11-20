@@ -68,6 +68,7 @@ export class Object3D {
 	app: Tea.App;
 	id: number;
 	name: string;
+	isDestroyed: boolean;
 	isActive: boolean;
 	scene: Tea.Scene;
 	localPosition: Tea.Vector3;
@@ -85,6 +86,7 @@ export class Object3D {
 		this.app = app;
 		this.id = Object3D._nextId++;
 		this.name = "";
+		this.isDestroyed = false;
 		this.isActive = true;
 		this.scene = null;
 		this.localPosition = Tea.Vector3.zero.clone();
@@ -319,6 +321,7 @@ export class Object3D {
 	}
 
 	destroy(): void {
+		this.isDestroyed = true;
 		this._toDestroy = true;
 	}
 
