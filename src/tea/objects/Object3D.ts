@@ -429,7 +429,15 @@ export class Object3D {
 			}
 			component.object3d = object3d;
 			object3d._components.push(component);
-			
+		}
+		length = json.children.length;
+		for (var i = 0; i < length; i++) {
+			var item = json.children[i];
+			var child = Object3D.fromJSON(app, item);
+			if (child == null) {
+				continue;
+			}
+			object3d.addChild(child);
 		}
 		return object3d;
 	}

@@ -1,5 +1,6 @@
 import * as nodePath from "path";
 import * as fs from "fs";
+import * as Electron from "electron";
 import Vue from "vue";
 import Component from "vue-class-component";
 import * as Tea from "../../Tea";
