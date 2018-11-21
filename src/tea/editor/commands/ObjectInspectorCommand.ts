@@ -7,25 +7,25 @@ import { ObjectInspector } from "../views/ObjectInspector";
 
 export class ObjectInspectorCommand {
 	editor: Editor;
-	updateTimer: Timer;
+	protected _updateTimer: Timer;
 	protected _componentMenu: NativeContextMenu;
 	protected _addComponentMenu: NativeContextMenu;
 
 	constructor() {
-		this.updateTimer = new Timer();
-		this.updateTimer.onUpdate = this.updateTRS;
+		this._updateTimer = new Timer();
+		this._updateTimer.onUpdate = this.updateTRS;
 	}
 
 	startUpdateTimer(): void {
-		this.updateTimer.start();
+		this._updateTimer.start();
 	}
 
 	snoozeUpdateTimer(wait: number = 1000): void {
-		this.updateTimer.snooze(wait);
+		this._updateTimer.snooze(wait);
 	}
 
 	stopUpdateTimer(): void {
-		this.updateTimer.stop();
+		this._updateTimer.stop();
 	}
 
 	update(): void {
@@ -118,7 +118,7 @@ export class ObjectInspectorCommand {
 		var inspectorView = this.editor.inspectorView;
 
 		if (hierarchyView.getSelectedItem() == null) {
-			this.updateTimer.stop();
+			this._updateTimer.stop();
 			return;
 		}
 		if (inspectorView.hasFocus()) {

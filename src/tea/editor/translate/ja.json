@@ -54,6 +54,28 @@
 			"Location": "フォルダ"
 		}
 	},
+	"Dialogs": {
+		"OpenScene": {
+			"Message": "シーンファイルを開く",
+			"FileType": "シーンファイル"
+		},
+		"SaveScene": {
+			"Message": "シーンファイルの保存",
+			"FileType": "シーンファイル"
+		},
+		"SelectBuildTarget": {
+			"Message": "出力先フォルダの選択"
+		},
+		"ConfirmSaveScene": {
+			"Buttons": {
+				"Save": "セーブ",
+				"DontSave": "セーブしない",
+				"Cancel": "キャンセル"
+			},
+			"Message": "シーンが変更されています",
+			"Detail": "セーブしますか？"
+		}
+	},
 	"Tabs": {
 		"Player": "再生",
 		"Scene": "シーン編集",

@@ -235,7 +235,7 @@ export class EditorBehavior {
 		}
 	}
 
-	protected updateScreenSize = (): void => {
+	updateScreenSize = (): void => {
 		var app = this.editor.status.app;
 		var aspect = this.editor.$refs.aspect as SelectAspect;
 		var canvas = this.editor.$refs.canvas as HTMLCanvasElement;
@@ -275,11 +275,12 @@ export class EditorBehavior {
 	protected onBeforeUnload = (e: BeforeUnloadEvent): void => {
 		if (this.editor.status.isChanged) {
 			e.returnValue = false;
-			this.editor.command.showConfirmSaveSceneDialog((response: string) => {
+			this.editor.command.showConfirmSaveSceneDialog((response: number) => {
 				switch (response) {
-					case "Save":
+					case 0: // Save
 						this.editor.command.once("save", (path: string) => {
 							if (path == null) {
+								this._willReload = false;
 								return;
 							}
 							if (this._willReload) {
@@ -289,9 +290,8 @@ export class EditorBehavior {
 							}
 						});
 						this.editor.command.saveScene();
-						//window.close();
 						break;
-					case "Don't Save":
+					case 2: // Don't Save
 						this.editor.status.isChanged = false;
 						if (this._willReload) {
 							location.reload();

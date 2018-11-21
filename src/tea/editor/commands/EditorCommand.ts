@@ -6,6 +6,7 @@ import { EventDispatcher } from "../../utils/EventDispatcher";
 import { Editor } from "../Editor";
 import { EditorMenu } from "../EditorMenu";
 import { AppBuilder } from "./AppBuilder";
+import { Translator } from "../translate/Translator";
 
 var remote = null;
 var Dialog = null;
@@ -73,9 +74,9 @@ export class EditorCommand extends EventDispatcher {
 			this.createNewScene();
 			return;
 		}
-		this.showConfirmSaveSceneDialog((response: string) => {
+		this.showConfirmSaveSceneDialog((response: number) => {
 			switch (response) {
-				case "Save":
+				case 0: // Save
 					this.once("save", (filename: string) => {
 						if (filename != null) {
 							this.createNewScene();
@@ -83,7 +84,7 @@ export class EditorCommand extends EventDispatcher {
 					});
 					this.saveScene();
 					break;
-				case "Don't Save":
+				case 2: // Don't Save
 					this.createNewScene();
 					break;
 			}
@@ -96,9 +97,9 @@ export class EditorCommand extends EventDispatcher {
 			this.showOpenSceneDialog();
 			return;
 		}
-		this.showConfirmSaveSceneDialog((response: string) => {
+		this.showConfirmSaveSceneDialog((response: number) => {
 			switch (response) {
-				case "Save":
+				case 0: // Save
 					this.once("save", (filename: string) => {
 						if (filename != null) {
 							this.showOpenSceneDialog();
@@ -106,7 +107,7 @@ export class EditorCommand extends EventDispatcher {
 					});
 					this.saveScene();
 					break;
-				case "Don't Save":
+				case 2: // Don't Save
 					this.showOpenSceneDialog();
 					break;
 			}
@@ -128,14 +129,19 @@ export class EditorCommand extends EventDispatcher {
 
 	saveSceneAs(): void {
 		console.log("saveSceneAs");
+		var translator = Translator.getInstance();
+		translator.basePath = "Dialogs/SaveScene";
 		var defaultPath = nodePath.resolve("./assets/scene.json");
 		var browserWindow = remote.getCurrentWindow();
 		var options: Electron.SaveDialogOptions = {
 			defaultPath: defaultPath,
-			title: "Save scene file",
-			message: "Save scene file",
+			title: translator.getText("Message"),
+			message: translator.getText("Message"),
 			filters: [
-				{ name: "Scene File", extensions: ["json"] }
+				{
+					name: translator.getText("FileType"),
+					extensions: ["json"]
+				}
 			]
 		};
 		Dialog.showSaveDialog(
@@ -150,9 +156,9 @@ export class EditorCommand extends EventDispatcher {
 			this.openNewProjectWindow();
 			return;
 		}
-		this.showConfirmSaveSceneDialog((response: string) => {
+		this.showConfirmSaveSceneDialog((response: number) => {
 			switch (response) {
-				case "Save":
+				case 0: // Save
 					this.once("save", (filename: string) => {
 						if (filename == null) {
 							return;
@@ -161,7 +167,7 @@ export class EditorCommand extends EventDispatcher {
 					});
 					this.saveScene();
 					break;
-				case "Don't Save":
+				case 2: // Don't Save
 					this.openNewProjectWindow();
 					break;
 			}
@@ -171,24 +177,21 @@ export class EditorCommand extends EventDispatcher {
 	openProject(): void {
 		console.log("openProject");
 		if (this.editor.status.isChanged === false) {
-			//this.showOpenProjectDialog();
 			this.openNewProjectWindow("open");
 			return;
 		}
-		this.showConfirmSaveSceneDialog((response: string) => {
+		this.showConfirmSaveSceneDialog((response: number) => {
 			switch (response) {
-				case "Save":
+				case 0: // Save
 					this.once("save", (filename: string) => {
 						if (filename == null) {
 							return;
 						}
-						//this.showOpenProjectDialog();
 						this.openNewProjectWindow("open");
 					});
 					this.saveScene();
 					break;
-				case "Don't Save":
-					//this.showOpenProjectDialog();
+				case 2: // Don't Save
 					this.openNewProjectWindow("open");
 					break;
 			}
@@ -209,9 +212,9 @@ export class EditorCommand extends EventDispatcher {
 			this.showSelectBuildTargetDialog();
 			return;
 		}
-		this.showConfirmSaveSceneDialog((response: string) => {
+		this.showConfirmSaveSceneDialog((response: number) => {
 			switch (response) {
-				case "Save":
+				case 0: // Save
 					this.once("save", (filename: string) => {
 						if (filename == null) {
 							return;
@@ -220,7 +223,7 @@ export class EditorCommand extends EventDispatcher {
 					});
 					this.saveScene();
 					break;
-				case "Don't Save":
+				case 2: // Don't Save
 					this.showSelectBuildTargetDialog();
 					break;
 			}
@@ -259,23 +262,27 @@ export class EditorCommand extends EventDispatcher {
 		});
 	}
 
-	showConfirmSaveSceneDialog(callback: (response: string) => void): void {
+	showConfirmSaveSceneDialog(callback: (response: number) => void): void {
 		console.log("showConfirmSaveSceneDialog");
+		var translator = Translator.getInstance();
+		translator.basePath = "Dialogs/ConfirmSaveScene";
 		var browserWindow = remote.getCurrentWindow();
 		var buttons = [
-			"Save", "Cancel", "Don't Save"
+			translator.getText("Buttons/Save"),
+			translator.getText("Buttons/Cancel"),
+			translator.getText("Buttons/DontSave")
 		];
 		var options: Electron.MessageBoxOptions = {
 			type: "info",
-			message: "Scene have been modified",
-			detail: "Do you want to save?",
+			message: translator.getText("Message"),
+			detail: translator.getText("Detail"),
 			buttons: buttons,
 			defaultId: 0
 		};
 		Dialog.showMessageBox(
 			browserWindow, options,
 			(response: number) => {
-				callback(buttons[response]);
+				callback(response);
 			}
 		);
 	}
@@ -298,30 +305,19 @@ export class EditorCommand extends EventDispatcher {
 	}
 
 	protected showOpenSceneDialog(): void {
+		var translator = Translator.getInstance();
+		translator.basePath = "Dialogs/OpenScene";
 		var browserWindow = remote.getCurrentWindow();
 		var options: Electron.OpenDialogOptions = {
 			defaultPath: ".",
-			title: "Open scene file",
-			message: "Open scene file",
+			title: translator.getText("Message"),
+			message: translator.getText("Message"),
 			properties: ["openFile"],
 			filters: [
-				{ name: "Scene File", extensions: ["json"] }
-			]
-		};
-		Dialog.showOpenDialog(
-			browserWindow, options,
-			this.onCloseOpenSceneDialog
-		);
-	}
-
-	protected showOpenProjectDialog(): void {
-		var browserWindow = remote.getCurrentWindow();
-		var options: Electron.OpenDialogOptions = {
-			defaultPath: ".",
-			title: "Open project folder",
-			message: "Open project folder",
-			properties: ["openDirectory"],
-			filters: [
+				{
+					name: translator.getText("FileType"),
+					extensions: ["json"]
+				}
 			]
 		};
 		Dialog.showOpenDialog(
@@ -353,12 +349,17 @@ export class EditorCommand extends EventDispatcher {
 	}
 
 	protected showSelectBuildTargetDialog(): void {
+		var translator = Translator.getInstance();
+		translator.basePath = "Dialogs/SelectBuildTarget";
 		var browserWindow = remote.getCurrentWindow();
 		var options: Electron.OpenDialogOptions = {
 			defaultPath: ".",
-			title: "Select build target folder",
-			message: "Select build target folder",
-			properties: ["openDirectory", "createDirectory"]
+			title: translator.getText("Message"),
+			message: translator.getText("Message"),
+			properties: [
+				"openDirectory",
+				"createDirectory"
+			]
 		};
 		Dialog.showOpenDialog(
 			browserWindow, options,

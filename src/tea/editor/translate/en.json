@@ -54,6 +54,28 @@
 			"Location": "Location"
 		}
 	},
+	"Dialogs": {
+		"OpenScene": {
+			"Message": "Open scene file",
+			"FileType": "Scene File"
+		},
+		"SaveScene": {
+			"Message": "Save scene file",
+			"FileType": "Scene File"
+		},
+		"SelectBuildTarget": {
+			"Message": "Select build target folder"
+		},
+		"ConfirmSaveScene": {
+			"Buttons": {
+				"Save": "Save",
+				"DontSave": "Don't Save",
+				"Cancel": "Cancel"
+			},
+			"Message": "Scene have been modified",
+			"Detail": "Do you want to save?"
+		}
+	},
 	"Tabs": {
 		"Player": "Player",
 		"Scene": "Scene",
