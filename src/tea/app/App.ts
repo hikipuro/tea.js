@@ -139,7 +139,7 @@ export class App {
 			return;
 		}
 		this._renderer.scene = value;
-		this._renderer.emit("setScene", value);
+		this._renderer.emit("changeScene", value);
 	}
 	
 	get keyboard(): Tea.Keyboard {

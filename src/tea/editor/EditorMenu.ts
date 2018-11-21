@@ -9,7 +9,7 @@ if (Electron) {
 import { Editor } from "./Editor";
 import { Translator } from "./translate/Translator";
 import { NativeContextMenu } from "./basic/NativeContextMenu";
-import { HierarchyView } from "./HierarchyView";
+import { HierarchyView } from "./views/HierarchyView";
 
 export class EditorMenu {
 	static mainMenu: Electron.Menu;

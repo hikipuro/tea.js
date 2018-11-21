@@ -1,6 +1,12 @@
 import * as fs from "fs";
 import * as nodePath from "path";
 import * as Electron from "electron";
+import * as Tea from "../../Tea";
+import { EventDispatcher } from "../../utils/EventDispatcher";
+import { Editor } from "../Editor";
+import { EditorMenu } from "../EditorMenu";
+import { AppBuilder } from "./AppBuilder";
+
 var remote = null;
 var Dialog = null;
 if (Electron) {
@@ -14,20 +20,8 @@ declare global {
 	}
 }
 
-import * as Tea from "../../Tea";
-import { EventDispatcher } from "../../utils/EventDispatcher";
-import { Editor } from "../Editor";
-import { EditorMenu } from "../EditorMenu";
-import { HierarchyView } from "../HierarchyView";
-import { InspectorView } from "../InspectorView";
-import { AppBuilder } from "./AppBuilder";
-
 export class EditorCommand extends EventDispatcher {
 	editor: Editor;
-	app: Tea.App;
-	scene: Tea.Scene;
-	hierarchyView: HierarchyView;
-	inspectorView: InspectorView;
 
 	constructor() {
 		super();
@@ -50,7 +44,8 @@ export class EditorCommand extends EventDispatcher {
 		}
 
 		var toolBox = this.editor.toolBox;
-		this.scene.app.isEditing = false;
+		var app = this.editor.status.app;
+		app.isEditing = false;
 		toolBox.play();
 	}
 
@@ -67,7 +62,8 @@ export class EditorCommand extends EventDispatcher {
 		}
 
 		var toolBox = this.editor.toolBox;
-		this.scene.app.isEditing = true;
+		var app = this.editor.status.app;
+		app.isEditing = true;
 		this.reloadScene();
 		toolBox.stop();
 	}
@@ -248,12 +244,14 @@ export class EditorCommand extends EventDispatcher {
 			}
 			this.editor.status.scenePath = path;
 			this.editor.status.isChanged = false;
-			var app = this.app;
+			var app = this.editor.status.app;
 			var prevScene = app.scene;
 			var scene = app.createSceneFromJSON(json);
 			app.scene = scene;
 			this.editor.setScene(scene);
 			if (prevScene) {
+				prevScene.removeAllListeners("addChild");
+				prevScene.removeAllListeners("removeChild");
 				prevScene.destroy();
 			}
 
@@ -283,10 +281,13 @@ export class EditorCommand extends EventDispatcher {
 	}
 
 	protected createNewScene(): void {
-		this.scene.destroy();
+		var scene = this.editor.status.scene;
+		scene.removeAllListeners("addChild");
+		scene.removeAllListeners("removeChild");
+		scene.destroy();
 		this.editor.status.scenePath = null;
 		this.editor.status.isChanged = false;
-		var app = this.app;
+		var app = this.editor.status.app;
 		var scene = app.createScene();
 		var camera = app.createCamera();
 		var light = app.createDirectionalLight();
@@ -331,7 +332,8 @@ export class EditorCommand extends EventDispatcher {
 
 	protected saveSceneFile(): void {
 		var filename = this.editor.status.scenePath;
-		var json = this.scene.toJSON();
+		var scene = this.editor.status.scene;
+		var json = scene.toJSON();
 		var text = JSON.stringify(json, null, "\t");
 		if (text.indexOf("\r\n") <= 0) {
 			text = text.replace(/\n/g, "\r\n");

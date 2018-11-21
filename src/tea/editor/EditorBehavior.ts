@@ -1,28 +1,17 @@
-import * as nodePath from "path";
-import * as fs from "fs";
 import * as Electron from "electron";
 import Vue from "vue";
 import * as Tea from "../Tea";
 import { Editor } from "./Editor";
 import { EditorSettings } from "./EditorSettings";
 import { EditorMenu } from "./EditorMenu";
-import { FileInspector } from "./FileInspector";
-import { SceneInspector } from "./SceneInspector";
 import { Translator } from "./translate/Translator";
 import { SelectAspect } from "./basic/SelectAspect";
 import { UICommands } from "./commands/UICommands";
-import { HierarchyViewCommand } from "./commands/HierarchyViewCommand";
-import { ObjectInspectorCommand } from "./commands/ObjectInspectorCommand";
-import { EditorCommand } from "./commands/EditorCommand";
 import { Tabs } from "./containers/Tabs";
 
 export class EditorBehavior {
 	editor: Editor;
-	scene: Tea.Scene;
 	commands: UICommands;
-	editorCommand: EditorCommand;
-	hierarchyViewCommand: HierarchyViewCommand;
-	objectInspectorCommand: ObjectInspectorCommand;
 	protected _willReload: boolean = false;
 
 	constructor(editor: Editor) {
@@ -40,17 +29,20 @@ export class EditorBehavior {
 	}
 
 	initEvents(): void {
+		this.editor.status.on("isChanged", (value: boolean) => {
+			this.updateWindowTitle();
+		});
 		if (Electron && Electron.remote) {
 			var browserWindow = Electron.remote.getCurrentWindow();
 			browserWindow.removeListener("enter-full-screen", this.onResizeWindow);
 			browserWindow.removeListener("leave-full-screen", this.onResizeWindow);
 			browserWindow.removeListener("maximize", this.onResizeWindow);
 			browserWindow.removeListener("unmaximize", this.onResizeWindow);
+			browserWindow.webContents.removeListener("devtools-reload-page", this.onDevtoolsReloadPage);
 			browserWindow.on("enter-full-screen", this.onResizeWindow);
 			browserWindow.on("leave-full-screen", this.onResizeWindow);
 			browserWindow.on("maximize", this.onResizeWindow);
 			browserWindow.on("unmaximize", this.onResizeWindow);
-			browserWindow.webContents.removeListener("devtools-reload-page", this.onDevtoolsReloadPage);
 			browserWindow.webContents.on("devtools-reload-page", this.onDevtoolsReloadPage);
 		}
 		window.addEventListener("beforeunload", this.onBeforeUnload);
@@ -78,31 +70,6 @@ export class EditorBehavior {
 		this.commands = new UICommands();
 		this.commands.hierarchyView = hierarchyView;
 		this.commands.inspectorView = inspectorView;
-
-		this.editorCommand = new EditorCommand();
-		this.editorCommand.editor = this.editor;
-		this.editorCommand.hierarchyView = hierarchyView;
-		this.editorCommand.inspectorView = inspectorView;
-
-		this.hierarchyViewCommand = new HierarchyViewCommand();
-		this.hierarchyViewCommand.editor = this.editor;
-		this.hierarchyViewCommand.editorCommand = this.editorCommand;
-		this.hierarchyViewCommand.hierarchyView = hierarchyView;
-		this.hierarchyViewCommand.inspectorView = inspectorView;
-		this.hierarchyViewCommand.on("menu", (id: string) => {
-			this.editor.status.isChanged = true;
-		});
-
-		this.objectInspectorCommand = new ObjectInspectorCommand();
-		this.objectInspectorCommand.editor = this.editor;
-		this.objectInspectorCommand.editorCommand = this.editorCommand;
-		this.objectInspectorCommand.hierarchyViewCommand = this.hierarchyViewCommand;
-		this.objectInspectorCommand.hierarchyView = hierarchyView;
-		this.objectInspectorCommand.inspectorView = inspectorView;
-
-		this.editor.status.on("isChanged", (value: boolean) => {
-			this.updateWindowTitle();
-		});
 	}
 
 	initTabs(): void {
@@ -111,14 +78,15 @@ export class EditorBehavior {
 		var scenePanel = this.editor.$refs.scenePanel as Vue;
 		var canvas = this.editor.$refs.canvas as HTMLElement;
 		mainTabs.$on("select", (item) => {
+			var app = this.editor.status.app;
 			switch (item.tabId) {
 				case "player":
 					playerPanel.$el.appendChild(canvas);
-					this.scene.app.isSceneView = false;
+					app.isSceneView = false;
 					break;
 				case "scene":
 					scenePanel.$el.appendChild(canvas);
-					this.scene.app.isSceneView = true;
+					app.isSceneView = true;
 					break;
 			}
 			this.updateScreenSize();
@@ -130,21 +98,21 @@ export class EditorBehavior {
 		toolBox.$on("play", () => {
 			console.log("play");
 			if (this.editor.status.isChanged) {
-				this.editorCommand.once("save", (path: string) => {
+				this.editor.command.once("save", (path: string) => {
 					if (path != null) {
 						this.editor.consoleView.clear();
-						this.editorCommand.play();
+						this.editor.command.play();
 					}
 				});
-				this.editorCommand.saveScene();
+				this.editor.command.saveScene();
 			} else {
 				this.editor.consoleView.clear();
-				this.editorCommand.play();
+				this.editor.command.play();
 			}
 		});
 		toolBox.$on("stop", () => {
 			console.log("stop");
-			this.editorCommand.stop();
+			this.editor.command.stop();
 		});
 	}
 
@@ -197,326 +165,46 @@ export class EditorBehavior {
 		var inspectorResize = this.editor.$refs.inspectorResize as Vue;
 		var projectResize = this.editor.$refs.projectResize as Vue;
 		hierarchyResize.$on("resize", Tea.debounce(() => {
-			this.scene.app.renderer.dispatchResizeEvent();
+			var app = this.editor.status.app;
+			app.renderer.dispatchResizeEvent();
 			//this.updateScreenSize();
 		}, 100));
 		inspectorResize.$on("resize", Tea.debounce(() => {
-			this.scene.app.renderer.dispatchResizeEvent();
+			var app = this.editor.status.app;
+			app.renderer.dispatchResizeEvent();
 			//this.updateScreenSize();
 			//this.scene.app.renderer.stats.updateSize();
 		}, 100));
 		projectResize.$on("resize", Tea.debounce(() => {
-			this.scene.app.renderer.dispatchResizeEvent();
+			var app = this.editor.status.app;
+			app.renderer.dispatchResizeEvent();
 			//this.updateScreenSize();
 		}, 100));
 	}
 
 	initHierarchyView(): void {
-		var hierarchyView = this.editor.hierarchyView;
-		var inspectorView = this.editor.inspectorView;
-		var projectView = this.editor.projectView;
-		//var contextMenu = this.editor.contextMenu;
-
-		hierarchyView.$on("menu", (e: MouseEvent) => {
-			e.preventDefault();
-			this.hierarchyViewCommand.showContextMenu();
-		});
-		hierarchyView.$on("select", (item: Editor.TreeViewItem) => {
-			if (item == null) {
-				hierarchyView.unselect();
-				inspectorView.hide();
-				return;
-			}
-			//console.log("select", item.tag);
-
-			if (item.tag == -1) {
-				//console.log("select scene");
-				var scene = this.scene;
-				inspectorView.hide();
-				inspectorView.component = SceneInspector.extend({
-					created: function () {
-						var self = this as SceneInspector;
-						self._scene = scene;
-						scene = undefined;
-					}
-				});
-				inspectorView.show();
-			} else {
-				this.objectInspectorCommand.update();
-			}
-		});
-		hierarchyView.$on("doubleClick", (item: Editor.TreeViewItem) => {
-			var object3d = this.hierarchyViewCommand.getSelectedObject();
-			this.scene.lockViewToSelected(object3d);
-		});
-		hierarchyView.$on("focus", (item: Editor.TreeViewItem) => {
-			if (item == null) {
-				return;
-			}
-			hierarchyView.$emit("select", item);
-		});
-		hierarchyView.$on("drop", (mode: number, idSrc: number, idDst: number) => {
-			//console.log("drop", idSrc, idDst, item.model.text);
-			var scene = this.scene;
-			var object3dSrc = scene.findChildById(idSrc);
-			var object3dDst = scene.findChildById(idDst);
-			if (object3dSrc == null || object3dDst == null) {
-				return;
-			}
-			//console.log(mode);
-			var item: Editor.TreeViewItem = null;
-			switch (mode) {
-				case 0:
-					object3dSrc.parent = object3dDst;
-					this.hierarchyViewCommand.update(false, () => {
-						item = hierarchyView.findItemByTag(object3dDst.id);
-						//console.log("item", item);
-						if (item != null) {
-							item.expand();
-							item = hierarchyView.findItemByTag(object3dSrc.id);
-							if (item != null) {
-								hierarchyView.select(item);
-							}
-						}
-					});
-					break;
-				case 1:
-					scene.moveChild(object3dSrc, object3dDst);
-					this.hierarchyViewCommand.update(false, () => {
-						item = hierarchyView.findItemByTag(object3dSrc.id);
-						if (item != null) {
-							hierarchyView.select(item);
-						}
-					});
-					break;
-				case 2:
-					scene.moveChild(object3dSrc, object3dDst, false);
-					this.hierarchyViewCommand.update(false, () => {
-						item = hierarchyView.findItemByTag(object3dSrc.id);
-						if (item != null) {
-							hierarchyView.select(item);
-						}
-					});
-					break;
-			}
-			this.editor.status.isChanged = true;
-		});
-		hierarchyView.$on("dropFromProjectView", (item: Editor.TreeViewItem) => {
-			var dragSource = projectView.getDragSource();
-			//console.log("dropFromProjectView", item, dragSource.tag);
-			var id = item.tag as number;
-			var object3d = this.scene.findChildById(id);
-			if (object3d == null) {
-				return;
-			}
-			var currentPath = nodePath.resolve(".");
-			var filename = dragSource.tag as string;
-			if (filename.indexOf(currentPath) !== 0) {
-				return;
-			}
-			filename = nodePath.relative(currentPath, filename);
-			if (filename.indexOf("assets") !== 0) {
-				return;
-			}
-			filename = nodePath.relative("assets", filename);
-			var ext = Tea.File.extension(filename);
-			ext = ext.toLowerCase();
-			switch (ext) {
-				case "js":
-					Tea.ScriptLoader.load(
-						this.scene.app, filename,
-						(script: Tea.Script) => {
-							if (script == null) {
-								return;
-							}
-							object3d.addComponentInstance(script);
-	
-							var selectedObject = this.hierarchyViewCommand.getSelectedObject();
-							if (selectedObject != null) {
-								this.hierarchyViewCommand.selectItem(selectedObject);
-							}
-							this.editor.status.isChanged = true;
-						}
-					);
-					break;
-				case "jpg":
-				case "png":
-					var selectedObject = this.hierarchyViewCommand.getSelectedObject();
-					if (selectedObject == null) {
-						return;
-					}
-					var renderer = selectedObject.getComponent(Tea.MeshRenderer);
-					if (renderer == null) {
-						return;
-					}
-					Tea.File.exists(filename, (exists: boolean) => {
-						if (exists === false) {
-							return;
-						}
-						renderer.material.mainTexture.load(filename, (err, url) => {
-							if (err) {
-								return;
-							}
-							this.objectInspectorCommand.update();
-						});
-					});
-					break;
-			}
-		});
 	}
 
 	initInspectorView(): void {
-		var hierarchyView = this.editor.hierarchyView;
-		var inspectorView = this.editor.inspectorView;
-
-		inspectorView._commands = this.commands;
-		inspectorView.$on("update", (type: string, key: string, value: any) => {
-			if (type === "ObjectInspector") {
-				if (hierarchyView.getSelectedItem() == null) {
-					return;
-				}
-				var object3d = this.hierarchyViewCommand.getSelectedObject();
-				if (object3d == null) {
-					return;
-				}
-				this.editor.status.isChanged = true;
-				switch (key) {
-					case "name":
-						hierarchyView.getSelectedItem().model.text = value;
-						break;
-					case "rotation":
-						this.objectInspectorCommand.snoozeUpdateTimer(1000);
-						break;
-				}
-			}
-			if (type === "SceneInspector") {
-				this.editor.status.isChanged = true;
-			}
-		});
-		inspectorView.$on("change", (type: any, property: string, value: any) => {
-			console.log("change", property, value);
-		});
-		inspectorView.$on("menu", (type: string) => {
-			switch (type) {
-				case "component":
-					this.objectInspectorCommand.showComponentMenu();
-					break;
-				case "addComponent":
-					this.objectInspectorCommand.showAddComponentMenu();
-					break;
-			}
-		});
 	}
 
 	initProjectView(): void {
-		var projectView = this.editor.projectView;
-		var inspectorView = this.editor.inspectorView;
-		projectView.$on("folderListMenu", (e: MouseEvent) => {
-			if (projectView.getSelectedFolderPath() == null) {
-				return;
-			}
-			e.preventDefault();
-			this.showProjectViewMenu();
-		});
-		projectView.$on("fileListMenu", (e: MouseEvent) => {
-			if (projectView.getSelectedFilePath() == null) {
-				return;
-			}
-			e.preventDefault();
-			this.showProjectViewFileMenu();
-		});
-		projectView.$on("selectFile", (item: Editor.TreeViewItem) => {
-			if (item == null) {
-				inspectorView.hide();
-				return;
-			}
-			var path = item.tag;
-			if (fs.existsSync(path) === false) {
-				return;
-			}
-			var ext = Tea.File.extension(path);
-			ext = ext.toLowerCase();
-			switch (ext) {
-				case "json":
-				case "html":
-				case "css":
-				case "js":
-				case "ts":
-				case "md":
-				case "txt":
-					Tea.File.readText(path, (err, data) => {
-						if (err) {
-							return;
-						}
-						var maxSize = 1024 * 64;
-						if (data.length > maxSize) {
-							data = data.substr(0, maxSize);
-						}
-						inspectorView.hide();
-						inspectorView.component = FileInspector;
-						inspectorView.show();
-						inspectorView.$nextTick(() => {
-							var component = inspectorView.getComponent() as FileInspector;
-							var stat = fs.statSync(path);
-							component.fileType = ext.toUpperCase();
-							component.text = data;
-							component.setSize(stat.size);
-							component.setCreatedTime(stat.birthtime);
-							component.setModifiedTime(stat.mtime);
-						});
-					});
-					break;
-			}
-		});
-		projectView.$on("doubleClickFile", (item: Editor.TreeViewItem) => {
-			if (item == null) {
-				return;
-			}
-			var path = projectView.getSelectedFilePath();
-			path = nodePath.resolve(path);
-			var ext = nodePath.extname(path);
-			if (ext === ".json") {
-				Tea.File.readText(path, (err: any, data: string) => {
-					if (err) {
-						console.error(err);
-						return;
-					}
-					var json = JSON.parse(data);
-					if (json._type === "Scene") {
-						this.editorCommand.loadScene(path);
-					} else {
-						Electron.shell.openItem(path);
-					}
-				});
-				return;
-			}
-			Electron.shell.openItem(path);
-		});
-		projectView.$on("focusFileList", (item: Editor.TreeViewItem) => {
-			if (item == null) {
-				return;
-			}
-			projectView.$emit("selectFile", item);
-		});
-		projectView.openFolder(process.cwd());
 	}
 
-	setScene(scene: Tea.Scene) {
-		var renderer = scene.app.renderer;
-		renderer.off("resize", this.updateScreenSize);
+	setApp(app: Tea.App): void {
+		var renderer = app.renderer;
 		renderer.on("resize", this.updateScreenSize);
-		renderer.off("setScene", this.onSetScene);
-		renderer.on("setScene", this.onSetScene);
+		renderer.on("changeScene", this.onChangeScene);
+	}
+
+	setScene(scene: Tea.Scene): void {
+		var hierarchyView = this.editor.hierarchyView;
+		var renderer = scene.app.renderer;
 		renderer.once("update", () => {
-			this.hierarchyViewCommand.update(true);
+			hierarchyView.command.update(true);
 		});
 
-		this.scene = scene;
 		this.commands.scene = scene;
-		this.editorCommand.app = scene.app;
-		this.editorCommand.scene = scene;
-		this.hierarchyViewCommand.scene = scene;
-		this.objectInspectorCommand.scene = scene;
 
 		scene.off("addChild", this.onAddChild);
 		scene.on("addChild", this.onAddChild);
@@ -547,8 +235,8 @@ export class EditorBehavior {
 		}
 	}
 
-	updateScreenSize = (): void => {
-		var app = this.scene.app;
+	protected updateScreenSize = (): void => {
+		var app = this.editor.status.app;
 		var aspect = this.editor.$refs.aspect as SelectAspect;
 		var canvas = this.editor.$refs.canvas as HTMLCanvasElement;
 		var width = canvas.parentElement.clientWidth;
@@ -566,34 +254,31 @@ export class EditorBehavior {
 		//console.log("updateScreenSize", width, height);
 	}
 
-	showProjectViewMenu(): void {
-		var contextMenu = EditorMenu.createProjectViewMenu(
-			this.onSelectProjectViewMenu
-		);
-		var projectView = this.editor.projectView;
-		var path = projectView.getSelectedFolderPath();
-		var relativePath = nodePath.relative(process.cwd(), path);
-		if (relativePath.toLowerCase() === "assets") {
-			var deleteItem = contextMenu.getMenuItemById("Delete");
-			deleteItem.enabled = false;
+	protected saveAppSettings(): void {
+		var settings = EditorSettings.getInstance();
+		var browserWindow = Electron.remote.getCurrentWindow();
+		var translator = Translator.getInstance();
+		if (browserWindow.isFullScreen()) {
+			browserWindow.setFullScreen(false);
 		}
-		contextMenu.show();
-	}
-
-	showProjectViewFileMenu(): void {
-		var contextMenu = EditorMenu.createProjectViewFileMenu(
-			this.onSelectProjectViewFileMenu
-		);
-		contextMenu.show();
+		if (browserWindow.isMaximized()) {
+			browserWindow.hide();
+			browserWindow.unmaximize();
+		} else if (browserWindow.isMinimized()) {
+			browserWindow.restore();
+		}
+		settings.window.setData(browserWindow);
+		settings.language = translator.lang;
+		settings.save();
 	}
 
 	protected onBeforeUnload = (e: BeforeUnloadEvent): void => {
 		if (this.editor.status.isChanged) {
 			e.returnValue = false;
-			this.editorCommand.showConfirmSaveSceneDialog((response: string) => {
+			this.editor.command.showConfirmSaveSceneDialog((response: string) => {
 				switch (response) {
 					case "Save":
-						this.editorCommand.once("save", (path: string) => {
+						this.editor.command.once("save", (path: string) => {
 							if (path == null) {
 								return;
 							}
@@ -603,7 +288,7 @@ export class EditorBehavior {
 								window.close();
 							}
 						});
-						this.editorCommand.saveScene();
+						this.editor.command.saveScene();
 						//window.close();
 						break;
 					case "Don't Save":
@@ -621,29 +306,16 @@ export class EditorBehavior {
 			});
 			return;
 		}
-		var settings = EditorSettings.getInstance();
-		var browserWindow = Electron.remote.getCurrentWindow();
-		var translator = Translator.getInstance();
-		if (browserWindow.isFullScreen()) {
-			browserWindow.setFullScreen(false);
-		}
-		if (browserWindow.isMaximized()) {
-			browserWindow.hide();
-			browserWindow.unmaximize();
-		} else if (browserWindow.isMinimized()) {
-			browserWindow.restore();
-		}
-		settings.window.setData(browserWindow);
-		settings.language = translator.lang;
-		settings.save();
+		this.saveAppSettings();
 		//e.returnValue = false;
 	}
 
 	protected onResizeWindow = (): void => {
-		if (this.scene == null) {
+		var scene = this.editor.status.scene;
+		if (scene == null) {
 			return;
 		}
-		var renderer = this.scene.app.renderer;
+		var renderer = scene.app.renderer;
 		setTimeout(() => {
 			renderer.dispatchResizeEvent();
 		}, 250);
@@ -697,8 +369,10 @@ export class EditorBehavior {
 			var key = e.key.toLowerCase();
 			switch (key) {
 				case "f":
-					var object3d = this.hierarchyViewCommand.getSelectedObject();
-					this.scene.lockViewToSelected(object3d);
+					var scene = this.editor.status.scene;
+					var hierarchyView = this.editor.hierarchyView;
+					var object3d = hierarchyView.command.getSelectedObject();
+					scene.lockViewToSelected(object3d);
 					break;
 			}
 			return;
@@ -729,8 +403,10 @@ export class EditorBehavior {
 			var key = e.key.toLowerCase();
 			switch (key) {
 				case "f":
-					var object3d = this.hierarchyViewCommand.getSelectedObject();
-					this.scene.lockViewToSelected(object3d);
+					var scene = this.editor.status.scene;
+					var hierarchyView = this.editor.hierarchyView;
+					var object3d = hierarchyView.command.getSelectedObject();
+					scene.lockViewToSelected(object3d);
 					break;
 			}
 			return;
@@ -738,123 +414,61 @@ export class EditorBehavior {
 	}
 
 	protected onAddChild = (): void => {
-		var item = this.hierarchyViewCommand.getSelectedObject();
+		var hierarchyView = this.editor.hierarchyView;
+		var item = hierarchyView.command.getSelectedObject();
 		this.editor.$nextTick(() => {
-			this.hierarchyViewCommand.update();
-			this.hierarchyViewCommand.selectItem(item);
+			hierarchyView.command.update();
+			hierarchyView.command.selectItem(item);
 		});
 	}
 
 	protected onRemoveChild = (): void => {
-		var item = this.hierarchyViewCommand.getSelectedObject();
+		var hierarchyView = this.editor.hierarchyView;
+		var item = hierarchyView.command.getSelectedObject();
 		this.editor.$nextTick(() => {
-			this.hierarchyViewCommand.update();
-			this.hierarchyViewCommand.selectItem(item);
+			hierarchyView.command.update();
+			hierarchyView.command.selectItem(item);
 		});
 	}
 
-	protected onSetScene = (scene: Tea.Scene): void => {
-		this.setScene(scene);
+	protected onChangeScene = (scene: Tea.Scene): void => {
+		this.editor.status.scene = scene;
+		//this.editor.hierarchyView.command.update(true);
 	}
 
 	protected onSelectMainMenu = (item: Electron.MenuItem): void => {
 		console.log(item.id);
 		//this.editorCommand.isChanged = true;
 
+		var command = this.editor.command;
 		switch (item.id) {
 			case "App/Preferences":
-				this.editorCommand.showPreferences();
+				command.showPreferences();
 				break;
 			case "File/New Scene":
-				this.editorCommand.newScene();
+				command.newScene();
 				break;
 			case "File/Open Scene":
-				this.editorCommand.openScene();
+				command.openScene();
 				break;
 			case "File/Save Scene":
-				this.editorCommand.saveScene();
+				command.saveScene();
 				break;
 			case "File/Save Scene as":
-				this.editorCommand.saveSceneAs();
+				command.saveSceneAs();
 				break;
 			case "File/New Project":
-				this.editorCommand.newProject();
+				command.newProject();
 				break;
 			case "File/Open Project":
-				this.editorCommand.openProject();
+				command.openProject();
 				break;
 			case "File/Build":
-				this.editorCommand.build();
+				command.build();
 				break;
 			case "View/Reload":
 				this._willReload = true;
 				location.reload();
-				break;
-		}
-	}
-
-	protected onSelectProjectViewMenu = (item: Electron.MenuItem): void => {
-		var projectView = this.editor.projectView;
-		var path = projectView.getSelectedFolderPath();
-		path = nodePath.resolve(path);
-
-		switch (item.id) {
-			case "Show in Explorer":
-				if (fs.existsSync(path) === false) {
-					break;
-				}
-				Electron.shell.openItem(path);
-				break;
-			case "Reveal in Finder":
-				console.log("Reveal in Finder", path);
-				if (fs.existsSync(path) === false) {
-					break;
-				}
-				Electron.shell.openItem(path);
-				break;
-			case "Create/Folder":
-				path = nodePath.join(path, "New Folder");
-				fs.mkdirSync(path);
-				projectView.openFolder(process.cwd());
-				break;
-			case "Create/JavaScript":
-				path = nodePath.join(path, "New Script.js");
-				var script = `class NewScript {
-	constructor() {
-	}
-
-	start() {
-	}
-
-	update() {
-	}
-}
-`;
-				fs.writeFileSync(path, script);
-				projectView.updateFileList(
-					projectView.getSelectedFolderPath()
-				);
-				break;
-			case "Delete":
-				projectView.selectParentFolder();
-				Tea.File.removeFolder(path);
-				projectView.openFolder(process.cwd());
-				break;
-			case "Refresh":
-				projectView.openFolder(process.cwd());
-				break;
-		}
-	}
-
-	protected onSelectProjectViewFileMenu = (item: Electron.MenuItem): void => {
-		var projectView = this.editor.projectView;
-		var path = projectView.getSelectedFilePath();
-		path = nodePath.resolve(path);
-
-		switch (item.id) {
-			case "Open":
-				Electron.shell.openItem(path);
-				console.log("Open", path);
 				break;
 		}
 	}

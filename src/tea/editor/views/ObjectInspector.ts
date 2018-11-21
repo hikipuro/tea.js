@@ -1,8 +1,8 @@
 import Vue from "vue";
 import Component from "vue-class-component";
-import * as Tea from "../Tea";
-import { ComponentPanel } from "./components/ComponentPanel";
-import { Translator } from "./translate/Translator";
+import * as Tea from "../../Tea";
+import { ComponentPanel } from "../components/ComponentPanel";
+import { Translator } from "../translate/Translator";
 
 @Component({
 	template: `

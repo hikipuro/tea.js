@@ -1,7 +1,7 @@
 import Vue from "vue";
 import Component from "vue-class-component";
-import * as Tea from "../Tea";
-import { Translator } from "./translate/Translator";
+import { EditorAssets } from "../EditorAssets";
+import { Translator } from "../translate/Translator";
 
 @Component({
 	template: `
@@ -33,8 +33,8 @@ export class ToolBox extends Vue {
 	translate(): void {
 		var translator = Translator.getInstance();
 		translator.basePath = "ToolBox";
-		this.playIcon = "<img src='images/play.svg' draggable='false' />";
-		this.stopIcon = "<img src='images/stop.svg' draggable='false' />";
+		this.playIcon = "<img src='" + EditorAssets.Images.PlayButton + "' draggable='false' />";
+		this.stopIcon = "<img src='" + EditorAssets.Images.StopButton + "' draggable='false' />";
 	}
 
 	play(): void {

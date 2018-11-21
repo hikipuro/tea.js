@@ -1,37 +1,26 @@
 import * as Tea from "../../Tea";
-import { EventDispatcher } from "../../utils/EventDispatcher";
 import { Editor } from "../Editor";
 import { EditorMenu } from "../EditorMenu";
-import { EditorCommand } from "./EditorCommand";
-import { HierarchyView } from "../HierarchyView";
-import { InspectorView } from "../InspectorView";
 import { NativeContextMenu } from "../basic/NativeContextMenu";
 
-export class HierarchyViewCommand extends EventDispatcher {
-	scene: Tea.Scene;
+export class HierarchyViewCommand {
 	editor: Editor;
-	editorCommand: EditorCommand;
-	hierarchyView: HierarchyView;
-	inspectorView: InspectorView;
 	contextMenu: NativeContextMenu;
 
-	constructor() {
-		super();
-	}
-
 	getSelectedObject(): Tea.Object3D {
-		var hierarchyView = this.hierarchyView;
+		var hierarchyView = this.editor.hierarchyView;
 		var item = hierarchyView.getSelectedItem();
 		if (item == null) {
 			return null;
 		}
 		var id = item.tag as number;
-		return this.scene.findChildById(id);
+		var scene = this.editor.status.scene;
+		return scene.findChildById(id);
 	}
 	
 	showContextMenu(): void {
 		var contextMenu = EditorMenu.createHierarchyViewMenu(
-			this.hierarchyView,
+			this.editor.hierarchyView,
 			this.onSelectMenu
 		)
 		this.contextMenu = contextMenu;
@@ -52,13 +41,19 @@ export class HierarchyViewCommand extends EventDispatcher {
 		if (object3d == null) {
 			return;
 		}
-		var hierarchyView = this.hierarchyView;
+		var hierarchyView = this.editor.hierarchyView;
 		var item = hierarchyView.findItemByTag(object3d.id);
 		hierarchyView.select(item);
 	}
 
 	update(expand: boolean = false, callback: Function = null): void {
-		var hierarchyView = this.hierarchyView;
+		var scene = this.editor.status.scene;
+		var hierarchyView = this.editor.hierarchyView;
+		if (scene == null || scene.children == null) {
+			hierarchyView.items = [];
+			hierarchyView.unselect();
+			return;
+		}
 		//setTimeout(() => {
 		//hierarchyView.$nextTick(() => {
 			var items = [];
@@ -84,7 +79,7 @@ export class HierarchyViewCommand extends EventDispatcher {
 				}
 				items.push(item);
 			};
-			var children = this.scene.children;
+			var children = scene.children;
 			for (var i = children.length - 1; i >= 0; i--) {
 				var child = children[i];
 				createItems(items, child);
@@ -116,24 +111,25 @@ export class HierarchyViewCommand extends EventDispatcher {
 	}
 
 	deleteSelectedItem(): void {
-		var hierarchyView = this.hierarchyView;
-		var inspectorView = this.inspectorView;
+		var hierarchyView = this.editor.hierarchyView;
+		var inspectorView = this.editor.inspectorView;
 		var item = hierarchyView.getSelectedItem();
 		if (item == null) {
 			return;
 		}
 		var id = item.tag as number;
-		var object3d = this.scene.findChildById(id);
+		var scene = this.editor.status.scene;
+		var object3d = scene.findChildById(id);
 		console.log(object3d);
 		inspectorView.hide();
 		object3d.destroy();
-		this.scene.app.renderer.once("update", () => {
+		scene.app.renderer.once("update", () => {
 			this.update();
 		});
 	}
 
 	protected onSelectMenu = (item: Electron.MenuItem): void => {
-		var scene = this.scene;
+		var scene = this.editor.status.scene;
 		var app = scene.app;
 		//console.log(item.id);
 		var object3d: Tea.Object3D;
@@ -207,6 +203,6 @@ export class HierarchyViewCommand extends EventDispatcher {
 			this.editor.status.isChanged = true;
 		}
 
-		this.emit("menu", item.id);
+		this.editor.status.isChanged = true;
 	}
 }

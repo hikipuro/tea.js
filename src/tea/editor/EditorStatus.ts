@@ -3,6 +3,7 @@ import { EventDispatcher } from "../utils/EventDispatcher";
 
 export class EditorStatus extends EventDispatcher {
 	app: Tea.App;
+	scene: Tea.Scene;
 	scenePath: string;
 	protected _isChanged: boolean;
 

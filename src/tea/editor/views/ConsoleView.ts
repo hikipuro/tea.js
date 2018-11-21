@@ -1,5 +1,6 @@
 import Vue from "vue";
 import Component from "vue-class-component";
+import { EditorAssets } from "../EditorAssets";
 
 @Component({
 	template: `
@@ -22,8 +23,8 @@ import Component from "vue-class-component";
 	data: () => {
 		return {
 			isOpen: false,
-			openIcon: "<img src='images/folder-open.svg' />",
-			closeIcon: "<img src='images/folder-close.svg' />"
+			openIcon: "",
+			closeIcon: ""
 		}
 	}
 })
@@ -51,6 +52,11 @@ export class Item extends Vue {
 			return this.openIcon;
 		}
 		return this.closeIcon;
+	}
+
+	protected created(): void {
+		this.openIcon = "<img src='" + EditorAssets.Images.FolderOpen + "' />"; 
+		this.closeIcon = "<img src='" + EditorAssets.Images.FolderClose + "' />"; 
 	}
 
 	protected onClickOpen(): void {

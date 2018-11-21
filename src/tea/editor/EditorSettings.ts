@@ -1,7 +1,6 @@
 import * as nodePath from "path";
 import * as fs from "fs";
 import * as Electron from "electron";
-import { Translator } from "./translate/Translator";
 
 export class EditorSettings {
 	static readonly FileName = "settings.json";

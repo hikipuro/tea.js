@@ -1,9 +1,9 @@
 import * as Tea from "../../Tea";
 import { UICommand } from "./UICommand";
 import { UICommandTarget } from "./UICommandTarget";
-import { HierarchyView } from "../HierarchyView";
-import { InspectorView } from "../InspectorView";
-import { ObjectInspector } from "../ObjectInspector";
+import { HierarchyView } from "../views/HierarchyView";
+import { InspectorView } from "../views/InspectorView";
+import { ObjectInspector } from "../views/ObjectInspector";
 
 export class UICommands {
 	static readonly DefaultMaxCommands: number = 100;
@@ -145,7 +145,7 @@ export class UICommands {
 				}
 				var item = hierarchyView.findItemByTag(value);
 				hierarchyView.select(item);
-				hierarchyView.focusTreeView();
+				hierarchyView.focus();
 				var object3d = this.hierarchyViewItem;
 				if (object3d == null) {
 					return;

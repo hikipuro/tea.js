@@ -1,18 +1,20 @@
 import Vue from "vue";
 import Component from "vue-class-component";
+import { NoCache } from "./basic/NoCache";
 import * as Tea from "../Tea";
 
 import { EditorSettings } from "./EditorSettings";
 import { Translator } from "./translate/Translator";
 import { EditorBehavior } from "./EditorBehavior";
 import { EditorStatus } from "./EditorStatus";
-import { ToolBox } from "./ToolBox";
-import { ConsoleView } from "./ConsoleView";
-import { HierarchyView } from "./HierarchyView";
-import { ProjectView } from "./ProjectView";
-import { InspectorView } from "./InspectorView";
-import { FileInspector } from "./FileInspector";
-import { ObjectInspector } from "./ObjectInspector";
+import { EditorCommand } from "./commands/EditorCommand";
+import { ToolBox } from "./views/ToolBox";
+import { ConsoleView } from "./views/ConsoleView";
+import { HierarchyView } from "./views/HierarchyView";
+import { ProjectView } from "./views/ProjectView";
+import { InspectorView } from "./views/InspectorView";
+import { FileInspector } from "./views/FileInspector";
+import { ObjectInspector } from "./views/ObjectInspector";
 
 import { Button } from "./basic/Button";
 import { CheckBox } from "./basic/CheckBox";
@@ -179,12 +181,18 @@ export class Editor extends Vue {
 	translator: any;
 	protected _status: EditorStatus;
 	protected _behavior: EditorBehavior;
+	protected _command: EditorCommand;
 
 	/*
 	addComponent(name: string, component: Vue): void {
 		Vue.component(name, component);
 	}
 	//*/
+
+	@NoCache
+	get command(): EditorCommand {
+		return this._command;
+	}
 
 	get toolBox(): ToolBox {
 		return this.$refs.toolBox as ToolBox;
@@ -220,9 +228,11 @@ export class Editor extends Vue {
 
 	setApp(app: Tea.App) {
 		this._status.app = app;
+		this._behavior.setApp(app);
 	}
 
 	setScene(scene: Tea.Scene) {
+		this.status.scene = scene;
 		this._behavior.setScene(scene);
 	}
 
@@ -257,6 +267,8 @@ export class Editor extends Vue {
 			translator.loadResource(settings.language);
 		}
 		this.translate();
+		this._command = new EditorCommand();
+		this._command.editor = this;
 	}
 
 	protected mounted(): void {

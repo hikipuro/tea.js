@@ -1,24 +1,15 @@
 import * as Tea from "../../Tea";
 import { Editor } from "../Editor";
 import { EditorMenu } from "../EditorMenu";
-import { HierarchyView } from "../HierarchyView";
-import { InspectorView } from "../InspectorView";
 import { NativeContextMenu } from "../basic/NativeContextMenu";
 import { Timer } from "../Timer";
-import { EditorCommand } from "./EditorCommand";
-import { HierarchyViewCommand } from "./HierarchyViewCommand";
-import { ObjectInspector } from "../ObjectInspector";
+import { ObjectInspector } from "../views/ObjectInspector";
 
 export class ObjectInspectorCommand {
-	scene: Tea.Scene;
 	editor: Editor;
-	editorCommand: EditorCommand;
-	hierarchyViewCommand: HierarchyViewCommand;
-	hierarchyView: HierarchyView;
-	inspectorView: InspectorView;
 	updateTimer: Timer;
-	componentMenu: NativeContextMenu;
-	addComponentMenu: NativeContextMenu;
+	protected _componentMenu: NativeContextMenu;
+	protected _addComponentMenu: NativeContextMenu;
 
 	constructor() {
 		this.updateTimer = new Timer();
@@ -42,7 +33,7 @@ export class ObjectInspectorCommand {
 		if (object3d == null) {
 			return;
 		}
-		var inspectorView = this.inspectorView;
+		var inspectorView = this.editor.inspectorView;
 		inspectorView.hide();
 		//var commands = this.commands;
 		inspectorView.component = ObjectInspector.extend({
@@ -59,38 +50,38 @@ export class ObjectInspectorCommand {
 	}
 
 	showComponentMenu(): void {
-		if (this.hierarchyView.getSelectedItem() == null) {
+		if (this.editor.hierarchyView.getSelectedItem() == null) {
 			return;
 		}
 		var contextMenu = EditorMenu.createInspectorViewComponentMenu(
 			this.onSelectComponentMenu
 		);
-		this.componentMenu = contextMenu;
+		this._componentMenu = contextMenu;
 		contextMenu.onClose = () => {
-			this.componentMenu = null;
+			this._componentMenu = null;
 		};
 		contextMenu.show();
 	}
 
 	closeComponentMenu(): void {
-		if (this.componentMenu == null) {
+		if (this._componentMenu == null) {
 			return;
 		}
-		this.componentMenu.hide();
+		this._componentMenu.hide();
 	}
 
 	showAddComponentMenu(): void {
-		if (this.hierarchyView.getSelectedItem() == null) {
+		if (this.editor.hierarchyView.getSelectedItem() == null) {
 			return;
 		}
 		var contextMenu = EditorMenu.createInspectorViewAddComponentMenu(
 			this.onSelectAddComponentMenu
 		);
-		this.addComponentMenu = contextMenu;
+		this._addComponentMenu = contextMenu;
 		contextMenu.onClose = () => {
-			this.addComponentMenu = null;
+			this._addComponentMenu = null;
 		};
-		var button = this.inspectorView.$el.querySelector("div.AddComponent button");
+		var button = this.editor.inspectorView.$el.querySelector("div.AddComponent button");
 		if (button) {
 			var rect = button.getBoundingClientRect();
 			//console.log(rect);
@@ -105,25 +96,26 @@ export class ObjectInspectorCommand {
 	}
 
 	closeAddComponentMenu(): void {
-		if (this.addComponentMenu == null) {
+		if (this._addComponentMenu == null) {
 			return;
 		}
-		this.addComponentMenu.hide();
+		this._addComponentMenu.hide();
 	}
 
 	protected getSelectedObject(): Tea.Object3D {
-		var hierarchyView = this.hierarchyView;
+		var hierarchyView = this.editor.hierarchyView;
 		var item = hierarchyView.getSelectedItem();
 		if (item == null) {
 			return null;
 		}
 		var id = item.tag as number;
-		return this.scene.findChildById(id);
+		var scene = this.editor.status.scene;
+		return scene.findChildById(id);
 	}
 
 	protected updateTRS = (): void => {
-		var hierarchyView = this.hierarchyView;
-		var inspectorView = this.inspectorView;
+		var hierarchyView = this.editor.hierarchyView;
+		var inspectorView = this.editor.inspectorView;
 
 		if (hierarchyView.getSelectedItem() == null) {
 			this.updateTimer.stop();
@@ -149,7 +141,7 @@ export class ObjectInspectorCommand {
 	}
 
 	protected onSelectComponentMenu = (item: Electron.MenuItem): void => {
-		var inspectorView = this.inspectorView;
+		var inspectorView = this.editor.inspectorView;
 		var inspector = inspectorView.getComponent() as ObjectInspector;
 		if ((inspector instanceof ObjectInspector) === false) {
 			return;
@@ -204,9 +196,9 @@ export class ObjectInspectorCommand {
 		}
 		if (component != null) {
 			object3d.addComponent(component);
-			this.hierarchyViewCommand.selectItem(object3d);
-			//this.selectHierarchyViewItem(object3d);
-			this.editor.status.isChanged = true;
+			var editor = this.editor;
+			editor.hierarchyView.command.selectItem(object3d);
+			editor.status.isChanged = true;
 		}
 	}
 }
