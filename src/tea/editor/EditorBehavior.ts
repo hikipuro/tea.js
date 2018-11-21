@@ -140,7 +140,7 @@ export class EditorBehavior {
 			consoleView.error(message, optionalParams);
 		};
 		window.addEventListener("error", (e: ErrorEvent) => {
-			consoleView.error(e.message);
+			consoleView.uncaughtError(e.message, e.error);
 		});
 		/*
 		var webContents = Electron.remote.getCurrentWebContents();

@@ -134,6 +134,28 @@ export class ConsoleView extends Vue {
 		});
 	}
 
+	uncaughtError(message: any, error: Error): void {
+		var stack = "";
+		if (error) {
+			stack = error.stack as string;
+			stack = stack.substr(stack.indexOf("\n") + 1);
+		}
+		var item = {
+			type: "error",
+			time: this.getTime(),
+			text: message,
+			stack: stack
+		};
+		this.items.push(item);
+		if (this.items.length > this.maxCount) {
+			this.items.shift();
+		}
+		this.$nextTick(() => {
+			var el = this.$el.parentElement;
+			el.scrollTop = el.scrollHeight;
+		});
+	}
+
 	clear(): void {
 		this.items.splice(0, this.items.length);
 	}
