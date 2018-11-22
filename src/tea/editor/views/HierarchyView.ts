@@ -162,8 +162,8 @@ export class HierarchyView extends Vue {
 		e.dataTransfer.dropEffect = "move";
 		var el = e.currentTarget as HTMLElement;
 		var text = el.querySelector(".text");
-		var clientHeight = el.clientHeight;
-		var borderSize = el.clientHeight * 0.3;
+		var clientHeight = el.offsetHeight;
+		var borderSize = el.offsetHeight * 0.3;
 		var offsetY = e.offsetY;
 		//console.log(e.offsetY, el.clientHeight);
 		if (offsetY < borderSize) {
