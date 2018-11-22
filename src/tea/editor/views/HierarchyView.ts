@@ -89,19 +89,6 @@ export class HierarchyView extends Vue {
 		dragEvents.drop = this.onDrop;
 	}
 
-	protected getDragImages(): HTMLElement {
-		return (this.$root as Editor).dragImages;
-	}
-
-	protected createDragImage(text: string): HTMLElement {
-		var dragImage = document.createElement("div");
-		var imageText = document.createElement("div");
-		dragImage.classList.add("dragImage");
-		imageText.innerText = text;
-		dragImage.appendChild(imageText);
-		return dragImage;
-	}
-
 	protected openSceneInspector(): void {
 		var inspectorView = this.command.editor.inspectorView;
 		var scene = this.command.editor.status.scene;
@@ -157,12 +144,9 @@ export class HierarchyView extends Vue {
 		e.dataTransfer.effectAllowed = "move";
 		//e.dataTransfer.dropEffect = "move";
 
-		var dragImages = this.getDragImages();
-		var dragImage = this.createDragImage(item.model.text);
-		while (dragImages.firstChild) {
-			dragImages.removeChild(dragImages.firstChild);
-		}
-		dragImages.appendChild(dragImage);
+		var dragImages = (this.$root as Editor).dragImages;
+		dragImages.clear();
+		var dragImage = dragImages.addDragImage(item.model.text);
 		e.dataTransfer.setDragImage(dragImage, 0, 0);
 	}
 

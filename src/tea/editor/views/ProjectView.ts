@@ -165,7 +165,7 @@ export class ProjectView extends Vue {
 
 	showProjectViewMenu(): void {
 		var contextMenu = EditorMenu.createProjectViewMenu(
-			this.onSelectProjectViewMenu
+			this.onSelectFolderMenu
 		);
 		var editor = this.$root as Editor;
 		var projectView = editor.projectView;
@@ -180,7 +180,7 @@ export class ProjectView extends Vue {
 
 	showProjectViewFileMenu(): void {
 		var contextMenu = EditorMenu.createProjectViewFileMenu(
-			this.onSelectProjectViewFileMenu
+			this.onSelectFileMenu
 		);
 		contextMenu.show();
 	}
@@ -216,15 +216,6 @@ export class ProjectView extends Vue {
 		return item;
 	}
 
-	protected createDragImage(text: string): HTMLElement {
-		var dragImage = document.createElement("div");
-		var imageText = document.createElement("div");
-		dragImage.classList.add("dragImage");
-		imageText.innerText = text;
-		dragImage.appendChild(imageText);
-		return dragImage;
-	}
-
 	protected setChildFolderItems(item: Editor.TreeViewItem): void {
 		var i = item.model;
 		if (i == null || i.children.length > 0) {
@@ -249,11 +240,8 @@ export class ProjectView extends Vue {
 		//e.dataTransfer.dropEffect = "move";
 
 		var dragImages = (this.$root as Editor).dragImages;
-		var dragImage = this.createDragImage(item.model.text);
-		while (dragImages.firstChild) {
-			dragImages.removeChild(dragImages.firstChild);
-		}
-		dragImages.appendChild(dragImage);
+		dragImages.clear();
+		var dragImage = dragImages.addDragImage(item.model.text);
 		e.dataTransfer.setDragImage(dragImage, 0, 0);
 	}
 
@@ -382,7 +370,7 @@ export class ProjectView extends Vue {
 		this.showProjectViewFileMenu();
 	}
 
-	protected onSelectProjectViewMenu = (item: Electron.MenuItem): void => {
+	protected onSelectFolderMenu = (item: Electron.MenuItem): void => {
 		var path = this.getSelectedFolderPath();
 		path = nodePath.resolve(path);
 
@@ -434,7 +422,7 @@ export class ProjectView extends Vue {
 		}
 	}
 
-	protected onSelectProjectViewFileMenu = (item: Electron.MenuItem): void => {
+	protected onSelectFileMenu = (item: Electron.MenuItem): void => {
 		var path = this.getSelectedFilePath();
 		path = nodePath.resolve(path);
 

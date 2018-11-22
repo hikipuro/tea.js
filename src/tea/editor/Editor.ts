@@ -15,6 +15,7 @@ import { ProjectView } from "./views/ProjectView";
 import { InspectorView } from "./views/InspectorView";
 import { FileInspector } from "./views/FileInspector";
 import { ObjectInspector } from "./views/ObjectInspector";
+import { DragImages } from "./views/DragImages";
 
 import { Button } from "./basic/Button";
 import { CheckBox } from "./basic/CheckBox";
@@ -156,10 +157,8 @@ Vue.component("TextMesh", TextMesh);
 					</Panel>
 				</HLayout>
 			</VLayout>
-			<div
-				ref="dragImages"
-				class="dragImages">
-			</div>
+			<DragImages ref="dragImages">
+			</DragImages>
 			<ContextMenu ref="menu"></ContextMenu>
 		</div>
 	`,
@@ -173,7 +172,8 @@ Vue.component("TextMesh", TextMesh);
 		ConsoleView: ConsoleView,
 		HierarchyView: HierarchyView,
 		ProjectView: ProjectView,
-		InspectorView: InspectorView
+		InspectorView: InspectorView,
+		DragImages: DragImages
 	}
 })
 export class Editor extends Vue {
@@ -219,8 +219,8 @@ export class Editor extends Vue {
 		return this.$refs.fileList as TreeView;
 	}
 
-	get dragImages(): HTMLElement {
-		return this.$refs.dragImages as HTMLElement;
+	get dragImages(): DragImages {
+		return this.$refs.dragImages as DragImages;
 	}
 
 	get contextMenu(): ContextMenu {
