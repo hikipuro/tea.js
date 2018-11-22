@@ -24,7 +24,9 @@ import { TreeView } from "./TreeView";
 						@click.stop="toggle"
 						v-html="folderIcon">
 					</div>
-					<div class="text">{{ model.text }}</div>
+					<div
+						class="text"
+						v-html="model.text"></div>
 				</div>
 			</div>
 			<ul v-show="isOpen" v-if="isFolder">

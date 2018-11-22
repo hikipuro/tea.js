@@ -12,15 +12,15 @@
 		white-space: nowrap;
 		overflow: auto;
 
-		> ul {
-			flex: 1;
-			padding-bottom: $lineHeight + em;
-		}
-
 		ul {
 			margin: 0;
 			padding-left: 0;
 			list-style-type: none;
+		}
+
+		> ul {
+			flex: 1;
+			padding-bottom: $lineHeight + em;
 		}
 
 		li {
@@ -45,6 +45,7 @@
 						display: inline-block;
 						position: relative;
 						flex: 1;
+						padding-right: 1.5em;
 						//letter-spacing: normal;
 					}
 				}
