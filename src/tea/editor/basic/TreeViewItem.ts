@@ -7,21 +7,25 @@ import { TreeView } from "./TreeView";
 	template: `
 		<li>
 			<div
-				class="item"
-				ref="item"
-				:class="{ selected: isSelected }"
-				:style="{ paddingLeft: indentValue }"
-				:title="model.title"
-				:draggable="draggable"
-				@click.stop="onClick"
-				@dblclick.stop="onDoubleClick"
-				@contextmenu="onContextMenu">
+				class="container"
+				:class="{ selected: isSelected }">
 				<div
-					class="folder"
-					@click.stop="toggle"
-					v-html="folderIcon">
+					class="item"
+					ref="item"
+					:style="{ paddingLeft: indentValue }"
+					:title="model.title"
+					:draggable="draggable"
+					@click.stop="onClick"
+					@dblclick.stop="onDoubleClick"
+					@contextmenu="onContextMenu">
+					<div
+						class="folder"
+						:style="{ minWidth: indent }"
+						@click.stop="toggle"
+						v-html="folderIcon">
+					</div>
+					<div class="text">{{ model.text }}</div>
 				</div>
-				<div class="text">{{ model.text }}</div>
 			</div>
 			<ul v-show="isOpen" v-if="isFolder">
 				<TreeViewItem
@@ -102,6 +106,9 @@ export class TreeViewItem extends Vue {
 	@NoCache
 	get folderIcon(): string {
 		if (this.isFolder === false) {
+			if (this.model.icon) {
+				return this.model.icon;
+			}
 			return "";
 		}
 		if (this.isOpen) {
@@ -147,7 +154,7 @@ export class TreeViewItem extends Vue {
 		return items[index - 1];
 	}
 
-	get indentValue(): string {
+	protected get indentValue(): string {
 		return "calc(" + this.indent + " * " + this.depth + ")";
 	}
 
@@ -227,10 +234,10 @@ export class TreeViewItem extends Vue {
 	}
 
 	protected created(): void {
-		this.$emit("create", this);
 		if (this.dragEvents == null) {
 			this.dragEvents = new TreeView.DragEvents();
 		}
+		this.$emit("create", this);
 	}
 
 	protected mounted(): void {

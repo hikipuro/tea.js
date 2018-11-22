@@ -101,22 +101,43 @@ export class ProjectView extends Vue {
 		});
 	}
 
+	selectFolder(path: string): void {
+		var folderList = this.$refs.folderList as TreeView;
+		var item = folderList.findItemByTag(path);
+		if (item) {
+			if (item.parent.isOpen === false) {
+				item.parent.expand();
+			}
+			folderList.select(item);
+		}
+	}
+
 	updateFileList(path: string): void {
 		var fileList = this.$refs.fileList as TreeView;
 		Tea.Directory.getFiles(path, (files: Tea.FileInfo[]) => {
 			var items = [];
+			files = files.sort((a: Tea.FileInfo, b: Tea.FileInfo): number => {
+				var valueA = a.isDirectory ? 1 : 0;
+				var valueB = b.isDirectory ? 1 : 0;
+				return valueB - valueA;
+			});
 			files.forEach((file) => {
-				if (file.isDirectory) {
+				/*if (file.isDirectory) {
 					return;
-				}
+				}*/
 				if (file.name === ".DS_Store") {
 					return;
 				}
-				var item = {
+				var icon: string = null;
+				if (file.isDirectory) {
+					icon = "📁";
+				}
+				var item: TreeView.Model = {
 					text: file.name,
-					children: [],
 					isFolder: false,
-					tag: file.fullName
+					icon: icon,
+					tag: file.fullName,
+					children: []
 				};
 				//console.log(file.fullName);
 				items.push(item);
@@ -188,6 +209,23 @@ export class ProjectView extends Vue {
 		return dragImage;
 	}
 
+	protected setChildFolderItems(item: Editor.TreeViewItem): void {
+		var i = item.model;
+		if (i == null || i.children.length > 0) {
+			return;
+		}
+		var items: Array<TreeView.Model> = [];
+		var files = Tea.Directory.getFilesSync(item.tag);
+		files.forEach(file => {
+			var item = this.createTreeViewItem(file);
+			if (item == null) {
+				return;
+			}
+			items.push(item);
+		});
+		i.children = items;
+	}
+
 	protected onDragStart(e: DragEvent, item: Editor.TreeViewItem): void {
 		//console.log("onDragStart");
 		this._dragSource = item;
@@ -209,20 +247,7 @@ export class ProjectView extends Vue {
 
 	protected onExpandFolderList(item: Editor.TreeViewItem): void {
 		//console.log("expand", item);
-		var i = item.model;
-		if (i == null || i.children.length > 0) {
-			return;
-		}
-		var items: Array<TreeView.Model> = [];
-		var files = Tea.Directory.getFilesSync(item.tag);
-		files.forEach(file => {
-			var item = this.createTreeViewItem(file);
-			if (item == null) {
-				return;
-			}
-			items.push(item);
-		});
-		i.children = items;
+		this.setChildFolderItems(item);
 	}
 
 	protected onSelectFolder(item: Editor.TreeViewItem): void {
@@ -234,6 +259,7 @@ export class ProjectView extends Vue {
 		}
 		//console.log("select", item.tag);
 		var path = item.tag;
+		this.setChildFolderItems(item);
 		this.updateFileList(path);
 	}
 
@@ -307,6 +333,12 @@ export class ProjectView extends Vue {
 		var editor = this.$root as Editor;
 		var path = this.getSelectedFilePath();
 		path = nodePath.resolve(path);
+
+		var stat = fs.statSync(path);
+		if (stat.isDirectory()) {
+			this.selectFolder(path);
+			return;
+		}
 		var ext = nodePath.extname(path);
 		if (ext === ".json") {
 			Tea.File.readText(path, (err: any, data: string) => {

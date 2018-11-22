@@ -7,6 +7,7 @@ export class Model {
 	text: string;
 	isFolder?: boolean;
 	isOpen?: boolean;
+	icon?: string;
 	tag?: any;
 	children: Array<Model>;
 }
