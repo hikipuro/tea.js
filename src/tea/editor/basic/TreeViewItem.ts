@@ -26,7 +26,14 @@ import { TreeView } from "./TreeView";
 					</div>
 					<div
 						class="text"
-						v-html="model.text"></div>
+						v-if="!isRenaming">{{ model.text }}</div>
+					<input
+						ref="rename"
+						type="text"
+						v-if="isRenaming"
+						:value="model.text"
+						@keydown="onKeyDownRename"
+						@mousedown="onMouseDownRename">
 				</div>
 			</div>
 			<ul v-show="isOpen" v-if="isFolder">
@@ -57,6 +64,7 @@ import { TreeView } from "./TreeView";
 		return {
 			isOpen: false,
 			isSelected: false,
+			isRenaming: false,
 			title: null,
 			openIcon: "📂",
 			closeIcon: "📁",
@@ -73,6 +81,7 @@ export class TreeViewItem extends Vue {
 	depth: number;
 	isOpen: boolean;
 	isSelected: boolean;
+	isRenaming: boolean;
 	title: string;
 	openIcon: string;
 	closeIcon: string;
@@ -228,6 +237,18 @@ export class TreeViewItem extends Vue {
 		this.isSelected = value;
 	}
 
+	rename(): void {
+		this.isRenaming = true;
+		this.$nextTick(() => {
+			var rename = this.$refs.rename as HTMLInputElement;
+			rename.select();
+			document.addEventListener(
+				"mousedown", this.onMouseDownScreen
+			);
+			this.$emit("before-rename", this, rename);
+		});
+	}
+
 	findTreeView(): TreeView {
 		var treeView = this.$parent;
 		var length = TreeView.maxDepth;
@@ -314,6 +335,18 @@ export class TreeViewItem extends Vue {
 		});
 	}
 
+	protected emitRenameEvent(): void {
+		var rename = this.$refs.rename as HTMLInputElement;
+		var value = rename.value;
+		if (value == null || value === "") {
+			return;
+		}
+		if (value === this.model.text) {
+			return;
+		}
+		this.$emit("rename", this, value);
+	}
+
 	protected onClick(): void {
 		this.$emit("select", this);
 	}
@@ -343,6 +376,28 @@ export class TreeViewItem extends Vue {
 		this.$emit("select", item);
 	}
 
+	protected onKeyDownRename(e: KeyboardEvent): void {
+		if (e.key === "Enter") {
+			this.isRenaming = false;
+			document.removeEventListener(
+				"mousedown", this.onMouseDownScreen
+			);
+			this.emitRenameEvent();
+		}
+	}
+
+	protected onMouseDownRename(e: MouseEvent): void {
+		e.stopPropagation();
+	}
+
+	protected onMouseDownScreen(e: MouseEvent): void {
+		this.isRenaming = false;
+		document.removeEventListener(
+			"mousedown", this.onMouseDownScreen
+		);
+		this.emitRenameEvent();
+	}
+
 	protected onDrag(e: DragEvent): void {
 		if (this.dragEvents.drag) {
 			this.dragEvents.drag(e, this);
@@ -350,6 +405,10 @@ export class TreeViewItem extends Vue {
 	}
 
 	protected onDragStart(e: DragEvent): void {
+		if (this.isRenaming) {
+			e.preventDefault();
+			return;
+		}
 		if (this.dragEvents.dragStart) {
 			this.dragEvents.dragStart(e, this);
 		}

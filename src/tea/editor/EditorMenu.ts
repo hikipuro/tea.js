@@ -511,8 +511,7 @@ export class EditorMenu {
 			},
 			{
 				id: "Rename",
-				label: "Rename",
-				enabled: false
+				label: "Rename"
 			}
 		];
 		EditorMenu.setMenuItemHandler(

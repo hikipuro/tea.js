@@ -30,7 +30,9 @@ export class Model {
 					:model="item"
 					@create="onCreateItem"
 					@select="onSelectItem"
-					@doubleClick="onDoubleClickItem">
+					@doubleClick="onDoubleClickItem"
+					@before-rename="onBeforeRenameItem"
+					@rename="onRenameItem">
 				</TreeViewItem>
 			</ul>
 			<slot></slot>
@@ -390,6 +392,10 @@ export class TreeView extends Vue {
 	}
 
 	protected onKeyDown(e: KeyboardEvent): void {
+		var target = e.target as HTMLElement;
+		if (target.tagName.toLowerCase() === "input") {
+			return;
+		}
 		var scrollFlag = false;
 		var item = this.selectedItem;
 		switch (e.key) {
@@ -475,6 +481,14 @@ export class TreeView extends Vue {
 
 	protected onDoubleClickItem(item: TreeViewItem): void {
 		this.$emit("doubleClick", item);
+	}
+
+	protected onBeforeRenameItem(item: TreeViewItem, rename: HTMLInputElement): void {
+		this.$emit("before-rename", item, rename);
+	}
+
+	protected onRenameItem(item: TreeViewItem, value: string): void {
+		this.$emit("rename", item, value);
 	}
 
 	protected forEachChild(callback: (item: TreeViewItem) => void) {

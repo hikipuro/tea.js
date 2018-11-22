@@ -27,7 +27,9 @@ import { TreeView } from "../basic/TreeView";
 				@focus="onFocusFileList"
 				@select="onSelectFile"
 				@doubleClick="onDoubleClickFile"
-				@menu="onFileListMenu"></TreeView>
+				@menu="onFileListMenu"
+				@before-rename="onBeforeRenameFile"
+				@rename="onRenameFile"></TreeView>
 		</div>
 	`
 })
@@ -77,7 +79,12 @@ export class ProjectView extends Vue {
 				return;
 			}
 			var items: Array<TreeView.Model> = [];
-			Tea.Directory.getFiles(path, (files) => {
+			Tea.Directory.getFiles(path, (files: Array<Tea.FileInfo>) => {
+				files = files.sort((a: Tea.FileInfo, b: Tea.FileInfo): number => {
+					var fileA = a.name.toLocaleLowerCase();
+					var fileB = b.name.toLocaleLowerCase();
+					return fileB > fileA ? 0 : 1;
+				});
 				files.forEach(file => {
 					var item = this.createTreeViewItem(file);
 					if (item == null) {
@@ -105,8 +112,11 @@ export class ProjectView extends Vue {
 		var folderList = this.$refs.folderList as TreeView;
 		var item = folderList.findItemByTag(path);
 		if (item) {
-			if (item.parent.isOpen === false) {
-				item.parent.expand();
+			var parent = item.parent;
+			if (parent instanceof Editor.TreeViewItem) {
+				if (parent.isOpen === false) {
+					parent.expand();
+				}
 			}
 			folderList.select(item);
 		}
@@ -336,6 +346,9 @@ export class ProjectView extends Vue {
 		}
 		var editor = this.$root as Editor;
 		var path = this.getSelectedFilePath();
+		if (path == null) {
+			return;
+		}
 		path = nodePath.resolve(path);
 
 		var stat = fs.statSync(path);
@@ -368,6 +381,29 @@ export class ProjectView extends Vue {
 		}
 		e.preventDefault();
 		this.showProjectViewFileMenu();
+	}
+
+	protected onBeforeRenameFile(item: Editor.TreeViewItem, rename: HTMLInputElement): void {
+		var value = rename.value;
+		rename.selectionEnd = value.lastIndexOf(".");
+	}
+
+	protected onRenameFile(item: Editor.TreeViewItem, value: string): void {
+		var oldPath = item.tag;
+		var basePath = nodePath.dirname(oldPath);
+		var newPath = nodePath.join(basePath, value);
+		fs.renameSync(oldPath, newPath);
+		item.model.text = value;
+		item.model.tag = newPath;
+		var stat = fs.statSync(newPath);
+		if (stat.isDirectory()) {
+			var folderList = this.$refs.folderList as TreeView;
+			var item = folderList.findItemByTag(basePath);
+			if (item && item.model) {
+				item.model.children = [];
+				this.setChildFolderItems(item);
+			}
+		}
 	}
 
 	protected onSelectFolderMenu = (item: Electron.MenuItem): void => {
@@ -430,6 +466,13 @@ export class ProjectView extends Vue {
 			case "Open":
 				Electron.shell.openItem(path);
 				console.log("Open", path);
+				break;
+			case "Rename":
+				var fileList = this.$refs.fileList as TreeView;
+				var fileItem = fileList.selectedItem;
+				if (fileItem) {
+					fileItem.rename();
+				}
 				break;
 		}
 	}
