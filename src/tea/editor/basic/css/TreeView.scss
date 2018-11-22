@@ -28,14 +28,14 @@
 			//cursor: pointer;
 
 			> .container {
-				padding-left: 0.2em;
+				padding-left: 0.3em;
 
 				> .item {
 					display: flex;
 					align-items: center;
 					//padding-left: 0.2em;
 					//width: 100%;
-					
+
 					.folder {
 						display: inline-flex;
 						min-width: $folderWidth;

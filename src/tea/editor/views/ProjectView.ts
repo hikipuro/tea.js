@@ -117,9 +117,11 @@ export class ProjectView extends Vue {
 		Tea.Directory.getFiles(path, (files: Tea.FileInfo[]) => {
 			var items = [];
 			files = files.sort((a: Tea.FileInfo, b: Tea.FileInfo): number => {
-				var valueA = a.isDirectory ? 1 : 0;
-				var valueB = b.isDirectory ? 1 : 0;
-				return valueB - valueA;
+				var folderA = a.isDirectory ? 2 : 0;
+				var folderB = b.isDirectory ? 2 : 0;
+				var fileA = a.name.toLocaleLowerCase();
+				var fileB = b.name.toLocaleLowerCase();
+				return (folderB - folderA) + (fileB > fileA ? 0 : 1);
 			});
 			files.forEach((file) => {
 				/*if (file.isDirectory) {
@@ -128,14 +130,28 @@ export class ProjectView extends Vue {
 				if (file.name === ".DS_Store") {
 					return;
 				}
+				var ext = nodePath.extname(file.name);
 				var icon: string = null;
 				if (file.isDirectory) {
 					icon = "📁";
+				} else {
+					switch (ext) {
+						case ".html":
+							icon = "<img src='" + EditorAssets.Images.HtmlIcon + "'>";
+							break;
+						case ".js":
+							icon = "<img src='" + EditorAssets.Images.JSIcon + "'>";
+							break;
+						case ".json":
+							icon = "<img src='" + EditorAssets.Images.JsonIcon + "'>";
+							break;
+					}
 				}
 				var item: TreeView.Model = {
 					text: file.name,
 					isFolder: false,
 					icon: icon,
+					indent: "1.5em",
 					tag: file.fullName,
 					children: []
 				};

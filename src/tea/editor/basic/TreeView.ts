@@ -8,6 +8,7 @@ export class Model {
 	isFolder?: boolean;
 	isOpen?: boolean;
 	icon?: string;
+	indent?: string;
 	tag?: any;
 	children: Array<Model>;
 }

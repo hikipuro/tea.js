@@ -12,7 +12,7 @@ import { TreeView } from "./TreeView";
 				<div
 					class="item"
 					ref="item"
-					:style="{ paddingLeft: indentValue }"
+					:style="{ paddingLeft: itemIndent }"
 					:title="model.title"
 					:draggable="draggable"
 					@click.stop="onClick"
@@ -20,7 +20,7 @@ import { TreeView } from "./TreeView";
 					@contextmenu="onContextMenu">
 					<div
 						class="folder"
-						:style="{ minWidth: indent }"
+						:style="{ minWidth: iconMinWidth }"
 						@click.stop="toggle"
 						v-html="folderIcon">
 					</div>
@@ -49,10 +49,6 @@ import { TreeView } from "./TreeView";
 		depth: {
 			type: Number,
 			default: 0
-		},
-		indent: {
-			type: String,
-			default: "1.3em"
 		}
 	},
 	data: () => {
@@ -62,7 +58,8 @@ import { TreeView } from "./TreeView";
 			title: null,
 			openIcon: "📂",
 			closeIcon: "📁",
-			draggable: false
+			draggable: false,
+			indent: "1.3em"
 		}
 	},
 	components: {
@@ -154,8 +151,19 @@ export class TreeViewItem extends Vue {
 		return items[index - 1];
 	}
 
-	protected get indentValue(): string {
-		return "calc(" + this.indent + " * " + this.depth + ")";
+	protected get itemIndent(): string {
+		var indent = this.indent;
+		if (this.model.indent) {
+			indent = this.model.indent;
+		}
+		return "calc(" + indent + " * " + this.depth + ")";
+	}
+
+	protected get iconMinWidth(): string {
+		if (this.model.indent) {
+			return this.model.indent;
+		}
+		return this.indent;
 	}
 
 	getItemComponents(): Array<TreeViewItem> {
