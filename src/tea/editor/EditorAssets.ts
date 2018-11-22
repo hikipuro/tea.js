@@ -4,6 +4,7 @@ export module EditorAssets {
 		export const StopButton = "images/stop.svg";
 		export const FolderOpen = "images/folder-open.svg";
 		export const FolderClose = "images/folder-close.svg";
+		export const FolderIcon = "images/folder.svg";
 		export const HtmlIcon = "images/html.svg";
 		export const JSIcon = "images/js.svg";
 		export const JsonIcon = "images/json.svg";

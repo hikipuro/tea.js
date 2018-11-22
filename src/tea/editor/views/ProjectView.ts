@@ -130,11 +130,11 @@ export class ProjectView extends Vue {
 				if (file.name === ".DS_Store") {
 					return;
 				}
-				var ext = nodePath.extname(file.name);
 				var icon: string = null;
 				if (file.isDirectory) {
-					icon = "📁";
+					icon = "<img src='" + EditorAssets.Images.FolderIcon + "'>";
 				} else {
+					var ext = nodePath.extname(file.name);
 					switch (ext) {
 						case ".html":
 							icon = "<img src='" + EditorAssets.Images.HtmlIcon + "'>";
@@ -151,7 +151,7 @@ export class ProjectView extends Vue {
 					text: file.name,
 					isFolder: false,
 					icon: icon,
-					indent: "1.5em",
+					indent: "1.7em",
 					tag: file.fullName,
 					children: []
 				};
