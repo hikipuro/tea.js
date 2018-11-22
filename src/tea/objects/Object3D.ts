@@ -695,17 +695,17 @@ export class Object3D {
 			return;
 		}
 
-		if (this._toDestroy) {
-			this._destroy();
-			return;
-		}
-
 		this._m.update(this);
 
 		if (isEditing) {
 			this.updateComponentsEditor();
 		} else {
 			this.updateComponents();
+		}
+
+		if (this._toDestroy) {
+			this._destroy();
+			return;
 		}
 	}
 
