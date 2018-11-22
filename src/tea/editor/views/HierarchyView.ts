@@ -5,6 +5,7 @@ import * as Tea from "../../Tea";
 import { Editor } from "../Editor";
 import { EditorAssets } from "../EditorAssets";
 import { TreeView } from "../basic/TreeView";
+import { TreeViewItem } from "../basic/TreeViewItem";
 import { HierarchyViewCommand } from "../commands/HierarchyViewCommand";
 import { SceneInspector } from "../views/SceneInspector";
 
@@ -23,7 +24,7 @@ import { SceneInspector } from "../views/SceneInspector";
 })
 export class HierarchyView extends Vue {
 	_command: HierarchyViewCommand;
-	_dragSource: Editor.TreeViewItem
+	_dragSource: TreeViewItem;
 
 	get command(): HierarchyViewCommand {
 		return this._command;
@@ -38,7 +39,7 @@ export class HierarchyView extends Vue {
 		treeView.items = value;
 	}
 
-	getSelectedItem(): TreeView.Item {
+	getSelectedItem(): TreeViewItem {
 		var treeView = this.$refs.hierarchy as TreeView;
 		return treeView.selectedItem;
 	}
@@ -53,7 +54,7 @@ export class HierarchyView extends Vue {
 		treeView.expandAll();
 	}
 
-	select(item: TreeView.Item): void {
+	select(item: TreeViewItem): void {
 		var treeView = this.$refs.hierarchy as TreeView;
 		treeView.select(item);
 	}
@@ -63,7 +64,7 @@ export class HierarchyView extends Vue {
 		treeView.unselect();
 	}
 
-	findItemByTag(tag: number): TreeView.Item {
+	findItemByTag(tag: number): TreeViewItem {
 		var treeView = this.$refs.hierarchy as TreeView;
 		return treeView.findItemByTag(tag);
 	}

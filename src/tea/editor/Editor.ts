@@ -34,6 +34,7 @@ import { SelectAspect } from "./basic/SelectAspect";
 import { SelectEnum } from "./basic/SelectEnum";
 import { TextArea } from "./basic/TextArea";
 import { TreeView } from "./basic/TreeView";
+import { TreeViewItem } from "./basic/TreeViewItem";
 import { Vector3 } from "./basic/Vector3";
 import { VResizeBar } from "./basic/VResizeBar";
 
@@ -309,6 +310,8 @@ var  _Rect = Rectangle;
 type _Rect = Rectangle;
 var  _TreeView = TreeView;
 type _TreeView = TreeView;
+var  _TreeViewItem = TreeViewItem;
+type _TreeViewItem = TreeViewItem;
 var  _Vector3 = Vector3;
 type _Vector3 = Vector3;
 
@@ -365,8 +368,8 @@ export module Editor {
 	export type Rect = _Rect;
 	export var  TreeView = _TreeView;
 	export type TreeView = _TreeView;
-	export var  TreeViewItem = TreeView.Item;
-	export type TreeViewItem = TreeView.Item;
+	export var  TreeViewItem = _TreeViewItem;
+	export type TreeViewItem = _TreeViewItem;
 	export var  Vector3 = _Vector3;
 	export type Vector3 = _Vector3;
 

@@ -2,6 +2,7 @@ import * as Tea from "../../Tea";
 import { Editor } from "../Editor";
 import { EditorMenu } from "../EditorMenu";
 import { NativeContextMenu } from "../basic/NativeContextMenu";
+import { TreeView } from "../basic/TreeView";
 
 export class HierarchyViewCommand {
 	editor: Editor;
@@ -54,60 +55,29 @@ export class HierarchyViewCommand {
 			hierarchyView.unselect();
 			return;
 		}
-		//setTimeout(() => {
-		//hierarchyView.$nextTick(() => {
-			var items = [];
-			var createItems = (items, child: Tea.Object3D) => {
-				var item = {
-					text: child.name,
-					children: [],
-					isFolder: false,
-					isOpen: null,
-					tag: child.id
-				};
-				child.children.forEach((i) => {
-					createItems(item.children, i);
-				});
-				if (item.children.length > 0) {
-					item.isFolder = true;
-				}
-				if (expand === false) {
-					var currentItem = hierarchyView.findItemByTag(item.tag);
-					if (currentItem != null) {
-						item.isOpen = currentItem.isOpen;
-					}
-				}
-				items.push(item);
-			};
-			var children = scene.children;
-			for (var i = children.length - 1; i >= 0; i--) {
-				var child = children[i];
-				createItems(items, child);
-			}
-			var sceneItem = {
-				text: "Scene",
-				children: items,
-				isFolder: true,
-				isOpen: null,
-				tag: "-1"
-			};
-			hierarchyView.items = [sceneItem];
-			//hierarchyView.items = items;
-			hierarchyView.unselect();
-			if (expand) {
-				hierarchyView.$nextTick(() => {
-					hierarchyView.expandAll();
-				});
-			}
-			if (callback != null) {
-				hierarchyView.$nextTick(() => {
-					setTimeout(() => {
-						callback();
-					}, 0);
-				});
-			}
-		//});
-		//}, 17);
+
+		var items = this.createTreeViewData(expand);
+		var sceneItem: TreeView.Model = {
+			text: "Scene",
+			children: items,
+			isFolder: true,
+			isOpen: null,
+			tag: "-1"
+		};
+		hierarchyView.items = [sceneItem];
+		hierarchyView.unselect();
+		if (expand) {
+			hierarchyView.$nextTick(() => {
+				hierarchyView.expandAll();
+			});
+		}
+		if (callback != null) {
+			hierarchyView.$nextTick(() => {
+				setTimeout(() => {
+					callback();
+				}, 0);
+			});
+		}
 	}
 
 	deleteSelectedItem(): void {
@@ -126,6 +96,41 @@ export class HierarchyViewCommand {
 		scene.app.renderer.once("update", () => {
 			this.update();
 		});
+	}
+
+	protected createTreeViewData(expand: boolean): Array<TreeView.Model> {
+		var scene = this.editor.status.scene;
+		var hierarchyView = this.editor.hierarchyView;
+
+		var items: Array<TreeView.Model> = [];
+		var createItems = (items: Array<TreeView.Model>, child: Tea.Object3D) => {
+			var item: TreeView.Model = {
+				text: child.name,
+				children: [],
+				isFolder: false,
+				isOpen: null,
+				tag: child.id
+			};
+			child.children.forEach((i) => {
+				createItems(item.children, i);
+			});
+			if (item.children.length > 0) {
+				item.isFolder = true;
+			}
+			if (expand === false) {
+				var currentItem = hierarchyView.findItemByTag(item.tag);
+				if (currentItem != null) {
+					item.isOpen = currentItem.isOpen;
+				}
+			}
+			items.push(item);
+		};
+		var children = scene.children;
+		for (var i = children.length - 1; i >= 0; i--) {
+			var child = children[i];
+			createItems(items, child);
+		}
+		return items;
 	}
 
 	protected onSelectMenu = (item: Electron.MenuItem): void => {

@@ -76,10 +76,10 @@ export class ProjectView extends Vue {
 			if (exists === false) {
 				return;
 			}
-			var items = [];
+			var items: Array<TreeView.Model> = [];
 			Tea.Directory.getFiles(path, (files) => {
 				files.forEach(file => {
-					var item = this.createItems(file);
+					var item = this.createTreeViewItem(file);
 					if (item == null) {
 						return;
 					}
@@ -163,18 +163,18 @@ export class ProjectView extends Vue {
 		this.openFolder(process.cwd());
 	}
 
-	protected createItems(file: Tea.FileInfo): any {
+	protected createTreeViewItem(file: Tea.FileInfo): TreeView.Model {
 		if (file == null || file.exists === false) {
 			return null;
 		}
 		if (file.isDirectory === false) {
 			return null;
 		}
-		var item = {
+		var item: TreeView.Model = {
 			text: file.name,
-			children: [],
 			isFolder: file.hasChildDirectory,
-			tag: file.fullName
+			tag: file.fullName,
+			children: []
 		};
 		return item;
 	}
@@ -213,10 +213,10 @@ export class ProjectView extends Vue {
 		if (i == null || i.children.length > 0) {
 			return;
 		}
-		var items = [];
+		var items: Array<TreeView.Model> = [];
 		var files = Tea.Directory.getFilesSync(item.tag);
 		files.forEach(file => {
-			var item = this.createItems(file);
+			var item = this.createTreeViewItem(file);
 			if (item == null) {
 				return;
 			}
