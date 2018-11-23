@@ -83,3 +83,5 @@ export class MeshRenderer extends Vue {
 		this.$emit("update", "wireframe");
 	}
 }
+
+Tea.MeshRenderer.editorView = MeshRenderer;

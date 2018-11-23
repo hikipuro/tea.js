@@ -136,3 +136,5 @@ export class Light extends Vue {
 		this.$emit("update", "intensity");
 	}
 }
+
+Tea.Light.editorView = Light;

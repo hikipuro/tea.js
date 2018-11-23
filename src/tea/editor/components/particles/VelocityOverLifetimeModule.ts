@@ -17,6 +17,21 @@ import { TitleBar } from "../TitleBar";
 				:style="{
 					display: 'none'
 				}">
+				<InputNumber
+					ref="x"
+					class="number"
+					:value="x"
+					@update="onUpdateX">X</InputNumber>
+				<InputNumber
+					ref="y"
+					class="number"
+					:value="y"
+					@update="onUpdateY">Y</InputNumber>
+				<InputNumber
+					ref="z"
+					class="number"
+					:value="z"
+					@update="onUpdateZ">Z</InputNumber>
 			</div>
 		</div>
 	`,
@@ -24,6 +39,9 @@ import { TitleBar } from "../TitleBar";
 		return {
 			name: "Velocity over Lifetime",
 			enabled: false,
+			x: 0,
+			y: 0,
+			z: 0,
 		}
 	},
 	watch: {
@@ -40,13 +58,18 @@ export class VelocityOverLifetimeModule extends Vue {
 	_module: Tea.ParticleSystem.VelocityOverLifetimeModule;
 	name: string;
 	enabled: boolean;
+	x: number;
+	y: number;
+	z: number;
 
 	update(): void {
 		var module = this._module;
 		if (module == null) {
 			return;
 		}
+		console.log("update");
 		this.enabled = module.enabled;
+		this.x = module.x.constant;
 	}
 
 	protected onUpdateEnabled(value: boolean): void {
@@ -62,6 +85,27 @@ export class VelocityOverLifetimeModule extends Vue {
 			style.display = "block";
 		} else {
 			style.display = "none";
+		}
+	}
+
+	protected onUpdateX(value: number): void {
+		this.x = value;
+		if (this._module) {
+			this._module.x.constant = value;
+		}
+	}
+
+	protected onUpdateY(value: number): void {
+		this.y = value;
+		if (this._module) {
+			this._module.y.constant = value;
+		}
+	}
+
+	protected onUpdateZ(value: number): void {
+		this.z = value;
+		if (this._module) {
+			this._module.z.constant = value;
 		}
 	}
 }

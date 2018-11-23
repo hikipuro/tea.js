@@ -1,15 +1,11 @@
 import * as Electron from "electron";
-var remote = null;
-var Menu = null;
-if (Electron) {
-	remote = Electron.remote;
-	Menu = remote.Menu;
-}
-
 import { Editor } from "./Editor";
 import { Translator } from "./translate/Translator";
 import { NativeContextMenu } from "./basic/NativeContextMenu";
 import { HierarchyView } from "./views/HierarchyView";
+
+const remote = Electron.remote;
+const Menu = remote.Menu;
 
 export class EditorMenu {
 	static mainMenu: Electron.Menu;

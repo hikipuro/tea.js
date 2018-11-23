@@ -205,3 +205,5 @@ export class TextMesh extends Vue {
 		this.$emit("update", "color");
 	}
 }
+
+Tea.TextMesh.editorView = TextMesh;

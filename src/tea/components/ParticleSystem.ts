@@ -203,14 +203,14 @@ export class ParticleSystem extends Component {
 				this.shape.apply(this.time, particle);
 			}
 			particle.size = startSize;
+			particle.velocity.mul$(startSpeed);
 			if (velocityOverLifetime.enabled) {
-				particle.velocity.scale$(new Tea.Vector3(
-					velocityOverLifetime.x.constant,
+				particle.velocity.add$(new Tea.Vector3(
+					velocityOverLifetime.x.evaluate(0) / (60.0),
 					velocityOverLifetime.y.constant,
 					velocityOverLifetime.z.constant
 				));
 			}
-			particle.velocity.mul$(startSpeed);
 			particle.startColor = startColor;
 			if (colorOverLifetime.enabled) {
 				switch (colorOverLifetime.color.mode) {

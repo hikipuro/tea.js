@@ -111,3 +111,5 @@ export class Script extends Vue {
 		component[key] = value;
 	}
 }
+
+Tea.Script.editorView = Script;

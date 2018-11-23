@@ -15,8 +15,6 @@ import Component from "vue-class-component";
 			</div>
 		</div>
 	`,
-	props: {
-	},
 	data: () => {
 		return {
 			url: ""

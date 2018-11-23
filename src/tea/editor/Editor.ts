@@ -3,6 +3,10 @@ import Component from "vue-class-component";
 import { NoCache } from "./basic/NoCache";
 import * as Tea from "../Tea";
 
+import * as BasicComponents from "./basic/BasicComponents";
+import * as Containers from "./containers/Containers";
+import * as TeaComponents from "./components/TeaComponents";
+
 import { EditorSettings } from "./EditorSettings";
 import { Translator } from "./translate/Translator";
 import { EditorBehavior } from "./EditorBehavior";
@@ -17,91 +21,28 @@ import { FileInspector } from "./views/FileInspector";
 import { ObjectInspector } from "./views/ObjectInspector";
 import { DragImages } from "./views/DragImages";
 
-import { Button } from "./basic/Button";
-import { CheckBox } from "./basic/CheckBox";
-import { ColorPicker } from "./basic/ColorPicker";
-import { ContextMenu } from "./basic/ContextMenu";
-import { HResizeBar } from "./basic/HResizeBar";
-import { ImageSelector } from "./basic/ImageSelector";
-import { InputNumber } from "./basic/InputNumber";
-import { InputRange } from "./basic/InputRange";
-import { InputText } from "./basic/InputText";
-import { Label } from "./basic/Label";
-import { ListView } from "./basic/ListView";
-import { NativeContextMenu } from "./basic/NativeContextMenu";
-import { ObjectTitle } from "./basic/ObjectTitle";
-import { Rectangle } from "./basic/Rectangle";
-import { SelectAspect } from "./basic/SelectAspect";
-import { SelectEnum } from "./basic/SelectEnum";
-import { TextArea } from "./basic/TextArea";
-import { TreeView } from "./basic/TreeView";
-import { TreeViewItem } from "./basic/TreeViewItem";
-import { Vector3 } from "./basic/Vector3";
-import { VResizeBar } from "./basic/VResizeBar";
-
-import { Panel } from "./containers/Panel";
-import { HLayout } from "./containers/HLayout";
-import { VLayout } from "./containers/VLayout";
-import { Tabs, TabItem } from "./containers/Tabs";
-import { Window } from "./containers/Window";
-
-import { AudioSource } from "./components/AudioSource";
-import { BoxCollider } from "./components/BoxCollider";
-import { Camera } from "./components/Camera";
-import { Light } from "./components/Light";
-import { LineRenderer } from "./components/LineRenderer";
-import { MeshFilter } from "./components/MeshFilter";
-import { MeshRenderer } from "./components/MeshRenderer";
-import { ParticleSystem } from "./components/ParticleSystem";
-import { Rigidbody } from "./components/Rigidbody";
-import { Script } from "./components/Script";
-import { TextMesh } from "./components/TextMesh";
-
 Vue.config.devtools = false;
 Vue.config.productionTip = false;
-//*
-Vue.component("FileInspector", FileInspector);
-Vue.component("ObjectInspector", ObjectInspector);
 
-Vue.component("Button", Button);
-Vue.component("CheckBox", CheckBox);
-Vue.component("ColorPicker", ColorPicker);
-Vue.component("ContextMenu", ContextMenu);
-Vue.component("HResizeBar", HResizeBar);
-Vue.component("ImageSelector", ImageSelector);
-Vue.component("InputNumber", InputNumber);
-Vue.component("InputRange", InputRange);
-Vue.component("InputText", InputText);
-Vue.component("Label", Label);
-Vue.component("ListView", ListView);
-Vue.component("ObjectTitle", ObjectTitle);
-Vue.component("Rectangle", Rectangle);
-Vue.component("SelectAspect", SelectAspect);
-Vue.component("SelectEnum", SelectEnum);
-Vue.component("TextArea", TextArea);
-Vue.component("TreeView", TreeView);
-Vue.component("Vector3", Vector3);
-Vue.component("VResizeBar", VResizeBar);
-
-Vue.component("Panel", Panel);
-Vue.component("HLayout", HLayout);
-Vue.component("VLayout", VLayout);
-Vue.component("Tabs", Tabs);
-Vue.component("TabItem", TabItem);
-Vue.component("Window", Window);
-
-Vue.component("AudioSource", AudioSource);
-Vue.component("BoxCollider", BoxCollider);
-Vue.component("Camera", Camera);
-Vue.component("Light", Light);
-Vue.component("LineRenderer", LineRenderer);
-Vue.component("MeshFilter", MeshFilter);
-Vue.component("MeshRenderer", MeshRenderer);
-Vue.component("ParticleSystem", ParticleSystem);
-Vue.component("Rigidbody", Rigidbody);
-Vue.component("Script", Script);
-Vue.component("TextMesh", TextMesh);
-//*/
+var vueComponents = {
+	FileInspector: FileInspector,
+	ObjectInspector: ObjectInspector,
+};
+Object.assign(
+	vueComponents,
+	BasicComponents.getComponents()
+);
+Object.assign(
+	vueComponents,
+	Containers.getComponents()
+);
+Object.assign(
+	vueComponents,
+	TeaComponents.getComponents()
+);
+Object.keys(vueComponents).forEach((key: string) => {
+	Vue.component(key, vueComponents[key]);
+});
 
 @Component({
 	template: `
@@ -184,12 +125,6 @@ export class Editor extends Vue {
 	protected _behavior: EditorBehavior;
 	protected _command: EditorCommand;
 
-	/*
-	addComponent(name: string, component: Vue): void {
-		Vue.component(name, component);
-	}
-	//*/
-
 	@NoCache
 	get command(): EditorCommand {
 		return this._command;
@@ -215,16 +150,16 @@ export class Editor extends Vue {
 		return this.$refs.project as ProjectView;
 	}
 
-	get fileList(): TreeView {
-		return this.$refs.fileList as TreeView;
+	get fileList(): BasicComponents.TreeView {
+		return this.$refs.fileList as BasicComponents.TreeView;
 	}
 
 	get dragImages(): DragImages {
 		return this.$refs.dragImages as DragImages;
 	}
 
-	get contextMenu(): ContextMenu {
-		return this.$refs.menu as ContextMenu;
+	get contextMenu(): BasicComponents.ContextMenu {
+		return this.$refs.menu as BasicComponents.ContextMenu;
 	}
 
 	setApp(app: Tea.App) {
@@ -292,131 +227,64 @@ export class Editor extends Vue {
 	}
 }
 
-var  _Button = Button;
-type _Button = Button;
-var  _CheckBox = CheckBox;
-type _CheckBox = CheckBox;
-var  _ContextMenu = ContextMenu;
-type _ContextMenu = ContextMenu;
-var  _InputNumber = InputNumber;
-type _InputNumber = InputNumber;
-var  _Label = Label;
-type _Label = Label;
-var  _ListView = ListView;
-type _ListView = ListView;
-var  _NativeContextMenu = NativeContextMenu;
-type _NativeContextMenu = NativeContextMenu;
-var  _Rect = Rectangle;
-type _Rect = Rectangle;
-var  _TreeView = TreeView;
-type _TreeView = TreeView;
-var  _TreeViewItem = TreeViewItem;
-type _TreeViewItem = TreeViewItem;
-var  _Vector3 = Vector3;
-type _Vector3 = Vector3;
-
-var  _Panel = Panel;
-type _Panel = Panel;
-var  _HLayout = HLayout;
-type _HLayout = HLayout;
-var  _VLayout = VLayout;
-type _VLayout = VLayout;
-var  _Window = Window;
-type _Window = Window;
-
-var  _AudioSource = AudioSource;
-type _AudioSource = AudioSource;
-var  _BoxCollider = BoxCollider;
-type _BoxCollider = BoxCollider;
-var  _Camera = Camera;
-type _Camera = Camera;
-var  _Light = Light;
-type _Light = Light;
-var  _LineRenderer = LineRenderer;
-type _LineRenderer = LineRenderer;
-var  _MeshFilter = MeshFilter;
-type _MeshFilter = MeshFilter;
-var  _MeshRenderer = MeshRenderer;
-type _MeshRenderer = MeshRenderer;
-var  _ParticleSystem = ParticleSystem;
-type _ParticleSystem = ParticleSystem;
-var  _Rigidbody = Rigidbody;
-type _Rigidbody = Rigidbody;
-var  _Script = Script;
-type _Script = Script;
-var  _TextMesh = TextMesh;
-type _TextMesh = TextMesh;
-
 export module Editor {
-	export var  Button = _Button;
-	export type Button = _Button;
-	export var  CheckBox = _CheckBox;
-	export type CheckBox = _CheckBox;
-	export var  ContextMenu = _ContextMenu;
-	export type ContextMenu = _ContextMenu;
-	export var  ContextMenuItem = ContextMenu.Item;
-	export type ContextMenuItem = ContextMenu.Item;
-	export var  InputNumber = _InputNumber;
-	export type InputNumber = _InputNumber;
-	export var  Label = _Label;
-	export type Label = _Label;
-	export var  ListView = _ListView;
-	export type ListView = _ListView;
-	export var  NativeContextMenu = _NativeContextMenu;
-	export type NativeContextMenu = _NativeContextMenu;
-	export var  Rect = _Rect;
-	export type Rect = _Rect;
-	export var  TreeView = _TreeView;
-	export type TreeView = _TreeView;
-	export var  TreeViewItem = _TreeViewItem;
-	export type TreeViewItem = _TreeViewItem;
-	export var  Vector3 = _Vector3;
-	export type Vector3 = _Vector3;
+	export var  Button = BasicComponents.Button;
+	export type Button = BasicComponents.Button;
+	export var  CheckBox = BasicComponents.CheckBox;
+	export type CheckBox = BasicComponents.CheckBox;
+	export var  ContextMenu = BasicComponents.ContextMenu;
+	export type ContextMenu = BasicComponents.ContextMenu;
+	export var  ContextMenuItem = BasicComponents.ContextMenuItem;
+	export type ContextMenuItem = BasicComponents.ContextMenuItem;
+	export var  InputNumber = BasicComponents.InputNumber;
+	export type InputNumber = BasicComponents.InputNumber;
+	export var  Label = BasicComponents.Label;
+	export type Label = BasicComponents.Label;
+	export var  ListView = BasicComponents.ListView;
+	export type ListView = BasicComponents.ListView;
+	export var  NativeContextMenu = BasicComponents.NativeContextMenu;
+	export type NativeContextMenu = BasicComponents.NativeContextMenu;
+	export var  Rect = BasicComponents.Rectangle;
+	export type Rect = BasicComponents.Rectangle;
+	export var  TreeView = BasicComponents.TreeView;
+	export type TreeView = BasicComponents.TreeView;
+	export var  TreeViewItem = BasicComponents.TreeViewItem;
+	export type TreeViewItem = BasicComponents.TreeViewItem;
+	export var  Vector3 = BasicComponents.Vector3;
+	export type Vector3 = BasicComponents.Vector3;
 
-	export var  Panel = _Panel;
-	export type Panel = _Panel;
-	export var  HLayout = _HLayout;
-	export type HLayout = _HLayout;
-	export var  VLayout = _VLayout;
-	export type VLayout = _VLayout;
-	export var  Window = _Window;
-	export type Window = _Window;
+	export var  Panel = Containers.Panel;
+	export type Panel = Containers.Panel;
+	export var  HLayout = Containers.HLayout;
+	export type HLayout = Containers.HLayout;
+	export var  VLayout = Containers.VLayout;
+	export type VLayout = Containers.VLayout;
+	export var  Window = Containers.Window;
+	export type Window = Containers.Window;
 
-	export var  AudioSource = _AudioSource;
-	export type AudioSource = _AudioSource;
-	export var  BoxCollider = _BoxCollider;
-	export type BoxCollider = _BoxCollider;
-	export var  Camera = _Camera;
-	export type Camera = _Camera;
-	export var  Light = _Light;
-	export type Light = _Light;
-	export var  LineRenderer = _LineRenderer;
-	export type LineRenderer = _LineRenderer;
-	export var  MeshFilter = _MeshFilter;
-	export type MeshFilter = _MeshFilter;
-	export var  MeshRenderer = _MeshRenderer;
-	export type MeshRenderer = _MeshRenderer;
-	export var  ParticleSystem = _ParticleSystem;
-	export type ParticleSystem = _ParticleSystem;
-	export var  Rigidbody = _Rigidbody;
-	export type Rigidbody = _Rigidbody;
-	export var  Script = _Script;
-	export type Script = _Script;
-	export var  TextMesh = _TextMesh;
-	export type TextMesh = _TextMesh;
+	export var  AudioSource = TeaComponents.AudioSource;
+	export type AudioSource = TeaComponents.AudioSource;
+	export var  BoxCollider = TeaComponents.BoxCollider;
+	export type BoxCollider = TeaComponents.BoxCollider;
+	export var  Camera = TeaComponents.Camera;
+	export type Camera = TeaComponents.Camera;
+	export var  Light = TeaComponents.Light;
+	export type Light = TeaComponents.Light;
+	export var  LineRenderer = TeaComponents.LineRenderer;
+	export type LineRenderer = TeaComponents.LineRenderer;
+	export var  MeshFilter = TeaComponents.MeshFilter;
+	export type MeshFilter = TeaComponents.MeshFilter;
+	export var  MeshRenderer = TeaComponents.MeshRenderer;
+	export type MeshRenderer = TeaComponents.MeshRenderer;
+	export var  ParticleSystem = TeaComponents.ParticleSystem;
+	export type ParticleSystem = TeaComponents.ParticleSystem;
+	export var  Rigidbody = TeaComponents.Rigidbody;
+	export type Rigidbody = TeaComponents.Rigidbody;
+	export var  Script = TeaComponents.Script;
+	export type Script = TeaComponents.Script;
+	export var  TextMesh = TeaComponents.TextMesh;
+	export type TextMesh = TeaComponents.TextMesh;
 }
-
-Tea.BoxCollider.editorView = Editor.BoxCollider;
-Tea.Camera.editorView = Editor.Camera;
-Tea.Light.editorView = Editor.Light;
-Tea.LineRenderer.editorView = Editor.LineRenderer;
-Tea.MeshFilter.editorView = Editor.MeshFilter;
-Tea.MeshRenderer.editorView = Editor.MeshRenderer;
-Tea.ParticleSystem.editorView = Editor.ParticleSystem;
-Tea.Rigidbody.editorView = Editor.Rigidbody;
-Tea.Script.editorView = Editor.Script;
-Tea.TextMesh.editorView = Editor.TextMesh;
-Tea.AudioSource.editorView = Editor.AudioSource;
 
 var loaded = () => {
 	document.removeEventListener(

@@ -17,6 +17,10 @@ import { TitleBar } from "../TitleBar";
 				:style="{
 					display: 'none'
 				}">
+				<Gradient
+					ref="color"
+					:value="color"
+					@update="onUpdateColor">Color</Gradient>
 			</div>
 		</div>
 	`,
@@ -24,6 +28,7 @@ import { TitleBar } from "../TitleBar";
 		return {
 			name: "Color over Lifetime",
 			enabled: false,
+			color: ""
 		}
 	},
 	watch: {
@@ -40,6 +45,7 @@ export class ColorOverLifetimeModule extends Vue {
 	_module: Tea.ParticleSystem.ColorOverLifetimeModule;
 	name: string;
 	enabled: boolean;
+	color: string;
 
 	update(): void {
 		var module = this._module;
@@ -47,6 +53,7 @@ export class ColorOverLifetimeModule extends Vue {
 			return;
 		}
 		this.enabled = module.enabled;
+		//this.color = module.color.color.toCssColor();
 	}
 
 	protected onUpdateEnabled(value: boolean): void {
@@ -63,5 +70,13 @@ export class ColorOverLifetimeModule extends Vue {
 		} else {
 			style.display = "none";
 		}
+	}
+
+	protected onUpdateColor(value: Tea.Color): void {
+		this.color = value.toCssColor();
+		if (this._module) {
+			this._module.color.color.copy(value);
+		}
+		this.$emit("update", "color", value);
 	}
 }

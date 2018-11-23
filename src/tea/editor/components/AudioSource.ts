@@ -42,3 +42,5 @@ export class AudioSource extends Vue {
 		this.enabled = component.enabled;
 	}
 }
+
+Tea.AudioSource.editorView = AudioSource;

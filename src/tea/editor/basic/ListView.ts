@@ -17,11 +17,12 @@ import Component from "vue-class-component";
 			</select>
 		</form>
 	`,
-	data: () => { return {
-		selected: null,
-		items: [
-		]
-	}}
+	data: () => {
+		return {
+			selected: null,
+			items: []
+		}
+	}
 })
 export class ListView extends Vue {
 	items: Array<object>;

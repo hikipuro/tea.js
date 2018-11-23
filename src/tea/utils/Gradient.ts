@@ -49,13 +49,19 @@ export class Gradient {
 		}
 		var alphaKeys = [];
 		var colorKeys = [];
-		for (var i = 0; i < json.alphaKeys.length; i++) {
-			var alphaKey = json.alphaKeys[i];
-			alphaKeys.push(Tea.GradientAlphaKey.fromJSON(app, alphaKey));
+		if (json.alphaKeys) {
+			var length = json.alphaKeys.length;
+			for (var i = 0; i < length; i++) {
+				var alphaKey = json.alphaKeys[i];
+				alphaKeys.push(Tea.GradientAlphaKey.fromJSON(app, alphaKey));
+			}
 		}
-		for (var i = 0; i < json.colorKeys.length; i++) {
-			var colorKey = json.colorKeys[i];
-			colorKeys.push(Tea.GradientColorKey.fromJSON(app, colorKey));
+		if (json.colorKeys) {
+			var length = json.colorKeys.length;
+			for (var i = 0; i < length; i++) {
+				var colorKey = json.colorKeys[i];
+				colorKeys.push(Tea.GradientColorKey.fromJSON(app, colorKey));
+			}
 		}
 		var gradient = new Gradient();
 		gradient.alphaKeys = alphaKeys;

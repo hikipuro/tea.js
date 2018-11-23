@@ -110,3 +110,5 @@ export class BoxCollider extends Vue {
 		this.$emit("update", "size");
 	}
 }
+
+Tea.BoxCollider.editorView = BoxCollider;

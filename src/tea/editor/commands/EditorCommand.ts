@@ -8,12 +8,8 @@ import { EditorMenu } from "../EditorMenu";
 import { AppBuilder } from "./AppBuilder";
 import { Translator } from "../translate/Translator";
 
-var remote = null;
-var Dialog = null;
-if (Electron) {
-	remote = Electron.remote;
-	Dialog = remote.dialog;
-}
+const remote = Electron.remote;
+const Dialog = remote.dialog;
 
 declare global {
 	interface Window {

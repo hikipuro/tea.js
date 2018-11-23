@@ -33,3 +33,5 @@ export class MeshFilter extends Vue {
 		}
 	}
 }
+
+Tea.MeshFilter.editorView = MeshFilter;

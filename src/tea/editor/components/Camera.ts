@@ -11,8 +11,12 @@ import { Translator } from "../translate/Translator";
 				<slot></slot>
 			</div>
 			<div class="value">
-				<InputNumber :value="near" @update="onUpdateNear">{{ translator.near }}</InputNumber>
-				<InputNumber :value="far" @update="onUpdateFar">{{ translator.far }}</InputNumber>
+				<InputNumber
+					:value="near"
+					@update="onUpdateNear">{{ translator.near }}</InputNumber>
+				<InputNumber
+					:value="far"
+					@update="onUpdateFar">{{ translator.far }}</InputNumber>
 			</div>
 		</div>
 	`,
@@ -319,3 +323,5 @@ export class Camera extends Vue {
 		this.$emit("update", "stereoMode");
 	}
 }
+
+Tea.Camera.editorView = Camera;

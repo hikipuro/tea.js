@@ -1,61 +1,9 @@
 import Vue from "vue";
 import Component from "vue-class-component";
+import { ContextMenuItem } from "./ContextMenuItem";
 
-@Component({
-	template: `
-		<div
-			class="item"
-			ref="item"
-			:class="{
-				separator: isSeparator,
-				selected: isSelected,
-				'selected-after': isSelectedAfter,
-				unselected: isUnselected
-			}"
-			@click.stop="onClick">
-			{{ isSeparator ? "" : model.text }}
-		</div>
-	`,
-	props: {
-		model: Object,
-		depth: Number
-	},
-	data: () => { return {
-		isSelected: false,
-		isSelectedAfter: false,
-		isUnselected: false
-	}}
-})
-export class Item extends Vue {
-	model: any;
-	tag: any;
-	protected isSelected: boolean;
-	protected isSelectedAfter: boolean;
-	isUnselected: boolean;
-
-	get text(): string {
-		return this.model.text;
-	}
-
-	get isSeparator(): boolean {
-		return this.model.text === "-";
-	}
-
-	protected onClick(): void {
-		if (this.isSeparator) {
-			return;
-		}
-		this.$emit("beforeSelect", this);
-		this.isSelected = true;
-		setTimeout(() => {
-			this.isSelected = false;
-			this.isSelectedAfter = true;
-		}, 50);
-		setTimeout(() => {
-			this.isSelectedAfter = false;
-			this.$emit("select", this);
-		}, 100);
-	}
+export class Model {
+	text: string;
 }
 
 @Component({
@@ -70,25 +18,27 @@ export class Item extends Vue {
 					left: x + 'px',
 					top: y + 'px'
 				}">
-				<item
+				<ContextMenuItem
 					v-for="(model, index) in items"
 					:key="index"
 					:model="model"
 					:depth="0"
 					@beforeSelect="onBeforeSelect"
 					@select="onSelect">
-				</item>
+				</ContextMenuItem>
 			</div>
 		</transition>
 	`,
-	data: () => { return {
-		x: 0,
-		y: 0,
-		isVisible: false,
-		items: []
-	}},
+	data: () => {
+		return {
+			x: 0,
+			y: 0,
+			isVisible: false,
+			items: []
+		}
+	},
 	components: {
-		item: Item
+		ContextMenuItem: ContextMenuItem
 	}
 })
 export class ContextMenu extends Vue {
@@ -96,7 +46,7 @@ export class ContextMenu extends Vue {
 	y: number;
 	isVisible: boolean;
 	state: string;
-	items: Array<any>;
+	items: Array<Model>;
 	protected _isSelectStart: boolean = false;
 
 	move(x: number, y: number): void {
@@ -136,7 +86,7 @@ export class ContextMenu extends Vue {
 		this.isVisible = false;
 	}
 
-	protected onBeforeSelect(item: Item): void {
+	protected onBeforeSelect(item: ContextMenuItem): void {
 		if (this._isSelectStart) {
 			return;
 		}
@@ -149,7 +99,7 @@ export class ContextMenu extends Vue {
 		});
 	}
 
-	protected onSelect(item: Item): void {
+	protected onSelect(item: ContextMenuItem): void {
 		if (this._isSelectStart === false) {
 			return;
 		}
@@ -164,22 +114,23 @@ export class ContextMenu extends Vue {
 		this._isSelectStart = false;
 	}
 
-	protected forEachChild(callback: (item: Item) => void) {
-		var forEach = (item: Item) => {
+	protected forEachChild(callback: (item: ContextMenuItem) => void) {
+		var forEach = (item: ContextMenuItem) => {
 			callback(item);
-			item.$children.forEach((item: Item) => {
+			item.$children.forEach((item: ContextMenuItem) => {
 				forEach(item);
 			});
 		};
-		this.$children.forEach((item: Item) => {
+		this.$children.forEach((item: ContextMenuItem) => {
 			forEach(item);
 		});
 	}
 }
 
-var  _Item = Item;
-type _Item = Item;
+var  _Model = Model;
+type _Model = Model;
+
 export module ContextMenu {
-	export var  Item = _Item;
-	export type Item = _Item;
+	export var  Model = _Model;
+	export type Model = _Model;
 }

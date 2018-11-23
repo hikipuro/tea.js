@@ -42,3 +42,5 @@ export class Rigidbody extends Vue {
 		this.enabled = component.enabled;
 	}
 }
+
+Tea.Rigidbody.editorView = Rigidbody;

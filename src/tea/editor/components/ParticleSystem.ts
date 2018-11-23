@@ -2,10 +2,14 @@ import Vue from "vue";
 import Component from "vue-class-component";
 import * as Tea from "../../Tea";
 import { Translator } from "../translate/Translator";
-import { EmissionModule } from "./particles/EmissionModule";
-import { ShapeModule } from "./particles/ShapeModule";
-import { ColorOverLifetimeModule } from "./particles/ColorOverLifetimeModule";
-import { VelocityOverLifetimeModule } from "./particles/VelocityOverLifetimeModule";
+import * as Modules from "./particles/Modules";
+
+const vueComponents = {
+	EmissionModule: Modules.EmissionModule,
+	ShapeModule: Modules.ShapeModule,
+	ColorOverLifetimeModule: Modules.ColorOverLifetimeModule,
+	VelocityOverLifetimeModule: Modules.VelocityOverLifetimeModule,
+};
 
 @Component({
 	template: `
@@ -29,6 +33,11 @@ import { VelocityOverLifetimeModule } from "./particles/VelocityOverLifetimeModu
 				class="number"
 				:value="startSpeed"
 				@update="onUpdateStartSpeed">Start Speed</InputNumber>
+			<InputNumber
+				ref="startSize"
+				class="number"
+				:value="startSize"
+				@update="onUpdateStartSize">Start Size</InputNumber>
 			<ColorPicker
 				ref="startColor"
 				:value="startColor"
@@ -45,10 +54,14 @@ import { VelocityOverLifetimeModule } from "./particles/VelocityOverLifetimeModu
 				:step="1"
 				:min="0"
 				@update="onUpdateMaxParticles">Max Particles</InputNumber>
-			<EmissionModule ref="emission"></EmissionModule>
-			<ShapeModule ref="shape"></ShapeModule>
-			<ColorOverLifetimeModule ref="colorOverLifetime"></ColorOverLifetimeModule>
-			<VelocityOverLifetimeModule ref="velocityOverLifetime"></VelocityOverLifetimeModule>
+			<EmissionModule
+				ref="emission"></EmissionModule>
+			<ShapeModule
+				ref="shape"></ShapeModule>
+			<ColorOverLifetimeModule
+				ref="colorOverLifetime"></ColorOverLifetimeModule>
+			<VelocityOverLifetimeModule
+				ref="velocityOverLifetime"></VelocityOverLifetimeModule>
 		</div>
 	`,
 	data: () => {
@@ -60,6 +73,7 @@ import { VelocityOverLifetimeModule } from "./particles/VelocityOverLifetimeModu
 			looping: false,
 			startLifetime: 0,
 			startSpeed: 0,
+			startSize: 0,
 			startColor: "",
 			gravityModifier: 0,
 			maxParticles: 0,
@@ -71,13 +85,7 @@ import { VelocityOverLifetimeModule } from "./particles/VelocityOverLifetimeModu
 			self._component.enabled = value;
 		}
 	},
-	components: {
-		EmissionModule: EmissionModule,
-		ShapeModule: ShapeModule,
-		ColorOverLifetimeModule: ColorOverLifetimeModule,
-		VelocityOverLifetimeModule: VelocityOverLifetimeModule
-
-	}
+	components: vueComponents
 })
 export class ParticleSystem extends Vue {
 	_component: Tea.ParticleSystem;
@@ -88,9 +96,26 @@ export class ParticleSystem extends Vue {
 	looping: boolean;
 	startLifetime: number;
 	startSpeed: number;
+	startSize: number;
 	startColor: string;
 	gravityModifier: number;
 	maxParticles: number;
+
+	get shapeModule(): Modules.ShapeModule {
+		return this.$refs.shape as Modules.ShapeModule;
+	}
+
+	get emissionModule(): Modules.EmissionModule {
+		return this.$refs.emission as Modules.EmissionModule;
+	}
+
+	get colorOverLifetimeModule(): Modules.ColorOverLifetimeModule {
+		return this.$refs.colorOverLifetime as Modules.ColorOverLifetimeModule;
+	}
+
+	get velocityOverLifetimeModule(): Modules.VelocityOverLifetimeModule {
+		return this.$refs.velocityOverLifetime as Modules.VelocityOverLifetimeModule;
+	}
 
 	protected created(): void {
 		var translator = Translator.getInstance();
@@ -108,23 +133,24 @@ export class ParticleSystem extends Vue {
 		this.looping = component.main.loop;
 		this.startLifetime = component.main.startLifetime.constant;
 		this.startSpeed = component.main.startSpeed.constant;
+		this.startSize = component.main.startSize.constant;
 		this.startColor = component.main.startColor.color.toCssColor();
 		this.gravityModifier = component.main.gravityModifier.constant;
 		this.maxParticles = component.main.maxParticles;
 
-		var shape = this.$refs.shape as ShapeModule;
+		var shape = this.shapeModule;
 		shape._module = component.shape;
 		shape.update();
 
-		var emission = this.$refs.emission as EmissionModule;
+		var emission = this.emissionModule;
 		emission._module = component.emission;
 		emission.update();
 
-		var colorOverLifetime = this.$refs.colorOverLifetime as ColorOverLifetimeModule;
+		var colorOverLifetime = this.colorOverLifetimeModule;
 		colorOverLifetime._module = component.colorOverLifetime;
 		colorOverLifetime.update();
 
-		var velocityOverLifetime = this.$refs.velocityOverLifetime as VelocityOverLifetimeModule;
+		var velocityOverLifetime = this.velocityOverLifetimeModule;
 		velocityOverLifetime._module = component.velocityOverLifetime;
 		velocityOverLifetime.update();
 	}
@@ -161,6 +187,14 @@ export class ParticleSystem extends Vue {
 		this.$emit("update", "startSpeed");
 	}
 
+	protected onUpdateStartSize(value: number): void {
+		this.startSize = value;
+		if (this._component) {
+			this._component.main.startSize.constant = value;
+		}
+		this.$emit("update", "startSize");
+	}
+
 	protected onUpdateStartColor(value: Tea.Color): void {
 		this.startColor = value.toCssColor();
 		if (this._component) {
@@ -185,3 +219,5 @@ export class ParticleSystem extends Vue {
 		this.$emit("update", "maxParticles");
 	}
 }
+
+Tea.ParticleSystem.editorView = ParticleSystem;

@@ -42,3 +42,5 @@ export class LineRenderer extends Vue {
 		this.enabled = component.enabled;
 	}
 }
+
+Tea.LineRenderer.editorView = LineRenderer;
