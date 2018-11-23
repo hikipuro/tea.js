@@ -2,6 +2,7 @@ import Vue from "vue";
 import Component from "vue-class-component";
 import * as Tea from "../../Tea";
 import { Editor } from "../Editor";
+import { EditorAssets } from "../EditorAssets";
 
 @Component({
 	template: `
@@ -17,7 +18,9 @@ import { Editor } from "../Editor";
 				@keydown="onKeyDown"
 				@click="onClick"
 				@change="onChange">
-				<div class="bg"></div>
+				<div
+					ref="bg"
+					class="bg"></div>
 				<div
 					ref="color"
 					class="color"
@@ -92,6 +95,11 @@ export class ColorPicker extends Vue {
 	hide(): void {
 		var window = this.$refs.window as Editor.Window;
 		window.hide();
+	}
+
+	protected mounted(): void {
+		var bg = this.$refs.bg as HTMLElement;
+		bg.style.backgroundImage = "url(" + EditorAssets.Images.Transparent + ")";
 	}
 
 	protected updated(): void {

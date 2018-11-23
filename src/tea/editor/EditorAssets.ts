@@ -1,5 +1,8 @@
 export module EditorAssets {
 	export module Images {
+		export const Transparent = "images/transparent.svg";
+		export const PickerUp = "images/picker-up.svg";
+		export const PickerDown = "images/picker-down.svg";
 		export const PlayButton = "images/play.svg";
 		export const StopButton = "images/stop.svg";
 		export const FolderOpen = "images/folder-open.svg";

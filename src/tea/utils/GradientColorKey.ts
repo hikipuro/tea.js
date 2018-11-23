@@ -5,7 +5,7 @@ export class GradientColorKey {
 	time: number;
 
 	constructor(color: Tea.Color, time: number) {
-		this.color = color;
+		this.color = color.clone();
 		this.time = time;
 	}
 
@@ -16,6 +16,10 @@ export class GradientColorKey {
 		return new GradientColorKey(
 			Tea.Color.fromArray(json.color), json.time
 		);
+	}
+
+	clone(): GradientColorKey {
+		return new GradientColorKey(this.color, this.time);
 	}
 	
 	toJSON(): Object {

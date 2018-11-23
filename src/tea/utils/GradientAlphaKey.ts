@@ -18,6 +18,10 @@ export class GradientAlphaKey {
 		);
 	}
 
+	clone(): GradientAlphaKey {
+		return new GradientAlphaKey(this.alpha, this.time);
+	}
+
 	toJSON(): Object {
 		var json = {
 			_type: "GradientAlphaKey",

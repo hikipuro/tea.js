@@ -80,11 +80,7 @@ export class ProjectView extends Vue {
 			}
 			var items: Array<TreeView.Model> = [];
 			Tea.Directory.getFiles(path, (files: Array<Tea.FileInfo>) => {
-				files = files.sort((a: Tea.FileInfo, b: Tea.FileInfo): number => {
-					var fileA = a.name.toLocaleLowerCase();
-					var fileB = b.name.toLocaleLowerCase();
-					return fileB > fileA ? 0 : 1;
-				});
+				files = this.sortFolders(files);
 				files.forEach(file => {
 					var item = this.createTreeViewItem(file);
 					if (item == null) {
@@ -226,6 +222,17 @@ export class ProjectView extends Vue {
 		return item;
 	}
 
+	protected sortFolders(files: Array<Tea.FileInfo>): Array<Tea.FileInfo> {
+		if (files == null || files.length <= 0) {
+			return files;
+		}
+		return files.sort((a: Tea.FileInfo, b: Tea.FileInfo): number => {
+			var fileA = a.name.toLocaleLowerCase();
+			var fileB = b.name.toLocaleLowerCase();
+			return fileB > fileA ? 0 : 1;
+		});
+	}
+
 	protected setChildFolderItems(item: Editor.TreeViewItem): void {
 		var i = item.model;
 		if (i == null || i.children.length > 0) {
@@ -233,6 +240,7 @@ export class ProjectView extends Vue {
 		}
 		var items: Array<TreeView.Model> = [];
 		var files = Tea.Directory.getFilesSync(item.tag);
+		files = this.sortFolders(files);
 		files.forEach(file => {
 			var item = this.createTreeViewItem(file);
 			if (item == null) {
@@ -464,6 +472,11 @@ export class ProjectView extends Vue {
 
 		switch (item.id) {
 			case "Open":
+				var stat = fs.statSync(path);
+				if (stat.isDirectory()) {
+					this.selectFolder(path);
+					break;
+				}
 				Electron.shell.openItem(path);
 				console.log("Open", path);
 				break;

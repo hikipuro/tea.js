@@ -1,5 +1,7 @@
 #{$parent} {
-	div.ColorPicker {
+	$width: 200px;
+
+	div.Gradient {
 		display: inline-flex;
 		box-sizing: border-box;
 		align-items: center;
@@ -37,35 +39,6 @@
 				width: 100%;
 				height: 100%;
 				border-radius: 0.1em;
-				/*
-				$gridColor1: #fff;
-				$gridColor2: #eee;
-				$gridSize: 8px;
-				position: absolute;
-				width: 100%;
-				height: 100%;
-				background-color: $gridColor1;
-				background-image:
-					linear-gradient(
-						45deg,
-						$gridColor2 25%,
-						$gridColor2 25%,
-						transparent 25%,
-						transparent 75%,
-						$gridColor2 75%,
-						$gridColor2 75%),
-					linear-gradient(
-						-135deg,
-						$gridColor2 25%,
-						$gridColor2 25%,
-						transparent 25%,
-						transparent 75%,
-						$gridColor2 75%,
-						$gridColor2 75%);
-				background-size: $gridSize $gridSize;
-				background-position: 0 0, $gridSize / 2 $gridSize / 2;
-				border-radius: 0.2em;
-				//*/
 			}
 		}
 
@@ -74,11 +47,39 @@
 			padding: 0.2em;
 			min-width: 150px;
 			max-width: 200px;
-			//height: 200px;
+			min-height: 130px;
 
 			.title {
 				width: 15%;
 			}
 		}
+	}
+
+	div.GradientImage {
+		width: $width;
+		height: 30px;
+		background-color: white;
+
+		> canvas {
+			width: 100%;
+			height: 100%;
+		}
+	}
+
+	div.GradientAnchor {
+		position: absolute;
+		line-height: 1;
+		//border: thin solid;
+
+		> img {
+			position: relative;
+			left: -50%;
+		}
+	}
+
+	div.GradientTimePicker {
+		width: $width;
+		height: 1.5em;
+		//background-color: blue;
 	}
 }

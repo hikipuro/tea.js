@@ -10,7 +10,7 @@ import Component from "vue-class-component";
 				left: x + 'px',
 				top: y + 'px'
 			}"
-			@mousedown.capture="onMouseDown">
+			@mousedown="onMouseDown">
 			<slot></slot>
 		</div>
 	`,
@@ -55,6 +55,7 @@ export class Window extends Vue {
 		document.removeEventListener(
 			"mousedown", this.onMouseDownScreen
 		);
+		this.$emit("hide", this);
 	}
 
 	protected fitPosition(): void {

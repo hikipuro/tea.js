@@ -43,6 +43,18 @@ export class Gradient {
 		this.sortColorKeys();
 	}
 
+	sortAlphaKeys(): void {
+		this.alphaKeys.sort((a: Tea.GradientAlphaKey, b: Tea.GradientAlphaKey) => {
+			return a.time - b.time;
+		});
+	}
+
+	sortColorKeys(): void {
+		this.colorKeys.sort((a: Tea.GradientColorKey, b: Tea.GradientColorKey) => {
+			return a.time - b.time;
+		});
+	}
+
 	static fromJSON(app: Tea.App, json: any): Gradient {
 		if (json == null || json._type !== "Gradient") {
 			return null;
@@ -121,29 +133,23 @@ export class Gradient {
 		}
 	}
 
-	protected sortAlphaKeys(): void {
-		this.alphaKeys.sort((a, b) => {
-			return a.time - b.time;
-		});
-	}
-
-	protected sortColorKeys(): void {
-		this.colorKeys.sort((a, b) => {
-			return a.time - b.time;
-		});
-	}
-
 	protected findAlphaKeys(time: number): Array<Tea.GradientAlphaKey> {
 		var key0: Tea.GradientAlphaKey;
 		var key1: Tea.GradientAlphaKey;
-		var length = this.alphaKeys.length;
+		var alphaKeys = this.alphaKeys;
+		var length = alphaKeys.length;
 		for (var i = 0; i < length; i++) {
-			var key = this.alphaKeys[i];
+			var key = alphaKeys[i];
 			if (time <= key.time) {
-				key0 = this.alphaKeys[i - 1];
-				key1 = this.alphaKeys[i];
+				key0 = alphaKeys[i - 1];
+				key1 = alphaKeys[i];
 				break;
 			}
+		}
+		if (key0 == null && key1 == null) {
+			var lastKey = alphaKeys[length - 1];
+			key0 = lastKey;
+			key1 = lastKey;
 		}
 		return [key0, key1];
 	}
@@ -151,14 +157,20 @@ export class Gradient {
 	protected findColorKeys(time: number): Array<Tea.GradientColorKey> {
 		var key0: Tea.GradientColorKey;
 		var key1: Tea.GradientColorKey;
-		var length = this.colorKeys.length;
+		var colorKeys = this.colorKeys;
+		var length = colorKeys.length;
 		for (var i = 0; i < length; i++) {
-			var key = this.colorKeys[i];
+			var key = colorKeys[i];
 			if (time <= key.time) {
-				key0 = this.colorKeys[i - 1];
-				key1 = this.colorKeys[i];
+				key0 = colorKeys[i - 1];
+				key1 = colorKeys[i];
 				break;
 			}
+		}
+		if (key0 == null && key1 == null) {
+			var lastKey = colorKeys[length - 1];
+			key0 = lastKey;
+			key1 = lastKey;
 		}
 		return [key0, key1];
 	}
