@@ -53,7 +53,7 @@ export class ColorOverLifetimeModule extends Vue {
 		this.enabled = module.enabled;
 		var color = this.$refs.color as Gradient;
 		color._gradient = module.color.gradient;
-		color.$forceUpdate();
+		color.updateImage();
 	}
 
 	protected onUpdateEnabled(value: boolean): void {

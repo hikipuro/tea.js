@@ -68,9 +68,11 @@ export class GradientImage extends Vue {
 	}
 })
 export class GradientKey extends Vue {
+	static readonly RemoveRange = 20;
 	model: KeyModel;
 	icon: string;
 	protected _mouseDownX: number = 0;
+	protected _mouseDownY: number = 0;
 	protected _mouseDownTime: number = 0;
 
 	protected mounted(): void {
@@ -92,9 +94,25 @@ export class GradientKey extends Vue {
 		return rect.width;
 	}
 
+	protected getItemCount(): number {
+		var parent = this.$parent as GradientKeys;
+		return parent.getCount();
+	}
+
+	protected removeMouseEvents(): void {
+		document.removeEventListener(
+			"mousemove", this.onMouseMoveScreen
+		);
+		document.removeEventListener(
+			"mouseup", this.onMouseUpScreen
+		);
+	}
+
 	protected onMouseDownImage(e: MouseEvent): void {
 		//console.log("onMouseDownImage");
+		e.stopPropagation();
 		this._mouseDownX = e.screenX;
+		this._mouseDownY = e.screenY;
 		this._mouseDownTime = this.model.time;
 		document.addEventListener(
 			"mousemove", this.onMouseMoveScreen
@@ -106,6 +124,14 @@ export class GradientKey extends Vue {
 	}
 
 	protected onMouseMoveScreen(e: MouseEvent): void {
+		if (this.getItemCount() > 2) {
+			var offsetY = e.screenY - this._mouseDownY;
+			if (Math.abs(offsetY) > GradientKey.RemoveRange) {
+				this.removeMouseEvents();
+				this.$emit("remove", this);
+				return;
+			}
+		}
 		var offsetX = e.screenX - this._mouseDownX;
 		offsetX *= window.innerWidth / window.outerWidth;
 		var offsetTime = offsetX / this.getParentWidth();
@@ -116,12 +142,7 @@ export class GradientKey extends Vue {
 
 	protected onMouseUpScreen(e: MouseEvent): void {
 		//console.log("onMouseUpScreen");
-		document.removeEventListener(
-			"mousemove", this.onMouseMoveScreen
-		);
-		document.removeEventListener(
-			"mouseup", this.onMouseUpScreen
-		);
+		this.removeMouseEvents();
 	}
 }
 
@@ -129,14 +150,16 @@ export class GradientKey extends Vue {
 	template: `
 		<div
 			ref="container"
-			class="GradientKeys">
+			class="GradientKeys"
+			@mousedown="onMouseDown">
 			<GradientKey
 				v-for="(item, index) in items"
 				ref="items"
 				:key="index"
 				:model="item"
 				@select="onSelect"
-				@update="onUpdate">
+				@update="onUpdate"
+				@remove="onRemove">
 			</GradientKey>
 		</div>
 	`,
@@ -156,19 +179,27 @@ export class GradientKey extends Vue {
 	}
 })
 export class GradientKeys extends Vue {
+	static readonly MaxKeys = 10;
 	items: Array<KeyModel>;
 	mode: string;
 	_alphaKeys: Array<Tea.GradientAlphaKey>;
 	_colorKeys: Array<Tea.GradientColorKey>;
 
 	setGradient(gradient: Tea.Gradient): void {
-		if (this.mode === "alpha") {
-			this._alphaKeys = gradient.alphaKeys;
-			this.items = this.createAlphaKeyItems(gradient);
-			return;
-		}
-		this._colorKeys = gradient.colorKeys;
-		this.items = this.createColorKeyItems(gradient);
+		this.items = null;
+		this.$nextTick(() => {
+			if (this.mode === "alpha") {
+				this._alphaKeys = gradient.alphaKeys;
+				this.items = this.createAlphaKeyItems(gradient);
+				return;
+			}
+			this._colorKeys = gradient.colorKeys;
+			this.items = this.createColorKeyItems(gradient);
+		});
+	}
+
+	getCount(): number {
+		return this.items.length;
 	}
 
 	protected createAlphaKeyItems(gradient: Tea.Gradient): Array<KeyModel> {
@@ -195,6 +226,55 @@ export class GradientKeys extends Vue {
 		return items;
 	}
 
+	protected findItem(model: KeyModel): GradientKey {
+		var items = this.$refs.items as Array<GradientKey>;
+		return items.find((key: GradientKey) => {
+			return key.model.index === model.index;
+		});
+	}
+
+	protected onMouseDown(e: MouseEvent): void {
+		//console.log("onMouseDown");
+		if (this.items.length >= GradientKeys.MaxKeys) {
+			return;
+		}
+		var offsetX = e.offsetX;
+		offsetX *= window.innerWidth / window.outerWidth;
+		var time = offsetX / this.$el.clientWidth;
+		time = Tea.Mathf.clamp01(time);
+		
+		var isAlphaKey = false;
+		if (this.mode === "alpha") {
+			isAlphaKey = true;
+		}
+		var length = this.items.length;
+		var model = {
+			index: length,
+			time: time,
+			isAlphaKey: isAlphaKey
+		};
+		this.items.push(model);
+
+		var keys: Array<any> = this._colorKeys;
+		if (isAlphaKey) {
+			keys = this._alphaKeys;
+			keys.push(new Tea.GradientAlphaKey(
+				1.0, time
+			));
+		} else {
+			keys.push(new Tea.GradientColorKey(
+				Tea.Color.white.clone(), time
+			));
+		}
+		this.$nextTick(() => {
+			var item = this.findItem(model);
+			item.$emit("select", item);
+			this.sortKeys(keys, model);
+			keys[model.index].time = time;
+			this.$emit("update", model.index, time);
+		})
+	}
+
 	protected onSelect(key: GradientKey): void {
 		this.$emit("select", key);
 	}
@@ -217,7 +297,27 @@ export class GradientKeys extends Vue {
 		this.$emit("update", model.index, time);
 	}
 
+	protected onRemove(key: GradientKey): void {
+		var index = key.model.index;
+		//console.log("onRemove", index);
+		if (this.mode === "alpha") {
+			this._alphaKeys.splice(index, 1);
+		} else {
+			this._colorKeys.splice(index, 1);
+		}
+		this.$emit("redraw", null);
+	}
+
 	protected sortKeys(keys: Array<any>, model: KeyModel): void {
+		for (var i = 0; i < 100; i++) {
+			var sorted = this._sortKeys(keys, model);
+			if (sorted === false) {
+				break;
+			}
+		}
+	}
+
+	protected _sortKeys(keys: Array<any>, model: KeyModel): boolean {
 		var items = this.items;
 		var index = model.index;
 		var lastIndex = items.length - 1;
@@ -226,13 +326,14 @@ export class GradientKeys extends Vue {
 			var prev = items.find((item: KeyModel) => {
 				return item.index === prevIndex;
 			});
-			if (model.time < prev.time) {
+			if (prev && model.time < prev.time) {
 				var key = keys[index];
 				keys[index] = keys[prevIndex];
 				keys[prevIndex] = key;
 				var i = model.index;
 				model.index = prev.index;
 				prev.index = i;
+				return true;
 			}
 		}
 		if (index !== lastIndex) {
@@ -240,15 +341,17 @@ export class GradientKeys extends Vue {
 			var next = items.find((item: KeyModel) => {
 				return item.index === nextIndex;
 			});
-			if (model.time > next.time) {
+			if (next && model.time > next.time) {
 				var key = keys[index];
 				keys[index] = keys[nextIndex];
 				keys[nextIndex] = key;
 				var i = model.index;
 				model.index = next.index;
 				next.index = i;
+				return true;
 			}
 		}
+		return false;
 	}
 }
 
@@ -281,13 +384,15 @@ export class GradientKeys extends Vue {
 						ref="alphaKeys"
 						mode="alpha"
 						@select="onSelectAlphaKey"
-						@update="onUpdateAlphaKey"></GradientKeys>
+						@update="onUpdateAlphaKey"
+						@redraw="onRequestRedrawKeys"></GradientKeys>
 					<GradientImage
 						ref="image"></GradientImage>
 					<GradientKeys
 						ref="colorKeys"
 						@select="onSelectColorKey"
-						@update="onUpdateColorKey"></GradientKeys>
+						@update="onUpdateColorKey"
+						@redraw="onRequestRedrawKeys"></GradientKeys>
 				</div>
 				<template
 					v-if="mode === 'color'">
@@ -357,15 +462,8 @@ export class Gradient extends Vue {
 		window.move(x, y);
 		window.show(true);
 		window.$nextTick(() => {
-			var gradient = this._gradient;
-			if (gradient) {
-				var image = this.$refs.image as GradientImage;
-				image.draw(gradient);
-				var alphaKeys = this.$refs.alphaKeys as GradientKeys;
-				alphaKeys.setGradient(gradient);
-				var colorKeys = this.$refs.colorKeys as GradientKeys;
-				colorKeys.setGradient(gradient);
-			}
+			this.updateImage();
+			this.setKeys();
 		});
 	}
 
@@ -374,17 +472,32 @@ export class Gradient extends Vue {
 		window.hide();
 	}
 
+	updateImage(): void {
+		var gradient = this._gradient;
+		if (gradient == null) {
+			return;
+		}
+		var image = this.$refs.image as GradientImage;
+		if (image) {
+			image.draw(gradient);
+		}
+		var color = this.$refs.color as GradientImage;
+		if (color) {
+			color.draw(gradient);
+		}
+	}
+
 	protected mounted(): void {
 		var bg = this.$refs.bg as HTMLElement;
 		bg.style.backgroundImage = "url(" + EditorAssets.Images.Transparent + ")";
 	}
 
 	protected updated(): void {
-		var gradient = this._gradient;
+		/*var gradient = this._gradient;
 		if (gradient) {
 			var color = this.$refs.color as GradientImage;
 			color.draw(gradient);
-		}
+		}*/
 		/*
 		//console.log("updated", this.value);
 		var color = Tea.Color.fromCssColor(this.value);
@@ -396,14 +509,19 @@ export class Gradient extends Vue {
 		*/
 	}
 
-	protected emitUpdate(): void {
-		this.$emit("update", this._gradient);
+	protected setKeys(): void {
+		var gradient = this._gradient;
+		if (gradient == null) {
+			return;
+		}
+		var alphaKeys = this.$refs.alphaKeys as GradientKeys;
+		alphaKeys.setGradient(gradient);
+		var colorKeys = this.$refs.colorKeys as GradientKeys;
+		colorKeys.setGradient(gradient);
 	}
 
-	protected updateImage(): void {
-		var image = this.$refs.image as GradientImage;
-		var gradient = this._gradient;
-		image.draw(gradient);
+	protected emitUpdate(): void {
+		this.$emit("update", this._gradient);
 	}
 
 	protected onKeyDown(e: KeyboardEvent): void {
@@ -432,8 +550,21 @@ export class Gradient extends Vue {
 		this.mode = "none";
 	}
 
+	protected onRequestRedrawKeys(): void {
+		this.mode = "none";
+		this._alphaKey = null;
+		this._colorKey = null;
+		this.updateImage();
+		this.setKeys();
+	}
+
 	protected onSelectAlphaKey(key: GradientKey): void {
 		//console.log("onSelectAlphaKey");
+		if (key == null) {
+			this.mode = "none";
+			this._alphaKey = null;
+			return;
+		}
 		this.mode = "alpha";
 		var index = key.model.index;
 		var alphaKey = this._gradient.alphaKeys[index];
@@ -445,6 +576,11 @@ export class Gradient extends Vue {
 	}
 
 	protected onSelectColorKey(key: GradientKey): void {
+		if (key == null) {
+			this.mode = "none";
+			this._colorKey = null;
+			return;
+		}
 		this.mode = "color";
 		var index = key.model.index;
 		var colorKey = this._gradient.colorKeys[index];
