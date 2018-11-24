@@ -1,16 +1,17 @@
 import * as Tea from "../../Tea";
+import { MinMaxCurve } from "../MinMaxCurve";
 
-export class PSSizeBySpeedModule {
+export class SizeBySpeedModule {
 	enabled: boolean;
 	range: Tea.Vector2;
 	separateAxes: boolean;
-	size: Tea.ParticleSystem.MinMaxCurve;
+	size: MinMaxCurve;
 	sizeMultiplier: number;
-	x: Tea.ParticleSystem.MinMaxCurve;
+	x: MinMaxCurve;
 	xMultiplier: number;
-	y: Tea.ParticleSystem.MinMaxCurve;
+	y: MinMaxCurve;
 	yMultiplier: number;
-	z: Tea.ParticleSystem.MinMaxCurve;
+	z: MinMaxCurve;
 	zMultiplier: number;
 
 	constructor() {

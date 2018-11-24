@@ -1,13 +1,14 @@
 import * as Tea from "../../Tea";
+import { MinMaxCurve } from "../MinMaxCurve";
 
-export class PSLightsModule {
+export class LightsModule {
 	enabled: boolean;
 	alphaAffectsIntensity: boolean;
-	intensity: Tea.ParticleSystem.MinMaxCurve;
+	intensity: MinMaxCurve;
 	intensityMultiplier: number;
 	light: Tea.Light;
 	maxLights: number;
-	range: Tea.ParticleSystem.MinMaxCurve;
+	range: MinMaxCurve;
 	rangeMultiplier: number;
 	ratio: number;
 	sizeAffectsRange: boolean;

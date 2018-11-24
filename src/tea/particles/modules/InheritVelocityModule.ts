@@ -1,8 +1,9 @@
 import * as Tea from "../../Tea";
+import { MinMaxCurve } from "../MinMaxCurve";
 
-export class PSInheritVelocityModule {
+export class InheritVelocityModule {
 	enabled: boolean;
-	curve: Tea.ParticleSystem.MinMaxCurve;
+	curve: MinMaxCurve;
 	curveMultiplier: number;
 	mode: Tea.ParticleSystemInheritVelocityMode;
 

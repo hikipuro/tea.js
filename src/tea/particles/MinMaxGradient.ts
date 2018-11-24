@@ -1,6 +1,6 @@
 import * as Tea from "../Tea";
 
-export class PSMinMaxGradient {
+export class MinMaxGradient {
 	color: Tea.Color;
 	colorMax: Tea.Color;
 	colorMin: Tea.Color;
@@ -65,7 +65,7 @@ export class PSMinMaxGradient {
 		return Tea.Color.white.clone();
 	}
 
-	static fromJSON(app: Tea.App, json: any): PSMinMaxGradient {
+	static fromJSON(app: Tea.App, json: any): MinMaxGradient {
 		if (json == null || json._type !== "MinMaxGradient") {
 			return null;
 		}
@@ -73,29 +73,29 @@ export class PSMinMaxGradient {
 		var mode = Tea.ParticleSystemGradientMode[json.mode as string];
 		switch (mode) {
 			case Tea.ParticleSystemGradientMode.Color:
-				minMaxGradient = new PSMinMaxGradient(
+				minMaxGradient = new MinMaxGradient(
 					Tea.Color.fromArray(json.color)
 				);
 				break;
 			case Tea.ParticleSystemGradientMode.TwoColors:
-				minMaxGradient = new PSMinMaxGradient(
+				minMaxGradient = new MinMaxGradient(
 					Tea.Color.fromArray(json.colorMin),
 					Tea.Color.fromArray(json.colorMax)
 				);
 				break;
 			case Tea.ParticleSystemGradientMode.Gradient:
-				minMaxGradient = new PSMinMaxGradient(
+				minMaxGradient = new MinMaxGradient(
 					Tea.Gradient.fromJSON(app, json.gradient)
 				);
 				break;
 			case Tea.ParticleSystemGradientMode.TwoGradients:
-				minMaxGradient = new PSMinMaxGradient(
+				minMaxGradient = new MinMaxGradient(
 					Tea.Gradient.fromJSON(app, json.gradientMin),
 					Tea.Gradient.fromJSON(app, json.gradientMax)
 				);
 				break;
 			case Tea.ParticleSystemGradientMode.RandomColor:
-				minMaxGradient = new PSMinMaxGradient(
+				minMaxGradient = new MinMaxGradient(
 					new Tea.Color()
 				);
 				minMaxGradient.mode = Tea.ParticleSystemGradientMode.RandomColor;

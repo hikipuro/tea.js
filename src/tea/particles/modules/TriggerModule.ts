@@ -1,6 +1,6 @@
 import * as Tea from "../../Tea";
 
-export class PSTriggerModule {
+export class TriggerModule {
 	enabled: boolean;
 	enter: Tea.ParticleSystemOverlapAction;
 	exit: Tea.ParticleSystemOverlapAction;

@@ -1,9 +1,6 @@
-import { PSMinMaxCurve } from "./MinMaxCurve";
+import { MinMaxCurve } from "./MinMaxCurve";
 
-type MinMaxCurve = PSMinMaxCurve;
-var MinMaxCurve = PSMinMaxCurve;
-
-export class PSBurst {
+export class Burst {
 	time: number;
 	minCount: number;
 	maxCount: number;

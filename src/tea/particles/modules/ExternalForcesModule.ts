@@ -1,4 +1,4 @@
-export class PSExternalForcesModule {
+export class ExternalForcesModule {
 	enabled: boolean;
 	multiplier: number;
 

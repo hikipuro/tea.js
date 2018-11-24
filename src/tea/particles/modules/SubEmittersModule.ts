@@ -1,4 +1,4 @@
-export class PSSubEmittersModule {
+export class SubEmittersModule {
 	enabled: boolean;
 
 	constructor() {

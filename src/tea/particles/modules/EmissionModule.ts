@@ -1,13 +1,8 @@
 import * as Tea from "../../Tea";
-import { PSMinMaxCurve } from "../MinMaxCurve";
-import { PSBurst } from "../Burst";
+import { Burst } from "../Burst";
+import { MinMaxCurve } from "../MinMaxCurve";
 
-type MinMaxCurve = PSMinMaxCurve;
-var  MinMaxCurve = PSMinMaxCurve;
-type Burst = PSBurst;
-var  Burst = PSBurst;
-
-export class PSEmissionModule {
+export class EmissionModule {
 	enabled: boolean;
 	rateOverDistance: MinMaxCurve;
 	rateOverTime: MinMaxCurve;
@@ -77,11 +72,11 @@ export class PSEmissionModule {
 	//setBursts(bursts: Array<Burst>, size?: number): void {
 	//}
 
-	static fromJSON(app: Tea.App, json: any): PSEmissionModule {
+	static fromJSON(app: Tea.App, json: any): EmissionModule {
 		if (json == null || json._type !== "EmissionModule") {
 			return null;
 		}
-		var module = new PSEmissionModule();
+		var module = new EmissionModule();
 		module.enabled = json.enabled;
 		module.rateOverDistance = MinMaxCurve.fromJSON(app, json.rateOverDistance);
 		module.rateOverTime = MinMaxCurve.fromJSON(app, json.rateOverTime);

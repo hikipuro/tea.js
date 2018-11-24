@@ -1,10 +1,7 @@
 import * as Tea from "../../Tea";
-import { PSMinMaxGradient } from "../MinMaxGradient";
+import { MinMaxGradient } from "../MinMaxGradient";
 
-type MinMaxGradient = PSMinMaxGradient;
-var  MinMaxGradient = PSMinMaxGradient;
-
-export class PSColorBySpeedModule {
+export class ColorBySpeedModule {
 	enabled: boolean;
 	color: MinMaxGradient;
 	range: Tea.Vector2;

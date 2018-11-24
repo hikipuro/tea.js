@@ -1,6 +1,6 @@
 import * as Tea from "../Tea";
 
-export class PSMinMaxCurve {
+export class MinMaxCurve {
 	constant: number;
 	constantMax: number;
 	constantMin: number;
@@ -63,29 +63,29 @@ export class PSMinMaxCurve {
 		}
 	}
 
-	static fromJSON(app: Tea.App, json: any): PSMinMaxCurve {
+	static fromJSON(app: Tea.App, json: any): MinMaxCurve {
 		if (json == null || json._type !== "MinMaxCurve") {
 			return null;
 		}
-		var minMaxCurve: PSMinMaxCurve = null;
+		var minMaxCurve: MinMaxCurve = null;
 		var mode = Tea.ParticleSystemCurveMode[json.mode as string];
 		switch (mode) {
 			case Tea.ParticleSystemCurveMode.Constant:
-				minMaxCurve = new PSMinMaxCurve(json.constant);
+				minMaxCurve = new MinMaxCurve(json.constant);
 				minMaxCurve.curveMultiplier = json.curveMultiplier;
 				break;
 			case Tea.ParticleSystemCurveMode.TwoConstants:
-				minMaxCurve = new PSMinMaxCurve(json.curveMin, json.curveMax);
+				minMaxCurve = new MinMaxCurve(json.curveMin, json.curveMax);
 				minMaxCurve.curveMultiplier = json.curveMultiplier;
 				break;
 			case Tea.ParticleSystemCurveMode.Curve:
 				var curve = Tea.AnimationCurve.fromJSON(app, json.curve);
-				minMaxCurve = new PSMinMaxCurve(json.curveMultiplier, curve);
+				minMaxCurve = new MinMaxCurve(json.curveMultiplier, curve);
 				break;
 			case Tea.ParticleSystemCurveMode.TwoCurves:
 				var curveMin = Tea.AnimationCurve.fromJSON(app, json.curveMin);
 				var curveMax = Tea.AnimationCurve.fromJSON(app, json.curveMax);
-				minMaxCurve = new PSMinMaxCurve(json.curveMultiplier, curveMin, curveMax);
+				minMaxCurve = new MinMaxCurve(json.curveMultiplier, curveMin, curveMax);
 				break;
 		}
 		return minMaxCurve;

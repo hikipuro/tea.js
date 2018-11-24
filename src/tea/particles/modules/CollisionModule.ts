@@ -1,8 +1,9 @@
 import * as Tea from "../../Tea";
+import { MinMaxCurve } from "../MinMaxCurve";
 
-export class PSCollisionModule {
+export class CollisionModule {
 	enabled: boolean;
-	bounce: Tea.ParticleSystem.MinMaxCurve;
+	bounce: MinMaxCurve;
 	bounceMultiplier: number;
 	colliderForce: number;
 

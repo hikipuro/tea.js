@@ -218,7 +218,9 @@ export class GradientTimePicker extends Vue {
 				@keydown="onKeyDown"
 				@click="onClick"
 				@change="onChange">
-				<div class="bg"></div>
+				<div
+					ref="bg"
+					class="bg"></div>
 				<div
 					ref="color"
 					class="color"

@@ -1,17 +1,18 @@
 import * as Tea from "../../Tea";
+import { MinMaxCurve } from "../MinMaxCurve";
 
-export class PSLimitVelocityOverLifetimeModule {
+export class LimitVelocityOverLifetimeModule {
 	enabled: boolean;
 	dampen: number;
-	drag: Tea.ParticleSystem.MinMaxCurve;
+	drag: MinMaxCurve;
 	dragMultiplier: number;
-	limit: Tea.ParticleSystem.MinMaxCurve;
+	limit: MinMaxCurve;
 	limitMultiplier: number;
-	limitX: Tea.ParticleSystem.MinMaxCurve;
+	limitX: MinMaxCurve;
 	limitXMultiplier: number;
-	limitY: Tea.ParticleSystem.MinMaxCurve;
+	limitY: MinMaxCurve;
 	limitYMultiplier: number;
-	limitZ: Tea.ParticleSystem.MinMaxCurve;
+	limitZ: MinMaxCurve;
 	limitZMultiplier: number;
 	multiplyDragByParticleSize: boolean;
 	multiplyDragByParticleVelocity: boolean;

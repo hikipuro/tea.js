@@ -1,4 +1,4 @@
-export class PSTextureSheetAnimationModule {
+export class TextureSheetAnimationModule {
 	enabled: boolean;
 
 	constructor() {

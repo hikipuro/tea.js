@@ -1,14 +1,15 @@
 import * as Tea from "../../Tea";
+import { MinMaxCurve } from "../MinMaxCurve";
 
-export class PSForceOverLifetimeModule {
+export class ForceOverLifetimeModule {
 	enabled: boolean;
 	randomized: boolean;
 	space: Tea.ParticleSystemSimulationSpace;
-	x: Tea.ParticleSystem.MinMaxCurve;
+	x: MinMaxCurve;
 	xMultiplier: number;
-	y: Tea.ParticleSystem.MinMaxCurve;
+	y: MinMaxCurve;
 	yMultiplier: number;
-	z: Tea.ParticleSystem.MinMaxCurve;
+	z: MinMaxCurve;
 	zMultiplier: number;
 
 	constructor() {

@@ -1,12 +1,13 @@
 import * as Tea from "../../Tea";
+import { MinMaxCurve } from "../MinMaxCurve";
 
-export class PSShapeModule {
+export class ShapeModule {
 	enabled: boolean;
 	alignToDirection: boolean;
 	angle: number;
 	arc: number;
 	arcMode: Tea.ParticleSystemShapeMultiModeValue;
-	arcSpeed: Tea.ParticleSystem.MinMaxCurve;
+	arcSpeed: MinMaxCurve;
 	arcSpread: number;
 	boxThickness: Tea.Vector3;
 	donutRadius: number;
@@ -19,7 +20,7 @@ export class PSShapeModule {
 	position: Tea.Vector3;
 	radius: number;
 	radiusMode: Tea.ParticleSystemShapeMultiModeValue;
-	radiusSpeed: Tea.ParticleSystem.MinMaxCurve;
+	radiusSpeed: MinMaxCurve;
 	radiusSpread: number;
 	radiusThickness: number;
 	randomDirectionAmount: number;
@@ -45,7 +46,7 @@ export class PSShapeModule {
 		this.angle = 25;
 		this.arc = 360.0;
 		this.arcMode = Tea.ParticleSystemShapeMultiModeValue.Random;
-		this.arcSpeed = new Tea.ParticleSystem.MinMaxCurve(1.0);
+		this.arcSpeed = new MinMaxCurve(1.0);
 		this.arcSpread = 0.0;
 		this.boxThickness = new Tea.Vector3();
 		this.donutRadius = 0.0;
@@ -58,7 +59,7 @@ export class PSShapeModule {
 		this.position = new Tea.Vector3();
 		this.radius = 1.0;
 		this.radiusMode = Tea.ParticleSystemShapeMultiModeValue.Loop;
-		this.radiusSpeed = new Tea.ParticleSystem.MinMaxCurve(1.0);
+		this.radiusSpeed = new MinMaxCurve(1.0);
 		this.radiusSpread = 0.0;
 		this.radiusThickness = 1.0;
 		this.randomDirectionAmount = 0.0;
@@ -140,17 +141,17 @@ export class PSShapeModule {
 		}
 	}
 
-	static fromJSON(app: Tea.App, json: any): PSShapeModule {
+	static fromJSON(app: Tea.App, json: any): ShapeModule {
 		if (json == null || json._type !== "ShapeModule") {
 			return null;
 		}
-		var module = new PSShapeModule();
+		var module = new ShapeModule();
 		module.enabled = json.enabled;
 		module.alignToDirection = json.alignToDirection;
 		module.angle = json.angle;
 		module.arc = json.arc;
 		module.arcMode = Tea.ParticleSystemShapeMultiModeValue[json.arcMode as string];
-		module.arcSpeed = Tea.ParticleSystem.MinMaxCurve.fromJSON(app, json.arcSpeed);
+		module.arcSpeed = MinMaxCurve.fromJSON(app, json.arcSpeed);
 		module.arcSpread = json.arcSpread;
 		module.boxThickness = Tea.Vector3.fromArray(json.boxThickness);
 		module.donutRadius = json.donutRadius;
@@ -163,7 +164,7 @@ export class PSShapeModule {
 		module.position = Tea.Vector3.fromArray(json.position);
 		module.radius = json.radius;
 		module.radiusMode = Tea.ParticleSystemShapeMultiModeValue[json.radiusMode as string];
-		module.radiusSpeed = Tea.ParticleSystem.MinMaxCurve.fromJSON(app, json.radiusSpeed);
+		module.radiusSpeed = MinMaxCurve.fromJSON(app, json.radiusSpeed);
 		module.radiusThickness = json.radiusThickness;
 		module.randomDirectionAmount = json.randomDirectionAmount;
 		module.randomPositionAmount = json.randomPositionAmount;

@@ -1,10 +1,7 @@
 import * as Tea from "../../Tea";
-import { PSMinMaxGradient } from "../MinMaxGradient";
+import { MinMaxGradient } from "../MinMaxGradient";
 
-type MinMaxGradient = PSMinMaxGradient;
-var  MinMaxGradient = PSMinMaxGradient;
-
-export class PSColorOverLifetimeModule {
+export class ColorOverLifetimeModule {
 	enabled: boolean;
 	color: MinMaxGradient;
 
@@ -14,11 +11,11 @@ export class PSColorOverLifetimeModule {
 		this.color = new MinMaxGradient(gradient);
 	}
 
-	static fromJSON(app: Tea.App, json: any): PSColorOverLifetimeModule {
+	static fromJSON(app: Tea.App, json: any): ColorOverLifetimeModule {
 		if (json == null || json._type !== "ColorOverLifetimeModule") {
 			return null;
 		}
-		var module = new PSColorOverLifetimeModule();
+		var module = new ColorOverLifetimeModule();
 		module.enabled = json.enabled;
 		module.color = MinMaxGradient.fromJSON(app, json.color);
 		return module;

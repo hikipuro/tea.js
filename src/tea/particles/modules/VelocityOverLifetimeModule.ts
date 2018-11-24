@@ -1,35 +1,36 @@
 import * as Tea from "../../Tea";
+import { MinMaxCurve } from "../MinMaxCurve";
 
-export class PSVelocityOverLifetimeModule {
+export class VelocityOverLifetimeModule {
 	enabled: boolean;
-	orbitalOffsetX: Tea.ParticleSystem.MinMaxCurve;
+	orbitalOffsetX: MinMaxCurve;
 	orbitalOffsetXMultiplier: number;
-	orbitalOffsetY: Tea.ParticleSystem.MinMaxCurve;
+	orbitalOffsetY: MinMaxCurve;
 	orbitalOffsetYMultiplier: number;
-	orbitalOffsetZ: Tea.ParticleSystem.MinMaxCurve;
+	orbitalOffsetZ: MinMaxCurve;
 	orbitalOffsetZMultiplier: number;
-	orbitalX: Tea.ParticleSystem.MinMaxCurve;
+	orbitalX: MinMaxCurve;
 	orbitalXMultiplier: number;
-	orbitalY: Tea.ParticleSystem.MinMaxCurve;
+	orbitalY: MinMaxCurve;
 	orbitalYMultiplier: number;
-	orbitalZ: Tea.ParticleSystem.MinMaxCurve;
+	orbitalZ: MinMaxCurve;
 	orbitalZMultiplier: number;
-	radial: Tea.ParticleSystem.MinMaxCurve;
+	radial: MinMaxCurve;
 	radialMultiplier: number;
 	space: Tea.ParticleSystemSimulationSpace;
-	speedModifier: Tea.ParticleSystem.MinMaxCurve;
+	speedModifier: MinMaxCurve;
 	speedModifierMultiplier: number;
-	x: Tea.ParticleSystem.MinMaxCurve;
+	x: MinMaxCurve;
 	xMultiplier: number;
-	y: Tea.ParticleSystem.MinMaxCurve;
+	y: MinMaxCurve;
 	yMultiplier: number;
-	z: Tea.ParticleSystem.MinMaxCurve;
+	z: MinMaxCurve;
 	zMultiplier: number;
 
 	constructor() {
 		this.enabled = false;
-		this.x = new Tea.ParticleSystem.MinMaxCurve(0.0);
-		this.y = new Tea.ParticleSystem.MinMaxCurve(0.0);
-		this.z = new Tea.ParticleSystem.MinMaxCurve(0.0);
+		this.x = new MinMaxCurve(0.0);
+		this.y = new MinMaxCurve(0.0);
+		this.z = new MinMaxCurve(0.0);
 	}
 }

@@ -1,11 +1,13 @@
 import * as Tea from "../../Tea";
+import { MinMaxCurve } from "../MinMaxCurve";
+import { MinMaxGradient } from "../MinMaxGradient";
 
-export class PSMainModule {
+export class MainModule {
 	//customSimulationSpace: Transform;
 	duration: number;
 	//emitterVelocityMode: Tea.ParticleSystemEmitterVelocityMode;
 	flipRotation: number;
-	gravityModifier: Tea.ParticleSystem.MinMaxCurve;
+	gravityModifier: MinMaxCurve;
 	loop: boolean;
 	maxParticles: number;
 	//playOnAwake: boolean;
@@ -13,43 +15,43 @@ export class PSMainModule {
 	//scalingMode: Tea.ParticleSystemScalingMode;
 	//simulationSpace: Tea.ParticleSystemSimulationSpace;
 	//simulationSpeed: number;
-	startColor: Tea.ParticleSystem.MinMaxGradient;
-	//startDelay: Tea.ParticleSystem.MinMaxCurve;
+	startColor: MinMaxGradient;
+	//startDelay: MinMaxCurve;
 	//startDelayMultiplier: number;
-	startLifetime: Tea.ParticleSystem.MinMaxCurve;
-	startRotation: Tea.ParticleSystem.MinMaxCurve;
+	startLifetime: MinMaxCurve;
+	startRotation: MinMaxCurve;
 	//startRotation3D: boolean;
-	//startRotationX: Tea.ParticleSystem.MinMaxCurve;
+	//startRotationX: MinMaxCurve;
 	//startRotationXMultiplier: number;
-	//startRotationY: Tea.ParticleSystem.MinMaxCurve;
+	//startRotationY: MinMaxCurve;
 	//startRotationYMultiplier: number;
-	//startRotationZ: Tea.ParticleSystem.MinMaxCurve;
+	//startRotationZ: MinMaxCurve;
 	//startRotationZMultiplier: number;
-	startSize: Tea.ParticleSystem.MinMaxCurve;
+	startSize: MinMaxCurve;
 	//startSize3D: boolean;
-	//startSizeX: Tea.ParticleSystem.MinMaxCurve;
+	//startSizeX: MinMaxCurve;
 	//startSizeXMultiplier: number;
-	//startSizeY: Tea.ParticleSystem.MinMaxCurve;
+	//startSizeY: MinMaxCurve;
 	//startSizeYMultiplier: number;
-	//startSizeZ: Tea.ParticleSystem.MinMaxCurve;
+	//startSizeZ: MinMaxCurve;
 	//startSizeZMultiplier: number;
-	startSpeed: Tea.ParticleSystem.MinMaxCurve;
+	startSpeed: MinMaxCurve;
 	//stopAction: Tea.ParticleSystemStopAction;
 	//useUnscaledTime: boolean;
 
 	constructor() {
 		this.duration = 5.0;
 		this.flipRotation = 0.0;
-		this.gravityModifier = new Tea.ParticleSystem.MinMaxCurve(0.0);
+		this.gravityModifier = new MinMaxCurve(0.0);
 		this.loop = false;
 		this.maxParticles = 1000;
 		//this.playOnAwake = true;
 		//this.prewarm = true;
-		this.startColor = new Tea.ParticleSystem.MinMaxGradient(Tea.Color.white.clone());
-		this.startLifetime = new Tea.ParticleSystem.MinMaxCurve(5.0);
-		this.startRotation = new Tea.ParticleSystem.MinMaxCurve(0.0);
-		this.startSize = new Tea.ParticleSystem.MinMaxCurve(1.0);
-		this.startSpeed = new Tea.ParticleSystem.MinMaxCurve(5.0);
+		this.startColor = new MinMaxGradient(Tea.Color.white.clone());
+		this.startLifetime = new MinMaxCurve(5.0);
+		this.startRotation = new MinMaxCurve(0.0);
+		this.startSize = new MinMaxCurve(1.0);
+		this.startSpeed = new MinMaxCurve(5.0);
 	}
 
 	get gravityModifierMultiplier(): number {
@@ -87,21 +89,21 @@ export class PSMainModule {
 		this.startSpeed.curveMultiplier = value;
 	}
 
-	static fromJSON(app: Tea.App, json: any): PSMainModule {
+	static fromJSON(app: Tea.App, json: any): MainModule {
 		if (json == null || json._type !== "MainModule") {
 			return null;
 		}
-		var module = new PSMainModule();
+		var module = new MainModule();
 		module.duration = json.duration;
 		module.flipRotation = json.flipRotation;
-		module.gravityModifier = Tea.ParticleSystem.MinMaxCurve.fromJSON(app, json.gravityModifier);
+		module.gravityModifier = MinMaxCurve.fromJSON(app, json.gravityModifier);
 		module.loop = json.loop;
 		module.maxParticles = json.maxParticles;
-		module.startColor = Tea.ParticleSystem.MinMaxGradient.fromJSON(app, json.startColor);
-		module.startLifetime = Tea.ParticleSystem.MinMaxCurve.fromJSON(app, json.startLifetime);
-		module.startRotation = Tea.ParticleSystem.MinMaxCurve.fromJSON(app, json.startRotation);
-		module.startSize = Tea.ParticleSystem.MinMaxCurve.fromJSON(app, json.startSize);
-		module.startSpeed = Tea.ParticleSystem.MinMaxCurve.fromJSON(app, json.startSpeed);
+		module.startColor = MinMaxGradient.fromJSON(app, json.startColor);
+		module.startLifetime = MinMaxCurve.fromJSON(app, json.startLifetime);
+		module.startRotation = MinMaxCurve.fromJSON(app, json.startRotation);
+		module.startSize = MinMaxCurve.fromJSON(app, json.startSize);
+		module.startSpeed = MinMaxCurve.fromJSON(app, json.startSpeed);
 		return module;
 	}
 

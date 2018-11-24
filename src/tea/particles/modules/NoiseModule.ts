@@ -1,4 +1,4 @@
-export class PSNoiseModule {
+export class NoiseModule {
 	enabled: boolean;
 	damping: boolean;
 	frequency: number;

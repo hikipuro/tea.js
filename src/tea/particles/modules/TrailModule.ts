@@ -1,8 +1,9 @@
 import * as Tea from "../../Tea";
+import { MinMaxCurve } from "../MinMaxCurve";
 
-export class PSTrailModule {
+export class TrailModule {
 	enabled: boolean;
-	colorOverLifetime: Tea.ParticleSystem.MinMaxCurve;
+	colorOverLifetime: MinMaxCurve;
 
 	constructor() {
 		this.enabled = false;
