@@ -67,7 +67,7 @@ export class VelocityOverLifetimeModule extends Vue {
 		if (module == null) {
 			return;
 		}
-		console.log("update");
+		//console.log("update");
 		this.enabled = module.enabled;
 		this.x = module.x.constant;
 	}

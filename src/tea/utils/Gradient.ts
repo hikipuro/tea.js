@@ -13,6 +13,34 @@ export class Gradient {
 		this._tmpColor = new Tea.Color();
 	}
 
+	copy(gradient: Gradient): void {
+		var alphaKeys: Array<Tea.GradientAlphaKey> = [];
+		var colorKeys: Array<Tea.GradientColorKey> = [];
+		gradient.alphaKeys.forEach((alphaKey: Tea.GradientAlphaKey) => {
+			alphaKeys.push(alphaKey.clone());
+		});
+		gradient.colorKeys.forEach((colorKey: Tea.GradientColorKey) => {
+			colorKeys.push(colorKey.clone());
+		});
+		this.setKeys(colorKeys, alphaKeys);
+		this.mode = gradient.mode;
+	}
+
+	clone(): Gradient {
+		var gradient = new Gradient();
+		var alphaKeys: Array<Tea.GradientAlphaKey> = [];
+		var colorKeys: Array<Tea.GradientColorKey> = [];
+		this.alphaKeys.forEach((alphaKey: Tea.GradientAlphaKey) => {
+			alphaKeys.push(alphaKey.clone());
+		});
+		this.colorKeys.forEach((colorKey: Tea.GradientColorKey) => {
+			colorKeys.push(colorKey.clone());
+		});
+		gradient.setKeys(colorKeys, alphaKeys);
+		gradient.mode = this.mode;
+		return gradient;
+	}
+
 	evaluate(time: number): Tea.Color {
 		time = Tea.Mathf.clamp01(time);
 		var alphaKeys = this.findAlphaKeys(time);
@@ -141,14 +169,20 @@ export class Gradient {
 		for (var i = 0; i < length; i++) {
 			var key = alphaKeys[i];
 			if (time <= key.time) {
-				key0 = alphaKeys[i - 1];
+				if (i - 1 < 0) {
+					key0 = alphaKeys[0];
+				} else {
+					key0 = alphaKeys[i - 1];
+				}
 				key1 = alphaKeys[i];
 				break;
 			}
 		}
-		if (key0 == null && key1 == null) {
-			var lastKey = alphaKeys[length - 1];
+		var lastKey = alphaKeys[length - 1];
+		if (key0 == null) {
 			key0 = lastKey;
+		}
+		if (key1 == null) {
 			key1 = lastKey;
 		}
 		return [key0, key1];
@@ -162,24 +196,30 @@ export class Gradient {
 		for (var i = 0; i < length; i++) {
 			var key = colorKeys[i];
 			if (time <= key.time) {
-				key0 = colorKeys[i - 1];
+				if (i - 1 < 0) {
+					key0 = colorKeys[0];
+				} else {
+					key0 = colorKeys[i - 1];
+				}
 				key1 = colorKeys[i];
 				break;
 			}
 		}
-		if (key0 == null && key1 == null) {
-			var lastKey = colorKeys[length - 1];
+		var lastKey = colorKeys[length - 1];
+		if (key0 == null) {
 			key0 = lastKey;
+		}
+		if (key1 == null) {
 			key1 = lastKey;
 		}
 		return [key0, key1];
 	}
 
 	protected evaluateAlphaKeys(time: number, keys: Array<Tea.GradientAlphaKey>): number {
-		if (keys == null || keys.length < 2) {
-			return 0;
+		if (time <= keys[0].time) {
+			return keys[0].alpha;
 		}
-		if (keys[0] == null) {
+		if (time >= keys[1].time) {
 			return keys[1].alpha;
 		}
 		var k0 = keys[0], k1 = keys[1];
@@ -189,10 +229,10 @@ export class Gradient {
 	}
 
 	protected evaluateColorKeys(time: number, keys: Array<Tea.GradientColorKey>): Tea.Color {
-		if (keys == null || keys.length < 2) {
-			return Tea.Color.black.clone();
+		if (time <= keys[0].time) {
+			return keys[0].color.clone();
 		}
-		if (keys[0] == null) {
+		if (time >= keys[1].time) {
 			return keys[1].color.clone();
 		}
 		var k0 = keys[0], k1 = keys[1];

@@ -1,8 +1,8 @@
 export enum ParticleSystemCurveMode {
 	Constant,
 	Curve,
-	TwoCurves,
-	TwoConstants
+	TwoConstants,
+	TwoCurves
 }
 
 export module ParticleSystemCurveMode {

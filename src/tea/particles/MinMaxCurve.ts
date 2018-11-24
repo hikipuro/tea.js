@@ -1,45 +1,47 @@
 import * as Tea from "../Tea";
+import { AnimationCurve } from "../utils/AnimationCurve"
+import { ParticleSystemCurveMode } from "./enums/ParticleSystemCurveMode";
 
 export class MinMaxCurve {
 	constant: number;
 	constantMax: number;
 	constantMin: number;
-	curve: Tea.AnimationCurve;
-	curveMax: Tea.AnimationCurve;
-	curveMin: Tea.AnimationCurve;
+	curve: AnimationCurve;
+	curveMax: AnimationCurve;
+	curveMin: AnimationCurve;
 	curveMultiplier: number;
-	mode: Tea.ParticleSystemCurveMode;
+	mode: ParticleSystemCurveMode;
 
 	constructor(constant: number);
 	constructor(min: number, max: number);
-	constructor(multiplier: number, curve: Tea.AnimationCurve);
-	constructor(multiplier: number, min: Tea.AnimationCurve, max: Tea.AnimationCurve);
-	constructor(a: number, b?: number | Tea.AnimationCurve, c?: Tea.AnimationCurve) {
+	constructor(multiplier: number, curve: AnimationCurve);
+	constructor(multiplier: number, min: AnimationCurve, max: AnimationCurve);
+	constructor(a: number, b?: number | AnimationCurve, c?: AnimationCurve) {
 		this.constant = 0.0;
 		this.constantMax = 1.0;
 		this.constantMin = 0.0;
 		this.curveMultiplier = 1.0;
 		if (c != null) {
 			this.curveMultiplier = a;
-			this.curveMin = b as Tea.AnimationCurve;
+			this.curveMin = b as AnimationCurve;
 			this.curveMax = c;
-			this.mode = Tea.ParticleSystemCurveMode.TwoCurves;
+			this.mode = ParticleSystemCurveMode.TwoCurves;
 			return;
 		}
-		if (b instanceof Tea.AnimationCurve) {
+		if (b instanceof AnimationCurve) {
 			this.curveMultiplier = a;
 			this.curve = b;
-			this.mode = Tea.ParticleSystemCurveMode.Curve;
+			this.mode = ParticleSystemCurveMode.Curve;
 			return;
 		}
 		if (b != null) {
 			this.constantMin = a;
 			this.constantMax = b;
-			this.mode = Tea.ParticleSystemCurveMode.TwoConstants;
+			this.mode = ParticleSystemCurveMode.TwoConstants;
 			return;
 		}
 		this.constant = a;
-		this.mode = Tea.ParticleSystemCurveMode.Constant;
+		this.mode = ParticleSystemCurveMode.Constant;
 	}
 
 	evaluate(time: number, lerpFactor?: number): number {
@@ -48,15 +50,15 @@ export class MinMaxCurve {
 			lerpFactor = Tea.Mathf.clamp01(lerpFactor);
 		}
 		switch (this.mode) {
-			case Tea.ParticleSystemCurveMode.Constant:
+			case ParticleSystemCurveMode.Constant:
 				return this.constant;
-			case Tea.ParticleSystemCurveMode.TwoConstants:
+			case ParticleSystemCurveMode.TwoConstants:
 				var min = this.constantMin;
 				var max = this.constantMax;
 				return min + Math.random() * (max - min);
-			case Tea.ParticleSystemCurveMode.Curve:
+			case ParticleSystemCurveMode.Curve:
 				return this.curve.evaluate(time) * this.curveMultiplier;
-			case Tea.ParticleSystemCurveMode.TwoCurves:
+			case ParticleSystemCurveMode.TwoCurves:
 				var min = this.curveMin.evaluate(time);
 				var max = this.curveMax.evaluate(time);
 				return (min + Math.random() * (max - min)) * this.curveMultiplier;
@@ -68,23 +70,23 @@ export class MinMaxCurve {
 			return null;
 		}
 		var minMaxCurve: MinMaxCurve = null;
-		var mode = Tea.ParticleSystemCurveMode[json.mode as string];
+		var mode = ParticleSystemCurveMode[json.mode as string];
 		switch (mode) {
-			case Tea.ParticleSystemCurveMode.Constant:
+			case ParticleSystemCurveMode.Constant:
 				minMaxCurve = new MinMaxCurve(json.constant);
 				minMaxCurve.curveMultiplier = json.curveMultiplier;
 				break;
-			case Tea.ParticleSystemCurveMode.TwoConstants:
+			case ParticleSystemCurveMode.TwoConstants:
 				minMaxCurve = new MinMaxCurve(json.curveMin, json.curveMax);
 				minMaxCurve.curveMultiplier = json.curveMultiplier;
 				break;
-			case Tea.ParticleSystemCurveMode.Curve:
-				var curve = Tea.AnimationCurve.fromJSON(app, json.curve);
+			case ParticleSystemCurveMode.Curve:
+				var curve = AnimationCurve.fromJSON(app, json.curve);
 				minMaxCurve = new MinMaxCurve(json.curveMultiplier, curve);
 				break;
-			case Tea.ParticleSystemCurveMode.TwoCurves:
-				var curveMin = Tea.AnimationCurve.fromJSON(app, json.curveMin);
-				var curveMax = Tea.AnimationCurve.fromJSON(app, json.curveMax);
+			case ParticleSystemCurveMode.TwoCurves:
+				var curveMin = AnimationCurve.fromJSON(app, json.curveMin);
+				var curveMax = AnimationCurve.fromJSON(app, json.curveMax);
 				minMaxCurve = new MinMaxCurve(json.curveMultiplier, curveMin, curveMax);
 				break;
 		}
@@ -92,9 +94,9 @@ export class MinMaxCurve {
 	}
 
 	toJSON(): Object {
-		var curve = null;
-		var curveMax = null;
-		var curveMin = null;
+		var curve: Object = null;
+		var curveMax: Object = null;
+		var curveMin: Object = null;
 		if (this.curve != null) {
 			curve = this.curve.toJSON();
 		}
@@ -113,7 +115,7 @@ export class MinMaxCurve {
 			curveMax: curveMax,
 			curveMin: curveMin,
 			curveMultiplier: this.curveMultiplier,
-			mode: Tea.ParticleSystemCurveMode.toString(this.mode)
+			mode: ParticleSystemCurveMode.toString(this.mode)
 		};
 		return json;
 	}

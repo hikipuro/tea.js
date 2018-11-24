@@ -10,7 +10,7 @@ export class MainModule {
 	gravityModifier: MinMaxCurve;
 	loop: boolean;
 	maxParticles: number;
-	//playOnAwake: boolean;
+	playOnAwake: boolean;
 	//prewarm: boolean;
 	//scalingMode: Tea.ParticleSystemScalingMode;
 	//simulationSpace: Tea.ParticleSystemSimulationSpace;
@@ -45,7 +45,7 @@ export class MainModule {
 		this.gravityModifier = new MinMaxCurve(0.0);
 		this.loop = false;
 		this.maxParticles = 1000;
-		//this.playOnAwake = true;
+		this.playOnAwake = true;
 		//this.prewarm = true;
 		this.startColor = new MinMaxGradient(Tea.Color.white.clone());
 		this.startLifetime = new MinMaxCurve(5.0);

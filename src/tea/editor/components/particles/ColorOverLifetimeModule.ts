@@ -2,6 +2,7 @@ import Vue from "vue";
 import Component from "vue-class-component";
 import * as Tea from "../../../Tea";
 import { TitleBar } from "../TitleBar";
+import { Gradient } from "../../basic/Gradient";
 
 @Component({
 	template: `
@@ -19,7 +20,6 @@ import { TitleBar } from "../TitleBar";
 				}">
 				<Gradient
 					ref="color"
-					:value="color"
 					@update="onUpdateColor">Color</Gradient>
 			</div>
 		</div>
@@ -27,8 +27,7 @@ import { TitleBar } from "../TitleBar";
 	data: () => {
 		return {
 			name: "Color over Lifetime",
-			enabled: false,
-			color: ""
+			enabled: false
 		}
 	},
 	watch: {
@@ -45,7 +44,6 @@ export class ColorOverLifetimeModule extends Vue {
 	_module: Tea.ParticleSystem.ColorOverLifetimeModule;
 	name: string;
 	enabled: boolean;
-	color: string;
 
 	update(): void {
 		var module = this._module;
@@ -53,7 +51,9 @@ export class ColorOverLifetimeModule extends Vue {
 			return;
 		}
 		this.enabled = module.enabled;
-		//this.color = module.color.color.toCssColor();
+		var color = this.$refs.color as Gradient;
+		color._gradient = module.color.gradient;
+		color.$forceUpdate();
 	}
 
 	protected onUpdateEnabled(value: boolean): void {
@@ -72,11 +72,7 @@ export class ColorOverLifetimeModule extends Vue {
 		}
 	}
 
-	protected onUpdateColor(value: Tea.Color): void {
-		this.color = value.toCssColor();
-		if (this._module) {
-			this._module.color.color.copy(value);
-		}
+	protected onUpdateColor(value: Tea.Gradient): void {
 		this.$emit("update", "color", value);
 	}
 }

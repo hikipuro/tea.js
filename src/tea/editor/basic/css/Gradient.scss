@@ -1,6 +1,4 @@
 #{$parent} {
-	$width: 200px;
-
 	div.Gradient {
 		display: inline-flex;
 		box-sizing: border-box;
@@ -52,11 +50,17 @@
 			.title {
 				width: 15%;
 			}
+
+			.container {
+				box-sizing: border-box;
+				padding: 0.5em;
+				width: 100%;
+			}
 		}
 	}
 
 	div.GradientImage {
-		width: $width;
+		width: 100%;
 		height: 30px;
 		background-color: white;
 
@@ -66,7 +70,7 @@
 		}
 	}
 
-	div.GradientAnchor {
+	div.GradientKey {
 		position: absolute;
 		line-height: 1;
 		//border: thin solid;
@@ -77,8 +81,9 @@
 		}
 	}
 
-	div.GradientTimePicker {
-		width: $width;
+	div.GradientKeys {
+		position: relative;
+		width: 100%;
 		height: 1.5em;
 		//background-color: blue;
 	}

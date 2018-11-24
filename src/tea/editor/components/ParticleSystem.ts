@@ -59,7 +59,8 @@ const vueComponents = {
 			<ShapeModule
 				ref="shape"></ShapeModule>
 			<ColorOverLifetimeModule
-				ref="colorOverLifetime"></ColorOverLifetimeModule>
+				ref="colorOverLifetime"
+				@update="onUpdateColorOverLifetime"></ColorOverLifetimeModule>
 			<VelocityOverLifetimeModule
 				ref="velocityOverLifetime"></VelocityOverLifetimeModule>
 		</div>
@@ -217,6 +218,10 @@ export class ParticleSystem extends Vue {
 			this._component.main.maxParticles = value;
 		}
 		this.$emit("update", "maxParticles");
+	}
+
+	protected onUpdateColorOverLifetime(value: Tea.Gradient): void {
+		this.$emit("update", "colorOverLifetime");
 	}
 }
 
