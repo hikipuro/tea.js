@@ -4,6 +4,12 @@
 		width: 100%;
 		line-height: 1.5;
 
+		input[type="text"] {
+			padding: 1px 2px;
+			border: 0;
+			border-radius: 0.2em;
+		}
+
 		div.ObjectTitle {
 			display: inline-flex;
 			box-sizing: border-box;
@@ -14,8 +20,9 @@
 
 			> input[type="text"] {
 				flex: 1;
+				box-sizing: border-box;
 				margin: 0 2px;
-				height: 1em;
+				height: 1.5em;
 			}
 		}
 
@@ -25,20 +32,24 @@
 			padding: 1px;
 
 			> .title {
-				min-width: 40%;
+				flex: 1;
 				white-space: nowrap;
 				overflow: hidden;
 			}
 
-			> .value {
-				flex: 1;
+			> input {
+				width: 60%;
 			}
 		}
 
 		div.Vector3 {
 			> .value > .InputNumber {
 				> .title {
-					min-width: auto;
+					flex: 0;
+					min-width: 0.7em;
+				}
+				> input {
+					flex: 1;
 				}
 			}
 		}
@@ -68,24 +79,35 @@
 			}
 		}
 
-		input[type="checkbox"]:focus {
-			outline: 1px solid orange;
+		/*
+		input[type="text"]:focus {
+			outline: thin solid orange;
 			outline-offset: 1px;
 		}
 
+		input[type="checkbox"]:focus {
+			outline: none;
+			border-radius: 0.2em;
+			//border: 1px solid orage;
+			box-shadow: 1px 1px 0 1px orange;
+			//outline: thin solid orange;
+			//outline-offset: 1px;
+		}
+
 		select:focus {
-			outline: 1px solid orange;
+			outline: thin solid orange;
 			outline-offset: 1px;
 		}
 
 		button:focus {
-			outline: 1px solid orange;
+			outline: thin solid orange;
 			outline-offset: 1px;
 		}
 
 		.ColorPicker > .container:focus {
-			outline: 1px solid orange;
+			outline: thin solid orange;
 			outline-offset: 1px;
 		}
+		*/
 	}
 }

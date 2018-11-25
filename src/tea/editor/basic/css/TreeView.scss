@@ -103,8 +103,7 @@
 	}
 	
 	div.TreeView:focus {
-		outline: 0;
-
+		outline-width: 0;
 		div.selected {
 			background-color: theme("selected");
 		}

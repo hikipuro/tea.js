@@ -16,11 +16,15 @@ import Component from "vue-class-component";
 							ref="x"
 							:value="value[0]"
 							:step="step"
+							:min="0"
+							:max="1"
 							@update="onUpdateX">X</InputNumber>
 						<InputNumber
 							ref="y"
 							:value="value[1]"
 							:step="step"
+							:min="0"
+							:max="1"
 							@update="onUpdateY">Y</InputNumber>
 					</Panel>
 
@@ -29,11 +33,15 @@ import Component from "vue-class-component";
 							ref="w"
 							:value="value[2]"
 							:step="step"
+							:min="0"
+							:max="1"
 							@update="onUpdateWidth">W</InputNumber>
 						<InputNumber
 							ref="h"
 							:value="value[3]"
 							:step="step"
+							:min="0"
+							:max="1"
 							@update="onUpdateHeight">H</InputNumber>
 					</Panel>
 				</VLayout>

@@ -63,6 +63,10 @@ textarea, pre {
 	//padding: 2px;
 	box-sizing: border-box;
 
+	:focus {
+		outline-color: orange;
+	}
+
 	.LeftLayout {
 		flex: 1;
 	}

@@ -4,17 +4,17 @@ import Component from "vue-class-component";
 @Component({
 	template: `
 		<div class="CheckBox">
-			<label
-				:for="id"
-				class="title">
-				<slot></slot>
-			</label>
-			<input
-				:id="id"
-				type="checkbox"
-				ref="checkbox"
-				:checked="value"
-				@change="onChange"></input>
+			<div class="title">
+				<label :for="id"><slot></slot></label>
+			</div>
+			<div class="value">
+				<input
+					:id="id"
+					type="checkbox"
+					ref="checkbox"
+					:checked="value"
+					@change="onChange"></input>
+			</div>
 		</div>
 	`,
 	props: {

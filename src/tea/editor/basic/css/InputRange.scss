@@ -7,29 +7,32 @@
 		width: 100%;
 
 		> .title {
-			display: inline-block;
-			width: 40%;
+			flex: 1;
 			white-space: nowrap;
 			overflow: hidden;
 		}
 
 		> .value {
 			display: inline-flex;
-			flex: 1;
 			align-items: center;
+			margin: 0 2px;
+			width: 60%;
 
 			> input {
-				margin: 0 2px;
+				margin: 0 1px 0 2px;
 			}
 
 			> input[type="range"] {
-				width: 3em !important;
-				height: 1em;
 				flex: 1;
+				margin: 0;
+				width: 3em;
+				height: 1em;
 			}
 
 			> input[type="text"] {
-				width: 2em;
+				box-sizing: border-box;
+				width: 2.5em;
+				height: 1.5em;
 			}
 		}
 	}

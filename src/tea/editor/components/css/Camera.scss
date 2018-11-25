@@ -8,8 +8,7 @@
 			width: 100%;
 	
 			> .title {
-				display: inline-block;
-				min-width: 40%;
+				flex: 1;
 				white-space: nowrap;
 				overflow: hidden;
 			}
@@ -17,11 +16,18 @@
 			> .value {
 				display: flex;
 				flex-direction: column;
-				width: 60%;
 				justify-content: space-evenly;
+				margin: 0 2px;
+				width: 60%;
 
 				.title {
+					flex: 0;
 					min-width: 2.5em;
+				}
+
+				input {
+					flex: 1;
+					margin-right: 0;
 				}
 			}
 		}

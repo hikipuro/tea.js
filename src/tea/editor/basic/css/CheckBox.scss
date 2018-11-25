@@ -7,15 +7,23 @@
 		width: 100%;
 
 		> .title {
-			display: inline-block;
-			min-width: 40%;
+			flex: 1;
 			white-space: nowrap;
 			overflow: hidden;
+
+			label {
+				display: inline-block;
+				width: 100%;
+			}
 		}
 
-		> input {
-			//flex: 1;
+		> .value {
 			margin: 0 2px;
+			width: 60%;
+
+			> input {
+				margin: 0;
+			}
 		}
 	}
 }
