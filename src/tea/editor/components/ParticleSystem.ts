@@ -1,8 +1,9 @@
 import Vue from "vue";
 import Component from "vue-class-component";
 import * as Tea from "../../Tea";
-import { Translator } from "../translate/Translator";
 import * as Modules from "./particles/Modules";
+import { Translator } from "../translate/Translator";
+import { AnimationCurve } from "../basic/AnimationCurve";
 
 const vueComponents = {
 	EmissionModule: Modules.EmissionModule,
@@ -42,11 +43,11 @@ const vueComponents = {
 				ref="startColor"
 				:value="startColor"
 				@update="onUpdateStartColor">Start Color</ColorPicker>
-			<InputNumber
+			<AnimationCurve
 				ref="gravityModifier"
 				class="number"
 				:value="gravityModifier"
-				@update="onUpdateGravityModifier">Gravity Modifier</InputNumber>
+				@update="onUpdateGravityModifier">Gravity Modifier</AnimationCurve>
 			<InputNumber
 				ref="maxParticles"
 				class="number"
@@ -138,6 +139,15 @@ export class ParticleSystem extends Vue {
 		this.startColor = component.main.startColor.color.toCssColor();
 		this.gravityModifier = component.main.gravityModifier.constant;
 		this.maxParticles = component.main.maxParticles;
+
+		var curve = Tea.AnimationCurve.easeInOut(0, 0, 1, 1);
+
+		var gravityModifier = this.$refs.gravityModifier as AnimationCurve;
+		//gravityModifier._curve = component.main.gravityModifier.curve;
+		gravityModifier._curve = curve;
+		this.$nextTick(() => {
+			gravityModifier.updateImage();
+		});
 
 		var shape = this.shapeModule;
 		shape._module = component.shape;

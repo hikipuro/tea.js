@@ -158,7 +158,7 @@ export class AnimationCurve {
 	}
 
 	protected sortKeys(): void {
-		this.keys.sort((a, b) => {
+		this.keys.sort((a: Tea.Keyframe, b: Tea.Keyframe) => {
 			return a.time - b.time;
 		});
 	}

@@ -20,13 +20,13 @@ class KeyModel {
 	`
 })
 export class GradientImage extends Vue {
-	protected mounted(): void {
-		var container = this.$refs.container as HTMLElement;
-		container.style.backgroundImage = "url(" + EditorAssets.Images.Transparent + ")";
-	}
-
 	draw(gradient: Tea.Gradient): void {
 		var canvas = this.$refs.canvas as HTMLCanvasElement;
+		var rect = canvas.getBoundingClientRect();
+		if (rect.width !== 0 && rect.height !== 0) {
+			canvas.width = rect.width;
+			canvas.height = rect.height;
+		}
 		var context = canvas.getContext("2d");
 		var width = canvas.width;
 		var height = canvas.height;
@@ -40,6 +40,11 @@ export class GradientImage extends Vue {
 			context.fillStyle = color.toCssColor();
 			context.fillRect(x, 0, 1, height);
 		}
+	}
+
+	protected mounted(): void {
+		var container = this.$refs.container as HTMLElement;
+		container.style.backgroundImage = "url(" + EditorAssets.Images.Transparent + ")";
 	}
 }
 
@@ -266,6 +271,9 @@ export class GradientKeys extends Vue {
 	protected onMouseDown(e: MouseEvent): void {
 		//console.log("onMouseDown");
 		if (this.items.length >= GradientKeys.MaxCount) {
+			return;
+		}
+		if (e.target !== this.$el) {
 			return;
 		}
 		var offsetX = e.offsetX;

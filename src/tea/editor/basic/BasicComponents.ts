@@ -1,3 +1,4 @@
+import { AnimationCurve } from "./AnimationCurve";
 import { Button } from "./Button";
 import { CheckBox } from "./CheckBox";
 import { ColorPicker } from "./ColorPicker";
@@ -23,6 +24,7 @@ import { Vector3 } from "./Vector3";
 import { VResizeBar } from "./VResizeBar";
 
 export {
+	AnimationCurve,
 	Button,
 	CheckBox,
 	ColorPicker,
@@ -50,6 +52,7 @@ export {
 
 export function getComponents(): Object {
 	return {
+		AnimationCurve: AnimationCurve,
 		Button: Button,
 		CheckBox: CheckBox,
 		ColorPicker: ColorPicker,
