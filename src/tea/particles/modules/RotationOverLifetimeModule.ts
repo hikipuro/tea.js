@@ -5,15 +5,27 @@ export class RotationOverLifetimeModule {
 	enabled: boolean;
 	separateAxes: boolean;
 	size: MinMaxCurve;
-	sizeMultiplier: number;
 	x: MinMaxCurve;
-	xMultiplier: number;
 	y: MinMaxCurve;
-	yMultiplier: number;
 	z: MinMaxCurve;
-	zMultiplier: number;
 
 	constructor() {
 		this.enabled = false;
+	}
+
+	get sizeMultiplier(): number {
+		return this.size.curveMultiplier;
+	}
+
+	get xMultiplier(): number {
+		return this.x.curveMultiplier;
+	}
+
+	get yMultiplier(): number {
+		return this.y.curveMultiplier;
+	}
+
+	get zMultiplier(): number {
+		return this.z.curveMultiplier;
 	}
 }

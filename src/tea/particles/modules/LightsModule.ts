@@ -5,11 +5,9 @@ export class LightsModule {
 	enabled: boolean;
 	alphaAffectsIntensity: boolean;
 	intensity: MinMaxCurve;
-	intensityMultiplier: number;
 	light: Tea.Light;
 	maxLights: number;
 	range: MinMaxCurve;
-	rangeMultiplier: number;
 	ratio: number;
 	sizeAffectsRange: boolean;
 	useParticleColor: boolean;
@@ -17,5 +15,13 @@ export class LightsModule {
 
 	constructor() {
 		this.enabled = false;
+	}
+
+	get intensityMultiplier(): number {
+		return this.intensity.curveMultiplier;
+	}
+
+	get rangeMultiplier(): number {
+		return this.range.curveMultiplier;
 	}
 }

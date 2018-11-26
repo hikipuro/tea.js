@@ -4,10 +4,13 @@ import { MinMaxCurve } from "../MinMaxCurve";
 export class CollisionModule {
 	enabled: boolean;
 	bounce: MinMaxCurve;
-	bounceMultiplier: number;
 	colliderForce: number;
 
 	constructor() {
 		this.enabled = false;
+	}
+
+	get bounceMultiplier(): number {
+		return this.bounce.curveMultiplier;
 	}
 }

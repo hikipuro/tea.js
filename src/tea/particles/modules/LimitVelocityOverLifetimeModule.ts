@@ -5,15 +5,10 @@ export class LimitVelocityOverLifetimeModule {
 	enabled: boolean;
 	dampen: number;
 	drag: MinMaxCurve;
-	dragMultiplier: number;
 	limit: MinMaxCurve;
-	limitMultiplier: number;
 	limitX: MinMaxCurve;
-	limitXMultiplier: number;
 	limitY: MinMaxCurve;
-	limitYMultiplier: number;
 	limitZ: MinMaxCurve;
-	limitZMultiplier: number;
 	multiplyDragByParticleSize: boolean;
 	multiplyDragByParticleVelocity: boolean;
 	separateAxes: boolean;
@@ -21,5 +16,25 @@ export class LimitVelocityOverLifetimeModule {
 
 	constructor() {
 		this.enabled = false;
+	}
+
+	get dragMultiplier(): number {
+		return this.drag.curveMultiplier;
+	}
+
+	get limitMultiplier(): number {
+		return this.limit.curveMultiplier;
+	}
+
+	get limitXMultiplier(): number {
+		return this.limitX.curveMultiplier;
+	}
+
+	get limitYMultiplier(): number {
+		return this.limitY.curveMultiplier;
+	}
+
+	get limitZMultiplier(): number {
+		return this.limitZ.curveMultiplier;
 	}
 }
