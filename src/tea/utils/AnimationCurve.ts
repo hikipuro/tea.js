@@ -78,10 +78,12 @@ export class AnimationCurve {
 		}
 		var first = this.first;
 		if (time <= first.time) {
+			// TODO: preWrapMode
 			return first.value;
 		}
 		var last = this.last;
 		if (time >= last.time) {
+			// TODO: postWrapMode
 			return last.value;
 		}
 		var key0: Tea.Keyframe;
@@ -145,16 +147,22 @@ export class AnimationCurve {
 		var t = (time - start.time) / duration;
 		var ts = 1.0 - t;
 		var t0 = ts * ts * ts;
-		var t1 = 3.0 * ts * ts * t;
-		var t2 = 3.0 * ts * t * t;
+		var tts3 = 3.0 * ts * t;
+		var t1 = tts3 * ts;
+		var t2 = tts3 * t;
 		var t3 = t * t * t;
 		var p0 = start.value;
 		var p1 = start.value;
 		var p2 = end.value;
 		var p3 = end.value;
-		p1 += start.outTangent * (1.0 / 3.0) * duration;
-		p2 -= end.inTangent * (2.0 / 3.0) * duration;
-		return p0 * t0 + p1 * t1 + p2 * t2 + p3 * t3;
+		p1 += start.outTangent / 3.0;
+		p2 -= end.inTangent / 3.0;
+		return (
+			p0 * t0 + 
+			p1 * t1 + 
+			p2 * t2 + 
+			p3 * t3
+		);
 	}
 
 	protected sortKeys(): void {

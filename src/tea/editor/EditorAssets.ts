@@ -3,6 +3,8 @@ export module EditorAssets {
 		export const Transparent = "images/transparent.svg";
 		export const PickerUp = "images/picker-up.svg";
 		export const PickerDown = "images/picker-down.svg";
+		export const ControlPoint = "images/control-point.svg";
+		export const AnchorPoint = "images/anchor-point.svg";
 		export const PlayButton = "images/play.svg";
 		export const StopButton = "images/stop.svg";
 		export const FolderOpen = "images/folder-open.svg";

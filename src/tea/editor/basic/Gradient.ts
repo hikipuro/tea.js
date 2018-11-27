@@ -104,6 +104,15 @@ export class GradientKey extends Vue {
 		return parent.getCount();
 	}
 
+	protected addMouseEvents(): void {
+		document.addEventListener(
+			"mousemove", this.onMouseMoveScreen
+		);
+		document.addEventListener(
+			"mouseup", this.onMouseUpScreen
+		);
+	}
+
 	protected removeMouseEvents(): void {
 		document.removeEventListener(
 			"mousemove", this.onMouseMoveScreen
@@ -119,12 +128,7 @@ export class GradientKey extends Vue {
 		this._mouseDownX = e.screenX;
 		this._mouseDownY = e.screenY;
 		this._mouseDownTime = this.model.time;
-		document.addEventListener(
-			"mousemove", this.onMouseMoveScreen
-		);
-		document.addEventListener(
-			"mouseup", this.onMouseUpScreen
-		);
+		this.addMouseEvents();
 		this.$emit("select", this);
 	}
 
