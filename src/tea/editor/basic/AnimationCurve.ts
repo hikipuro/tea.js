@@ -307,7 +307,7 @@ export class AnchorPoint extends Vue {
 	}
 
 	protected onMouseMoveScreen(e: MouseEvent): void {
-		var screenScale = window.innerWidth / window.outerWidth;
+		//var screenScale = window.innerWidth / window.outerWidth;
 		var rect = this.getParentRect();
 		var controlPoint = this.getControlPoint();
 		if (controlPoint == null) {
@@ -320,8 +320,14 @@ export class AnchorPoint extends Vue {
 		x /= rect.width;
 		y /= rect.height;
 		var tangent = 0.0;
-		if (x > 0) {
-			tangent = y / x;
+		if (this.isLeft) {
+			if (x < 0) {
+				tangent = y / x;
+			}
+		} else {
+			if (x > 0) {
+				tangent = y / x;
+			}
 		}
 		this.$emit("update", this, tangent);
 	}
@@ -352,7 +358,8 @@ export class AnchorPoint extends Vue {
 				@update="onUpdateAnchorPoint"></AnchorPoint>
 			<AnchorPoint
 				ref="anchorLeft"
-				:isLeft="true"></AnchorPoint>
+				:isLeft="true"
+				@update="onUpdateAnchorPoint"></AnchorPoint>
 		</div>
 	`,
 	data: () => {
@@ -533,11 +540,9 @@ export class Keyframes extends Vue {
 		//console.log("onUpdateAnchorPoint", time, value);
 		var model = point.model;
 		var key = this._keys[model.index];
+		key.inTangent = tangent;
 		key.outTangent = tangent;
-		//key.outWeight = weight;
 		model.tangent = tangent;
-		//point.updatePosition();
-
 		var controlPoint = this.getControlPoint(model.index);
 		this.updateAnchorPoint(controlPoint);
 		this.drawLine(controlPoint);
@@ -574,8 +579,6 @@ export class Keyframes extends Vue {
 			</Window>
 		</div>
 	`,
-	props: {
-	},
 	components: {
 		AnimationCurveImage: AnimationCurveImage,
 		Keyframes: Keyframes
@@ -601,19 +604,6 @@ export class AnimationCurve extends Vue {
 		window.move(x, y);
 		window.show(true);
 		window.$nextTick(() => {
-			var keys = this._curve.keys;
-			//keys[0].weightedMode = Tea.WeightedMode.Both;
-			keys[0].outTangent = 0;
-			//keys[0].outWeight = 1;
-			this._curve.keys.forEach((key) => {
-				//key.weightedMode = Tea.WeightedMode.Both;
-				console.log(
-					key.time, key.value,
-					key.inTangent, key.outTangent,
-					//key.inWeight, key.outWeight,
-					//key.weightedMode
-				);
-			});
 			this.updateImage();
 			var keyframes = this.$refs.keyframes as Keyframes;
 			keyframes.setAnimationCurve(this._curve);
@@ -664,5 +654,6 @@ export class AnimationCurve extends Vue {
 
 	protected onUpdateKeyframes(): void {
 		this.updateImage();
+		this.$emit("update", this._curve);
 	}
 }

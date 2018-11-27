@@ -140,11 +140,15 @@ export class ParticleSystem extends Vue {
 		this.gravityModifier = component.main.gravityModifier.constant;
 		this.maxParticles = component.main.maxParticles;
 
-		var curve = Tea.AnimationCurve.easeInOut(0, 0, 1, 1);
+		//var curve = Tea.AnimationCurve.easeInOut(0, 0, 1, 1);
+		component.main.gravityModifier.mode = Tea.ParticleSystemCurveMode.Curve;
+		if (component.main.gravityModifier.curve == null) {
+			component.main.gravityModifier.curve = Tea.AnimationCurve.easeInOut(0, 0, 1, 1);
+		}
 
 		var gravityModifier = this.$refs.gravityModifier as AnimationCurve;
 		//gravityModifier._curve = component.main.gravityModifier.curve;
-		gravityModifier._curve = curve;
+		gravityModifier._curve = component.main.gravityModifier.curve;
 		this.$nextTick(() => {
 			gravityModifier.updateImage();
 		});
@@ -214,10 +218,10 @@ export class ParticleSystem extends Vue {
 		this.$emit("update", "startColor");
 	}
 
-	protected onUpdateGravityModifier(value: number): void {
-		this.gravityModifier = value;
+	protected onUpdateGravityModifier(value: AnimationCurve): void {
+		//this.gravityModifier = value;
 		if (this._component) {
-			this._component.main.gravityModifier.constant = value;
+			//this._component.main.gravityModifier.curve = value;
 		}
 		this.$emit("update", "gravityModifier");
 	}
