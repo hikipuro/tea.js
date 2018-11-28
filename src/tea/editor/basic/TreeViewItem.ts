@@ -224,6 +224,7 @@ export class TreeViewItem extends Vue {
 
 	toggle(): void {
 		if (this.isFolder === false) {
+			this.$emit("select", this);
 			return;
 		}
 		if (this.isOpen) {

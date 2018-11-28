@@ -19,6 +19,7 @@ import { TreeView } from "../basic/TreeView";
 				tabindex="1"
 				@expand="onExpandFolderList"
 				@select="onSelectFolder"
+				@doubleClick="onDoubleClickFolderList"
 				@menu="onFolderListMenu"></TreeView>
 			<TreeView
 				ref="fileList"
@@ -287,6 +288,10 @@ export class ProjectView extends Vue {
 		var path = item.tag;
 		this.setChildFolderItems(item);
 		this.updateFileList(path);
+	}
+
+	protected onDoubleClickFolderList(item: Editor.TreeViewItem): void {
+		item.toggle();
 	}
 
 	protected onFolderListMenu(e: MouseEvent): void {
