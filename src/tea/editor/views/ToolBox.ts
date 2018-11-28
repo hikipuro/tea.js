@@ -9,10 +9,12 @@ import { Translator } from "../translate/Translator";
 			<button
 				ref="play"
 				v-html="playIcon"
+				:title="translator.play"
 				@click="onClickPlayButton"></button>
 			<button
 				ref="stop"
 				v-html="stopIcon"
+				:title="translator.stop"
 				disabled="disabled"
 				@click="onClickStopButton"></button>
 		</div>
@@ -33,6 +35,8 @@ export class ToolBox extends Vue {
 	translate(): void {
 		var translator = Translator.getInstance();
 		translator.basePath = "ToolBox";
+		this.translator.play = translator.getText("Play");
+		this.translator.stop = translator.getText("Stop");
 		this.playIcon = "<img src='" + EditorAssets.Images.PlayButton + "' draggable='false' />";
 		this.stopIcon = "<img src='" + EditorAssets.Images.StopButton + "' draggable='false' />";
 	}

@@ -189,6 +189,11 @@ export class Editor extends Vue {
 			selectAspect["translate"]();
 			(selectAspect as Vue).$forceUpdate();
 		}
+		var toolBox = this.$refs.toolBox;
+		if (toolBox != null) {
+			toolBox["translate"]();
+			(toolBox as Vue).$forceUpdate();
+		}
 	}
 
 	get status(): EditorStatus {

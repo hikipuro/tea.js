@@ -82,6 +82,10 @@
 		"Project": "プロジェクト",
 		"Console": "コンソール"
 	},
+	"ToolBox": {
+		"Play": "再生",
+		"Stop": "停止"
+	},
 	"SelectAspect": {
 		"FreeAspect": "アスペクト比可変"
 	},

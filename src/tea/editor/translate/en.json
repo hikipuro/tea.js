@@ -82,6 +82,10 @@
 		"Project": "Project",
 		"Console": "Console"
 	},
+	"ToolBox": {
+		"Play": "Play",
+		"Stop": "Stop"
+	},
 	"SelectAspect": {
 		"FreeAspect": "Free Aspect"
 	},
