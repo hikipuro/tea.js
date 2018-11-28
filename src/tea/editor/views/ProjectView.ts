@@ -24,7 +24,7 @@ import { TreeView } from "../basic/TreeView";
 			<TreeView
 				ref="fileList"
 				class="fileList"
-				tabindex="2"
+				tabindex="1"
 				@focus="onFocusFileList"
 				@select="onSelectFile"
 				@doubleClick="onDoubleClickFile"
@@ -36,6 +36,14 @@ import { TreeView } from "../basic/TreeView";
 })
 export class ProjectView extends Vue {
 	protected _dragSource: Editor.TreeViewItem;
+
+	get folderList(): TreeView {
+		return this.$refs.folderList as TreeView;
+	}
+
+	get fileList(): TreeView {
+		return this.$refs.fileList as TreeView;
+	}
 
 	getSelectedFolderPath(): string {
 		var folderList = this.$refs.folderList as TreeView;

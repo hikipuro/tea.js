@@ -60,7 +60,10 @@ Object.keys(vueComponents).forEach((key: string) => {
 								<HierarchyView ref="hierarchy"></HierarchyView>
 								<HResizeBar ref="hierarchyResize"></HResizeBar>
 							</Panel>
-							<Tabs ref="mainTabs" class="Top">
+							<Tabs
+								ref="mainTabs"
+								class="Top"
+								:tabindex="0">
 								<TabItem tabId="player" :name="translator.player" class="MainPanel">
 									<VLayout
 										:style="{
@@ -83,7 +86,9 @@ Object.keys(vueComponents).forEach((key: string) => {
 								</TabItem>
 							</Tabs>
 						</HLayout>
-						<Tabs class="Bottom">
+						<Tabs
+							class="Bottom"
+							:tabindex="1">
 							<TabItem tabId="project" :name="translator.project">
 								<ProjectView ref="project"></ProjectView>
 							</TabItem>

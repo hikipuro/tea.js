@@ -28,6 +28,13 @@
 				border-right: 1px solid gray;
 				border-radius: 0.3em 0.3em 0 0;
 			}
+			> li.focus {
+				background-color: #333;
+			}
+		}
+			
+		> ul.TabBar:focus {
+			outline: 0;
 		}
 
 		div.TabItem {

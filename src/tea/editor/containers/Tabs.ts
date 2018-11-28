@@ -40,7 +40,11 @@ export class TabBarItem extends Vue {
 
 @Component({
 	template: `
-		<ul class="TabBar">
+		<ul
+			class="TabBar"
+			@focus="onFocus"
+			@blur="onBlur"
+			@keydown="onKeyDown">
 			<TabBarItem
 				v-for="(name, index) in names"
 				ref="items"
@@ -49,14 +53,6 @@ export class TabBarItem extends Vue {
 				@select="onSelect"></TabBarItem>
 		</ul>
 	`,
-	props: {
-		/*names: {
-			type: Array,
-			default: function () {
-				return [];
-			}
-		}*/
-	},
 	data: () => {
 		return {
 			names: [],
@@ -76,15 +72,25 @@ export class TabBar extends Vue {
 		if (item == null) {
 			return;
 		}
-		this.$children.forEach((child: TabBarItem) => {
-			child.unselect();
-		});
+		this.unselectAllItems();
 		item.select();
+		if (this.hasFocus()) {
+			item.$el.classList.add("focus");
+		}
 		this.selectedIndex = index;
+	}
+
+	hasFocus(): boolean {
+		return document.activeElement === this.$el;
 	}
 
 	getItems(): Array<TabBarItem> {
 		return this.$refs.items as Array<TabBarItem>;
+	}
+
+	getSelectedItem(): TabBarItem {
+		var index = this.selectedIndex;
+		return this.$children[index] as TabBarItem;
 	}
 
 	protected updated(): void {
@@ -94,16 +100,59 @@ export class TabBar extends Vue {
 		});
 	}
 
+	protected unselectAllItems(): void {
+		this.$children.forEach((child: TabBarItem) => {
+			child.unselect();
+			child.$el.classList.remove("focus");
+		});
+	}
+
 	protected onSelect(item: TabBarItem): void {
 		if (this.selectedIndex === item.index) {
 			return;
 		}
-		this.$children.forEach((child: TabBarItem) => {
-			child.unselect();
-		});
+		this.unselectAllItems();
 		item.select();
+		if (this.hasFocus()) {
+			item.$el.classList.add("focus");
+		}
 		this.selectedIndex = item.index;
 		this.$emit("select", item.index);
+	}
+
+	protected onFocus(): void {
+		var item = this.getSelectedItem();
+		item.$el.classList.add("focus");
+	}
+
+	protected onBlur(): void {
+		var item = this.getSelectedItem();
+		item.$el.classList.remove("focus");
+	}
+
+	protected onKeyDown(e: KeyboardEvent): void {
+		var target = e.target as HTMLElement;
+		if (target.classList.contains("TabBar") === false) {
+			return;
+		}
+		var count = this.names.length;
+		var index = this.selectedIndex;
+		switch (e.key) {
+			case "ArrowLeft":
+				if (index > 0) {
+					index--;
+					this.select(index);
+					this.$emit("select", index);
+				}
+				break;
+			case "ArrowRight":
+				if (index + 1 < count) {
+					index++;
+					this.select(index);
+					this.$emit("select", index);
+				}
+				break;
+		}
 	}
 }
 
@@ -146,12 +195,15 @@ export class TabItem extends Vue {
 		<div class="Tabs">
 			<TabBar
 				ref="bar"
+				:tabindex="tabindex"
 				@select="onSelect"></TabBar>
 			<slot></slot>
 		</div>
 	`,
-	data: () => {
-		return {
+	props: {
+		tabindex: {
+			type: Number,
+			default: null
 		}
 	},
 	components: {
