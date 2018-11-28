@@ -7,6 +7,7 @@ import * as BasicComponents from "./basic/BasicComponents";
 import * as Containers from "./containers/Containers";
 import * as TeaComponents from "./components/TeaComponents";
 
+import { EditorAssets } from "./EditorAssets";
 import { EditorSettings } from "./EditorSettings";
 import { Translator } from "./translate/Translator";
 import { EditorBehavior } from "./EditorBehavior";
@@ -203,6 +204,7 @@ export class Editor extends Vue {
 			translator.loadResource(settings.language);
 		}
 		this.translate();
+		EditorAssets.cacheImages();
 		this._command = new EditorCommand();
 		this._command.editor = this;
 	}

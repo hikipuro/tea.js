@@ -14,4 +14,14 @@ export module EditorAssets {
 		export const JSIcon = "images/js.svg";
 		export const JsonIcon = "images/json.svg";
 	}
+
+	export function cacheImages(): void {
+		var images = EditorAssets.Images;
+		var keys = Object.keys(images);
+		keys.forEach((key: string) => {
+			var url = images[key];
+			var image = new Image();
+			image.src = url;
+		});
+	}
 }
