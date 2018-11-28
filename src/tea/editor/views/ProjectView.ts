@@ -136,22 +136,10 @@ export class ProjectView extends Vue {
 				if (file.name === ".DS_Store") {
 					return;
 				}
+				var iconUrl = this.getFileIconUrl(file);
 				var icon: string = null;
-				if (file.isDirectory) {
-					icon = "<img src='" + EditorAssets.Images.FolderIcon + "'>";
-				} else {
-					var ext = nodePath.extname(file.name);
-					switch (ext) {
-						case ".html":
-							icon = "<img src='" + EditorAssets.Images.HtmlIcon + "'>";
-							break;
-						case ".js":
-							icon = "<img src='" + EditorAssets.Images.JSIcon + "'>";
-							break;
-						case ".json":
-							icon = "<img src='" + EditorAssets.Images.JsonIcon + "'>";
-							break;
-					}
+				if (iconUrl !== "") {
+					icon = "<img src='" + iconUrl + "'>";
 				}
 				var item: TreeView.Model = {
 					text: file.name,
@@ -249,6 +237,22 @@ export class ProjectView extends Vue {
 			items.push(item);
 		});
 		i.children = items;
+	}
+
+	protected getFileIconUrl(file: Tea.FileInfo): string {
+		if (file.isDirectory) {
+			return EditorAssets.Images.FolderIcon;
+		}
+		var ext = nodePath.extname(file.name);
+		switch (ext) {
+			case ".html":
+				return EditorAssets.Images.HtmlIcon;
+			case ".js":
+				return EditorAssets.Images.JSIcon;
+			case ".json":
+				return EditorAssets.Images.JsonIcon;
+		}
+		return "";
 	}
 
 	protected onDragStart(e: DragEvent, item: Editor.TreeViewItem): void {
@@ -403,6 +407,15 @@ export class ProjectView extends Vue {
 		fs.renameSync(oldPath, newPath);
 		item.model.text = value;
 		item.model.tag = newPath;
+
+		var file = new Tea.FileInfo(newPath);
+		var iconUrl = this.getFileIconUrl(file);
+		if (iconUrl !== "") {
+			item.model.icon = "<img src='" + iconUrl + "'>";
+		} else {
+			item.model.icon = null;
+		}
+
 		var stat = fs.statSync(newPath);
 		if (stat.isDirectory()) {
 			var folderList = this.$refs.folderList as TreeView;

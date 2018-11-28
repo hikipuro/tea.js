@@ -55,12 +55,12 @@ export class Directory {
 				return;
 			}
 			var fileInfoList = [];
-			fs.readdir(path, (err, files) => {
+			fs.readdir(path, (err, files: Array<string>) => {
 				if (err) {
 					callback(null);
 					return;
 				}
-				files.forEach(file => {
+				files.forEach((file: string) => {
 					file = nodePath.join(path, file);
 					//file = nodePath.resolve(file);
 					var fileInfo = new FileInfo(file);
