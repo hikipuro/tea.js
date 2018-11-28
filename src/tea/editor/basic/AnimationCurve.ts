@@ -37,7 +37,7 @@ export class AnimationCurveImage extends Vue {
 			canvas.height = rect.height;
 		}
 		var context = canvas.getContext("2d");
-		context.imageSmoothingEnabled = false;
+		//context.imageSmoothingEnabled = false;
 		var width = canvas.width;
 		var height = canvas.height;
 		//console.log("draw", rect);
@@ -55,10 +55,8 @@ export class AnimationCurveImage extends Vue {
 			var time = x / width;
 			var value = curve.evaluate(time);
 			y = (1.0 - value) * height + 1;
-			//console.log(x, value);
-			//context.strokeRect(x, y, 1, 1);
 			context.lineTo(x, y);
-			context.moveTo(x, y);
+			//context.moveTo(x, y);
 		}
 		context.lineTo(x, y);
 		//context.closePath();
