@@ -42,6 +42,22 @@
 			}
 		}
 
+		div.InputText {
+			box-sizing: border-box;
+			align-items: center;
+			padding: 1px;
+
+			> .title {
+				flex: 1;
+				white-space: nowrap;
+				overflow: hidden;
+			}
+
+			> input {
+				width: 60%;
+			}
+		}
+
 		div.Vector3 {
 			> .value > .InputNumber {
 				> .title {

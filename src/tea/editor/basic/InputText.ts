@@ -9,15 +9,14 @@ import Component from "vue-class-component";
 				class="title">
 				<slot></slot>
 			</div>
-			<div class="value">
-				<input
-					type="text"
-					ref="text"
-					:value="value"
-					@input="onInput"
-					@change="onChange">
-				</input>
-			</div>
+			<input
+				type="text"
+				ref="text"
+				:value="value"
+				@input="onInput"
+				@change="onChange"
+				@focus="onFocus">
+			</input>
 		</div>
 	`,
 	props: {
@@ -40,5 +39,10 @@ export class InputText extends Vue {
 		//console.log("onChange");
 		var el = this.$refs.text as HTMLInputElement;
 		this.$emit("update", el.value);
+	}
+
+	protected onFocus(e: FocusEvent): void {
+		var el = this.$refs.text as HTMLInputElement;
+		el.setSelectionRange(0, el.value.length);
 	}
 }
