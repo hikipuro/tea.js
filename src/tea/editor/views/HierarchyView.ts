@@ -128,9 +128,14 @@ export class HierarchyView extends Vue {
 		}
 	}
 
-	protected onDoubleClick(): void {
-		var object3d = this._command.getSelectedObject();
-		this._command.editor.status.scene.lockViewToSelected(object3d);
+	protected onDoubleClick(item: Editor.TreeViewItem): void {
+		var editor = this.$root as Editor;
+		if (editor.status.app.isSceneView) {
+			var object3d = this._command.getSelectedObject();
+			editor.status.scene.lockViewToSelected(object3d);
+		} else {
+			item.toggle();
+		}
 	}
 
 	protected onMenu(e: MouseEvent): void {
