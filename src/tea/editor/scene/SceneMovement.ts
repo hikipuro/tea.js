@@ -1,7 +1,7 @@
-import * as Tea from "../Tea";
-import { Keyboard } from "../input/Keyboard";
-import { Mouse } from "../input/Mouse";
-import { Script } from "../components/Script";
+import * as Tea from "../../Tea";
+import { Keyboard } from "../../input/Keyboard";
+import { Mouse } from "../../input/Mouse";
+import { Script } from "../../components/Script";
 
 export class SceneMovement extends Script {
 	moveSpeed: number = 0.2;
@@ -35,35 +35,36 @@ export class SceneMovement extends Script {
 		var keyboard = this.keyboard;
 		var object3d = this.object3d;
 		var speed = this.moveSpeed;
+		var keyCode = Keyboard.Code;
 
-		if (keyboard.isHeld(Keyboard.Code.ShiftLeft)
-		|| keyboard.isHeld(Keyboard.Code.ShiftRight)) {
+		if (keyboard.isHeld(keyCode.ShiftLeft)
+		|| keyboard.isHeld(keyCode.ShiftRight)) {
 			speed *= 3;
 		}
 
-		if (keyboard.isHeld(Keyboard.Code.KeyW)) {
+		if (keyboard.isHeld(keyCode.KeyW)) {
 			object3d.translate(
 				object3d.forward.mul$(speed)
 			);
-		} else if (keyboard.isHeld(Keyboard.Code.KeyS)) {
+		} else if (keyboard.isHeld(keyCode.KeyS)) {
 			object3d.translate(
 				object3d.forward.mul$(-speed)
 			);
 		}
-		if (keyboard.isHeld(Keyboard.Code.KeyD)) {
+		if (keyboard.isHeld(keyCode.KeyD)) {
 			object3d.translate(
 				object3d.right.mul$(speed)
 			);
-		} else if (keyboard.isHeld(Keyboard.Code.KeyA)) {
+		} else if (keyboard.isHeld(keyCode.KeyA)) {
 			object3d.translate(
 				object3d.right.mul$(-speed)
 			);
 		}
-		if (keyboard.isHeld(Keyboard.Code.KeyE)) {
+		if (keyboard.isHeld(keyCode.KeyE)) {
 			object3d.translate(
 				object3d.up.mul$(speed)
 			);
-		} else if (keyboard.isHeld(Keyboard.Code.KeyQ)) {
+		} else if (keyboard.isHeld(keyCode.KeyQ)) {
 			object3d.translate(
 				object3d.up.mul$(-speed)
 			);

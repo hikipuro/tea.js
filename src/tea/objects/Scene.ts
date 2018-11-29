@@ -280,12 +280,12 @@ export class Scene extends EventDispatcher {
 	enablePostProcessing: boolean;
 	renderTexture: Tea.RenderTexture;
 	postProcessingRenderer: Tea.PostProcessingRenderer;
+	sceneRenderer: SceneRenderer;
+	stats: Tea.Stats;
 	protected _isEditing: boolean;
 	protected _isCleared: boolean;
 	protected _children: Array<Tea.Object3D>;
 	protected _components: SceneComponents;
-	protected _sceneRenderer: SceneRenderer;
-	protected _stats: Tea.Stats;
 
 	constructor(app: Tea.App) {
 		super();
@@ -299,10 +299,6 @@ export class Scene extends EventDispatcher {
 		this._isCleared = false;
 		this._children = [];
 		this._components = new SceneComponents();
-		if (app.status.isEditor) {
-			this._sceneRenderer = new SceneRenderer(this);
-			this._stats = new Tea.Stats(app);
-		}
 		var shader = this.app.createShader(
 			Tea.ShaderSources.antialiasPostProcessingVS,
 			Tea.ShaderSources.antialiasPostProcessingFS
@@ -637,13 +633,13 @@ export class Scene extends EventDispatcher {
 				this.postProcessingRenderer.render();
 			}
 		}
-		if (haveNormalCamera && this._stats && this._stats.enabled) {
+		if (haveNormalCamera && this.stats && this.stats.enabled) {
 			var app = this.app;
 			this.app.status.setViewport(
 				0.0, 0.0, app.width, app.height
 			);
-			this._stats.update();
-			this._stats.renderer.render2d();
+			this.stats.update();
+			this.stats.renderer.render2d();
 		}
 		if (haveNormalCamera) {
 			this._isCleared = false;
@@ -669,7 +665,7 @@ export class Scene extends EventDispatcher {
 		this._components.sortRenderers();
 		var renderers = this._components.availableRenderers;
 		var lights = this._components.availableLights;
-		this._sceneRenderer.render(renderers, lights);
+		this.sceneRenderer.render(renderers, lights);
 	}
 
 	static fromJSON(app: Tea.App, json: any): Scene {
@@ -716,7 +712,7 @@ export class Scene extends EventDispatcher {
 		if (this.app.isSceneView === false) {
 			return;
 		}
-		this._sceneRenderer.lockViewToSelected(object3d);
+		this.sceneRenderer.lockViewToSelected(object3d);
 	}
 
 	protected updateObject3D(object3d: Tea.Object3D): void {

@@ -8,6 +8,7 @@ import { Translator } from "./translate/Translator";
 import { SelectAspect } from "./basic/SelectAspect";
 import { UICommands } from "./commands/UICommands";
 import { Tabs } from "./containers/Tabs";
+import { EditorSceneRenderer } from "./scene/SceneRenderer";
 
 export class EditorBehavior {
 	editor: Editor;
@@ -158,6 +159,10 @@ export class EditorBehavior {
 	}
 
 	setScene(scene: Tea.Scene): void {
+		if (scene.sceneRenderer == null) {
+			scene.sceneRenderer = new EditorSceneRenderer(scene);
+			scene.stats = new Tea.Stats(scene.app);
+		}
 		var hierarchyView = this.editor.hierarchyView;
 		var renderer = scene.app.renderer;
 		renderer.once("update", () => {
