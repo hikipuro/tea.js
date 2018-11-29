@@ -246,7 +246,7 @@ export class TreeViewItem extends Vue {
 			document.addEventListener(
 				"mousedown", this.onMouseDownScreen
 			);
-			this.$emit("before-rename", this, rename);
+			this.$emit("beforeRename", this, rename);
 		});
 	}
 

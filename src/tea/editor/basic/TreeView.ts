@@ -31,7 +31,7 @@ export class Model {
 					@create="onCreateItem"
 					@select="onSelectItem"
 					@doubleClick="onDoubleClickItem"
-					@before-rename="onBeforeRenameItem"
+					@beforeRename="onBeforeRenameItem"
 					@rename="onRenameItem">
 				</TreeViewItem>
 			</ul>
@@ -450,6 +450,7 @@ export class TreeView extends Vue {
 			e.preventDefault();
 			this.scrollTo(this.selectedItem);
 		}
+		this.$emit("keydown", e);
 	}
 
 	protected onCreateItem(item: TreeViewItem): void {
@@ -484,7 +485,7 @@ export class TreeView extends Vue {
 	}
 
 	protected onBeforeRenameItem(item: TreeViewItem, rename: HTMLInputElement): void {
-		this.$emit("before-rename", item, rename);
+		this.$emit("beforeRename", item, rename);
 	}
 
 	protected onRenameItem(item: TreeViewItem, value: string): void {

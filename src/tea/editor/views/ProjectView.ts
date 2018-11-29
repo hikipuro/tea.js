@@ -27,9 +27,10 @@ import { TreeView } from "../basic/TreeView";
 				tabindex="1"
 				@focus="onFocusFileList"
 				@select="onSelectFile"
+				@keydown="onFileListKeyDown"
 				@doubleClick="onDoubleClickFile"
 				@menu="onFileListMenu"
-				@before-rename="onBeforeRenameFile"
+				@beforeRename="onBeforeRenameFile"
 				@rename="onRenameFile"></TreeView>
 		</div>
 	`
@@ -264,6 +265,81 @@ export class ProjectView extends Vue {
 		return "";
 	}
 
+	protected openFile(path: string): void {
+		if (path == null) {
+			return;
+		}
+		var editor = this.$root as Editor;
+		path = nodePath.resolve(path);
+
+		var stat = fs.statSync(path);
+		if (stat.isDirectory()) {
+			this.selectFolder(path);
+			return;
+		}
+		var ext = nodePath.extname(path);
+		if (ext === ".json") {
+			Tea.File.readText(path, (err: any, data: string) => {
+				if (err) {
+					console.error(err);
+					return;
+				}
+				var json = JSON.parse(data);
+				if (json._type === "Scene") {
+					editor.command.loadScene(path);
+				} else {
+					Electron.shell.openItem(path);
+				}
+			});
+			return;
+		}
+		Electron.shell.openItem(path);
+	}
+
+	protected openFileInspector(path: string): void {
+		if (path == null) {
+			return;
+		}
+		if (fs.existsSync(path) === false) {
+			return;
+		}
+		var editor = this.$root as Editor;
+		var inspectorView = editor.inspectorView;
+		var ext = Tea.File.extension(path);
+		ext = ext.toLowerCase();
+		switch (ext) {
+			case "json":
+			case "html":
+			case "css":
+			case "js":
+			case "ts":
+			case "md":
+			case "txt":
+				Tea.File.readText(path, (err, data) => {
+					if (err) {
+						return;
+					}
+					var maxSize = 1024 * 64;
+					if (data.length > maxSize) {
+						data = data.substr(0, maxSize);
+					}
+					inspectorView.hide();
+					inspectorView.component = FileInspector;
+					inspectorView.show();
+					inspectorView.$nextTick(() => {
+						var component = inspectorView.getComponent() as FileInspector;
+						var stat = fs.statSync(path);
+						component.fileType = ext.toUpperCase();
+						component.text = data;
+						component.setSize(stat.size);
+						component.setCreatedTime(stat.birthtime);
+						component.setModifiedTime(stat.mtime);
+					});
+				});
+				break;
+		}
+	}
+
 	protected onDragStart(e: DragEvent, item: Editor.TreeViewItem): void {
 		//console.log("onDragStart");
 		this._dragSource = item;
@@ -327,40 +403,14 @@ export class ProjectView extends Vue {
 			return;
 		}
 		var path = item.tag;
-		if (fs.existsSync(path) === false) {
-			return;
-		}
-		var ext = Tea.File.extension(path);
-		ext = ext.toLowerCase();
-		switch (ext) {
-			case "json":
-			case "html":
-			case "css":
-			case "js":
-			case "ts":
-			case "md":
-			case "txt":
-				Tea.File.readText(path, (err, data) => {
-					if (err) {
-						return;
-					}
-					var maxSize = 1024 * 64;
-					if (data.length > maxSize) {
-						data = data.substr(0, maxSize);
-					}
-					inspectorView.hide();
-					inspectorView.component = FileInspector;
-					inspectorView.show();
-					inspectorView.$nextTick(() => {
-						var component = inspectorView.getComponent() as FileInspector;
-						var stat = fs.statSync(path);
-						component.fileType = ext.toUpperCase();
-						component.text = data;
-						component.setSize(stat.size);
-						component.setCreatedTime(stat.birthtime);
-						component.setModifiedTime(stat.mtime);
-					});
-				});
+		this.openFileInspector(path);
+	}
+
+	protected onFileListKeyDown(e: KeyboardEvent): void {
+		switch (e.key) {
+			case "Enter":
+				var path = this.getSelectedFilePath();
+				this.openFile(path);
 				break;
 		}
 	}
@@ -369,35 +419,8 @@ export class ProjectView extends Vue {
 		if (item == null) {
 			return;
 		}
-		var editor = this.$root as Editor;
 		var path = this.getSelectedFilePath();
-		if (path == null) {
-			return;
-		}
-		path = nodePath.resolve(path);
-
-		var stat = fs.statSync(path);
-		if (stat.isDirectory()) {
-			this.selectFolder(path);
-			return;
-		}
-		var ext = nodePath.extname(path);
-		if (ext === ".json") {
-			Tea.File.readText(path, (err: any, data: string) => {
-				if (err) {
-					console.error(err);
-					return;
-				}
-				var json = JSON.parse(data);
-				if (json._type === "Scene") {
-					editor.command.loadScene(path);
-				} else {
-					Electron.shell.openItem(path);
-				}
-			});
-			return;
-		}
-		Electron.shell.openItem(path);
+		this.openFile(path);
 	}
 
 	protected onFileListMenu(e: MouseEvent): void {
