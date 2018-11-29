@@ -160,7 +160,9 @@ export class EditorBehavior {
 
 	setScene(scene: Tea.Scene): void {
 		if (scene.sceneRenderer == null) {
-			scene.sceneRenderer = new EditorSceneRenderer(scene);
+			var sceneRenderer = new EditorSceneRenderer(scene);
+			sceneRenderer.editor = this.editor;
+			scene.sceneRenderer = sceneRenderer;
 			scene.stats = new Tea.Stats(scene.app);
 		}
 		var hierarchyView = this.editor.hierarchyView;

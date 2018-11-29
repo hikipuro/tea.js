@@ -1,20 +1,25 @@
 import * as Tea from "../../Tea";
+import { Editor } from "../Editor";
 import { SceneRenderer } from "../../objects/SceneRenderer";
 import { SceneGrid } from "./SceneGrid";
 import { SceneMovement } from "./SceneMovement";
 import { SceneIcons } from "./SceneIcons";
+import { FrustumPlanes } from "./FrustumPlanes";
 
 export class EditorSceneRenderer extends SceneRenderer {
+	editor: Editor;
 	cameraObject: Tea.Object3D;
 	camera: Tea.Camera;
 	grid: SceneGrid;
 	icons: SceneIcons;
+	frustumPlanes: FrustumPlanes;
 
 	constructor(scene: Tea.Scene) {
 		super(scene);
 		this.createCamera();
 		this.grid = new SceneGrid(scene.app);
 		this.icons = new SceneIcons(scene);
+		this.frustumPlanes = new FrustumPlanes(scene.app);
 	}
 
 	render(renderers: Array<Tea.Renderer>, lights: Array<Tea.Light>): void {
@@ -22,6 +27,7 @@ export class EditorSceneRenderer extends SceneRenderer {
 		Tea.Renderer.drawCallCount = 0;
 		var camera = this.camera;
 		renderers.unshift(this.grid.renderer);
+		renderers.unshift(this.frustumPlanes.renderer);
 		var renderSettings = this.scene.renderSettings;
 		var rendererCount = renderers.length;
 		for (var i = 0; i < rendererCount; i++) {
@@ -55,6 +61,7 @@ export class EditorSceneRenderer extends SceneRenderer {
 		meshFilter.mesh = Tea.Primitives.createQuadMesh();
 		this.cameraObject.addComponent(Tea.MeshRenderer);
 		this.camera = this.cameraObject.getComponent(Tea.Camera);
+		this.camera.farClipPlane = 2000;
 		this.camera.backgroundColor.set(0.5, 0.5, 0.5, 1.0);
 	}
 
@@ -77,6 +84,14 @@ export class EditorSceneRenderer extends SceneRenderer {
 			position[2]
 		);
 		this.grid.object3d.update();
+
+		var object3d = this.editor.hierarchyView.getSelectedObject();
+		if (object3d) {
+			this.frustumPlanes.object3d.update();
+			this.frustumPlanes.setCamera(object3d);
+		} else {
+			this.frustumPlanes.clearLines();
+		}
 	}
 
 	protected updateObject3D(object3d: Tea.Object3D): void {

@@ -44,6 +44,20 @@ export class HierarchyView extends Vue {
 		return treeView.selectedItem;
 	}
 
+	getSelectedObject(): Tea.Object3D {
+		var item = this.getSelectedItem();
+		if (item == null) {
+			return null;
+		}
+		var editor = this.$root as Editor;
+		var id = item.tag as number;
+		var scene = editor.status.scene;
+		if (scene == null) {
+			return null;
+		}
+		return scene.findChildById(id);
+	}
+
 	focus(): void {
 		var treeView = this.$refs.hierarchy as TreeView;
 		treeView.$el.focus();

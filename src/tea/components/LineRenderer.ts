@@ -37,6 +37,10 @@ export class LineRenderer extends Renderer {
 		}
 	}
 
+	clear(): void {
+		this.points = [];
+	}
+
 	add(x: number, y: number, z: number): void;
 	add(point: Tea.Vector3): void;
 	add(x: Tea.Vector3 | number, y: number = 0.0, z: number = 0.0): void {

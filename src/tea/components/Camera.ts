@@ -189,7 +189,7 @@ export class Camera extends Component {
 		super.destroy();
 	}
 
-	update(): void {
+	updateMatrix(): void {
 		var isChanged = false;
 		var object3d = this.object3d;
 		if (this._prev.isViewChanged(object3d)) {
@@ -245,7 +245,10 @@ export class Camera extends Component {
 			this._inverseViewProjectionMatrix = this._viewProjectionMatrix.inverse;
 			//this.frustumPlanes = Tea.GeometryUtil.calculateFrustumPlanes(this);
 		}
+	}
 
+	update(): void {
+		this.updateMatrix();
 		if (this.targetTexture != null) {
 			var t = this.targetTexture;
 			var w = t.width;

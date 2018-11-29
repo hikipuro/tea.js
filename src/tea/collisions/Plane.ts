@@ -67,8 +67,10 @@ export class Plane {
 
 	closestPointOnPlane(point: Tea.Vector3): Tea.Vector3 {
 		var d = this.getDistanceToPoint(point);
-		var n = this.normal;
-		return point.sub(n.mul(d));
+		var n = this._tmpVec3;
+		n.copy(this.normal);
+		n.mul$(d);
+		return point.sub(n);
 	}
 
 	flip(): void {
@@ -112,6 +114,83 @@ export class Plane {
 	translate(translation: Tea.Vector3): void {
 		var d = this.normal.scale(translation);
 		this.distance += d.magnitude;
+	}
+
+	isParallel(plane: Plane): boolean {
+		if (plane == null) {
+			return false;
+		}
+		return this.normal.isParallel(plane.normal);
+	}
+
+	intersectLine(line: Tea.Line): Tea.Vector3 {
+		if (line == null) {
+			return null;
+		}
+		var n = this.normal;
+		var d = n.dot(line.direction);
+		if (Tea.Mathf.approximately(d, 0.0)) {
+			return null;
+		}
+		var t = (-this.distance - n.dot(line.point)) / d;
+		return line.point.add(line.direction.mul(t));
+	}
+
+	intersectPlane(plane: Plane): Tea.Line {
+		if (plane == null) {
+			return null;
+		}
+		var u = this._tmpVec3;
+		u.copy(this.normal);
+		u.cross$(plane.normal);
+		
+		var ax = u[0] >= 0 ? u[0] : -u[0];
+		var ay = u[1] >= 0 ? u[1] : -u[1];
+		var az = u[2] >= 0 ? u[2] : -u[2];
+		if (ax + ay + az < Tea.Mathf.Epsilon) {
+			// parallel
+			return null;
+		}
+
+		// max coordinate
+		var maxc = 3;
+		if (ax > ay) {
+			if (ax > az) {
+				maxc =  1;
+			}
+		} else {
+			if (ay > az) {
+				maxc =  2;
+			}
+		}
+	
+		var d1 = this.distance;
+		var d2 = plane.distance;
+		var n1 = this.normal;
+		var n2 = plane.normal;
+		var point = new Tea.Vector3();
+		
+		switch (maxc) {
+			case 1:
+				point[0] = 0.0;
+				point[1] = (d2 * n1[2] - d1 * n2[2]) / u[0];
+				point[2] = (d1 * n2[1] - d2 * n1[1]) / u[0];
+				break;
+			case 2:
+				point[0] = (d1 * n2[2] - d2 * n1[2]) / u[1];
+				point[1] = 0.0;
+				point[2] = (d2 * n1[0] - d1 * n2[0]) / u[1];
+				break;
+			case 3:
+				point[0] = (d2 * n1[1] - d1 * n2[1]) / u[2];
+				point[1] = (d1 * n2[0] - d2 * n1[0]) / u[2];
+				point[2] = 0.0;
+				break;
+		}
+		var line = new Tea.Line();
+		line.direction.copy(u.normalized);
+		line.point.copy(point);
+		return line;
 	}
 
 	collideLine(line: Tea.Line): boolean {

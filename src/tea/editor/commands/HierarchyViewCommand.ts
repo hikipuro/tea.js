@@ -10,13 +10,7 @@ export class HierarchyViewCommand {
 
 	getSelectedObject(): Tea.Object3D {
 		var hierarchyView = this.editor.hierarchyView;
-		var item = hierarchyView.getSelectedItem();
-		if (item == null) {
-			return null;
-		}
-		var id = item.tag as number;
-		var scene = this.editor.status.scene;
-		return scene.findChildById(id);
+		return hierarchyView.getSelectedObject();
 	}
 	
 	showContextMenu(): void {

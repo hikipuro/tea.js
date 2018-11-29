@@ -5,6 +5,12 @@ export class GeometryUtil {
 	protected static _tmpVec3: Tea.Vector3 = new Tea.Vector3();
 
 	static calculateFrustumPlanes(camera: Tea.Camera): Array<Tea.Plane> {
+		if (camera == null) {
+			return null;
+		}
+		if (camera.orthographic) {
+			return GeometryUtil.calculateOrthoFrustumPlanes(camera);
+		}
 		var planes = new Array(6);
 		var near = camera.nearClipPlane;
 		var far = camera.farClipPlane;
@@ -56,6 +62,57 @@ export class GeometryUtil {
 		normal.applyQuaternion(rotation);
 		p = position.add(forwardNear.add$(forward.mul$(far)));
 		planes[5] = new Tea.Plane(normal, p);
+		return planes;
+	}
+
+	protected static calculateOrthoFrustumPlanes(camera: Tea.Camera): Array<Tea.Plane> {
+		if (camera == null) {
+			return null;
+		}
+		var planes = [];
+		var position = camera.object3d.position;
+		var corners: Array<Tea.Vector3> = new Array(8);
+		corners[0] = new Tea.Vector3(0, 1, 0);
+		corners[1] = new Tea.Vector3(1, 1, 0);
+		corners[2] = new Tea.Vector3(1, 0, 0);
+		corners[3] = new Tea.Vector3(0, 0, 0);
+		corners[4] = new Tea.Vector3(0, 1, 1);
+		corners[5] = new Tea.Vector3(1, 1, 1);
+		corners[6] = new Tea.Vector3(1, 0, 1);
+		corners[7] = new Tea.Vector3(0, 0, 1);
+
+		for (var i = 0; i < 8; i++) {
+			var position = corners[i];
+			var p = position.clone();
+			p[2] = -1.0;
+			var near = camera.unproject(p);
+			p[2] = 1.0;
+			var far = camera.unproject(p);
+			var direction = far.sub(near).normalized;
+			var z = 0.0;
+			if (position.z > 0) {
+				z = camera.farClipPlane - camera.nearClipPlane;
+			}
+			corners[i] = near.add(direction.mul(z));
+		}
+		planes.push(new Tea.Plane(
+			corners[0], corners[3], corners[4]
+		));
+		planes.push(new Tea.Plane(
+			corners[1], corners[2], corners[5]
+		));
+		planes.push(new Tea.Plane(
+			corners[2], corners[3], corners[6]
+		));
+		planes.push(new Tea.Plane(
+			corners[0], corners[1], corners[4]
+		));
+		planes.push(new Tea.Plane(
+			corners[0], corners[1], corners[2]
+		));
+		planes.push(new Tea.Plane(
+			corners[4], corners[5], corners[6]
+		));
 		return planes;
 	}
 
