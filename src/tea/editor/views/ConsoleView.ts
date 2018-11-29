@@ -7,7 +7,9 @@ import { EditorAssets } from "../EditorAssets";
 		<div class="item" :class="model.type">
 			<div class="icon">{{ getIcon(model.type) }}</div>
 			<div class="time">[{{ model.time }}]</div>
-			<div class="toggle" v-html="getToggleIcon()" @click="onClickOpen"></div>
+			<div class="toggle" @click="onClickOpen">
+				<img :src="getToggleIcon()">
+			</div>
 			<div class="message">
 				<div class="text">{{ model.text }}</div>
 				<div class="stack" v-if="isOpen">{{ model.stack }}</div>
@@ -23,8 +25,8 @@ import { EditorAssets } from "../EditorAssets";
 	data: () => {
 		return {
 			isOpen: false,
-			openIcon: "",
-			closeIcon: ""
+			openIcon: EditorAssets.Images.FolderOpen,
+			closeIcon: EditorAssets.Images.FolderClose
 		}
 	}
 })
@@ -52,11 +54,6 @@ export class Item extends Vue {
 			return this.openIcon;
 		}
 		return this.closeIcon;
-	}
-
-	protected created(): void {
-		this.openIcon = "<img src='" + EditorAssets.Images.FolderOpen + "' />"; 
-		this.closeIcon = "<img src='" + EditorAssets.Images.FolderClose + "' />"; 
 	}
 
 	protected onClickOpen(): void {
@@ -160,6 +157,10 @@ export class ConsoleView extends Vue {
 		this.items.splice(0, this.items.length);
 	}
 
+	protected created(): void {
+		this.overrideConsoleObject();
+	}
+
 	protected createItem(type: string, message: any, optionalParams: any[]): any {
 		return {
 			type: type,
@@ -225,5 +226,48 @@ export class ConsoleView extends Vue {
 
 	protected getLocation(line: number, sourceId: string): string {
 		return sourceId + ":" + line;
+	}
+
+	protected overrideConsoleObject(): void {
+		//*
+		var log = console.log;
+		var info = console.info;
+		var warn = console.warn;
+		var error = console.error;
+		console.log = (message: any, ...optionalParams: any[]) => {
+			log.apply(console, [message].concat(optionalParams));
+			this.log(message, optionalParams);
+		};
+		console.info = (message: any, ...optionalParams: any[]) => {
+			info.apply(console, [message].concat(optionalParams));
+			this.info(message, optionalParams);
+		};
+		console.warn = (message: any, ...optionalParams: any[]) => {
+			warn.apply(console, [message].concat(optionalParams));
+			this.warn(message, optionalParams);
+		};
+		console.error = (message: any, ...optionalParams: any[]) => {
+			error.apply(console, [message].concat(optionalParams));
+			this.error(message, optionalParams);
+		};
+		window.addEventListener("error", (e: ErrorEvent) => {
+			this.uncaughtError(e.message, e.error);
+		});
+		/*
+		var webContents = Electron.remote.getCurrentWebContents();
+		webContents.on("console-message", (e: Electron.Event, level: number, message: string, line: number, sourceId: string) => {
+			switch (level) {
+				case 0:
+					consoleView.log(message, line, sourceId);
+					break;
+				case 1:
+					consoleView.warn(message, line, sourceId);
+					break;
+				case 2:
+					consoleView.error(message, line, sourceId);
+					break;
+			}
+		});
+		*/
 	}
 }

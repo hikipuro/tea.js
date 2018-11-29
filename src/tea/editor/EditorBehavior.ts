@@ -94,70 +94,30 @@ export class EditorBehavior {
 	}
 
 	initToolBox(): void {
+		var editor = this.editor;
 		var toolBox = this.editor.toolBox;
 		toolBox.$on("play", () => {
 			console.log("play");
-			if (this.editor.status.isChanged) {
-				this.editor.command.once("save", (path: string) => {
+			if (editor.status.isChanged) {
+				editor.command.once("save", (path: string) => {
 					if (path != null) {
-						this.editor.consoleView.clear();
-						this.editor.command.play();
+						editor.consoleView.clear();
+						editor.command.play();
 					}
 				});
-				this.editor.command.saveScene();
+				editor.command.saveScene();
 			} else {
-				this.editor.consoleView.clear();
-				this.editor.command.play();
+				editor.consoleView.clear();
+				editor.command.play();
 			}
 		});
 		toolBox.$on("stop", () => {
 			console.log("stop");
-			this.editor.command.stop();
+			editor.command.stop();
 		});
 	}
 
 	initConsoleView(): void {
-		var consoleView = this.editor.consoleView;
-		//*
-		var log = console.log;
-		var info = console.info;
-		var warn = console.warn;
-		var error = console.error;
-		console.log = (message: any, ...optionalParams: any[]) => {
-			log.apply(console, [message].concat(optionalParams));
-			consoleView.log(message, optionalParams);
-		};
-		console.info = (message: any, ...optionalParams: any[]) => {
-			info.apply(console, [message].concat(optionalParams));
-			consoleView.info(message, optionalParams);
-		};
-		console.warn = (message: any, ...optionalParams: any[]) => {
-			warn.apply(console, [message].concat(optionalParams));
-			consoleView.warn(message, optionalParams);
-		};
-		console.error = (message: any, ...optionalParams: any[]) => {
-			error.apply(console, [message].concat(optionalParams));
-			consoleView.error(message, optionalParams);
-		};
-		window.addEventListener("error", (e: ErrorEvent) => {
-			consoleView.uncaughtError(e.message, e.error);
-		});
-		/*
-		var webContents = Electron.remote.getCurrentWebContents();
-		webContents.on("console-message", (e: Electron.Event, level: number, message: string, line: number, sourceId: string) => {
-			switch (level) {
-				case 0:
-					consoleView.log(message, line, sourceId);
-					break;
-				case 1:
-					consoleView.warn(message, line, sourceId);
-					break;
-				case 2:
-					consoleView.error(message, line, sourceId);
-					break;
-			}
-		});
-		*/
 	}
 
 	initScreenView(): void {
@@ -273,41 +233,41 @@ export class EditorBehavior {
 	}
 
 	protected onBeforeUnload = (e: BeforeUnloadEvent): void => {
-		if (this.editor.status.isChanged) {
-			e.returnValue = false;
-			this.editor.command.showConfirmSaveSceneDialog((response: number) => {
-				switch (response) {
-					case 0: // Save
-						this.editor.command.once("save", (path: string) => {
-							if (path == null) {
-								this._willReload = false;
-								return;
-							}
-							if (this._willReload) {
-								location.reload();
-							} else {
-								window.close();
-							}
-						});
-						this.editor.command.saveScene();
-						break;
-					case 2: // Don't Save
-						this.editor.status.isChanged = false;
+		var editor = this.editor;
+		if (editor.status.isChanged === false) {
+			this.saveAppSettings();
+			return;
+		}
+		e.returnValue = false;
+		editor.command.showConfirmSaveSceneDialog((response: number) => {
+			switch (response) {
+				case 0: // Save
+					editor.command.once("save", (path: string) => {
+						if (path == null) {
+							this._willReload = false;
+							return;
+						}
 						if (this._willReload) {
 							location.reload();
 						} else {
 							window.close();
 						}
-						break;
-					default:
-						this._willReload = false;
-						break;
-				}
-			});
-			return;
-		}
-		this.saveAppSettings();
-		//e.returnValue = false;
+					});
+					editor.command.saveScene();
+					break;
+				case 2: // Don't Save
+					editor.status.isChanged = false;
+					if (this._willReload) {
+						location.reload();
+					} else {
+						window.close();
+					}
+					break;
+				default:
+					this._willReload = false;
+					break;
+			}
+		});
 	}
 
 	protected onResizeWindow = (): void => {
