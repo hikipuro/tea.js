@@ -5,6 +5,7 @@ import { SceneGrid } from "./SceneGrid";
 import { SceneMovement } from "./SceneMovement";
 import { SceneIcons } from "./SceneIcons";
 import { FrustumPlanes } from "./FrustumPlanes";
+import { LightRange } from "./LightRange";
 
 export class EditorSceneRenderer extends SceneRenderer {
 	editor: Editor;
@@ -13,13 +14,16 @@ export class EditorSceneRenderer extends SceneRenderer {
 	grid: SceneGrid;
 	icons: SceneIcons;
 	frustumPlanes: FrustumPlanes;
+	lightRange: LightRange;
 
 	constructor(scene: Tea.Scene) {
 		super(scene);
+		var app = scene.app;
 		this.createCamera();
-		this.grid = new SceneGrid(scene.app);
+		this.grid = new SceneGrid(app);
 		this.icons = new SceneIcons(scene);
-		this.frustumPlanes = new FrustumPlanes(scene.app);
+		this.frustumPlanes = new FrustumPlanes(app);
+		this.lightRange = new LightRange(app);
 	}
 
 	render(renderers: Array<Tea.Renderer>, lights: Array<Tea.Light>): void {
@@ -28,6 +32,7 @@ export class EditorSceneRenderer extends SceneRenderer {
 		var camera = this.camera;
 		renderers.unshift(this.grid.renderer);
 		renderers.unshift(this.frustumPlanes.renderer);
+		renderers.unshift(this.lightRange.renderer);
 		var renderSettings = this.scene.renderSettings;
 		var rendererCount = renderers.length;
 		for (var i = 0; i < rendererCount; i++) {
@@ -89,8 +94,11 @@ export class EditorSceneRenderer extends SceneRenderer {
 		if (object3d) {
 			this.frustumPlanes.object3d.update();
 			this.frustumPlanes.setCamera(object3d);
+			this.lightRange.object3d.update();
+			this.lightRange.setLight(object3d);
 		} else {
 			this.frustumPlanes.clearLines();
+			this.lightRange.clearLines();
 		}
 	}
 

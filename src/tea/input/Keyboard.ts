@@ -52,7 +52,8 @@ export class Keyboard {
 	}
 
 	update(): void {
-		Object.keys(this._keys).forEach((key) => {
+		var keys = Object.keys(this._keys);
+		keys.forEach((key: string) => {
 			this._prevKeys[key] = this._keys[key];
 		});
 		//for (var key in this._keys) {
@@ -74,6 +75,7 @@ export class Keyboard {
 			return;
 		}
 		element.removeEventListener("keydown", this.onKeyDown);
+		element.removeEventListener("keyup", this.onKeyUp);
 	}
 
 	protected onWindowBlur = () => {
@@ -84,6 +86,9 @@ export class Keyboard {
 	}
 
 	protected onKeyDown = (e: KeyboardEvent) => {
+		if (e.metaKey && e.key !== "Meta") {
+			return;
+		}
 		this._keys[e.code] = true;
 	}
 
