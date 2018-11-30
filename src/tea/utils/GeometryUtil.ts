@@ -20,10 +20,10 @@ export class GeometryUtil {
 		var forward = camera.object3d.forward;
 		var m20 = m.m20, m21 = m.m21, m22 = m.m22;
 		var m30 = m.m30, m31 = m.m31, m32 = m.m32;
-		var a, b, c, d;
 		var vec3 = new Tea.Vector3();
 
 		for (var i = 0; i < 4; i++) {
+			var a: number, b: number, c: number;
 			var r = Math.floor(i / 2);
 			if (i % 2 === 0) {
 				a = m30 - m.getValue(r, 0);
@@ -42,25 +42,29 @@ export class GeometryUtil {
 			planes[i] = new Tea.Plane(normal, position);
 		}
 
-		a = m30 + m20;
-		b = m31 + m21;
-		c = m32 + m22;
-		//d = pmat.getValue(3, 3) + pmat.getValue(2, 3);
-		vec3.set(a, b, c);
+		vec3.set(
+			m30 + m20,
+			m31 + m21,
+			m32 + m22
+		);
 		var normal = vec3.normalize$().mul$(-1.0);
 		normal.applyQuaternion(rotation);
-		var forwardNear = forward.mul(near);
-		var p = position.add(forwardNear);
+		var p = this._tmpVec3;
+		p.copy(forward);
+		p.mul$(near);
+		p.add$(position);
 		planes[4] = new Tea.Plane(normal, p);
 
-		a = m30 - m20;
-		b = m31 - m21;
-		c = m32 - m22;
-		//d = pmat.getValue(3, 3) - pmat.getValue(2, 3);
-		vec3.set(a, b, c);
+		vec3.set(
+			m30 - m20,
+			m31 - m21,
+			m32 - m22
+		);
 		normal = vec3.normalize$().mul$(-1.0);
 		normal.applyQuaternion(rotation);
-		p = position.add(forwardNear.add$(forward.mul$(far)));
+		p.copy(forward);
+		p.mul$(far);
+		p.add$(position);
 		planes[5] = new Tea.Plane(normal, p);
 		return planes;
 	}

@@ -14,10 +14,11 @@ import { Translator } from "../translate/Translator";
 				<InputNumber
 					:value="near"
 					:min="0.001"
+					:max="far - 0.001"
 					@update="onUpdateNear">{{ translator.near }}</InputNumber>
 				<InputNumber
 					:value="far"
-					:min="0.001"
+					:min="near + 0.001"
 					@update="onUpdateFar">{{ translator.far }}</InputNumber>
 			</div>
 		</div>
