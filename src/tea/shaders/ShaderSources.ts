@@ -379,6 +379,32 @@ export module ShaderSources {
 		}
 	`;
 
+	export const outlineVS = `
+		attribute vec3 vertex;
+		attribute vec3 normal;
+		uniform mat4 TEA_MATRIX_MVP;
+
+		void main() {
+			vec4 position = vec4(vertex * 1.1, 1.0);
+			gl_Position = TEA_MATRIX_MVP * position;
+		}
+	`;
+
+	export const outlineFS = `
+		precision mediump float;
+		uniform int TEA_CAMERA_STEREO;
+		uniform vec4 _Color;
+		void main() {
+			if (TEA_CAMERA_STEREO != 0) {
+				float stereoMod = float(TEA_CAMERA_STEREO - 1);
+				if (mod(floor(gl_FragCoord.y), 2.0) == stereoMod) {
+					discard;
+				}
+			}
+			gl_FragColor = _Color;
+		}
+	`;
+
 	export const flatVS = `
 		attribute vec4 vertex;
 		attribute vec3 normal;

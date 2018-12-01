@@ -115,6 +115,7 @@ export class Material {
 	constructor(app: Tea.App) {
 		this.renderQueue = 2000;
 		this._isDefault = false;
+		this._shader = null;
 		this._uniforms = {};
 		this._textures = {};
 		this.color = Tea.Color.white.clone();

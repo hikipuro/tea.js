@@ -46,6 +46,7 @@ export class MeshRenderer extends Renderer {
 	vertexBuffer: WebGLBuffer;
 	indexBuffer: WebGLBuffer;
 	protected _mesh: Tea.Mesh;
+	protected _prevMesh: Tea.Mesh;
 	protected _bounds: Tea.Bounds;
 	protected _wireframe: boolean;
 	protected _draw: Function;
@@ -58,6 +59,8 @@ export class MeshRenderer extends Renderer {
 		this.receiveShadows = true;
 		this.vertexBuffer = gl.createBuffer();
 		this.indexBuffer = gl.createBuffer();
+		this._mesh = null;
+		this._prevMesh = null;
 		this._bounds = new Tea.Bounds();
 		this._wireframe = false;
 		this._draw = this.draw;
@@ -94,6 +97,9 @@ export class MeshRenderer extends Renderer {
 	get mesh(): Tea.Mesh {
 		return this._mesh;
 	}
+	//set mesh(value: Tea.Mesh) {
+	//	this._mesh = value;
+	//}
 
 	destroy(): void {
 		var gl = this.gl;
@@ -110,6 +116,7 @@ export class MeshRenderer extends Renderer {
 		}
 		this.receiveShadows = undefined;
 		this._mesh = undefined;
+		this._prevMesh = undefined;
 		this._bounds = undefined;
 		this._wireframe = undefined;
 		this._draw = undefined;
@@ -118,12 +125,16 @@ export class MeshRenderer extends Renderer {
 	}
 
 	update(): void {
+		if (this.object3d == null) {
+			return;
+		}
 		var component = this.object3d.getComponent(Tea.MeshFilter);
-		if (component != null && component.mesh != null) {
-			this._mesh = component.mesh;
-		} else {
+		if (component == null || component.mesh == null) {
+			this._prevMesh = this._mesh;
 			this._mesh = null;
 		}
+		this._prevMesh = this._mesh;
+		this._mesh = component.mesh;
 	}
 
 	render(camera: Tea.Camera, lights: Array<Tea.Light>, renderSettings: Tea.RenderSettings): void {
@@ -136,7 +147,8 @@ export class MeshRenderer extends Renderer {
 		super.render(camera, lights, renderSettings);
 
 		var mesh = this._mesh;
-		if (mesh.isModified === true) {
+		var prevMesh = this._prevMesh;
+		if (mesh.isModified === true || mesh !== prevMesh) {
 			this.setMeshData(mesh);
 		}
 		this.setVertexBuffer(mesh);
@@ -264,7 +276,7 @@ export class MeshRenderer extends Renderer {
 
 		this.updateAttributes();
 		this._draw = this.getDrawFunc(mesh);
-		mesh.isModified = false;
+		//mesh.isModified = false;
 	}
 
 	protected setVertexBuffer(mesh: Tea.Mesh): void {

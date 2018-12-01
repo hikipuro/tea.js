@@ -6,6 +6,7 @@ import { SceneMovement } from "./SceneMovement";
 import { SceneIcons } from "./SceneIcons";
 import { FrustumPlanes } from "./FrustumPlanes";
 import { LightRange } from "./LightRange";
+import { Outline } from "./Outline";
 
 export class EditorSceneRenderer extends SceneRenderer {
 	editor: Editor;
@@ -15,6 +16,7 @@ export class EditorSceneRenderer extends SceneRenderer {
 	icons: SceneIcons;
 	frustumPlanes: FrustumPlanes;
 	lightRange: LightRange;
+	outline: Outline;
 
 	constructor(scene: Tea.Scene) {
 		super(scene);
@@ -24,12 +26,14 @@ export class EditorSceneRenderer extends SceneRenderer {
 		this.icons = new SceneIcons(scene);
 		this.frustumPlanes = new FrustumPlanes(app);
 		this.lightRange = new LightRange(app);
+		this.outline = new Outline(app);
 	}
 
 	render(renderers: Array<Tea.Renderer>, lights: Array<Tea.Light>): void {
 		this.update();
 		Tea.Renderer.drawCallCount = 0;
 		var camera = this.camera;
+		renderers.unshift(this.outline.renderer);
 		renderers.unshift(this.grid.renderer);
 		renderers.unshift(this.frustumPlanes.renderer);
 		renderers.unshift(this.lightRange.renderer);
@@ -100,6 +104,7 @@ export class EditorSceneRenderer extends SceneRenderer {
 			this.frustumPlanes.clearLines();
 			this.lightRange.clearLines();
 		}
+		this.outline.setObject(object3d);
 	}
 
 	protected updateObject3D(object3d: Tea.Object3D): void {

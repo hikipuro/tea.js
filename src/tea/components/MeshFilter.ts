@@ -15,6 +15,13 @@ export class MeshFilter extends Component {
 		}
 		super.destroy();
 	}
+
+	upadte(): void {
+		if (this.mesh == null) {
+			return;
+		}
+		this.mesh.isModified = false;
+	}
 	
 	toJSON(): Object {
 		var json = super.toJSON();

@@ -86,6 +86,7 @@ export class ObjectFactory {
 
 	static createMeshRenderer(app: Tea.App, shader: Tea.Shader): Tea.MeshRenderer {
 		var renderer = new Tea.MeshRenderer(app);
+		renderer.material = Tea.Material.getDefault(app);
 		renderer.material.shader = shader;
 		return renderer;
 	}
