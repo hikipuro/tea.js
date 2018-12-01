@@ -1,11 +1,14 @@
 import * as Tea from "../Tea";
 import { Component } from "./Component";
+import { BufferData } from "./BufferData";
 
 export class MeshFilter extends Component {
 	mesh: Tea.Mesh;
+	data: BufferData;
 	
 	constructor(app: Tea.App) {
 		super(app);
+		this.data = new BufferData(app);
 	}
 
 	destroy(): void {
@@ -13,13 +16,21 @@ export class MeshFilter extends Component {
 			this.mesh.destroy();
 			this.mesh = undefined;
 		}
+		if (this.data != null) {
+			this.data.destroy();
+			this.data = undefined;
+		}
 		super.destroy();
 	}
 
-	upadte(): void {
+	createData(): void {
 		if (this.mesh == null) {
 			return;
 		}
+		if (this.mesh.isModified === false) {
+			return;
+		}
+		this.data.setMeshData(this.mesh);
 		this.mesh.isModified = false;
 	}
 	

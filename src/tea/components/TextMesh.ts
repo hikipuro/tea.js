@@ -303,6 +303,9 @@ export class TextMesh extends Component {
 		var padding = this._padding * 2;
 		var textWidth = 0;
 		var textHeight = (fontSize * (text.length - 1)) * lineSpacing + padding;
+		if (textHeight < 0) {
+			textHeight = 0;
+		}
 		textHeight += fontSize;
 
 		var length = text.length;

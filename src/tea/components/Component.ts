@@ -43,6 +43,9 @@ export class Component {
 	update(): void {
 	}
 
+	//lateUpdate(): void {
+	//}
+
 	toJSON(): Object {
 		var json = {
 			_type: "Component",

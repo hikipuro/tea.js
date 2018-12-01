@@ -39,6 +39,7 @@ export class Outline {
 			this.object3d.update();
 			return;
 		}
+		this.meshFilter.data = meshFilter.data;
 		this.meshFilter.mesh = meshFilter.mesh;
 		//this.renderer.update();
 		this.object3d.localPosition.copy(object3d.position);

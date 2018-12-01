@@ -1,78 +1,28 @@
 import * as Tea from "../Tea";
 import { Renderer } from "./Renderer";
 
-class BufferAttributes {
-	stride: number;
-	items: Array<BufferAttribute>;
-	shader: Tea.Shader;
-
-	constructor() {
-		this.stride = 0;
-		this.items = [];
-	}
-
-	clear(): void {
-		this.items.splice(0, this.items.length);
-	}
-
-	add(name: string, size: number, type: number, offset: number): void {
-		var location = -1;
-		if (this.shader != null) {
-			location = this.shader.getAttribLocation(name);
-		}
-		var attrib = new BufferAttribute();
-		attrib.name = name;
-		attrib.location = location;
-		attrib.size = size;
-		attrib.type = type;
-		attrib.offset = offset;
-		this.items.push(attrib);
-	}
-}
-
-class BufferAttribute {
-	name: string;
-	location: number;
-	size: number;
-	type: number;
-	offset: number;
-
-	constructor() {
-	}
-}
-
 export class MeshRenderer extends Renderer {
 	receiveShadows: boolean;
-	vertexBuffer: WebGLBuffer;
-	indexBuffer: WebGLBuffer;
-	protected _mesh: Tea.Mesh;
-	protected _prevMesh: Tea.Mesh;
+	protected _meshFilter: Tea.MeshFilter;
 	protected _bounds: Tea.Bounds;
 	protected _wireframe: boolean;
-	protected _draw: Function;
-	protected _attributes: BufferAttributes;
 	protected _frontFace: number;
 
 	constructor(app: Tea.App) {
 		super(app);
 		var gl = this.gl;
 		this.receiveShadows = true;
-		this.vertexBuffer = gl.createBuffer();
-		this.indexBuffer = gl.createBuffer();
-		this._mesh = null;
-		this._prevMesh = null;
+		this._meshFilter = null;
 		this._bounds = new Tea.Bounds();
 		this._wireframe = false;
-		this._draw = this.draw;
-		this._attributes = new BufferAttributes();
 		this._frontFace = gl.CCW;
 	}
 
 	get bounds(): Tea.Bounds {
-		if (this._mesh == null) {
+		if (this._meshFilter.mesh == null) {
 			return null;
 		}
-		this._bounds.copy(this._mesh.bounds);
+		this._bounds.copy(this._meshFilter.mesh.bounds);
 		var bounds = this._bounds;
 		bounds.center.add$(this.object3d.position);
 		
@@ -91,36 +41,20 @@ export class MeshRenderer extends Renderer {
 	}
 	set wireframe(value: boolean) {
 		this._wireframe = value;
-		this._draw = this.getDrawFunc(this._mesh);
 	}
 
 	get mesh(): Tea.Mesh {
-		return this._mesh;
+		return this._meshFilter.mesh;
 	}
 	//set mesh(value: Tea.Mesh) {
 	//	this._mesh = value;
 	//}
 
 	destroy(): void {
-		var gl = this.gl;
-		if (this.vertexBuffer != null) {
-			//gl.bindBuffer(gl.ARRAY_BUFFER, this.vertexBuffer);
-			//gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([]), gl.STATIC_DRAW);
-			//gl.bindBuffer(gl.ARRAY_BUFFER, null);
-			gl.deleteBuffer(this.vertexBuffer);
-			this.vertexBuffer = undefined;
-		}
-		if (this.indexBuffer != null) {
-			gl.deleteBuffer(this.indexBuffer);
-			this.indexBuffer = undefined;
-		}
 		this.receiveShadows = undefined;
-		this._mesh = undefined;
-		this._prevMesh = undefined;
+		this._meshFilter = undefined;
 		this._bounds = undefined;
 		this._wireframe = undefined;
-		this._draw = undefined;
-		this._attributes = undefined;
 		super.destroy();
 	}
 
@@ -129,12 +63,12 @@ export class MeshRenderer extends Renderer {
 			return;
 		}
 		var component = this.object3d.getComponent(Tea.MeshFilter);
-		if (component == null || component.mesh == null) {
-			this._prevMesh = this._mesh;
-			this._mesh = null;
+		if (component == null) {
+			this._meshFilter = null;
+			return;
 		}
-		this._prevMesh = this._mesh;
-		this._mesh = component.mesh;
+		component.createData();
+		this._meshFilter = component;
 	}
 
 	render(camera: Tea.Camera, lights: Array<Tea.Light>, renderSettings: Tea.RenderSettings): void {
@@ -145,15 +79,11 @@ export class MeshRenderer extends Renderer {
 			return;
 		}
 		super.render(camera, lights, renderSettings);
-
-		var mesh = this._mesh;
-		var prevMesh = this._prevMesh;
-		if (mesh.isModified === true || mesh !== prevMesh) {
-			this.setMeshData(mesh);
-		}
-		this.setVertexBuffer(mesh);
+		var meshFilter = this._meshFilter;
+		meshFilter.data.setBuffers(this.material.shader);
 		this.setFrontFace();
-		this._draw(mesh);
+		var draw = this.getDrawFunc(this._meshFilter.mesh);
+		draw.apply(this);
 		//this.disableAllAttributes();
 		Renderer.drawCallCount++;
 	}
@@ -187,143 +117,9 @@ export class MeshRenderer extends Renderer {
 			this.object3d != null &&
 			this.material != null &&
 			this.material.shader != null &&
-			this._mesh != null
+			this._meshFilter != null &&
+			this._meshFilter.mesh != null
 		);
-	}
-
-	updateAttributes(): void {
-		var mesh = this._mesh;
-		if (mesh == null) {
-			return;
-		}
-
-		var gl = this.gl;
-		var type = gl.FLOAT;
-		var stride = 4 * 3;
-		this._attributes.clear();
-		this._attributes.shader = this.material.shader;
-		this._attributes.add("vertex", 3, type, 0);
-
-		if (mesh.hasTriangles === false) {
-			this._attributes.add("normal", 0, type, 0);
-			this._attributes.add("texcoord", 0, type, 0);
-			this._attributes.add("color", 0, type, 0);
-			this._attributes.stride = stride;
-			return;
-		}
-		if (mesh.hasNormals) {
-			this._attributes.add("normal", 3, type, stride);
-			stride += 4 * 3;
-		} else {
-			this._attributes.add("normal", 0, type, 0);
-		}
-		if (mesh.hasUVs) {
-			this._attributes.add("texcoord", 2, type, stride);
-			stride += 4 * 2;
-		} else {
-			this._attributes.add("texcoord", 0, type, 0);
-		}
-		if (mesh.hasColors) {
-			this._attributes.add("color", 4, type, stride);
-			stride += 4 * 4;
-		} else {
-			this._attributes.add("color", 0, type, 0);
-		}
-		this._attributes.stride = stride;
-
-		/*
-		var items = this._attributes.items;
-		var length = items.length;
-		for (var i = 0; i < length; i++) {
-			var item = items[i];
-			if (item.location < 0) {
-				continue;
-			}
-			if (item.size <= 0) {
-				gl.disableVertexAttribArray(item.location);
-				continue;
-			}
-			gl.enableVertexAttribArray(item.location);
-		}
-		*/
-	}
-
-	protected setMeshData(mesh: Tea.Mesh): void {
-		if (mesh.vertices == null || mesh.vertices.length <= 0) {
-			return;
-		}
-		var data = mesh.createVertexBufferData();
-
-		var gl = this.gl;
-		var target = gl.ARRAY_BUFFER;
-
-		gl.bindBuffer(target, this.vertexBuffer);
-		gl.bufferData(target, data, gl.STATIC_DRAW);
-		//gl.bindBuffer(target, null);
-
-		if (mesh.hasTriangles) {
-			target = gl.ELEMENT_ARRAY_BUFFER;
-			var triangles = null;
-			if (mesh.vertices.length > 0xFFFF) {
-				triangles = new Uint32Array(Tea.ArrayUtil.unroll(mesh.triangles));
-			} else {
-				triangles = new Uint16Array(Tea.ArrayUtil.unroll(mesh.triangles));
-			}
-			gl.bindBuffer(target, this.indexBuffer);
-			gl.bufferData(target, triangles, gl.STATIC_DRAW);
-			//gl.bindBuffer(target, null);
-		}
-
-		this.updateAttributes();
-		this._draw = this.getDrawFunc(mesh);
-		//mesh.isModified = false;
-	}
-
-	protected setVertexBuffer(mesh: Tea.Mesh): void {
-		var gl = this.gl;
-		gl.bindBuffer(gl.ARRAY_BUFFER, this.vertexBuffer);
-		var attributes = Renderer.attributes;
-		var stride = this._attributes.stride;
-		var items = this._attributes.items;
-		var length = items.length;
-		//var locations = [];
-		//attributes.start();
-		for (var i = 0; i < length; i++) {
-			var item = items[i];
-			if (item.location < 0) {
-				continue;
-			}
-			if (item.size <= 0) {
-				//if (attributes.isEnabled(item.location)) {
-				//	gl.disableVertexAttribArray(item.location);
-				//	attributes.set(item.location, false);
-				//}
-				continue;
-			}
-			//locations.push(item.location);
-			if (attributes.isEnabled(item.location) === false) {
-				gl.enableVertexAttribArray(item.location);
-			}
-			attributes.enable(item.location);
-			//console.log(gl.getError());
-			gl.vertexAttribPointer(
-				item.location,
-				item.size,
-				item.type,
-				false,
-				stride,
-				item.offset
-			);
-		}
-
-		attributes.end(gl);
-		//gl.bindBuffer(gl.ARRAY_BUFFER, null);
-
-		if (mesh.hasTriangles) {
-			gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this.indexBuffer);
-		} else {
-			gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, null);
-		}
 	}
 
 	protected disableAllAttributes(): void {
@@ -383,39 +179,45 @@ export class MeshRenderer extends Renderer {
 		return this.drawArrays;
 	}
 
-	protected draw(mesh: Tea.Mesh): void {
+	protected draw(): void {
 		var gl = this.gl;
+		var mesh = this._meshFilter.mesh;
 		var count = mesh.triangles.length * 3;
 		gl.drawElements(gl.TRIANGLES, count, gl.UNSIGNED_SHORT, 0);
 	}
 
-	protected draw32(mesh: Tea.Mesh): void {
+	protected draw32(): void {
 		var gl = this.gl;
+		var mesh = this._meshFilter.mesh;
 		var count = mesh.triangles.length * 3;
 		gl.drawElements(gl.TRIANGLES, count, gl.UNSIGNED_INT, 0);
 	}
 
-	protected drawArrays(mesh: Tea.Mesh): void {
+	protected drawArrays(): void {
 		var gl = this.gl;
+		var mesh = this._meshFilter.mesh;
 		gl.drawArrays(
 			gl.TRIANGLES, 0, mesh.vertices.length
 		);
 	}
 
-	protected drawWireframe(mesh: Tea.Mesh): void {
+	protected drawWireframe(): void {
 		var gl = this.gl;
+		var mesh = this._meshFilter.mesh;
 		var count = mesh.triangles.length * 3;
 		gl.drawElements(gl.LINES, count, gl.UNSIGNED_SHORT, 0);
 	}
 
-	protected drawWireframe32(mesh: Tea.Mesh): void {
+	protected drawWireframe32(): void {
 		var gl = this.gl;
+		var mesh = this._meshFilter.mesh;
 		var count = mesh.triangles.length * 3;
 		gl.drawElements(gl.LINES, count, gl.UNSIGNED_INT, 0);
 	}
 
-	protected drawArraysWireframe(mesh: Tea.Mesh): void {
+	protected drawArraysWireframe(): void {
 		var gl = this.gl;
+		var mesh = this._meshFilter.mesh;
 		gl.drawArrays(
 			gl.LINES, 0, mesh.vertices.length
 		);

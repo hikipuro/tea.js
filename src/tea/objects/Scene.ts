@@ -768,7 +768,7 @@ export class Scene extends EventDispatcher {
 		//console.log(renderer.object3d.name);
 
 		if (renderer instanceof Tea.MeshRenderer) {
-			renderer.updateAttributes();
+			//renderer.updateAttributes();
 			renderer.render(camera, lights, this.renderSettings);
 			if (renderer.receiveShadows) {
 				renderer.material.setTexture("_ShadowTex", camera.targetTexture);
@@ -792,7 +792,7 @@ export class Scene extends EventDispatcher {
 				renderer.material.setInt("receiveShadows", 0);
 			}
 			renderer.material.shader = shader;
-			renderer.updateAttributes();
+			//renderer.updateAttributes();
 		} else {
 			renderer.render(camera, lights, this.renderSettings);
 			renderer.material.shader = shader;

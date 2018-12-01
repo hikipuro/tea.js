@@ -80,6 +80,10 @@ export class EditorSceneRenderer extends SceneRenderer {
 		for (var i = childCount - 1; i >= 0 ; i--) {
 			this.updateObject3D(children[i]);
 		}
+		childCount = children.length;
+		for (var i = childCount - 1; i >= 0 ; i--) {
+			this.lateUpdateObject3D(children[i]);
+		}
 		this.cameraObject.update();
 		this.camera.update();
 		var position = this.cameraObject.localPosition.clone();
@@ -116,6 +120,18 @@ export class EditorSceneRenderer extends SceneRenderer {
 		var length = children.length;
 		for (var i = 0; i < length; i++) {
 			this.updateObject3D(children[i]);
+		}
+	}
+
+	protected lateUpdateObject3D(object3d: Tea.Object3D): void {
+		if (object3d == null || object3d.isActive === false) {
+			return;
+		}
+		object3d.sendMessage("lateUpdate");
+		var children = object3d.children;
+		var length = children.length;
+		for (var i = 0; i < length; i++) {
+			this.lateUpdateObject3D(children[i]);
 		}
 	}
 }

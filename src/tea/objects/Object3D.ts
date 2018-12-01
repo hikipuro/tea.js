@@ -567,15 +567,16 @@ export class Object3D {
 		if (this.isActive === false) {
 			return;
 		}
-		var scripts = this._components.filter((c) => {
-			return c instanceof Tea.Script;
-		}) as Array<Tea.Script>;
-		var length = scripts.length;
+		var components = this._components;
+		var length = components.length;
 		for (var i = 0; i < length; i++) {
-			var script = scripts[i];
-			var method = script[methodName];
+			var component = components[i];
+			if (component.enabled === false) {
+				continue;
+			}
+			var method = component[methodName];
 			if (method instanceof Function) {
-				method.apply(script, args);
+				method.apply(component, args);
 			}
 		}
 	}
@@ -714,6 +715,9 @@ export class Object3D {
 		var length = components.length;
 		for (var i = 0; i < length; i++) {
 			var component = components[i];
+			if (component.enabled === false) {
+				continue;
+			}
 			if (component instanceof Tea.Camera) {
 				continue;
 			}
@@ -727,12 +731,10 @@ export class Object3D {
 					component.isStarted = true;
 				}
 			}
-			if (component.enabled) {
-				try {
-					component.update();
-				} catch (err) {
-					console.error(err);
-				}
+			try {
+				component.update();
+			} catch (err) {
+				console.error(err);
 			}
 		}
 	}
@@ -742,6 +744,9 @@ export class Object3D {
 		var length = components.length;
 		for (var i = 0; i < length; i++) {
 			var component = components[i];
+			if (component.enabled === false) {
+				continue;
+			}
 			if (component instanceof Tea.Camera) {
 				continue;
 			}
@@ -751,12 +756,10 @@ export class Object3D {
 			if (component instanceof Tea.Rigidbody) {
 				continue;
 			}
-			if (component.enabled) {
-				try {
-					component.update();
-				} catch (err) {
-					console.error(err);
-				}
+			try {
+				component.update();
+			} catch (err) {
+				console.error(err);
 			}
 		}
 	}

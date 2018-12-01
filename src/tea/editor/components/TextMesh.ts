@@ -19,6 +19,7 @@ import { Translator } from "../translate/Translator";
 				ref="lineSpacing"
 				class="number"
 				:value="lineSpacing"
+				:min="0"
 				@update="onUpdateLineSpacing">{{ translator.lineSpacing }}</InputNumber>
 			<SelectEnum
 				ref="anchor"
