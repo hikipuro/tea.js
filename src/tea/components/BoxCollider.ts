@@ -14,8 +14,64 @@ export class BoxCollider extends Collider {
 	//get bounds(): Tea.Bounds {
 	//}
 
-	//closestPoint(point: Tea.Vector3): Tea.Vector3 {
-	//}
+	get worldCenter(): Tea.Vector3 {
+		var object3d = this.object3d;
+		var center = this.center.clone();
+		if (object3d == null) {
+			return center;
+		}
+		return center.add$(object3d.position);
+	}
+
+	get extents(): Tea.Vector3 {
+		var object3d = this.object3d;
+		var extents = this.size.clone();
+		extents.mul$(0.5);
+		if (object3d == null) {
+			return extents;
+		}
+		return extents.scale$(object3d.scale);
+	}
+
+	closestPoint(point: Tea.Vector3): Tea.Vector3 {
+		if (point == null) {
+			return null;
+		}
+		var object3d = this.object3d;
+		var result = new Tea.Vector3();
+		var center = this.worldCenter;
+		var extents = this.extents;
+		var directions = null;
+		if (object3d == null) {
+			directions = [
+				Tea.Vector3.right.clone(),
+				Tea.Vector3.up.clone(),
+				Tea.Vector3.forward.clone()
+			];
+		} else {
+			directions = [
+				object3d.right,
+				object3d.up,
+				object3d.forward
+			];
+		}
+		var p0 = point.sub(center);
+		for (var i = 0; i < 3; i++) {
+			var length = Math.abs(extents[i]);
+			if (length <= 0) {
+				continue;
+			}
+			var p1 = directions[i];
+			var s = p0.dot(p1) / length;
+			s = Math.abs(s);
+			if (s > 1.0) {
+				p1.mul$(length);
+				p1.mul$(1.0 - s);
+				result.add$(p1);
+			}
+		}
+		return result;
+	}
 
 	raycast(ray: Tea.Ray, hitInfo: Tea.RaycastHit, maxDistance: number): boolean {
 		return false;
@@ -50,7 +106,7 @@ export class BoxCollider extends Collider {
 		return boxCollider;
 	}
 
-	testRay(ray: Tea.Ray): boolean {
+	hitTestRay(ray: Tea.Ray): boolean {
 		var r = this.object3d.rotation.inversed;
 		var p = ray.origin.clone();
 		p.sub$(this.object3d.position);
@@ -58,9 +114,7 @@ export class BoxCollider extends Collider {
 		var d = ray.direction.clone();
 		d.applyQuaternion(r);
 		
-		var extents = this.size.clone();
-		extents.mul$(0.5);
-		extents.scale$(this.object3d.scale);
+		var extents = this.extents;
 		var center = this.center;
 		var min = center.sub(extents);
 		var max = center.add(extents);
@@ -98,7 +152,7 @@ export class BoxCollider extends Collider {
 		return true;
 	}
 
-	testBoxCollider(box: BoxCollider): boolean {
+	hitTestBox(box: BoxCollider): boolean {
 		if (box == null) {
 			return false;
 		}

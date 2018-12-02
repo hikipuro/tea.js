@@ -98,7 +98,7 @@ export class TestScript extends Tea.Script {
 		if (box2 != null) {
 			var r = this.cube.getComponent(Tea.Renderer);
 			//console.log(box1.toString());
-			if (box1.testBoxCollider(box2)) {
+			if (box1.hitTestBox(box2)) {
 				//console.log("true");
 				r.material.color = Tea.Color.red;
 			} else {
