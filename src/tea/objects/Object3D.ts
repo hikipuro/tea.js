@@ -463,7 +463,11 @@ export class Object3D {
 		if (component == null) {
 			return;
 		}
-		var c = new component(this.app);
+		var c = this.getComponent(component);
+		if (c) {
+			return c;
+		}
+		c = new component(this.app);
 		c.object3d = this;
 		this._components.push(c);
 		if (this.scene != null) {
