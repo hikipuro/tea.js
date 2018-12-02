@@ -65,13 +65,14 @@ export class EditorSceneRenderer extends SceneRenderer {
 		this.cameraObject = this.scene.app.createCamera();
 		this.cameraObject.localPosition.set(10, 10, -10);
 		this.cameraObject.localEulerAngles = new Tea.Vector3(45, -45, 0);
-		this.cameraObject.addComponent(SceneMovement);
+		var movement = this.cameraObject.addComponent(SceneMovement);
 		var meshFilter = this.cameraObject.addComponent(Tea.MeshFilter);
 		meshFilter.mesh = Tea.Primitives.createQuadMesh();
 		this.cameraObject.addComponent(Tea.MeshRenderer);
 		this.camera = this.cameraObject.getComponent(Tea.Camera);
 		this.camera.farClipPlane = 2000;
 		this.camera.backgroundColor.set(0.5, 0.5, 0.5, 1.0);
+		movement.sceneRenderer = this;
 	}
 
 	protected update(): void {

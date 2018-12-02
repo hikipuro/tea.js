@@ -2,8 +2,10 @@ import * as Tea from "../../Tea";
 import { Keyboard } from "../../input/Keyboard";
 import { Mouse } from "../../input/Mouse";
 import { Script } from "../../components/Script";
+import { EditorSceneRenderer } from "./SceneRenderer";
 
 export class SceneMovement extends Script {
+	sceneRenderer: EditorSceneRenderer;
 	moveSpeed: number = 0.2;
 	rotateSpeed: number = 0.2;
 	wheelSpeed: number = 0.05;
@@ -14,12 +16,13 @@ export class SceneMovement extends Script {
 
 	update(): void {
 		var mouse = this.mouse;
-		if (mouse.isDown(Mouse.Button.Right)) {
+		if (mouse.isDown(Mouse.Button.Left)) {
+			this.onMouseDownScreen(mouse.position);
+		} else if (mouse.isDown(Mouse.Button.Right)) {
 			document.addEventListener("mousemove", this.onMouseMove);
 			window.addEventListener("mouseup", this.onMouseUp);
 			document.body.requestPointerLock();
-		}
-		if (mouse.isHeld(Mouse.Button.Right)) {
+		} else if (mouse.isHeld(Mouse.Button.Right)) {
 			this.move();
 		}
 		var wheelY = mouse.wheelY;
@@ -69,6 +72,22 @@ export class SceneMovement extends Script {
 				object3d.up.mul$(-speed)
 			);
 		}
+	}
+
+	protected onMouseDownScreen(position: Tea.Vector3): void {
+		position.z = 1;
+		var camera = this.sceneRenderer.camera;
+		var scene = this.sceneRenderer.scene;
+		var ray = camera.screenPointToRay(position);
+		var target = scene.children.find((object3d: Tea.Object3D) => {
+			var renderer = object3d.getComponent(Tea.MeshRenderer);
+			if (renderer == null) {
+				return false;
+			}
+			return renderer.bounds.collideRay(ray);
+		});
+		var editor = this.sceneRenderer.editor;
+		editor.behavior.sceneViewCommand("select", target);
 	}
 
 	protected onMouseMove = (e: MouseEvent): void => {

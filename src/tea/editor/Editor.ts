@@ -132,6 +132,11 @@ export class Editor extends Vue {
 	protected _command: EditorCommand;
 
 	@NoCache
+	get behavior(): EditorBehavior {
+		return this._behavior;
+	}
+
+	@NoCache
 	get command(): EditorCommand {
 		return this._command;
 	}

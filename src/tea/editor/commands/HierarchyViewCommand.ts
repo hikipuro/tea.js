@@ -33,10 +33,11 @@ export class HierarchyViewCommand {
 	}
 
 	selectItem(object3d: Tea.Object3D): void {
+		var hierarchyView = this.editor.hierarchyView;
 		if (object3d == null) {
+			hierarchyView.select(null);
 			return;
 		}
-		var hierarchyView = this.editor.hierarchyView;
 		var item = hierarchyView.findItemByTag(object3d.id);
 		hierarchyView.select(item);
 	}

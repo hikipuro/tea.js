@@ -221,6 +221,16 @@ export class EditorBehavior {
 		//console.log("updateScreenSize", width, height);
 	}
 
+	sceneViewCommand(command: string, ...args: Array<any>): void {
+		//console.log("sceneViewCommand", command, args[0]);
+		var hierarchyView = this.editor.hierarchyView;
+		switch (command) {
+			case "select":
+				hierarchyView.command.selectItem(args[0]);
+				break;
+		}
+	}
+
 	protected saveAppSettings(): void {
 		var settings = EditorSettings.getInstance();
 		var browserWindow = Electron.remote.getCurrentWindow();
