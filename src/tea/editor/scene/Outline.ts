@@ -30,12 +30,15 @@ export class Outline {
 
 	setObject(object3d: Tea.Object3D): void {
 		this.meshFilter.mesh = null;
-		if (object3d == null) {
+		if (object3d == null || object3d.isActive === false) {
 			this.object3d.update();
 			return;
 		}
 		var meshFilter = object3d.getComponent(Tea.MeshFilter);
-		if (meshFilter == null) {
+		var meshRenderer = object3d.getComponent(Tea.MeshRenderer);
+		if (meshFilter == null
+		||  meshRenderer == null
+		||  meshRenderer.enabled === false) {
 			this.object3d.update();
 			return;
 		}

@@ -20,6 +20,8 @@ export class BoxCollider extends Collider {
 		if (object3d == null) {
 			return center;
 		}
+		center.applyQuaternion(object3d.rotation);
+		center[2] = -center[2];
 		return center.add$(object3d.position);
 	}
 

@@ -7,6 +7,7 @@ import { SceneIcons } from "./SceneIcons";
 import { FrustumPlanes } from "./FrustumPlanes";
 import { LightRange } from "./LightRange";
 import { Outline } from "./Outline";
+import { Collider } from "./Collider";
 
 export class EditorSceneRenderer extends SceneRenderer {
 	editor: Editor;
@@ -17,6 +18,7 @@ export class EditorSceneRenderer extends SceneRenderer {
 	frustumPlanes: FrustumPlanes;
 	lightRange: LightRange;
 	outline: Outline;
+	collider: Collider;
 
 	constructor(scene: Tea.Scene) {
 		super(scene);
@@ -27,12 +29,14 @@ export class EditorSceneRenderer extends SceneRenderer {
 		this.frustumPlanes = new FrustumPlanes(app);
 		this.lightRange = new LightRange(app);
 		this.outline = new Outline(app);
+		this.collider = new Collider(app);
 	}
 
 	render(renderers: Array<Tea.Renderer>, lights: Array<Tea.Light>): void {
 		this.update();
 		Tea.Renderer.drawCallCount = 0;
 		var camera = this.camera;
+		renderers.unshift(this.collider.renderer);
 		renderers.unshift(this.outline.renderer);
 		renderers.unshift(this.grid.renderer);
 		renderers.unshift(this.frustumPlanes.renderer);
@@ -101,11 +105,14 @@ export class EditorSceneRenderer extends SceneRenderer {
 
 		var object3d = this.editor.hierarchyView.getSelectedObject();
 		if (object3d) {
+			this.collider.object3d.update();
+			this.collider.setObject(object3d);
 			this.frustumPlanes.object3d.update();
 			this.frustumPlanes.setCamera(object3d);
 			this.lightRange.object3d.update();
 			this.lightRange.setLight(object3d);
 		} else {
+			this.collider.clearLines();
 			this.frustumPlanes.clearLines();
 			this.lightRange.clearLines();
 		}
