@@ -184,6 +184,9 @@ export class ObjectInspectorCommand {
 			case "Physics/BoxCollider":
 				component = Tea.BoxCollider;
 				break;
+			case "Physics/SphereCollider":
+				component = Tea.SphereCollider;
+				break;
 			case "Physics/Rigidbody":
 				component = Tea.Rigidbody;
 				break;

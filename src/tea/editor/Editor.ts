@@ -299,6 +299,8 @@ export module Editor {
 	export type Rigidbody = TeaComponents.Rigidbody;
 	export var  Script = TeaComponents.Script;
 	export type Script = TeaComponents.Script;
+	export var  SphereCollider = TeaComponents.SphereCollider;
+	export type SphereCollider = TeaComponents.SphereCollider;
 	export var  TextMesh = TeaComponents.TextMesh;
 	export type TextMesh = TeaComponents.TextMesh;
 }

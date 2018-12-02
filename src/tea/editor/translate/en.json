@@ -147,6 +147,7 @@
 			"Physics": {
 				"Title": "Physics",
 				"BoxCollider": "Box Collider",
+				"SphereCollider": "Sphere Collider",
 				"Rigidbody": "Rigidbody"
 			},
 			"Rendering": {
@@ -170,6 +171,11 @@
 			"Title": "Box Collider",
 			"Center": "Center",
 			"Size": "Size"
+		},
+		"SphereCollider": {
+			"Title": "Sphere Collider",
+			"Center": "Center",
+			"Radius": "Radius"
 		},
 		"Camera": {
 			"Title": "Camera",

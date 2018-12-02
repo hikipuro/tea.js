@@ -8,6 +8,7 @@ import { MeshRenderer } from "./MeshRenderer";
 import { ParticleSystem } from "./ParticleSystem";
 import { Rigidbody } from "./Rigidbody";
 import { Script } from "./Script";
+import { SphereCollider } from "./SphereCollider";
 import { TextMesh } from "./TextMesh";
 
 export {
@@ -21,6 +22,7 @@ export {
 	ParticleSystem,
 	Rigidbody,
 	Script,
+	SphereCollider,
 	TextMesh
 }
 
@@ -36,6 +38,7 @@ export function getComponents(): Object {
 		ParticleSystem: ParticleSystem,
 		Rigidbody: Rigidbody,
 		Script: Script,
+		SphereCollider: SphereCollider,
 		TextMesh: TextMesh,
 	}
 }

@@ -415,6 +415,10 @@ export class EditorMenu {
 						label: translator.getText("Physics/BoxCollider")
 					},
 					{
+						id: "Physics/SphereCollider",
+						label: translator.getText("Physics/SphereCollider")
+					},
+					{
 						id: "Physics/Rigidbody",
 						label: translator.getText("Physics/Rigidbody")
 					}

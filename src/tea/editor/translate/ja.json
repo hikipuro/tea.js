@@ -163,6 +163,11 @@
 			"Center": "中心",
 			"Size": "サイズ"
 		},
+		"SphereCollider": {
+			"Title": "スフィアコライダ",
+			"Center": "中心",
+			"Radius": "半径"
+		},
 		"Camera": {
 			"Title": "カメラ",
 			"ClearFlags": "画面クリア",
