@@ -33,7 +33,7 @@ export class MeshRenderer extends Renderer {
 		extents[1] = Math.abs(extents[1]);
 		extents[2] = Math.abs(extents[2]);
 		bounds.extents.scale$(this.object3d.scale);
-		return this._bounds;
+		return bounds;
 	}
 
 	get wireframe(): boolean {

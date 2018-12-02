@@ -74,18 +74,31 @@ export class SceneMovement extends Script {
 		}
 	}
 
+	protected hitTestScreen(children: Array<Tea.Object3D>, ray: Tea.Ray): Tea.Object3D {
+		var target: Tea.Object3D = null;
+		children.some((object3d: Tea.Object3D) => {
+			var renderer = object3d.getComponent(Tea.MeshRenderer);
+			if (renderer == null) {
+				target = this.hitTestScreen(object3d.children, ray);
+				return target != null;
+			}
+			if (renderer.bounds.collideRay(ray)) {
+				target = object3d;
+				return true;
+			}
+			target = this.hitTestScreen(object3d.children, ray);
+			return target != null;
+			
+		});
+		return target;
+	}
+
 	protected onMouseDownScreen(position: Tea.Vector3): void {
 		position.z = 1;
 		var camera = this.sceneRenderer.camera;
 		var scene = this.sceneRenderer.scene;
 		var ray = camera.screenPointToRay(position);
-		var target = scene.children.find((object3d: Tea.Object3D) => {
-			var renderer = object3d.getComponent(Tea.MeshRenderer);
-			if (renderer == null) {
-				return false;
-			}
-			return renderer.bounds.collideRay(ray);
-		});
+		var target = this.hitTestScreen(scene.children, ray);
 		var editor = this.sceneRenderer.editor;
 		editor.behavior.sceneViewCommand("select", target);
 	}
