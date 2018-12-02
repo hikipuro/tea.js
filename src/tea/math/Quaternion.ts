@@ -187,7 +187,11 @@ export class Quaternion extends Array<number> {
 
 	get normalized(): Quaternion {
 		var x = this[0], y = this[1], z = this[2], w = this[3];
-		var m = 1.0 / Math.sqrt(x * x + y * y + z * z + w * w);
+		var s = x * x + y * y + z * z + w * w;
+		if (s === 0.0) {
+			return Quaternion.identity.clone();
+		}
+		var m = 1.0 / Math.sqrt(s);
 		return new Quaternion(
 			x * m, y * m, z * m, w * m
 		);

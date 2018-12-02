@@ -69,21 +69,16 @@ export class LightRange {
 
 		for (var i = 0; i < 4; i++) {
 			var point1 = object3d.position.clone();
-			point1[2] = -point1[2];
 			var d = directions[i];
-			d[2] = -d[2];
 			point1.add$(d);
 			var forward = object3d.forward;
-			forward[2] = -forward[2];
 			var point2 = point1.add(forward);
 			renderer.add(point1);
 			renderer.add(point2);
 		}
 
 		var center = object3d.position.clone();
-		center[2] = -center[2];
 		var direction = light.direction.clone();
-		direction[2] = -direction[2];
 		var rotation = Tea.Quaternion.fromToRotation(
 			new Tea.Vector3(0, 0, 1), direction
 		);
@@ -117,17 +112,6 @@ export class LightRange {
 		var object3d = light.object3d;
 		renderer.material.color.copy(light.color);
 
-		/*
-		var point1 = object3d.position.clone();
-		point1[2] = -point1[2];
-		var direction = light.direction.clone();
-		direction[2] = -direction[2];
-		direction.mul$(light.range);
-		var point2 = point1.sub(direction);
-		renderer.add(point1);
-		renderer.add(point2);
-		//*/
-
 		var directions = [
 			object3d.right,
 			object3d.up,
@@ -136,16 +120,13 @@ export class LightRange {
 		];
 
 		var point1 = object3d.position.clone();
-		point1[2] = -point1[2];
 		var angle = light.spotAngle * Math.PI / 360.0;
 		var range = light.range;
 		var radius = Math.tan(angle) * range;
 		var forward = object3d.forward.mul$(-1);
-		forward[2] = -forward[2];
 		for (var i = 0; i < 4; i++) {
 			var point2 = point1.sub(forward.mul(light.range));
 			var d = directions[i];
-			d[2] = -d[2];
 			point2.add$(d.mul(radius));
 			renderer.add(point1);
 			renderer.add(point2);
@@ -153,9 +134,7 @@ export class LightRange {
 
 		var center = object3d.position.clone();
 		center.add$(object3d.forward.mul(light.range));
-		center[2] = -center[2];
 		var direction = light.direction.clone();
-		direction[2] = -direction[2];
 		var rotation = Tea.Quaternion.fromToRotation(
 			new Tea.Vector3(0, 0, 1), direction
 		);

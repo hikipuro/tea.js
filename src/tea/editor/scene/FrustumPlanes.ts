@@ -43,8 +43,6 @@ export class FrustumPlanes {
 		}
 		var point1 = p1.intersectLine(line);
 		var point2 = p2.intersectLine(line);
-		point1[2] = -point1[2];
-		point2[2] = -point2[2];
 		this.renderer.add(point1);
 		this.renderer.add(point2);
 	}

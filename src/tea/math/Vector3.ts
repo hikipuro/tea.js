@@ -552,6 +552,9 @@ export class Vector3 extends Array<number> {
 	}
 
 	applyQuaternion(q: Tea.Quaternion): void {
+		if (q == null) {
+			return;
+		}
 		var ax = q[0], ay = q[1], az = q[2], aw = q[3];
 		if (ax === 0.0 && ay === 0.0 && az === 0.0 && aw === 0.0) {
 			return;
@@ -570,6 +573,9 @@ export class Vector3 extends Array<number> {
 	}
 
 	applyMatrix4(m: Tea.Matrix4x4): void {
+		if (m == null) {
+			return;
+		}
 		var tx = this[0], ty = this[1], tz = this[2];
 		var x = m[0] * tx + m[4] * ty + m[8]  * tz + m[12];
 		var y = m[1] * tx + m[5] * ty + m[9]  * tz + m[13];

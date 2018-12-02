@@ -53,9 +53,11 @@ export class LineRenderer extends Renderer {
 		}
 		this._isChanged = true;
 		if (x instanceof Tea.Vector3) {
-			this.points.push(x);
+			var point = x.clone();
+			point[2] = -point[2];
+			this.points.push(point);
 		} else {
-			this.points.push(new Tea.Vector3(x, y, z));
+			this.points.push(new Tea.Vector3(x, y, -z));
 		}
 	}
 

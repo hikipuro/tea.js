@@ -90,8 +90,6 @@ export class Collider {
 			);
 			point1.applyQuaternion(rotation);
 			point2.applyQuaternion(rotation);
-			point1[2] = -point1[2];
-			point2[2] = -point2[2];
 			this.drawLine(
 				center.add(point1),
 				center.add(point2)
