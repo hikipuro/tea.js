@@ -82,7 +82,12 @@ export class SceneMovement extends Script {
 				target = this.hitTestScreen(object3d.children, ray);
 				return target != null;
 			}
-			if (renderer.bounds.collideRay(ray)) {
+			var bounds = renderer.bounds;
+			if (bounds == null) {
+				target = this.hitTestScreen(object3d.children, ray);
+				return target != null;
+			}
+			if (bounds.collideRay(ray)) {
 				target = object3d;
 				return true;
 			}

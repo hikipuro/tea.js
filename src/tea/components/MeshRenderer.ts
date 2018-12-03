@@ -19,6 +19,9 @@ export class MeshRenderer extends Renderer {
 	}
 
 	get bounds(): Tea.Bounds {
+		if (this._meshFilter == null) {
+			return null;
+		}
 		if (this._meshFilter.mesh == null) {
 			return null;
 		}
