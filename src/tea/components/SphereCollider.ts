@@ -8,7 +8,7 @@ export class SphereCollider extends Collider {
 	constructor(app: Tea.App) {
 		super(app);
 		this.center = new Tea.Vector3();
-		this.radius = 0.0;
+		this.radius = 0.5;
 	}
 
 	get worldCenter(): Tea.Vector3 {
@@ -58,28 +58,5 @@ export class SphereCollider extends Collider {
 		collider.center = Tea.Vector3.fromArray(json.center);
 		collider.radius = parseFloat(json.radius);
 		return collider;
-	}
-
-	hitTestSphere(sphere: SphereCollider): boolean {
-		if (sphere == null) {
-			return false;
-		}
-		var c0 = this.worldCenter;
-		var c1 = sphere.worldCenter;
-		var d = c0.distance(c1);
-		return d <= (this.radius + sphere.radius);
-	}
-
-	hitTestBox(box: Tea.BoxCollider): boolean {
-		if (box == null) {
-			return false;
-		}
-		var center = this.worldCenter;
-		var point = box.closestPoint(center);
-		if (point == null) {
-			return false;
-		}
-		var d = center.distance(point);
-		return d <= this.radius;
 	}
 }

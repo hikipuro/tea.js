@@ -1,6 +1,7 @@
 //export * from "./editor/Editor";
 
 export * from "./collisions/AABB";
+export * from "./collisions/HitTest";
 export * from "./collisions/Line";
 export * from "./collisions/LineSegment";
 export * from "./collisions/Plane";
