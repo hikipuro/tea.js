@@ -452,9 +452,9 @@ export class Quaternion extends Array<number> {
 		);
 	}
 
-	rotateEuler(x: number, y: number, z: number): void;
-	rotateEuler(eulerAngles: Tea.Vector3): void;
-	rotateEuler(a: number | Tea.Vector3, b: number = 0.0, c: number = 0.0): void {
+	rotateEuler(x: number, y: number, z: number): Quaternion;
+	rotateEuler(eulerAngles: Tea.Vector3): Quaternion;
+	rotateEuler(a: number | Tea.Vector3, b: number = 0.0, c: number = 0.0): Quaternion {
 		var toRadian = Math.PI / 180.0;
 		var x: number = 0.0;
 		var y: number = 0.0;
@@ -483,6 +483,7 @@ export class Quaternion extends Array<number> {
 			aw * cz - az * sz
 		);
 		this.mul$(q);
+		return this;
 	}
 
 	dot(value: Quaternion): number {

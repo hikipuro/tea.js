@@ -18,7 +18,7 @@ export class Collider {
 			this.clearLines();
 			return;
 		}
-		this.collider = object3d.getComponent(Tea.BoxCollider);
+		this.collider = object3d.getComponent(Tea.Collider);
 		if (this.collider == null || this.collider.enabled === false) {
 			this.clearLines();
 			return;
@@ -41,6 +41,8 @@ export class Collider {
 
 		if (collider instanceof Tea.BoxCollider) {
 			this.drawBoxCollider();
+		} else if (collider instanceof Tea.SphereCollider) {
+			this.drawSphereCollider();
 		}
 		renderer.update();
 	}
@@ -95,8 +97,46 @@ export class Collider {
 				center.add(point2)
 			);
 		}
-		
+
 		//console.log(point1, point2);
 		renderer.update();
+	}
+
+	drawSphereCollider(): void {
+		var renderer = this.renderer;
+		var collider = this.collider as Tea.SphereCollider;
+		var rotation = collider.object3d.rotation;
+
+		var center = collider.worldCenter;
+		var radius = collider.radius;
+
+		this.drawCircle(center, radius, rotation);
+		var r = rotation.clone().rotateEuler(90, 0, 0);
+		this.drawCircle(center, radius, r);
+		r = rotation.clone().rotateEuler(0, 90, 0);
+		this.drawCircle(center, radius, r);
+		renderer.update();
+	}
+
+	drawCircle(center: Tea.Vector3, radius: number, rotation: Tea.Quaternion): void {
+		var renderer = this.renderer;
+		var s = 32;
+		var p = new Tea.Vector3(radius, 0, 0);
+		p.applyQuaternion(rotation);
+		p = p.add(center);
+		renderer.add(p);
+		for (var i = 0; i <= s; i++) {
+			var angle = i * 2.0 * Math.PI / s;
+			var x = Math.cos(angle) * radius;
+			var y = Math.sin(angle) * radius;
+			var p = new Tea.Vector3(x, y, 0.0);
+			p.applyQuaternion(rotation);
+			p = p.add(center);
+			renderer.add(p);
+			if (i === s) {
+				break;
+			}
+			renderer.add(p.clone());
+		}
 	}
 }

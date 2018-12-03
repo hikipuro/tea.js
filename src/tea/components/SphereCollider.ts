@@ -13,10 +13,11 @@ export class SphereCollider extends Collider {
 
 	get worldCenter(): Tea.Vector3 {
 		var object3d = this.object3d;
-		if (object3d == null) {
-			return this.center;
-		}
 		var center = this.center.clone();
+		if (object3d == null) {
+			return center;
+		}
+		center.applyQuaternion(object3d.rotation);
 		return center.add$(object3d.position);
 	}
 
