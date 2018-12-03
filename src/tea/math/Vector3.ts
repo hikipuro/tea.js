@@ -226,10 +226,17 @@ export class Vector3 extends Array<number> {
 	}
 
 	distance(value: Vector3): number {
-		var t = Vector3._tmp;
-		t.copy(this).sub$(value);
-		var x = t[0], y = t[1], z = t[2];
-		return Math.sqrt(x * x + y * y + z * z);
+		if (value == null) {
+			return 0.0;
+		}
+		var x = this[0] - value[0];
+		var y = this[1] - value[1];
+		var z = this[2] - value[2];
+		var m = x * x + y * y + z * z;
+		if (m === 0.0) {
+			return 0.0;
+		}
+		return Math.sqrt(m);
 	}
 
 	lerp(value: Vector3, t: number): Vector3 {

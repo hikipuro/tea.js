@@ -506,9 +506,13 @@ export class Scene extends EventDispatcher {
 	}
 
 	findChildByName(name: string): Tea.Object3D {
-		var length = this.children.length;
+		if (name == null || name === "") {
+			return null;
+		}
+		var children = this.children;
+		var length = children.length;
 		for (var i = 0; i < length; i++) {
-			var child = this.children[i];
+			var child = children[i];
 			if (child.name === name) {
 				return child;
 			}
@@ -520,6 +524,34 @@ export class Scene extends EventDispatcher {
 			}
 		}
 		return null;
+	}
+
+	findChild(path: string): Tea.Object3D {
+		if (path == null || path === "") {
+			return null;
+		}
+		var paths = path.split("/");
+		var name = paths[0];
+		var child: Tea.Object3D = null;
+		var children = this.children;
+		var length = children.length;
+		for (var i = 0; i < length; i++) {
+			if (children[i].name === name) {
+				child = children[i];
+				break;
+			}
+		}
+		if (child == null) {
+			return null;
+		}
+		length = paths.length;
+		for (var i = 1; i < length; i++) {
+			child = child.find(paths[i]);
+			if (child == null) {
+				return null;
+			}
+		}
+		return child;
 	}
 
 	addComponent(component: Tea.Component): void {

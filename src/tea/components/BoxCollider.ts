@@ -39,7 +39,6 @@ export class BoxCollider extends Collider {
 			return null;
 		}
 		var object3d = this.object3d;
-		var result = new Tea.Vector3();
 		var center = this.worldCenter;
 		var extents = this.extents;
 		var directions = null;
@@ -57,6 +56,7 @@ export class BoxCollider extends Collider {
 			];
 		}
 		var p0 = point.sub(center);
+		var result = point.clone();
 		for (var i = 0; i < 3; i++) {
 			var length = Math.abs(extents[i]);
 			if (length <= 0) {
@@ -64,10 +64,11 @@ export class BoxCollider extends Collider {
 			}
 			var p1 = directions[i];
 			var s = p0.dot(p1) / length;
-			s = Math.abs(s);
 			if (s > 1.0) {
-				p1.mul$(length);
-				p1.mul$(1.0 - s);
+				p1.mul$((1.0 - s) * length);
+				result.add$(p1);
+			} else if (s < -1.0) {
+				p1.mul$(-(1.0 + s) * length);
 				result.add$(p1);
 			}
 		}

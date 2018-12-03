@@ -646,9 +646,18 @@ export class Object3D {
 	}
 
 	find(name: string): Object3D {
-		return this.children.find((child) => {
-			return child.name === name;
-		});
+		var children = this.children;
+		if (children == null || children.length <= 0) {
+			return null;
+		}
+		var length = children.length;
+		for (var i = 0; i < length; i++) {
+			var child = children[i];
+			if (child.name === name) {
+				return child;
+			}
+		}
+		return null;
 	}
 
 	translate(translation: Tea.Vector3): void;
