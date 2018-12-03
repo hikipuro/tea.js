@@ -220,6 +220,9 @@ export class HitTest {
 			return false;
 		}
 		var center = sphere.worldCenter;
+		if (box.containsPoint(center)) {
+			return true;
+		}
 		var point = box.closestPoint(center);
 		if (point == null) {
 			return false;

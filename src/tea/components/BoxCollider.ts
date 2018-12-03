@@ -34,6 +34,45 @@ export class BoxCollider extends Collider {
 		return extents.scale$(object3d.scale);
 	}
 
+	containsPoint(point: Tea.Vector3): boolean {
+		if (point == null) {
+			return false;
+		}
+		var object3d = this.object3d;
+		var center = this.worldCenter;
+		var extents = this.extents;
+		var directions = null;
+		if (object3d == null) {
+			directions = [
+				Tea.Vector3.right.clone(),
+				Tea.Vector3.up.clone(),
+				Tea.Vector3.forward.clone()
+			];
+		} else {
+			directions = [
+				object3d.right,
+				object3d.up,
+				object3d.forward
+			];
+		}
+		var p0 = point.sub(center);
+		for (var i = 0; i < 3; i++) {
+			var length = Math.abs(extents[i]);
+			if (length <= 0.0) {
+				if (Tea.Mathf.approximately(p0[i], 0.0)) {
+					continue;
+				}
+				return false;
+			}
+			var p1 = directions[i];
+			var s = p0.dot(p1) / length;
+			if (Math.abs(s) > 1.0) {
+				return false;
+			}
+		}
+		return true;
+	}
+
 	closestPoint(point: Tea.Vector3): Tea.Vector3 {
 		if (point == null) {
 			return null;
@@ -59,7 +98,8 @@ export class BoxCollider extends Collider {
 		var result = point.clone();
 		for (var i = 0; i < 3; i++) {
 			var length = Math.abs(extents[i]);
-			if (length <= 0) {
+			if (length <= 0.0) {
+				result[i] -= p0[i];
 				continue;
 			}
 			var p1 = directions[i];
