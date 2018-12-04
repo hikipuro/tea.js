@@ -100,32 +100,26 @@ export class ProjectView extends Vue {
 	openFolder(path: string): void {
 		var folderList = this.$refs.folderList as TreeView;
 		var selectedItem = folderList.selectedItem;
-		Tea.File.exists(path, (exists: boolean) => {
-			if (exists === false) {
+		var selectedPath = null;
+		if (selectedItem != null) {
+			selectedPath = selectedItem.tag;
+		}
+		if (fs.existsSync(path) === false) {
+			this.clearFolderList();
+			this.clearFileList();
+			return;
+		}
+		var items = this.createFolderListItems(path);
+		folderList.items = items;
+		if (selectedPath == null) {
+			return;
+		}
+		folderList.$nextTick(() => {
+			var item = folderList.findItemByTag(selectedPath);
+			if (item == null) {
 				return;
 			}
-			var items: Array<TreeView.Model> = [];
-			Tea.Directory.getFiles(path, (files: Array<Tea.FileInfo>) => {
-				files = this.sortFolders(files);
-				files.forEach((file: Tea.FileInfo) => {
-					var item = this.createFolderListModel(file);
-					if (item == null) {
-						return;
-					}
-					items.push(item);
-				});
-			});
-			folderList.items = items;
-			if (selectedItem == null) {
-				return;
-			}
-			folderList.$nextTick(() => {
-				var tag = selectedItem.tag;
-				var item = folderList.findItemByTag(tag);
-				if (item) {
-					item.select();
-				}
-			});
+			folderList.select(item);
 		});
 	}
 
@@ -238,6 +232,30 @@ export class ProjectView extends Vue {
 		return item;
 	}
 
+	protected createFolderListItems(path: string): Array<TreeView.Model> {
+		if (fs.existsSync(path) === false) {
+			return null;
+		}
+		var items: Array<TreeView.Model> = [];
+		var files = Tea.Directory.getFilesSync(path);
+		if (files == null) {
+			return null;
+		}
+		files = this.sortFolders(files);
+		files.forEach((file: Tea.FileInfo) => {
+			var item = this.createFolderListModel(file);
+			if (item == null) {
+				return;
+			}
+			var children = this.createFolderListItems(item.tag);
+			if (children) {
+				item.children = children;
+			}
+			items.push(item);
+		});
+		return items;
+	}
+
 	protected createFileListModel(file: Tea.FileInfo): TreeView.Model {
 		var iconUrl = this.getFileIconUrl(file);
 		var icon: string = null;
@@ -256,6 +274,12 @@ export class ProjectView extends Vue {
 			children: []
 		};
 		return item;
+	}
+
+	protected clearFolderList(): void {
+		var folderList = this.$refs.folderList as TreeView;
+		folderList.unselect();
+		folderList.items = [];
 	}
 
 	protected clearFileList(): void {
