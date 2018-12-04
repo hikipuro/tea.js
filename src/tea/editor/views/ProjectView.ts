@@ -10,6 +10,18 @@ import { EditorMenu } from "../EditorMenu";
 import { FileInspector } from "./FileInspector";
 import { TreeView } from "../basic/TreeView";
 
+class FileItemTag {
+	path: string;
+	isFolder: boolean;
+
+	static create(path: string, isFolder: boolean): FileItemTag {
+		var tag = new FileItemTag ();
+		tag.path = path;
+		tag.isFolder = isFolder;
+		return tag;
+	}
+}
+
 @Component({
 	template: `
 		<div class="ProjectView">
@@ -36,7 +48,7 @@ import { TreeView } from "../basic/TreeView";
 	`
 })
 export class ProjectView extends Vue {
-	protected _dragSource: Editor.TreeViewItem;
+	protected _dragSourceFile: Editor.TreeViewItem;
 
 	get folderList(): TreeView {
 		return this.$refs.folderList as TreeView;
@@ -61,11 +73,15 @@ export class ProjectView extends Vue {
 		if (item == null) {
 			return null;
 		}
-		return item.tag;
+		var tag = item.tag as FileItemTag;
+		if (tag == null) {
+			return null;
+		}
+		return tag.path;
 	}
 
 	getDragSource(): Editor.TreeViewItem {
-		return this._dragSource;
+		return this._dragSourceFile;
 	}
 
 	selectParentFolder(): void {
@@ -91,15 +107,14 @@ export class ProjectView extends Vue {
 			var items: Array<TreeView.Model> = [];
 			Tea.Directory.getFiles(path, (files: Array<Tea.FileInfo>) => {
 				files = this.sortFolders(files);
-				files.forEach(file => {
-					var item = this.createTreeViewItem(file);
+				files.forEach((file: Tea.FileInfo) => {
+					var item = this.createFolderListModel(file);
 					if (item == null) {
 						return;
 					}
 					items.push(item);
 				});
 			});
-			var folderList = this.$refs.folderList as TreeView;
 			folderList.items = items;
 			if (selectedItem == null) {
 				return;
@@ -131,6 +146,10 @@ export class ProjectView extends Vue {
 	updateFileList(path: string): void {
 		var fileList = this.$refs.fileList as TreeView;
 		Tea.Directory.getFiles(path, (files: Tea.FileInfo[]) => {
+			if (files == null) {
+				this.clearFileList();
+				return;
+			}
 			var items = [];
 			files = files.sort((a: Tea.FileInfo, b: Tea.FileInfo): number => {
 				var folderA = a.isDirectory ? 2 : 0;
@@ -139,26 +158,14 @@ export class ProjectView extends Vue {
 				var fileB = b.name.toLocaleLowerCase();
 				return (folderB - folderA) + (fileB > fileA ? 0 : 1);
 			});
-			files.forEach((file) => {
+			files.forEach((file: Tea.FileInfo) => {
 				/*if (file.isDirectory) {
 					return;
 				}*/
 				if (file.name === ".DS_Store") {
 					return;
 				}
-				var iconUrl = this.getFileIconUrl(file);
-				var icon: string = null;
-				if (iconUrl !== "") {
-					icon = "<img src='" + iconUrl + "'>";
-				}
-				var item: TreeView.Model = {
-					text: file.name,
-					isFolder: false,
-					icon: icon,
-					indent: "1.7em",
-					tag: file.fullName,
-					children: []
-				};
+				var item = this.createFileListModel(file);
 				//console.log(file.fullName);
 				items.push(item);
 			});
@@ -196,15 +203,26 @@ export class ProjectView extends Vue {
 		folderList.openIcon = "<img src='" + EditorAssets.Images.FolderOpen + "' />";
 		folderList.closeIcon = "<img src='" + EditorAssets.Images.FolderClose + "' />";
 
+		folderList.draggable = true;
+		var dragEvents = folderList.dragEvents;
+		dragEvents.dragStart = this.onFolderDragStart;
+		dragEvents.dragOver = this.onFolderDragOver;
+		dragEvents.dragEnter = this.onFolderDragEnter;
+		dragEvents.dragLeave = this.onFolderDragLeave;
+		dragEvents.drop = this.onFolderDrop;
+
 		fileList.draggable = true;
-		
-		var dragEvents = fileList.dragEvents;
-		dragEvents.dragStart = this.onDragStart;
-		dragEvents.dragEnd = this.onDragEnd;
+		dragEvents = fileList.dragEvents;
+		dragEvents.dragStart = this.onFileDragStart;
+		dragEvents.dragEnd = this.onFileDragEnd;
+		dragEvents.dragOver = this.onFileDragOver;
+		dragEvents.dragEnter = this.onFileDragEnter;
+		dragEvents.dragLeave = this.onFileDragLeave;
+		dragEvents.drop = this.onFileDrop;
 		this.openFolder(process.cwd());
 	}
 
-	protected createTreeViewItem(file: Tea.FileInfo): TreeView.Model {
+	protected createFolderListModel(file: Tea.FileInfo): TreeView.Model {
 		if (file == null || file.exists === false) {
 			return null;
 		}
@@ -220,6 +238,32 @@ export class ProjectView extends Vue {
 		return item;
 	}
 
+	protected createFileListModel(file: Tea.FileInfo): TreeView.Model {
+		var iconUrl = this.getFileIconUrl(file);
+		var icon: string = null;
+		if (iconUrl !== "") {
+			icon = "<img src='" + iconUrl + "'>";
+		}
+		var item: TreeView.Model = {
+			text: file.name,
+			isFolder: false,
+			icon: icon,
+			indent: "1.7em",
+			tag: FileItemTag.create(
+				file.fullName,
+				file.isDirectory
+			),
+			children: []
+		};
+		return item;
+	}
+
+	protected clearFileList(): void {
+		var fileList = this.$refs.fileList as TreeView;
+		fileList.unselect();
+		fileList.items = [];
+	}
+
 	protected sortFolders(files: Array<Tea.FileInfo>): Array<Tea.FileInfo> {
 		if (files == null || files.length <= 0) {
 			return files;
@@ -231,16 +275,19 @@ export class ProjectView extends Vue {
 		});
 	}
 
-	protected setChildFolderItems(item: Editor.TreeViewItem): void {
+	protected setFolderListChildItems(item: Editor.TreeViewItem): void {
 		var i = item.model;
 		if (i == null || i.children.length > 0) {
 			return;
 		}
 		var items: Array<TreeView.Model> = [];
 		var files = Tea.Directory.getFilesSync(item.tag);
+		if (files == null) {
+			return;
+		}
 		files = this.sortFolders(files);
-		files.forEach(file => {
-			var item = this.createTreeViewItem(file);
+		files.forEach((file: Tea.FileInfo) => {
+			var item = this.createFolderListModel(file);
 			if (item == null) {
 				return;
 			}
@@ -296,6 +343,16 @@ export class ProjectView extends Vue {
 		Electron.shell.openItem(path);
 	}
 
+	protected moveFile(path: string, target: string): void {
+		var stat = fs.statSync(target);
+		if (stat == null || stat.isDirectory() === false) {
+			return;
+		}
+		var name = nodePath.basename(path);
+		target = nodePath.join(target, name);
+		fs.renameSync(path, target);
+	}
+
 	protected openFileInspector(path: string): void {
 		if (path == null) {
 			return;
@@ -340,9 +397,62 @@ export class ProjectView extends Vue {
 		}
 	}
 
-	protected onDragStart(e: DragEvent, item: Editor.TreeViewItem): void {
+	protected onFolderDragStart(e: DragEvent, item: Editor.TreeViewItem): void {
 		//console.log("onDragStart");
-		this._dragSource = item;
+		e.preventDefault();
+	}
+
+	protected onFolderDragOver(e: DragEvent, item: Editor.TreeViewItem): void {
+		if (this._dragSourceFile == null) {
+			return;
+		}
+		e.preventDefault();
+		e.dataTransfer.dropEffect = "move";
+	}
+
+	protected onFolderDragEnter(e: DragEvent, item: Editor.TreeViewItem): void {
+		//console.log("dragEnter", item.model.text, this._dragSourceFile);
+		if (this._dragSourceFile == null) {
+			return;
+		}
+		var el = e.currentTarget as HTMLElement;
+		el.classList.add("dragEnter");
+	}
+
+	protected onFolderDragLeave(e: DragEvent, item: Editor.TreeViewItem): void {
+		//console.log("dragLeave", this, e);
+		var el = e.currentTarget as HTMLElement;
+		el.classList.remove("dragEnter");
+	}
+
+	protected onFolderDrop(e: DragEvent, item: Editor.TreeViewItem): void {
+		//console.log("drop", item);
+		if (this._dragSourceFile == null) {
+			return;
+		}
+		var el = e.currentTarget as HTMLElement;
+		if (el.classList.contains("dragEnter") === false) {
+			return;
+		}
+		el.classList.remove("dragEnter");
+		var tagSrc = this._dragSourceFile.model.tag as FileItemTag;
+		var targetPath = item.model.tag;
+		this._dragSourceFile = null;
+		if (tagSrc == null || targetPath == null) {
+			return;
+		}
+		//console.log(tagSrc, targetPath);
+		this.moveFile(tagSrc.path, targetPath);
+		var path = nodePath.dirname(tagSrc.path);
+		this.updateFileList(path);
+		if (tagSrc.isFolder) {
+			this.openFolder(process.cwd());
+		}
+	}
+
+	protected onFileDragStart(e: DragEvent, item: Editor.TreeViewItem): void {
+		//console.log("onDragStart");
+		this._dragSourceFile = item;
 		e.dataTransfer.effectAllowed = "move";
 		//e.dataTransfer.dropEffect = "move";
 
@@ -352,25 +462,79 @@ export class ProjectView extends Vue {
 		e.dataTransfer.setDragImage(dragImage, 0, 0);
 	}
 
-	protected onDragEnd(e: DragEvent, item: Editor.TreeViewItem): void {
-		this._dragSource = null;
+	protected onFileDragEnd(e: DragEvent, item: Editor.TreeViewItem): void {
+		this._dragSourceFile = null;
+	}
+
+	protected onFileDragOver(e: DragEvent, item: Editor.TreeViewItem): void {
+		if (this._dragSourceFile == null) {
+			return;
+		}
+		var tag = item.tag as FileItemTag;
+		if (tag == null || tag.isFolder === false) {
+			return;
+		}
+		e.preventDefault();
+		e.dataTransfer.dropEffect = "move";
+	}
+
+	protected onFileDragEnter(e: DragEvent, item: Editor.TreeViewItem): void {
+		//console.log("dragEnter", item.model.text, this._dragSource);
+		if (this._dragSourceFile == null) {
+			return;
+		}
+		var tag = item.tag as FileItemTag;
+		if (tag == null || tag.isFolder === false) {
+			return;
+		}
+		var el = e.currentTarget as HTMLElement;
+		el.classList.add("dragEnter");
+	}
+
+	protected onFileDragLeave(e: DragEvent, item: Editor.TreeViewItem): void {
+		//console.log("dragLeave", this, e);
+		var el = e.currentTarget as HTMLElement;
+		el.classList.remove("dragEnter");
+	}
+
+	protected onFileDrop(e: DragEvent, item: Editor.TreeViewItem): void {
+		//console.log("drop", item);
+		if (this._dragSourceFile == null) {
+			return;
+		}
+		var el = e.currentTarget as HTMLElement;
+		if (el.classList.contains("dragEnter") === false) {
+			return;
+		}
+		el.classList.remove("dragEnter");
+		var tagSrc = this._dragSourceFile.model.tag as FileItemTag;
+		var tagDst = item.model.tag as FileItemTag;
+		this._dragSourceFile = null;
+		if (tagSrc == null || tagDst == null || tagSrc == tagDst) {
+			return;
+		}
+		//console.log(tagSrc, tagDst);
+		this.moveFile(tagSrc.path, tagDst.path);
+		var path = nodePath.dirname(tagSrc.path);
+		this.updateFileList(path);
+		if (tagSrc.isFolder) {
+			this.openFolder(process.cwd());
+		}
 	}
 
 	protected onExpandFolderList(item: Editor.TreeViewItem): void {
 		//console.log("expand", item);
-		this.setChildFolderItems(item);
+		this.setFolderListChildItems(item);
 	}
 
 	protected onSelectFolder(item: Editor.TreeViewItem): void {
-		var fileList = this.$refs.fileList as TreeView;
 		if (item == null) {
-			fileList.unselect();
-			fileList.items = [];
+			this.clearFileList();
 			return;
 		}
 		//console.log("select", item.tag);
 		var path = item.tag;
-		this.setChildFolderItems(item);
+		this.setFolderListChildItems(item);
 		this.updateFileList(path);
 	}
 
@@ -402,8 +566,8 @@ export class ProjectView extends Vue {
 			inspectorView.hide();
 			return;
 		}
-		var path = item.tag;
-		this.openFileInspector(path);
+		var tag = item.tag as FileItemTag;
+		this.openFileInspector(tag.path);
 	}
 
 	protected onFileListKeyDown(e: KeyboardEvent): void {
@@ -437,12 +601,13 @@ export class ProjectView extends Vue {
 	}
 
 	protected onRenameFile(item: Editor.TreeViewItem, value: string): void {
-		var oldPath = item.tag;
+		var tag = item.tag as FileItemTag;
+		var oldPath = tag.path;
 		var basePath = nodePath.dirname(oldPath);
 		var newPath = nodePath.join(basePath, value);
 		fs.renameSync(oldPath, newPath);
 		item.model.text = value;
-		item.model.tag = newPath;
+		tag.path = newPath;
 
 		var file = new Tea.FileInfo(newPath);
 		var iconUrl = this.getFileIconUrl(file);
@@ -458,7 +623,7 @@ export class ProjectView extends Vue {
 			var item = folderList.findItemByTag(basePath);
 			if (item && item.model) {
 				item.model.children = [];
-				this.setChildFolderItems(item);
+				this.setFolderListChildItems(item);
 			}
 		}
 	}

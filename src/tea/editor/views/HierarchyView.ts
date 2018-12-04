@@ -97,7 +97,7 @@ export class HierarchyView extends Vue {
 		var dragEvents = treeView.dragEvents;
 		dragEvents.dragStart = this.onDragStart;
 		dragEvents.dragEnd = this.onDragEnd;
-		dragEvents.dragOver = this.onDragOver
+		dragEvents.dragOver = this.onDragOver;
 		dragEvents.dragEnter = this.onDragEnter;
 		dragEvents.dragLeave = this.onDragLeave;
 		dragEvents.drop = this.onDrop;
