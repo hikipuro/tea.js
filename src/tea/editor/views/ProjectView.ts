@@ -343,14 +343,22 @@ export class ProjectView extends Vue {
 		Electron.shell.openItem(path);
 	}
 
-	protected moveFile(path: string, target: string): void {
+	protected moveFile(path: string, target: string): boolean {
 		var stat = fs.statSync(target);
 		if (stat == null || stat.isDirectory() === false) {
-			return;
+			return false;
+		}
+		var dir = nodePath.dirname(path);
+		if (nodePath.relative(dir, target) === "") {
+			return false;
 		}
 		var name = nodePath.basename(path);
 		target = nodePath.join(target, name);
+		if (fs.existsSync(target)) {
+			return false;
+		}
 		fs.renameSync(path, target);
+		return true;
 	}
 
 	protected openFileInspector(path: string): void {
@@ -442,11 +450,12 @@ export class ProjectView extends Vue {
 			return;
 		}
 		//console.log(tagSrc, targetPath);
-		this.moveFile(tagSrc.path, targetPath);
-		var path = nodePath.dirname(tagSrc.path);
-		this.updateFileList(path);
-		if (tagSrc.isFolder) {
-			this.openFolder(process.cwd());
+		if (this.moveFile(tagSrc.path, targetPath)) {
+			var path = nodePath.dirname(tagSrc.path);
+			this.updateFileList(path);
+			if (tagSrc.isFolder) {
+				this.openFolder(process.cwd());
+			}
 		}
 	}
 
@@ -514,11 +523,12 @@ export class ProjectView extends Vue {
 			return;
 		}
 		//console.log(tagSrc, tagDst);
-		this.moveFile(tagSrc.path, tagDst.path);
-		var path = nodePath.dirname(tagSrc.path);
-		this.updateFileList(path);
-		if (tagSrc.isFolder) {
-			this.openFolder(process.cwd());
+		if (this.moveFile(tagSrc.path, tagDst.path)) {
+			var path = nodePath.dirname(tagSrc.path);
+			this.updateFileList(path);
+			if (tagSrc.isFolder) {
+				this.openFolder(process.cwd());
+			}
 		}
 	}
 
