@@ -117,6 +117,19 @@ export class TreeView extends Vue {
 		this.selectedItem.collapse();
 	}
 
+	findItem(predicate: (item: TreeViewItem, index: number) => boolean): TreeViewItem {
+		if (predicate == null) {
+			return null;
+		}
+		var item = this.$children.find((item: Vue, index: number): boolean => {
+			if ((item instanceof TreeViewItem) === false) {
+				return false;
+			}
+			return predicate(item as TreeViewItem, index);
+		});
+		return item as TreeViewItem;
+	}
+
 	findItemByTag(tag: any): TreeViewItem {
 		var find = (i: TreeViewItem): TreeViewItem => {
 			if ((i instanceof TreeViewItem) === false) {

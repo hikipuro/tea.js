@@ -126,45 +126,61 @@ export class ProjectView extends Vue {
 	selectFolder(path: string): void {
 		var folderList = this.$refs.folderList as TreeView;
 		var item = folderList.findItemByTag(path);
-		if (item) {
-			var parent = item.parent;
-			if (parent instanceof Editor.TreeViewItem) {
-				if (parent.isOpen === false) {
-					parent.expand();
-				}
-			}
-			folderList.select(item);
+		if (item == null) {
+			return;
 		}
+		var parent = item.parent;
+		if (parent instanceof Editor.TreeViewItem) {
+			if (parent.isOpen === false) {
+				parent.expand();
+			}
+		}
+		folderList.select(item);
 	}
 
 	updateFileList(path: string): void {
 		var fileList = this.$refs.fileList as TreeView;
-		Tea.Directory.getFiles(path, (files: Tea.FileInfo[]) => {
-			if (files == null) {
-				this.clearFileList();
+		var files = Tea.Directory.getFilesSync(path);
+		if (files == null) {
+			this.clearFileList();
+			return;
+		}
+		var selectedItem = fileList.selectedItem;
+		var selectedTag = null;
+		if (selectedItem != null) {
+			selectedTag = selectedItem.tag;
+		}
+		var items = [];
+		files = this.sortFiles(files);
+		files.forEach((file: Tea.FileInfo) => {
+			/*if (file.isDirectory) {
+				return;
+			}*/
+			if (file.name === ".DS_Store") {
 				return;
 			}
-			var items = [];
-			files = files.sort((a: Tea.FileInfo, b: Tea.FileInfo): number => {
-				var folderA = a.isDirectory ? 2 : 0;
-				var folderB = b.isDirectory ? 2 : 0;
-				var fileA = a.name.toLocaleLowerCase();
-				var fileB = b.name.toLocaleLowerCase();
-				return (folderB - folderA) + (fileB > fileA ? 0 : 1);
+			var item = this.createFileListModel(file);
+			//console.log(file.fullName);
+			items.push(item);
+		});
+		fileList.unselect();
+		fileList.items = items;
+		if (selectedTag == null) {
+			return;
+		}
+		var dir = nodePath.dirname(selectedTag.path);
+		var relative = nodePath.relative(dir, path);
+		if (relative !== "") {
+			return;
+		}
+		fileList.$nextTick(() => {
+			var item = fileList.findItem((item: Editor.TreeViewItem): boolean => {
+				return item.tag.path === selectedTag.path;
 			});
-			files.forEach((file: Tea.FileInfo) => {
-				/*if (file.isDirectory) {
-					return;
-				}*/
-				if (file.name === ".DS_Store") {
-					return;
-				}
-				var item = this.createFileListModel(file);
-				//console.log(file.fullName);
-				items.push(item);
-			});
-			fileList.unselect();
-			fileList.items = items;
+			if (item == null) {
+				return;
+			}
+			fileList.select(item);
 		});
 	}
 
@@ -296,6 +312,19 @@ export class ProjectView extends Vue {
 			var fileA = a.name.toLocaleLowerCase();
 			var fileB = b.name.toLocaleLowerCase();
 			return fileB > fileA ? 0 : 1;
+		});
+	}
+
+	protected sortFiles(files: Array<Tea.FileInfo>): Array<Tea.FileInfo> {
+		if (files == null || files.length <= 0) {
+			return files;
+		}
+		return files.sort((a: Tea.FileInfo, b: Tea.FileInfo): number => {
+			var folderA = a.isDirectory ? 2 : 0;
+			var folderB = b.isDirectory ? 2 : 0;
+			var fileA = a.name.toLocaleLowerCase();
+			var fileB = b.name.toLocaleLowerCase();
+			return (folderB - folderA) + (fileB > fileA ? 0 : 1);
 		});
 	}
 
@@ -601,6 +630,10 @@ export class ProjectView extends Vue {
 			return;
 		}
 		var tag = item.tag as FileItemTag;
+		if (tag == null || tag.isFolder) {
+			inspectorView.hide();
+			return;
+		}
 		this.openFileInspector(tag.path);
 	}
 
