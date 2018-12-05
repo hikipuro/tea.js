@@ -136,6 +136,9 @@ export class ObjectInspectorCommand {
 		var hierarchyView = this.editor.hierarchyView;
 		var inspectorView = this.editor.inspectorView;
 
+		if (this.editor.status.app.isEditing) {
+			return;
+		}
 		if (hierarchyView.getSelectedItem() == null) {
 			this._updateTimer.stop();
 			return;
