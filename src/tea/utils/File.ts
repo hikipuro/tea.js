@@ -145,7 +145,8 @@ export class File {
 		}
 		fs.readdirSync(path).forEach((file: string) => {
 			file = nodePath.join(path, file);
-			if (fs.lstatSync(file).isDirectory()) {
+			var stat = fs.lstatSync(file);
+			if (stat != null && stat.isDirectory()) {
 				File.removeFolder(file);
 			} else {
 				fs.unlinkSync(file);

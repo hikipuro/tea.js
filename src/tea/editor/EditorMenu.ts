@@ -506,8 +506,7 @@ export class EditorMenu {
 			},
 			{
 				id: "Delete",
-				label: "Delete",
-				enabled: false
+				label: "Delete"
 			},
 			{
 				id: "Rename",

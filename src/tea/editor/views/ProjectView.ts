@@ -49,6 +49,7 @@ class FileItemTag {
 })
 export class ProjectView extends Vue {
 	protected _dragSourceFile: Editor.TreeViewItem;
+	protected _folderPath: string;
 
 	get folderList(): TreeView {
 		return this.$refs.folderList as TreeView;
@@ -97,7 +98,10 @@ export class ProjectView extends Vue {
 		folderList.select(parent);
 	}
 
-	openFolder(path: string): void {
+	openFolder(path: string = null): void {
+		if (path == null) {
+			path = this._folderPath;
+		}
 		var folderList = this.$refs.folderList as TreeView;
 		var selectedItem = folderList.selectedItem;
 		var selectedPath = null;
@@ -109,6 +113,7 @@ export class ProjectView extends Vue {
 			this.clearFileList();
 			return;
 		}
+		this._folderPath = path;
 		var items = this.createFolderListItems(path);
 		folderList.items = items;
 		if (selectedPath == null) {
@@ -138,7 +143,10 @@ export class ProjectView extends Vue {
 		folderList.select(item);
 	}
 
-	updateFileList(path: string): void {
+	updateFileList(path: string = null): void {
+		if (path == null) {
+			path = this.getSelectedFolderPath();
+		}
 		var fileList = this.$refs.fileList as TreeView;
 		var files = Tea.Directory.getFilesSync(path);
 		if (files == null) {
@@ -230,6 +238,14 @@ export class ProjectView extends Vue {
 		dragEvents.dragLeave = this.onFileDragLeave;
 		dragEvents.drop = this.onFileDrop;
 		this.openFolder(process.cwd());
+	}
+
+	protected isFolder(path): boolean {
+		var stat = fs.statSync(path);
+		if (stat == null) {
+			return false;
+		}
+		return stat.isDirectory();
 	}
 
 	protected createFolderListModel(file: Tea.FileInfo): TreeView.Model {
@@ -372,8 +388,7 @@ export class ProjectView extends Vue {
 		var editor = this.$root as Editor;
 		path = nodePath.resolve(path);
 
-		var stat = fs.statSync(path);
-		if (stat.isDirectory()) {
+		if (this.isFolder(path)) {
 			this.selectFolder(path);
 			return;
 		}
@@ -397,8 +412,7 @@ export class ProjectView extends Vue {
 	}
 
 	protected moveFile(path: string, target: string): boolean {
-		var stat = fs.statSync(target);
-		if (stat == null || stat.isDirectory() === false) {
+		if (this.isFolder(target) === false) {
 			return false;
 		}
 		var dir = nodePath.dirname(path);
@@ -504,10 +518,9 @@ export class ProjectView extends Vue {
 		}
 		//console.log(tagSrc, targetPath);
 		if (this.moveFile(tagSrc.path, targetPath)) {
-			var path = nodePath.dirname(tagSrc.path);
-			this.updateFileList(path);
+			this.updateFileList();
 			if (tagSrc.isFolder) {
-				this.openFolder(process.cwd());
+				this.openFolder();
 			}
 		}
 	}
@@ -577,10 +590,9 @@ export class ProjectView extends Vue {
 		}
 		//console.log(tagSrc, tagDst);
 		if (this.moveFile(tagSrc.path, tagDst.path)) {
-			var path = nodePath.dirname(tagSrc.path);
-			this.updateFileList(path);
+			this.updateFileList();
 			if (tagSrc.isFolder) {
-				this.openFolder(process.cwd());
+				this.openFolder();
 			}
 		}
 	}
@@ -672,6 +684,10 @@ export class ProjectView extends Vue {
 		var oldPath = tag.path;
 		var basePath = nodePath.dirname(oldPath);
 		var newPath = nodePath.join(basePath, value);
+		
+		if (fs.existsSync(newPath)) {
+			return;
+		}
 		fs.renameSync(oldPath, newPath);
 		item.model.text = value;
 		tag.path = newPath;
@@ -684,8 +700,7 @@ export class ProjectView extends Vue {
 			item.model.icon = null;
 		}
 
-		var stat = fs.statSync(newPath);
-		if (stat.isDirectory()) {
+		if (this.isFolder(newPath)) {
 			var folderList = this.$refs.folderList as TreeView;
 			var item = folderList.findItemByTag(basePath);
 			if (item && item.model) {
@@ -716,7 +731,7 @@ export class ProjectView extends Vue {
 			case "Create/Folder":
 				path = nodePath.join(path, "New Folder");
 				fs.mkdirSync(path);
-				this.openFolder(process.cwd());
+				this.openFolder();
 				break;
 			case "Create/JavaScript":
 				path = nodePath.join(path, "New Script.js");
@@ -732,17 +747,15 @@ export class ProjectView extends Vue {
 }
 `;
 				fs.writeFileSync(path, script);
-				this.updateFileList(
-					this.getSelectedFolderPath()
-				);
+				this.updateFileList();
 				break;
 			case "Delete":
 				this.selectParentFolder();
 				Tea.File.removeFolder(path);
-				this.openFolder(process.cwd());
+				this.openFolder();
 				break;
 			case "Refresh":
-				this.openFolder(process.cwd());
+				this.openFolder();
 				break;
 		}
 	}
@@ -753,13 +766,21 @@ export class ProjectView extends Vue {
 
 		switch (item.id) {
 			case "Open":
-				var stat = fs.statSync(path);
-				if (stat.isDirectory()) {
+				if (this.isFolder(path)) {
 					this.selectFolder(path);
 					break;
 				}
 				Electron.shell.openItem(path);
 				console.log("Open", path);
+				break;
+			case "Delete":
+				if (this.isFolder(path)) {
+					Tea.File.removeFolder(path);
+					this.openFolder();
+				} else {
+					fs.unlinkSync(path);
+				}
+				this.updateFileList();
 				break;
 			case "Rename":
 				var fileList = this.$refs.fileList as TreeView;
