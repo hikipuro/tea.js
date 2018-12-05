@@ -319,7 +319,7 @@ export class ProjectView extends Vue {
 		return files.sort((a: Directory.FileInfo, b: Directory.FileInfo): number => {
 			var fileA = a.name.toLocaleLowerCase();
 			var fileB = b.name.toLocaleLowerCase();
-			return fileB > fileA ? 0 : 1;
+			return fileB > fileA ? -1 : 1;
 		});
 	}
 
