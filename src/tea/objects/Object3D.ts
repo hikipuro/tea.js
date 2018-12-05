@@ -461,6 +461,25 @@ export class Object3D {
 		object3d.parent = null;
 	}
 
+	getComponentIndex(component: Tea.Component): number {
+		return this._components.indexOf(component);
+	}
+
+	getComponentCount(): number {
+		return this._components.length;
+	}
+
+	swapComponents(index0: number, index1: number): void {
+		var item0 = this._components[index0];
+		var item1 = this._components[index1];
+		if (item0 == null || item1 == null) {
+			return;
+		}
+		var temp = item0;
+		this._components[index0] = item1;
+		this._components[index1] = temp;
+	}
+
 	addComponent<T extends Tea.Component>(component: new (app: Tea.App) => T): T {
 		if (component == null) {
 			return;

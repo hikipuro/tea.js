@@ -50,9 +50,16 @@ export class ObjectInspectorCommand {
 	}
 
 	showComponentMenu(): void {
-		if (this.editor.hierarchyView.getSelectedItem() == null) {
+		var object3d = this.getSelectedObject();
+		if (object3d == null) {
 			return;
 		}
+		var inspectorView = this.editor.inspectorView;
+		var inspector = inspectorView.getComponent() as ObjectInspector;
+		if ((inspector instanceof ObjectInspector) === false) {
+			return;
+		}
+
 		var contextMenu = EditorMenu.createInspectorViewComponentMenu(
 			this.onSelectComponentMenu
 		);
@@ -60,6 +67,18 @@ export class ObjectInspectorCommand {
 		contextMenu.onClose = () => {
 			this._componentMenu = null;
 		};
+
+		var component = inspector._configComponent;
+		var index = object3d.getComponentIndex(component);
+		if (index === 0) {
+			var item = contextMenu.getMenuItemById("Move Up");
+			item.enabled = false;
+		}
+		var count = object3d.getComponentCount();
+		if (index + 1 >= count) {
+			var item = contextMenu.getMenuItemById("Move Down");
+			item.enabled = false;
+		}
 		contextMenu.show();
 	}
 
@@ -156,9 +175,19 @@ export class ObjectInspectorCommand {
 			case "Remove Component":
 				object3d.removeComponent(component);
 				this.update();
-				this.editor.status.isChanged = true;
+				break;
+			case "Move Up":
+				var index = object3d.getComponentIndex(component);
+				object3d.swapComponents(index, index - 1);
+				this.update();
+				break;
+			case "Move Down":
+				var index = object3d.getComponentIndex(component);
+				object3d.swapComponents(index, index + 1);
+				this.update();
 				break;
 		}
+		this.editor.status.isChanged = true;
 	}
 
 	protected onSelectAddComponentMenu = (item: Electron.MenuItem): void => {

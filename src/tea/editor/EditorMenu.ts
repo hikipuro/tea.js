@@ -361,6 +361,14 @@ export class EditorMenu {
 			{
 				id: "Remove Component",
 				label: translator.getText("RemoveComponent")
+			},
+			{
+				id: "Move Up",
+				label: translator.getText("MoveUp")
+			},
+			{
+				id: "Move Down",
+				label: translator.getText("MoveDown")
 			}
 		];
 		EditorMenu.setMenuItemHandler(

@@ -128,7 +128,9 @@
 		"Scale": "Scale",
 		"AddComponent": "Add Component",
 		"ComponentMenu": {
-			"RemoveComponent": "Remove Component"
+			"RemoveComponent": "Remove Component",
+			"MoveUp": "Move Up",
+			"MoveDown": "Move Down"
 		},
 		"AddComponentMenu": {
 			"Audio": {
