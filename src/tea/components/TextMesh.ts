@@ -231,9 +231,10 @@ export class TextMesh extends Component {
 		return json;
 	}
 
-	static fromJSON(app: Tea.App, json: any): TextMesh {
+	static fromJSON(app: Tea.App, json: any, callback: (component: Tea.Component) => void): void {
 		if (json == null || json._type !== "TextMesh") {
-			return null;
+			callback(null);
+			return;
 		}
 		var textMesh = new TextMesh(app);
 		textMesh.enabled = json.enabled;
@@ -252,7 +253,7 @@ export class TextMesh extends Component {
 		textMesh._text = json.text;
 		textMesh._padding = json.padding;
 		//textMesh._isChanged = true;
-		return textMesh;
+		callback(textMesh);
 	}
 
 	protected clearRect(): void {

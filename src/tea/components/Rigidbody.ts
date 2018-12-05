@@ -313,13 +313,14 @@ export class Rigidbody extends Component {
 		return json;
 	}
 
-	static fromJSON(app: Tea.App, json: any): Rigidbody {
+	static fromJSON(app: Tea.App, json: any, callback: (component: Tea.Component) => void): void {
 		if (json == null || json._type !== "Rigidbody") {
-			return null;
+			callback(null);
+			return;
 		}
 		var rigidbody = new Rigidbody(app);
 		rigidbody.enabled = json.enabled;
-		return rigidbody;
+		callback(rigidbody);
 	}
 
 	protected addPosition(position: Tea.Vector3): void {

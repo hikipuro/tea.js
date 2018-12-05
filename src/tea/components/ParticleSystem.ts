@@ -261,9 +261,10 @@ export class ParticleSystem extends Component {
 	//triggerSubEmitter(): void {
 	//}
 
-	static fromJSON(app: Tea.App, json: any): ParticleSystem {
+	static fromJSON(app: Tea.App, json: any, callback: (component: Tea.Component) => void): void {
 		if (json == null || json._type !== "ParticleSystem") {
-			return null;
+			callback(null);
+			return;
 		}
 		app.enableInstancedArrays();
 		var particleSystem = new ParticleSystem(app);
@@ -272,7 +273,7 @@ export class ParticleSystem extends Component {
 		particleSystem.emission = Modules.EmissionModule.fromJSON(app, json.emission);
 		particleSystem.shape = Modules.ShapeModule.fromJSON(app, json.shape);
 		particleSystem.main = Modules.MainModule.fromJSON(app, json.main);
-		return particleSystem;
+		callback(particleSystem);
 	}
 	
 	toJSON(): Object {

@@ -82,15 +82,16 @@ export class ParticleSystemRenderer extends Renderer {
 		this.disableAllAttributes();
 	}
 
-	static fromJSON(app: Tea.App, json: any): ParticleSystemRenderer {
+	static fromJSON(app: Tea.App, json: any, callback: (component: Tea.Component) => void): void {
 		if (json == null || json._type !== "ParticleSystemRenderer") {
-			return null;
+			callback(null);
+			return;
 		}
 		var renderer = new ParticleSystemRenderer(app);
 		renderer.enabled = json.enabled;
 		renderer.material = Tea.Material.fromJSON(app, json.material);
 		renderer.material.mainTexture = Tea.Texture.getDefaultParticle(app);
-		return renderer;
+		callback(renderer);
 	}
 
 	toJSON(): Object {

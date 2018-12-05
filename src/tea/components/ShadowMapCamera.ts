@@ -34,12 +34,13 @@ export class ShadowMapCamera extends Camera {
 		return json;
 	}
 
-	static fromJSON(app: Tea.App, json: any): ShadowMapCamera {
+	static fromJSON(app: Tea.App, json: any, callback: (component: Tea.Component) => void): void {
 		if (json == null || json._type !== "ShadowMapCamera") {
-			return null;
+			callback(null);
+			return;
 		}
 		var shadowMapCamera = new ShadowMapCamera(app);
 		shadowMapCamera.enabled = json.enabled;
-		return shadowMapCamera;
+		callback(shadowMapCamera);
 	}
 }

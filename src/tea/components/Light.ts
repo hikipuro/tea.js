@@ -55,9 +55,10 @@ export class Light extends Component {
 		return json;
 	}
 
-	static fromJSON(app: Tea.App, json: any): Light {
+	static fromJSON(app: Tea.App, json: any, callback: (component: Tea.Component) => void): void {
 		if (json == null || json._type !== "Light") {
-			return null;
+			callback(null);
+			return;
 		}
 		var light = new Light(app);
 		light.enabled = json.enabled;
@@ -66,6 +67,6 @@ export class Light extends Component {
 		light.range = json.range;
 		light.spotAngle = json.spotAngle;
 		light.type = Tea.LightType[json.type as string];
-		return light;
+		callback(light);
 	}
 }

@@ -43,13 +43,14 @@ export class MeshFilter extends Component {
 		return json;
 	}
 
-	static fromJSON(app: Tea.App, json: any): MeshFilter {
+	static fromJSON(app: Tea.App, json: any, callback: (component: Tea.Component) => void): void {
 		if (json == null || json._type !== "MeshFilter") {
-			return null;
+			callback(null);
+			return;
 		}
 		var meshFilter = new MeshFilter(app);
 		//meshFilter.enabled = json.enabled;
 		meshFilter.mesh = Tea.Mesh.fromJSON(app, json.mesh);
-		return meshFilter;
+		callback(meshFilter);
 	}
 }

@@ -137,14 +137,15 @@ export class BoxCollider extends Collider {
 		return json;
 	}
 
-	static fromJSON(app: Tea.App, json: any): BoxCollider {
+	static fromJSON(app: Tea.App, json: any, callback: (component: Tea.Component) => void): void {
 		if (json == null || json._type !== "BoxCollider") {
-			return null;
+			callback(null);
+			return;
 		}
 		var boxCollider = new BoxCollider(app);
 		boxCollider.enabled = json.enabled;
 		boxCollider.center = Tea.Vector3.fromArray(json.center);
 		boxCollider.size = Tea.Vector3.fromArray(json.size);
-		return boxCollider;
+		callback(boxCollider);
 	}
 }

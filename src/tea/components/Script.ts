@@ -14,12 +14,14 @@ export class Script extends Component {
 		this.awake();
 	}
 
-	static fromJSON(app: Tea.App, json: any, callback: (script: Tea.Script) => void): Script {
+	static fromJSON(app: Tea.App, json: any, callback: (component: Tea.Component) => void): void {
 		if (json == null || json._type !== "Script") {
-			return null;
+			callback(null);
+			return;
 		}
 		if (json.path == null || json.path === "") {
-			return null;
+			callback(null);
+			return;
 		}
 		Tea.ScriptLoader.load(
 			app, json.path,

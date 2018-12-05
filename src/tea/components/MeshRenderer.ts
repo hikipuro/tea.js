@@ -101,9 +101,10 @@ export class MeshRenderer extends Renderer {
 		return json;
 	}
 
-	static fromJSON(app: Tea.App, json: any): MeshRenderer {
+	static fromJSON(app: Tea.App, json: any, callback: (component: Tea.Component) => void): void {
 		if (json == null || json._type !== "MeshRenderer") {
-			return null;
+			callback(null);
+			return;
 		}
 		var meshRenderer = new MeshRenderer(app);
 		meshRenderer.enabled = json.enabled;
@@ -111,7 +112,7 @@ export class MeshRenderer extends Renderer {
 		meshRenderer._wireframe = json.wireframe;
 		meshRenderer.material = Tea.Material.fromJSON(app, json.material);
 		//meshRenderer.material.shader = Tea.Shader.fromJSON(app, json);
-		return meshRenderer;
+		callback(meshRenderer);
 	}
 
 	protected get isRenderable(): boolean {

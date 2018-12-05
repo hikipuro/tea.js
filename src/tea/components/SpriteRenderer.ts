@@ -160,16 +160,17 @@ export class SpriteRenderer extends Renderer {
 		return json;
 	}
 
-	static fromJSON(app: Tea.App, json: any): SpriteRenderer {
+	static fromJSON(app: Tea.App, json: any, callback: (component: Tea.Component) => void): void {
 		if (json == null || json._type !== "MeshRenderer") {
-			return null;
+			callback(null);
+			return;
 		}
-		var meshRenderer = new SpriteRenderer(app);
-		meshRenderer.enabled = json.enabled;
-		meshRenderer._wireframe = json.wireframe;
-		meshRenderer.material = Tea.Material.fromJSON(app, json.material);
+		var renderer = new SpriteRenderer(app);
+		renderer.enabled = json.enabled;
+		renderer._wireframe = json.wireframe;
+		renderer.material = Tea.Material.fromJSON(app, json.material);
 		//meshRenderer.material.shader = Tea.Shader.fromJSON(app, json);
-		return meshRenderer;
+		callback(renderer);
 	}
 
 	protected get isRenderable(): boolean {

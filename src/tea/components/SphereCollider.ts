@@ -21,6 +21,15 @@ export class SphereCollider extends Collider {
 		return center.add$(object3d.position);
 	}
 
+	containsPoint(point: Tea.Vector3): boolean {
+		if (point == null) {
+			return false;
+		}
+		var center = this.worldCenter;
+		var d = center.distance(point);
+		return d <= this.radius;
+	}
+
 	closestPoint(point: Tea.Vector3): Tea.Vector3 {
 		if (point == null) {
 			return null;
@@ -50,14 +59,15 @@ export class SphereCollider extends Collider {
 		return json;
 	}
 
-	static fromJSON(app: Tea.App, json: any): SphereCollider {
+	static fromJSON(app: Tea.App, json: any, callback: (component: Tea.Component) => void): void {
 		if (json == null || json._type !== "SphereCollider") {
-			return null;
+			callback(null);
+			return;
 		}
 		var collider = new SphereCollider(app);
 		collider.enabled = json.enabled;
 		collider.center = Tea.Vector3.fromArray(json.center);
 		collider.radius = parseFloat(json.radius);
-		return collider;
+		callback(collider);
 	}
 }

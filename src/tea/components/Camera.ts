@@ -492,9 +492,10 @@ export class Camera extends Component {
 		return json;
 	}
 
-	static fromJSON(app: Tea.App, json: any): Camera {
+	static fromJSON(app: Tea.App, json: any, callback: (component: Tea.Component) => void): void {
 		if (json == null || json._type !== "Camera") {
-			return null;
+			callback(null);
+			return;
 		}
 		var camera = new Camera(app);
 		camera.enabled = json.enabled;
@@ -511,7 +512,7 @@ export class Camera extends Component {
 		camera._enableStereo = json.enableStereo;
 		camera.stereoDistance = json.stereoDistance;
 		camera.stereoMode = Tea.CameraStereoMode[json.stereoMode as string];
-		return camera;
+		callback(camera);
 	}
 
 	protected getViewportRect(): Tea.Rect {

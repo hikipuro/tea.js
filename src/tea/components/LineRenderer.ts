@@ -93,13 +93,14 @@ export class LineRenderer extends Renderer {
 		return json;
 	}
 
-	static fromJSON(app: Tea.App, json: any): LineRenderer {
+	static fromJSON(app: Tea.App, json: any, callback: (component: Tea.Component) => void): void {
 		if (json == null || json._type !== "LineRenderer") {
-			return null;
+			callback(null);
+			return;
 		}
 		var lineRenderer = new LineRenderer(app);
 		lineRenderer.enabled = json.enabled;
-		return lineRenderer;
+		callback(lineRenderer);
 	}
 
 	protected get isRenderable(): boolean {
