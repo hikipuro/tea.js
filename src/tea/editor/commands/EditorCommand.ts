@@ -6,6 +6,7 @@ import { EditorMenu } from "../EditorMenu";
 import { AppBuilder } from "./AppBuilder";
 import { Translator } from "../translate/Translator";
 import { NativeFile } from "../NativeFile";
+import { EditorSceneLoader } from "../EditorSceneLoader";
 
 const remote = Electron.remote;
 const Dialog = remote.dialog;
@@ -243,16 +244,16 @@ export class EditorCommand extends EventDispatcher {
 		this.editor.status.isChanged = false;
 		var app = this.editor.status.app;
 		var prevScene = app.scene;
-		var scene = app.createSceneFromJSON(json);
-		app.scene = scene;
-		this.editor.setScene(scene);
-		if (prevScene) {
-			prevScene.removeAllListeners("addChild");
-			prevScene.removeAllListeners("removeChild");
-			prevScene.destroy();
-		}
-
-		console.log("onload", app.isEditing, scene.isEditing);
+		EditorSceneLoader.load(app, json, (scene: Tea.Scene) => {
+			app.scene = scene;
+			this.editor.setScene(scene);
+			if (prevScene) {
+				prevScene.removeAllListeners("addChild");
+				prevScene.removeAllListeners("removeChild");
+				prevScene.destroy();
+			}
+			console.log("onload", app.isEditing, scene.isEditing);
+		});
 	}
 
 	showConfirmSaveSceneDialog(callback: (response: number) => void): void {

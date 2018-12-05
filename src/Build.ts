@@ -33,9 +33,14 @@ export class Main {
 				return;
 			}
 			var json = JSON.parse(data);
-			var scene = app.createSceneFromJSON(json);
-			app.scene = scene;
-			app.start();
+			Tea.SceneLoader.load(app, json, (scene: Tea.Scene) => {
+				if (scene == null) {
+					console.log("error: load scene file", settings.sceneFile);
+					return;
+				}
+				app.scene = scene;
+				app.start();
+			});
 		});
 	}
 }

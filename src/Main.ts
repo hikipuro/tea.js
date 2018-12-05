@@ -8,6 +8,7 @@ import { HitTest } from "./HitTest";
 
 import { Editor } from "./tea/editor/Editor";
 import { NativeFile } from "./tea/editor/NativeFile";
+import { EditorSceneLoader } from "./tea/editor/EditorSceneLoader";
 var editor: Editor;
 
 export class Main {
@@ -62,7 +63,7 @@ export class Main {
 			return;
 		}
 		var json = JSON.parse(data);
-		Tea.SceneLoader.load(app, json, (scene: Tea.Scene) => {
+		EditorSceneLoader.load(app, json, (scene: Tea.Scene) => {
 			if (scene == null) {
 				console.log("error: load scene", scenePath);
 				this.setNewScene();

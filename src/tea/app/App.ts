@@ -226,11 +226,16 @@ export class App {
 			}
 			var prevScene = this.scene;
 			var json = JSON.parse(data);
-			var scene = this.createSceneFromJSON(json);
-			this.scene = scene;
-			if (prevScene) {
-				prevScene.destroy();
-			}
+			Tea.SceneLoader.load(this, json, (scene: Tea.Scene) => {
+				if (scene == null) {
+					console.log("error: load scene", path);
+					return;
+				}
+				this.scene = scene;
+				if (prevScene) {
+					prevScene.destroy();
+				}
+			});
 		});
 	}
 
@@ -250,9 +255,9 @@ export class App {
 		return ObjectFactory.createScene(this);
 	}
 
-	createSceneFromJSON(data: any): Tea.Scene {
-		return ObjectFactory.createSceneFromJSON(this, data);
-	}
+	//createSceneFromJSON(data: any): Tea.Scene {
+	//	return ObjectFactory.createSceneFromJSON(this, data);
+	//}
 
 	createPrimitive(type: Tea.PrimitiveType): Tea.Object3D {
 		return Tea.Object3D.createPrimitive(this, type);

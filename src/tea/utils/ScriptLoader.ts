@@ -1,20 +1,9 @@
 import * as Tea from "../Tea";
-import { NativeFile } from "../editor/NativeFile";
 
 export class ScriptLoader {
 	static readonly MaxMatchLength = 2048;
 
 	static load(app: Tea.App, path: string, callback: (script: Tea.Script) => void): void {
-		if (app.status.isEditor) {
-			var data = NativeFile.readText(path);
-			if (data == null) {
-				console.error("error");
-				callback(null);
-				return;
-			}
-			this.loadScriptFile(app, path, data, callback);
-			return;
-		}
 		Tea.File.readText(path, (err: any, data: string) => {
 			if (err) {
 				console.error(err);
