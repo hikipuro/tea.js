@@ -115,12 +115,16 @@ export class SceneLoader {
 			callback(null);
 			return;
 		}
-		if (json.path == null || json.path === "") {
+		var path = json.path;
+		if (path == null || path === "") {
 			callback(null);
 			return;
 		}
+		if (app.status.isEditor) {
+			path = process.cwd() + "/assets/" + path;
+		}
 		Tea.ScriptLoader.load(
-			app, json.path,
+			app, path,
 			(script: Tea.Script) => {
 				if (script == null) {
 					callback(script);

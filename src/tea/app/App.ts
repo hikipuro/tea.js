@@ -219,6 +219,9 @@ export class App {
 		if (this.isEditing) {
 			return;
 		}
+		if (this.status.isEditor) {
+			path = process.cwd() + "/assets/" + path;
+		}
 		Tea.File.readText(path, (err, data) => {
 			if (err) {
 				console.log(err);
