@@ -340,9 +340,11 @@ export class TreeViewItem extends Vue {
 		var rename = this.$refs.rename as HTMLInputElement;
 		var value = rename.value;
 		if (value == null || value === "") {
+			this.$emit("rename", this, null);
 			return;
 		}
 		if (value === this.model.text) {
+			this.$emit("rename", this, null);
 			return;
 		}
 		this.$emit("rename", this, value);
@@ -384,6 +386,12 @@ export class TreeViewItem extends Vue {
 				"mousedown", this.onMouseDownScreen
 			);
 			this.emitRenameEvent();
+		} else if (e.key === "Escape") {
+			this.isRenaming = false;
+			document.removeEventListener(
+				"mousedown", this.onMouseDownScreen
+			);
+			this.$emit("rename", this, null);
 		}
 	}
 

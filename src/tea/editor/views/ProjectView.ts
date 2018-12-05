@@ -328,11 +328,11 @@ export class ProjectView extends Vue {
 			return files;
 		}
 		return files.sort((a: Directory.FileInfo, b: Directory.FileInfo): number => {
-			var folderA = a.isDirectory ? 2 : 0;
-			var folderB = b.isDirectory ? 2 : 0;
+			var folderA = a.isDirectory ? 2 : -2;
+			var folderB = b.isDirectory ? 2 : -2;
 			var fileA = a.name.toLocaleLowerCase();
 			var fileB = b.name.toLocaleLowerCase();
-			return (folderB - folderA) + (fileB > fileA ? 0 : 1);
+			return (folderB - folderA) + (fileB > fileA ? -1 : 1);
 		});
 	}
 
@@ -647,6 +647,13 @@ export class ProjectView extends Vue {
 				var path = this.getSelectedFilePath();
 				this.openFile(path);
 				break;
+			case "F2":
+				var fileList = this.$refs.fileList as TreeView;
+				var fileItem = fileList.selectedItem;
+				if (fileItem) {
+					fileItem.rename();
+				}
+				break;
 		}
 	}
 
@@ -672,12 +679,18 @@ export class ProjectView extends Vue {
 	}
 
 	protected onRenameFile(item: Editor.TreeViewItem, value: string): void {
+		var fileList = this.$refs.fileList as TreeView;
+		if (value == null) {
+			fileList.focus();
+			return;
+		}
 		var tag = item.tag as FileItemTag;
 		var oldPath = tag.path;
 		var basePath = NativeFile.dirname(oldPath);
 		var newPath = NativeFile.join(basePath, value);
 		
 		if (NativeFile.exists(newPath)) {
+			fileList.focus();
 			return;
 		}
 		NativeFile.rename(oldPath, newPath);
@@ -700,6 +713,7 @@ export class ProjectView extends Vue {
 				this.setFolderListChildItems(item);
 			}
 		}
+		fileList.focus();
 	}
 
 	protected onSelectFolderMenu = (item: Electron.MenuItem): void => {

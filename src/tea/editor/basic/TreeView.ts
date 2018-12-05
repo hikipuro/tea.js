@@ -16,6 +16,7 @@ export class Model {
 @Component({
 	template: `
 		<div
+			ref="treeView"
 			class="TreeView"
 			@keydown="onKeyDown"
 			@click="onClick"
@@ -71,6 +72,11 @@ export class TreeView extends Vue {
 			return [];
 		}
 		return items;
+	}
+
+	focus(): void {
+		var treeView = this.$refs.treeView as HTMLElement;
+		treeView.focus();
 	}
 
 	expandAll(): void {
