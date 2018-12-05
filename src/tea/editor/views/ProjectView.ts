@@ -688,30 +688,15 @@ export class ProjectView extends Vue {
 		var oldPath = tag.path;
 		var basePath = NativeFile.dirname(oldPath);
 		var newPath = NativeFile.join(basePath, value);
-		
 		if (NativeFile.exists(newPath)) {
 			fileList.focus();
 			return;
 		}
 		NativeFile.rename(oldPath, newPath);
-		item.model.text = value;
 		tag.path = newPath;
-
-		var file = new Directory.FileInfo(newPath);
-		var iconUrl = this.getFileIconUrl(file);
-		if (iconUrl !== "") {
-			item.model.icon = "<img src='" + iconUrl + "'>";
-		} else {
-			item.model.icon = null;
-		}
-
+		this.updateFileList();
 		if (NativeFile.isFolder(newPath)) {
-			var folderList = this.$refs.folderList as TreeView;
-			var item = folderList.findItemByTag(basePath);
-			if (item && item.model) {
-				item.model.children = [];
-				this.setFolderListChildItems(item);
-			}
+			this.openFolder();
 		}
 		fileList.focus();
 	}
