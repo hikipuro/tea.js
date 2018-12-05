@@ -6,10 +6,12 @@ export class ObjectFactory {
 		return scene;
 	}
 
+	/*
 	static createSceneFromJSON(app: Tea.App, data: any): Tea.Scene {
 		var scene = Tea.Scene.fromJSON(app, data);
 		return scene;
 	}
+	//*/
 
 	static createObject3D(app: Tea.App): Tea.Object3D {
 		var object3d = new Tea.Object3D(app);

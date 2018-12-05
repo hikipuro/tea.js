@@ -392,6 +392,7 @@ export class Object3D {
 		return json;
 	}
 
+	/*
 	static fromJSON(app: Tea.App, json: any): Object3D {
 		if (json == null || json._type !== "Object3D") {
 			return null;
@@ -441,6 +442,7 @@ export class Object3D {
 		}
 		return object3d;
 	}
+	//*/
 
 	addChild(object3d: Object3D): void {
 		if (object3d == null) {

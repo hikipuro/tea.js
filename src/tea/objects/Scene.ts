@@ -700,6 +700,7 @@ export class Scene extends EventDispatcher {
 		this.sceneRenderer.render(renderers, lights);
 	}
 
+	/*
 	static fromJSON(app: Tea.App, json: any): Scene {
 		if (json == null || json._type !== "Scene") {
 			return null;
@@ -716,6 +717,7 @@ export class Scene extends EventDispatcher {
 		}
 		return scene;
 	}
+	//*/
 
 	toJSON(): Object {
 		var json = {
