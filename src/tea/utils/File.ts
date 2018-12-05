@@ -1,18 +1,4 @@
-import * as fs from "fs";
-import * as nodePath from "path";
-
 export class File {
-	static exists(path: string, callback: (exists: boolean) => void): void {
-		if (fs == null) {
-			console.warn("File.exists() is not supported.");
-			callback(false);
-			return;
-		}
-		fs.exists(path, (exists: boolean) => {
-			callback(exists);
-		});
-	}
-
 	static extension(path: string): string {
 		if (path == null || path === "") {
 			return "";
@@ -42,14 +28,6 @@ export class File {
 		if (callback == null) {
 			return;
 		}
-		if (fs) {
-			url = this.resolvePath(url);
-			fs.readFile(url, (err: any, data: Buffer) => {
-				var buffer = new Uint8Array(data).buffer;
-				callback(err, buffer);
-			});
-			return;
-		}
 		var xhr = this.createXHR(callback);
 		xhr.responseType = "arraybuffer";
 		xhr.open("get", url, true);
@@ -57,17 +35,6 @@ export class File {
 
 	static readText(url: string, callback: (err: any, data: string) => void): void {
 		if (callback == null) {
-			return;
-		}
-		if (fs) {
-			url = this.resolvePath(url);
-			fs.readFile(url, (err: any, data: Buffer) => {
-				if (data == null) {
-					callback(err, null);
-					return;
-				}
-				callback(err, data.toString());
-			});
 			return;
 		}
 		var xhr = this.createXHR(callback);
@@ -93,24 +60,8 @@ export class File {
 			image.addEventListener("error", onError);
 			image.src = url;
 		};
-		if (fs == null) {
-			load(url);
-			load = undefined;
-			return;
-		}
-		url = this.resolvePath(url);
-		fs.readFile(url, (err: any, data: Buffer) => {
-			if (err) {
-				callback("error", null, url);
-				return;
-			}
-			var base64image = data.toString("base64");
-			//var base64image = btoa(String.fromCharCode.apply(null, data));
-			var mimeType = "image/" + nodePath.extname(url).substr(1);
-			var dataImage = "data:" + mimeType + ";base64," + base64image;
-			load(dataImage);
-			load = undefined;
-		});
+		load(url);
+		load = undefined;
 	}
 
 	static readArrayBuffer(url: string, callback: (err: any, data: ArrayBuffer) => void): void {
@@ -120,49 +71,6 @@ export class File {
 		var xhr = this.createXHR(callback);
 		xhr.responseType = "arraybuffer";
 		xhr.open("get", url, true);
-	}
-
-	static writeText(path: string, data: any, callback: (err: any) => void): void {
-		if (fs == null) {
-			console.warn("File.writeText() is not supported.");
-			return;
-		}
-		path = this.resolvePath(path);
-		fs.writeFile(path, data, "utf-8", (err) => {
-			if (callback) {
-				callback(err);
-			}
-		});
-	}
-
-	static removeFolder(path: string): void {
-		if (fs == null) {
-			console.warn("File.removeFolder() is not supported.");
-			return;
-		}
-		if (fs.existsSync(path) === false) {
-			return;
-		}
-		fs.readdirSync(path).forEach((file: string) => {
-			file = nodePath.join(path, file);
-			var stat = fs.lstatSync(file);
-			if (stat != null && stat.isDirectory()) {
-				File.removeFolder(file);
-			} else {
-				fs.unlinkSync(file);
-			}
-		});
-		fs.rmdirSync(path);
-	}
-
-	protected static resolvePath(path: string): string {
-		if (path == null || path === "") {
-			return "";
-		}
-		if (nodePath.resolve(path) !== path) {
-			path = nodePath.join("assets", path);
-		}
-		return path;
 	}
 
 	protected static createXHR(callback: (err: any, data: any) => void): XMLHttpRequest {

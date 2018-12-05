@@ -1,5 +1,3 @@
-import * as fs from "fs";
-import * as nodePath from "path";
 import * as Electron from "electron";
 import * as Tea from "../../Tea";
 import { EventDispatcher } from "../../utils/EventDispatcher";
@@ -7,6 +5,7 @@ import { Editor } from "../Editor";
 import { EditorMenu } from "../EditorMenu";
 import { AppBuilder } from "./AppBuilder";
 import { Translator } from "../translate/Translator";
+import { NativeFile } from "../NativeFile";
 
 const remote = Electron.remote;
 const Dialog = remote.dialog;
@@ -127,7 +126,7 @@ export class EditorCommand extends EventDispatcher {
 		console.log("saveSceneAs");
 		var translator = Translator.getInstance();
 		translator.basePath = "Dialogs/SaveScene";
-		var defaultPath = nodePath.resolve("./assets/scene.json");
+		var defaultPath = NativeFile.resolve("./assets/scene.json");
 		var browserWindow = remote.getCurrentWindow();
 		var options: Electron.SaveDialogOptions = {
 			defaultPath: defaultPath,
@@ -227,35 +226,33 @@ export class EditorCommand extends EventDispatcher {
 	}
 
 	loadScene(path: string): void {
-		Tea.File.readText(path, (err, data) => {
-			if (err) {
-				console.error("EditorCommand.loadScene(): " + path);
-				console.error(err);
-				return;
-			}
-			var json = null;
-			try {
-				json = JSON.parse(data);
-			} catch (err) {
-				console.error("EditorCommand.loadScene(): " + path);
-				console.error(err);
-				return;
-			}
-			this.editor.status.scenePath = path;
-			this.editor.status.isChanged = false;
-			var app = this.editor.status.app;
-			var prevScene = app.scene;
-			var scene = app.createSceneFromJSON(json);
-			app.scene = scene;
-			this.editor.setScene(scene);
-			if (prevScene) {
-				prevScene.removeAllListeners("addChild");
-				prevScene.removeAllListeners("removeChild");
-				prevScene.destroy();
-			}
+		var data = NativeFile.readText(path);
+		if (data == null) {
+			console.error("EditorCommand.loadScene(): " + path);
+			return;
+		}
+		var json = null;
+		try {
+			json = JSON.parse(data);
+		} catch (err) {
+			console.error("EditorCommand.loadScene(): " + path);
+			console.error(err);
+			return;
+		}
+		this.editor.status.scenePath = path;
+		this.editor.status.isChanged = false;
+		var app = this.editor.status.app;
+		var prevScene = app.scene;
+		var scene = app.createSceneFromJSON(json);
+		app.scene = scene;
+		this.editor.setScene(scene);
+		if (prevScene) {
+			prevScene.removeAllListeners("addChild");
+			prevScene.removeAllListeners("removeChild");
+			prevScene.destroy();
+		}
 
-			console.log("onload", app.isEditing, scene.isEditing);
-		});
+		console.log("onload", app.isEditing, scene.isEditing);
 	}
 
 	showConfirmSaveSceneDialog(callback: (response: number) => void): void {
@@ -330,7 +327,7 @@ export class EditorCommand extends EventDispatcher {
 		if (text.indexOf("\r\n") <= 0) {
 			text = text.replace(/\n/g, "\r\n");
 		}
-		Tea.File.writeText(filename, text, null);
+		NativeFile.writeText(filename, text);
 		this.editor.status.isChanged = false;
 		this.emit("save", filename);
 	}

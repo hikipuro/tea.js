@@ -7,6 +7,7 @@ import { CameraRotate } from "./CameraRotate";
 import { HitTest } from "./HitTest";
 
 import { Editor } from "./tea/editor/Editor";
+import { NativeFile } from "./tea/editor/NativeFile";
 var editor: Editor;
 
 export class Main {
@@ -53,20 +54,19 @@ export class Main {
 		app.height = app.canvas.parentElement.clientHeight;
 
 		var scenePath = "scene.json";
-		Tea.File.readText(scenePath, (err, data) => {
-			if (err) {
-				console.log(err);
-				this.setNewScene();
-				app.start();
-				return;
-			}
-			var json = JSON.parse(data);
-			var scene = app.createSceneFromJSON(json);
-			app.scene = scene;
-			editor.setScene(scene);
-			editor.status.scenePath = scenePath;
+		var data = NativeFile.readText(scenePath);
+		if (data == null) {
+			console.log("error");
+			this.setNewScene();
 			app.start();
-		});
+			return;
+		}
+		var json = JSON.parse(data);
+		var scene = app.createSceneFromJSON(json);
+		app.scene = scene;
+		editor.setScene(scene);
+		editor.status.scenePath = scenePath;
+		app.start();
 	}
 
 	setNewScene(): void {

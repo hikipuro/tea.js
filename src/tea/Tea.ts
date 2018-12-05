@@ -70,7 +70,6 @@ export * from "./utils/ArrayBufferUtil";
 export * from "./utils/ArrayUtil";
 export * from "./utils/Color";
 export * from "./utils/Cursor";
-export * from "./utils/Directory";
 export * from "./utils/EventDispatcher";
 export * from "./utils/File";
 export * from "./utils/GeometryUtil";

@@ -1,10 +1,9 @@
-import * as nodePath from "path";
-import * as fs from "fs";
 import * as Electron from "electron";
 import Vue from "vue";
 import Component from "vue-class-component";
 import { EditorSettings } from "../EditorSettings";
 import { Translator } from "../translate/Translator";
+import { NativeFile } from "../NativeFile";
 
 @Component({
 	template: `
@@ -134,7 +133,7 @@ export class NewProject extends Vue {
 		//this.emitToParent("ready", null);
 		this.translate();
 		var path = this.getDocumentsPath();
-		this.location = nodePath.resolve(path);
+		this.location = NativeFile.resolve(path);
 		if (location.hash === "#open") {
 			this.$nextTick(() => {
 				var radioOpen = this.$refs.radioOpen as HTMLInputElement;
@@ -167,12 +166,12 @@ export class NewProject extends Vue {
 
 	protected createProjectFolder(path: string): void {
 		//console.log(path);
-		if (fs.existsSync(path) === false) {
-			fs.mkdirSync(path, { recursive: true });
+		if (NativeFile.exists(path) === false) {
+			NativeFile.createFolder(path);
 		}
-		var assetsPath = nodePath.join(path, "assets");
-		if (fs.existsSync(assetsPath) === false) {
-			fs.mkdirSync(assetsPath, { recursive: true });
+		var assetsPath = NativeFile.join(path, "assets");
+		if (NativeFile.exists(assetsPath) === false) {
+			NativeFile.createFolder(assetsPath);
 		}
 	}
 
@@ -183,7 +182,7 @@ export class NewProject extends Vue {
 			location = this.$refs.locationOpen as HTMLInputElement;
 		}
 		var path = location.value;
-		if (fs.existsSync(path)) {
+		if (NativeFile.exists(path)) {
 			defaultPath = path;
 		}
 
@@ -208,7 +207,7 @@ export class NewProject extends Vue {
 		var path = location.value;
 		if (name.value === ""
 		||  path === ""
-		||  fs.existsSync(path) === false) {
+		||  NativeFile.exists(path) === false) {
 			return false;
 		}
 		return true;
@@ -252,7 +251,7 @@ export class NewProject extends Vue {
 		var location = this.$refs.locationOpen as HTMLInputElement;
 		var openButton = this.$refs.openButton as HTMLButtonElement;
 		var path = location.value;
-		if (path === "" || fs.existsSync(path) === false) {
+		if (path === "" || NativeFile.exists(path) === false) {
 			openButton.disabled = true;
 		} else {
 			openButton.disabled = false;
@@ -271,7 +270,7 @@ export class NewProject extends Vue {
 		createButton.disabled = true;
 		var name = this.$refs.name as HTMLInputElement;
 		var location = this.$refs.location as HTMLInputElement;
-		var path = nodePath.join(location.value, name.value);
+		var path = NativeFile.join(location.value, name.value);
 		this.createProjectFolder(path);
 		Electron.ipcRenderer.sendSync("chdir", path);
 		Electron.ipcRenderer.sendSync("showWindow", "main");
@@ -282,7 +281,7 @@ export class NewProject extends Vue {
 		var openButton = this.$refs.openButton as HTMLButtonElement;
 		openButton.disabled = true;
 		var location = this.$refs.locationOpen as HTMLInputElement;
-		var path = nodePath.join(location.value);
+		var path = NativeFile.join(location.value);
 		Electron.ipcRenderer.sendSync("chdir", path);
 		Electron.ipcRenderer.sendSync("showWindow", "main");
 		window.close();

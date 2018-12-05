@@ -1,8 +1,8 @@
-import * as nodePath from "path";
 import Vue from "vue";
 import Component from "vue-class-component";
 import * as Tea from "../../Tea";
 import { ImageSelector } from "../basic/ImageSelector";
+import { NativeFile } from "../NativeFile";
 
 @Component({
 	template: `
@@ -40,7 +40,7 @@ export class Material extends Vue {
 		var mainTexture = this.$refs.mainTexture as ImageSelector;
 		var url = material.mainTexture.url;
 		if (url) {
-			mainTexture.url = nodePath.resolve(url);
+			mainTexture.url = NativeFile.resolve(url);
 		}
 	}
 

@@ -86,3 +86,10 @@ export class Directory {
 		return fileInfoList;
 	}
 }
+
+var  _FileInfo = FileInfo;
+type _FileInfo = FileInfo;
+export module Directory {
+	export var  FileInfo = _FileInfo;
+	export type FileInfo = _FileInfo;
+}

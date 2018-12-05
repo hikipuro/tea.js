@@ -1,6 +1,6 @@
-import * as fs from "fs";
-import * as nodePath from "path";
 import * as Electron from "electron";
+import { Directory } from "../Directory";
+import { NativeFile } from "../NativeFile";
 
 export class AppBuilder {
 	appPath: string;
@@ -12,7 +12,7 @@ export class AppBuilder {
 
 	build(): boolean {
 		var targetPath = this.targetPath;
-		if (targetPath == null || fs.existsSync(targetPath) === false) {
+		if (targetPath == null || NativeFile.exists(targetPath) === false) {
 			return false;
 		}
 		this.copyAppFile("html/build.html", "index.html");
@@ -23,31 +23,29 @@ export class AppBuilder {
 
 	protected copyAppFile(src: string, dest: string): void {
 		var appPath = this.appPath;
-		var srcPath = nodePath.join(appPath, src);
+		var srcPath = NativeFile.join(appPath, src);
 		var destPath = this.targetPath;
-		destPath = nodePath.join(destPath, dest);
-		fs.copyFileSync(srcPath, destPath);
+		destPath = NativeFile.join(destPath, dest);
+		NativeFile.copyFile(srcPath, destPath);
 	}
 
 	protected copyFolder(src: string, dest: string): void {
-		var stat = fs.statSync(src);
-		if (stat.isDirectory()) {
-			var files = fs.readdirSync(src);
-			files.forEach((file: string) => {
-				var srcPath = nodePath.join(src, file);
+		if (NativeFile.isFolder(src)) {
+			var files = Directory.getFilesSync(src);
+			files.forEach((file: Directory.FileInfo) => {
+				var srcPath = NativeFile.join(src, file.name);
 				var destPath = "";
-				stat = fs.statSync(srcPath);
-				if (stat.isDirectory()) {
-					destPath = nodePath.join(dest, file);
-					fs.copyFileSync(srcPath, destPath);
+				if (NativeFile.isFolder(srcPath)) {
+					destPath = NativeFile.join(dest, file.name);
+					NativeFile.copyFile(srcPath, destPath);
 					this.copyFolder(srcPath, destPath);
 					return;
 				}
-				destPath = nodePath.join(dest, file);
-				fs.copyFileSync(srcPath, destPath);
+				destPath = NativeFile.join(dest, file.name);
+				NativeFile.copyFile(srcPath, destPath);
 			});
 		} else {
-			fs.copyFileSync(src, dest);
+			NativeFile.copyFile(src, dest);
 		}
 	}
 

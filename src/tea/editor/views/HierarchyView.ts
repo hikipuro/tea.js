@@ -1,4 +1,3 @@
-import * as nodePath from "path";
 import Vue from "vue";
 import Component from "vue-class-component";
 import * as Tea from "../../Tea";
@@ -8,6 +7,7 @@ import { TreeView } from "../basic/TreeView";
 import { TreeViewItem } from "../basic/TreeViewItem";
 import { HierarchyViewCommand } from "../commands/HierarchyViewCommand";
 import { SceneInspector } from "../views/SceneInspector";
+import { NativeFile } from "../NativeFile";
 
 @Component({
 	template: `
@@ -302,16 +302,16 @@ export class HierarchyView extends Vue {
 		if (object3d == null) {
 			return;
 		}
-		var currentPath = nodePath.resolve(".");
+		var currentPath = NativeFile.resolve(".");
 		var filename = dragSource.tag as string;
 		if (filename.indexOf(currentPath) !== 0) {
 			return;
 		}
-		filename = nodePath.relative(currentPath, filename);
+		filename = NativeFile.relative(currentPath, filename);
 		if (filename.indexOf("assets") !== 0) {
 			return;
 		}
-		filename = nodePath.relative("assets", filename);
+		filename = NativeFile.relative("assets", filename);
 		var ext = Tea.File.extension(filename);
 		ext = ext.toLowerCase();
 		var app = editor.status.app;
@@ -343,10 +343,7 @@ export class HierarchyView extends Vue {
 				if (renderer == null) {
 					return;
 				}
-				Tea.File.exists(filename, (exists: boolean) => {
-					if (exists === false) {
-						return;
-					}
+				if (NativeFile.exists(filename)) {
 					renderer.material.mainTexture.load(filename, (err, url) => {
 						if (err) {
 							return;
@@ -354,7 +351,7 @@ export class HierarchyView extends Vue {
 						var inspectorView = this.command.editor.inspectorView;
 						inspectorView.command.updateObjectInspector();
 					});
-				});
+				}
 				break;
 		}
 	}

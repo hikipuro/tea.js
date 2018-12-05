@@ -1,5 +1,3 @@
-import * as nodePath from "path";
-import * as fs from "fs";
 import * as Electron from "electron";
 import Vue from "vue";
 import Component from "vue-class-component";
@@ -9,6 +7,8 @@ import { EditorAssets } from "../EditorAssets";
 import { EditorMenu } from "../EditorMenu";
 import { FileInspector } from "./FileInspector";
 import { TreeView } from "../basic/TreeView";
+import { Directory } from "../Directory";
+import { NativeFile } from "../NativeFile";
 
 class FileItemTag {
 	path: string;
@@ -108,7 +108,7 @@ export class ProjectView extends Vue {
 		if (selectedItem != null) {
 			selectedPath = selectedItem.tag;
 		}
-		if (fs.existsSync(path) === false) {
+		if (NativeFile.exists(path) === false) {
 			this.clearFolderList();
 			this.clearFileList();
 			return;
@@ -148,7 +148,7 @@ export class ProjectView extends Vue {
 			path = this.getSelectedFolderPath();
 		}
 		var fileList = this.$refs.fileList as TreeView;
-		var files = Tea.Directory.getFilesSync(path);
+		var files = Directory.getFilesSync(path);
 		if (files == null) {
 			this.clearFileList();
 			return;
@@ -160,7 +160,7 @@ export class ProjectView extends Vue {
 		}
 		var items = [];
 		files = this.sortFiles(files);
-		files.forEach((file: Tea.FileInfo) => {
+		files.forEach((file: Directory.FileInfo) => {
 			/*if (file.isDirectory) {
 				return;
 			}*/
@@ -176,8 +176,8 @@ export class ProjectView extends Vue {
 		if (selectedTag == null) {
 			return;
 		}
-		var dir = nodePath.dirname(selectedTag.path);
-		var relative = nodePath.relative(dir, path);
+		var dir = NativeFile.dirname(selectedTag.path);
+		var relative = NativeFile.relative(dir, path);
 		if (relative !== "") {
 			return;
 		}
@@ -199,7 +199,7 @@ export class ProjectView extends Vue {
 		var editor = this.$root as Editor;
 		var projectView = editor.projectView;
 		var path = projectView.getSelectedFolderPath();
-		var relativePath = nodePath.relative(process.cwd(), path);
+		var relativePath = NativeFile.relative(process.cwd(), path);
 		if (relativePath.toLowerCase() === "assets") {
 			var deleteItem = contextMenu.getMenuItemById("Delete");
 			deleteItem.enabled = false;
@@ -240,15 +240,7 @@ export class ProjectView extends Vue {
 		this.openFolder(process.cwd());
 	}
 
-	protected isFolder(path): boolean {
-		var stat = fs.statSync(path);
-		if (stat == null) {
-			return false;
-		}
-		return stat.isDirectory();
-	}
-
-	protected createFolderListModel(file: Tea.FileInfo): TreeView.Model {
+	protected createFolderListModel(file: Directory.FileInfo): TreeView.Model {
 		if (file == null || file.exists === false) {
 			return null;
 		}
@@ -265,16 +257,16 @@ export class ProjectView extends Vue {
 	}
 
 	protected createFolderListItems(path: string): Array<TreeView.Model> {
-		if (fs.existsSync(path) === false) {
+		if (NativeFile.exists(path) === false) {
 			return null;
 		}
 		var items: Array<TreeView.Model> = [];
-		var files = Tea.Directory.getFilesSync(path);
+		var files = Directory.getFilesSync(path);
 		if (files == null) {
 			return null;
 		}
 		files = this.sortFolders(files);
-		files.forEach((file: Tea.FileInfo) => {
+		files.forEach((file: Directory.FileInfo) => {
 			var item = this.createFolderListModel(file);
 			if (item == null) {
 				return;
@@ -288,7 +280,7 @@ export class ProjectView extends Vue {
 		return items;
 	}
 
-	protected createFileListModel(file: Tea.FileInfo): TreeView.Model {
+	protected createFileListModel(file: Directory.FileInfo): TreeView.Model {
 		var iconUrl = this.getFileIconUrl(file);
 		var icon: string = null;
 		if (iconUrl !== "") {
@@ -320,22 +312,22 @@ export class ProjectView extends Vue {
 		fileList.items = [];
 	}
 
-	protected sortFolders(files: Array<Tea.FileInfo>): Array<Tea.FileInfo> {
+	protected sortFolders(files: Array<Directory.FileInfo>): Array<Directory.FileInfo> {
 		if (files == null || files.length <= 0) {
 			return files;
 		}
-		return files.sort((a: Tea.FileInfo, b: Tea.FileInfo): number => {
+		return files.sort((a: Directory.FileInfo, b: Directory.FileInfo): number => {
 			var fileA = a.name.toLocaleLowerCase();
 			var fileB = b.name.toLocaleLowerCase();
 			return fileB > fileA ? 0 : 1;
 		});
 	}
 
-	protected sortFiles(files: Array<Tea.FileInfo>): Array<Tea.FileInfo> {
+	protected sortFiles(files: Array<Directory.FileInfo>): Array<Directory.FileInfo> {
 		if (files == null || files.length <= 0) {
 			return files;
 		}
-		return files.sort((a: Tea.FileInfo, b: Tea.FileInfo): number => {
+		return files.sort((a: Directory.FileInfo, b: Directory.FileInfo): number => {
 			var folderA = a.isDirectory ? 2 : 0;
 			var folderB = b.isDirectory ? 2 : 0;
 			var fileA = a.name.toLocaleLowerCase();
@@ -350,12 +342,12 @@ export class ProjectView extends Vue {
 			return;
 		}
 		var items: Array<TreeView.Model> = [];
-		var files = Tea.Directory.getFilesSync(item.tag);
+		var files = Directory.getFilesSync(item.tag);
 		if (files == null) {
 			return;
 		}
 		files = this.sortFolders(files);
-		files.forEach((file: Tea.FileInfo) => {
+		files.forEach((file: Directory.FileInfo) => {
 			var item = this.createFolderListModel(file);
 			if (item == null) {
 				return;
@@ -365,11 +357,11 @@ export class ProjectView extends Vue {
 		i.children = items;
 	}
 
-	protected getFileIconUrl(file: Tea.FileInfo): string {
+	protected getFileIconUrl(file: Directory.FileInfo): string {
 		if (file.isDirectory) {
 			return EditorAssets.Images.FolderIcon;
 		}
-		var ext = nodePath.extname(file.name);
+		var ext = NativeFile.extname(file.name);
 		switch (ext) {
 			case ".html":
 				return EditorAssets.Images.HtmlIcon;
@@ -386,13 +378,13 @@ export class ProjectView extends Vue {
 			return;
 		}
 		var editor = this.$root as Editor;
-		path = nodePath.resolve(path);
+		path = NativeFile.resolve(path);
 
-		if (this.isFolder(path)) {
+		if (NativeFile.isFolder(path)) {
 			this.selectFolder(path);
 			return;
 		}
-		var ext = nodePath.extname(path);
+		var ext = NativeFile.extname(path);
 		if (ext === ".json") {
 			Tea.File.readText(path, (err: any, data: string) => {
 				if (err) {
@@ -412,19 +404,19 @@ export class ProjectView extends Vue {
 	}
 
 	protected moveFile(path: string, target: string): boolean {
-		if (this.isFolder(target) === false) {
+		if (NativeFile.isFolder(target) === false) {
 			return false;
 		}
-		var dir = nodePath.dirname(path);
-		if (nodePath.relative(dir, target) === "") {
+		var dir = NativeFile.dirname(path);
+		if (NativeFile.relative(dir, target) === "") {
 			return false;
 		}
-		var name = nodePath.basename(path);
-		target = nodePath.join(target, name);
-		if (fs.existsSync(target)) {
+		var name = NativeFile.basename(path);
+		target = NativeFile.join(target, name);
+		if (NativeFile.exists(target)) {
 			return false;
 		}
-		fs.renameSync(path, target);
+		NativeFile.rename(path, target);
 		return true;
 	}
 
@@ -432,7 +424,7 @@ export class ProjectView extends Vue {
 		if (path == null) {
 			return;
 		}
-		if (fs.existsSync(path) === false) {
+		if (NativeFile.exists(path) === false) {
 			return;
 		}
 		var editor = this.$root as Editor;
@@ -460,7 +452,7 @@ export class ProjectView extends Vue {
 					inspectorView.show();
 					inspectorView.$nextTick(() => {
 						var component = inspectorView.getComponent() as FileInspector;
-						var stat = fs.statSync(path);
+						var stat = NativeFile.stat(path);
 						component.fileType = ext.toUpperCase();
 						component.text = data;
 						component.setSize(stat.size);
@@ -682,17 +674,17 @@ export class ProjectView extends Vue {
 	protected onRenameFile(item: Editor.TreeViewItem, value: string): void {
 		var tag = item.tag as FileItemTag;
 		var oldPath = tag.path;
-		var basePath = nodePath.dirname(oldPath);
-		var newPath = nodePath.join(basePath, value);
+		var basePath = NativeFile.dirname(oldPath);
+		var newPath = NativeFile.join(basePath, value);
 		
-		if (fs.existsSync(newPath)) {
+		if (NativeFile.exists(newPath)) {
 			return;
 		}
-		fs.renameSync(oldPath, newPath);
+		NativeFile.rename(oldPath, newPath);
 		item.model.text = value;
 		tag.path = newPath;
 
-		var file = new Tea.FileInfo(newPath);
+		var file = new Directory.FileInfo(newPath);
 		var iconUrl = this.getFileIconUrl(file);
 		if (iconUrl !== "") {
 			item.model.icon = "<img src='" + iconUrl + "'>";
@@ -700,7 +692,7 @@ export class ProjectView extends Vue {
 			item.model.icon = null;
 		}
 
-		if (this.isFolder(newPath)) {
+		if (NativeFile.isFolder(newPath)) {
 			var folderList = this.$refs.folderList as TreeView;
 			var item = folderList.findItemByTag(basePath);
 			if (item && item.model) {
@@ -712,29 +704,29 @@ export class ProjectView extends Vue {
 
 	protected onSelectFolderMenu = (item: Electron.MenuItem): void => {
 		var path = this.getSelectedFolderPath();
-		path = nodePath.resolve(path);
+		path = NativeFile.resolve(path);
 
 		switch (item.id) {
 			case "Show in Explorer":
-				if (fs.existsSync(path) === false) {
+				if (NativeFile.exists(path) === false) {
 					break;
 				}
 				Electron.shell.openItem(path);
 				break;
 			case "Reveal in Finder":
 				console.log("Reveal in Finder", path);
-				if (fs.existsSync(path) === false) {
+				if (NativeFile.exists(path) === false) {
 					break;
 				}
 				Electron.shell.openItem(path);
 				break;
 			case "Create/Folder":
-				path = nodePath.join(path, "New Folder");
-				fs.mkdirSync(path);
+				path = NativeFile.join(path, "New Folder");
+				NativeFile.createFolder(path);
 				this.openFolder();
 				break;
 			case "Create/JavaScript":
-				path = nodePath.join(path, "New Script.js");
+				path = NativeFile.join(path, "New Script.js");
 				var script = `class NewScript {
 	constructor() {
 	}
@@ -746,12 +738,12 @@ export class ProjectView extends Vue {
 	}
 }
 `;
-				fs.writeFileSync(path, script);
+				NativeFile.writeText(path, script);
 				this.updateFileList();
 				break;
 			case "Delete":
 				this.selectParentFolder();
-				Tea.File.removeFolder(path);
+				NativeFile.removeFolder(path);
 				this.openFolder();
 				break;
 			case "Refresh":
@@ -762,11 +754,11 @@ export class ProjectView extends Vue {
 
 	protected onSelectFileMenu = (item: Electron.MenuItem): void => {
 		var path = this.getSelectedFilePath();
-		path = nodePath.resolve(path);
+		path = NativeFile.resolve(path);
 
 		switch (item.id) {
 			case "Open":
-				if (this.isFolder(path)) {
+				if (NativeFile.isFolder(path)) {
 					this.selectFolder(path);
 					break;
 				}
@@ -774,11 +766,11 @@ export class ProjectView extends Vue {
 				console.log("Open", path);
 				break;
 			case "Delete":
-				if (this.isFolder(path)) {
-					Tea.File.removeFolder(path);
+				if (NativeFile.isFolder(path)) {
+					NativeFile.removeFolder(path);
 					this.openFolder();
 				} else {
-					fs.unlinkSync(path);
+					NativeFile.removeFile(path);
 				}
 				this.updateFileList();
 				break;
