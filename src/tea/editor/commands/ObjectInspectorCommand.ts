@@ -64,9 +64,9 @@ export class ObjectInspectorCommand {
 			this.onSelectComponentMenu
 		);
 		this._componentMenu = contextMenu;
-		contextMenu.onClose = () => {
+		contextMenu.once("close", () => {
 			this._componentMenu = null;
-		};
+		});
 
 		var component = inspector._configComponent;
 		var index = object3d.getComponentIndex(component);
@@ -97,9 +97,9 @@ export class ObjectInspectorCommand {
 			this.onSelectAddComponentMenu
 		);
 		this._addComponentMenu = contextMenu;
-		contextMenu.onClose = () => {
+		contextMenu.once("close", () => {
 			this._addComponentMenu = null;
-		};
+		});
 		var button = this.editor.inspectorView.$el.querySelector("div.AddComponent button");
 		if (button) {
 			var rect = button.getBoundingClientRect();

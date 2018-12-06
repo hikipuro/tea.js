@@ -19,9 +19,9 @@ export class HierarchyViewCommand {
 			this.onSelectMenu
 		)
 		this.contextMenu = contextMenu;
-		contextMenu.onClose = () => {
+		contextMenu.once("close", () => {
 			this.contextMenu = null;
-		};
+		});
 		contextMenu.show();
 	}
 

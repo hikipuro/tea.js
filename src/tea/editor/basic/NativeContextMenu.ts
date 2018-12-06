@@ -1,23 +1,22 @@
 import * as Electron from "electron";
+import { EventDispatcher } from "../../utils/EventDispatcher";
 const remote = Electron.remote;
 const Menu = remote.Menu;
 const MenuItem = remote.MenuItem;
 
-export class NativeContextMenu {
+export class NativeContextMenu extends EventDispatcher {
 	menu: Electron.Menu;
-	onShow: (menu: NativeContextMenu) => void;
-	onClose: (menu: NativeContextMenu) => void;
 
 	constructor() {
+		super();
 		this.menu = null;
-		this.onClose = null;
 	}
 
 	static create(template: Electron.MenuItemConstructorOptions[]): NativeContextMenu {
 		var menu = new NativeContextMenu();
 		menu.menu = Menu.buildFromTemplate(template);
-		menu.menu.once("menu-will-show", menu._onShow);
-		menu.menu.once("menu-will-close", menu._onClose);
+		menu.menu.once("menu-will-show", menu.onShow);
+		menu.menu.once("menu-will-close", menu.onClose);
 		return menu;
 	}
 
@@ -47,15 +46,11 @@ export class NativeContextMenu {
 		return this.menu.getMenuItemById(id);
 	}
 
-	protected _onShow = (e: Electron.Event): void => {
-		if (this.onShow != null) {
-			this.onShow(this);
-		}
+	protected onShow = (e: Electron.Event): void => {
+		this.emit("show", this);
 	}
 
-	protected _onClose = (e: Electron.Event): void => {
-		if (this.onClose != null) {
-			this.onClose(this);
-		}
+	protected onClose = (e: Electron.Event): void => {
+		this.emit("close", this);
 	}
 }
