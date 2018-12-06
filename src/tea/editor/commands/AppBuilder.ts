@@ -1,6 +1,6 @@
 import * as Electron from "electron";
 import { Directory } from "../Directory";
-import { NativeFile } from "../NativeFile";
+import { LocalFile } from "../LocalFile";
 
 export class AppBuilder {
 	appPath: string;
@@ -12,7 +12,7 @@ export class AppBuilder {
 
 	build(): boolean {
 		var targetPath = this.targetPath;
-		if (targetPath == null || NativeFile.exists(targetPath) === false) {
+		if (targetPath == null || LocalFile.exists(targetPath) === false) {
 			return false;
 		}
 		this.copyAppFile("html/build.html", "index.html");
@@ -23,29 +23,29 @@ export class AppBuilder {
 
 	protected copyAppFile(src: string, dest: string): void {
 		var appPath = this.appPath;
-		var srcPath = NativeFile.join(appPath, src);
+		var srcPath = LocalFile.join(appPath, src);
 		var destPath = this.targetPath;
-		destPath = NativeFile.join(destPath, dest);
-		NativeFile.copyFile(srcPath, destPath);
+		destPath = LocalFile.join(destPath, dest);
+		LocalFile.copyFile(srcPath, destPath);
 	}
 
 	protected copyFolder(src: string, dest: string): void {
-		if (NativeFile.isFolder(src)) {
+		if (LocalFile.isFolder(src)) {
 			var files = Directory.getFilesSync(src);
 			files.forEach((file: Directory.FileInfo) => {
-				var srcPath = NativeFile.join(src, file.name);
+				var srcPath = LocalFile.join(src, file.name);
 				var destPath = "";
-				if (NativeFile.isFolder(srcPath)) {
-					destPath = NativeFile.join(dest, file.name);
-					NativeFile.copyFile(srcPath, destPath);
+				if (LocalFile.isFolder(srcPath)) {
+					destPath = LocalFile.join(dest, file.name);
+					LocalFile.copyFile(srcPath, destPath);
 					this.copyFolder(srcPath, destPath);
 					return;
 				}
-				destPath = NativeFile.join(dest, file.name);
-				NativeFile.copyFile(srcPath, destPath);
+				destPath = LocalFile.join(dest, file.name);
+				LocalFile.copyFile(srcPath, destPath);
 			});
 		} else {
-			NativeFile.copyFile(src, dest);
+			LocalFile.copyFile(src, dest);
 		}
 	}
 

@@ -1,5 +1,5 @@
 import * as Electron from "electron";
-import { NativeFile } from "./NativeFile";
+import { LocalFile } from "./LocalFile";
 
 export class EditorSettings {
 	static readonly FileName = "settings.json";
@@ -21,7 +21,7 @@ export class EditorSettings {
 			// renderer process
 			path = Electron.remote.app.getAppPath();
 		}
-		return NativeFile.join(path, EditorSettings.FileName);
+		return LocalFile.join(path, EditorSettings.FileName);
 	}
 
 	static getInstance(): EditorSettings {
@@ -32,21 +32,21 @@ export class EditorSettings {
 	}
 
 	exists(): boolean {
-		return NativeFile.exists(EditorSettings.path);
+		return LocalFile.exists(EditorSettings.path);
 	}
 
 	save(): void {
 		var path = EditorSettings.path;
 		var data = JSON.stringify(this, null, "\t");
-		NativeFile.writeText(path, data);
+		LocalFile.writeText(path, data);
 	}
 
 	load(): void {
 		var path = EditorSettings.path;
-		if (NativeFile.exists(path) === false) {
+		if (LocalFile.exists(path) === false) {
 			return;
 		}
-		var data = NativeFile.readText(path);
+		var data = LocalFile.readText(path);
 		var json = null;
 		try {
 			json = JSON.parse(data);

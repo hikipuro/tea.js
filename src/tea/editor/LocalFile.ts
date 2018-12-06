@@ -1,7 +1,7 @@
 import * as fs from "fs";
 import * as nodePath from "path";
 
-export class NativeFile {
+export class LocalFile {
 	static exists(path: string): boolean {
 		return fs.existsSync(path);
 	}
@@ -119,7 +119,7 @@ export class NativeFile {
 			file = nodePath.join(path, file);
 			var stat = fs.lstatSync(file);
 			if (stat != null && stat.isDirectory()) {
-				NativeFile.removeFolder(file);
+				LocalFile.removeFolder(file);
 			} else {
 				fs.unlinkSync(file);
 			}

@@ -5,7 +5,7 @@ import { Editor } from "../Editor";
 import { EditorMenu } from "../EditorMenu";
 import { AppBuilder } from "./AppBuilder";
 import { Translator } from "../translate/Translator";
-import { NativeFile } from "../NativeFile";
+import { LocalFile } from "../LocalFile";
 import { EditorSceneLoader } from "../EditorSceneLoader";
 
 const remote = Electron.remote;
@@ -127,7 +127,7 @@ export class EditorCommand extends EventDispatcher {
 		console.log("saveSceneAs");
 		var translator = Translator.getInstance();
 		translator.basePath = "Dialogs/SaveScene";
-		var defaultPath = NativeFile.resolve("./assets/scene.json");
+		var defaultPath = LocalFile.resolve("./assets/scene.json");
 		var browserWindow = remote.getCurrentWindow();
 		var options: Electron.SaveDialogOptions = {
 			defaultPath: defaultPath,
@@ -227,7 +227,7 @@ export class EditorCommand extends EventDispatcher {
 	}
 
 	loadScene(path: string): void {
-		var data = NativeFile.readText(path);
+		var data = LocalFile.readText(path);
 		if (data == null) {
 			console.error("EditorCommand.loadScene(): " + path);
 			return;
@@ -328,7 +328,7 @@ export class EditorCommand extends EventDispatcher {
 		if (text.indexOf("\r\n") <= 0) {
 			text = text.replace(/\n/g, "\r\n");
 		}
-		NativeFile.writeText(filename, text);
+		LocalFile.writeText(filename, text);
 		this.editor.status.isChanged = false;
 		this.emit("save", filename);
 	}

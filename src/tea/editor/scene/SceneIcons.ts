@@ -1,6 +1,6 @@
 import * as Tea from "../../Tea";
 import { SceneIcon } from "./SceneIcon";
-import { NativeFile } from "../NativeFile";
+import { LocalFile } from "../LocalFile";
 
 export class SceneIcons {
 	scene: Tea.Scene;
@@ -27,7 +27,7 @@ export class SceneIcons {
 	}
 
 	protected createIcon(iconPath: string): SceneIcon {
-		var path = NativeFile.join(__dirname, iconPath);
+		var path = LocalFile.join(__dirname, iconPath);
 		var icon = new SceneIcon(this.scene.app);
 		icon.material.mainTexture.load(path);
 		return icon;

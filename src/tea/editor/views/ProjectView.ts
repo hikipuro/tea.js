@@ -8,7 +8,7 @@ import { EditorMenu } from "../EditorMenu";
 import { FileInspector } from "./FileInspector";
 import { TreeView } from "../basic/TreeView";
 import { Directory } from "../Directory";
-import { NativeFile } from "../NativeFile";
+import { LocalFile } from "../LocalFile";
 
 class FileItemTag {
 	path: string;
@@ -108,7 +108,7 @@ export class ProjectView extends Vue {
 		if (selectedItem != null) {
 			selectedPath = selectedItem.tag;
 		}
-		if (NativeFile.exists(path) === false) {
+		if (LocalFile.exists(path) === false) {
 			this.clearFolderList();
 			this.clearFileList();
 			return;
@@ -176,8 +176,8 @@ export class ProjectView extends Vue {
 		if (selectedTag == null) {
 			return;
 		}
-		var dir = NativeFile.dirname(selectedTag.path);
-		var relative = NativeFile.relative(dir, path);
+		var dir = LocalFile.dirname(selectedTag.path);
+		var relative = LocalFile.relative(dir, path);
 		if (relative !== "") {
 			return;
 		}
@@ -199,7 +199,7 @@ export class ProjectView extends Vue {
 		var editor = this.$root as Editor;
 		var projectView = editor.projectView;
 		var path = projectView.getSelectedFolderPath();
-		var relativePath = NativeFile.relative(process.cwd(), path);
+		var relativePath = LocalFile.relative(process.cwd(), path);
 		if (relativePath.toLowerCase() === "assets") {
 			var deleteItem = contextMenu.getMenuItemById("Delete");
 			deleteItem.enabled = false;
@@ -257,7 +257,7 @@ export class ProjectView extends Vue {
 	}
 
 	protected createFolderListItems(path: string): Array<TreeView.Model> {
-		if (NativeFile.exists(path) === false) {
+		if (LocalFile.exists(path) === false) {
 			return null;
 		}
 		var items: Array<TreeView.Model> = [];
@@ -361,7 +361,7 @@ export class ProjectView extends Vue {
 		if (file.isDirectory) {
 			return EditorAssets.Images.FolderIcon;
 		}
-		var ext = NativeFile.extname(file.name);
+		var ext = LocalFile.extname(file.name);
 		switch (ext) {
 			case ".html":
 				return EditorAssets.Images.HtmlIcon;
@@ -378,13 +378,13 @@ export class ProjectView extends Vue {
 			return;
 		}
 		var editor = this.$root as Editor;
-		path = NativeFile.resolve(path);
+		path = LocalFile.resolve(path);
 
-		if (NativeFile.isFolder(path)) {
+		if (LocalFile.isFolder(path)) {
 			this.selectFolder(path);
 			return;
 		}
-		var ext = NativeFile.extname(path);
+		var ext = LocalFile.extname(path);
 		if (ext === ".json") {
 			Tea.File.readText(path, (err: any, data: string) => {
 				if (err) {
@@ -404,19 +404,19 @@ export class ProjectView extends Vue {
 	}
 
 	protected moveFile(path: string, target: string): boolean {
-		if (NativeFile.isFolder(target) === false) {
+		if (LocalFile.isFolder(target) === false) {
 			return false;
 		}
-		var dir = NativeFile.dirname(path);
-		if (NativeFile.relative(dir, target) === "") {
+		var dir = LocalFile.dirname(path);
+		if (LocalFile.relative(dir, target) === "") {
 			return false;
 		}
-		var name = NativeFile.basename(path);
-		target = NativeFile.join(target, name);
-		if (NativeFile.exists(target)) {
+		var name = LocalFile.basename(path);
+		target = LocalFile.join(target, name);
+		if (LocalFile.exists(target)) {
 			return false;
 		}
-		NativeFile.rename(path, target);
+		LocalFile.rename(path, target);
 		return true;
 	}
 
@@ -424,7 +424,7 @@ export class ProjectView extends Vue {
 		if (path == null) {
 			return;
 		}
-		if (NativeFile.exists(path) === false) {
+		if (LocalFile.exists(path) === false) {
 			return;
 		}
 		var editor = this.$root as Editor;
@@ -452,7 +452,7 @@ export class ProjectView extends Vue {
 					inspectorView.show();
 					inspectorView.$nextTick(() => {
 						var component = inspectorView.getComponent() as FileInspector;
-						var stat = NativeFile.stat(path);
+						var stat = LocalFile.stat(path);
 						component.fileType = ext.toUpperCase();
 						component.text = data;
 						component.setSize(stat.size);
@@ -686,16 +686,16 @@ export class ProjectView extends Vue {
 		}
 		var tag = item.tag as FileItemTag;
 		var oldPath = tag.path;
-		var basePath = NativeFile.dirname(oldPath);
-		var newPath = NativeFile.join(basePath, value);
-		if (NativeFile.exists(newPath)) {
+		var basePath = LocalFile.dirname(oldPath);
+		var newPath = LocalFile.join(basePath, value);
+		if (LocalFile.exists(newPath)) {
 			fileList.focus();
 			return;
 		}
-		NativeFile.rename(oldPath, newPath);
+		LocalFile.rename(oldPath, newPath);
 		tag.path = newPath;
 		this.updateFileList();
-		if (NativeFile.isFolder(newPath)) {
+		if (LocalFile.isFolder(newPath)) {
 			this.openFolder();
 		}
 		fileList.focus();
@@ -703,29 +703,29 @@ export class ProjectView extends Vue {
 
 	protected onSelectFolderMenu = (item: Electron.MenuItem): void => {
 		var path = this.getSelectedFolderPath();
-		path = NativeFile.resolve(path);
+		path = LocalFile.resolve(path);
 
 		switch (item.id) {
 			case "Show in Explorer":
-				if (NativeFile.exists(path) === false) {
+				if (LocalFile.exists(path) === false) {
 					break;
 				}
 				Electron.shell.openItem(path);
 				break;
 			case "Reveal in Finder":
 				console.log("Reveal in Finder", path);
-				if (NativeFile.exists(path) === false) {
+				if (LocalFile.exists(path) === false) {
 					break;
 				}
 				Electron.shell.openItem(path);
 				break;
 			case "Create/Folder":
-				path = NativeFile.join(path, "New Folder");
-				NativeFile.createFolder(path);
+				path = LocalFile.join(path, "New Folder");
+				LocalFile.createFolder(path);
 				this.openFolder();
 				break;
 			case "Create/JavaScript":
-				path = NativeFile.join(path, "New Script.js");
+				path = LocalFile.join(path, "New Script.js");
 				var script = `class NewScript {
 	constructor() {
 	}
@@ -737,12 +737,12 @@ export class ProjectView extends Vue {
 	}
 }
 `;
-				NativeFile.writeText(path, script);
+				LocalFile.writeText(path, script);
 				this.updateFileList();
 				break;
 			case "Delete":
 				this.selectParentFolder();
-				NativeFile.removeFolder(path);
+				LocalFile.removeFolder(path);
 				this.openFolder();
 				break;
 			case "Refresh":
@@ -753,11 +753,11 @@ export class ProjectView extends Vue {
 
 	protected onSelectFileMenu = (item: Electron.MenuItem): void => {
 		var path = this.getSelectedFilePath();
-		path = NativeFile.resolve(path);
+		path = LocalFile.resolve(path);
 
 		switch (item.id) {
 			case "Open":
-				if (NativeFile.isFolder(path)) {
+				if (LocalFile.isFolder(path)) {
 					this.selectFolder(path);
 					break;
 				}
@@ -765,11 +765,11 @@ export class ProjectView extends Vue {
 				console.log("Open", path);
 				break;
 			case "Delete":
-				if (NativeFile.isFolder(path)) {
-					NativeFile.removeFolder(path);
+				if (LocalFile.isFolder(path)) {
+					LocalFile.removeFolder(path);
 					this.openFolder();
 				} else {
-					NativeFile.removeFile(path);
+					LocalFile.removeFile(path);
 				}
 				this.updateFileList();
 				break;

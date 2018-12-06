@@ -7,7 +7,7 @@ import { TreeView } from "../basic/TreeView";
 import { TreeViewItem } from "../basic/TreeViewItem";
 import { HierarchyViewCommand } from "../commands/HierarchyViewCommand";
 import { SceneInspector } from "../views/SceneInspector";
-import { NativeFile } from "../NativeFile";
+import { LocalFile } from "../LocalFile";
 
 @Component({
 	template: `
@@ -302,16 +302,16 @@ export class HierarchyView extends Vue {
 		if (object3d == null) {
 			return;
 		}
-		var currentPath = NativeFile.resolve(".");
+		var currentPath = LocalFile.resolve(".");
 		var filename = dragSource.tag as string;
 		if (filename.indexOf(currentPath) !== 0) {
 			return;
 		}
-		filename = NativeFile.relative(currentPath, filename);
+		filename = LocalFile.relative(currentPath, filename);
 		if (filename.indexOf("assets") !== 0) {
 			return;
 		}
-		filename = NativeFile.relative("assets", filename);
+		filename = LocalFile.relative("assets", filename);
 		var ext = Tea.File.extension(filename);
 		ext = ext.toLowerCase();
 		var app = editor.status.app;
@@ -343,7 +343,7 @@ export class HierarchyView extends Vue {
 				if (renderer == null) {
 					return;
 				}
-				if (NativeFile.exists(filename)) {
+				if (LocalFile.exists(filename)) {
 					renderer.material.mainTexture.load(filename, (err, url) => {
 						if (err) {
 							return;

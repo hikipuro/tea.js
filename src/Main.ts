@@ -7,7 +7,7 @@ import { CameraRotate } from "./CameraRotate";
 import { HitTest } from "./HitTest";
 
 import { Editor } from "./tea/editor/Editor";
-import { NativeFile } from "./tea/editor/NativeFile";
+import { LocalFile } from "./tea/editor/LocalFile";
 import { EditorSceneLoader } from "./tea/editor/EditorSceneLoader";
 var editor: Editor;
 
@@ -55,7 +55,7 @@ export class Main {
 		app.height = app.canvas.parentElement.clientHeight;
 
 		var scenePath = "scene.json";
-		var data = NativeFile.readText(scenePath);
+		var data = LocalFile.readText(scenePath);
 		if (data == null) {
 			console.log("error");
 			this.setNewScene();
