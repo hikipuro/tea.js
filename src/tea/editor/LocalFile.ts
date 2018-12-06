@@ -35,6 +35,9 @@ export class LocalFile {
 	}
 
 	static isFolder(path: string): boolean {
+		if (this.exists(path) === false) {
+			return false;
+		}
 		var stat = fs.statSync(path);
 		if (stat == null) {
 			return false;

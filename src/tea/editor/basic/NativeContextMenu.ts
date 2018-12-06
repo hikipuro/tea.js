@@ -46,6 +46,22 @@ export class NativeContextMenu extends EventDispatcher {
 		return this.menu.getMenuItemById(id);
 	}
 
+	enableItem(id: string): void {
+		var item = this.getMenuItemById(id);
+		if (item == null) {
+			return;
+		}
+		item.enabled = true;
+	}
+
+	disableItem(id: string): void {
+		var item = this.getMenuItemById(id);
+		if (item == null) {
+			return;
+		}
+		item.enabled = false;
+	}
+
 	protected onShow = (e: Electron.Event): void => {
 		this.emit("show", this);
 	}

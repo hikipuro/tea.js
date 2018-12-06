@@ -222,6 +222,11 @@ export class ProjectView extends Vue {
 		var contextMenu = EditorMenu.createProjectViewFileMenu(
 			this.onSelectFileMenu
 		);
+		if (this.getSelectedFilePath() == null) {
+			contextMenu.disableItem("Open");
+			contextMenu.disableItem("Delete");
+			contextMenu.disableItem("Rename");
+		}
 		contextMenu.show();
 	}
 
@@ -391,6 +396,11 @@ export class ProjectView extends Vue {
 		var editor = this.$root as Editor;
 		path = LocalFile.resolve(path);
 
+		if (LocalFile.exists(path) === false) {
+			this.openFolder();
+			this.updateFileList();
+			return;
+		}
 		if (LocalFile.isFolder(path)) {
 			this.selectFolder(path);
 			return;
@@ -473,6 +483,26 @@ export class ProjectView extends Vue {
 				});
 				break;
 		}
+	}
+
+	protected getNewFileName(targetPath: string, basename: string): string {
+		var path = LocalFile.join(targetPath, basename);
+		if (LocalFile.exists(path) === false) {
+			return basename;
+		}
+		var n = basename.split(".");
+		for (var i = 1; i < 100; i++) {
+			var index = i.toString();
+			var name = basename + " " + index;
+			if (n.length > 1) {
+				name = [n[0] + " " + index].concat(n.slice(1)).join(".");
+			}
+			path = LocalFile.join(targetPath, name);
+			if (LocalFile.exists(path) === false) {
+				return name;
+			}
+		}
+		return null;
 	}
 
 	protected onFolderDragStart(e: DragEvent, item: Editor.TreeViewItem): void {
@@ -677,9 +707,6 @@ export class ProjectView extends Vue {
 	}
 
 	protected onFileListMenu(e: MouseEvent): void {
-		if (this.getSelectedFilePath() == null) {
-			return;
-		}
 		e.preventDefault();
 		this.showProjectViewFileMenu();
 	}
@@ -731,18 +758,25 @@ export class ProjectView extends Vue {
 				Electron.shell.openItem(path);
 				break;
 			case "Create/Folder":
-				path = LocalFile.join(path, "New Folder");
-				LocalFile.createFolder(path);
-				this.openFolder();
+				var name = this.getNewFileName(path, "New Folder");
+				if (name != null) {
+					path = LocalFile.join(path, name);
+					LocalFile.createFolder(path);
+					this.openFolder();
+				}
 				break;
 			case "Create/JavaScript":
-				path = LocalFile.join(path, "New Script.js");
-				LocalFile.writeText(path, ScriptTemplate);
-				this.updateFileList();
+				var name = this.getNewFileName(path, "New Script.js");
+				if (name != null) {
+					path = LocalFile.join(path, name);
+					LocalFile.writeText(path, ScriptTemplate);
+					this.updateFileList();
+				}
 				break;
 			case "Delete":
 				this.selectParentFolder();
-				LocalFile.removeFolder(path);
+				//LocalFile.removeFolder(path);
+				Electron.shell.moveItemToTrash(path);
 				this.openFolder();
 				break;
 			case "Refresh":
@@ -753,20 +787,37 @@ export class ProjectView extends Vue {
 
 	protected onSelectFileMenu = (item: Electron.MenuItem): void => {
 		var path = this.getSelectedFilePath();
+		var filePath = path;
+		if (path == null) {
+			path = this.getSelectedFolderPath();
+		}
+		if (path == null) {
+			return;
+		}
 		path = LocalFile.resolve(path);
 
 		switch (item.id) {
 			case "Create/Folder":
-				path = LocalFile.dirname(path);
-				path = LocalFile.join(path, "New Folder");
-				LocalFile.createFolder(path);
-				this.openFolder();
+				if (filePath != null) {
+					path = LocalFile.dirname(path);
+				}
+				var name = this.getNewFileName(path, "New Folder");
+				if (name != null) {
+					path = LocalFile.join(path, name);
+					LocalFile.createFolder(path);
+					this.openFolder();
+				}
 				break;
 			case "Create/JavaScript":
-				path = LocalFile.dirname(path);
-				path = LocalFile.join(path, "New Script.js");
-				LocalFile.writeText(path, ScriptTemplate);
-				this.updateFileList();
+				if (filePath != null) {
+					path = LocalFile.dirname(path);
+				}
+				var name = this.getNewFileName(path, "New Script.js");
+				if (name != null) {
+					path = LocalFile.join(path, name);
+					LocalFile.writeText(path, ScriptTemplate);
+					this.updateFileList();
+				}
 				break;
 			case "Show in Explorer":
 				if (LocalFile.exists(path) === false) {
@@ -790,10 +841,12 @@ export class ProjectView extends Vue {
 				break;
 			case "Delete":
 				if (LocalFile.isFolder(path)) {
-					LocalFile.removeFolder(path);
+					//LocalFile.removeFolder(path);
+					Electron.shell.moveItemToTrash(path);
 					this.openFolder();
 				} else {
-					LocalFile.removeFile(path);
+					//LocalFile.removeFile(path);
+					Electron.shell.moveItemToTrash(path);
 				}
 				this.updateFileList();
 				break;
