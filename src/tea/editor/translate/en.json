@@ -122,6 +122,23 @@
 			}
 		}
 	},
+	"ProjectView": {
+		"ContextMenu": {
+			"Create": {
+				"Title": "Create",
+				"Folder": "Folder",
+				"JavaScript": "JavaScript"
+			},
+			"Show in Explorer": "Show in Explorer",
+			"Reveal in Finder": "Reveal in Finder",
+			"Open": "Open",
+			"Delete": "Delete",
+			"Rename": "Rename",
+			"CopyPath": "Copy Path",
+			"Refresh": "Refresh"
+
+		}
+	},
 	"ObjectInspector": {
 		"Position": "Position",
 		"Rotation": "Rotation",

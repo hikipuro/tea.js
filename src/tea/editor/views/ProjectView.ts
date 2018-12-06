@@ -22,6 +22,17 @@ class FileItemTag {
 	}
 }
 
+const ScriptTemplate = `class NewScript {
+	constructor() {
+	}
+
+	start() {
+	}
+
+	update() {
+	}
+}`;
+
 @Component({
 	template: `
 		<div class="ProjectView">
@@ -726,18 +737,7 @@ export class ProjectView extends Vue {
 				break;
 			case "Create/JavaScript":
 				path = LocalFile.join(path, "New Script.js");
-				var script = `class NewScript {
-	constructor() {
-	}
-
-	start() {
-	}
-
-	update() {
-	}
-}
-`;
-				LocalFile.writeText(path, script);
+				LocalFile.writeText(path, ScriptTemplate);
 				this.updateFileList();
 				break;
 			case "Delete":
@@ -756,6 +756,30 @@ export class ProjectView extends Vue {
 		path = LocalFile.resolve(path);
 
 		switch (item.id) {
+			case "Create/Folder":
+				path = LocalFile.dirname(path);
+				path = LocalFile.join(path, "New Folder");
+				LocalFile.createFolder(path);
+				this.openFolder();
+				break;
+			case "Create/JavaScript":
+				path = LocalFile.dirname(path);
+				path = LocalFile.join(path, "New Script.js");
+				LocalFile.writeText(path, ScriptTemplate);
+				this.updateFileList();
+				break;
+			case "Show in Explorer":
+				if (LocalFile.exists(path) === false) {
+					break;
+				}
+				Electron.shell.showItemInFolder(path);
+				break;
+			case "Reveal in Finder":
+				if (LocalFile.exists(path) === false) {
+					break;
+				}
+				Electron.shell.showItemInFolder(path);
+				break;
 			case "Open":
 				if (LocalFile.isFolder(path)) {
 					this.selectFolder(path);
@@ -779,6 +803,12 @@ export class ProjectView extends Vue {
 				if (fileItem) {
 					fileItem.rename();
 				}
+				break;
+			case "Copy Path":
+				Electron.clipboard.writeText(path);
+				break;
+			case "Refresh":
+				this.updateFileList();
 				break;
 		}
 	}

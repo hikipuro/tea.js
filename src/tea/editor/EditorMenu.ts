@@ -455,49 +455,48 @@ export class EditorMenu {
 	static createProjectViewMenu(
 		handler: (menuItem: Electron.MenuItem, browserWindow: Electron.BrowserWindow, event: Event) => void
 	): NativeContextMenu {
-		var template: Electron.MenuItemConstructorOptions[] = [];
-		if (process && process.platform) {
-			//console.log("process.platform", process.platform);
-			if (process.platform === "win32") {
-				template.push(
-					{
-						id: "Show in Explorer",
-						label: "Show in Explorer"
-					}
-				);
-			} else if (process.platform === "darwin") {
-				template.push(
-					{
-						id: "Reveal in Finder",
-						label: "Reveal in Finder"
-					}
-				);
-			}
-		}
-		template.push(
-			{ type: "separator" },
+		var translator = Translator.getInstance();
+		translator.basePath = "ProjectView/ContextMenu";
+		var template: Electron.MenuItemConstructorOptions[] = [
 			{
-				label: "Create",
+				label: translator.getText("Create/Title"),
 				submenu: [
 					{
 						id: "Create/Folder",
-						label: "Folder"
+						label: translator.getText("Create/Folder")
 					},
 					{
 						id: "Create/JavaScript",
-						label: "JavaScript"
+						label: translator.getText("Create/JavaScript")
 					}
 				]
 			},
 			{
 				id: "Delete",
-				label: "Delete"
+				label: translator.getText("Delete")
 			},
 			{
 				id: "Refresh",
-				label: "Refresh"
+				label: translator.getText("Refresh")
 			}
-		)
+		];
+		if (process && process.platform) {
+			if (process.platform === "win32") {
+				template.splice(1, 0,
+					{
+						id: "Show in Explorer",
+						label: translator.getText("Show in Explorer")
+					}
+				);
+			} else if (process.platform === "darwin") {
+				template.splice(1, 0,
+					{
+						id: "Reveal in Finder",
+						label: translator.getText("Reveal in Finder")
+					}
+				);
+			}
+		}
 		EditorMenu.setMenuItemHandler(
 			template, handler
 		);
@@ -507,20 +506,63 @@ export class EditorMenu {
 	static createProjectViewFileMenu(
 		handler: (menuItem: Electron.MenuItem, browserWindow: Electron.BrowserWindow, event: Event) => void
 	): NativeContextMenu {
+		var translator = Translator.getInstance();
+		translator.basePath = "ProjectView/ContextMenu";
 		var template: Electron.MenuItemConstructorOptions[] = [
 			{
+				label: translator.getText("Create/Title"),
+				submenu: [
+					{
+						id: "Create/Folder",
+						label: translator.getText("Create/Folder"),
+					},
+					{
+						id: "Create/JavaScript",
+						label: translator.getText("Create/JavaScript"),
+					}
+				]
+			},
+			{
 				id: "Open",
-				label: "Open"
+				label: translator.getText("Open")
 			},
 			{
 				id: "Delete",
-				label: "Delete"
+				label: translator.getText("Delete")
 			},
 			{
 				id: "Rename",
-				label: "Rename"
-			}
+				label: translator.getText("Rename")
+			},
+			{
+				id: "Copy Path",
+				label: translator.getText("CopyPath")
+			},
+			{
+				type: "separator"
+			},
+			{
+				id: "Refresh",
+				label: translator.getText("Refresh")
+			},
 		];
+		if (process && process.platform) {
+			if (process.platform === "win32") {
+				template.splice(1, 0,
+					{
+						id: "Show in Explorer",
+						label: translator.getText("Show in Explorer")
+					}
+				);
+			} else if (process.platform === "darwin") {
+				template.splice(1, 0,
+					{
+						id: "Reveal in Finder",
+						label: translator.getText("Reveal in Finder")
+					}
+				);
+			}
+		}
 		EditorMenu.setMenuItemHandler(
 			template, handler
 		);
