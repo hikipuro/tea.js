@@ -31,7 +31,8 @@ const ScriptTemplate = `class NewScript {
 
 	update() {
 	}
-}`;
+}
+`;
 
 @Component({
 	template: `
@@ -254,6 +255,16 @@ export class ProjectView extends Vue {
 		dragEvents.dragLeave = this.onFileDragLeave;
 		dragEvents.drop = this.onFileDrop;
 		this.openFolder(process.cwd());
+	}
+
+	protected getSelectedFolderItem(): Editor.TreeViewItem {
+		var folderList = this.$refs.folderList as TreeView;
+		return folderList.selectedItem;
+	}
+
+	protected getSelectedFileItem(): Editor.TreeViewItem {
+		var fileList = this.$refs.fileList as TreeView;
+		return fileList.selectedItem;
 	}
 
 	protected createFolderListModel(file: Directory.FileInfo): TreeView.Model {
@@ -503,6 +514,20 @@ export class ProjectView extends Vue {
 			}
 		}
 		return null;
+	}
+
+	protected renameFileListItem(path: string): void {
+		var item = this.fileList.findItem((item: Editor.TreeViewItem) => {
+			var tag = item.tag as FileItemTag;
+			if ((tag instanceof FileItemTag) === false) {
+				return false;
+			}
+			return tag.path === path;
+		});
+		if (item == null) {
+			return;
+		}
+		item.rename();
 	}
 
 	protected onFolderDragStart(e: DragEvent, item: Editor.TreeViewItem): void {
@@ -763,6 +788,10 @@ export class ProjectView extends Vue {
 					path = LocalFile.join(path, name);
 					LocalFile.createFolder(path);
 					this.openFolder();
+					this.updateFileList();
+					this.$nextTick(() => {
+						this.renameFileListItem(path);
+					});
 				}
 				break;
 			case "Create/JavaScript":
@@ -771,6 +800,9 @@ export class ProjectView extends Vue {
 					path = LocalFile.join(path, name);
 					LocalFile.writeText(path, ScriptTemplate);
 					this.updateFileList();
+					this.$nextTick(() => {
+						this.renameFileListItem(path);
+					});
 				}
 				break;
 			case "Delete":
@@ -806,6 +838,10 @@ export class ProjectView extends Vue {
 					path = LocalFile.join(path, name);
 					LocalFile.createFolder(path);
 					this.openFolder();
+					this.updateFileList();
+					this.$nextTick(() => {
+						this.renameFileListItem(path);
+					});
 				}
 				break;
 			case "Create/JavaScript":
@@ -817,6 +853,9 @@ export class ProjectView extends Vue {
 					path = LocalFile.join(path, name);
 					LocalFile.writeText(path, ScriptTemplate);
 					this.updateFileList();
+					this.$nextTick(() => {
+						this.renameFileListItem(path);
+					});
 				}
 				break;
 			case "Show in Explorer":
