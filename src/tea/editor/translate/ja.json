@@ -91,6 +91,7 @@
 	},
 	"HierarchyView": {
 		"ContextMenu": {
+			"Rename": "名前の変更",
 			"Delete": "削除",
 			"CreateEmpty": "空オブジェクト",
 			"3DObject": {
@@ -122,13 +123,31 @@
 			}
 		}
 	},
+	"ProjectView": {
+		"ContextMenu": {
+			"Create": {
+				"Title": "作成",
+				"Folder": "フォルダ",
+				"JavaScript": "JavaScript"
+			},
+			"Show in Explorer": "エクスプローラで表示",
+			"Reveal in Finder": "Finderで表示",
+			"Open": "開く",
+			"Delete": "削除",
+			"Rename": "名前の変更",
+			"CopyPath": "パスのコピー",
+			"Refresh": "更新"
+		}
+	},
 	"ObjectInspector": {
 		"Position": "位置",
 		"Rotation": "回転",
 		"Scale": "拡大率",
 		"AddComponent": "コンポーネントの追加",
 		"ComponentMenu": {
-			"RemoveComponent": "コンポーネントの削除"
+			"RemoveComponent": "コンポーネントの削除",
+			"MoveUp": "上へ移動",
+			"MoveDown": "下へ移動"
 		},
 		"AddComponentMenu": {
 			"Audio": {
