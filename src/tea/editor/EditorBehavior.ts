@@ -245,6 +245,7 @@ export class EditorBehavior {
 			browserWindow.restore();
 		}
 		settings.window.setData(browserWindow);
+		settings.panels.setData(this.editor);
 		settings.language = translator.lang;
 		settings.save();
 	}

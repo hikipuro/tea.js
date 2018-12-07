@@ -1,14 +1,17 @@
 import * as Electron from "electron";
+import { Editor } from "./Editor";
 import { LocalFile } from "./LocalFile";
 
 export class EditorSettings {
 	static readonly FileName = "settings.json";
 	protected static _instance: EditorSettings;
 	window: EditorSettings.Window;
+	panels: EditorSettings.Panels;
 	language: string;
 
 	protected constructor() {
 		this.window = new EditorSettings.Window();
+		this.panels = new EditorSettings.Panels();
 		this.language = "en";
 	}
 
@@ -55,6 +58,7 @@ export class EditorSettings {
 			return;
 		}
 		this.window.setJSON(json.window);
+		this.panels.setJSON(json.panels);
 		if (json.language) {
 			this.language = json.language;
 		}
@@ -96,6 +100,40 @@ export module EditorSettings {
 			this.y = position[1];
 			this.width = size[0];
 			this.height = size[1];
+		}
+	}
+
+	export class Panels {
+		leftPanelWidth: number;
+		rightPanelWidth: number;
+		bottomPanelHeight: number;
+
+		constructor() {
+			this.leftPanelWidth = null;
+			this.rightPanelWidth = null;
+			this.bottomPanelHeight = null;
+		}
+
+		setJSON(json: any): void {
+			try {
+				this.leftPanelWidth = json.leftPanelWidth;
+				this.rightPanelWidth = json.rightPanelWidth;
+				this.bottomPanelHeight = json.bottomPanelHeight;
+			} catch (err) {
+				console.error(err);
+			}
+		}
+
+		setData(editor: Editor): void {
+			if (editor == null) {
+				return;
+			}
+			var leftPanelRect = editor.leftPanel.rect;
+			var rightPanelRect = editor.rightPanel.rect;
+			var bottomPanelRect = editor.bottomPanel.rect;
+			this.leftPanelWidth = leftPanelRect.width;
+			this.rightPanelWidth = rightPanelRect.width;
+			this.bottomPanelHeight = bottomPanelRect.height;
 		}
 	}
 }

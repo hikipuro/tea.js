@@ -20,18 +20,36 @@ import Component from "vue-class-component";
 })
 export class HResizeBar extends Vue {
 	isLeft: boolean;
+	static readonly Cursor = "ew-resize";
 	protected _isMouseDown: boolean = false;
 	protected _cursor: string;
 	protected _parentX: number;
 	protected _mouseDownX: number;
 
-	protected onMouseDown(e: MouseEvent): void {
+	protected setCursor(cursor: string): void {
+		document.body.style.cursor = cursor;
+	}
+
+	protected addMouseEvents(): void {
 		window.addEventListener("mousemove", this.onMouseMove);
 		window.addEventListener("mouseup", this.onMouseUp);
+	}
+
+	protected removeMouseEvents(): void {
+		window.removeEventListener("mousemove", this.onMouseMove);
+		window.removeEventListener("mouseup", this.onMouseUp);
+	}
+
+	protected onMouseDown(e: MouseEvent): void {
+		this.addMouseEvents();
 		this._cursor = document.body.style.cursor;
-		document.body.style.cursor = "ew-resize";
+		this.setCursor(HResizeBar.Cursor);
 		this._isMouseDown = true;
-		this._parentX = this.$parent.$el.clientWidth;
+		this._parentX = 0;
+		var parent = this.$parent;
+		if (parent && parent.$el) {
+			this._parentX = parent.$el.clientWidth;
+		}
 		this._mouseDownX = e.screenX;
 	}
 
@@ -42,13 +60,15 @@ export class HResizeBar extends Vue {
 		} else {
 			x += this._parentX;
 		}
-		this.$parent.$el.style.width = x + "px";
+		var parent = this.$parent;
+		if (parent && parent.$el) {
+			parent.$el.style.width = x + "px";
+		}
 		this.$emit("resize");
 	}
 
 	protected onMouseUp(e: MouseEvent): void {
-		window.removeEventListener("mousemove", this.onMouseMove);
-		window.removeEventListener("mouseup", this.onMouseUp);
-		document.body.style.cursor = this._cursor;
+		this.removeMouseEvents();
+		this.setCursor(this._cursor);
 	}
 }

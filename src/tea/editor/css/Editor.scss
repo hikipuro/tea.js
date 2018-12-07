@@ -128,25 +128,14 @@ textarea, pre {
 		display: none;
 	}
 
-	div.Tabs.Bottom {
+	div.BottomPanel {
 		height: 200px;
 		border-top: thin solid theme("border");
-
+	}
+	div.Tabs.Bottom {
+		height: 100%;
 		> div.ConsoleViewTab {
 			overflow: auto;
-		}
-	}
-	div.BottomLayout {
-		position: relative;
-
-		.Panel {
-			overflow: auto;
-		}
-		.TreeView {
-			width: 200px;
-		}
-		.FileList {
-			flex: 1;
 		}
 	}
 	div.RightPanel {

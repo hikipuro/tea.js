@@ -14,13 +14,15 @@ import Component from "vue-class-component";
 			<slot></slot>
 		</div>
 	`,
-	data: () => { return {
-		x: 0,
-		y: 0,
-		isVisible: false,
-		isForm: false,
-		items: []
-	}}
+	data: () => {
+		return {
+			x: 0,
+			y: 0,
+			isVisible: false,
+			isForm: false,
+			items: []
+		}
+	}
 })
 export class Window extends Vue {
 	x: number;

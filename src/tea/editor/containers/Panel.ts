@@ -1,5 +1,6 @@
 import Vue from "vue";
 import Component from "vue-class-component";
+import { NoCache } from "../basic/NoCache";
 
 @Component({
 	template: `
@@ -23,31 +24,25 @@ import Component from "vue-class-component";
 				paddingBottom: paddingBottom
 			}">
 			<slot></slot>
-			<!--
-			<div
-				@mousedown="onMouseDown"
-				@mousemove="onMouseMove"
-				class="resize"
-				v-if="isResizable">
-			</div>
-			-->
 		</div>
 	`,
-	data: () => { return {
-		width: "",
-		height: "",
-		marginLeft: "",
-		marginRight: "",
-		marginTop: "",
-		marginBottom: "",
-		paddingLeft: "",
-		paddingRight: "",
-		paddingTop: "",
-		paddingBottom: "",
-		isResizable: false,
-		isResizableX: false,
-		isResizableY: false
-	}}
+	data: () => {
+		return {
+			width: "",
+			height: "",
+			marginLeft: "",
+			marginRight: "",
+			marginTop: "",
+			marginBottom: "",
+			paddingLeft: "",
+			paddingRight: "",
+			paddingTop: "",
+			paddingBottom: "",
+			isResizable: false,
+			isResizableX: false,
+			isResizableY: false
+		}
+	}
 })
 export class Panel extends Vue {
 	width: string;
@@ -83,5 +78,10 @@ export class Panel extends Vue {
 		this.paddingRight = value;
 		this.paddingTop = value;
 		this.paddingBottom = value;
+	}
+
+	@NoCache
+	get rect(): ClientRect {
+		return this.$el.getBoundingClientRect();
 	}
 }

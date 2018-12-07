@@ -86,17 +86,19 @@ Object.keys(vueComponents).forEach((key: string) => {
 								</TabItem>
 							</Tabs>
 						</HLayout>
-						<Tabs
-							class="Bottom"
-							:tabindex="1">
-							<TabItem tabId="project" :name="translator.project">
-								<ProjectView ref="project"></ProjectView>
-							</TabItem>
-							<TabItem tabId="console" :name="translator.console" class="ConsoleViewTab">
-								<ConsoleView ref="console"></ConsoleView>
-							</TabItem>
+						<Panel ref="bottom" class="BottomPanel">
+							<Tabs
+								class="Bottom"
+								:tabindex="1">
+								<TabItem tabId="project" :name="translator.project">
+									<ProjectView ref="project"></ProjectView>
+								</TabItem>
+								<TabItem tabId="console" :name="translator.console" class="ConsoleViewTab">
+									<ConsoleView ref="console"></ConsoleView>
+								</TabItem>
+							</Tabs>
 							<VResizeBar ref="projectResize" :isTop="true"></VResizeBar>
-						</Tabs>
+						</Panel>
 					</VLayout>
 					<Panel ref="right" class="RightPanel">
 						<InspectorView ref="inspector"></InspectorView>
@@ -173,6 +175,18 @@ export class Editor extends Vue {
 		return this.$refs.menu as BasicComponents.ContextMenu;
 	}
 
+	get leftPanel(): Containers.Panel {
+		return this.$refs.left as Containers.Panel;
+	}
+
+	get rightPanel(): Containers.Panel {
+		return this.$refs.right as Containers.Panel;
+	}
+
+	get bottomPanel(): Containers.Panel {
+		return this.$refs.bottom as Containers.Panel;
+	}
+
 	setApp(app: Tea.App) {
 		this._status.app = app;
 		this._behavior.setApp(app);
@@ -212,12 +226,7 @@ export class Editor extends Vue {
 
 	protected created(): void {
 		this._status = new EditorStatus();
-		var settings = EditorSettings.getInstance();
-		settings.load();
-		if (settings.language) {
-			var translator = Translator.getInstance();
-			translator.loadResource(settings.language);
-		}
+		this.restoreSettings();
 		this.translate();
 		EditorAssets.cacheImages();
 		this._command = new EditorCommand();
@@ -226,6 +235,32 @@ export class Editor extends Vue {
 
 	protected mounted(): void {
 		this._behavior = new EditorBehavior(this);
+		this.restoreUIState();
+	}
+
+	protected restoreSettings(): void {
+		var settings = EditorSettings.getInstance();
+		settings.load();
+		if (settings.language) {
+			var translator = Translator.getInstance();
+			translator.loadResource(settings.language);
+		}
+	}
+
+	protected restoreUIState(): void {
+		var settings = EditorSettings.getInstance();
+		var panels = settings.panels;
+		if (panels != null) {
+			if (panels.leftPanelWidth) {
+				this.leftPanel.width = panels.leftPanelWidth + "px";
+			}
+			if (panels.rightPanelWidth) {
+				this.rightPanel.width = panels.rightPanelWidth + "px";
+			}
+			if (panels.bottomPanelHeight) {
+				this.bottomPanel.height = panels.bottomPanelHeight + "px";
+			}
+		}
 	}
 
 	protected onUpdateAspect(): void {
