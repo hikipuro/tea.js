@@ -240,18 +240,28 @@ export class EditorCommand extends EventDispatcher {
 			console.error(err);
 			return;
 		}
-		this.editor.status.scenePath = path;
-		this.editor.status.isChanged = false;
+		var editor = this.editor;
+		editor.status.scenePath = path;
+		editor.status.isChanged = false;
 		var app = this.editor.status.app;
 		var prevScene = app.scene;
+		var selectedObjectPath = "";
+		var object3d = editor.hierarchyView.getSelectedObject();
+		if (object3d) {
+			selectedObjectPath = object3d.path;
+		}
 		EditorSceneLoader.load(app, json, (scene: Tea.Scene) => {
 			app.scene = scene;
-			this.editor.setScene(scene);
+			editor.setScene(scene);
 			if (prevScene) {
 				prevScene.removeAllListeners("addChild");
 				prevScene.removeAllListeners("removeChild");
 				prevScene.destroy();
 			}
+			setTimeout(() => {
+				var object3d = app.scene.findChild(selectedObjectPath);
+				editor.hierarchyView.selectObject(object3d);
+			}, 100);
 			console.log("onload", app.isEditing, scene.isEditing);
 		});
 	}

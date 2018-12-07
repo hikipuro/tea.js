@@ -73,6 +73,15 @@ export class HierarchyView extends Vue {
 		treeView.select(item);
 	}
 
+	selectObject(object3d: Tea.Object3D): void {
+		if (object3d == null) {
+			return;
+		}
+		var treeView = this.$refs.hierarchy as TreeView;
+		var item = this.findItemByTag(object3d.id);
+		treeView.select(item);
+	}
+
 	unselect(): void {
 		var treeView = this.$refs.hierarchy as TreeView;
 		treeView.unselect();

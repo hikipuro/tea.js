@@ -320,6 +320,22 @@ export class Object3D {
 		return this._parent.root;
 	}
 
+	get path(): string {
+		if (this.scene == null) {
+			return "";
+		}
+		var path = "";
+		for (var i = 0; i < 100; i++) {
+			var parent = this.parent;
+			if (parent == null) {
+				break;
+			}
+			path = parent.name + "/";
+		}
+		path += this.name;
+		return path;
+	}
+
 	destroy(): void {
 		this.isDestroyed = true;
 		this._toDestroy = true;
