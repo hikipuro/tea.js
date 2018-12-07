@@ -74,8 +74,7 @@ export class ProjectView extends Vue {
 	}
 
 	getSelectedFolderPath(): string {
-		var folderList = this.$refs.folderList as TreeView;
-		var item = folderList.selectedItem;
+		var item = this.getSelectedFolderItem();
 		if (item == null) {
 			return null;
 		}
@@ -83,8 +82,7 @@ export class ProjectView extends Vue {
 	}
 
 	getSelectedFilePath(): string {
-		var fileList = this.$refs.fileList as TreeView;
-		var item = fileList.selectedItem;
+		var item = this.getSelectedFileItem();
 		if (item == null) {
 			return null;
 		}
@@ -100,7 +98,7 @@ export class ProjectView extends Vue {
 	}
 
 	selectParentFolder(): void {
-		var folderList = this.$refs.folderList as TreeView;
+		var folderList = this.folderList;
 		var item = folderList.selectedItem;
 		if (item == null) {
 			return;
@@ -116,7 +114,7 @@ export class ProjectView extends Vue {
 		if (path == null) {
 			path = this._folderPath;
 		}
-		var folderList = this.$refs.folderList as TreeView;
+		var folderList = this.folderList;
 		var selectedItem = folderList.selectedItem;
 		var selectedPath = null;
 		if (selectedItem != null) {
@@ -143,7 +141,7 @@ export class ProjectView extends Vue {
 	}
 
 	selectFolder(path: string): void {
-		var folderList = this.$refs.folderList as TreeView;
+		var folderList = this.folderList;
 		var item = folderList.findItemByTag(path);
 		if (item == null) {
 			return;
@@ -161,7 +159,7 @@ export class ProjectView extends Vue {
 		if (path == null) {
 			path = this.getSelectedFolderPath();
 		}
-		var fileList = this.$refs.fileList as TreeView;
+		var fileList = this.fileList;
 		var files = Directory.getFilesSync(path);
 		if (files == null) {
 			this.clearFileList();
@@ -240,8 +238,8 @@ export class ProjectView extends Vue {
 	}
 
 	protected mounted(): void {
-		var folderList = this.$refs.folderList as TreeView;
-		var fileList = this.$refs.fileList as TreeView;
+		var folderList = this.folderList;
+		var fileList = this.fileList;
 
 		folderList.openIcon = "<img src='" + EditorAssets.Images.FolderOpen + "' />";
 		folderList.closeIcon = "<img src='" + EditorAssets.Images.FolderClose + "' />";
@@ -266,12 +264,12 @@ export class ProjectView extends Vue {
 	}
 
 	protected getSelectedFolderItem(): Editor.TreeViewItem {
-		var folderList = this.$refs.folderList as TreeView;
+		var folderList = this.folderList;
 		return folderList.selectedItem;
 	}
 
 	protected getSelectedFileItem(): Editor.TreeViewItem {
-		var fileList = this.$refs.fileList as TreeView;
+		var fileList = this.fileList;
 		return fileList.selectedItem;
 	}
 
@@ -336,13 +334,13 @@ export class ProjectView extends Vue {
 	}
 
 	protected clearFolderList(): void {
-		var folderList = this.$refs.folderList as TreeView;
+		var folderList = this.folderList;
 		folderList.unselect();
 		folderList.items = [];
 	}
 
 	protected clearFileList(): void {
-		var fileList = this.$refs.fileList as TreeView;
+		var fileList = this.fileList;
 		fileList.unselect();
 		fileList.items = [];
 	}
@@ -727,8 +725,7 @@ export class ProjectView extends Vue {
 	}
 
 	protected onFocusFileList(): void {
-		var fileList = this.$refs.fileList as TreeView;
-		var item = fileList.selectedItem;
+		var item = this.getSelectedFileItem();
 		if (item == null) {
 			return;
 		}
@@ -757,10 +754,9 @@ export class ProjectView extends Vue {
 				this.openFile(path);
 				break;
 			case "F2":
-				var fileList = this.$refs.fileList as TreeView;
-				var fileItem = fileList.selectedItem;
-				if (fileItem) {
-					fileItem.rename();
+				var item = this.getSelectedFileItem();
+				if (item) {
+					item.rename();
 				}
 				break;
 		}
@@ -785,7 +781,7 @@ export class ProjectView extends Vue {
 	}
 
 	protected onRenameFile(item: Editor.TreeViewItem, value: string): void {
-		var fileList = this.$refs.fileList as TreeView;
+		var fileList = this.fileList;
 		if (value == null) {
 			fileList.focus();
 			return;
@@ -946,8 +942,7 @@ export class ProjectView extends Vue {
 				this.updateFileList();
 				break;
 			case "Rename":
-				var fileList = this.$refs.fileList as TreeView;
-				var fileItem = fileList.selectedItem;
+				var fileItem = this.getSelectedFileItem();
 				if (fileItem) {
 					fileItem.rename();
 				}
