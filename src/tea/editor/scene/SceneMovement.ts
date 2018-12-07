@@ -9,6 +9,7 @@ export class SceneMovement extends Script {
 	moveSpeed: number = 0.2;
 	rotateSpeed: number = 0.2;
 	wheelSpeed: number = 0.05;
+	dragSpeed: number = 0.03;
 
 	constructor(app: Tea.App) {
 		super(app);
@@ -18,9 +19,12 @@ export class SceneMovement extends Script {
 		var mouse = this.mouse;
 		if (mouse.isDown(Mouse.Button.Left)) {
 			this.onMouseDownScreen(mouse.position);
+			document.addEventListener("mousemove", this.onMouseMoveLeft);
+			window.addEventListener("mouseup", this.onMouseUpLeft);
+			document.body.requestPointerLock();
 		} else if (mouse.isDown(Mouse.Button.Right)) {
-			document.addEventListener("mousemove", this.onMouseMove);
-			window.addEventListener("mouseup", this.onMouseUp);
+			document.addEventListener("mousemove", this.onMouseMoveRight);
+			window.addEventListener("mouseup", this.onMouseUpRight);
 			document.body.requestPointerLock();
 		} else if (mouse.isHeld(Mouse.Button.Right)) {
 			this.move();
@@ -108,7 +112,30 @@ export class SceneMovement extends Script {
 		editor.behavior.sceneViewCommand("select", target);
 	}
 
-	protected onMouseMove = (e: MouseEvent): void => {
+	protected onMouseMoveLeft = (e: MouseEvent): void => {
+		var x = e.movementX;
+		var y = e.movementY;
+		var camera = this.sceneRenderer.camera;
+		var position = new Tea.Vector3(-x, y, 0);
+		var speed = this.dragSpeed;
+		var keyboard = this.keyboard;
+		var keyCode = Keyboard.Code;
+		if (keyboard.isHeld(keyCode.ShiftLeft)
+		|| keyboard.isHeld(keyCode.ShiftRight)) {
+			speed *= 3;
+		}
+		position.mul$(speed);
+		position.applyQuaternion(camera.object3d.rotation);
+		camera.object3d.translate(position);
+	}
+
+	protected onMouseUpLeft = (e: MouseEvent): void => {
+		document.removeEventListener("mousemove", this.onMouseMoveLeft);
+		window.removeEventListener("mouseup", this.onMouseUpLeft);
+		document.exitPointerLock();
+	}
+
+	protected onMouseMoveRight = (e: MouseEvent): void => {
 		var x = e.movementX;
 		var y = e.movementY;
 		var object3d = this.object3d;
@@ -126,9 +153,9 @@ export class SceneMovement extends Script {
 		}
 	}
 
-	protected onMouseUp = (e: MouseEvent): void => {
-		document.removeEventListener("mousemove", this.onMouseMove);
-		window.removeEventListener("mouseup", this.onMouseUp);
+	protected onMouseUpRight = (e: MouseEvent): void => {
+		document.removeEventListener("mousemove", this.onMouseMoveRight);
+		window.removeEventListener("mouseup", this.onMouseUpRight);
 		document.exitPointerLock();
 	}
 }
