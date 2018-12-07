@@ -192,6 +192,7 @@ export class HierarchyView extends Vue {
 		object3d.name = value;
 		this._command.update(false, () => {
 			treeView.select(item);
+			treeView.focus();
 		});
 		var editor = this.$root as Editor;
 		editor.status.isChanged = true;
