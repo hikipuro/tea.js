@@ -20,6 +20,8 @@ import Component from "vue-class-component";
 				v-if="enableConfig"
 				ref="config"
 				class="config"
+				tabindex="0"
+				@keydown="onKeyDownConfig"
 				@click="onClickConfig">⚙️</div>
 		</div>
 	`,
@@ -44,6 +46,15 @@ export class TitleBar extends Vue {
 
 	protected onClickTitle(e: MouseEvent): void {
 		this.$emit("clickTitle", e);
+	}
+
+	protected onKeyDownConfig(e: KeyboardEvent): void {
+		switch (e.key) {
+			case " ":
+			case "Enter":
+				this.$emit("config", e);
+				break;
+		}
 	}
 
 	protected onClickConfig(e: MouseEvent): void {
