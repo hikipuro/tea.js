@@ -85,7 +85,7 @@ export class HierarchyViewCommand {
 		var id = item.tag as number;
 		var scene = this.editor.status.scene;
 		var object3d = scene.findChildById(id);
-		console.log(object3d);
+		//console.log(object3d);
 		inspectorView.hide();
 		object3d.destroy();
 		scene.app.renderer.once("update", () => {
@@ -129,6 +129,7 @@ export class HierarchyViewCommand {
 	}
 
 	protected onSelectMenu = (item: Electron.MenuItem): void => {
+		var hierarchyView = this.editor.hierarchyView;
 		var scene = this.editor.status.scene;
 		var app = scene.app;
 		//console.log(item.id);
@@ -196,8 +197,19 @@ export class HierarchyViewCommand {
 		}
 
 		if (object3d != null) {
-			scene.addChild(object3d);
+			var selectedObject = hierarchyView.getSelectedObject();
+			if (selectedObject) {
+				selectedObject.addChild(object3d);
+			} else {
+				scene.addChild(object3d);
+			}
 			this.update(false, () => {
+				if (selectedObject) {
+					var item = hierarchyView.findItemByTag(selectedObject.id);
+					if (item) {
+						item.expand();
+					}
+				}
 				this.selectItem(object3d);
 			});
 			this.editor.status.isChanged = true;
