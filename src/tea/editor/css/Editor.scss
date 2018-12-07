@@ -131,6 +131,7 @@ textarea, pre {
 	div.BottomPanel {
 		height: 200px;
 		border-top: thin solid theme("border");
+		overflow: hidden;
 	}
 	div.Tabs.Bottom {
 		height: 100%;
