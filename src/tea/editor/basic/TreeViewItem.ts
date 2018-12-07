@@ -43,9 +43,10 @@ import { TreeView } from "./TreeView";
 					:key="index"
 					:model="model"
 					:depth="depth + 1"
-					@create="onCreate"
-					@select="onSelect"
-					@doubleClick="$emit('doubleClick', $event)">
+					@create="onCreateChild"
+					@select="onSelectChild"
+					@doubleClick="$emit('doubleClick', $event)"
+					@rename="onRenameChild">
 				</TreeViewItem>
 			</ul>
 		</li>
@@ -362,7 +363,7 @@ export class TreeViewItem extends Vue {
 		this.$emit("select", this);
 	}
 
-	protected onCreate(item: TreeViewItem): void {
+	protected onCreateChild(item: TreeViewItem): void {
 		if (this.openIcon != null) {
 			item.openIcon = this.openIcon;
 		}
@@ -375,8 +376,12 @@ export class TreeViewItem extends Vue {
 		}
 	}
 
-	protected onSelect(item: TreeViewItem): void {
+	protected onSelectChild(item: TreeViewItem): void {
 		this.$emit("select", item);
+	}
+
+	protected onRenameChild(item: TreeViewItem, value: string): void {
+		this.$emit("rename", item, value);
 	}
 
 	protected onKeyDownRename(e: KeyboardEvent): void {

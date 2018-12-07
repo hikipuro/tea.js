@@ -476,6 +476,17 @@ export class EditorMenu {
 				label: translator.getText("Delete")
 			},
 			{
+				id: "Rename",
+				label: translator.getText("Rename")
+			},
+			{
+				id: "Copy Path",
+				label: translator.getText("CopyPath")
+			},
+			{
+				type: "separator"
+			},
+			{
 				id: "Refresh",
 				label: translator.getText("Refresh")
 			}

@@ -43,8 +43,10 @@ const ScriptTemplate = `class NewScript {
 				tabindex="1"
 				@expand="onExpandFolderList"
 				@select="onSelectFolder"
+				@keydown="onFolderListKeyDown"
 				@doubleClick="onDoubleClickFolderList"
-				@menu="onFolderListMenu"></TreeView>
+				@menu="onFolderListMenu"
+				@rename="onRenameFolder"></TreeView>
 			<TreeView
 				ref="fileList"
 				class="fileList"
@@ -213,8 +215,8 @@ export class ProjectView extends Vue {
 		var path = projectView.getSelectedFolderPath();
 		var relativePath = LocalFile.relative(process.cwd(), path);
 		if (relativePath.toLowerCase() === "assets") {
-			var deleteItem = contextMenu.getMenuItemById("Delete");
-			deleteItem.enabled = false;
+			contextMenu.disableItem("Delete");
+			contextMenu.disableItem("Rename");
 		}
 		contextMenu.show();
 	}
@@ -671,6 +673,25 @@ export class ProjectView extends Vue {
 		this.updateFileList(path);
 	}
 
+	protected onFolderListKeyDown(e: KeyboardEvent): void {
+		switch (e.key) {
+			case "F2":
+				var folderList = this.folderList;
+				var item = folderList.selectedItem;
+				var path = item.tag;
+				var assetsPath = LocalFile.join(
+					process.cwd(), "assets"
+				);
+				if (path === assetsPath) {
+					break;
+				}
+				if (item) {
+					item.rename();
+				}
+				break;
+		}
+	}
+
 	protected onDoubleClickFolderList(item: Editor.TreeViewItem): void {
 		item.toggle();
 	}
@@ -681,6 +702,25 @@ export class ProjectView extends Vue {
 		}
 		e.preventDefault();
 		this.showProjectViewMenu();
+	}
+
+	protected onRenameFolder(item: Editor.TreeViewItem, value: string): void {
+		var folderList = this.folderList;
+		if (value == null) {
+			folderList.focus();
+			return;
+		}
+		var oldPath = item.tag as string;
+		var basePath = LocalFile.dirname(oldPath);
+		var newPath = LocalFile.join(basePath, value);
+		if (LocalFile.exists(newPath)) {
+			folderList.focus();
+			return;
+		}
+		LocalFile.rename(oldPath, newPath);
+		item.model.tag = newPath;
+		this.openFolder();
+		folderList.focus();
 	}
 
 	protected onFocusFileList(): void {
@@ -810,6 +850,16 @@ export class ProjectView extends Vue {
 				//LocalFile.removeFolder(path);
 				Electron.shell.moveItemToTrash(path);
 				this.openFolder();
+				break;
+			case "Rename":
+				var folderList = this.folderList;
+				var folderItem = folderList.selectedItem;
+				if (folderItem) {
+					folderItem.rename();
+				}
+				break;
+			case "Copy Path":
+				Electron.clipboard.writeText(path);
 				break;
 			case "Refresh":
 				this.openFolder();
