@@ -17,8 +17,10 @@ import { LocalFile } from "../LocalFile";
 				tabindex="0"
 				@focus="onFocus"
 				@select="onSelect"
+				@keydown="onKeyDown"
 				@doubleClick="onDoubleClick"
-				@menu="onMenu"></TreeView>
+				@menu="onMenu"
+				@rename="onRename"></TreeView>
 		</div>
 	`
 })
@@ -151,6 +153,20 @@ export class HierarchyView extends Vue {
 		}
 	}
 
+	protected onKeyDown(e: KeyboardEvent): void {
+		switch (e.key) {
+			case "F2":
+				var item = this.getSelectedItem();
+				if (item.tag < 0) {
+					return;
+				}
+				if (item) {
+					item.rename();
+				}
+				break;
+		}
+	}
+
 	protected onDoubleClick(item: Editor.TreeViewItem): void {
 		var editor = this.$root as Editor;
 		if (editor.status.app.isSceneView) {
@@ -164,6 +180,21 @@ export class HierarchyView extends Vue {
 	protected onMenu(e: MouseEvent): void {
 		e.preventDefault();
 		this._command.showContextMenu();
+	}
+
+	protected onRename(item: Editor.TreeViewItem, value: string): void {
+		var treeView = this.$refs.hierarchy as TreeView;
+		if (value == null || value === "") {
+			treeView.focus();
+			return;
+		}
+		var object3d = this.getSelectedObject();
+		object3d.name = value;
+		this._command.update(false, () => {
+			treeView.select(item);
+		});
+		var editor = this.$root as Editor;
+		editor.status.isChanged = true;
 	}
 
 	protected onDragStart(e: DragEvent, item: Editor.TreeViewItem): void {

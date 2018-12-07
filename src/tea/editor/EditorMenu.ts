@@ -338,6 +338,10 @@ export class EditorMenu {
 		if (item != null && item.tag >= 0) {
 			template.unshift(
 				{
+					id: "Rename",
+					label: translator.getText("Rename")
+				},
+				{
 					id: "Delete",
 					label: translator.getText("Delete"),
 				},

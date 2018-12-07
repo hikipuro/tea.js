@@ -190,6 +190,12 @@ export class HierarchyViewCommand {
 			case "Camera":
 				object3d = app.createCamera();
 				break;
+			case "Rename":
+				var i = hierarchyView.getSelectedItem();
+				if (i) {
+					i.rename();
+				}
+				return;
 			case "Delete":
 				this.deleteSelectedItem();
 				this.editor.status.isChanged = true;

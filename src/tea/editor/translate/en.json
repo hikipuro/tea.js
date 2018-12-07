@@ -91,6 +91,7 @@
 	},
 	"HierarchyView": {
 		"ContextMenu": {
+			"Rename": "Rename",
 			"Delete": "Delete",
 			"CreateEmpty": "Create Empty",
 			"3DObject": {
