@@ -26,7 +26,8 @@ import { TreeView } from "./TreeView";
 					</div>
 					<div
 						class="text"
-						v-if="!isRenaming">{{ model.text }}</div>
+						v-if="!isRenaming"
+						v-html="getText()"></div>
 					<input
 						ref="rename"
 						type="text"
@@ -318,6 +319,17 @@ export class TreeViewItem extends Vue {
 		}
 	}
 
+	protected getText(): string {
+		var text = this.model.text;
+		if (text == null || text == "") {
+			return "";
+		}
+		if (text.trim() === "") {
+			text = text.replace(/ /g, "&nbsp;");
+		}
+		return text;
+	}
+
 	protected forEachChild(callback: (item: TreeViewItem) => boolean) {
 		var forEach = (item: TreeViewItem): boolean => {
 			if ((item instanceof TreeViewItem) === false) {
@@ -385,18 +397,22 @@ export class TreeViewItem extends Vue {
 	}
 
 	protected onKeyDownRename(e: KeyboardEvent): void {
-		if (e.key === "Enter") {
-			this.isRenaming = false;
-			document.removeEventListener(
-				"mousedown", this.onMouseDownScreen
-			);
-			this.emitRenameEvent();
-		} else if (e.key === "Escape") {
-			this.isRenaming = false;
-			document.removeEventListener(
-				"mousedown", this.onMouseDownScreen
-			);
-			this.$emit("rename", this, null);
+		switch (e.key) {
+			case "Enter":
+				this.isRenaming = false;
+				document.removeEventListener(
+					"mousedown", this.onMouseDownScreen
+				);
+				this.emitRenameEvent();
+				break;
+			case "Escape":
+			case "Tab":
+				this.isRenaming = false;
+				document.removeEventListener(
+					"mousedown", this.onMouseDownScreen
+				);
+				this.$emit("rename", this, null);
+				break;
 		}
 	}
 
