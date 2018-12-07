@@ -463,6 +463,7 @@ export class EditorMenu {
 		translator.basePath = "ProjectView/ContextMenu";
 		var template: Electron.MenuItemConstructorOptions[] = [
 			{
+				id: "Create",
 				label: translator.getText("Create/Title"),
 				submenu: [
 					{

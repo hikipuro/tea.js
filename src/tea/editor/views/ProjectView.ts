@@ -213,10 +213,16 @@ export class ProjectView extends Vue {
 		var editor = this.$root as Editor;
 		var projectView = editor.projectView;
 		var path = projectView.getSelectedFolderPath();
-		var relativePath = LocalFile.relative(process.cwd(), path);
-		if (relativePath.toLowerCase() === "assets") {
+		if (path == null) {
+			contextMenu.disableItem("Create");
 			contextMenu.disableItem("Delete");
 			contextMenu.disableItem("Rename");
+		} else {
+			var relativePath = LocalFile.relative(process.cwd(), path);
+			if (relativePath.toLowerCase() === "assets") {
+				contextMenu.disableItem("Delete");
+				contextMenu.disableItem("Rename");
+			}
 		}
 		contextMenu.show();
 	}
@@ -697,9 +703,6 @@ export class ProjectView extends Vue {
 	}
 
 	protected onFolderListMenu(e: MouseEvent): void {
-		if (this.getSelectedFolderPath() == null) {
-			return;
-		}
 		e.preventDefault();
 		this.showProjectViewMenu();
 	}
@@ -806,6 +809,9 @@ export class ProjectView extends Vue {
 
 	protected onSelectFolderMenu = (item: Electron.MenuItem): void => {
 		var path = this.getSelectedFolderPath();
+		if (path == null) {
+			path = process.cwd();
+		}
 		path = LocalFile.resolve(path);
 
 		switch (item.id) {
