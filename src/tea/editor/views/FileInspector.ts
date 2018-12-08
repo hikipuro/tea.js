@@ -1,6 +1,7 @@
 import Vue from "vue";
 import Component from "vue-class-component";
 import { Translator } from "../translate/Translator";
+import { EditorAssets } from "../EditorAssets";
 
 @Component({
 	template: `
@@ -76,6 +77,14 @@ export class FileInspector extends Vue {
 		this.translate();
 	}
 
+	protected updated(): void {
+		var image = this.$refs.image as HTMLImageElement;
+		if (image) {
+			var url = EditorAssets.Images.Transparent;
+			image.style.backgroundImage = "url(" + url + ")";
+		}
+	}
+
 	protected getSizeString(size: number): string {
 		var units = [
 			"bytes",
@@ -115,7 +124,7 @@ export class FileInspector extends Vue {
 
 export module FileInspector {
 	export enum Type {
-		Null = 0,
+		Default = 0,
 		Text,
 		Image
 	}

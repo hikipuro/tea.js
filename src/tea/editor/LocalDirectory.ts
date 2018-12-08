@@ -47,7 +47,7 @@ export class FileInfo {
 	}
 }
 
-export class Directory {
+export class LocalDirectory {
 	static getFiles(path: string, callback: (files: Array<FileInfo>) => void): void {
 		fs.exists(path, exists => {
 			if (exists === false) {
@@ -89,7 +89,7 @@ export class Directory {
 
 var  _FileInfo = FileInfo;
 type _FileInfo = FileInfo;
-export module Directory {
+export module LocalDirectory {
 	export var  FileInfo = _FileInfo;
 	export type FileInfo = _FileInfo;
 }

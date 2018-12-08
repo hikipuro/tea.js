@@ -7,7 +7,7 @@ import { EditorAssets } from "../EditorAssets";
 import { EditorMenu } from "../EditorMenu";
 import { FileInspector } from "./FileInspector";
 import { TreeView } from "../basic/TreeView";
-import { Directory } from "../Directory";
+import { LocalDirectory } from "../LocalDirectory";
 import { LocalFile } from "../LocalFile";
 
 class FileItemTag {
@@ -160,7 +160,7 @@ export class ProjectView extends Vue {
 			path = this.getSelectedFolderPath();
 		}
 		var fileList = this.fileList;
-		var files = Directory.getFilesSync(path);
+		var files = LocalDirectory.getFilesSync(path);
 		if (files == null) {
 			this.clearFileList();
 			return;
@@ -172,7 +172,7 @@ export class ProjectView extends Vue {
 		}
 		var items = [];
 		files = this.sortFiles(files);
-		files.forEach((file: Directory.FileInfo) => {
+		files.forEach((file: LocalDirectory.FileInfo) => {
 			/*if (file.isDirectory) {
 				return;
 			}*/
@@ -273,7 +273,7 @@ export class ProjectView extends Vue {
 		return fileList.selectedItem;
 	}
 
-	protected createFolderListModel(file: Directory.FileInfo): TreeView.Model {
+	protected createFolderListModel(file: LocalDirectory.FileInfo): TreeView.Model {
 		if (file == null || file.exists === false) {
 			return null;
 		}
@@ -294,12 +294,12 @@ export class ProjectView extends Vue {
 			return null;
 		}
 		var items: Array<TreeView.Model> = [];
-		var files = Directory.getFilesSync(path);
+		var files = LocalDirectory.getFilesSync(path);
 		if (files == null) {
 			return null;
 		}
 		files = this.sortFolders(files);
-		files.forEach((file: Directory.FileInfo) => {
+		files.forEach((file: LocalDirectory.FileInfo) => {
 			var item = this.createFolderListModel(file);
 			if (item == null) {
 				return;
@@ -313,7 +313,7 @@ export class ProjectView extends Vue {
 		return items;
 	}
 
-	protected createFileListModel(file: Directory.FileInfo): TreeView.Model {
+	protected createFileListModel(file: LocalDirectory.FileInfo): TreeView.Model {
 		var iconUrl = this.getFileIconUrl(file);
 		var icon: string = null;
 		if (iconUrl !== "") {
@@ -345,22 +345,22 @@ export class ProjectView extends Vue {
 		fileList.items = [];
 	}
 
-	protected sortFolders(files: Array<Directory.FileInfo>): Array<Directory.FileInfo> {
+	protected sortFolders(files: Array<LocalDirectory.FileInfo>): Array<LocalDirectory.FileInfo> {
 		if (files == null || files.length <= 0) {
 			return files;
 		}
-		return files.sort((a: Directory.FileInfo, b: Directory.FileInfo): number => {
+		return files.sort((a: LocalDirectory.FileInfo, b: LocalDirectory.FileInfo): number => {
 			var fileA = a.name.toLocaleLowerCase();
 			var fileB = b.name.toLocaleLowerCase();
 			return fileB > fileA ? -1 : 1;
 		});
 	}
 
-	protected sortFiles(files: Array<Directory.FileInfo>): Array<Directory.FileInfo> {
+	protected sortFiles(files: Array<LocalDirectory.FileInfo>): Array<LocalDirectory.FileInfo> {
 		if (files == null || files.length <= 0) {
 			return files;
 		}
-		return files.sort((a: Directory.FileInfo, b: Directory.FileInfo): number => {
+		return files.sort((a: LocalDirectory.FileInfo, b: LocalDirectory.FileInfo): number => {
 			var folderA = a.isDirectory ? 2 : -2;
 			var folderB = b.isDirectory ? 2 : -2;
 			var fileA = a.name.toLocaleLowerCase();
@@ -375,12 +375,12 @@ export class ProjectView extends Vue {
 			return;
 		}
 		var items: Array<TreeView.Model> = [];
-		var files = Directory.getFilesSync(item.tag);
+		var files = LocalDirectory.getFilesSync(item.tag);
 		if (files == null) {
 			return;
 		}
 		files = this.sortFolders(files);
-		files.forEach((file: Directory.FileInfo) => {
+		files.forEach((file: LocalDirectory.FileInfo) => {
 			var item = this.createFolderListModel(file);
 			if (item == null) {
 				return;
@@ -390,7 +390,7 @@ export class ProjectView extends Vue {
 		i.children = items;
 	}
 
-	protected getFileIconUrl(file: Directory.FileInfo): string {
+	protected getFileIconUrl(file: LocalDirectory.FileInfo): string {
 		if (file.isDirectory) {
 			return EditorAssets.Images.FolderIcon;
 		}
@@ -465,8 +465,6 @@ export class ProjectView extends Vue {
 		if (LocalFile.exists(path) === false) {
 			return;
 		}
-		var editor = this.$root as Editor;
-		var inspectorView = editor.inspectorView;
 		var ext = Tea.File.extension(path);
 		ext = ext.toLowerCase();
 		switch (ext) {
@@ -477,16 +475,19 @@ export class ProjectView extends Vue {
 			case "ts":
 			case "md":
 			case "txt":
+			case "obj":
+			case "mtl":
 				this.openTextFileInspector(path, ext);
 				break;
 			case "jpg":
 			case "png":
 			case "gif":
 			case "bmp":
+			case "svg":
 				this.openImageFileInspector(path, ext);
 				break;
 			default:
-				inspectorView.hide();
+				this.openDefaultFileInspector(path, ext);
 				break;
 		}
 	}
@@ -529,6 +530,23 @@ export class ProjectView extends Vue {
 			component.fileType = ext.toUpperCase();
 			component.type = FileInspector.Type.Image;
 			component.image = path;
+			component.setSize(stat.size);
+			component.setCreatedTime(stat.birthtime);
+			component.setModifiedTime(stat.mtime);
+		});
+	}
+
+	protected openDefaultFileInspector(path: string, ext: string): void {
+		var editor = this.$root as Editor;
+		var inspectorView = editor.inspectorView;
+		inspectorView.hide();
+		inspectorView.component = FileInspector;
+		inspectorView.show();
+		inspectorView.$nextTick(() => {
+			var component = inspectorView.getComponent() as FileInspector;
+			var stat = LocalFile.stat(path);
+			component.fileType = ext.toUpperCase();
+			component.type = FileInspector.Type.Default;
 			component.setSize(stat.size);
 			component.setCreatedTime(stat.birthtime);
 			component.setModifiedTime(stat.mtime);

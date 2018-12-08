@@ -1,5 +1,5 @@
 import * as Electron from "electron";
-import { Directory } from "../Directory";
+import { LocalDirectory } from "../LocalDirectory";
 import { LocalFile } from "../LocalFile";
 
 export class AppBuilder {
@@ -31,8 +31,8 @@ export class AppBuilder {
 
 	protected copyFolder(src: string, dest: string): void {
 		if (LocalFile.isFolder(src)) {
-			var files = Directory.getFilesSync(src);
-			files.forEach((file: Directory.FileInfo) => {
+			var files = LocalDirectory.getFilesSync(src);
+			files.forEach((file: LocalDirectory.FileInfo) => {
 				var srcPath = LocalFile.join(src, file.name);
 				var destPath = "";
 				if (LocalFile.isFolder(srcPath)) {
