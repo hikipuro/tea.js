@@ -134,6 +134,12 @@ export class HierarchyView extends Vue {
 		if (item == null) {
 			return;
 		}
+		if (item.tag == -1) {
+			this.openSceneInspector();
+		} else {
+			var inspectorView = this.command.editor.inspectorView;
+			inspectorView.command.updateObjectInspector();
+		}
 		this.$emit("select", item);
 	}
 

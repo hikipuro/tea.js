@@ -6,7 +6,6 @@ import { EditorAssets } from "../EditorAssets";
 @Component({
 	template: `
 		<div class="FileInspector">
-			<div class="title">File</div>
 			<div
 				v-if="type === Type.Text"
 				class="textContainer">
@@ -21,7 +20,8 @@ import { EditorAssets } from "../EditorAssets";
 					@load="onLoadImage">
 				<div>Size: {{ width }}x{{ height }}</div>
 			</div>
-			<div class="size">{{ fileType }} - {{ size }}</div>
+			<div class="size" v-if="type === Type.Folder">Folder</div>
+			<div class="size" v-if="type !== Type.Folder">{{ fileType }} - {{ size }}</div>
 			<div class="created">Created: {{ createdTime }}</div>
 			<div class="modified">Modified: {{ modifiedTime }}</div>
 		</div>
@@ -125,6 +125,7 @@ export class FileInspector extends Vue {
 export module FileInspector {
 	export enum Type {
 		Default = 0,
+		Folder,
 		Text,
 		Image
 	}

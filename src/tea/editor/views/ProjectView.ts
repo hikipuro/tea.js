@@ -465,6 +465,10 @@ export class ProjectView extends Vue {
 		if (LocalFile.exists(path) === false) {
 			return;
 		}
+		if (LocalFile.isFolder(path)) {
+			this.openDefaultFileInspector(path, "");
+			return;
+		}
 		var ext = Tea.File.extension(path);
 		ext = ext.toLowerCase();
 		switch (ext) {
@@ -547,6 +551,9 @@ export class ProjectView extends Vue {
 			var stat = LocalFile.stat(path);
 			component.fileType = ext.toUpperCase();
 			component.type = FileInspector.Type.Default;
+			if (LocalFile.isFolder(path)) {
+				component.type = FileInspector.Type.Folder;
+			}
 			component.setSize(stat.size);
 			component.setCreatedTime(stat.birthtime);
 			component.setModifiedTime(stat.mtime);
@@ -791,7 +798,7 @@ export class ProjectView extends Vue {
 			return;
 		}
 		var tag = item.tag as FileItemTag;
-		if (tag == null || tag.isFolder) {
+		if (tag == null) {
 			inspectorView.hide();
 			return;
 		}
