@@ -477,29 +477,62 @@ export class ProjectView extends Vue {
 			case "ts":
 			case "md":
 			case "txt":
-				Tea.File.readText(path, (err, data) => {
-					if (err) {
-						return;
-					}
-					var maxSize = 1024 * 64;
-					if (data.length > maxSize) {
-						data = data.substr(0, maxSize);
-					}
-					inspectorView.hide();
-					inspectorView.component = FileInspector;
-					inspectorView.show();
-					inspectorView.$nextTick(() => {
-						var component = inspectorView.getComponent() as FileInspector;
-						var stat = LocalFile.stat(path);
-						component.fileType = ext.toUpperCase();
-						component.text = data;
-						component.setSize(stat.size);
-						component.setCreatedTime(stat.birthtime);
-						component.setModifiedTime(stat.mtime);
-					});
-				});
+				this.openTextFileInspector(path, ext);
+				break;
+			case "jpg":
+			case "png":
+			case "gif":
+			case "bmp":
+				this.openImageFileInspector(path, ext);
+				break;
+			default:
+				inspectorView.hide();
 				break;
 		}
+	}
+
+	protected openTextFileInspector(path: string, ext: string): void {
+		var editor = this.$root as Editor;
+		var inspectorView = editor.inspectorView;
+		var data = LocalFile.readText(path);
+		if (data == null) {
+			return;
+		}
+		var maxSize = 1024 * 64;
+		if (data.length > maxSize) {
+			data = data.substr(0, maxSize);
+		}
+		inspectorView.hide();
+		inspectorView.component = FileInspector;
+		inspectorView.show();
+		inspectorView.$nextTick(() => {
+			var component = inspectorView.getComponent() as FileInspector;
+			var stat = LocalFile.stat(path);
+			component.fileType = ext.toUpperCase();
+			component.type = FileInspector.Type.Text;
+			component.text = data;
+			component.setSize(stat.size);
+			component.setCreatedTime(stat.birthtime);
+			component.setModifiedTime(stat.mtime);
+		});
+	}
+
+	protected openImageFileInspector(path: string, ext: string): void {
+		var editor = this.$root as Editor;
+		var inspectorView = editor.inspectorView;
+		inspectorView.hide();
+		inspectorView.component = FileInspector;
+		inspectorView.show();
+		inspectorView.$nextTick(() => {
+			var component = inspectorView.getComponent() as FileInspector;
+			var stat = LocalFile.stat(path);
+			component.fileType = ext.toUpperCase();
+			component.type = FileInspector.Type.Image;
+			component.image = path;
+			component.setSize(stat.size);
+			component.setCreatedTime(stat.birthtime);
+			component.setModifiedTime(stat.mtime);
+		});
 	}
 
 	protected getNewFileName(targetPath: string, basename: string): string {

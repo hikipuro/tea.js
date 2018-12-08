@@ -6,8 +6,19 @@ import { Translator } from "../translate/Translator";
 	template: `
 		<div class="FileInspector">
 			<div class="title">File</div>
-			<div class="textContainer">
+			<div
+				v-if="type === Type.Text"
+				class="textContainer">
 				<textarea readonly wrap="off">{{ text }}</textarea>
+			</div>
+			<div
+				v-if="type === Type.Image"
+				class="imageContainer">
+				<img
+					ref="image"
+					:src="image"
+					@load="onLoadImage">
+				<div>Size: {{ width }}x{{ height }}</div>
 			</div>
 			<div class="size">{{ fileType }} - {{ size }}</div>
 			<div class="created">Created: {{ createdTime }}</div>
@@ -16,9 +27,14 @@ import { Translator } from "../translate/Translator";
 	`,
 	data: () => {
 		return {
+			Type: FileInspector.Type,
 			translator: {},
 			name: "",
+			type: 0,
 			text: "",
+			image: "",
+			width: 0,
+			height: 0,
 			fileType: "",
 			size: "",
 			createdTime: "",
@@ -29,7 +45,11 @@ import { Translator } from "../translate/Translator";
 export class FileInspector extends Vue {
 	translator: any;
 	name: string;
+	type: FileInspector.Type;
 	text: string;
+	image: string;
+	width: number;
+	height: number;
 	fileType: string;
 	size: string;
 	createdTime: string;
@@ -84,5 +104,19 @@ export class FileInspector extends Vue {
 			minute: "numeric"
 		};
 		return date.toLocaleString(undefined, options);
+	}
+
+	protected onLoadImage(e: Event): void {
+		var image = this.$refs.image as HTMLImageElement;
+		this.width = image.naturalWidth;
+		this.height = image.naturalHeight;
+	}
+}
+
+export module FileInspector {
+	export enum Type {
+		Null = 0,
+		Text,
+		Image
 	}
 }

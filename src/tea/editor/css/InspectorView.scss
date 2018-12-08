@@ -87,6 +87,17 @@
 					background-color: #eee;
 				}
 			}
+
+			> .imageContainer {
+				padding: 2px;
+				width: 100%;
+				box-sizing: border-box;
+
+				> img {
+					width: 100%;
+					object-fit: contain;
+				}
+			}
 		}
 
 		> div.SceneInspector {
