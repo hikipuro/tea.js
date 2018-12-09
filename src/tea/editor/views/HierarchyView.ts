@@ -134,13 +134,19 @@ export class HierarchyView extends Vue {
 		if (item == null) {
 			return;
 		}
-		if (item.tag == -1) {
-			this.openSceneInspector();
-		} else {
-			var inspectorView = this.command.editor.inspectorView;
-			inspectorView.command.updateObjectInspector();
-		}
-		this.$emit("select", item);
+		//this.$emit("select", item);
+		setTimeout(() => {
+			var item = treeView.selectedItem;
+			if (item == null) {
+				return;
+			}
+			if (item.tag == -1) {
+				this.openSceneInspector();
+			} else {
+				var inspectorView = this.command.editor.inspectorView;
+				inspectorView.command.updateObjectInspector();
+			}
+		}, 100);
 	}
 
 	protected onSelect(item: Editor.TreeViewItem): void {

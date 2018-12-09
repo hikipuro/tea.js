@@ -791,7 +791,10 @@ export class ProjectView extends Vue {
 		if (item == null) {
 			return;
 		}
-		this.onSelectFile(item);
+		setTimeout(() => {
+			var item = this.getSelectedFileItem();
+			this.onSelectFile(item);
+		}, 100);
 	}
 
 	protected onSelectFile(item: Editor.TreeViewItem): void {
