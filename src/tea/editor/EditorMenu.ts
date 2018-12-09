@@ -561,6 +561,10 @@ export class EditorMenu {
 				id: "Refresh",
 				label: translator.getText("Refresh")
 			},
+			{
+				id: "Convert",
+				label: "Convert"
+			},
 		];
 		if (process && process.platform) {
 			if (process.platform === "win32") {

@@ -18,12 +18,12 @@ import { EditorAssets } from "../EditorAssets";
 					ref="image"
 					:src="image"
 					@load="onLoadImage">
-				<div>Size: {{ width }}x{{ height }}</div>
+				<div>{{ translator.size }}: {{ width }}x{{ height }}</div>
 			</div>
-			<div class="size" v-if="type === Type.Folder">Folder</div>
+			<div class="size" v-if="type === Type.Folder">{{ translator.folder }}</div>
 			<div class="size" v-if="type !== Type.Folder">{{ fileType }} - {{ size }}</div>
-			<div class="created">Created: {{ createdTime }}</div>
-			<div class="modified">Modified: {{ modifiedTime }}</div>
+			<div class="created">{{ translator.created }}: {{ createdTime }}</div>
+			<div class="modified">{{ translator.modified }}: {{ modifiedTime }}</div>
 		</div>
 	`,
 	data: () => {
@@ -59,6 +59,11 @@ export class FileInspector extends Vue {
 	translate(): void {
 		var translator = Translator.getInstance();
 		translator.basePath = "FileInspector";
+		this.translator.created = translator.getText("Created");
+		this.translator.modified = translator.getText("Modified");
+		this.translator.folder = translator.getText("Folder");
+		this.translator.size = translator.getText("Size");
+		this.translator.bytes = translator.getText("Bytes");
 	}
 
 	setSize(size: number): void {
@@ -87,7 +92,7 @@ export class FileInspector extends Vue {
 
 	protected getSizeString(size: number): string {
 		var units = [
-			"bytes",
+			this.translator.bytes,
 			"KB",
 			"MB",
 			"GB",

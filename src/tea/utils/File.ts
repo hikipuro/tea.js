@@ -1,5 +1,5 @@
 export class File {
-	static extension(path: string): string {
+	static extname(path: string): string {
 		if (path == null || path === "") {
 			return "";
 		}
@@ -7,7 +7,7 @@ export class File {
 		if (index <= 0) {
 			return "";
 		}
-		return path.substr(index + 1);
+		return path.substr(index);
 	}
 
 	static basename(path: string): string {

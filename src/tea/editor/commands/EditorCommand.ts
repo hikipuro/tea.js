@@ -32,7 +32,8 @@ export class EditorCommand extends EventDispatcher {
 		var menu = EditorMenu.getMainMenu();
 		var fileMenu = menu.getMenuItemById("File");
 		if (fileMenu) {
-			fileMenu.submenu.items.forEach((item: Electron.MenuItem) => {
+			var items = fileMenu.submenu.items;
+			items.forEach((item: Electron.MenuItem) => {
 				if (item.id === "App/Quit") {
 					return;
 				}
@@ -50,7 +51,8 @@ export class EditorCommand extends EventDispatcher {
 		var menu = EditorMenu.getMainMenu();
 		var fileMenu = menu.getMenuItemById("File");
 		if (fileMenu) {
-			fileMenu.submenu.items.forEach((item: Electron.MenuItem) => {
+			var items = fileMenu.submenu.items;
+			items.forEach((item: Electron.MenuItem) => {
 				if (item.id === "App/Quit") {
 					return;
 				}

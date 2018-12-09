@@ -71,13 +71,11 @@ export class ObjectInspectorCommand {
 		var component = inspector._configComponent;
 		var index = object3d.getComponentIndex(component);
 		if (index === 0) {
-			var item = contextMenu.getMenuItemById("Move Up");
-			item.enabled = false;
+			contextMenu.disableItem("Move Up");
 		}
-		var count = object3d.getComponentCount();
+		var count = object3d.componentCount;
 		if (index + 1 >= count) {
-			var item = contextMenu.getMenuItemById("Move Down");
-			item.enabled = false;
+			contextMenu.disableItem("Move Down");
 		}
 		contextMenu.show();
 	}

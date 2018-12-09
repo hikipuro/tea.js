@@ -336,6 +336,10 @@ export class Object3D {
 		return path;
 	}
 
+	get componentCount(): number {
+		return this._components.length;
+	}
+
 	destroy(): void {
 		this.isDestroyed = true;
 		this._toDestroy = true;
@@ -479,10 +483,6 @@ export class Object3D {
 
 	getComponentIndex(component: Tea.Component): number {
 		return this._components.indexOf(component);
-	}
-
-	getComponentCount(): number {
-		return this._components.length;
 	}
 
 	swapComponents(index0: number, index1: number): void {

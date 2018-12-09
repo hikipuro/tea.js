@@ -173,6 +173,13 @@
 		"Gravity": "重力",
 		"AmbientLight": "環境光"
 	},
+	"FileInspector": {
+		"Created": "作成日",
+		"Modified": "変更日",
+		"Folder": "フォルダ",
+		"Size": "大きさ",
+		"Bytes": "バイト"
+	},
 	"Components": {
 		"AudioSource": {
 			"Title": "オーディオソース"

@@ -15,7 +15,8 @@ export class LocalFile {
 	}
 
 	static extname(path: string): string {
-		return nodePath.extname(path);
+		var ext = nodePath.extname(path);
+		return ext.toLowerCase();
 	}
 
 	static basename(path: string): string {

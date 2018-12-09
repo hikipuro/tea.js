@@ -359,11 +359,11 @@ export class HierarchyView extends Vue {
 			return;
 		}
 		filename = LocalFile.relative("assets", filename);
-		var ext = Tea.File.extension(filename);
+		var ext = LocalFile.extname(filename);
 		ext = ext.toLowerCase();
 		var app = editor.status.app;
 		switch (ext) {
-			case "js":
+			case ".js":
 				Tea.ScriptLoader.load(
 					app, filename,
 					(script: Tea.Script) => {
@@ -380,8 +380,8 @@ export class HierarchyView extends Vue {
 					}
 				);
 				break;
-			case "jpg":
-			case "png":
+			case ".jpg":
+			case ".png":
 				var selectedObject = this._command.getSelectedObject();
 				if (selectedObject == null) {
 					return;

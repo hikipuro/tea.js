@@ -9,6 +9,7 @@ import { FileInspector } from "./FileInspector";
 import { TreeView } from "../basic/TreeView";
 import { LocalDirectory } from "../LocalDirectory";
 import { LocalFile } from "../LocalFile";
+import { FileType } from "../FileType";
 
 class FileItemTag {
 	path: string;
@@ -204,7 +205,7 @@ export class ProjectView extends Vue {
 		});
 	}
 
-	showProjectViewMenu(): void {
+	showFolderListContextMenu(): void {
 		var contextMenu = EditorMenu.createProjectViewMenu(
 			this.onSelectFolderMenu
 		);
@@ -225,14 +226,18 @@ export class ProjectView extends Vue {
 		contextMenu.show();
 	}
 
-	showProjectViewFileMenu(): void {
+	showFileListContextMenu(): void {
 		var contextMenu = EditorMenu.createProjectViewFileMenu(
 			this.onSelectFileMenu
 		);
-		if (this.getSelectedFilePath() == null) {
+		var path = this.getSelectedFilePath();
+		console.log(LocalFile.extname(path));
+		if (path == null) {
 			contextMenu.disableItem("Open");
 			contextMenu.disableItem("Delete");
 			contextMenu.disableItem("Rename");
+		} else if (LocalFile.extname(path) !== ".obj") {
+			contextMenu.hideItem("Convert");
 		}
 		contextMenu.show();
 	}
@@ -424,18 +429,17 @@ export class ProjectView extends Vue {
 		}
 		var ext = LocalFile.extname(path);
 		if (ext === ".json") {
-			Tea.File.readText(path, (err: any, data: string) => {
-				if (err) {
-					console.error(err);
-					return;
-				}
-				var json = JSON.parse(data);
-				if (json._type === "Scene") {
-					editor.command.loadScene(path);
-				} else {
-					Electron.shell.openItem(path);
-				}
-			});
+			var data = LocalFile.readText(path);
+			if (data == null) {
+				console.error("error");
+				return;
+			}
+			var json = JSON.parse(data);
+			if (json._type === "Scene") {
+				editor.command.loadScene(path);
+			} else {
+				Electron.shell.openItem(path);
+			}
 			return;
 		}
 		Electron.shell.openItem(path);
@@ -469,25 +473,25 @@ export class ProjectView extends Vue {
 			this.openDefaultFileInspector(path, "");
 			return;
 		}
-		var ext = Tea.File.extension(path);
+		var ext = LocalFile.extname(path);
 		ext = ext.toLowerCase();
 		switch (ext) {
-			case "json":
-			case "html":
-			case "css":
-			case "js":
-			case "ts":
-			case "md":
-			case "txt":
-			case "obj":
-			case "mtl":
+			case ".json":
+			case ".html":
+			case ".css":
+			case ".js":
+			case ".ts":
+			case ".md":
+			case ".txt":
+			case ".obj":
+			case ".mtl":
 				this.openTextFileInspector(path, ext);
 				break;
-			case "jpg":
-			case "png":
-			case "gif":
-			case "bmp":
-			case "svg":
+			case ".jpg":
+			case ".png":
+			case ".gif":
+			case ".bmp":
+			case ".svg":
 				this.openImageFileInspector(path, ext);
 				break;
 			default:
@@ -513,7 +517,7 @@ export class ProjectView extends Vue {
 		inspectorView.$nextTick(() => {
 			var component = inspectorView.getComponent() as FileInspector;
 			var stat = LocalFile.stat(path);
-			component.fileType = ext.toUpperCase();
+			component.fileType = FileType.getFileTypeString(ext);
 			component.type = FileInspector.Type.Text;
 			component.text = data;
 			component.setSize(stat.size);
@@ -531,7 +535,7 @@ export class ProjectView extends Vue {
 		inspectorView.$nextTick(() => {
 			var component = inspectorView.getComponent() as FileInspector;
 			var stat = LocalFile.stat(path);
-			component.fileType = ext.toUpperCase();
+			component.fileType = FileType.getFileTypeString(ext);
 			component.type = FileInspector.Type.Image;
 			component.image = path;
 			component.setSize(stat.size);
@@ -549,7 +553,7 @@ export class ProjectView extends Vue {
 		inspectorView.$nextTick(() => {
 			var component = inspectorView.getComponent() as FileInspector;
 			var stat = LocalFile.stat(path);
-			component.fileType = ext.toUpperCase();
+			component.fileType = FileType.getFileTypeString(ext);
 			component.type = FileInspector.Type.Default;
 			if (LocalFile.isFolder(path)) {
 				component.type = FileInspector.Type.Folder;
@@ -760,7 +764,7 @@ export class ProjectView extends Vue {
 
 	protected onFolderListMenu(e: MouseEvent): void {
 		e.preventDefault();
-		this.showProjectViewMenu();
+		this.showFolderListContextMenu();
 	}
 
 	protected onRenameFolder(item: Editor.TreeViewItem, value: string): void {
@@ -830,7 +834,7 @@ export class ProjectView extends Vue {
 
 	protected onFileListMenu(e: MouseEvent): void {
 		e.preventDefault();
-		this.showProjectViewFileMenu();
+		this.showFileListContextMenu();
 	}
 
 	protected onBeforeRenameFile(item: Editor.TreeViewItem, rename: HTMLInputElement): void {

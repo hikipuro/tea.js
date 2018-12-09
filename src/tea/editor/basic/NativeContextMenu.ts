@@ -46,6 +46,16 @@ export class NativeContextMenu extends EventDispatcher {
 		return this.menu.getMenuItemById(id);
 	}
 
+	showItem(id: string): void {
+		var item = this.getMenuItemById(id);
+		item.visible = true;
+	}
+
+	hideItem(id: string): void {
+		var item = this.getMenuItemById(id);
+		item.visible = false;
+	}
+
 	enableItem(id: string): void {
 		var item = this.getMenuItemById(id);
 		this.enableSubmenu(item, true);

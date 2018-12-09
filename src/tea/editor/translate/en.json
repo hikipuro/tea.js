@@ -182,6 +182,13 @@
 		"Gravity": "Gravity",
 		"AmbientLight": "Ambient Light"
 	},
+	"FileInspector": {
+		"Created": "Created",
+		"Modified": "Modified",
+		"Folder": "Folder",
+		"Size": "Size",
+		"Bytes": "bytes"
+	},
 	"Components": {
 		"AudioSource": {
 			"Title": "Audio Source"
