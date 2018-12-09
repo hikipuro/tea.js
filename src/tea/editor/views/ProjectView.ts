@@ -374,6 +374,9 @@ export class ProjectView extends Vue {
 	}
 
 	protected setFolderListChildItems(item: Editor.TreeViewItem): void {
+		if (item == null) {
+			return;
+		}
 		var i = item.model;
 		if (i == null || i.children.length > 0) {
 			return;
@@ -840,6 +843,23 @@ export class ProjectView extends Vue {
 			return;
 		}
 		var path = this.getSelectedFilePath();
+		if (LocalFile.isFolder(path)) {
+			var item = this.folderList.findItemByTag(path);
+			if (item != null) {
+				this.openFile(path);
+				return;
+			}
+			item = this.getSelectedFolderItem();
+			if (item == null) {
+				return;
+			}
+			item.model.children = [];
+			this.setFolderListChildItems(item);
+			this.$nextTick(() => {
+				this.openFile(path);
+			});
+			return;
+		}
 		this.openFile(path);
 	}
 
