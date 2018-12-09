@@ -102,6 +102,7 @@ export * from "./objects/Skybox";
 export * from "./objects/Texture";
 
 export * from "./parsers/DaeReader";
+export * from "./parsers/MtlReader";
 export * from "./parsers/ObjReader";
 
 export * from "./particles/Particle";

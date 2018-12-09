@@ -1,198 +1,6 @@
 import * as Tea from "../Tea";
 
-class MaterialReaderContext {
-	url: string;
-	callback: (materials: any) => void;
-	materials: any;
-	textureCount: number;
-	textureLoaded: number;
-
-	constructor() {
-		this.textureCount = 0;
-		this.textureLoaded = 0;
-	}
-
-	get isCompleted(): boolean {
-		if (this.textureLoaded >= this.textureCount) {
-			return true;
-		}
-		return false;
-	}
-
-	complete(): void {
-		this.callback(this.materials);
-	}
-}
-
-class MaterialReader {
-	constructor() {
-	}
-
-	readFile(url: string, callback: (material: any) => void): void {
-		if (callback == null) {
-			return;
-		}
-		var context = new MaterialReaderContext();
-		context.url = url;
-		context.callback = callback;
-
-		Tea.File.readText(url, (err, data) => {
-			if (err) {
-				callback(null);
-				return;
-			}
-			this.read(context, data);
-		});
-	}
-
-	protected read(context: MaterialReaderContext, data: string): void {
-		var materials: any = {};
-		var material: any = null;
-		this.forEachLine(data, (text: string, index: number) => {
-			var params = text.trim().split(/\s+/);
-			switch (params[0]) {
-				case "#":
-					// comments
-					break;
-				case "newmtl":
-					// new material
-					material = this.createMaterial();
-					materials[params[1]] = material;
-					break;
-				case "Ka": // ambient
-				case "Kd": // diffuse
-				case "Ks": // specular
-				case "Ke": // ?
-				case "Tf": // ?
-					material[params[0]] = this.parseColor(params);
-					break;
-				case "Ns": // ?
-				case "Ni": // ?
-				case "Tr": // ?
-				case "d":  // dissolve
-					material[params[0]] = this.parseFloat(params);
-					break;
-				case "illum":
-					// illumination
-					material.illum = this.parseFloat(params);
-					break;
-				case "map_Ka":   // texture
-				case "map_Kd":   // 
-				case "map_Ks":   // 
-				case "map_Ns":   // 
-				case "map_d":    // 
-				case "map_bump": // 
-				case "bump":     // 
-				case "disp":     // 
-				case "decal":    // 
-					var path = "";
-					if (params.length <= 2) {
-						path = this.getUrl(context.url, params[1]);
-					} else {
-						path = this.getUrl(context.url, params[params.length - 1]);
-					}
-					//console.log("path", path);
-					if (material[params[0]] == null) {
-						context.textureCount++;
-						material[params[0]] = path;
-					}
-					//this.readImage(material, params[0], path);
-					break;
-			}
-		});
-
-		context.materials = materials;
-		if (context.isCompleted) {
-			//console.log("complete");
-			context.complete();
-			return;
-		}
-
-		for (var key in materials) {
-			var m = materials[key];
-			for (var k in m) {
-				if (k.indexOf("map_") < 0) {
-					continue;
-				}
-				var path = m[k];
-				if (path != null && path !== "") {
-					this.readImage(context, m, k, path);
-				}
-			}
-		}
-	}
-
-	protected readImage(context: MaterialReaderContext, material: any, name: string, path: string): void {
-		Tea.File.readImage(path, (err, image) => {
-			if (err == null) {
-				material[name] = image;
-			}
-			context.textureLoaded++;
-			//console.log("context.textureLoaded", context.textureLoaded, context.textureCount);
-			if (context.isCompleted) {
-				//console.log("complete");
-				context.complete();
-			}
-		});
-	}
-
-
-	protected createMaterial(): any {
-		return {
-			Ka: null,
-			Kd: null,
-			Ks: null,
-			Ke: null,
-			Ns: null,
-			Ni: null,
-			Tr: null,
-			Ts: null,
-			d: null,
-			illum: null,
-			map_Ka: null,
-			map_Kd: null,
-			map_Ks: null,
-			map_Ns: null,
-			map_d: null,
-			map_bump: null,
-			bump: null,
-			disp: null,
-			decal: null
-		};
-	}
-
-	protected forEachLine(data: string, callback: (text: string, index: number) => void): void {
-		var lines = data.split(/\r\n|\r|\n/);
-		var length = lines.length;
-		for (var i = 0; i < length; i++) {
-			callback(lines[i], i);
-		}
-	}
-
-	protected getUrl(base: string, filename: string): string {
-		var url = new URL(base, location.toString());
-		var path = url.pathname;
-		path = path.substr(0, path.lastIndexOf("/") + 1);
-		return path + filename;
-	}
-
-	protected parseFloat(params: Array<string>): number | null {
-		var value = parseFloat(params[1]);
-		if (isNaN(value)) {
-			return null;
-		}
-		return value;
-	}
-
-	protected parseColor(params: Array<string>): Tea.Color {
-		var r = parseFloat(params[1]);
-		var g = parseFloat(params[2]);
-		var b = parseFloat(params[3]);
-		return new Tea.Color(r, g, b, 1);
-	}
-}
-
-class ObjReaderContext {
+class Context {
 	url: string;
 	callback: (obj: any) => void;
 	obj: any;
@@ -221,6 +29,116 @@ class ObjReaderContext {
 	}
 }
 
+class ObjIndex {
+	triangle: number;
+	uv: number;
+	normal: number;
+
+	constructor() {
+		this.triangle = 0;
+		this.uv = 0;
+		this.normal = 0;
+	}
+}
+
+class ObjIndices extends Array<ObjIndex> {
+}
+
+class ObjFile {
+	v: Array<Tea.Vector3>;
+	vn: Array<Tea.Vector3>;
+	vt: Array<Tea.Vector2>;
+	f: Array<ObjIndices>;
+	g: any;
+	materials: any;
+	usemtl: string;
+
+	constructor() {
+		this.v = [];
+		this.vn = [];
+		this.vt = [];
+		this.f = [];
+		this.g = null;
+		this.materials = null;
+		this.usemtl = "";
+	}
+
+	toMesh(): Tea.Mesh {
+		var vf = this.f;
+		var vt = this.vt;
+		var vn = this.vn;
+		var v = this.v;
+
+		var vertices: Array<Tea.Vector3> = [];
+		var triangles: Array<Tea.Vector3> = [];
+		var normals: Array<Tea.Vector3> = [];
+		if (vn.length > 0) {
+			normals = new Array(vf.length);
+		}
+		var uv: Array<Tea.Vector2> = [];
+		if (vt.length > 0) {
+			uv = new Array(vf.length);
+		}
+		var length = vf.length;
+		for (var i = 0; i < length; i++) {
+			var f = vf[i];
+			var i0 = f[0].triangle;
+			var i1 = f[1].triangle;
+			var i2 = f[2].triangle;
+			var i3 = null;
+			if (f[3] != null) {
+				i3 = f[3].triangle;
+			}
+			switch (f.length) {
+				case 3:
+					triangles.push(new Tea.Vector3(i0, i1, i2));
+					if (vt.length > 0) {
+						uv[i0] = vt[f[0].uv];
+						uv[i1] = vt[f[1].uv];
+						uv[i2] = vt[f[2].uv];
+					}
+					if (vn.length > 0) {
+						normals[i0] = vn[f[0].normal];
+						normals[i1] = vn[f[1].normal];
+						normals[i2] = vn[f[2].normal];
+					}
+					break;
+				case 4:
+					triangles.push(new Tea.Vector3(i0, i1, i2));
+					triangles.push(new Tea.Vector3(i0, i2, i3));
+					if (vt.length > 0) {
+						uv[i0] = vt[f[0].uv];
+						uv[i1] = vt[f[1].uv];
+						uv[i2] = vt[f[2].uv];
+						uv[i3] = vt[f[3].uv];
+					}
+					if (vn.length > 0) {
+						normals[i0] = vn[f[0].normal];
+						normals[i1] = vn[f[1].normal];
+						normals[i2] = vn[f[2].normal];
+						normals[i3] = vn[f[3].normal];
+					}
+					break;
+				default:
+					//console.log("5");
+					break;
+			}
+		}
+		var mesh = new Tea.Mesh();
+		mesh.vertices = v;
+		//mesh.vertices = vertices;
+		mesh.triangles = triangles;
+		mesh.normals = normals;
+		mesh.uv = uv;
+		if (vn.length <= 0) {
+			mesh.calculateNormals();
+		}
+		mesh.calculateBounds();
+		mesh.uploadMeshData();
+		return mesh;
+	}
+}
+
 export class ObjReader {
 	protected app: Tea.App;
 
@@ -228,11 +146,88 @@ export class ObjReader {
 		this.app = app;
 	}
 
+	static convertToMesh(url: string, callback: (mesh: Tea.Mesh) => void): void {
+		if (callback == null) {
+			return;
+		}
+		var context = new Context();
+		context.url = url;
+
+		Tea.File.readText(url, (err: any, data: string) => {
+			if (err) {
+				callback(null);
+				return;
+			}
+			ObjReader.parseObj(data, (objFile: ObjFile) => {
+				callback(objFile.toMesh());
+			});
+		});
+	}
+
+	protected static parseObj(data: string, callback: (objFile: ObjFile) => void): void {
+		var objFile = new ObjFile();
+		ObjReader.forEachLine(data, (text: string, index: number) => {
+			var params = text.trim().split(/\s+/);
+			switch (params[0]) {
+				case "#":
+					// comments
+					break;
+				case "mtllib":
+					// material
+					break;
+				case "usemtl":
+					objFile.usemtl = params[1];
+					break;
+				case "g":
+					// group
+					objFile.g = params[1];
+					break;
+				case "v":
+					// vertices
+					var v = this.parseVector3(params);
+					objFile.v.push(v);
+					break;
+				case "f":
+					// triangles
+					var f = this.parseF(
+						params,
+						objFile.v.length,
+						objFile.vt.length,
+						objFile.vn.length
+					);
+					objFile.f.push(f);
+					break;
+				case "vn":
+					// normals
+					var vn = this.parseVN(params);
+					objFile.vn.push(vn);
+					break;
+				case "vt":
+					// texture coord
+					var vt = this.parseVT(params);
+					objFile.vt.push(vt);
+					break;
+				case "vp":
+					// parameter space vertices
+					break;
+				case "s":
+					// smooth shading
+					break;
+				case "l":
+					// line element
+					break;
+			}
+		}, () => {
+			console.log("read complete");
+			callback(objFile);
+		});
+	}
+
 	readFile(url: string, callback: (object3d: Tea.Object3D) => void): void {
 		if (callback == null) {
 			return;
 		}
-		var context = new ObjReaderContext();
+		var context = new Context();
 		context.url = url;
 		context.callback = (obj) => {
 			var object3d = this.createObject3D(context);
@@ -248,7 +243,7 @@ export class ObjReader {
 		});
 	}
 
-	protected read(context: ObjReaderContext, data: string): void {
+	protected read(context: Context, data: string): void {
 		var obj = {
 			v: [],
 			vn: [],
@@ -258,7 +253,7 @@ export class ObjReader {
 			materials: null,
 			usemtl: ""
 		}
-		this.forEachLine(data, (text: string, index: number) => {
+		ObjReader.forEachLine(data, (text: string, index: number) => {
 			var params = text.trim().split(/\s+/);
 			switch (params[0]) {
 				case "#":
@@ -268,7 +263,7 @@ export class ObjReader {
 					// material
 					context.materialCount++;
 					var path = this.getUrl(context.url, params[1]);
-					var reader = new MaterialReader();
+					var reader = new Tea.MtlReader();
 					reader.readFile(path, (material) => {
 						obj.materials = material;
 						context.materialLoaded++;
@@ -286,12 +281,12 @@ export class ObjReader {
 					break;
 				case "v":
 					// vertices
-					var v = this.parseVector3(params);
+					var v = ObjReader.parseVector3(params);
 					obj.v.push(v);
 					break;
 				case "f":
 					// triangles
-					var f = this.parseF(
+					var f = ObjReader.parseF(
 						params,
 						obj.v.length,
 						obj.vt.length,
@@ -301,12 +296,12 @@ export class ObjReader {
 					break;
 				case "vn":
 					// normals
-					var vn = this.parseVN(params);
+					var vn = ObjReader.parseVN(params);
 					obj.vn.push(vn);
 					break;
 				case "vt":
 					// texture coord
-					var vt = this.parseVT(params);
+					var vt = ObjReader.parseVT(params);
 					obj.vt.push(vt);
 					break;
 				case "vp":
@@ -319,15 +314,15 @@ export class ObjReader {
 					// line element
 					break;
 			}
+		}, () => {
+			context.obj = obj;
+			if (context.isCompleted) {
+				context.complete();
+			}
 		});
-
-		context.obj = obj;
-		if (context.isCompleted) {
-			context.complete();
-		}
 	}
 
-	protected createObject3D(context: ObjReaderContext): Tea.Object3D {
+	protected createObject3D(context: Context): Tea.Object3D {
 		//console.log("createObject3D");
 		var obj = context.obj;
 		var vf = obj.f;
@@ -537,12 +532,37 @@ export class ObjReader {
 		return object3d;
 	}
 
-	protected forEachLine(data: string, callback: (text: string, index: number) => void): void {
-		var lines = data.split(/\r\n|\r|\n/);
-		var length = lines.length;
-		for (var i = 0; i < length; i++) {
-			callback(lines[i], i);
+	protected static forEachLine(
+		data: string,
+		callback: (text: string, index: number) => void,
+		complete: () => void,
+		iterations: number = 3000): void
+	{
+		if (data == null || data.length <= 0) {
+			return;
 		}
+		var lines = data.split(/\r\n|\r|\n/);
+		var call = (lines: Array<string>, start: number, count: number) => {
+			var length = start + count;
+			var lineCount = lines.length;
+			if (length > lineCount) {
+				length = lineCount;
+			}
+			var i = start;
+			for (; i < length; i++) {
+				callback(lines[i], i);
+			}
+			if (i >= lineCount) {
+				complete();
+			} else {
+				setTimeout(() => {
+					call(lines, start + count, count);
+				}, 0);
+			}
+		}
+		setTimeout(() => {
+			call(lines, 0, iterations);
+		}, 0);
 	}
 
 	protected getUrl(base: string, filename: string): string {
@@ -552,10 +572,10 @@ export class ObjReader {
 		return path + filename;
 	}
 
-	protected parseVector3(params: Array<string>): Tea.Vector3 {
-		var x = parseFloat(params[1]);
-		var y = parseFloat(params[2]);
-		var z = parseFloat(params[3]);
+	protected static parseVector3(params: Array<string>): Tea.Vector3 {
+		var x = this.parseFloat(params[1]);
+		var y = this.parseFloat(params[2]);
+		var z = this.parseFloat(params[3]);
 		/*
 		var w = parseFloat(params[4]);
 		if (isNaN(w) === false && w != 1) {
@@ -568,8 +588,8 @@ export class ObjReader {
 		return new Tea.Vector3(x, y, z);
 	}
 
-	protected parseF(params: Array<string>, vLength: number, vtLength: number, vnLength: number): any {
-		var list = [];
+	protected static parseF(params: Array<string>, vLength: number, vtLength: number, vnLength: number): ObjIndices {
+		var list: ObjIndices = [];
 		var length = params.length;
 		for (var i = 1; i < length; i++) {
 			if (params[i] == "") {
@@ -597,17 +617,17 @@ export class ObjReader {
 		return list;
 	}
 
-	protected parseVN(params: Array<string>): Tea.Vector3 {
-		var x = parseFloat(params[1]);
-		var y = parseFloat(params[2]);
-		var z = parseFloat(params[3]);
+	protected static parseVN(params: Array<string>): Tea.Vector3 {
+		var x = this.parseFloat(params[1]);
+		var y = this.parseFloat(params[2]);
+		var z = this.parseFloat(params[3]);
 		var normal = new Tea.Vector3(x, y, z);
 		return normal.normalized;
 	}
 
-	protected parseVT(params: Array<string>): Tea.Vector2 {
-		var x = parseFloat(params[1]);
-		var y = parseFloat(params[2]);
+	protected static parseVT(params: Array<string>): Tea.Vector2 {
+		var x = this.parseFloat(params[1]);
+		var y = this.parseFloat(params[2]);
 		/*
 		var w = parseFloat(params[3]);
 		if (isNaN(w) === false && w != 0) {
@@ -619,7 +639,15 @@ export class ObjReader {
 		return new Tea.Vector2(x, 1 - y);
 	}
 
-	protected parseInt(s: string): number {
+	protected static parseFloat(s: string): number {
+		var value = parseFloat(s);
+		if (isNaN(value)) {
+			return 0.0;
+		}
+		return value;
+	}
+
+	protected static parseInt(s: string): number {
 		var value = parseInt(s);
 		if (isNaN(value)) {
 			return 0;

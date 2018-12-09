@@ -8,6 +8,7 @@ import { TreeViewItem } from "../basic/TreeViewItem";
 import { HierarchyViewCommand } from "../commands/HierarchyViewCommand";
 import { SceneInspector } from "../views/SceneInspector";
 import { LocalFile } from "../LocalFile";
+import { FileItemTag } from "./ProjectView";
 
 @Component({
 	template: `
@@ -356,7 +357,8 @@ export class HierarchyView extends Vue {
 			return;
 		}
 		var currentPath = LocalFile.resolve(".");
-		var filename = dragSource.tag as string;
+		var tag = dragSource.tag as FileItemTag;
+		var filename = tag.path;
 		if (filename.indexOf(currentPath) !== 0) {
 			return;
 		}
@@ -364,9 +366,8 @@ export class HierarchyView extends Vue {
 		if (filename.indexOf("assets") !== 0) {
 			return;
 		}
-		filename = LocalFile.relative("assets", filename);
+		//filename = LocalFile.relative("assets", filename);
 		var ext = LocalFile.extname(filename);
-		ext = ext.toLowerCase();
 		var app = editor.status.app;
 		switch (ext) {
 			case ".js":
@@ -388,6 +389,7 @@ export class HierarchyView extends Vue {
 				break;
 			case ".jpg":
 			case ".png":
+			case ".svg":
 				var selectedObject = this._command.getSelectedObject();
 				if (selectedObject == null) {
 					return;
@@ -396,8 +398,8 @@ export class HierarchyView extends Vue {
 				if (renderer == null) {
 					return;
 				}
-				if (LocalFile.exists(filename)) {
-					renderer.material.mainTexture.load(filename, (err, url) => {
+				if (LocalFile.exists(tag.path)) {
+					renderer.material.mainTexture.load(tag.path, (err: string, url: string) => {
 						if (err) {
 							return;
 						}

@@ -11,7 +11,7 @@ import { LocalDirectory } from "../LocalDirectory";
 import { LocalFile } from "../LocalFile";
 import { FileType } from "../FileType";
 
-class FileItemTag {
+export class FileItemTag {
 	path: string;
 	isFolder: boolean;
 
@@ -231,7 +231,6 @@ export class ProjectView extends Vue {
 			this.onSelectFileMenu
 		);
 		var path = this.getSelectedFilePath();
-		console.log(LocalFile.extname(path));
 		if (path == null) {
 			contextMenu.disableItem("Open");
 			contextMenu.disableItem("Delete");
@@ -516,6 +515,9 @@ export class ProjectView extends Vue {
 		inspectorView.show();
 		inspectorView.$nextTick(() => {
 			var component = inspectorView.getComponent() as FileInspector;
+			if (component == null) {
+				return;
+			}
 			var stat = LocalFile.stat(path);
 			component.fileType = FileType.getFileTypeString(ext);
 			component.type = FileInspector.Type.Text;
@@ -534,6 +536,9 @@ export class ProjectView extends Vue {
 		inspectorView.show();
 		inspectorView.$nextTick(() => {
 			var component = inspectorView.getComponent() as FileInspector;
+			if (component == null) {
+				return;
+			}
 			var stat = LocalFile.stat(path);
 			component.fileType = FileType.getFileTypeString(ext);
 			component.type = FileInspector.Type.Image;
@@ -552,6 +557,9 @@ export class ProjectView extends Vue {
 		inspectorView.show();
 		inspectorView.$nextTick(() => {
 			var component = inspectorView.getComponent() as FileInspector;
+			if (component == null) {
+				return;
+			}
 			var stat = LocalFile.stat(path);
 			component.fileType = FileType.getFileTypeString(ext);
 			component.type = FileInspector.Type.Default;
@@ -1017,6 +1025,35 @@ export class ProjectView extends Vue {
 				break;
 			case "Refresh":
 				this.updateFileList();
+				break;
+			case "Convert":
+				console.log("select convert")
+				Tea.ObjReader.convertToMesh(path, (mesh: Tea.Mesh) => {
+					if (mesh == null) {
+						return;
+					}
+					var editor = this.$root as Editor;
+					var app = editor.status.app;
+					var scene = editor.status.scene;
+					var object3d = new Tea.Object3D(app);
+					object3d.name = LocalFile.basename(path);
+					var size = mesh.bounds.size;
+					var scale = 1.0 / Math.max(size[0], size[1], size[2]);
+					object3d.localScale.set(scale, scale, scale);
+					var shader = new Tea.Shader(app);
+					shader.attach(
+						Tea.ShaderSources.defaultVS,
+						Tea.ShaderSources.defaultFS
+					);
+					var renderer = object3d.addComponent(Tea.MeshRenderer);
+					//renderer.wireframe = true;
+					renderer.material = Tea.Material.getDefault(app);
+					renderer.material.shader = shader;
+					var meshFilter = object3d.addComponent(Tea.MeshFilter);
+					meshFilter.mesh = mesh;
+					scene.addChild(object3d);
+					//console.log(mesh);
+				});
 				break;
 		}
 	}

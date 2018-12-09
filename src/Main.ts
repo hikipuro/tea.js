@@ -51,6 +51,7 @@ export class Main {
 		editor.setApp(app);
 		app.status.isEditor = true;
 		app.isEditing = true;
+		app.enableUint32Index();
 		app.width = app.canvas.parentElement.clientWidth;
 		app.height = app.canvas.parentElement.clientHeight;
 

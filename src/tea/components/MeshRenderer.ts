@@ -25,17 +25,21 @@ export class MeshRenderer extends Renderer {
 		if (this._meshFilter.mesh == null) {
 			return null;
 		}
+		var position = this.object3d.position;
+		var rotation = this.object3d.rotation;
+		var scale = this.object3d.scale;
+
 		this._bounds.copy(this._meshFilter.mesh.bounds);
 		var bounds = this._bounds;
-		bounds.center.add$(this.object3d.position);
+		bounds.center.scale$(scale);
+		bounds.center.add$(position);
 		
-		var rotation = this.object3d.rotation;
 		bounds.extents.applyQuaternion(rotation);
 		var extents = bounds.extents;
 		extents[0] = Math.abs(extents[0]);
 		extents[1] = Math.abs(extents[1]);
 		extents[2] = Math.abs(extents[2]);
-		bounds.extents.scale$(this.object3d.scale);
+		bounds.extents.scale$(scale);
 		return bounds;
 	}
 
