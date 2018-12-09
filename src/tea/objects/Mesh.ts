@@ -7,6 +7,7 @@ export class Mesh {
 	uv: Array<Tea.Vector2>;
 	colors: Array<Tea.Color>;
 
+	name: string;
 	bounds: Tea.Bounds;
 	isModified: boolean;
 	isPrimitive: boolean;
@@ -95,6 +96,7 @@ export class Mesh {
 		this.normals = [];
 		this.uv = [];
 		this.colors = [];
+		this.name = "";
 		this.bounds = new Tea.Bounds();
 		this.isModified = true;
 		this.isPrimitive = false;

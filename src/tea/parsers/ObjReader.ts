@@ -44,12 +44,32 @@ class ObjIndex {
 class ObjIndices extends Array<ObjIndex> {
 }
 
+class ObjF {
+	group: string;
+	material: string;
+	indices: Array<ObjIndices>;
+
+	constructor() {
+		this.group = "";
+		this.material = "";
+		this.indices = [];
+	}
+
+	get length(): number {
+		return this.indices.length;
+	}
+
+	push(item: ObjIndices): number {
+		return this.indices.push(item);
+	}
+}
+
 class ObjFile {
 	v: Array<Tea.Vector3>;
 	vn: Array<Tea.Vector3>;
 	vt: Array<Tea.Vector2>;
-	f: Array<ObjIndices>;
-	g: any;
+	f: Array<ObjF>;
+	//g: any;
 	materials: any;
 	usemtl: string;
 
@@ -58,84 +78,125 @@ class ObjFile {
 		this.vn = [];
 		this.vt = [];
 		this.f = [];
-		this.g = null;
+		//this.g = null;
 		this.materials = null;
 		this.usemtl = "";
 	}
 
-	toMesh(): Tea.Mesh {
-		var vf = this.f;
+	addIndices(): ObjF {
+		var indices = new ObjF();
+		this.f.push(indices);
+		return indices;
+	}
+
+	createIndexList(fIndex: number): Object {
+		var hash = {};
+		var f = this.f[fIndex];
+		var length = f.indices.length;
+		var count = 0;
+		for (var i = 0; i < length; i++) {
+			var indices = f.indices[i];
+			for (var n = 0; n < indices.length; n++) {
+				var index = indices[n].triangle;
+				if (hash[index] != null) {
+					continue;
+				}
+				hash[index] = count;
+				count++;
+			}
+		}
+		return hash;
+	}
+
+	toMeshes(): Array<Tea.Mesh> {
 		var vt = this.vt;
 		var vn = this.vn;
 		var v = this.v;
 
-		var vertices: Array<Tea.Vector3> = [];
-		var triangles: Array<Tea.Vector3> = [];
-		var normals: Array<Tea.Vector3> = [];
-		if (vn.length > 0) {
-			normals = new Array(vf.length);
-		}
-		var uv: Array<Tea.Vector2> = [];
-		if (vt.length > 0) {
-			uv = new Array(vf.length);
-		}
-		var length = vf.length;
-		for (var i = 0; i < length; i++) {
-			var f = vf[i];
-			var i0 = f[0].triangle;
-			var i1 = f[1].triangle;
-			var i2 = f[2].triangle;
-			var i3 = null;
-			if (f[3] != null) {
-				i3 = f[3].triangle;
+		var meshes: Array<Tea.Mesh> = [];
+		var fLength = this.f.length;
+		for (var n = 0; n < fLength; n++) {
+			var f = this.f[n];
+			var vertices: Array<Tea.Vector3> = null;
+			var triangles: Array<Tea.Vector3> = [];
+			var normals: Array<Tea.Vector3> = [];
+			var uv: Array<Tea.Vector2> = [];
+
+			var hash = this.createIndexList(n);
+			var keys = Object.keys(hash);
+			vertices = new Array(keys.length);
+			if (vn.length > 0) {
+				normals = new Array(keys.length);
 			}
-			switch (f.length) {
-				case 3:
-					triangles.push(new Tea.Vector3(i0, i1, i2));
-					if (vt.length > 0) {
-						uv[i0] = vt[f[0].uv];
-						uv[i1] = vt[f[1].uv];
-						uv[i2] = vt[f[2].uv];
-					}
-					if (vn.length > 0) {
-						normals[i0] = vn[f[0].normal];
-						normals[i1] = vn[f[1].normal];
-						normals[i2] = vn[f[2].normal];
-					}
-					break;
-				case 4:
-					triangles.push(new Tea.Vector3(i0, i1, i2));
-					triangles.push(new Tea.Vector3(i0, i2, i3));
-					if (vt.length > 0) {
-						uv[i0] = vt[f[0].uv];
-						uv[i1] = vt[f[1].uv];
-						uv[i2] = vt[f[2].uv];
-						uv[i3] = vt[f[3].uv];
-					}
-					if (vn.length > 0) {
-						normals[i0] = vn[f[0].normal];
-						normals[i1] = vn[f[1].normal];
-						normals[i2] = vn[f[2].normal];
-						normals[i3] = vn[f[3].normal];
-					}
-					break;
-				default:
-					//console.log("5");
-					break;
+			if (vt.length > 0) {
+				uv = new Array(keys.length);
 			}
+			keys.forEach((key: string) => {
+				var i = hash[key];
+				vertices[i] = v[parseInt(key)];
+			});
+
+			var length = f.length;
+			for (var i = 0; i < length; i++) {
+				var indices = f.indices[i];
+				var i0 = hash[indices[0].triangle];
+				var i1 = hash[indices[1].triangle];
+				var i2 = hash[indices[2].triangle];
+				var i3 = null;
+				if (indices[3] != null) {
+					i3 = hash[indices[3].triangle];
+				}
+				//console.log(i0, i1, i2, i3);
+				switch (indices.length) {
+					case 3:
+						triangles.push(new Tea.Vector3(i0, i1, i2));
+						if (vt.length > 0) {
+							uv[i0] = vt[indices[0].uv];
+							uv[i1] = vt[indices[1].uv];
+							uv[i2] = vt[indices[2].uv];
+						}
+						if (vn.length > 0) {
+							normals[i0] = vn[indices[0].normal];
+							normals[i1] = vn[indices[1].normal];
+							normals[i2] = vn[indices[2].normal];
+						}
+						break;
+					case 4:
+						triangles.push(new Tea.Vector3(i0, i1, i2));
+						triangles.push(new Tea.Vector3(i0, i2, i3));
+						if (vt.length > 0) {
+							uv[i0] = vt[indices[0].uv];
+							uv[i1] = vt[indices[1].uv];
+							uv[i2] = vt[indices[2].uv];
+							uv[i3] = vt[indices[3].uv];
+						}
+						if (vn.length > 0) {
+							normals[i0] = vn[indices[0].normal];
+							normals[i1] = vn[indices[1].normal];
+							normals[i2] = vn[indices[2].normal];
+							normals[i3] = vn[indices[3].normal];
+						}
+						break;
+					default:
+						console.log("parse error");
+						break;
+				}
+			}
+			var mesh = new Tea.Mesh();
+			mesh.vertices = vertices;
+			mesh.triangles = triangles;
+			mesh.normals = normals;
+			mesh.uv = uv;
+			if (vn.length <= 0) {
+				mesh.calculateNormals();
+			}
+			mesh.name = f.group;
+			mesh.calculateBounds();
+			mesh.uploadMeshData();
+			meshes.push(mesh);
+			//console.log("mesh", mesh.vertices.length, mesh.triangles.length);
 		}
-		var mesh = new Tea.Mesh();
-		mesh.vertices = v;
-		//mesh.vertices = vertices;
-		mesh.triangles = triangles;
-		mesh.normals = normals;
-		mesh.uv = uv;
-		if (vn.length <= 0) {
-			mesh.calculateNormals();
-		}
-		mesh.calculateBounds();
-		mesh.uploadMeshData();
-		return mesh;
+		return meshes;
 	}
 }
 
@@ -146,7 +207,7 @@ export class ObjReader {
 		this.app = app;
 	}
 
-	static convertToMesh(url: string, callback: (mesh: Tea.Mesh) => void): void {
+	static convertToMeshes(url: string, callback: (meshes: Array<Tea.Mesh>) => void): void {
 		if (callback == null) {
 			return;
 		}
@@ -159,13 +220,14 @@ export class ObjReader {
 				return;
 			}
 			ObjReader.parseObj(data, (objFile: ObjFile) => {
-				callback(objFile.toMesh());
+				callback(objFile.toMeshes());
 			});
 		});
 	}
 
 	protected static parseObj(data: string, callback: (objFile: ObjFile) => void): void {
 		var objFile = new ObjFile();
+		var currentF: ObjF = null;
 		ObjReader.forEachLine(data, (text: string, index: number) => {
 			var params = text.trim().split(/\s+/);
 			switch (params[0]) {
@@ -176,11 +238,14 @@ export class ObjReader {
 					// material
 					break;
 				case "usemtl":
-					objFile.usemtl = params[1];
+					if (currentF) {
+						currentF.material = params[1];
+					}
 					break;
 				case "g":
 					// group
-					objFile.g = params[1];
+					currentF = objFile.addIndices();
+					currentF.group = params[1];
 					break;
 				case "v":
 					// vertices
@@ -189,13 +254,15 @@ export class ObjReader {
 					break;
 				case "f":
 					// triangles
-					var f = this.parseF(
-						params,
-						objFile.v.length,
-						objFile.vt.length,
-						objFile.vn.length
-					);
-					objFile.f.push(f);
+					if (currentF) {
+						var f = this.parseF(
+							params,
+							objFile.v.length,
+							objFile.vt.length,
+							objFile.vn.length
+						);
+						currentF.push(f);
+					}
 					break;
 				case "vn":
 					// normals
@@ -218,7 +285,6 @@ export class ObjReader {
 					break;
 			}
 		}, () => {
-			console.log("read complete");
 			callback(objFile);
 		});
 	}

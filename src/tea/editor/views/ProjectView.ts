@@ -1028,8 +1028,9 @@ export class ProjectView extends Vue {
 				break;
 			case "Convert":
 				console.log("select convert")
-				Tea.ObjReader.convertToMesh(path, (mesh: Tea.Mesh) => {
-					if (mesh == null) {
+				Tea.ObjReader.convertToMeshes(path, (meshes: Array<Tea.Mesh>) => {
+					//console.log("convertToMeshes", meshes.length);
+					if (meshes == null || meshes.length <= 0) {
 						return;
 					}
 					var editor = this.$root as Editor;
@@ -1037,24 +1038,36 @@ export class ProjectView extends Vue {
 					var scene = editor.status.scene;
 					var object3d = new Tea.Object3D(app);
 					object3d.name = LocalFile.basename(path);
-					var size = mesh.bounds.size;
+					for (var i = 0; i < meshes.length; i++) {
+						var mesh = meshes[i];
+						var name = mesh.name;
+						var child = this.createMeshObject(app, name, mesh);
+						object3d.addChild(child);
+					}
+					var size = meshes[0].bounds.size;
 					var scale = 1.0 / Math.max(size[0], size[1], size[2]);
 					object3d.localScale.set(scale, scale, scale);
-					var shader = new Tea.Shader(app);
-					shader.attach(
-						Tea.ShaderSources.defaultVS,
-						Tea.ShaderSources.defaultFS
-					);
-					var renderer = object3d.addComponent(Tea.MeshRenderer);
-					//renderer.wireframe = true;
-					renderer.material = Tea.Material.getDefault(app);
-					renderer.material.shader = shader;
-					var meshFilter = object3d.addComponent(Tea.MeshFilter);
-					meshFilter.mesh = mesh;
 					scene.addChild(object3d);
 					//console.log(mesh);
 				});
 				break;
 		}
+	}
+
+	protected createMeshObject(app: Tea.App, name: string, mesh: Tea.Mesh): Tea.Object3D {
+		var object3d = new Tea.Object3D(app);
+		object3d.name = name;
+		var shader = new Tea.Shader(app);
+		shader.attach(
+			Tea.ShaderSources.defaultVS,
+			Tea.ShaderSources.defaultFS
+		);
+		var renderer = object3d.addComponent(Tea.MeshRenderer);
+		//renderer.wireframe = true;
+		renderer.material = Tea.Material.getDefault(app);
+		renderer.material.shader = shader;
+		var meshFilter = object3d.addComponent(Tea.MeshFilter);
+		meshFilter.mesh = mesh;
+		return object3d;
 	}
 }
