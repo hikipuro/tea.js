@@ -426,7 +426,21 @@ export class ProjectView extends Vue {
 			return;
 		}
 		if (LocalFile.isFolder(path)) {
-			this.selectFolder(path);
+			var item = this.folderList.findItemByTag(path);
+			if (item != null) {
+				this.selectFolder(path);
+				return;
+			}
+			item = this.getSelectedFolderItem();
+			if (item == null) {
+				return;
+			}
+			item.model.children = [];
+			this.setFolderListChildItems(item);
+			this.$nextTick(() => {
+				this.openFile(path);
+				this.selectFolder(path);
+			});
 			return;
 		}
 		var ext = LocalFile.extname(path);
@@ -843,23 +857,6 @@ export class ProjectView extends Vue {
 			return;
 		}
 		var path = this.getSelectedFilePath();
-		if (LocalFile.isFolder(path)) {
-			var item = this.folderList.findItemByTag(path);
-			if (item != null) {
-				this.openFile(path);
-				return;
-			}
-			item = this.getSelectedFolderItem();
-			if (item == null) {
-				return;
-			}
-			item.model.children = [];
-			this.setFolderListChildItems(item);
-			this.$nextTick(() => {
-				this.openFile(path);
-			});
-			return;
-		}
 		this.openFile(path);
 	}
 
@@ -1017,7 +1014,7 @@ export class ProjectView extends Vue {
 				break;
 			case "Open":
 				if (LocalFile.isFolder(path)) {
-					this.selectFolder(path);
+					this.openFile(path);
 					break;
 				}
 				Electron.shell.openItem(path);
