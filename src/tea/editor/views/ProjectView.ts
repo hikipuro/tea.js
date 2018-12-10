@@ -240,6 +240,7 @@ export class ProjectView extends Vue {
 			switch (ext) {
 				case ".obj":
 				case ".dae":
+				case ".fbx":
 					break;
 				default:
 					contextMenu.hideItem("Convert");
@@ -1081,6 +1082,12 @@ export class ProjectView extends Vue {
 		}
 		if (ext === ".dae") {
 			Tea.DaeReader.convertToMeshes(path, (meshes: Array<Tea.Mesh>) => {
+				console.log("convertToMeshes", meshes.length);
+				this.addObject3DToScene(path, meshes);
+			});
+		}
+		if (ext === ".fbx") {
+			Tea.FbxReader.convertToMeshes(path, (meshes: Array<Tea.Mesh>) => {
 				console.log("convertToMeshes", meshes.length);
 				this.addObject3DToScene(path, meshes);
 			});

@@ -25,6 +25,7 @@ export class FileType {
 		OBJ:  "Geometry Definition File Format",
 		MTL:  "OBJ material file",
 		DAE:  "Digital Asset Exchange",
+		FBX:  "FBX file",
 
 		// Audio
 		MP3:  "MP3 audio",
