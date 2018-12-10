@@ -1,3 +1,5 @@
+import { LocalFile } from "./LocalFile";
+
 export class FileType {
 	static readonly Extensions = {
 		// Documents
@@ -31,14 +33,18 @@ export class FileType {
 		ZIP:  "ZIP archive"
 	};
 
-	static getFileTypeString(extension: string): string {
-		if (extension.indexOf(".") === 0) {
-			extension = extension.substr(1);
+	static getFileTypeString(path: string): string {
+		if (path == null || path === "") {
+			return "";
 		}
-		extension = extension.toUpperCase();
-		if (FileType.Extensions[extension]) {
-			return FileType.Extensions[extension];
+		var ext = LocalFile.extname(path);
+		if (ext.indexOf(".") === 0) {
+			ext = ext.substr(1);
 		}
-		return extension;
+		ext = ext.toUpperCase();
+		if (FileType.Extensions[ext]) {
+			return FileType.Extensions[ext];
+		}
+		return ext;
 	}
 }

@@ -235,8 +235,16 @@ export class ProjectView extends Vue {
 			contextMenu.disableItem("Open");
 			contextMenu.disableItem("Delete");
 			contextMenu.disableItem("Rename");
-		} else if (LocalFile.extname(path) !== ".obj") {
-			contextMenu.hideItem("Convert");
+		} else {
+			var ext = LocalFile.extname(path);
+			switch (ext) {
+				case ".obj":
+				case ".dae":
+					break;
+				default:
+					contextMenu.hideItem("Convert");
+					break;
+			}
 		}
 		contextMenu.show();
 	}
@@ -478,19 +486,11 @@ export class ProjectView extends Vue {
 		return true;
 	}
 
-	protected openFileInspector(path: string): void {
-		if (path == null) {
-			return;
-		}
-		if (LocalFile.exists(path) === false) {
-			return;
-		}
-		if (LocalFile.isFolder(path)) {
-			this.openDefaultFileInspector(path, "");
-			return;
+	protected getFileType(path: string): string {
+		if (path == null || path === "") {
+			return "";
 		}
 		var ext = LocalFile.extname(path);
-		ext = ext.toLowerCase();
 		switch (ext) {
 			case ".json":
 			case ".html":
@@ -501,22 +501,44 @@ export class ProjectView extends Vue {
 			case ".txt":
 			case ".obj":
 			case ".mtl":
-				this.openTextFileInspector(path, ext);
-				break;
+			case ".dae":
+				return "text";
 			case ".jpg":
 			case ".png":
 			case ".gif":
 			case ".bmp":
 			case ".svg":
-				this.openImageFileInspector(path, ext);
+				return "image";
+		}
+		return "";
+	}
+
+	protected openFileInspector(path: string): void {
+		if (path == null) {
+			return;
+		}
+		if (LocalFile.exists(path) === false) {
+			return;
+		}
+		if (LocalFile.isFolder(path)) {
+			this.openDefaultFileInspector(path);
+			return;
+		}
+		var fileType = this.getFileType(path);
+		switch (fileType) {
+			case "text":
+				this.openTextFileInspector(path);
+				break;
+			case "image":
+				this.openImageFileInspector(path);
 				break;
 			default:
-				this.openDefaultFileInspector(path, ext);
+				this.openDefaultFileInspector(path);
 				break;
 		}
 	}
 
-	protected openTextFileInspector(path: string, ext: string): void {
+	protected openTextFileInspector(path: string): void {
 		var editor = this.$root as Editor;
 		var inspectorView = editor.inspectorView;
 		var data = LocalFile.readText(path);
@@ -536,7 +558,7 @@ export class ProjectView extends Vue {
 				return;
 			}
 			var stat = LocalFile.stat(path);
-			component.fileType = FileType.getFileTypeString(ext);
+			component.fileType = FileType.getFileTypeString(path);
 			component.type = FileInspector.Type.Text;
 			component.text = data;
 			component.setSize(stat.size);
@@ -545,7 +567,7 @@ export class ProjectView extends Vue {
 		});
 	}
 
-	protected openImageFileInspector(path: string, ext: string): void {
+	protected openImageFileInspector(path: string): void {
 		var editor = this.$root as Editor;
 		var inspectorView = editor.inspectorView;
 		inspectorView.hide();
@@ -557,7 +579,7 @@ export class ProjectView extends Vue {
 				return;
 			}
 			var stat = LocalFile.stat(path);
-			component.fileType = FileType.getFileTypeString(ext);
+			component.fileType = FileType.getFileTypeString(path);
 			component.type = FileInspector.Type.Image;
 			component.image = path;
 			component.setSize(stat.size);
@@ -566,7 +588,7 @@ export class ProjectView extends Vue {
 		});
 	}
 
-	protected openDefaultFileInspector(path: string, ext: string): void {
+	protected openDefaultFileInspector(path: string): void {
 		var editor = this.$root as Editor;
 		var inspectorView = editor.inspectorView;
 		inspectorView.hide();
@@ -578,7 +600,7 @@ export class ProjectView extends Vue {
 				return;
 			}
 			var stat = LocalFile.stat(path);
-			component.fileType = FileType.getFileTypeString(ext);
+			component.fileType = FileType.getFileTypeString(path);
 			component.type = FileInspector.Type.Default;
 			if (LocalFile.isFolder(path)) {
 				component.type = FileInspector.Type.Folder;
@@ -1044,31 +1066,56 @@ export class ProjectView extends Vue {
 				this.updateFileList();
 				break;
 			case "Convert":
-				console.log("select convert")
-				Tea.ObjReader.convertToMeshes(path, (meshes: Array<Tea.Mesh>) => {
-					//console.log("convertToMeshes", meshes.length);
-					if (meshes == null || meshes.length <= 0) {
-						return;
-					}
-					var editor = this.$root as Editor;
-					var app = editor.status.app;
-					var scene = editor.status.scene;
-					var object3d = new Tea.Object3D(app);
-					object3d.name = LocalFile.basename(path);
-					for (var i = 0; i < meshes.length; i++) {
-						var mesh = meshes[i];
-						var name = mesh.name;
-						var child = this.createMeshObject(app, name, mesh);
-						object3d.addChild(child);
-					}
-					var size = meshes[0].bounds.size;
-					var scale = 1.0 / Math.max(size[0], size[1], size[2]);
-					object3d.localScale.set(scale, scale, scale);
-					scene.addChild(object3d);
-					//console.log(mesh);
-				});
+				this.convertObjectFile(path);
 				break;
 		}
+	}
+
+	protected convertObjectFile(path: string): void {
+		var ext = LocalFile.extname(path);
+		if (ext === ".obj") {
+			Tea.ObjReader.convertToMeshes(path, (meshes: Array<Tea.Mesh>) => {
+				//console.log("convertToMeshes", meshes.length);
+				this.addObject3DToScene(path, meshes);
+			});
+		}
+		if (ext === ".dae") {
+			Tea.DaeReader.convertToMeshes(path, (meshes: Array<Tea.Mesh>) => {
+				console.log("convertToMeshes", meshes.length);
+				this.addObject3DToScene(path, meshes);
+			});
+		}
+	}
+
+	protected addObject3DToScene(path: string, meshes: Array<Tea.Mesh>): void {
+		if (meshes == null || meshes.length <= 0) {
+			return;
+		}
+		var editor = this.$root as Editor;
+		var app = editor.status.app;
+		var scene = editor.status.scene;
+		var object3d = new Tea.Object3D(app);
+		var name = LocalFile.basename(path);
+		name = name.split(".")[0];
+		if (name == null || name === "") {
+			name = "Object3D";
+		}
+		object3d.name = name;
+		var length = meshes.length;
+		for (var i = 0; i < length; i++) {
+			var mesh = meshes[i];
+			var name = mesh.name;
+			if (name == null || name === "") {
+				name = "Mesh";
+			}
+			var child = this.createMeshObject(app, name, mesh);
+			object3d.addChild(child);
+		}
+		var size = meshes[0].bounds.size;
+		var scale = 1.0 / Math.max(size[0], size[1], size[2]);
+		object3d.localScale.set(scale, scale, scale);
+		scene.addChild(object3d);
+		//console.log(mesh);
 	}
 
 	protected createMeshObject(app: Tea.App, name: string, mesh: Tea.Mesh): Tea.Object3D {

@@ -1,42 +1,35 @@
 import * as Tea from "../Tea";
+import { DaeDocument } from "./dae/DaeDocument";
 
 export class DaeReader {
-	static mimeType = "text/xml";
+	static convertToMeshes(url: string, callback: (meshes: Array<Tea.Mesh>) => void): void {
+		if (callback == null) {
+			return;
+		}
+		Tea.File.readText(url, (err: any, data: string) => {
+			if (err) {
+				callback(null);
+				return;
+			}
+			DaeReader.parseDae(data, (document: DaeDocument) => {
+				callback(document.toMeshes());
+			});
+		});
+	}
 
-	static read(data: string): Tea.Mesh {
-		var vertices = [];
-		var indices = [];
-
+	static parseDae(data: string, callback: (document: DaeDocument) => void): void {
+		if (data == null || data === "") {
+			return;
+		}
 		var parser = new DOMParser();
-		var document = parser.parseFromString(data, DaeReader.mimeType);
-		//console.log(document);
+		var document = parser.parseFromString(data, "text/xml");
 
 		if (document.getElementsByTagName("parsererror").length) {
 			console.error("parse error");
 			return null;
 		}
 
-		//var asset = document.querySelector("asset");
-		//console.log(asset.querySelector("author").textContent);
-
-		var geometries = document.querySelector("library_geometries");
-		console.log(geometries.querySelector("geometry mesh float_array"));
-
-		/*
-		this.forEachLine(data, (text: string, index: number) => {
-			var params = text.split(/\s+/);
-			switch (params[0]) {
-				case "v":
-					this.pushArray(vertices, this.parseVertex(params));
-					break;
-				case "f":
-					this.pushArray(indices, this.parseIndex(params));
-					break;
-			}
-		});
-		*/
-		//console.log("vertices", vertices.length / 3);
-		//console.log("indices", indices.length / 3);
-		return new Tea.Mesh();
+		var daeDocument = DaeDocument.parse(document);
+		callback(daeDocument);
 	}
 }
