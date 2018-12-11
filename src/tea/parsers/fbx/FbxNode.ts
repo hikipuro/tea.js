@@ -1,6 +1,5 @@
 import * as Tea from "../../Tea";
 import { FbxProperty } from "./FbxProperty";
-import { isArray } from "util";
 
 export class FbxNode {
 	endOffset: number;
