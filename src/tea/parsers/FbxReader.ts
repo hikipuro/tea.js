@@ -1,5 +1,5 @@
 import * as Tea from "../Tea";
-import { BinaryReader } from "./fbx/BinaryReader";
+import { BinaryReader } from "../utils/BinaryReader";
 import { FbxDocument } from "./fbx/FbxDocument";
 
 export class FbxReader {
@@ -12,19 +12,20 @@ export class FbxReader {
 				callback(null);
 				return;
 			}
-			FbxReader.parseFbx(data, () => {
-				//callback(document.toMeshes());
+			FbxReader.parseFbx(data, (document: FbxDocument) => {
+				callback(document.toMeshes());
 			});
 		});
 	}
 
-	static parseFbx(data: ArrayBuffer, callback: () => void): void {
+	static parseFbx(data: ArrayBuffer, callback: (document: FbxDocument) => void): void {
 		if (data == null || data.byteLength <= 0) {
 			return;
 		}
 		var reader = new BinaryReader(data, true);
 		var document = FbxDocument.parse(reader);
 		console.log(document.toJSON());
-		callback();
+		//console.log(document);
+		callback(document);
 	}
 }

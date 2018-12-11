@@ -61,7 +61,7 @@ export class LocalFile {
 			return null;
 		}
 		var buffer = new Uint8Array(data).buffer;
-		return buffer;
+		return buffer as ArrayBuffer;
 	}
 
 	static readText(path: string): string {

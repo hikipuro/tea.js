@@ -211,7 +211,7 @@ export class App {
 			for (var i = 0; i < data.length; i++) {
 				buffer[i] = data.charCodeAt(i);
 			}
-			callback(buffer.buffer);
+			callback(buffer.buffer as ArrayBuffer);
 		});
 	}
 

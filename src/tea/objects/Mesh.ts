@@ -350,9 +350,10 @@ export class Mesh {
 		var a = [];
 		var length = Math.floor(array.length / 3) * 3;
 		for (var i = 0; i < length; i += 3) {
-			var item = new Tea.Vector3(
-				array[i], array[i + 1], array[i + 2]
-			);
+			var x = array[i];
+			var y = array[i + 1];
+			var z = array[i + 2];
+			var item = new Tea.Vector3(x, y, z);
 			a.push(item);
 		}
 		return a;

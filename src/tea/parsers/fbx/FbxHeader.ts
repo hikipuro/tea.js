@@ -1,4 +1,4 @@
-import { BinaryReader } from "./BinaryReader";
+import * as Tea from "../../Tea";
 
 export class FbxHeader {
 	signature: string;
@@ -11,7 +11,7 @@ export class FbxHeader {
 		this.version = 0;
 	}
 
-	static parse(reader: BinaryReader): FbxHeader {
+	static parse(reader: Tea.BinaryReader): FbxHeader {
 		var header = new FbxHeader();
 		header.signature = reader.readAsciiString(21);
 		header.reserved = reader.readUint16();

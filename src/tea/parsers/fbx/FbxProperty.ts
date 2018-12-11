@@ -1,37 +1,5 @@
-import { BinaryReader } from "./BinaryReader";
-
-export class FbxArray {
-	size: number;
-	typeCode: string;
-	arrayLength: number;
-	encoding: number;
-	compressedLength: number;
-	contents: ArrayBuffer;
-
-	constructor() {
-		this.size = 0;
-		this.typeCode = "";
-		this.arrayLength = 0;
-		this.encoding = 0;
-		this.compressedLength = 0;
-		this.contents = null;
-	}
-
-	static parse(size: number, typeCode: string, reader: BinaryReader): FbxArray {
-		var array = new FbxArray();
-		array.size = size;
-		array.typeCode = typeCode;
-		array.arrayLength = reader.readUint32();
-		array.encoding = reader.readUint32();
-		array.compressedLength = reader.readUint32();
-		if (array.encoding === 0) {
-			array.contents = reader.readBinary(size * array.arrayLength);
-		} else {
-			array.contents = reader.readBinary(array.compressedLength);
-		}
-		return array;
-	}
-}
+import * as Tea from "../../Tea";
+import { FbxArray } from "./FbxArray";
 
 export class FbxProperty {
 	typeCode: string;
@@ -44,7 +12,7 @@ export class FbxProperty {
 		this.data = null;
 	}
 
-	static parse(reader: BinaryReader): FbxProperty {
+	static parse(reader: Tea.BinaryReader): FbxProperty {
 		var property = new FbxProperty();
 		property.typeCode = String.fromCharCode(reader.readUint8());
 		switch (property.typeCode) {
@@ -87,20 +55,27 @@ export class FbxProperty {
 			case "d":
 				property.data = FbxArray.parse(8, property.typeCode, reader);
 				break;
+			default:
+				console.warn("unknown type", property.typeCode);
+				break;
 		}
 		return property;
 	}
 
 	toJSON(): Object {
+		var data = this.data;
+		if (data instanceof FbxArray) {
+			return data.toJSON();
+		}
 		return this.data;
 	}
 
-	protected parseR(reader: BinaryReader): ArrayBuffer {
+	protected parseR(reader: Tea.BinaryReader): ArrayBuffer {
 		this.length = reader.readUint32();
-		return reader.readBinary(this.length);
+		return reader.readBuffer(this.length);
 	}
 
-	protected parseS(reader: BinaryReader): string {
+	protected parseS(reader: Tea.BinaryReader): string {
 		this.length = reader.readUint32();
 		return reader.readAsciiString(this.length);
 	}

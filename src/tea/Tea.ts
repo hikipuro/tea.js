@@ -68,6 +68,7 @@ export * from "./sounds/AudioSource";
 export * from "./utils/AnimationCurve";
 export * from "./utils/ArrayBufferUtil";
 export * from "./utils/ArrayUtil";
+export * from "./utils/BinaryReader";
 export * from "./utils/Color";
 export * from "./utils/Cursor";
 export * from "./utils/EventDispatcher";

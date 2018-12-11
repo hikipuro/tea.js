@@ -1082,13 +1082,13 @@ export class ProjectView extends Vue {
 		}
 		if (ext === ".dae") {
 			Tea.DaeReader.convertToMeshes(path, (meshes: Array<Tea.Mesh>) => {
-				console.log("convertToMeshes", meshes.length);
+				//console.log("convertToMeshes", meshes.length);
 				this.addObject3DToScene(path, meshes);
 			});
 		}
 		if (ext === ".fbx") {
 			Tea.FbxReader.convertToMeshes(path, (meshes: Array<Tea.Mesh>) => {
-				console.log("convertToMeshes", meshes.length);
+				console.log("convertToMeshes", meshes);
 				this.addObject3DToScene(path, meshes);
 			});
 		}

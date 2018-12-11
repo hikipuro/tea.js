@@ -1,5 +1,6 @@
-import { BinaryReader } from "./BinaryReader";
+import * as Tea from "../../Tea";
 import { FbxProperty } from "./FbxProperty";
+import { isArray } from "util";
 
 export class FbxNode {
 	endOffset: number;
@@ -20,7 +21,7 @@ export class FbxNode {
 		this.children = [];
 	}
 
-	static parse(reader: BinaryReader): FbxNode {
+	static parse(reader: Tea.BinaryReader): FbxNode {
 		var node = new FbxNode();
 		node.endOffset = reader.readUint32();
 		node.numProperties = reader.readUint32();
@@ -50,32 +51,33 @@ export class FbxNode {
 		}
 		var json = {} as any;
 		var properties = [];
+		var children = [];
 		this.properties.forEach((property: FbxProperty) => {
 			properties.push(property.toJSON());
 		});
-		var children = [];
-		this.children.forEach((child: FbxNode) => {
-			var node = child.toJSON();
-			if (node == null) {
+		this.children.forEach((node: FbxNode) => {
+			var nodeJson = node.toJSON();
+			if (nodeJson == null) {
 				return;
 			}
-			children.push(node);
-			json[child.name] = node;
+			children.push(nodeJson);
+			if (json[node.name] == null) {
+				json[node.name] = [];
+			}
+			json[node.name].push(nodeJson);
 		});
-		//json.properties = properties;
-		//json.children = children;
-		if (properties.length <= 0) {
-			delete json.properties;
-		}
+		var keys = Object.keys(json);
+		keys.forEach((key: string) => {
+			if (json[key].length === 1) {
+				json[key] = json[key][0];
+			}
+		});
 		if (children.length === 0) {
 			if (properties.length === 1) {
 				return properties[0];
 			}
 			return properties;
 		}
-		//if (children.length <= 0) {
-		//	delete json.children;
-		//}
 		return json;
 	}
 }

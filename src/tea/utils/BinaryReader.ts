@@ -1,3 +1,4 @@
+
 export class BinaryReader {
 	data: ArrayBuffer;
 	view: DataView;
@@ -15,7 +16,7 @@ export class BinaryReader {
 		return this.offset >= this.data.byteLength;
 	}
 
-	readBinary(length: number): ArrayBuffer {
+	readBuffer(length: number): ArrayBuffer {
 		if (length <= 0) {
 			return null;
 		}
@@ -101,7 +102,7 @@ export class BinaryReader {
 		if (length <= 0) {
 			return "";
 		}
-		var data = this.readBinary(length);
+		var data = this.readBuffer(length);
 		return String.fromCharCode.apply(null, new Uint8Array(data));
 	}
 }

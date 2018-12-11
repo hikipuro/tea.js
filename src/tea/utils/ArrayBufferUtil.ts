@@ -3,7 +3,7 @@ export class ArrayBufferUtil {
 		var reader = new FileReader();
 		var onLoadEnd = () => {
 			reader.removeEventListener("loadend", onLoadEnd);
-			callback(reader.result);
+			callback(reader.result as ArrayBuffer);
 			reader = undefined;
 		};
 		reader.addEventListener("loadend", onLoadEnd);
@@ -14,7 +14,7 @@ export class ArrayBufferUtil {
 		var reader = new FileReader();
 		var onLoadEnd = () => {
 			reader.removeEventListener("loadend", onLoadEnd);
-			callback(reader.result);
+			callback(reader.result as string);
 			reader = undefined;
 		};
 		reader.addEventListener("loadend", onLoadEnd);
