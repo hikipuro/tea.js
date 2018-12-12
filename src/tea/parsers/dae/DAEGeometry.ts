@@ -1,5 +1,6 @@
 import * as Tea from "../../Tea";
 import { DAEMesh } from "./DAEMesh";
+import { DAEUtil } from "./DAEUtil";
 
 export class DAEGeometry {
 	id?: string;
@@ -40,5 +41,20 @@ export class DAEGeometry {
 			array.push(mesh);
 		}
 		return array;
+	}
+
+	toXML(): Element {
+		var el = document.createElement("geometry");
+		DAEUtil.setAttribute(el, "id", this.id);
+		DAEUtil.setAttribute(el, "name", this.name);
+		if (this.meshes) {
+			this.meshes.forEach((mesh: DAEMesh) => {
+				if (mesh == null) {
+					return;
+				}
+				el.appendChild(mesh.toXML());
+			});
+		}
+		return el;
 	}
 }

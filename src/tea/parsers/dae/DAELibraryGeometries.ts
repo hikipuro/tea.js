@@ -1,6 +1,7 @@
 import * as Tea from "../../Tea";
 import { DAEAsset } from "./DAEAsset";
 import { DAEGeometry } from "./DAEGeometry";
+import { DAEUtil } from "./DAEUtil";
 
 export class DAELibraryGeometries {
 	id?: string;
@@ -65,5 +66,20 @@ export class DAELibraryGeometries {
 			array.push(...meshes);
 		}
 		return array;
+	}
+
+	toXML(): Element {
+		var el = document.createElement("library_geometries");
+		DAEUtil.setAttribute(el, "id", this.id);
+		DAEUtil.setAttribute(el, "name", this.name);
+		if (this.geometries) {
+			this.geometries.forEach((geometry: DAEGeometry) => {
+				if (geometry == null) {
+					return;
+				}
+				el.appendChild(geometry.toXML());
+			});
+		}
+		return el;
 	}
 }

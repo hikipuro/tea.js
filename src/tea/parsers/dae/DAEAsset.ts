@@ -32,4 +32,30 @@ export class DAEAsset {
 		asset.upAxis = DAEUtil.textContent(el, "up_axis")
 		return asset;
 	}
+
+	toXML(): Element {
+		var el = document.createElement("asset");
+		if (this.contributor) {
+			el.appendChild(this.contributor.toXML());
+		}
+		if (this.created) {
+			var created = document.createElement("created");
+			created.textContent = DAEUtil.formatDate(this.created);
+			el.appendChild(created);
+		}
+		if (this.modified) {
+			var modified = document.createElement("modified");
+			modified.textContent = DAEUtil.formatDate(this.modified);
+			el.appendChild(modified);
+		}
+		if (this.unit) {
+			el.appendChild(this.unit.toXML());
+		}
+		if (this.upAxis) {
+			var upAxis = document.createElement("up_axis");
+			upAxis.textContent = this.upAxis;
+			el.appendChild(upAxis);
+		}
+		return el;
+	}
 }

@@ -98,4 +98,10 @@ export class DAEMesh {
 		mesh.uploadMeshData();
 		return mesh;
 	}
+
+	toXML(): Element {
+		var el = document.createElement("mesh");
+		DAEUtil.setAttribute(el, "id", this.id);
+		return el;
+	}
 }

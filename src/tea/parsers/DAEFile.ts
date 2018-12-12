@@ -62,6 +62,7 @@ export class DAEFile {
 				file.libraryGeometries = geometries;
 				progress(1.0);
 				callback(file);
+				console.log("xml", file.toXML());
 			});
 		}, 0);
 	}
@@ -72,6 +73,22 @@ export class DAEFile {
 			return null;
 		}
 		return geometries.toMeshes();
+	}
+
+	toXML(): Document {
+		var doc = document.implementation.createDocument(
+			"", "", null
+		);
+		var root = doc.createElement("COLLADA");
+		root.setAttribute("xmlns", "http://www.collada.org/2005/11/COLLADASchema");
+		root.setAttribute("version", "1.4.1");
+		root.setAttribute("xmlns:xsi", "http://www.w3.org/2001/XMLSchema-instance");
+		var asset = this.asset.toXML();
+		root.appendChild(asset);
+		var libraryGeometries = this.libraryGeometries.toXML();
+		root.appendChild(libraryGeometries);
+		doc.appendChild(root);
+		return doc;
 	}
 
 	protected static isValidDocument(document: Document): boolean {

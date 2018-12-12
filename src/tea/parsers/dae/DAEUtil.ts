@@ -72,4 +72,37 @@ export class DAEUtil {
 		}
 		return i;
 	}
+
+	static addTextContent(element: Element, name: string, content: string): void {
+		if (element == null || content == null) {
+			return;
+		}
+		var el = document.createElement(name);
+		el.textContent = content;
+		element.appendChild(el);
+	}
+
+	static setAttribute(element: Element, name: string, text: string): void {
+		if (element == null || name == null || text == null || text === "") {
+			return;
+		}
+		element.setAttribute(name, text);
+	}
+	
+	static formatDate(date: Date, format: string = "YYYY-MM-DDThh:mm:ss"): string {
+		format = format.replace(/YYYY/g, date.getFullYear().toString());
+		format = format.replace(/MM/g, ('0' + (date.getMonth() + 1)).slice(-2));
+		format = format.replace(/DD/g, ('0' + date.getDate()).slice(-2));
+		format = format.replace(/hh/g, ('0' + date.getHours()).slice(-2));
+		format = format.replace(/mm/g, ('0' + date.getMinutes()).slice(-2));
+		format = format.replace(/ss/g, ('0' + date.getSeconds()).slice(-2));
+		if (format.match(/S/g)) {
+			var milliSeconds = ('00' + date.getMilliseconds()).slice(-3);
+			var length = format.match(/S/g).length;
+			for (var i = 0; i < length; i++) {
+				format = format.replace(/S/, milliSeconds.substring(i, i + 1));
+			}
+		}
+		return format;
+	}
 }
