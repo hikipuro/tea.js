@@ -1,28 +1,70 @@
-import * as Tea from "../../Tea";
-import { FbxHeader } from "./FbxHeader";
-import { FbxNode } from "./FbxNode";
+import * as Tea from "../Tea";
+import { FBXHeader } from "./fbx/FBXHeader";
+import { FBXNode } from "./fbx/FBXNode";
 
-export class FbxDocument {
-	header: FbxHeader;
-	nodes: Array<FbxNode>;
+export class FBXFile {
+	header: FBXHeader;
+	nodes: Array<FBXNode>;
 
 	constructor() {
 		this.header = null;
 		this.nodes = [];
 	}
 
-	static parse(reader: Tea.BinaryReader): FbxDocument {
-		var document = new FbxDocument();
-		document.header = FbxHeader.parse(reader);
-		while (reader.isCompleted === false) {
-			var node = FbxNode.parse(reader);
-			document.nodes.push(node);
+	static load(url: string, callback: (fbxFile: FBXFile) => void): void {
+		if (url == null || url === "") {
+			callback(null);
+			return;
+		}
+		Tea.File.readArrayBuffer(url, (err: any, data: ArrayBuffer) => {
+			if (err) {
+				callback(null);
+				return;
+			}
+			this.parse(data, callback, (progress: number) => {
+				console.log("loading", progress);
+			});
+		});
+	}
+
+	static parse(
+		data: ArrayBuffer,
+		callback: (fbxFile: FBXFile) => void,
+		progress: (progress: number) => void = null
+	): void {
+		if (data == null || data.byteLength <= 0) {
+			callback(null);
+			return;
+		}
+		if (progress == null) {
+			progress = (progress: number) => {};
+		}
+		var reader = new Tea.BinaryReader(data, true);
+		var file = new FBXFile();
+		var byteLength = data.byteLength;
+		var parse = (reader: Tea.BinaryReader) => {
+			progress(reader.offset / byteLength);
+			if (reader.isCompleted) {
+				progress(1.0);
+				callback(file);
+				return;
+			}
+			var node = FBXNode.parse(reader);
+			file.nodes.push(node);
 			if (node.endOffset === 0) {
-				break;
+				progress(1.0);
+				callback(file);
+				return;
 			}
 			reader.offset = node.endOffset;
-		}
-		return document;
+			setTimeout(() => {
+				parse(reader);
+			}, 0);
+		};
+		setTimeout(() => {
+			file.header = FBXHeader.parse(reader);
+			parse(reader);
+		}, 0);
 	}
 
 	toJSON(): Object {
@@ -30,7 +72,7 @@ export class FbxDocument {
 			return null;
 		}
 		var json = {} as any;
-		this.nodes.forEach((node: FbxNode) => {
+		this.nodes.forEach((node: FBXNode) => {
 			var nodeJson = node.toJSON();
 			if (nodeJson == null) {
 				return;

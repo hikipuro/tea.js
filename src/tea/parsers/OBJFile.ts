@@ -1,12 +1,12 @@
-import * as Tea from "../../Tea";
-import { ObjIndices } from "./ObjIndices";
-import { ObjFValues } from "./ObjFValue";
+import * as Tea from "../Tea";
+import { OBJIndices } from "./obj/OBJIndices";
+import { OBJFValues } from "./obj/OBJFValue";
 
-export class ObjDocument {
+export class OBJFile {
 	v: Array<Tea.Vector3>;
 	vn: Array<Tea.Vector3>;
 	vt: Array<Tea.Vector2>;
-	f: Array<ObjIndices>;
+	f: Array<OBJIndices>;
 	//g: any;
 	materials: any;
 	usemtl: string;
@@ -21,13 +21,41 @@ export class ObjDocument {
 		this.usemtl = "";
 	}
 
-	static parse(data: string, callback: (document: ObjDocument) => void, iterations: number = 3000): void {
-		var document = new ObjDocument();
-		var indices: ObjIndices = null;
-		this.forEachLine(data, (text: string, index: number, progress: number) => {
-			//if (index % 1000 === 0) {
-			//	console.log("progress", progress);
-			//}
+	static load(url: string, callback: (objFile: OBJFile) => void): void {
+		if (url == null || url === "") {
+			callback(null);
+			return;
+		}
+		Tea.File.readText(url, (err: any, data: string) => {
+			if (err) {
+				callback(null);
+				return;
+			}
+			this.parse(data, callback, (progress: number) => {
+				console.log("loading", progress);
+			});
+		});
+	}
+
+	static parse(
+		data: string,
+		callback: (objFile: OBJFile) => void,
+		progress: (progress: number) => void = null,
+		iterations: number = 3000
+	): void {
+		if (data == null || data === "") {
+			callback(null);
+			return;
+		}
+		if (progress == null) {
+			progress = (progress: number) => {};
+		}
+		var file = new OBJFile();
+		var indices: OBJIndices = null;
+		this.forEachLine(data, (text: string, index: number, p: number) => {
+			if (index % iterations === 0) {
+				progress(p);
+			}
 			var params = text.trim().split(/\s+/);
 			switch (params[0]) {
 				case "":
@@ -46,22 +74,22 @@ export class ObjDocument {
 					break;
 				case "g":
 					// group
-					indices = document.addIndices();
+					indices = file.addIndices();
 					indices.group = params[1];
 					break;
 				case "v":
 					// vertices
 					var v = this.parseVector3(params);
-					document.v.push(v);
+					file.v.push(v);
 					break;
 				case "f":
 					// triangles
 					if (indices) {
 						var f = this.parseF(
 							params,
-							document.v.length,
-							document.vt.length,
-							document.vn.length
+							file.v.length,
+							file.vt.length,
+							file.vn.length
 						);
 						indices.push(f);
 					}
@@ -69,12 +97,12 @@ export class ObjDocument {
 				case "vn":
 					// normals
 					var vn = this.parseVN(params);
-					document.vn.push(vn);
+					file.vn.push(vn);
 					break;
 				case "vt":
 					// texture coord
 					var vt = this.parseVT(params);
-					document.vt.push(vt);
+					file.vt.push(vt);
 					break;
 				case "vp":
 					// parameter space vertices
@@ -90,7 +118,8 @@ export class ObjDocument {
 					break;
 			}
 		}, () => {
-			callback(document);
+			progress(1.0);
+			callback(file);
 		}, iterations);
 	}
 
@@ -116,11 +145,11 @@ export class ObjDocument {
 			}
 			if (i >= lineCount) {
 				complete();
-			} else {
-				setTimeout(() => {
-					call(lines, start + count, count);
-				}, 0);
+				return;
 			}
+			setTimeout(() => {
+				call(lines, start + count, count);
+			}, 0);
 		}
 		setTimeout(() => {
 			call(lines, 0, iterations);
@@ -134,8 +163,8 @@ export class ObjDocument {
 		return new Tea.Vector3(x, y, z);
 	}
 
-	protected static parseF(params: Array<string>, vLength: number, vtLength: number, vnLength: number): ObjFValues {
-		var list: ObjFValues = [];
+	protected static parseF(params: Array<string>, vLength: number, vtLength: number, vnLength: number): OBJFValues {
+		var list: OBJFValues = [];
 		var length = params.length;
 		for (var i = 1; i < length; i++) {
 			if (params[i] == "") {
@@ -193,8 +222,8 @@ export class ObjDocument {
 		return value;
 	}
 
-	addIndices(): ObjIndices {
-		var indices = new ObjIndices();
+	addIndices(): OBJIndices {
+		var indices = new OBJIndices();
 		this.f.push(indices);
 		return indices;
 	}
@@ -210,7 +239,7 @@ export class ObjDocument {
 		return meshes;
 	}
 
-	protected createMesh(f: ObjIndices): Tea.Mesh {
+	protected createMesh(f: OBJIndices): Tea.Mesh {
 		var vt = this.vt;
 		var vn = this.vn;
 		var v = this.v;
@@ -294,7 +323,7 @@ export class ObjDocument {
 		return mesh;
 	}
 
-	protected createIndexList(f: ObjIndices): Object {
+	protected createIndexList(f: OBJIndices): Object {
 		var hash = {};
 		var fLength = f.fValues.length;
 		var count = 0;

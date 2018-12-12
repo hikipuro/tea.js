@@ -1075,20 +1075,23 @@ export class ProjectView extends Vue {
 	protected convertObjectFile(path: string): void {
 		var ext = LocalFile.extname(path);
 		if (ext === ".obj") {
-			Tea.ObjReader.convertToMeshes(path, (meshes: Array<Tea.Mesh>) => {
+			Tea.OBJFile.load(path, (file: Tea.OBJFile) => {
+				var meshes = file.toMeshes();
 				//console.log("convertToMeshes", meshes.length);
 				this.addObject3DToScene(path, meshes);
 			});
 		}
 		if (ext === ".dae") {
-			Tea.DaeReader.convertToMeshes(path, (meshes: Array<Tea.Mesh>) => {
+			Tea.DAEFile.load(path, (file: Tea.DAEFile) => {
+				var meshes = file.toMeshes();
 				//console.log("convertToMeshes", meshes.length);
 				this.addObject3DToScene(path, meshes);
 			});
 		}
 		if (ext === ".fbx") {
-			Tea.FbxReader.convertToMeshes(path, (meshes: Array<Tea.Mesh>) => {
-				console.log("convertToMeshes", meshes);
+			Tea.FBXFile.load(path, (file: Tea.FBXFile) => {
+				var meshes = file.toMeshes();
+				//console.log("convertToMeshes", meshes.length);
 				this.addObject3DToScene(path, meshes);
 			});
 		}

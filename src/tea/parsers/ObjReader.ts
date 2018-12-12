@@ -1,7 +1,7 @@
 import * as Tea from "../Tea";
-import { ObjDocument } from "./obj/ObjDocument";
-import { ObjIndices } from "./obj/ObjIndices";
-import { ObjFValues } from "./obj/ObjFValue";
+import { OBJFile } from "./OBJFile";
+import { OBJIndices } from "./obj/OBJIndices";
+import { OBJFValues } from "./obj/OBJFValue";
 
 class Context {
 	url: string;
@@ -51,7 +51,7 @@ export class ObjReader {
 				callback(null);
 				return;
 			}
-			ObjDocument.parse(data, (document: ObjDocument) => {
+			OBJFile.parse(data, (document: OBJFile) => {
 				callback(document.toMeshes());
 			});
 		});
@@ -422,8 +422,8 @@ export class ObjReader {
 		return new Tea.Vector3(x, y, z);
 	}
 
-	protected static parseF(params: Array<string>, vLength: number, vtLength: number, vnLength: number): ObjFValues {
-		var list: ObjFValues = [];
+	protected static parseF(params: Array<string>, vLength: number, vtLength: number, vnLength: number): OBJFValues {
+		var list: OBJFValues = [];
 		var length = params.length;
 		for (var i = 1; i < length; i++) {
 			if (params[i] == "") {
