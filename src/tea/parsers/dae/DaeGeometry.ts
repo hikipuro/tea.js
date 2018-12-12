@@ -1,5 +1,5 @@
 import * as Tea from "../../Tea";
-import { DAEMesh } from "./DaeMesh";
+import { DAEMesh } from "./DAEMesh";
 
 export class DAEGeometry {
 	id: string;

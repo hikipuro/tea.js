@@ -20,28 +20,44 @@ export class FBXNode {
 		this.children = [];
 	}
 
-	static parse(reader: Tea.BinaryReader): FBXNode {
+	static parse(reader: Tea.BinaryReader, callback: (node: FBXNode) => void, bytesPerWait: number = 0x10000): void {
+		var offset = reader.offset;
 		var node = new FBXNode();
 		node.endOffset = reader.readUint32();
 		node.numProperties = reader.readUint32();
 		node.propertyListLen = reader.readUint32();
 		node.nameLen = reader.readUint8();
 		node.name = reader.readAsciiString(node.nameLen);
-		for (var i = 0; i < node.numProperties; i++) {
+		var length = node.numProperties;
+		for (var i = 0; i < length; i++) {
 			var property = FBXProperty.parse(reader);
 			if (property == null) {
 				continue;
 			}
 			node.properties.push(property);
 		}
-		while (node.endOffset > reader.offset) {
-			var child = FBXNode.parse(reader);
-			node.children.push(child);
-			if (child.endOffset === 0) {
-				break;
+		var parseChildren = (reader: Tea.BinaryReader) => {
+			if (node.endOffset <= reader.offset) {
+				callback(node);
+				return;
 			}
-		}
-		return node;
+			FBXNode.parse(reader, (child: FBXNode) => {
+				node.children.push(child);
+				if (child.endOffset === 0) {
+					callback(node);
+					return;
+				}
+				if (child.endOffset - offset > bytesPerWait) {
+					offset += bytesPerWait;
+					setTimeout(() => {
+						parseChildren(reader);
+					}, 0);
+					return;
+				}
+				parseChildren(reader);
+			});
+		};
+		parseChildren(reader);
 	}
 
 	toJSON(): Object {

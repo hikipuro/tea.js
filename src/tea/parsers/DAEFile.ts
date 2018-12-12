@@ -63,9 +63,11 @@ export class DAEFile {
 			var $asset = document.querySelector("asset");
 			file.asset = DAEAsset.parse($asset);
 			var $libraryGeometries = document.querySelector("library_geometries");
-			file.libraryGeometries = DAELibraryGeometries.parse($libraryGeometries);
-			progress(1.0);
-			callback(file);
+			DAELibraryGeometries.parse($libraryGeometries, (geometries: DAELibraryGeometries) => {
+				file.libraryGeometries = geometries;
+				progress(1.0);
+				callback(file);
+			});
 		}, 0);
 	}
 

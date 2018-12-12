@@ -49,17 +49,18 @@ export class FBXFile {
 				callback(file);
 				return;
 			}
-			var node = FBXNode.parse(reader);
-			file.nodes.push(node);
-			if (node.endOffset === 0) {
-				progress(1.0);
-				callback(file);
-				return;
-			}
-			reader.offset = node.endOffset;
-			setTimeout(() => {
-				parse(reader);
-			}, 0);
+			FBXNode.parse(reader, (node: FBXNode) => {
+				file.nodes.push(node);
+				if (node.endOffset === 0) {
+					progress(1.0);
+					callback(file);
+					return;
+				}
+				reader.offset = node.endOffset;
+				setTimeout(() => {
+					parse(reader);
+				}, 0);
+			});
 		};
 		setTimeout(() => {
 			file.header = FBXHeader.parse(reader);

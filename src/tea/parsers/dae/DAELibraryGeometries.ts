@@ -8,22 +8,35 @@ export class DAELibraryGeometries {
 		this.geometries = [];
 	}
 
-	static parse(el: Element): DAELibraryGeometries {
+	static parse(el: Element, callback: (geometries: DAELibraryGeometries) => void): void {
 		if (el == null) {
 			console.error("parse error");
 			return null;
 		}
 		var libraryGeometries = new DAELibraryGeometries();
 		var $geometries = el.querySelectorAll("geometry");
-		for (var i = 0; i < $geometries.length; i++) {
-			var $geometry = $geometries[i];
+		var length = $geometries.length;
+		var parse = ($geometries: NodeListOf<Element>, index: number) => {
+			if (index >= length) {
+				callback(libraryGeometries);
+				return;
+			}
+			var $geometry = $geometries[index];
 			var geometry = DAEGeometry.parse($geometry);
 			if (geometry == null) {
-				continue;
+				parse($geometries, index + 1);
+				return;
 			}
 			libraryGeometries.geometries.push(geometry);
-		}
-		return libraryGeometries;
+			if (index % 100 === 0) {
+				setTimeout(() => {
+					parse($geometries, index + 1);
+				}, 0);
+				return;
+			}
+			parse($geometries, index + 1);
+		};
+		parse($geometries, 0);
 	}
 
 	toMeshes(): Array<Tea.Mesh> {
