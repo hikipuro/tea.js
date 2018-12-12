@@ -49,12 +49,7 @@ export class DAEFile {
 				callback(null);
 				return;
 			}
-			if (document == null) {
-				console.error("parse error");
-				callback(null);
-				return;
-			}
-			if (document.getElementsByTagName("parsererror").length) {
+			if (this.isValidDocument(document) === false) {
 				console.error("parse error");
 				callback(null);
 				return;
@@ -77,5 +72,21 @@ export class DAEFile {
 			return null;
 		}
 		return geometries.toMeshes();
+	}
+
+	protected static isValidDocument(document: Document): boolean {
+		if (document == null) {
+			return false;
+		}
+		if (document.children.length <= 0) {
+			return false;
+		}
+		if (document.children[0].nodeName !== "COLLADA") {
+			return false;
+		}
+		if (document.getElementsByTagName("parsererror").length > 0) {
+			return false;
+		}
+		return true;
 	}
 }

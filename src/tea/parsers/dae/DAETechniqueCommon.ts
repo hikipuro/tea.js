@@ -14,8 +14,7 @@ export class DAETechniqueCommon {
 		}
 		var technique = new DAETechniqueCommon();
 		var $accessor = el.querySelector("accessor");
-		var accessor = DAEAccessor.parse($accessor);
-		technique.accessor = accessor;
+		technique.accessor = DAEAccessor.parse($accessor);
 		return technique;
 	}
 }

@@ -1,10 +1,18 @@
 import * as Tea from "../../Tea";
+import { DAEAsset } from "./DAEAsset";
 import { DAEGeometry } from "./DAEGeometry";
 
 export class DAELibraryGeometries {
+	id?: string;
+	name?: string;
+	asset?: DAEAsset;
 	geometries: Array<DAEGeometry>;
+	//extra?: DAEExtra;
 
 	constructor() {
+		this.id = null;
+		this.name = null;
+		this.asset = null;
 		this.geometries = [];
 	}
 
@@ -14,6 +22,8 @@ export class DAELibraryGeometries {
 			return null;
 		}
 		var libraryGeometries = new DAELibraryGeometries();
+		libraryGeometries.id = el.id;
+		libraryGeometries.name = el.getAttribute("name");
 		var $geometries = el.querySelectorAll("geometry");
 		var length = $geometries.length;
 		var parse = ($geometries: NodeListOf<Element>, index: number) => {

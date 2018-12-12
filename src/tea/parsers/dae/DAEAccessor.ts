@@ -1,15 +1,19 @@
 import { DAEParam } from "./DAEParam";
+import { DAEUtil } from "./DAEUtil";
 
+// parent: source / technique_common
 export class DAEAccessor {
-	source: string;
 	count: number;
-	stride: number;
+	offset?: number;
+	source: string;
+	stride?: number;
 	params: Array<DAEParam>;
 
 	constructor() {
-		this.source = "";
 		this.count = 0;
-		this.stride = 0;
+		this.offset = 0;
+		this.source = "";
+		this.stride = 1;
 		this.params = [];
 	}
 
@@ -19,18 +23,11 @@ export class DAEAccessor {
 			return null;
 		}
 		var accessor = new DAEAccessor();
+		accessor.count = DAEUtil.intAttrib(el, "count");
+		accessor.offset = DAEUtil.intAttrib(el, "offset", 0);
 		accessor.source = el.getAttribute("source");
-		accessor.count = parseInt(el.getAttribute("count"));
-		accessor.stride = parseInt(el.getAttribute("stride"));
-		var $params = el.querySelectorAll("param");
-		for (var i = 0; i < $params.length; i++) {
-			var $param = $params[i];
-			var param = DAEParam.parse($param);
-			if (param == null) {
-				continue;
-			}
-			accessor.params.push(param);
-		}
+		accessor.stride = DAEUtil.intAttrib(el, "stride", 1);
+		accessor.params = DAEParam.parseArray(el, "param");
 		return accessor;
 	}
 }

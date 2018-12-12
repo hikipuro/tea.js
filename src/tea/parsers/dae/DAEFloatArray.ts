@@ -1,4 +1,5 @@
 import * as Tea from "../../Tea";
+import { DAEUtil } from "./DAEUtil";
 
 export class DAEFloatArray {
 	id: string;
@@ -17,13 +18,8 @@ export class DAEFloatArray {
 		}
 		var floatArray = new DAEFloatArray();
 		floatArray.id = el.id;
-		floatArray.count = parseInt(el.getAttribute("count"));
-		var content = el.textContent;
-		var numbers = content.split(/\s/);
-		for (var i = 0; i < numbers.length; i++) {
-			var n = parseFloat(numbers[i]);
-			floatArray.data.push(n);
-		}
+		floatArray.count = DAEUtil.intAttrib(el, "count");
+		floatArray.data = DAEUtil.floatArray(el);
 		return floatArray;
 	}
 

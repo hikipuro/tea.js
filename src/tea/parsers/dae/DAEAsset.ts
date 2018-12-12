@@ -1,5 +1,6 @@
 import { DAEContributor } from "./DAEContributor";
 import { DAEUnit } from "./DAEUnit";
+import { DAEUtil } from "./DAEUtil";
 
 export class DAEAsset {
 	contributor: DAEContributor;
@@ -24,14 +25,11 @@ export class DAEAsset {
 		var asset = new DAEAsset();
 		var $contributor = el.querySelector("contributor");
 		asset.contributor = DAEContributor.parse($contributor);
-		var $created = el.querySelector("created");
-		asset.created = new Date($created.textContent);
-		var $modified = el.querySelector("modified");
-		asset.modified = new Date($modified.textContent);
+		asset.created = new Date(DAEUtil.textContent(el, "created"));
+		asset.modified = new Date(DAEUtil.textContent(el, "modified"));
 		var $unit = el.querySelector("unit");
 		asset.unit = DAEUnit.parse($unit);
-		var $upAxis = el.querySelector("up_axis");
-		asset.upAxis = $upAxis.textContent;
+		asset.upAxis = DAEUtil.textContent(el, "up_axis")
 		return asset;
 	}
 }

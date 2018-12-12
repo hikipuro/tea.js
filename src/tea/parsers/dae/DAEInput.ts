@@ -1,3 +1,5 @@
+import { DAEUtil } from "./DAEUtil";
+
 export class DAEInput {
 	semantic: string;
 	source: string;
@@ -17,7 +19,11 @@ export class DAEInput {
 		var input = new DAEInput();
 		input.semantic = el.getAttribute("semantic");
 		input.source = el.getAttribute("source");
-		input.offset = parseInt(el.getAttribute("offset"));
+		input.offset = DAEUtil.intAttrib(el, "offset", 0);
 		return input;
+	}
+
+	static parseArray(el: Element, selector: string): Array<DAEInput> {
+		return DAEUtil.parseArray<DAEInput>(this.parse, el, selector);
 	}
 }

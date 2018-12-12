@@ -2,6 +2,7 @@ import * as Tea from "../../Tea";
 import { DAESource } from "./DAESource";
 import { DAEVertices } from "./DAEVertices";
 import { DAETriangles } from "./DAETriangles";
+import { DAEUtil } from "./DAEUtil";
 
 export class DAEMesh {
 	id: string;
@@ -23,20 +24,16 @@ export class DAEMesh {
 		}
 		var mesh = new DAEMesh();
 		mesh.id = el.id;
-		var $sources = el.querySelectorAll("source");
-		for (var i = 0; i < $sources.length; i++) {
-			var $source = $sources[i];
-			var source = DAESource.parse($source);
-			if (source == null) {
-				continue;
-			}
-			mesh.sources.push(source);
-		}
+		mesh.sources = DAESource.parseArray(el, "source");
 		var $vertices = el.querySelector("vertices");
 		mesh.vertices = DAEVertices.parse($vertices);
 		var $triangles = el.querySelector("triangles");
 		mesh.triangles = DAETriangles.parse($triangles);
 		return mesh;
+	}
+
+	static parseArray(el: Element, selector: string): Array<DAEMesh> {
+		return DAEUtil.parseArray<DAEMesh>(this.parse, el, selector);
 	}
 
 	findSource(id: string): DAESource {

@@ -1,6 +1,7 @@
 import * as Tea from "../../Tea";
 import { DAEFloatArray } from "./DAEFloatArray";
 import { DAETechniqueCommon } from "./DAETechniqueCommon";
+import { DAEUtil } from "./DAEUtil";
 
 export class DAESource {
 	id: string;
@@ -27,6 +28,10 @@ export class DAESource {
 		var techniqueCommon = DAETechniqueCommon.parse($technique_common);
 		source.techniqueCommon = techniqueCommon;
 		return source;
+	}
+
+	static parseArray(el: Element, selector: string): Array<DAESource> {
+		return DAEUtil.parseArray<DAESource>(this.parse, el, selector);
 	}
 
 	toVector3Array(): Array<Tea.Vector3> {

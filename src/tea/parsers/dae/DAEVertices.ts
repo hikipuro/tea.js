@@ -16,15 +16,7 @@ export class DAEVertices {
 		}
 		var vertices = new DAEVertices();
 		vertices.id = el.id;
-		var $inputs = el.querySelectorAll("input");
-		for (var i = 0; i < $inputs.length; i++) {
-			var $input = $inputs[i];
-			var input = DAEInput.parse($input);
-			if (input == null) {
-				continue;
-			}
-			vertices.inputs.push(input);
-		}
+		vertices.inputs = DAEInput.parseArray(el, "input");
 		return vertices;
 	}
 

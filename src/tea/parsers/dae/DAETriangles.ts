@@ -1,5 +1,6 @@
 import * as Tea from "../../Tea";
 import { DAEInput } from "./DAEInput";
+import { DAEUtil } from "./DAEUtil";
 
 export class DAETriangles {
 	id: string;
@@ -24,23 +25,10 @@ export class DAETriangles {
 		var triangles = new DAETriangles();
 		triangles.id = el.id;
 		triangles.material = el.getAttribute("material");
-		triangles.count = parseInt(el.getAttribute("count"));
-		var $inputs = el.querySelectorAll("input");
-		for (var i = 0; i < $inputs.length; i++) {
-			var $input = $inputs[i];
-			var input = DAEInput.parse($input);
-			if (input == null) {
-				continue;
-			}
-			triangles.inputs.push(input);
-		}
+		triangles.count = DAEUtil.intAttrib(el, "count");
+		triangles.inputs = DAEInput.parseArray(el, "input");
 		var $p = el.querySelector("p");
-		var content = $p.textContent;
-		var numbers = content.split(/\s/);
-		for (var i = 0; i < numbers.length; i++) {
-			var n = parseInt(numbers[i]);
-			triangles.data.push(n);
-		}
+		triangles.data = DAEUtil.intArray($p);
 		return triangles;
 	}
 

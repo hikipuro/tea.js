@@ -1,3 +1,5 @@
+import { DAEUtil } from "./DAEUtil";
+
 export class DAEParam {
 	name: string;
 	type: string;
@@ -16,5 +18,9 @@ export class DAEParam {
 		param.name = el.getAttribute("name");
 		param.type = el.getAttribute("type");
 		return param;
+	}
+
+	static parseArray(el: Element, selector: string): Array<DAEParam> {
+		return DAEUtil.parseArray<DAEParam>(this.parse, el, selector);
 	}
 }

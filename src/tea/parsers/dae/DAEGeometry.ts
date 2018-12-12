@@ -2,13 +2,13 @@ import * as Tea from "../../Tea";
 import { DAEMesh } from "./DAEMesh";
 
 export class DAEGeometry {
-	id: string;
-	name: string;
+	id?: string;
+	name?: string;
 	meshes: Array<DAEMesh>;
 
 	constructor() {
-		this.id = "";
-		this.name = "";
+		this.id = null;
+		this.name = null;
 		this.meshes = [];
 	}
 
@@ -20,15 +20,7 @@ export class DAEGeometry {
 		var geometry = new DAEGeometry();
 		geometry.id = el.id;
 		geometry.name = el.getAttribute("name");
-		var $meshes = el.querySelectorAll("mesh");
-		for (var i = 0; i < $meshes.length; i++) {
-			var $mesh = $meshes[i];
-			var mesh = DAEMesh.parse($mesh);
-			if (mesh == null) {
-				continue;
-			}
-			geometry.meshes.push(mesh);
-		}
+		geometry.meshes = DAEMesh.parseArray(el, "mesh");
 		return geometry;
 	}
 
