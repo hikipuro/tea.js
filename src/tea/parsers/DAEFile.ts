@@ -1,10 +1,41 @@
 import * as Tea from "../Tea";
-import { DAEAsset } from "./dae/DAEAsset";
-import { DAELibraryGeometries } from "./dae/DAELibraryGeometries";
+import { DAEAsset } from "./dae/metadata/DAEAsset";
+import { DAELibraryAnimationClips } from "./dae/animation/DAELibraryAnimationClips";
+import { DAELibraryAnimations } from "./dae/animation/DAELibraryAnimations";
+import { DAELibraryCameras } from "./dae/camera/DAELibraryCameras";
+import { DAELibraryControllers } from "./dae/controller/DAELibraryControllers";
+import { DAELibraryFormulas } from "./dae/math/DAELibraryFormulas";
+import { DAELibraryGeometries } from "./dae/geometry/DAELibraryGeometries";
+import { DAELibraryLights } from "./dae/lighting/DAELibraryLights";
+import { DAELibraryNodes } from "./dae/scene/DAELibraryNodes";
+import { DAELibraryVisualScenes } from "./dae/scene/DAELibraryVisualScenes";
+import { DAEScene } from "./dae/scene/DAEScene";
+import { DAEExtra } from "./dae/extensibility/DAEExtra";
 
 export class DAEFile {
 	asset: DAEAsset;
-	libraryGeometries: DAELibraryGeometries;
+	libraryAnimationClips?: DAELibraryAnimationClips;
+	libraryAnimations: DAELibraryAnimations;
+	//libraryArticulatedSystems: any;
+	libraryCameras: DAELibraryCameras;
+	libraryControllers: DAELibraryControllers;
+	//libraryEffects: any;
+	//libraryForceFields: any;
+	libraryFormulas: DAELibraryFormulas;
+	libraryGeometries?: DAELibraryGeometries;
+	//libraryImages: any;
+	//libraryJoints: any;
+	//libraryKinematicsModels: any;
+	//libraryKinematicsScenes: any;
+	libraryLights: DAELibraryLights;
+	//libraryMaterials: any;
+	libraryNodes: DAELibraryNodes;
+	//libraryPhysicsMaterials: any;
+	//libraryPhysicsModels: any;
+	//libraryPhysicsScenes: any;
+	libraryVisualScenes: DAELibraryVisualScenes;
+	scene?: DAEScene;
+	extras?: Array<DAEExtra>;
 
 	constructor() {
 		this.asset = null;

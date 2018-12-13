@@ -1,9 +1,11 @@
+import { DAESemantic } from "./data/DAESemantic";
+
 export class DAEUtil {
-	static parseArray<T>(parse: (el: Element) => T, element: Element, selector: string): Array<T> {
-		if (element == null || selector == null || selector === "") {
+	static parseArray<T>(parse: (el: Element) => T, parent: Element, selector: string): Array<T> {
+		if (parent == null || selector == null || selector === "") {
 			return null;
 		}
-		var elements = element.querySelectorAll(selector);
+		var elements = parent.querySelectorAll(selector);
 		var result: Array<T> = [];
 		var length = elements.length;
 		for (var i = 0; i < length; i++) {
@@ -15,6 +17,20 @@ export class DAEUtil {
 			result.push(instance);
 		}
 		return result;
+	}
+
+	static floatContent(element: Element, selector: string = null): number {
+		if (element == null) {
+			return null;
+		}
+		var el = element;
+		if (selector != null) {
+			el = element.querySelector(selector);
+		}
+		if (el == null) {
+			return null;
+		}
+		return parseFloat(el.textContent);
 	}
 
 	static textContent(element: Element, selector: string): string {
@@ -43,19 +59,57 @@ export class DAEUtil {
 		return result;
 	}
 
+	static boolArray(element: Element): Array<boolean> {
+		if (element == null || element.textContent == null) {
+			return null;
+		}
+		var result = [];
+		var content = element.textContent;
+		var values = content.split(/\s+/);
+		var length = values.length;
+		for (var i = 0; i < length; i++) {
+			var n = new Boolean(values[i]);
+			result.push(n.valueOf());
+		}
+		return result;
+	}
+
 	static floatArray(element: Element): Array<number> {
 		if (element == null || element.textContent == null) {
 			return null;
 		}
 		var result = [];
 		var content = element.textContent;
-		var numbers = content.split(/\s+/);
-		var length = numbers.length;
+		var values = content.split(/\s+/);
+		var length = values.length;
 		for (var i = 0; i < length; i++) {
-			var n = parseFloat(numbers[i]);
+			var n = parseFloat(values[i]);
 			result.push(n);
 		}
 		return result;
+	}
+
+	static stringArray(element: Element): Array<string> {
+		if (element == null || element.textContent == null) {
+			return null;
+		}
+		var content = element.textContent;
+		return content.split(/\s+/);
+	}
+
+	static boolAttrib(element: Element, name: string, defaultValue: boolean = null): boolean {
+		if (element == null) {
+			return defaultValue;
+		}
+		var value = element.getAttribute(name);
+		if (value == null) {
+			return defaultValue;
+		}
+		var i = new Boolean(value);
+		if (i == null) {
+			return defaultValue;
+		}
+		return i.valueOf();
 	}
 
 	static intAttrib(element: Element, name: string, defaultValue: number = null): number {
@@ -71,6 +125,40 @@ export class DAEUtil {
 			return defaultValue;
 		}
 		return i;
+	}
+
+	static floatAttrib(element: Element, name: string, defaultValue: number = null): number {
+		if (element == null) {
+			return defaultValue;
+		}
+		var value = element.getAttribute(name);
+		if (value == null) {
+			return defaultValue;
+		}
+		var i = parseFloat(value);
+		if (isNaN(i)) {
+			return defaultValue;
+		}
+		return i;
+	}
+
+	static stringAttrib(element: Element, name: string, defaultValue: string = null): string {
+		if (element == null) {
+			return defaultValue;
+		}
+		var value = element.getAttribute(name);
+		if (value == null) {
+			return defaultValue;
+		}
+		return value;
+	}
+
+	static semanticAttrib(element: Element, name: string = "semantic"): DAESemantic {
+		if (element == null || name == null) {
+			return null;
+		}
+		var attr = element.getAttribute(name);
+		return DAESemantic[attr];
 	}
 
 	static addTextContent(element: Element, name: string, content: string): void {
