@@ -21,7 +21,7 @@ export class DAELibraryNodes {
 
 	static parse(el: Element): DAELibraryNodes {
 		if (el == null) {
-			console.error("parse error");
+			//console.error("parse error");
 			return null;
 		}
 		var value = new DAELibraryNodes();

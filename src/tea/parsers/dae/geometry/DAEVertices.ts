@@ -1,24 +1,32 @@
+import { DAEUtil } from "../DAEUtil";
 import { DAEInput } from "../data/DAEInput";
 import { DAESemantic } from "../data/DAESemantic";
-import { DAEUtil } from "../DAEUtil";
+import { DAEExtra } from "../extensibility/DAEExtra";
 
+// parent: mesh, convex_mesh, brep
 export class DAEVertices {
 	id: string;
+	name?: string;
 	inputs: Array<DAEInput>;
+	extras?: Array<DAEExtra>;
 
 	constructor() {
 		this.id = "";
+		this.name = null;
 		this.inputs = [];
+		this.extras = null;
 	}
 
 	static parse(el: Element): DAEVertices {
 		if (el == null) {
-			console.error("parse error");
+			//console.error("parse error");
 			return null;
 		}
 		var value = new DAEVertices();
 		value.id = DAEUtil.stringAttrib(el, "id");
+		value.name = DAEUtil.stringAttrib(el, "name");
 		value.inputs = DAEInput.parseArray(el);
+		value.extras = DAEExtra.parseArray(el);
 		return value;
 	}
 

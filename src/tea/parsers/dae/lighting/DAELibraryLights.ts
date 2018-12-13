@@ -21,7 +21,7 @@ export class DAELibraryLights {
 
 	static parse(el: Element): DAELibraryLights {
 		if (el == null) {
-			console.error("parse error");
+			//console.error("parse error");
 			return null;
 		}
 		var value = new DAELibraryLights();

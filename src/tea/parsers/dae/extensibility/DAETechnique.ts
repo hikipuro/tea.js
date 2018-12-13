@@ -1,22 +1,25 @@
 import { DAEUtil } from "../DAEUtil";
 
+// parent: extra, source(core), light, optics, imager, force_field, physics_material, 
+// physics_scene, rigid_body, rigid_constraint, instance_rigid_body, 
+// bind_material, motion, kinematics, kinematics_model
 export class DAETechnique {
-	id?: string;
-	sid: string;
+	profile: string;
+	xmlns?: string;
 
 	constructor() {
-		this.id = null;
-		this.sid = null;
+		this.profile = null;
+		this.xmlns = null;
 	}
 
 	static parse(el: Element): DAETechnique {
 		if (el == null) {
-			console.error("parse error");
+			//console.error("parse error");
 			return null;
 		}
 		var value = new DAETechnique();
-		value.id = DAEUtil.stringAttrib(el, "id");
-		value.sid = DAEUtil.stringAttrib(el, "sid");
+		value.profile = DAEUtil.stringAttrib(el, "profile");
+		value.xmlns = DAEUtil.stringAttrib(el, "xmlns");
 		return value;
 	}
 

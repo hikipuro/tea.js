@@ -22,7 +22,7 @@ export class DAEIntArray {
 
 	static parse(el: Element): DAEIntArray {
 		if (el == null) {
-			console.error("parse error");
+			//console.error("parse error");
 			return null;
 		}
 		var value = new DAEIntArray();

@@ -2,36 +2,74 @@ import * as Tea from "../../../Tea";
 import { DAEUtil } from "../DAEUtil";
 import { DAESource } from "../data/DAESource";
 import { DAEVertices } from "./DAEVertices";
+import { DAELines } from "./DAELines";
+import { DAELinestrips } from "./DAELineStrips";
+import { DAEPolygons } from "./DAEPolygons";
+import { DAEPolyList } from "./DAEPolyList";
 import { DAETriangles } from "./DAETriangles";
+import { DAETrifans } from "./DAETrifans";
+import { DAETristrips } from "./DAETristrips";
+import { DAEExtra } from "../extensibility/DAEExtra";
 import { DAESemantic } from "../data/DAESemantic";
 
+// parent: geometry
 export class DAEMesh {
-	id: string;
 	sources: Array<DAESource>;
 	vertices: DAEVertices;
-	triangles: DAETriangles;
+	lines?: DAELines;
+	linestrips?: DAELinestrips;
+	polygons?: DAEPolygons;
+	polylist?: DAEPolyList;
+	triangles?: DAETriangles;
+	trifans?: DAETrifans;
+	tristrips?: DAETristrips;
+	extras?: Array<DAEExtra>;
 
 	constructor() {
-		this.id = "";
 		this.sources = [];
 		this.vertices = null;
+		this.lines = null;
+		this.linestrips = null;
+		this.polygons = null;
+		this.polylist = null;
 		this.triangles = null;
+		this.trifans = null;
+		this.tristrips = null;
+		this.extras = null;
 	}
 
 	static parse(el: Element): DAEMesh {
 		if (el == null) {
-			console.error("parse error");
+			//console.error("parse error");
 			return null;
 		}
 		var value = new DAEMesh();
-		value.id = DAEUtil.stringAttrib(el, "id");
 		value.sources = DAESource.parseArray(el);
 		value.vertices = DAEVertices.parse(
 			el.querySelector("vertices")
 		);
+		value.lines = DAELines.parse(
+			el.querySelector("lines")
+		);
+		value.linestrips = DAELinestrips.parse(
+			el.querySelector("linestrips")
+		);
+		value.polygons = DAEPolygons.parse(
+			el.querySelector("polygons")
+		);
+		value.polylist = DAEPolyList.parse(
+			el.querySelector("polylist")
+		);
 		value.triangles = DAETriangles.parse(
 			el.querySelector("triangles")
 		);
+		value.trifans = DAETrifans.parse(
+			el.querySelector("trifans")
+		);
+		value.tristrips = DAETristrips.parse(
+			el.querySelector("tristrips")
+		);
+		value.extras = DAEExtra.parseArray(el);
 		return value;
 	}
 
@@ -106,7 +144,6 @@ export class DAEMesh {
 
 	toXML(): Element {
 		var el = document.createElement("mesh");
-		DAEUtil.setAttribute(el, "id", this.id);
 		return el;
 	}
 }

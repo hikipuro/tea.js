@@ -27,7 +27,7 @@ export class DAEFormula {
 
 	static parse(el: Element): DAEFormula {
 		if (el == null) {
-			console.error("parse error");
+			//console.error("parse error");
 			return null;
 		}
 		var value = new DAEFormula();

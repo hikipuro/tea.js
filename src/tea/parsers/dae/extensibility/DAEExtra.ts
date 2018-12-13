@@ -26,7 +26,7 @@ export class DAEExtra {
 
 	static parse(el: Element): DAEExtra {
 		if (el == null) {
-			console.error("parse error");
+			//console.error("parse error");
 			return null;
 		}
 		var value = new DAEExtra();
@@ -40,7 +40,7 @@ export class DAEExtra {
 		return value;
 	}
 
-	static parseArray(parent: Element): Array<DAEExtra> {
+	static parseArray(parent: Document | Element): Array<DAEExtra> {
 		return DAEUtil.parseArray<DAEExtra>(
 			this.parse, parent, "extra"
 		);

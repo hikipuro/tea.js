@@ -20,7 +20,7 @@ export class DAELibraryFormulas {
 
 	static parse(el: Element): DAELibraryFormulas {
 		if (el == null) {
-			console.error("parse error");
+			//console.error("parse error");
 			return null;
 		}
 		var value = new DAELibraryFormulas();

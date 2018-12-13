@@ -16,7 +16,7 @@ export class DAEIDREFArray {
 
 	static parse(el: Element): DAEIDREFArray {
 		if (el == null) {
-			console.error("parse error");
+			//console.error("parse error");
 			return null;
 		}
 		var value = new DAEIDREFArray();

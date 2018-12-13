@@ -18,7 +18,7 @@ export class DAEInstanceGeometry {
 
 	static parse(el: Element): DAEInstanceGeometry {
 		if (el == null) {
-			console.error("parse error");
+			//console.error("parse error");
 			return null;
 		}
 		var value = new DAEInstanceGeometry();
@@ -27,5 +27,11 @@ export class DAEInstanceGeometry {
 		value.url = DAEUtil.stringAttrib(el, "url", "");
 		value.extras = DAEExtra.parseArray(el);
 		return value;
+	}
+
+	static parseArray(parent: Element): Array<DAEInstanceGeometry> {
+		return DAEUtil.parseArray<DAEInstanceGeometry>(
+			this.parse, parent, "instance_geometry"
+		);
 	}
 }

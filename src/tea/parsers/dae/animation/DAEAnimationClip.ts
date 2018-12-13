@@ -28,7 +28,7 @@ export class DAEAnimationClip {
 
 	static parse(el: Element): DAEAnimationClip {
 		if (el == null) {
-			console.error("parse error");
+			//console.error("parse error");
 			return null;
 		}
 		var value = new DAEAnimationClip();

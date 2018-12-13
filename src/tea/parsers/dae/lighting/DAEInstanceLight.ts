@@ -17,7 +17,7 @@ export class DAEInstanceLight {
 
 	static parse(el: Element): DAEInstanceLight {
 		if (el == null) {
-			console.error("parse error");
+			//console.error("parse error");
 			return null;
 		}
 		var value = new DAEInstanceLight();
@@ -26,5 +26,11 @@ export class DAEInstanceLight {
 		value.url = DAEUtil.stringAttrib(el, "url", "");
 		value.extras = DAEExtra.parseArray(el);
 		return value;
+	}
+
+	static parseArray(parent: Element): Array<DAEInstanceLight> {
+		return DAEUtil.parseArray<DAEInstanceLight>(
+			this.parse, parent, "instance_light"
+		);
 	}
 }

@@ -17,7 +17,7 @@ export class DAEInstanceAnimation {
 
 	static parse(el: Element): DAEInstanceAnimation {
 		if (el == null) {
-			console.error("parse error");
+			//console.error("parse error");
 			return null;
 		}
 		var value = new DAEInstanceAnimation();

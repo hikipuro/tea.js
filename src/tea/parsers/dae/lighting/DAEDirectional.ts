@@ -10,7 +10,7 @@ export class DAEDirectional {
 
 	static parse(el: Element): DAEDirectional {
 		if (el == null) {
-			console.error("parse error");
+			//console.error("parse error");
 			return null;
 		}
 		var value = new DAEDirectional();

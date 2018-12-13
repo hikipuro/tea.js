@@ -19,7 +19,7 @@ export class DAEInstanceNode {
 
 	static parse(el: Element): DAEInstanceNode {
 		if (el == null) {
-			console.error("parse error");
+			//console.error("parse error");
 			return null;
 		}
 		var value = new DAEInstanceNode();
@@ -29,5 +29,11 @@ export class DAEInstanceNode {
 		value.proxy = DAEUtil.stringAttrib(el, "proxy");
 		value.extras = DAEExtra.parseArray(el);
 		return value;
+	}
+
+	static parseArray(parent: Element): Array<DAEInstanceNode> {
+		return DAEUtil.parseArray<DAEInstanceNode>(
+			this.parse, parent, "instance_node"
+		);
 	}
 }

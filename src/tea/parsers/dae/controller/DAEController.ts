@@ -24,7 +24,7 @@ export class DAEController {
 
 	static parse(el: Element): DAEController {
 		if (el == null) {
-			console.error("parse error");
+			//console.error("parse error");
 			return null;
 		}
 		var value = new DAEController();

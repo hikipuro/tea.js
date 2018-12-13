@@ -23,7 +23,7 @@ export class DAEFloatArray {
 
 	static parse(el: Element): DAEFloatArray {
 		if (el == null) {
-			console.error("parse error");
+			//console.error("parse error");
 			return null;
 		}
 		var value = new DAEFloatArray();

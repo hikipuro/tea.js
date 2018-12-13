@@ -13,7 +13,7 @@ export class DAEJoints {
 
 	static parse(el: Element): DAEJoints {
 		if (el == null) {
-			console.error("parse error");
+			//console.error("parse error");
 			return null;
 		}
 		var value = new DAEJoints();

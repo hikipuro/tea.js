@@ -24,7 +24,7 @@ export class DAELight {
 
 	static parse(el: Element): DAELight {
 		if (el == null) {
-			console.error("parse error");
+			//console.error("parse error");
 			return null;
 		}
 		var value = new DAELight();

@@ -36,4 +36,10 @@ export class DAEEvaluateScene {
 		value.extras = DAEExtra.parseArray(el);
 		return value;
 	}
+
+	static parseArray(parent: Element): Array<DAEEvaluateScene> {
+		return DAEUtil.parseArray<DAEEvaluateScene>(
+			this.parse, parent, "evaluate_scene"
+		);
+	}
 }

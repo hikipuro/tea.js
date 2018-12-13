@@ -5,7 +5,7 @@ export class DAETarget {
 
 	static parse(el: Element): DAETarget {
 		if (el == null) {
-			console.error("parse error");
+			//console.error("parse error");
 			return null;
 		}
 		var value = new DAETarget();

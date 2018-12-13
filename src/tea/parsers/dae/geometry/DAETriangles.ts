@@ -2,35 +2,40 @@ import * as Tea from "../../../Tea";
 import { DAEUtil } from "../DAEUtil";
 import { DAEInput } from "../data/DAEInput";
 import { DAESemantic } from "../data/DAESemantic";
+import { DAEExtra } from "../extensibility/DAEExtra";
 
+// parent: mesh, convex_mesh
 export class DAETriangles {
-	id: string;
-	material: string;
+	name?: string;
 	count: number;
-	inputs: Array<DAEInput>;
+	material?: string;
+	inputs?: Array<DAEInput>;
 	data: Array<number>;
+	extras?: Array<DAEExtra>;
 
 	constructor() {
-		this.id = "";
-		this.material = "";
+		this.name = null;
 		this.count = 0;
-		this.inputs = [];
+		this.material = null;
+		this.inputs = null;
 		this.data = [];
+		this.extras = null;
 	}
 
 	static parse(el: Element): DAETriangles {
 		if (el == null) {
-			console.error("parse error");
+			//console.error("parse error");
 			return null;
 		}
 		var value = new DAETriangles();
-		value.id = DAEUtil.stringAttrib(el, "id");
-		value.material = DAEUtil.stringAttrib(el, "material");
+		value.name = DAEUtil.stringAttrib(el, "name");
 		value.count = DAEUtil.intAttrib(el, "count");
+		value.material = DAEUtil.stringAttrib(el, "material");
 		value.inputs = DAEInput.parseArray(el);
 		value.data = DAEUtil.intArray(
 			el.querySelector("p")
 		);
+		value.extras = DAEExtra.parseArray(el);
 		return value;
 	}
 

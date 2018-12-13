@@ -13,7 +13,7 @@ export class DAEControlVertices {
 
 	static parse(el: Element): DAEControlVertices {
 		if (el == null) {
-			console.error("parse error");
+			//console.error("parse error");
 			return null;
 		}
 		var value = new DAEControlVertices();

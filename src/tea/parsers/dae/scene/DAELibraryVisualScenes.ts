@@ -21,7 +21,7 @@ export class DAELibraryVisualScenes {
 
 	static parse(el: Element): DAELibraryVisualScenes {
 		if (el == null) {
-			console.error("parse error");
+			//console.error("parse error");
 			return null;
 		}
 		var value = new DAELibraryVisualScenes();

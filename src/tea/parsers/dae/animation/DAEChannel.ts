@@ -12,7 +12,7 @@ export class DAEChannel {
 
 	static parse(el: Element): DAEChannel {
 		if (el == null) {
-			console.error("parse error");
+			//console.error("parse error");
 			return null;
 		}
 		var value = new DAEChannel();

@@ -11,7 +11,7 @@ export class DAEAltitude {
 
 	static parse(el: Element): DAEAltitude {
 		if (el == null) {
-			console.error("parse error");
+			//console.error("parse error");
 			return null;
 		}
 		var value = new DAEAltitude();

@@ -21,7 +21,7 @@ export class DAELibraryAnimations {
 
 	static parse(el: Element): DAELibraryAnimations {
 		if (el == null) {
-			console.error("parse error");
+			//console.error("parse error");
 			return null;
 		}
 		var value = new DAELibraryAnimations();

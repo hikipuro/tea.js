@@ -1,7 +1,7 @@
 import { DAESemantic } from "./data/DAESemantic";
 
 export class DAEUtil {
-	static parseArray<T>(parse: (el: Element) => T, parent: Element, selector: string): Array<T> {
+	static parseArray<T>(parse: (el: Element) => T, parent: Document | Element, selector: string): Array<T> {
 		if (parent == null || selector == null || selector === "") {
 			return null;
 		}
@@ -19,6 +19,35 @@ export class DAEUtil {
 		return result;
 	}
 
+	static boolContent(element: Element, selector: string = null): boolean {
+		if (element == null) {
+			return null;
+		}
+		var el = element;
+		if (selector != null) {
+			el = element.querySelector(selector);
+		}
+		if (el == null) {
+			return null;
+		}
+		var value = new Boolean(el.textContent);
+		return value.valueOf();
+	}
+
+	static intContent(element: Element, selector: string = null): number {
+		if (element == null) {
+			return null;
+		}
+		var el = element;
+		if (selector != null) {
+			el = element.querySelector(selector);
+		}
+		if (el == null) {
+			return null;
+		}
+		return parseInt(el.textContent);
+	}
+
 	static floatContent(element: Element, selector: string = null): number {
 		if (element == null) {
 			return null;
@@ -33,30 +62,18 @@ export class DAEUtil {
 		return parseFloat(el.textContent);
 	}
 
-	static textContent(element: Element, selector: string): string {
+	static textContent(element: Element, selector: string = null): string {
 		if (element == null) {
 			return null;
 		}
-		var el = element.querySelector(selector);
+		var el = element;
+		if (selector != null) {
+			el = element.querySelector(selector);
+		}
 		if (el == null) {
 			return null;
 		}
 		return el.textContent;
-	}
-
-	static intArray(element: Element): Array<number> {
-		if (element == null || element.textContent == null) {
-			return null;
-		}
-		var result = [];
-		var content = element.textContent;
-		var numbers = content.split(/\s+/);
-		var length = numbers.length;
-		for (var i = 0; i < length; i++) {
-			var n = parseInt(numbers[i]);
-			result.push(n);
-		}
-		return result;
 	}
 
 	static boolArray(element: Element): Array<boolean> {
@@ -64,7 +81,7 @@ export class DAEUtil {
 			return null;
 		}
 		var result = [];
-		var content = element.textContent;
+		var content = element.textContent.trim();
 		var values = content.split(/\s+/);
 		var length = values.length;
 		for (var i = 0; i < length; i++) {
@@ -74,12 +91,27 @@ export class DAEUtil {
 		return result;
 	}
 
+	static intArray(element: Element): Array<number> {
+		if (element == null || element.textContent == null) {
+			return null;
+		}
+		var result = [];
+		var content = element.textContent.trim();
+		var numbers = content.split(/\s+/);
+		var length = numbers.length;
+		for (var i = 0; i < length; i++) {
+			var n = parseInt(numbers[i]);
+			result.push(n);
+		}
+		return result;
+	}
+
 	static floatArray(element: Element): Array<number> {
 		if (element == null || element.textContent == null) {
 			return null;
 		}
 		var result = [];
-		var content = element.textContent;
+		var content = element.textContent.trim();
 		var values = content.split(/\s+/);
 		var length = values.length;
 		for (var i = 0; i < length; i++) {
@@ -93,7 +125,7 @@ export class DAEUtil {
 		if (element == null || element.textContent == null) {
 			return null;
 		}
-		var content = element.textContent;
+		var content = element.textContent.trim();
 		return content.split(/\s+/);
 	}
 

@@ -86,8 +86,37 @@ export class DAEFile {
 				return;
 			}
 			var file = new DAEFile();
-			var $asset = document.querySelector("asset");
-			file.asset = DAEAsset.parse($asset);
+			file.asset = DAEAsset.parse(
+				document.querySelector("asset")
+			);
+			file.libraryAnimationClips = DAELibraryAnimationClips.parse(
+				document.querySelector("library_animation_clips")
+			);
+			file.libraryAnimations = DAELibraryAnimations.parse(
+				document.querySelector("library_animations")
+			);
+			file.libraryCameras = DAELibraryCameras.parse(
+				document.querySelector("library_cameras")
+			);
+			file.libraryControllers = DAELibraryControllers.parse(
+				document.querySelector("library_controllers")
+			);
+			file.libraryFormulas = DAELibraryFormulas.parse(
+				document.querySelector("library_formulas")
+			);
+			file.libraryLights = DAELibraryLights.parse(
+				document.querySelector("library_lights")
+			);
+			file.libraryNodes = DAELibraryNodes.parse(
+				document.querySelector("library_nodes")
+			);
+			file.libraryVisualScenes = DAELibraryVisualScenes.parse(
+				document.querySelector("library_visual_scenes")
+			);
+			file.extras = DAEExtra.parseArray(document);
+			file.scene = DAEScene.parse(
+				document.querySelector("scene")
+			);
 			var $libraryGeometries = document.querySelector("library_geometries");
 			DAELibraryGeometries.parse($libraryGeometries, (geometries: DAELibraryGeometries) => {
 				file.libraryGeometries = geometries;

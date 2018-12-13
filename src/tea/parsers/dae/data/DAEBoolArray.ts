@@ -16,7 +16,7 @@ export class DAEBoolArray {
 
 	static parse(el: Element): DAEBoolArray {
 		if (el == null) {
-			console.error("parse error");
+			//console.error("parse error");
 			return null;
 		}
 		var value = new DAEBoolArray();
