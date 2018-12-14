@@ -1,13 +1,17 @@
-import { DAESemantic } from "./data/DAESemantic";
+import { DAESemantic } from "./core/data/DAESemantic";
 
 export class DAEUtil {
 	static parseArray<T>(parse: (el: Element) => T, parent: Document | Element, selector: string): Array<T> {
 		if (parent == null || selector == null || selector === "") {
 			return null;
 		}
+		selector = ":scope > " + selector;
 		var elements = parent.querySelectorAll(selector);
-		var result: Array<T> = [];
 		var length = elements.length;
+		if (length <= 0) {
+			return null;
+		}
+		var result: Array<T> = [];
 		for (var i = 0; i < length; i++) {
 			var el = elements[i];
 			var instance = parse(el);
@@ -25,6 +29,7 @@ export class DAEUtil {
 		}
 		var el = element;
 		if (selector != null) {
+			selector = ":scope > " + selector;
 			el = element.querySelector(selector);
 		}
 		if (el == null) {
@@ -40,6 +45,7 @@ export class DAEUtil {
 		}
 		var el = element;
 		if (selector != null) {
+			selector = ":scope > " + selector;
 			el = element.querySelector(selector);
 		}
 		if (el == null) {
@@ -54,6 +60,7 @@ export class DAEUtil {
 		}
 		var el = element;
 		if (selector != null) {
+			selector = ":scope > " + selector;
 			el = element.querySelector(selector);
 		}
 		if (el == null) {
@@ -68,6 +75,7 @@ export class DAEUtil {
 		}
 		var el = element;
 		if (selector != null) {
+			selector = ":scope > " + selector;
 			el = element.querySelector(selector);
 		}
 		if (el == null) {

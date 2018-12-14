@@ -1,16 +1,20 @@
 import * as Tea from "../Tea";
-import { DAEAsset } from "./dae/metadata/DAEAsset";
-import { DAELibraryAnimationClips } from "./dae/animation/DAELibraryAnimationClips";
-import { DAELibraryAnimations } from "./dae/animation/DAELibraryAnimations";
-import { DAELibraryCameras } from "./dae/camera/DAELibraryCameras";
-import { DAELibraryControllers } from "./dae/controller/DAELibraryControllers";
-import { DAELibraryFormulas } from "./dae/math/DAELibraryFormulas";
-import { DAELibraryGeometries } from "./dae/geometry/DAELibraryGeometries";
-import { DAELibraryLights } from "./dae/lighting/DAELibraryLights";
-import { DAELibraryNodes } from "./dae/scene/DAELibraryNodes";
-import { DAELibraryVisualScenes } from "./dae/scene/DAELibraryVisualScenes";
-import { DAEScene } from "./dae/scene/DAEScene";
-import { DAEExtra } from "./dae/extensibility/DAEExtra";
+import { DAEAsset } from "./dae/core/metadata/DAEAsset";
+import { DAELibraryAnimationClips } from "./dae/core/animation/DAELibraryAnimationClips";
+import { DAELibraryAnimations } from "./dae/core/animation/DAELibraryAnimations";
+import { DAELibraryCameras } from "./dae/core/camera/DAELibraryCameras";
+import { DAELibraryControllers } from "./dae/core/controller/DAELibraryControllers";
+import { DAELibraryForceFields } from "./dae/physics/scene/DAELibraryForceFields";
+import { DAELibraryFormulas } from "./dae/core/math/DAELibraryFormulas";
+import { DAELibraryGeometries } from "./dae/core/geometry/DAELibraryGeometries";
+import { DAELibraryLights } from "./dae/core/lighting/DAELibraryLights";
+import { DAELibraryNodes } from "./dae/core/scene/DAELibraryNodes";
+import { DAELibraryPhysicsMaterials } from "./dae/physics/material/DAELibraryPhysicsMaterials";
+import { DAELibraryPhysicsModels } from "./dae/physics/model/DAELibraryPhysicsModels";
+import { DAELibraryPhysicsScenes } from "./dae/physics/scene/DAELibraryPhysicsScenes";
+import { DAELibraryVisualScenes } from "./dae/core/scene/DAELibraryVisualScenes";
+import { DAEScene } from "./dae/core/scene/DAEScene";
+import { DAEExtra } from "./dae/core/extensibility/DAEExtra";
 
 export class DAEFile {
 	asset: DAEAsset;
@@ -20,7 +24,7 @@ export class DAEFile {
 	libraryCameras: DAELibraryCameras;
 	libraryControllers: DAELibraryControllers;
 	//libraryEffects: any;
-	//libraryForceFields: any;
+	libraryForceFields: DAELibraryForceFields;
 	libraryFormulas: DAELibraryFormulas;
 	libraryGeometries?: DAELibraryGeometries;
 	//libraryImages: any;
@@ -30,9 +34,9 @@ export class DAEFile {
 	libraryLights: DAELibraryLights;
 	//libraryMaterials: any;
 	libraryNodes: DAELibraryNodes;
-	//libraryPhysicsMaterials: any;
-	//libraryPhysicsModels: any;
-	//libraryPhysicsScenes: any;
+	libraryPhysicsMaterials: DAELibraryPhysicsMaterials;
+	libraryPhysicsModels: DAELibraryPhysicsModels;
+	libraryPhysicsScenes: DAELibraryPhysicsScenes;
 	libraryVisualScenes: DAELibraryVisualScenes;
 	scene?: DAEScene;
 	extras?: Array<DAEExtra>;
@@ -87,42 +91,54 @@ export class DAEFile {
 			}
 			var file = new DAEFile();
 			file.asset = DAEAsset.parse(
-				document.querySelector("asset")
+				document.querySelector(":scope > asset")
 			);
 			file.libraryAnimationClips = DAELibraryAnimationClips.parse(
-				document.querySelector("library_animation_clips")
+				document.querySelector(":scope > library_animation_clips")
 			);
 			file.libraryAnimations = DAELibraryAnimations.parse(
-				document.querySelector("library_animations")
+				document.querySelector(":scope > library_animations")
 			);
 			file.libraryCameras = DAELibraryCameras.parse(
-				document.querySelector("library_cameras")
+				document.querySelector(":scope > library_cameras")
 			);
 			file.libraryControllers = DAELibraryControllers.parse(
-				document.querySelector("library_controllers")
+				document.querySelector(":scope > library_controllers")
+			);
+			file.libraryForceFields = DAELibraryForceFields.parse(
+				document.querySelector(":scope > library_force_fields")
 			);
 			file.libraryFormulas = DAELibraryFormulas.parse(
-				document.querySelector("library_formulas")
+				document.querySelector(":scope > library_formulas")
 			);
 			file.libraryLights = DAELibraryLights.parse(
-				document.querySelector("library_lights")
+				document.querySelector(":scope > library_lights")
 			);
 			file.libraryNodes = DAELibraryNodes.parse(
-				document.querySelector("library_nodes")
+				document.querySelector(":scope > library_nodes")
+			);
+			file.libraryPhysicsMaterials = DAELibraryPhysicsMaterials.parse(
+				document.querySelector(":scope > library_physics_materials")
+			);
+			file.libraryPhysicsModels = DAELibraryPhysicsModels.parse(
+				document.querySelector(":scope > library_physics_models")
+			);
+			file.libraryPhysicsScenes = DAELibraryPhysicsScenes.parse(
+				document.querySelector(":scope > library_physics_scenes")
 			);
 			file.libraryVisualScenes = DAELibraryVisualScenes.parse(
-				document.querySelector("library_visual_scenes")
+				document.querySelector(":scope > library_visual_scenes")
 			);
 			file.extras = DAEExtra.parseArray(document);
 			file.scene = DAEScene.parse(
-				document.querySelector("scene")
+				document.querySelector(":scope > scene")
 			);
-			var $libraryGeometries = document.querySelector("library_geometries");
+			var $libraryGeometries = document.querySelector(":scope > library_geometries");
 			DAELibraryGeometries.parse($libraryGeometries, (geometries: DAELibraryGeometries) => {
 				file.libraryGeometries = geometries;
 				progress(1.0);
 				callback(file);
-				console.log("xml", file.toXML());
+				console.log("xml", file);
 			});
 		}, 0);
 	}
@@ -139,16 +155,27 @@ export class DAEFile {
 		var doc = document.implementation.createDocument(
 			"", "", null
 		);
-		var root = doc.createElement("COLLADA");
-		root.setAttribute("xmlns", "http://www.collada.org/2005/11/COLLADASchema");
-		root.setAttribute("version", "1.4.1");
-		root.setAttribute("xmlns:xsi", "http://www.w3.org/2001/XMLSchema-instance");
+		var root = this.createRootElement(doc);
 		var asset = this.asset.toXML();
 		root.appendChild(asset);
 		var libraryGeometries = this.libraryGeometries.toXML();
 		root.appendChild(libraryGeometries);
 		doc.appendChild(root);
 		return doc;
+	}
+
+	protected createRootElement(document: Document, version: string = "1.5.0"): Element {
+		var element = document.createElement("COLLADA");
+		if (version === "1.5.0") {
+			element.setAttribute("xmlns", "http://www.collada.org/2008/03/COLLADASchema");
+			element.setAttribute("version", "1.5.0");
+			element.setAttribute("xmlns:xsi", "http://www.w3.org/2001/XMLSchema-instance");
+		} else {
+			element.setAttribute("xmlns", "http://www.collada.org/2005/11/COLLADASchema");
+			element.setAttribute("version", "1.4.1");
+			element.setAttribute("xmlns:xsi", "http://www.w3.org/2001/XMLSchema-instance");
+		}
+		return element;
 	}
 
 	protected static isValidDocument(document: Document): boolean {
