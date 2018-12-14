@@ -169,7 +169,6 @@ export class DAEFile {
 		if (version === "1.5.0") {
 			element.setAttribute("xmlns", "http://www.collada.org/2008/03/COLLADASchema");
 			element.setAttribute("version", "1.5.0");
-			element.setAttribute("xmlns:xsi", "http://www.w3.org/2001/XMLSchema-instance");
 		} else {
 			element.setAttribute("xmlns", "http://www.collada.org/2005/11/COLLADASchema");
 			element.setAttribute("version", "1.4.1");

@@ -217,7 +217,7 @@ export class DAEUtil {
 		element.setAttribute(name, text);
 	}
 	
-	static formatDate(date: Date, format: string = "YYYY-MM-DDThh:mm:ss"): string {
+	static formatDate(date: Date, format: string = "YYYY-MM-DDThh:mm:ssZ"): string {
 		format = format.replace(/YYYY/g, date.getFullYear().toString());
 		format = format.replace(/MM/g, ('0' + (date.getMonth() + 1)).slice(-2));
 		format = format.replace(/DD/g, ('0' + date.getDate()).slice(-2));
