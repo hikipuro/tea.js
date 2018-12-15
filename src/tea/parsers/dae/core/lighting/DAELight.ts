@@ -6,6 +6,7 @@ import { DAEExtra } from "../extensibility/DAEExtra";
 
 // parent: library_lights
 export class DAELight {
+	static readonly TagName: string = "light";
 	id?: string;
 	name?: string;
 	asset?: DAEAsset;
@@ -31,10 +32,10 @@ export class DAELight {
 		value.id = DAEUtil.stringAttrib(el, "id");
 		value.name = DAEUtil.stringAttrib(el, "name");
 		value.asset = DAEAsset.parse(
-			el.querySelector(":scope > asset")
+			DAEUtil.queryChildSelector(el, DAEAsset.TagName)
 		);
 		value.techniqueCommon = DAETechniqueCommon.parse(
-			el.querySelector(":scope > technique_common")
+			DAEUtil.queryChildSelector(el, DAETechniqueCommon.TagName)
 		);
 		value.techniques = DAETechnique.parseArray(el);
 		value.extras = DAEExtra.parseArray(el);
@@ -43,12 +44,12 @@ export class DAELight {
 
 	static parseArray(parent: Element): Array<DAELight> {
 		return DAEUtil.parseArray<DAELight>(
-			this.parse, parent, "light"
+			this.parse, parent, DAELight.TagName
 		);
 	}
 
 	toXML(): Element {
-		var el = document.createElement("light");
+		var el = document.createElement(DAELight.TagName);
 		DAEUtil.setAttribute(el, "id", this.id);
 		DAEUtil.setAttribute(el, "name", this.name);
 		DAEUtil.addXML(el, this.asset);

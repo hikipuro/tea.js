@@ -5,6 +5,7 @@ import { DAEExtra } from "../extensibility/DAEExtra";
 
 // parent: COLLADA
 export class DAEScene {
+	static readonly TagName: string = "scene";
 	instancePhysicsScenes?: Array<DAEInstancePhysicsScene>;
 	instanceVisualScene?: DAEInstanceVisualScene;
 	//instanceKinematicsScene: any;
@@ -24,14 +25,14 @@ export class DAEScene {
 		var value = new DAEScene();
 		value.instancePhysicsScenes = DAEInstancePhysicsScene.parseArray(el);
 		value.instanceVisualScene = DAEInstanceVisualScene.parse(
-			el.querySelector(":scope > instance_visual_scene")
+			DAEUtil.queryChildSelector(el, DAEInstanceVisualScene.TagName)
 		);
 		value.extras = DAEExtra.parseArray(el);
 		return value;
 	}
 
 	toXML(): Element {
-		var el = document.createElement("scene");
+		var el = document.createElement(DAEScene.TagName);
 		DAEUtil.addXMLArray(el, this.instancePhysicsScenes);
 		DAEUtil.addXML(el, this.instanceVisualScene);
 		DAEUtil.addXMLArray(el, this.extras);

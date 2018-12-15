@@ -6,6 +6,7 @@ import { DAEExtra } from "../extensibility/DAEExtra";
 
 // parent: COLLADA
 export class DAELibraryGeometries {
+	static readonly TagName: string = "library_geometries";
 	id?: string;
 	name?: string;
 	asset?: DAEAsset;
@@ -29,7 +30,7 @@ export class DAELibraryGeometries {
 		value.id = DAEUtil.stringAttrib(el, "id");
 		value.name = DAEUtil.stringAttrib(el, "name");
 		value.asset = DAEAsset.parse(
-			el.querySelector(":scope > asset")
+			DAEUtil.queryChildSelector(el, DAEAsset.TagName)
 		);
 		var $geometries = el.querySelectorAll(":scope > geometry");
 		var length = $geometries.length;
@@ -77,7 +78,7 @@ export class DAELibraryGeometries {
 	}
 
 	toXML(): Element {
-		var el = document.createElement("library_geometries");
+		var el = document.createElement(DAELibraryGeometries.TagName);
 		DAEUtil.setAttribute(el, "id", this.id);
 		DAEUtil.setAttribute(el, "name", this.name);
 		DAEUtil.addXML(el, this.asset);

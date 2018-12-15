@@ -5,6 +5,7 @@ import { DAEExtra } from "../extensibility/DAEExtra";
 
 // parent: mesh, convex_mesh, brep
 export class DAEVertices {
+	static readonly TagName: string = "vertices";
 	id: string;
 	name?: string;
 	inputs: Array<DAEUnsharedInput>;
@@ -41,7 +42,7 @@ export class DAEVertices {
 	}
 
 	toXML(): Element {
-		var el = document.createElement("vertices");
+		var el = document.createElement(DAEVertices.TagName);
 		DAEUtil.setAttribute(el, "id", this.id);
 		DAEUtil.setAttribute(el, "name", this.name);
 		DAEUtil.addXMLArray(el, this.inputs);

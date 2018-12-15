@@ -6,6 +6,7 @@ import { DAEExtra } from "../extensibility/DAEExtra";
 
 // parent: library_animation_clips
 export class DAEAnimationClip {
+	static readonly TagName: string = "animation_clip";
 	id?: string;
 	start?: number;
 	end?: number;
@@ -37,7 +38,7 @@ export class DAEAnimationClip {
 		value.end = DAEUtil.floatAttrib(el, "end");
 		value.name = DAEUtil.stringAttrib(el, "name");
 		value.asset = DAEAsset.parse(
-			el.querySelector(":scope > asset")
+			DAEUtil.queryChildSelector(el, DAEAsset.TagName)
 		);
 		value.instanceAnimations = DAEInstanceAnimation.parseArray(el);
 		value.instanceFormulas = DAEInstanceFormula.parseArray(el);
@@ -47,12 +48,12 @@ export class DAEAnimationClip {
 
 	static parseArray(parent: Element): Array<DAEAnimationClip> {
 		return DAEUtil.parseArray<DAEAnimationClip>(
-			this.parse, parent, "animation_clip"
+			this.parse, parent, DAEAnimationClip.TagName
 		);
 	}
 
 	toXML(): Element {
-		var el = document.createElement("animation_clip");
+		var el = document.createElement(DAEAnimationClip.TagName);
 		DAEUtil.setAttribute(el, "id", this.id);
 		if (this.start !== 0.0) {
 			DAEUtil.setAttribute(el, "start", this.start);

@@ -4,6 +4,7 @@ import { DAEExtra } from "../extensibility/DAEExtra";
 
 // parent: camera
 export class DAEImager {
+	static readonly TagName: string = "imager";
 	techniques?: Array<DAETechnique>;
 	extras?: Array<DAEExtra>;
 
@@ -24,7 +25,7 @@ export class DAEImager {
 	}
 
 	toXML(): Element {
-		var el = document.createElement("imager");
+		var el = document.createElement(DAEImager.TagName);
 		DAEUtil.addXMLArray(el, this.techniques);
 		DAEUtil.addXMLArray(el, this.extras);
 		return el;

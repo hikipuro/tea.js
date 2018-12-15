@@ -8,6 +8,7 @@ import { DAEExtra } from "../../core/extensibility/DAEExtra";
 
 // parent: library_physics_scenes
 export class DAEPhysicsScene {
+	static readonly TagName: string = "physics_scene";
 	id?: string;
 	name?: string;
 	asset?: DAEAsset;
@@ -37,12 +38,12 @@ export class DAEPhysicsScene {
 		value.id = DAEUtil.stringAttrib(el, "id");
 		value.name = DAEUtil.stringAttrib(el, "name");
 		value.asset = DAEAsset.parse(
-			el.querySelector(":scope > asset")
+			DAEUtil.queryChildSelector(el, DAEAsset.TagName)
 		);
 		value.instanceForceFields = DAEInstanceForceField.parseArray(el);
 		value.instancePhysicsModels = DAEInstancePhysicsModel.parseArray(el);
 		value.techniqueCommon = DAETechniqueCommon.parse(
-			el.querySelector("technique_common")
+			DAEUtil.queryChildSelector(el, DAETechniqueCommon.TagName)
 		);
 		value.techniques = DAETechnique.parseArray(el);
 		value.extras = DAEExtra.parseArray(el);
@@ -51,7 +52,7 @@ export class DAEPhysicsScene {
 
 	static parseArray(parent: Element): Array<DAEPhysicsScene> {
 		return DAEUtil.parseArray<DAEPhysicsScene>(
-			this.parse, parent, "physics_scene"
+			this.parse, parent, DAEPhysicsScene.TagName
 		);
 	}
 }

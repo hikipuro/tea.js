@@ -6,6 +6,7 @@ import { DAEExtra } from "../extensibility/DAEExtra";
 
 // paernt: library_visual_scenes
 export class DAEVisualScene {
+	static readonly TagName: string = "visual_scene";
 	id?: string;
 	name?: string;
 	asset?: DAEAsset;
@@ -31,7 +32,7 @@ export class DAEVisualScene {
 		value.id = DAEUtil.stringAttrib(el, "id");
 		value.name = DAEUtil.stringAttrib(el, "name");
 		value.asset = DAEAsset.parse(
-			el.querySelector(":scope > asset")
+			DAEUtil.queryChildSelector(el, DAEAsset.TagName)
 		);
 		value.nodes = DAENode.parseArray(el);
 		value.evaluateScenes = DAEEvaluateScene.parseArray(el);
@@ -41,12 +42,12 @@ export class DAEVisualScene {
 
 	static parseArray(parent: Element): Array<DAEVisualScene> {
 		return DAEUtil.parseArray<DAEVisualScene>(
-			this.parse, parent, "visual_scene"
+			this.parse, parent, DAEVisualScene.TagName
 		);
 	}
 
 	toXML(): Element {
-		var el = document.createElement("visual_scene");
+		var el = document.createElement(DAEVisualScene.TagName);
 		DAEUtil.setAttribute(el, "id", this.id);
 		DAEUtil.setAttribute(el, "name", this.name);
 		DAEUtil.addXML(el, this.asset);

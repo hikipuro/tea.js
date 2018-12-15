@@ -5,6 +5,7 @@ import { DAEExtra } from "../../core/extensibility/DAEExtra";
 
 // parent: physics_model
 export class DAERigidBody {
+	static readonly TagName: string = "rigid_body";
 	sid?: string;
 	name?: string;
 	id?: string;
@@ -31,7 +32,7 @@ export class DAERigidBody {
 		value.name = DAEUtil.stringAttrib(el, "name");
 		value.id = DAEUtil.stringAttrib(el, "id");
 		value.techniqueCommon = DAETechniqueCommon.parse(
-			el.querySelector(":scope > technique_common")
+			DAEUtil.queryChildSelector(el, DAETechniqueCommon.TagName)
 		);
 		value.techniques = DAETechnique.parseArray(el);
 		value.extras = DAEExtra.parseArray(el);
@@ -40,7 +41,7 @@ export class DAERigidBody {
 
 	static parseArray(parent: Element): Array<DAERigidBody> {
 		return DAEUtil.parseArray<DAERigidBody>(
-			this.parse, parent, "rigid_body"
+			this.parse, parent, DAERigidBody.TagName
 		);
 	}
 }

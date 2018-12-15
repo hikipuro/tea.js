@@ -7,6 +7,7 @@ import { DAESemanticType } from "../data/DAESemanticType";
 // parent:
 // core: formula
 export class DAENewparam {
+	static readonly TagName: string = "newparam";
 	sid: string;
 	annotates?: Array<DAEAnnotate>;
 	semantic?: DAESemanticType;
@@ -29,7 +30,7 @@ export class DAENewparam {
 		var value = new DAENewparam();
 		value.sid = DAEUtil.stringAttrib(el, "sid");
 		value.annotates = DAEAnnotate.parseArray(el);
-		var $semantic = el.querySelector(":scope > semantic");
+		var $semantic = DAEUtil.queryChildSelector(el, "semantic");
 		if ($semantic != null) {
 			value.semantic = DAESemanticType[$semantic.textContent];
 		}
@@ -48,12 +49,12 @@ export class DAENewparam {
 
 	static parseArray(parent: Element): Array<DAENewparam> {
 		return DAEUtil.parseArray<DAENewparam>(
-			this.parse, parent, "newparam"
+			this.parse, parent, DAENewparam.TagName
 		);
 	}
 
 	toXML(): Element {
-		var el = document.createElement("newparam");
+		var el = document.createElement(DAENewparam.TagName);
 		DAEUtil.setAttribute(el, "sid", this.sid);
 		DAEUtil.addXMLArray(el, this.annotates);
 		if (this.semantic != null) {

@@ -14,6 +14,7 @@ import { DAESemanticType } from "../../core/data/DAESemanticType";
 
 // parent: geometry
 export class DAEConvexMesh implements DAEGeometricElement {
+	static readonly TagName: string = "convex_mesh";
 	convexHullOf: string;
 	sources: Array<DAESource>;
 	vertices: DAEVertices;
@@ -49,35 +50,35 @@ export class DAEConvexMesh implements DAEGeometricElement {
 		value.convexHullOf = DAEUtil.stringAttrib(el, "convex_hull_of");
 		value.sources = DAESource.parseArray(el);
 		value.vertices = DAEVertices.parse(
-			el.querySelector(":scope > vertices")
+			DAEUtil.queryChildSelector(el, "vertices")
 		);
 		value.lines = DAELines.parse(
-			el.querySelector(":scope > lines")
+			DAEUtil.queryChildSelector(el, DAELines.TagName)
 		);
 		value.linestrips = DAELinestrips.parse(
-			el.querySelector(":scope > linestrips")
+			DAEUtil.queryChildSelector(el, DAELinestrips.TagName)
 		);
 		value.polygons = DAEPolygons.parse(
-			el.querySelector(":scope > polygons")
+			DAEUtil.queryChildSelector(el, DAEPolygons.TagName)
 		);
 		value.polylist = DAEPolylist.parse(
-			el.querySelector(":scope > polylist")
+			DAEUtil.queryChildSelector(el, DAEPolylist.TagName)
 		);
 		value.triangles = DAETriangles.parse(
-			el.querySelector(":scope > triangles")
+			DAEUtil.queryChildSelector(el, DAETriangles.TagName)
 		);
 		value.trifans = DAETrifans.parse(
-			el.querySelector(":scope > trifans")
+			DAEUtil.queryChildSelector(el, DAETrifans.TagName)
 		);
 		value.tristrips = DAETristrips.parse(
-			el.querySelector(":scope > tristrips")
+			DAEUtil.queryChildSelector(el, DAETristrips.TagName)
 		);
 		value.extras = DAEExtra.parseArray(el);
 		return value;
 	}
 
 	toXML(): Element {
-		var el = document.createElement("convex_mesh");
+		var el = document.createElement(DAEConvexMesh.TagName);
 		return el;
 	}
 }

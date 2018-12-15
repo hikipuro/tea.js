@@ -5,6 +5,7 @@ import { DAEExtra } from "../extensibility/DAEExtra";
 
 // parent: COLLADA
 export class DAELibraryAnimationClips {
+	static readonly TagName: string = "library_animation_clips";
 	id?: string;
 	name?: string;
 	assets?: Array<DAEAsset>;
@@ -34,7 +35,7 @@ export class DAELibraryAnimationClips {
 	}
 
 	toXML(): Element {
-		var el = document.createElement("library_animation_clips");
+		var el = document.createElement(DAELibraryAnimationClips.TagName);
 		DAEUtil.setAttribute(el, "id", this.id);
 		DAEUtil.setAttribute(el, "name", this.name);
 		DAEUtil.addXMLArray(el, this.assets);

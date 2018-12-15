@@ -5,6 +5,7 @@ import { DAEExtra } from "../../core/extensibility/DAEExtra";
 
 // parent: COLLADA
 export class DAELibraryPhysicsModels {
+	static readonly TagName: string = "library_physics_models";
 	id?: string;
 	name?: string;
 	asset?: DAEAsset;
@@ -28,7 +29,7 @@ export class DAELibraryPhysicsModels {
 		value.id = DAEUtil.stringAttrib(el, "id");
 		value.name = DAEUtil.stringAttrib(el, "name");
 		value.asset = DAEAsset.parse(
-			el.querySelector(":scope > asset")
+			DAEUtil.queryChildSelector(el, DAEAsset.TagName)
 		);
 		value.physicsModels = DAEPhysicsModel.parseArray(el);
 		value.extras = DAEExtra.parseArray(el);

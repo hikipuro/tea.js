@@ -5,6 +5,7 @@ import { DAEExtra } from "../extensibility/DAEExtra";
 
 // parent: mesh, convex_mesh
 export class DAETrifans implements DAEPrimitiveElement {
+	static readonly TagName: string = "trifans";
 	name?: string;
 	count: number;
 	material?: string;
@@ -32,7 +33,7 @@ export class DAETrifans implements DAEPrimitiveElement {
 		value.material = DAEUtil.stringAttrib(el, "material");
 		value.inputs = DAESharedInput.parseArray(el);
 		value.data = DAEUtil.intArray(
-			el.querySelector(":scope > p")
+			DAEUtil.queryChildSelector(el, "p")
 		);
 		value.extras = DAEExtra.parseArray(el);
 		return value;
@@ -40,12 +41,12 @@ export class DAETrifans implements DAEPrimitiveElement {
 
 	static parseArray(parent: Element): Array<DAETrifans> {
 		return DAEUtil.parseArray<DAETrifans>(
-			this.parse, parent, "trifans"
+			this.parse, parent, DAETrifans.TagName
 		);
 	}
 
 	toXML(): Element {
-		var el = document.createElement("trifans");
+		var el = document.createElement(DAETrifans.TagName);
 		DAEUtil.setAttribute(el, "name", this.name);
 		DAEUtil.setAttribute(el, "count", this.count);
 		DAEUtil.setAttribute(el, "material", this.material);

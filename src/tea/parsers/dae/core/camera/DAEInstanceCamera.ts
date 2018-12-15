@@ -3,6 +3,7 @@ import { DAEExtra } from "../extensibility/DAEExtra";
 
 // parent: node
 export class DAEInstanceCamera {
+	static readonly TagName: string = "instance_camera";
 	sid?: string;
 	name?: string;
 	url: string;
@@ -30,12 +31,12 @@ export class DAEInstanceCamera {
 
 	static parseArray(parent: Element): Array<DAEInstanceCamera> {
 		return DAEUtil.parseArray<DAEInstanceCamera>(
-			this.parse, parent, "instance_camera"
+			this.parse, parent, DAEInstanceCamera.TagName
 		);
 	}
 
 	toXML(): Element {
-		var el = document.createElement("instance_camera");
+		var el = document.createElement(DAEInstanceCamera.TagName);
 		DAEUtil.setAttribute(el, "sid", this.sid);
 		DAEUtil.setAttribute(el, "name", this.name);
 		DAEUtil.setAttribute(el, "url", this.url);

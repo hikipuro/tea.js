@@ -3,6 +3,7 @@ import { DAETransformationElement } from "./DAETransformationElement";
 
 // parent: node
 export class DAESkew implements DAETransformationElement {
+	static readonly TagName: string = "skew";
 	sid?: string;
 	data: Array<number>;
 
@@ -23,7 +24,7 @@ export class DAESkew implements DAETransformationElement {
 	}
 
 	toXML(): Element {
-		var el = document.createElement("skew");
+		var el = document.createElement(DAESkew.TagName);
 		DAEUtil.setAttribute(el, "sid", this.sid);
 		DAEUtil.setArrayContent(el, this.data);
 		return el;

@@ -6,6 +6,7 @@ import { DAEExtra } from "../extensibility/DAEExtra";
 
 // parent: geometry
 export class DAESpline implements DAEGeometricElement {
+	static readonly TagName: string = "spline";
 	closed?: boolean;
 	sources: Array<DAESource>;
 	controlVertices: DAEControlVertices;
@@ -27,14 +28,14 @@ export class DAESpline implements DAEGeometricElement {
 		value.closed = DAEUtil.boolAttrib(el, "closed", false);
 		value.sources = DAESource.parseArray(el);
 		value.controlVertices = DAEControlVertices.parse(
-			el.querySelector(":scope > control_vertices")
+			DAEUtil.queryChildSelector(el, DAEControlVertices.TagName)
 		);
 		value.extras = DAEExtra.parseArray(el);
 		return value;
 	}
 
 	toXML(): Element {
-		var el = document.createElement("spline");
+		var el = document.createElement(DAESpline.TagName);
 		DAEUtil.setAttribute(el, "closed", this.closed);
 		DAEUtil.addXMLArray(el, this.sources);
 		DAEUtil.addXML(el, this.controlVertices);

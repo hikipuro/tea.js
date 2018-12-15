@@ -7,6 +7,7 @@ import { DAETechnique } from "../extensibility/DAETechnique";
 // parent: library_formulas, animation_clip,
 // kinematics_model/technique_common, kinematics/axis_info
 export class DAEFormula {
+	static readonly TagName: string = "formula";
 	id?: string;
 	name?: string;
 	sid?: string;
@@ -36,10 +37,10 @@ export class DAEFormula {
 		value.sid = DAEUtil.stringAttrib(el, "sid");
 		value.newparams = DAENewparam.parseArray(el);
 		value.target = DAETarget.parse(
-			el.querySelector(":scope > target")
+			DAEUtil.queryChildSelector(el, DAETarget.TagName)
 		);
 		value.techniqueCommon = DAETechniqueCommon.parse(
-			el.querySelector(":scope > technique_common")
+			DAEUtil.queryChildSelector(el, DAETechniqueCommon.TagName)
 		);
 		value.techniques = DAETechnique.parseArray(el);
 		return value;
@@ -47,12 +48,12 @@ export class DAEFormula {
 
 	static parseArray(parent: Element): Array<DAEFormula> {
 		return DAEUtil.parseArray<DAEFormula>(
-			this.parse, parent, "formula"
+			this.parse, parent, DAEFormula.TagName
 		);
 	}
 
 	toXML(): Element {
-		var el = document.createElement("formula");
+		var el = document.createElement(DAEFormula.TagName);
 		DAEUtil.setAttribute(el, "id", this.id);
 		DAEUtil.setAttribute(el, "name", this.name);
 		DAEUtil.setAttribute(el, "sid", this.sid);

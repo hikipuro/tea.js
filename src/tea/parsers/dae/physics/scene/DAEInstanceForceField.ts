@@ -3,6 +3,7 @@ import { DAEExtra } from "../../core/extensibility/DAEExtra";
 
 // parent: instance_physics_model, physics_scene
 export class DAEInstanceForceField {
+	static readonly TagName: string = "instance_force_field";
 	sid?: string;
 	name?: string;
 	url: string;
@@ -30,7 +31,7 @@ export class DAEInstanceForceField {
 
 	static parseArray(parent: Element): Array<DAEInstanceForceField> {
 		return DAEUtil.parseArray<DAEInstanceForceField>(
-			this.parse, parent, "instance_force_field"
+			this.parse, parent, DAEInstanceForceField.TagName
 		);
 	}
 }

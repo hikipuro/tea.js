@@ -3,6 +3,7 @@ import { DAEFloatValue } from "../data/DAEFloatValue";
 
 // parent: optics / technique_common
 export class DAEPerspective {
+	static readonly TagName: string = "perspective";
 	xfov: DAEFloatValue;
 	yfov: DAEFloatValue;
 	aspectRatio?: DAEFloatValue;
@@ -24,25 +25,25 @@ export class DAEPerspective {
 		}
 		var value = new DAEPerspective();
 		value.xfov = DAEFloatValue.parse(
-			el.querySelector(":scope > xfov")
+			DAEUtil.queryChildSelector(el, "xfov")
 		);
 		value.yfov = DAEFloatValue.parse(
-			el.querySelector(":scope > yfov")
+			DAEUtil.queryChildSelector(el, "yfov")
 		);
 		value.aspectRatio = DAEFloatValue.parse(
-			el.querySelector(":scope > aspect_ratio")
+			DAEUtil.queryChildSelector(el, "aspect_ratio")
 		);
 		value.znear = DAEFloatValue.parse(
-			el.querySelector(":scope > znear")
+			DAEUtil.queryChildSelector(el, "znear")
 		);
 		value.zfar = DAEFloatValue.parse(
-			el.querySelector(":scope > zfar")
+			DAEUtil.queryChildSelector(el, "zfar")
 		);
 		return value;
 	}
 
 	toXML(): Element {
-		var el = document.createElement("perspective");
+		var el = document.createElement(DAEPerspective.TagName);
 		DAEUtil.addXML(el, this.xfov);
 		DAEUtil.addXML(el, this.yfov);
 		DAEUtil.addXML(el, this.aspectRatio);

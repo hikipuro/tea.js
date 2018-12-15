@@ -4,6 +4,7 @@ import { DAEUtil } from "../../DAEUtil";
 
 // paernt: morph
 export class DAETargets {
+	static readonly TagName: string = "targets";
 	inputs: Array<DAEUnsharedInput>;
 	extras?: Array<DAEExtra>;
 
@@ -24,7 +25,7 @@ export class DAETargets {
 	}
 
 	toXML(): Element {
-		var el = document.createElement("targets");
+		var el = document.createElement(DAETargets.TagName);
 		DAEUtil.addXMLArray(el, this.inputs);
 		DAEUtil.addXMLArray(el, this.extras);
 		return el;

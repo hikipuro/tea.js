@@ -6,6 +6,7 @@ import { DAEInstanceRigidConstraint } from "./DAEInstanceRigidConstraint";
 
 // parent: physics_scene, physics_model
 export class DAEInstancePhysicsModel {
+	static readonly TagName: string = "instance_physics_model";
 	sid?: string;
 	name?: string;
 	url: string;
@@ -45,7 +46,7 @@ export class DAEInstancePhysicsModel {
 
 	static parseArray(parent: Element): Array<DAEInstancePhysicsModel> {
 		return DAEUtil.parseArray<DAEInstancePhysicsModel>(
-			this.parse, parent, "instance_physics_model"
+			this.parse, parent, DAEInstancePhysicsModel.TagName
 		);
 	}
 }

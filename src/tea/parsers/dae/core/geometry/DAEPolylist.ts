@@ -5,6 +5,7 @@ import { DAEExtra } from "../extensibility/DAEExtra";
 
 // parent: mesh
 export class DAEPolylist implements DAEPrimitiveElement {
+	static readonly TagName: string = "polylist";
 	name?: string;
 	count: number;
 	material: string;
@@ -34,10 +35,10 @@ export class DAEPolylist implements DAEPrimitiveElement {
 		value.material = DAEUtil.stringAttrib(el, "material");
 		value.inputs = DAESharedInput.parseArray(el);
 		value.vcount = DAEUtil.intArray(
-			el.querySelector(":scope > vcount")
+			DAEUtil.queryChildSelector(el, "vcount")
 		);
 		value.p = DAEUtil.intArray(
-			el.querySelector(":scope > p")
+			DAEUtil.queryChildSelector(el, "p")
 		);
 		value.extras = DAEExtra.parseArray(el);
 		return value;
@@ -45,12 +46,12 @@ export class DAEPolylist implements DAEPrimitiveElement {
 
 	static parseArray(parent: Element): Array<DAEPolylist> {
 		return DAEUtil.parseArray<DAEPolylist>(
-			this.parse, parent, "polylist"
+			this.parse, parent, DAEPolylist.TagName
 		);
 	}
 
 	toXML(): Element {
-		var el = document.createElement("polylist");
+		var el = document.createElement(DAEPolylist.TagName);
 		DAEUtil.setAttribute(el, "name", this.name);
 		DAEUtil.setAttribute(el, "count", this.count);
 		DAEUtil.setAttribute(el, "material", this.material);

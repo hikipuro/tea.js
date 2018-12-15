@@ -9,6 +9,7 @@ import { DAEExtra } from "../extensibility/DAEExtra";
 // all section:
 // library_*
 export class DAEAsset {
+	static readonly TagName: string = "asset";
 	contributor?: DAEContributor;
 	//coverage: DAECoverage;
 	created: Date;
@@ -41,18 +42,18 @@ export class DAEAsset {
 		}
 		var value = new DAEAsset();
 		value.contributor = DAEContributor.parse(
-			el.querySelector(":scope > contributor")
+			DAEUtil.queryChildSelector(el, DAEContributor.TagName)
 		);
 		value.created = new Date(DAEUtil.textContent(el, "created"));
 		value.keywords = DAEUtil.stringArray(
-			el.querySelector(":scope > keywords")
+			DAEUtil.queryChildSelector(el, "keywords")
 		);
 		value.modified = new Date(DAEUtil.textContent(el, "modified"));
 		value.revision = DAEUtil.textContent(el, "revision");
 		value.subject = DAEUtil.textContent(el, "subject");
 		value.title = DAEUtil.textContent(el, "title");
 		value.unit = DAEUnit.parse(
-			el.querySelector(":scope > unit")
+			DAEUtil.queryChildSelector(el, DAEUnit.TagName)
 		);
 		value.upAxis = DAEUtil.textContent(el, "up_axis");
 		value.extras = DAEExtra.parseArray(el);
@@ -61,12 +62,12 @@ export class DAEAsset {
 
 	static parseArray(parent: Element): Array<DAEAsset> {
 		return DAEUtil.parseArray<DAEAsset>(
-			this.parse, parent, "asset"
+			this.parse, parent, DAEAsset.TagName
 		);
 	}
 
 	toXML(): Element {
-		var el = document.createElement("asset");
+		var el = document.createElement(DAEAsset.TagName);
 		DAEUtil.addXML(el, this.contributor);
 		var created = this.toDateElement("created", this.created);
 		if (created != null) {

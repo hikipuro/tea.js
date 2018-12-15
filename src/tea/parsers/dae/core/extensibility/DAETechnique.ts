@@ -4,6 +4,7 @@ import { DAEUtil } from "../../DAEUtil";
 // physics_scene, rigid_body, rigid_constraint, instance_rigid_body, 
 // bind_material, motion, kinematics, kinematics_model
 export class DAETechnique {
+	static readonly TagName: string = "technique";
 	profile: string;
 	xmlns?: string;
 
@@ -25,12 +26,12 @@ export class DAETechnique {
 
 	static parseArray(parent: Element): Array<DAETechnique> {
 		return DAEUtil.parseArray<DAETechnique>(
-			this.parse, parent, "technique"
+			this.parse, parent, DAETechnique.TagName
 		);
 	}
 
 	toXML(): Element {
-		var el = document.createElement("technique");
+		var el = document.createElement(DAETechnique.TagName);
 		DAEUtil.setAttribute(el, "profile", this.profile);
 		DAEUtil.setAttribute(el, "xmlns", this.xmlns);
 		return el;

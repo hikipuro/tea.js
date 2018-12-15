@@ -3,6 +3,7 @@ import { DAEExtra } from "../../core/extensibility/DAEExtra";
 
 // parent: shape
 export class DAEBox {
+	static readonly TagName: string = "box";
 	halfExtents: Array<number>;
 	extras?: Array<DAEExtra>;
 
@@ -18,7 +19,7 @@ export class DAEBox {
 		}
 		var value = new DAEBox();
 		value.halfExtents = DAEUtil.floatArray(
-			el.querySelector(":scope > half_extents")
+			DAEUtil.queryChildSelector(el, "half_extents")
 		);
 		value.extras = DAEExtra.parseArray(el);
 		return value;

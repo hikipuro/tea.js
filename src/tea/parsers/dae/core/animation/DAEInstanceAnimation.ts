@@ -3,6 +3,7 @@ import { DAEExtra } from "../extensibility/DAEExtra";
 
 // parent: animation_clip
 export class DAEInstanceAnimation {
+	static readonly TagName: string = "instance_animation";
 	sid?: string;
 	name?: string;
 	url: string;
@@ -30,12 +31,12 @@ export class DAEInstanceAnimation {
 
 	static parseArray(parent: Element): Array<DAEInstanceAnimation> {
 		return DAEUtil.parseArray<DAEInstanceAnimation>(
-			this.parse, parent, "instance_animation"
+			this.parse, parent, DAEInstanceAnimation.TagName
 		);
 	}
 
 	toXML(): Element {
-		var el = document.createElement("instance_animation");
+		var el = document.createElement(DAEInstanceAnimation.TagName);
 		DAEUtil.setAttribute(el, "sid", this.sid);
 		DAEUtil.setAttribute(el, "name", this.name);
 		DAEUtil.setAttribute(el, "url", this.url);

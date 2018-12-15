@@ -10,6 +10,7 @@ import { DAEUtil } from "../../DAEUtil";
 //
 // bind_material, accessor
 export class DAEParamRef {
+	static readonly TagName: string = "param";
 	ref: string;
 
 	constructor() {
@@ -28,12 +29,12 @@ export class DAEParamRef {
 
 	static parseArray(parent: Element): Array<DAEParamRef> {
 		return DAEUtil.parseArray<DAEParamRef>(
-			this.parse, parent, "param"
+			this.parse, parent, DAEParamRef.TagName
 		);
 	}
 
 	toXML(): Element {
-		var el = document.createElement("param");
+		var el = document.createElement(DAEParamRef.TagName);
 		DAEUtil.setAttribute(el, "ref", this.ref);
 		return el;
 	}

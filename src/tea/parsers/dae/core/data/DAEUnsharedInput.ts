@@ -3,6 +3,7 @@ import { DAESemanticType } from "./DAESemanticType";
 
 // parent: joints, sampler, targets, vertices, control_vertices
 export class DAEUnsharedInput {
+	static readonly TagName: string = "input";
 	semantic: DAESemanticType;
 	source: string;
 
@@ -18,18 +19,18 @@ export class DAEUnsharedInput {
 		}
 		var value = new DAEUnsharedInput();
 		value.semantic = DAEUtil.semanticAttrib(el);
-		value.source = el.getAttribute("source");
+		value.source = DAEUtil.stringAttrib(el, "source");
 		return value;
 	}
 
 	static parseArray(parent: Element): Array<DAEUnsharedInput> {
 		return DAEUtil.parseArray<DAEUnsharedInput>(
-			this.parse, parent, "input"
+			this.parse, parent, DAEUnsharedInput.TagName
 		);
 	}
 
 	toXML(): Element {
-		var el = document.createElement("input");
+		var el = document.createElement(DAEUnsharedInput.TagName);
 		var semantic = DAESemanticType.toString(this.semantic);
 		DAEUtil.setAttribute(el, "semantic", semantic);
 		DAEUtil.setAttribute(el, "source", this.source);

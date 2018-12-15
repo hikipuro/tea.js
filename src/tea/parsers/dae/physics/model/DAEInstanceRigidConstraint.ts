@@ -3,6 +3,7 @@ import { DAEExtra } from "../../core/extensibility/DAEExtra";
 
 // parent: instance_physics_model
 export class DAEInstanceRigidConstraint {
+	static readonly TagName: string = "instance_rigid_constraint";
 	sid?: string;
 	name?: string;
 	constraint: string;
@@ -30,7 +31,7 @@ export class DAEInstanceRigidConstraint {
 
 	static parseArray(parent: Element): Array<DAEInstanceRigidConstraint> {
 		return DAEUtil.parseArray<DAEInstanceRigidConstraint>(
-			this.parse, parent, "instance_rigid_constraint"
+			this.parse, parent, DAEInstanceRigidConstraint.TagName
 		);
 	}
 }

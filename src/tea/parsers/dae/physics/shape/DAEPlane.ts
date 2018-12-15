@@ -3,6 +3,7 @@ import { DAEExtra } from "../../core/extensibility/DAEExtra";
 
 // parent: shape, surface (B-Rep)
 export class DAEPlane {
+	static readonly TagName: string = "plane";
 	equation: Array<number>;
 	extras?: Array<DAEExtra>;
 
@@ -18,7 +19,7 @@ export class DAEPlane {
 		}
 		var value = new DAEPlane();
 		value.equation = DAEUtil.floatArray(
-			el.querySelector(":scope > equation")
+			DAEUtil.queryChildSelector(el, "equation")
 		);
 		value.extras = DAEExtra.parseArray(el);
 		return value;

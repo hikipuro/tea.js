@@ -2,6 +2,7 @@ import { DAEUtil } from "../../DAEUtil";
 
 // parent: asset
 export class DAEContributor {
+	static readonly TagName: string = "contributor";
 	author?: string;
 	authorEmail?: string;
 	authorWebsite?: string;
@@ -36,7 +37,7 @@ export class DAEContributor {
 	}
 
 	toXML(): Element {
-		var el = document.createElement("contributor");
+		var el = document.createElement(DAEContributor.TagName);
 		DAEUtil.addTextContent(el, "author", this.author);
 		DAEUtil.addTextContent(el, "author_email", this.authorEmail);
 		DAEUtil.addTextContent(el, "author_website", this.authorWebsite);

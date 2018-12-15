@@ -3,6 +3,7 @@ import { DAEExtra } from "../../core/extensibility/DAEExtra";
 
 // parent: shape
 export class DAECapsule {
+	static readonly TagName: string = "capsule";
 	height: number;
 	radius: Array<number>;
 	extras?: Array<DAEExtra>;
@@ -21,7 +22,7 @@ export class DAECapsule {
 		var value = new DAECapsule();
 		value.height = DAEUtil.floatContent(el, "height");
 		value.radius = DAEUtil.floatArray(
-			el.querySelector(":scope > radius")
+			DAEUtil.queryChildSelector(el, "radius")
 		);
 		value.extras = DAEExtra.parseArray(el);
 		return value;

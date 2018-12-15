@@ -5,6 +5,7 @@ import { DAEExtra } from "../extensibility/DAEExtra";
 
 // parent: COLLADA
 export class DAELibraryNodes {
+	static readonly TagName: string = "library_nodes";
 	id?: string;
 	name?: string;
 	asset?: DAEAsset;
@@ -28,7 +29,7 @@ export class DAELibraryNodes {
 		value.id = DAEUtil.stringAttrib(el, "id");
 		value.name = DAEUtil.stringAttrib(el, "name");
 		value.asset = DAEAsset.parse(
-			el.querySelector(":scope > asset")
+			DAEUtil.queryChildSelector(el, DAEAsset.TagName)
 		);
 		value.nodes = DAENode.parseArray(el);
 		value.extras = DAEExtra.parseArray(el);
@@ -36,7 +37,7 @@ export class DAELibraryNodes {
 	}
 
 	toXML(): Element {
-		var el = document.createElement("library_nodes");
+		var el = document.createElement(DAELibraryNodes.TagName);
 		DAEUtil.setAttribute(el, "id", this.id);
 		DAEUtil.setAttribute(el, "name", this.name);
 		DAEUtil.addXML(el, this.asset);

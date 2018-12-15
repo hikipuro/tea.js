@@ -3,6 +3,7 @@ import { DAEArrayElement } from "./DAEArrayElement";
 
 // parent: source (core)
 export class DAESIDREFArray implements DAEArrayElement {
+	static readonly TagName: string = "SIDREF_array";
 	count: number;
 	id?: string;
 	name?: string;
@@ -29,7 +30,7 @@ export class DAESIDREFArray implements DAEArrayElement {
 	}
 
 	toXML(): Element {
-		var el = document.createElement("SIDREF_array");
+		var el = document.createElement(DAESIDREFArray.TagName);
 		DAEUtil.setAttribute(el, "count", this.count);
 		DAEUtil.setAttribute(el, "id", this.id);
 		DAEUtil.setAttribute(el, "name", this.name);

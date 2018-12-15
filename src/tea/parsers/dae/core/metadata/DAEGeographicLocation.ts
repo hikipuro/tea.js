@@ -3,6 +3,7 @@ import { DAEAltitude } from "./DAEAltitude";
 
 // parent: asset/coverage
 export class DAEGeographicLocation {
+	static readonly TagName: string = "geographic_location";
 	longitude: number;
 	latitude: number;
 	altitude: DAEAltitude;
@@ -24,7 +25,7 @@ export class DAEGeographicLocation {
 		value.latitude = DAEUtil.floatContent(el, "latitude");
 		value.latitude = this.clampLatitude(value.latitude);
 		value.altitude = DAEAltitude.parse(
-			el.querySelector(":scope > altitude")
+			DAEUtil.queryChildSelector(el, DAEAltitude.TagName)
 		);
 		return value;
 	}
@@ -44,7 +45,7 @@ export class DAEGeographicLocation {
 	}
 
 	toXML(): Element {
-		var el = document.createElement("geographic_location");
+		var el = document.createElement(DAEGeographicLocation.TagName);
 		var longitude = DAEGeographicLocation.clampLongitude(this.longitude);
 		DAEUtil.addFloatContent(el, "longitude", longitude);
 		var latitude = DAEGeographicLocation.clampLongitude(this.latitude);

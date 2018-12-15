@@ -1,5 +1,6 @@
 // TODO: fix
 export class DAETarget {
+	static readonly TagName: string = "target";
 
 	constructor() {
 	}

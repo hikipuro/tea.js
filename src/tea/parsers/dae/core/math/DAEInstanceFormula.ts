@@ -3,6 +3,7 @@ import { DAESetparam } from "../parameters/DAESetParam";
 
 // parent: animation_clip, kinematics/axis_info, kinematics_model/technique_common
 export class DAEInstanceFormula {
+	static readonly TagName: string = "instance_formula";
 	sid?: string;
 	name?: string;
 	url: string;
@@ -30,12 +31,12 @@ export class DAEInstanceFormula {
 
 	static parseArray(parent: Element): Array<DAEInstanceFormula> {
 		return DAEUtil.parseArray<DAEInstanceFormula>(
-			this.parse, parent, "instance_formula"
+			this.parse, parent, DAEInstanceFormula.TagName
 		);
 	}
 
 	toXML(): Element {
-		var el = document.createElement("instance_formula");
+		var el = document.createElement(DAEInstanceFormula.TagName);
 		DAEUtil.setAttribute(el, "sid", this.sid);
 		DAEUtil.setAttribute(el, "name", this.name);
 		DAEUtil.setAttribute(el, "url", this.url);

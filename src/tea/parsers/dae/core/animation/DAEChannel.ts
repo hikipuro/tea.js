@@ -2,6 +2,7 @@ import { DAEUtil } from "../../DAEUtil";
 
 // parent: animation
 export class DAEChannel {
+	static readonly TagName: string = "channel";
 	source: string;
 	target: string;
 
@@ -23,12 +24,12 @@ export class DAEChannel {
 	
 	static parseArray(parent: Element): Array<DAEChannel> {
 		return DAEUtil.parseArray<DAEChannel>(
-			this.parse, parent, "channel"
+			this.parse, parent, DAEChannel.TagName
 		);
 	}
 
 	toXML(): Element {
-		var el = document.createElement("channel");
+		var el = document.createElement(DAEChannel.TagName);
 		DAEUtil.setAttribute(el, "source", this.source);
 		DAEUtil.setAttribute(el, "target", this.target);
 		return el;

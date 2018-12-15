@@ -3,6 +3,7 @@ import { DAEArrayElement } from "./DAEArrayElement";
 
 // parent: source (core)
 export class DAEBoolArray implements DAEArrayElement {
+	static readonly TagName: string = "bool_array";
 	count: number;
 	id?: string;
 	name?: string;
@@ -29,7 +30,7 @@ export class DAEBoolArray implements DAEArrayElement {
 	}
 
 	toXML(): Element {
-		var el = document.createElement("bool_array");
+		var el = document.createElement(DAEBoolArray.TagName);
 		DAEUtil.setAttribute(el, "count", this.count);
 		DAEUtil.setAttribute(el, "id", this.id);
 		DAEUtil.setAttribute(el, "name", this.name);

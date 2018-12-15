@@ -92,49 +92,49 @@ export class DAEFile {
 			}
 			var file = new DAEFile();
 			file.asset = DAEAsset.parse(
-				document.querySelector(":scope > asset")
+				DAEUtil.queryChildSelector(document, DAEAsset.TagName)
 			);
 			file.libraryAnimationClips = DAELibraryAnimationClips.parse(
-				document.querySelector(":scope > library_animation_clips")
+				DAEUtil.queryChildSelector(document, DAELibraryAnimationClips.TagName)
 			);
 			file.libraryAnimations = DAELibraryAnimations.parse(
-				document.querySelector(":scope > library_animations")
+				DAEUtil.queryChildSelector(document, DAELibraryAnimations.TagName)
 			);
 			file.libraryCameras = DAELibraryCameras.parse(
-				document.querySelector(":scope > library_cameras")
+				DAEUtil.queryChildSelector(document, DAELibraryCameras.TagName)
 			);
 			file.libraryControllers = DAELibraryControllers.parse(
-				document.querySelector(":scope > library_controllers")
+				DAEUtil.queryChildSelector(document, DAELibraryControllers.TagName)
 			);
 			file.libraryForceFields = DAELibraryForceFields.parse(
-				document.querySelector(":scope > library_force_fields")
+				DAEUtil.queryChildSelector(document, DAELibraryForceFields.TagName)
 			);
 			file.libraryFormulas = DAELibraryFormulas.parse(
-				document.querySelector(":scope > library_formulas")
+				DAEUtil.queryChildSelector(document, DAELibraryFormulas.TagName)
 			);
 			file.libraryLights = DAELibraryLights.parse(
-				document.querySelector(":scope > library_lights")
+				DAEUtil.queryChildSelector(document, DAELibraryLights.TagName)
 			);
 			file.libraryNodes = DAELibraryNodes.parse(
-				document.querySelector(":scope > library_nodes")
+				DAEUtil.queryChildSelector(document, DAELibraryNodes.TagName)
 			);
 			file.libraryPhysicsMaterials = DAELibraryPhysicsMaterials.parse(
-				document.querySelector(":scope > library_physics_materials")
+				DAEUtil.queryChildSelector(document, DAELibraryPhysicsMaterials.TagName)
 			);
 			file.libraryPhysicsModels = DAELibraryPhysicsModels.parse(
-				document.querySelector(":scope > library_physics_models")
+				DAEUtil.queryChildSelector(document, DAELibraryPhysicsModels.TagName)
 			);
 			file.libraryPhysicsScenes = DAELibraryPhysicsScenes.parse(
-				document.querySelector(":scope > library_physics_scenes")
+				DAEUtil.queryChildSelector(document, DAELibraryPhysicsScenes.TagName)
 			);
 			file.libraryVisualScenes = DAELibraryVisualScenes.parse(
-				document.querySelector(":scope > library_visual_scenes")
+				DAEUtil.queryChildSelector(document, DAELibraryVisualScenes.TagName)
 			);
 			file.extras = DAEExtra.parseArray(document);
 			file.scene = DAEScene.parse(
-				document.querySelector(":scope > scene")
+				DAEUtil.queryChildSelector(document, DAEScene.TagName)
 			);
-			var $libraryGeometries = document.querySelector(":scope > library_geometries");
+			var $libraryGeometries = DAEUtil.queryChildSelector(document, DAELibraryGeometries.TagName)
 			DAELibraryGeometries.parse($libraryGeometries, (geometries: DAELibraryGeometries) => {
 				file.libraryGeometries = geometries;
 				progress(1.0);

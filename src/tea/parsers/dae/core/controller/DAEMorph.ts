@@ -5,6 +5,7 @@ import { DAEExtra } from "../extensibility/DAEExtra";
 
 // parent: controller
 export class DAEMorph {
+	static readonly TagName: string = "morph";
 	source: string;
 	method?: string;
 	sources: Array<DAESource>;
@@ -29,14 +30,14 @@ export class DAEMorph {
 		value.method = DAEUtil.stringAttrib(el, "method");
 		value.sources = DAESource.parseArray(el);
 		value.targets = DAETargets.parse(
-			el.querySelector(":scope > targets")
+			DAEUtil.queryChildSelector(el, DAETargets.TagName)
 		);
 		value.extras = DAEExtra.parseArray(el);
 		return value;
 	}
 
 	toXML(): Element {
-		var el = document.createElement("morph");
+		var el = document.createElement(DAEMorph.TagName);
 		DAEUtil.setAttribute(el, "source", this.source);
 		DAEUtil.setAttribute(el, "method", this.method);
 		DAEUtil.addXMLArray(el, this.sources);

@@ -4,6 +4,7 @@ import { DAEArrayElement } from "./DAEArrayElement";
 
 // parent: source
 export class DAEFloatArray implements DAEArrayElement {
+	static readonly TagName: string = "float_array";
 	static readonly DefaultDigits: number = 6;
 	static readonly DefaultMagnitude: number = 38;
 	count: number;
@@ -34,7 +35,7 @@ export class DAEFloatArray implements DAEArrayElement {
 		value.digits = DAEUtil.intAttrib(el, "digits");
 		value.digits = this.clampDigits(value.digits);
 		value.magnitude = DAEUtil.intAttrib(el, "magnitude");
-		value.magnitude = this.clampDigits(value.magnitude);
+		value.magnitude = this.clampMagnitude(value.magnitude);
 		value.data = DAEUtil.floatArray(el);
 		return value;
 	}
@@ -54,14 +55,18 @@ export class DAEFloatArray implements DAEArrayElement {
 	}
 
 	toXML(): Element {
-		var el = document.createElement("float_array");
+		var el = document.createElement(DAEFloatArray.TagName);
 		DAEUtil.setAttribute(el, "count", this.count);
 		DAEUtil.setAttribute(el, "id", this.id);
 		DAEUtil.setAttribute(el, "name", this.name);
-		var digits = DAEFloatArray.clampDigits(this.digits);
-		DAEUtil.setAttribute(el, "digits", digits);
-		var magnitude = DAEFloatArray.clampMagnitude(this.magnitude);
-		DAEUtil.setAttribute(el, "magnitude", magnitude);
+		if (this.digits != null && this.digits != DAEFloatArray.DefaultDigits) {
+			var digits = DAEFloatArray.clampDigits(this.digits);
+			DAEUtil.setAttribute(el, "digits", digits);
+		}
+		if (this.magnitude != null && this.magnitude != DAEFloatArray.DefaultMagnitude) {
+			var magnitude = DAEFloatArray.clampMagnitude(this.magnitude);
+			DAEUtil.setAttribute(el, "magnitude", magnitude);
+		}
 		DAEUtil.setArrayContent(el, this.data);
 		return el;
 	}

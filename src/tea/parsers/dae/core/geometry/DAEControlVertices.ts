@@ -4,6 +4,7 @@ import { DAEExtra } from "../extensibility/DAEExtra";
 
 // parent: spline, nurbs, nurbs_surface
 export class DAEControlVertices {
+	static readonly TagName: string = "control_vertices";
 	inputs: Array<DAEUnsharedInput>;
 	extras?: Array<DAEExtra>;
 
@@ -24,7 +25,7 @@ export class DAEControlVertices {
 	}
 
 	toXML(): Element {
-		var el = document.createElement("control_vertices");
+		var el = document.createElement(DAEControlVertices.TagName);
 		DAEUtil.addXMLArray(el, this.inputs);
 		DAEUtil.addXMLArray(el, this.extras);
 		return el;

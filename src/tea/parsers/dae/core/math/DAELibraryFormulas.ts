@@ -4,6 +4,7 @@ import { DAEFormula } from "./DAEFormula";
 import { DAEExtra } from "../extensibility/DAEExtra";
 
 export class DAELibraryFormulas {
+	static readonly TagName: string = "library_formulas";
 	id?: string;
 	name?: string;
 	asset?: DAEAsset;
@@ -27,7 +28,7 @@ export class DAELibraryFormulas {
 		value.id = DAEUtil.stringAttrib(el, "id");
 		value.name = DAEUtil.stringAttrib(el, "name");
 		value.asset = DAEAsset.parse(
-			el.querySelector(":scope > asset")
+			DAEUtil.queryChildSelector(el, DAEAsset.TagName)
 		);
 		value.formulas = DAEFormula.parseArray(el);
 		value.extras = DAEExtra.parseArray(el);
@@ -35,7 +36,7 @@ export class DAELibraryFormulas {
 	}
 
 	toXML(): Element {
-		var el = document.createElement("library_formulas");
+		var el = document.createElement(DAELibraryFormulas.TagName);
 		DAEUtil.setAttribute(el, "id", this.id);
 		DAEUtil.setAttribute(el, "name", this.name);
 		DAEUtil.addXML(el, this.asset);

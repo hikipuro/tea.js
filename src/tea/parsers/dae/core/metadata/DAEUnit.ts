@@ -1,6 +1,7 @@
 import { DAEUtil } from "../../DAEUtil";
 
 export class DAEUnit {
+	static readonly TagName: string = "unit";
 	name: string;
 	meter: string;
 
@@ -20,7 +21,7 @@ export class DAEUnit {
 	}
 
 	toXML(): Element {
-		var el = document.createElement("unit");
+		var el = document.createElement(DAEUnit.TagName);
 		DAEUtil.setAttribute(el, "name", this.name);
 		DAEUtil.setAttribute(el, "meter", this.meter);
 		return el;

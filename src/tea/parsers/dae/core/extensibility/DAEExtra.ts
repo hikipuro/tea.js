@@ -10,6 +10,7 @@ import { DAETechnique } from "./DAETechnique";
 // skin, spline, targets, triangles, trifans , tristrips, vertex_weights,
 // vertices, visual_scene
 export class DAEExtra {
+	static readonly TagName: string = "extra";
 	id?: string;
 	name?: string;
 	type?: string;
@@ -34,7 +35,7 @@ export class DAEExtra {
 		value.name = DAEUtil.stringAttrib(el, "name");
 		value.type = DAEUtil.stringAttrib(el, "type");
 		value.asset = DAEAsset.parse(
-			el.querySelector(":scope > asset")
+			DAEUtil.queryChildSelector(el, DAEAsset.TagName)
 		);
 		value.techniques = DAETechnique.parseArray(el);
 		return value;
@@ -42,12 +43,12 @@ export class DAEExtra {
 
 	static parseArray(parent: Document | Element): Array<DAEExtra> {
 		return DAEUtil.parseArray<DAEExtra>(
-			this.parse, parent, "extra"
+			this.parse, parent, DAEExtra.TagName
 		);
 	}
 
 	toXML(): Element {
-		var el = document.createElement("extra");
+		var el = document.createElement(DAEExtra.TagName);
 		DAEUtil.setAttribute(el, "id", this.id);
 		DAEUtil.setAttribute(el, "name", this.name);
 		DAEUtil.setAttribute(el, "type", this.type);

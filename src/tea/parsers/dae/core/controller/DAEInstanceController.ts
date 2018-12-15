@@ -4,6 +4,7 @@ import { DAESkeleton } from "./DAESkeleton";
 
 // parent: node
 export class DAEInstanceController {
+	static readonly TagName: string = "instance_controller";
 	sid?: string;
 	name?: string;
 	url: string;
@@ -36,12 +37,12 @@ export class DAEInstanceController {
 
 	static parseArray(parent: Element): Array<DAEInstanceController> {
 		return DAEUtil.parseArray<DAEInstanceController>(
-			this.parse, parent, "instance_controller"
+			this.parse, parent, DAEInstanceController.TagName
 		);
 	}
 
 	toXML(): Element {
-		var el = document.createElement("instance_controller");
+		var el = document.createElement(DAEInstanceController.TagName);
 		DAEUtil.setAttribute(el, "sid", this.sid);
 		DAEUtil.setAttribute(el, "name", this.name);
 		DAEUtil.setAttribute(el, "url", this.url);

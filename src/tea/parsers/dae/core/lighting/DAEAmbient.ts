@@ -3,6 +3,7 @@ import { DAEColor } from "./DAEColor";
 
 // parent: light/technique_common
 export class DAEAmbient {
+	static readonly TagName: string = "ambient";
 	color: DAEColor;
 
 	constructor() {
@@ -16,13 +17,13 @@ export class DAEAmbient {
 		}
 		var value = new DAEAmbient();
 		value.color = DAEColor.parse(
-			el.querySelector(":scope > color")
+			DAEUtil.queryChildSelector(el, DAEColor.TagName)
 		);
 		return value;
 	}
 
 	toXML(): Element {
-		var el = document.createElement("ambient");
+		var el = document.createElement(DAEAmbient.TagName);
 		DAEUtil.addXML(el, this.color);
 		return el;
 	}

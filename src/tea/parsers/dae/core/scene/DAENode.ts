@@ -16,6 +16,7 @@ import { DAEExtra } from "../extensibility/DAEExtra";
 
 // parent: library_nodes, node, visual_scene
 export class DAENode {
+	static readonly TagName: string = "node";
 	id?: string;
 	name?: string;
 	sid?: string;
@@ -60,7 +61,7 @@ export class DAENode {
 		value.type = DAEUtil.stringAttrib(el, "type");
 		value.layer = DAEUtil.stringAttrib(el, "layer");
 		value.asset = DAEAsset.parse(
-			el.querySelector(":scope > asset")
+			DAEUtil.queryChildSelector(el, DAEAsset.TagName)
 		);
 		value.transformationElements = DAENode.parseTransformationElements(el);
 		value.instanceCameras = DAEInstanceCamera.parseArray(el);
@@ -75,7 +76,7 @@ export class DAENode {
 
 	static parseArray(parent: Element): Array<DAENode> {
 		return DAEUtil.parseArray<DAENode>(
-			this.parse, parent, "node"
+			this.parse, parent, DAENode.TagName
 		);
 	}
 
@@ -89,23 +90,32 @@ export class DAENode {
 			var name = el.tagName;
 			var child = null;
 			switch (name) {
-				case "Lookat":
+				case DAELookat.TagName:
 					child = DAELookat.parse(el);
 					break;
-				case "matrix":
+				case DAEMatrix.TagName:
 					child = DAEMatrix.parse(el);
 					break;
-				case "rotate":
+				case DAERotate.TagName:
 					child = DAERotate.parse(el);
 					break;
-				case "scale":
+				case DAEScale.TagName:
 					child = DAEScale.parse(el);
 					break;
-				case "skew":
+				case DAESkew.TagName:
 					child = DAESkew.parse(el);
 					break;
-				case "translate":
+				case DAETranslate.TagName:
 					child = DAETranslate.parse(el);
+					break;
+				case DAEAsset.TagName:
+				case DAEInstanceCamera.TagName:
+				case DAEInstanceController.TagName:
+				case DAEInstanceGeometry.TagName:
+				case DAEInstanceLight.TagName:
+				case DAEInstanceNode.TagName:
+				case DAENode.TagName:
+				case DAEExtra.TagName:
 					break;
 				default:
 					console.warn("unknown tag:", name);
@@ -120,7 +130,7 @@ export class DAENode {
 	}
 
 	toXML(): Element {
-		var el = document.createElement("node");
+		var el = document.createElement(DAENode.TagName);
 		DAEUtil.setAttribute(el, "id", this.id);
 		DAEUtil.setAttribute(el, "name", this.name);
 		DAEUtil.setAttribute(el, "sid", this.sid);

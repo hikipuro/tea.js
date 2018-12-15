@@ -3,6 +3,7 @@ import { DAEUnsharedInput } from "../data/DAEUnsharedInput";
 
 // parent: animation
 export class DAESampler {
+	static readonly TagName: string = "sampler";
 	id?: string;
 	preBehavior: string;
 	postBehavior: string;
@@ -30,12 +31,12 @@ export class DAESampler {
 
 	static parseArray(parent: Element): Array<DAESampler> {
 		return DAEUtil.parseArray<DAESampler>(
-			this.parse, parent, "sampler"
+			this.parse, parent, DAESampler.TagName
 		);
 	}
 
 	toXML(): Element {
-		var el = document.createElement("sampler");
+		var el = document.createElement(DAESampler.TagName);
 		DAEUtil.setAttribute(el, "id", this.id);
 		DAEUtil.setAttribute(el, "pre_behavior", this.preBehavior);
 		DAEUtil.setAttribute(el, "post_behavior", this.postBehavior);

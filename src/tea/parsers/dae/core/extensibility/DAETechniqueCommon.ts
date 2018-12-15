@@ -5,6 +5,7 @@ import { DAEAccessor } from "../data/DAEAccessor";
 // physics_scene, rigid_body, rigid_constraint, source(core), motion, 
 // kinematics, kinematics_model
 export class DAETechniqueCommon {
+	static readonly TagName: string = "technique_common";
 	accessor: DAEAccessor;
 
 	constructor() {
@@ -18,13 +19,13 @@ export class DAETechniqueCommon {
 		}
 		var value = new DAETechniqueCommon();
 		value.accessor = DAEAccessor.parse(
-			el.querySelector(":scope > accessor")
+			DAEUtil.queryChildSelector(el, DAEAccessor.TagName)
 		);
 		return value;
 	}
 
 	toXML(): Element {
-		var el = document.createElement("technique_common");
+		var el = document.createElement(DAETechniqueCommon.TagName);
 		DAEUtil.addXML(el, this.accessor);
 		return el;
 	}

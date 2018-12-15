@@ -6,6 +6,7 @@ import { DAEExtra } from "../extensibility/DAEExtra";
 
 // parent: controller
 export class DAESkin {
+	static readonly TagName: string = "skin";
 	source: string;
 	//bindShapeMatrix: any;
 	sources: Array<DAESource>;
@@ -30,17 +31,17 @@ export class DAESkin {
 		value.source = DAEUtil.stringAttrib(el, "source");
 		value.sources = DAESource.parseArray(el);
 		value.joints = DAEJoints.parse(
-			el.querySelector(":scope > joints")
+			DAEUtil.queryChildSelector(el, DAEJoints.TagName)
 		);
 		value.vertexWeights = DAEVertexWeights.parse(
-			el.querySelector(":scope > vertex_weights")
+			DAEUtil.queryChildSelector(el, DAEVertexWeights.TagName)
 		);
 		value.extras = DAEExtra.parseArray(el);
 		return value;
 	}
 
 	toXML(): Element {
-		var el = document.createElement("skin");
+		var el = document.createElement(DAESkin.TagName);
 		DAEUtil.setAttribute(el, "source", this.source);
 		DAEUtil.addXMLArray(el, this.sources);
 		DAEUtil.addXML(el, this.joints);

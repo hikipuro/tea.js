@@ -64,7 +64,7 @@ export class DAEPolygonsPH {
 		}
 		var value = new DAEPolygonsPH();
 		value.p = DAEPolygonsP.parse(
-			el.querySelector(":scope > p")
+			DAEUtil.queryChildSelector(el, "p")
 		);
 		value.h = DAEPolygonsH.parseArray(el);
 		return value;
@@ -79,6 +79,7 @@ export class DAEPolygonsPH {
 
 // parent: mesh, convex_mesh
 export class DAEPolygons implements DAEPrimitiveElement {
+	static readonly TagName: string = "polygons";
 	count: number;
 	material: string;
 	name?: string;
@@ -112,12 +113,12 @@ export class DAEPolygons implements DAEPrimitiveElement {
 
 	static parseArray(parent: Element): Array<DAEPolygons> {
 		return DAEUtil.parseArray<DAEPolygons>(
-			this.parse, parent, "polygons"
+			this.parse, parent, DAEPolygons.TagName
 		);
 	}
 
 	toXML(): Element {
-		var el = document.createElement("polygons");
+		var el = document.createElement(DAEPolygons.TagName);
 		DAEUtil.setAttribute(el, "count", this.count);
 		DAEUtil.setAttribute(el, "material", this.material);
 		DAEUtil.setAttribute(el, "name", this.name);

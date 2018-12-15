@@ -5,6 +5,7 @@ import { DAEUtil } from "../../DAEUtil";
 // parent:
 // core: instance_formula
 export class DAESetparam {
+	static readonly TagName: string = "setparam";
 	ref: string;
 	data: any;
 
@@ -35,12 +36,12 @@ export class DAESetparam {
 
 	static parseArray(parent: Element): Array<DAESetparam> {
 		return DAEUtil.parseArray<DAESetparam>(
-			this.parse, parent, "setparam"
+			this.parse, parent, DAESetparam.TagName
 		);
 	}
 
 	toXML(): Element {
-		var el = document.createElement("setparam");
+		var el = document.createElement(DAESetparam.TagName);
 		DAEUtil.setAttribute(el, "ref", this.ref);
 		return el;
 	}

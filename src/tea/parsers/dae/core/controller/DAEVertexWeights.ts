@@ -4,6 +4,7 @@ import { DAEExtra } from "../extensibility/DAEExtra";
 
 // parent: skin
 export class DAEVertexWeights {
+	static readonly TagName: string = "vertex_weights";
 	count: number;
 	inputs?: Array<DAESharedInput>;
 	vcount?: Array<number>;
@@ -27,17 +28,17 @@ export class DAEVertexWeights {
 		value.count = DAEUtil.intAttrib(el, "count");
 		value.inputs = DAESharedInput.parseArray(el);
 		value.vcount = DAEUtil.intArray(
-			el.querySelector(":scope > vcount")
+			DAEUtil.queryChildSelector(el, "vcount")
 		);
 		value.v = DAEUtil.intArray(
-			el.querySelector(":scope > v")
+			DAEUtil.queryChildSelector(el, "v")
 		);
 		value.extras = DAEExtra.parseArray(el);
 		return value;
 	}
 	
 	toXML(): Element {
-		var el = document.createElement("vertex_weights");
+		var el = document.createElement(DAEVertexWeights.TagName);
 		DAEUtil.setAttribute(el, "count", this.count);
 		DAEUtil.addXMLArray(el, this.inputs);
 		if (this.vcount != null) {

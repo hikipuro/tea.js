@@ -4,6 +4,7 @@ import { DAEFloatValue } from "../data/DAEFloatValue";
 
 // parent: light / technique_common
 export class DAESpot {
+	static readonly TagName: string = "spot";
 	color: DAEColor;
 	constantAttenuation?: DAEFloatValue;
 	linearAttenuation?: DAEFloatValue;
@@ -27,28 +28,28 @@ export class DAESpot {
 		}
 		var value = new DAESpot();
 		value.color = DAEColor.parse(
-			el.querySelector(":scope > color")
+			DAEUtil.queryChildSelector(el, DAEColor.TagName)
 		);
 		value.constantAttenuation = DAEFloatValue.parse(
-			el.querySelector(":scope > constant_attenuation"), 1.0
+			DAEUtil.queryChildSelector(el, "constant_attenuation"), 1.0
 		);
 		value.linearAttenuation = DAEFloatValue.parse(
-			el.querySelector(":scope > linear_attenuation"), 0.0
+			DAEUtil.queryChildSelector(el, "linear_attenuation"), 0.0
 		);
 		value.quadraticAttenuation = DAEFloatValue.parse(
-			el.querySelector(":scope > quadratic_attenuation")
+			DAEUtil.queryChildSelector(el, "quadratic_attenuation")
 		);
 		value.falloffAngle = DAEFloatValue.parse(
-			el.querySelector(":scope > falloff_angle")
+			DAEUtil.queryChildSelector(el, "falloff_angle")
 		);
 		value.falloffExponent = DAEFloatValue.parse(
-			el.querySelector(":scope > falloff_exponent")
+			DAEUtil.queryChildSelector(el, "falloff_exponent")
 		);
 		return value;
 	}
 
 	toXML(): Element {
-		var el = document.createElement("spot");
+		var el = document.createElement(DAESpot.TagName);
 		DAEUtil.addXML(el, this.color);
 		DAEUtil.addXML(el, this.constantAttenuation);
 		DAEUtil.addXML(el, this.linearAttenuation);

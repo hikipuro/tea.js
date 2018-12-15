@@ -5,6 +5,7 @@ import { DAESemanticType } from "./DAESemanticType";
 // tristrips, vertex_weights
 // (unshared): joints, sampler, targets, vertices, control_vertices
 export class DAESharedInput {
+	static readonly TagName: string = "input";
 	offset: number;
 	semantic: DAESemanticType;
 	source: string;
@@ -25,19 +26,19 @@ export class DAESharedInput {
 		var value = new DAESharedInput();
 		value.offset = DAEUtil.intAttrib(el, "offset", 0);
 		value.semantic = DAEUtil.semanticAttrib(el);
-		value.source = el.getAttribute("source");
+		value.source = DAEUtil.stringAttrib(el, "source");
 		value.set = DAEUtil.intAttrib(el, "set");
 		return value;
 	}
 
 	static parseArray(parent: Element): Array<DAESharedInput> {
 		return DAEUtil.parseArray<DAESharedInput>(
-			this.parse, parent, "input"
+			this.parse, parent, DAESharedInput.TagName
 		);
 	}
 
 	toXML(): Element {
-		var el = document.createElement("input");
+		var el = document.createElement(DAESharedInput.TagName);
 		DAEUtil.setAttribute(el, "offset", this.offset);
 		var semantic = DAESemanticType.toString(this.semantic);
 		DAEUtil.setAttribute(el, "semantic", semantic);

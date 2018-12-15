@@ -16,6 +16,7 @@ import { DAESemanticType } from "../data/DAESemanticType";
 
 // parent: geometry
 export class DAEMesh implements DAEGeometricElement {
+	static readonly TagName: string = "mesh";
 	sources: Array<DAESource>;
 	vertices: DAEVertices;
 	primitiveElements?: Array<DAEPrimitiveElement>;
@@ -36,9 +37,9 @@ export class DAEMesh implements DAEGeometricElement {
 		var value = new DAEMesh();
 		value.sources = DAESource.parseArray(el);
 		value.vertices = DAEVertices.parse(
-			el.querySelector(":scope > vertices")
+			DAEUtil.queryChildSelector(el, DAEVertices.TagName)
 		);
-		value.primitiveElements = this.parsePrimitiveElements(el);
+		value.primitiveElements = DAEMesh.parsePrimitiveElements(el);
 		value.extras = DAEExtra.parseArray(el);
 		return value;
 	}
@@ -53,26 +54,30 @@ export class DAEMesh implements DAEGeometricElement {
 			var name = el.tagName;
 			var child = null;
 			switch (name) {
-				case "lines":
+				case DAELines.TagName:
 					child = DAELines.parse(el);
 					break;
-				case "linestrips":
+				case DAELinestrips.TagName:
 					child = DAELinestrips.parse(el);
 					break;
-				case "polygons":
+				case DAEPolygons.TagName:
 					child = DAEPolygons.parse(el);
 					break;
-				case "polylist":
+				case DAEPolylist.TagName:
 					child = DAEPolylist.parse(el);
 					break;
-				case "triangles":
+				case DAETriangles.TagName:
 					child = DAETriangles.parse(el);
 					break;
-				case "trifans":
+				case DAETrifans.TagName:
 					child = DAETrifans.parse(el);
 					break;
-				case "tristrips":
+				case DAETristrips.TagName:
 					child = DAETristrips.parse(el);
+					break;
+				case DAESource.TagName:
+				case DAEVertices.TagName:
+				case DAEExtra.TagName:
 					break;
 				default:
 					console.warn("unknown tag:", name);
@@ -155,7 +160,7 @@ export class DAEMesh implements DAEGeometricElement {
 	}
 
 	toXML(): Element {
-		var el = document.createElement("mesh");
+		var el = document.createElement(DAEMesh.TagName);
 		DAEUtil.addXMLArray(el, this.sources);
 		DAEUtil.addXML(el, this.vertices);
 		DAEUtil.addXMLArray(el, this.primitiveElements);

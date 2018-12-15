@@ -7,6 +7,7 @@ import { DAEExtra } from "../../core/extensibility/DAEExtra";
 
 // parent: library_physics_models
 export class DAEPhysicsModel {
+	static readonly TagName: string = "physics_model";
 	id?: string;
 	name?: string;
 	asset?: DAEAsset;
@@ -34,7 +35,7 @@ export class DAEPhysicsModel {
 		value.id = DAEUtil.stringAttrib(el, "id");
 		value.name = DAEUtil.stringAttrib(el, "name");
 		value.asset = DAEAsset.parse(
-			el.querySelector(":scope > asset")
+			DAEUtil.queryChildSelector(el, DAEAsset.TagName)
 		);
 		value.rigidBodies = DAERigidBody.parseArray(el);
 		value.rigidConstraints = DAERigidConstraint.parseArray(el);
@@ -45,7 +46,7 @@ export class DAEPhysicsModel {
 
 	static parseArray(parent: Element): Array<DAEPhysicsModel> {
 		return DAEUtil.parseArray<DAEPhysicsModel>(
-			this.parse, parent, "physics_model"
+			this.parse, parent, DAEPhysicsModel.TagName
 		);
 	}
 }

@@ -14,6 +14,7 @@ import { DAETechnique } from "../extensibility/DAETechnique";
 // parent:
 // core: animation, mesh, morph, skin, spline
 export class DAESource {
+	static readonly TagName: string = "source";
 	id: string;
 	name?: string;
 	asset?: DAEAsset;
@@ -39,11 +40,11 @@ export class DAESource {
 		value.id = DAEUtil.stringAttrib(el, "id");
 		value.name = DAEUtil.stringAttrib(el, "name");
 		value.asset = DAEAsset.parse(
-			el.querySelector(":scope > asset")
+			DAEUtil.queryChildSelector(el, DAEAsset.TagName)
 		);
 		value.arrayElement = DAESource.parseArrayElement(el);
 		value.techniqueCommon = DAETechniqueCommon.parse(
-			el.querySelector(":scope > technique_common")
+			DAEUtil.queryChildSelector(el, DAETechniqueCommon.TagName)
 		);
 		value.techniques = DAETechnique.parseArray(el);
 		return value;
@@ -51,44 +52,44 @@ export class DAESource {
 
 	static parseArray(parent: Element): Array<DAESource> {
 		return DAEUtil.parseArray<DAESource>(
-			this.parse, parent, "source"
+			this.parse, parent, DAESource.TagName
 		);
 	}
 
 	protected static parseArrayElement(el: Element): DAEArrayElement {
-		var element = el.querySelector(":scope > bool_array");
+		var element = DAEUtil.queryChildSelector(el, DAEBoolArray.TagName);
 		if (element != null) {
 			return DAEBoolArray.parse(element);
 		}
-		element = el.querySelector(":scope > float_array");
+		element = DAEUtil.queryChildSelector(el, DAEFloatArray.TagName);
 		if (element != null) {
 			return DAEFloatArray.parse(element);
 		}
-		element = el.querySelector(":scope > IDREF_array");
+		element = DAEUtil.queryChildSelector(el, DAEIDREFArray.TagName);
 		if (element != null) {
 			return DAEIDREFArray.parse(element);
 		}
-		element = el.querySelector(":scope > int_array");
+		element = DAEUtil.queryChildSelector(el, DAEIntArray.TagName);
 		if (element != null) {
 			return DAEIntArray.parse(element);
 		}
-		element = el.querySelector(":scope > Name_array");
+		element = DAEUtil.queryChildSelector(el, DAENameArray.TagName);
 		if (element != null) {
 			return DAENameArray.parse(element);
 		}
-		element = el.querySelector(":scope > SIDREF_array");
+		element = DAEUtil.queryChildSelector(el, DAESIDREFArray.TagName);
 		if (element != null) {
 			return DAESIDREFArray.parse(element);
 		}
-		element = el.querySelector(":scope > token_array");
-		if (element != null) {
+		//element = DAEUtil.queryChildSelector(el, DAETokenArray.TagName);
+		//if (element != null) {
 			//return DAETokenArray.parse(element);
-		}
+		//}
 		return null;
 	}
 
 	toXML(): Element {
-		var el = document.createElement("source");
+		var el = document.createElement(DAESource.TagName);
 		DAEUtil.setAttribute(el, "id", this.id);
 		DAEUtil.setAttribute(el, "name", this.name);
 		DAEUtil.addXML(el, this.asset);

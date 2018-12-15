@@ -3,6 +3,7 @@ import { DAEUtil } from "../../DAEUtil";
 // parent: accessor, bind_material
 // *
 export class DAEParam {
+	static readonly TagName: string = "param";
 	name?: string;
 	sid?: string;
 	type: string;
@@ -30,12 +31,12 @@ export class DAEParam {
 
 	static parseArray(parent: Element): Array<DAEParam> {
 		return DAEUtil.parseArray<DAEParam>(
-			this.parse, parent, "param"
+			this.parse, parent, DAEParam.TagName
 		);
 	}
 
 	toXML(): Element {
-		var el = document.createElement("param");
+		var el = document.createElement(DAEParam.TagName);
 		DAEUtil.setAttribute(el, "name", this.name);
 		DAEUtil.setAttribute(el, "sid", this.sid);
 		DAEUtil.setAttribute(el, "type", this.type);

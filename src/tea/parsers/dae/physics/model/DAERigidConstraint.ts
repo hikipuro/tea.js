@@ -7,6 +7,7 @@ import { DAEExtra } from "../../core/extensibility/DAEExtra";
 
 // parent: physics_model
 export class DAERigidConstraint {
+	static readonly TagName: string = "rigid_constraint";
 	sid?: string;
 	name?: string;
 	refAttachment: DAERefAttachment;
@@ -34,13 +35,13 @@ export class DAERigidConstraint {
 		value.sid = DAEUtil.stringAttrib(el, "sid");
 		value.name = DAEUtil.stringAttrib(el, "name");
 		value.refAttachment = DAERefAttachment.parse(
-			el.querySelector(":scope > ref_attachment")
+			DAEUtil.queryChildSelector(el, DAERefAttachment.TagName)
 		);
-		value.attachment = DAERefAttachment.parse(
-			el.querySelector(":scope > Attachment")
+		value.attachment = DAEAttachment.parse(
+			DAEUtil.queryChildSelector(el, DAEAttachment.TagName)
 		);
 		value.techniqueCommon = DAETechniqueCommon.parse(
-			el.querySelector(":scope > technique_common")
+			DAEUtil.queryChildSelector(el, DAETechniqueCommon.TagName)
 		);
 		value.techniques = DAETechnique.parseArray(el);
 		value.extras = DAEExtra.parseArray(el);
@@ -49,7 +50,7 @@ export class DAERigidConstraint {
 
 	static parseArray(parent: Element): Array<DAERigidConstraint> {
 		return DAEUtil.parseArray<DAERigidConstraint>(
-			this.parse, parent, "rigid_constraint"
+			this.parse, parent, DAERigidConstraint.TagName
 		);
 	}
 }

@@ -3,6 +3,7 @@ import { DAEArrayElement } from "./DAEArrayElement";
 
 // parent: source (core)
 export class DAEIntArray implements DAEArrayElement {
+	static readonly TagName: string = "int_array";
 	static readonly DefaultMinInclusive: number = -2147483648;
 	static readonly DefaultMaxInclusive: number = 2147483647;
 	count: number;
@@ -37,7 +38,7 @@ export class DAEIntArray implements DAEArrayElement {
 	}
 
 	toXML(): Element {
-		var el = document.createElement("int_array");
+		var el = document.createElement(DAEIntArray.TagName);
 		DAEUtil.setAttribute(el, "count", this.count);
 		DAEUtil.setAttribute(el, "id", this.id);
 		DAEUtil.setAttribute(el, "name", this.name);

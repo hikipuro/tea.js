@@ -3,6 +3,7 @@ import { DAEExtra } from "../../core/extensibility/DAEExtra";
 
 // parent: shape, surface (B-Rep)
 export class DAESphere {
+	static readonly TagName: string = "sphere";
 	radius: number;
 	extras?: Array<DAEExtra>;
 

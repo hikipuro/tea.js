@@ -7,6 +7,7 @@ import { DAEPerspective } from "./DAEPerspective";
 
 // parent: camera
 export class DAEOptics {
+	static readonly TagName: string = "optics";
 	techniqueCommon: DAETechniqueCommon;
 	techniques?: Array<DAETechnique>;
 	extras?: Array<DAEExtra>;
@@ -28,21 +29,21 @@ export class DAEOptics {
 		}
 		var value = new DAEOptics();
 		value.techniqueCommon = DAETechniqueCommon.parse(
-			el.querySelector(":scope > technique_common")
+			DAEUtil.queryChildSelector(el, DAETechniqueCommon.TagName)
 		);
 		value.techniques = DAETechnique.parseArray(el);
 		value.extras = DAEExtra.parseArray(el);
 		value.orthographic = DAEOrthographic.parse(
-			el.querySelector(":scope > orthographic")
+			DAEUtil.queryChildSelector(el, DAEOrthographic.TagName)
 		);
 		value.perspective = DAEPerspective.parse(
-			el.querySelector(":scope > perspective")
+			DAEUtil.queryChildSelector(el, DAEPerspective.TagName)
 		);
 		return value;
 	}
 
 	toXML(): Element {
-		var el = document.createElement("optics");
+		var el = document.createElement(DAEOptics.TagName);
 		DAEUtil.addXML(el, this.techniqueCommon);
 		DAEUtil.addXMLArray(el, this.techniques);
 		DAEUtil.addXMLArray(el, this.extras);

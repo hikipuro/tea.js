@@ -4,6 +4,7 @@ import { DAEFloatValue } from "../data/DAEFloatValue";
 
 // parent: light / technique_common
 export class DAEPoint {
+	static readonly TagName: string = "point";
 	color: DAEColor;
 	constantAttenuation?: DAEFloatValue;
 	linearAttenuation?: DAEFloatValue;
@@ -23,22 +24,22 @@ export class DAEPoint {
 		}
 		var value = new DAEPoint();
 		value.color = DAEColor.parse(
-			el.querySelector(":scope > color")
+			DAEUtil.queryChildSelector(el, DAEColor.TagName)
 		);
 		value.constantAttenuation = DAEFloatValue.parse(
-			el.querySelector(":scope > constant_attenuation"), 1.0
+			DAEUtil.queryChildSelector(el, "constant_attenuation"), 1.0
 		);
 		value.linearAttenuation = DAEFloatValue.parse(
-			el.querySelector(":scope > linear_attenuation"), 0.0
+			DAEUtil.queryChildSelector(el, "linear_attenuation"), 0.0
 		);
 		value.quadraticAttenuation = DAEFloatValue.parse(
-			el.querySelector(":scope > quadratic_attenuation")
+			DAEUtil.queryChildSelector(el, "quadratic_attenuation")
 		);
 		return value;
 	}
 
 	toXML(): Element {
-		var el = document.createElement("point");
+		var el = document.createElement(DAEPoint.TagName);
 		DAEUtil.addXML(el, this.color);
 		DAEUtil.addXML(el, this.constantAttenuation);
 		DAEUtil.addXML(el, this.linearAttenuation);

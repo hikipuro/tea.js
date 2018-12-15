@@ -3,6 +3,7 @@ import { DAEExtra } from "../../core/extensibility/DAEExtra";
 
 // parent: scene
 export class DAEInstancePhysicsScene {
+	static readonly TagName: string = "instance_physics_scene";
 	sid?: string;
 	name?: string;
 	url: string;
@@ -30,7 +31,7 @@ export class DAEInstancePhysicsScene {
 
 	static parseArray(parent: Element): Array<DAEInstancePhysicsScene> {
 		return DAEUtil.parseArray<DAEInstancePhysicsScene>(
-			this.parse, parent, "instance_physics_scene"
+			this.parse, parent, DAEInstancePhysicsScene.TagName
 		);
 	}
 }

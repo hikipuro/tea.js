@@ -3,6 +3,7 @@ import { DAEArrayElement } from "./DAEArrayElement";
 
 // parent: source (core)
 export class DAENameArray implements DAEArrayElement {
+	static readonly TagName: string = "Name_array";
 	count: number;
 	id?: string;
 	name?: string;
@@ -29,7 +30,7 @@ export class DAENameArray implements DAEArrayElement {
 	}
 
 	toXML(): Element {
-		var el = document.createElement("Name_array");
+		var el = document.createElement(DAENameArray.TagName);
 		DAEUtil.setAttribute(el, "count", this.count);
 		DAEUtil.setAttribute(el, "id", this.id);
 		DAEUtil.setAttribute(el, "name", this.name);

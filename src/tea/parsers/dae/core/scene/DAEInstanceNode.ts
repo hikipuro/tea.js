@@ -3,6 +3,7 @@ import { DAEExtra } from "../extensibility/DAEExtra";
 
 // parent: node
 export class DAEInstanceNode {
+	static readonly TagName: string = "instance_node";
 	sid?: string;
 	name?: string;
 	url: string;
@@ -33,12 +34,12 @@ export class DAEInstanceNode {
 
 	static parseArray(parent: Element): Array<DAEInstanceNode> {
 		return DAEUtil.parseArray<DAEInstanceNode>(
-			this.parse, parent, "instance_node"
+			this.parse, parent, DAEInstanceNode.TagName
 		);
 	}
 
 	toXML(): Element {
-		var el = document.createElement("instance_node");
+		var el = document.createElement(DAEInstanceNode.TagName);
 		DAEUtil.setAttribute(el, "sid", this.sid);
 		DAEUtil.setAttribute(el, "name", this.name);
 		DAEUtil.setAttribute(el, "url", this.url);

@@ -5,6 +5,7 @@ import { DAEUtil } from "../../DAEUtil";
 // <profile_COMMON>: fx_common_color_or_texture_type (ambient, 
 // emission, diffuse, reflective, specular, transparent)
 export class DAEColor {
+	static readonly TagName: string = "color";
 	sid?: string;
 	data: Array<number>;
 
@@ -25,7 +26,7 @@ export class DAEColor {
 	}
 
 	toXML(): Element {
-		var el = document.createElement("color");
+		var el = document.createElement(DAEColor.TagName);
 		DAEUtil.setAttribute(el, "sid", this.sid);
 		DAEUtil.setArrayContent(el, this.data);
 		return el;

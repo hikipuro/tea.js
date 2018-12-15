@@ -11,6 +11,7 @@ import { DAEExtra } from "../../core/extensibility/DAEExtra";
 
 // parent: rigid_body / technique_common, instance_rigid_body / technique_common
 export class DAEShape {
+	static readonly TagName: string = "shape";
 	hollow?: boolean;
 	mass?: DAEFloatValue;
 	density?: DAEFloatValue;
@@ -45,31 +46,31 @@ export class DAEShape {
 		var value = new DAEShape();
 		//value.hollow = null;
 		value.mass = DAEFloatValue.parse(
-			el.querySelector(":scope > mass")
+			DAEUtil.queryChildSelector(el, "mass")
 		);
 		value.density = DAEFloatValue.parse(
-			el.querySelector(":scope > density")
+			DAEUtil.queryChildSelector(el, "density")
 		);
 		value.physicsMaterial = DAEPhysicsMaterial.parse(
-			el.querySelector(":scope > physics_material")
+			DAEUtil.queryChildSelector(el, "physics_material")
 		);
 		value.instancePhysicsMaterial = DAEInstancePhysicsMaterial.parse(
-			el.querySelector(":scope > instance_physics_material")
+			DAEUtil.queryChildSelector(el, "instance_physics_material")
 		);
 		value.plane = DAEPlane.parse(
-			el.querySelector(":scope > plane")
+			DAEUtil.queryChildSelector(el, "plane")
 		);
 		value.box = DAEBox.parse(
-			el.querySelector(":scope > box")
+			DAEUtil.queryChildSelector(el, "box")
 		);
 		value.sphere = DAESphere.parse(
-			el.querySelector(":scope > sphere")
+			DAEUtil.queryChildSelector(el, "sphere")
 		);
 		value.cylinder = DAECylinder.parse(
-			el.querySelector(":scope > cylinder")
+			DAEUtil.queryChildSelector(el, "cylinder")
 		);
 		value.capsule = DAECapsule.parse(
-			el.querySelector(":scope > capsule")
+			DAEUtil.queryChildSelector(el, "capsule")
 		);
 		value.extras = DAEExtra.parseArray(el);
 		return value;
@@ -77,7 +78,7 @@ export class DAEShape {
 
 	static parseArray(parent: Element): Array<DAEShape> {
 		return DAEUtil.parseArray<DAEShape>(
-			this.parse, parent, "shape"
+			this.parse, parent, DAEShape.TagName
 		);
 	}
 }

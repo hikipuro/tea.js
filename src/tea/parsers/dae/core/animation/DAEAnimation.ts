@@ -7,6 +7,7 @@ import { DAEExtra } from "../extensibility/DAEExtra";
 
 // parent: library_animations, animation
 export class DAEAnimation {
+	static readonly TagName: string = "animation";
 	id?: string;
 	name?: string;
 	asset?: DAEAsset;
@@ -36,7 +37,7 @@ export class DAEAnimation {
 		value.id = DAEUtil.stringAttrib(el, "id");
 		value.name = DAEUtil.stringAttrib(el, "name");
 		value.asset = DAEAsset.parse(
-			el.querySelector(":scope > asset")
+			DAEUtil.queryChildSelector(el, DAEAsset.TagName)
 		);
 		value.animations = DAEAnimation.parseArray(el);
 		value.sources = DAESource.parseArray(el);
@@ -48,12 +49,12 @@ export class DAEAnimation {
 
 	static parseArray(parent: Element): Array<DAEAnimation> {
 		return DAEUtil.parseArray<DAEAnimation>(
-			this.parse, parent, "animation"
+			this.parse, parent, DAEAnimation.TagName
 		);
 	}
 
 	toXML(): Element {
-		var el = document.createElement("animation");
+		var el = document.createElement(DAEAnimation.TagName);
 		DAEUtil.setAttribute(el, "id", this.id);
 		DAEUtil.setAttribute(el, "name", this.name);
 		DAEUtil.addXML(el, this.asset);

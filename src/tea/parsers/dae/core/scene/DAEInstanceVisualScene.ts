@@ -3,6 +3,7 @@ import { DAEExtra } from "../extensibility/DAEExtra";
 
 // parent: scene
 export class DAEInstanceVisualScene {
+	static readonly TagName: string = "instance_visual_scene";
 	sid?: string;
 	name?: string;
 	url: string;
@@ -29,7 +30,7 @@ export class DAEInstanceVisualScene {
 	}
 
 	toXML(): Element {
-		var el = document.createElement("instance_visual_scene");
+		var el = document.createElement(DAEInstanceVisualScene.TagName);
 		DAEUtil.setAttribute(el, "sid", this.sid);
 		DAEUtil.setAttribute(el, "name", this.name);
 		DAEUtil.setAttribute(el, "url", this.url);

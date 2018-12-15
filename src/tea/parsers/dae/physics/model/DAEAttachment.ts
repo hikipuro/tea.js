@@ -5,6 +5,7 @@ import { DAEExtra } from "../../core/extensibility/DAEExtra";
 
 // parent: rigid_constraint
 export class DAEAttachment {
+	static readonly TagName: string = "Attachment";
 	rigidBody: string;
 	translates?: Array<DAETranslate>;
 	rotates?: Array<DAERotate>;

@@ -3,6 +3,7 @@ import { DAETransformationElement } from "./DAETransformationElement";
 
 // parent: node
 export class DAEMatrix implements DAETransformationElement {
+	static readonly TagName: string = "matrix";
 	sid?: string;
 	data: Array<number>;
 
@@ -23,7 +24,7 @@ export class DAEMatrix implements DAETransformationElement {
 	}
 
 	toXML(): Element {
-		var el = document.createElement("matrix");
+		var el = document.createElement(DAEMatrix.TagName);
 		DAEUtil.setAttribute(el, "sid", this.sid);
 		DAEUtil.setArrayContent(el, this.data);
 		return el;

@@ -4,6 +4,7 @@ import { DAEExtra } from "../../core/extensibility/DAEExtra";
 // parent: rigid_body / technique_common,
 // instance_rigid_body / technique_common, shape
 export class DAEInstancePhysicsMaterial {
+	static readonly TagName: string = "instance_physics_material";
 	sid?: string;
 	name?: string;
 	url: string;

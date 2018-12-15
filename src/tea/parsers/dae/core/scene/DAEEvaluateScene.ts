@@ -4,6 +4,7 @@ import { DAEExtra } from "../extensibility/DAEExtra";
 
 // parent: visual_scene
 export class DAEEvaluateScene {
+	static readonly TagName: string = "evaluate_scene";
 	id?: string;
 	name?: string;
 	sid?: string;
@@ -31,7 +32,7 @@ export class DAEEvaluateScene {
 		value.sid = DAEUtil.stringAttrib(el, "sid");
 		value.enable = DAEUtil.boolAttrib(el, "enable", true);
 		value.asset = DAEAsset.parse(
-			el.querySelector(":scope > asset")
+			DAEUtil.queryChildSelector(el, DAEAsset.TagName)
 		);
 		//value.renders = DAERender.parseArray(el);
 		value.extras = DAEExtra.parseArray(el);
@@ -40,12 +41,12 @@ export class DAEEvaluateScene {
 
 	static parseArray(parent: Element): Array<DAEEvaluateScene> {
 		return DAEUtil.parseArray<DAEEvaluateScene>(
-			this.parse, parent, "evaluate_scene"
+			this.parse, parent, DAEEvaluateScene.TagName
 		);
 	}
 
 	toXML(): Element {
-		var el = document.createElement("evaluate_scene");
+		var el = document.createElement(DAEEvaluateScene.TagName);
 		DAEUtil.setAttribute(el, "id", this.id);
 		DAEUtil.setAttribute(el, "name", this.name);
 		DAEUtil.setAttribute(el, "sid", this.sid);

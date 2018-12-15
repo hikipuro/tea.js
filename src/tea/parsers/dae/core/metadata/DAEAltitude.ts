@@ -1,6 +1,7 @@
 import { DAEUtil } from "../../DAEUtil";
 
 export class DAEAltitude {
+	static readonly TagName: string = "altitude";
 	mode: string;
 	value: number;
 
@@ -21,7 +22,7 @@ export class DAEAltitude {
 	}
 
 	toXML(): Element {
-		var el = document.createElement("altitude");
+		var el = document.createElement(DAEAltitude.TagName);
 		DAEUtil.setTextContent(el, this.value.toString());
 		return el;
 	}

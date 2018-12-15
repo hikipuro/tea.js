@@ -3,6 +3,7 @@ import { DAEParam } from "./DAEParam";
 
 // parent: source / technique_common
 export class DAEAccessor {
+	static readonly TagName: string = "accessor";
 	count: number;
 	offset?: number;
 	source: string;
@@ -32,7 +33,7 @@ export class DAEAccessor {
 	}
 
 	toXML(): Element {
-		var el = document.createElement("accessor");
+		var el = document.createElement(DAEAccessor.TagName);
 		DAEUtil.setAttribute(el, "count", this.count);
 		if (this.offset !== 0) {
 			DAEUtil.setAttribute(el, "offset", this.offset);

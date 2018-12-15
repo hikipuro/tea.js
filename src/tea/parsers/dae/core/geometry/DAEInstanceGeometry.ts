@@ -3,6 +3,7 @@ import { DAEExtra } from "../extensibility/DAEExtra";
 
 // parent: node, shape
 export class DAEInstanceGeometry {
+	static readonly TagName: string = "instance_geometry";
 	sid?: string;
 	name?: string;
 	url: string;
@@ -32,12 +33,12 @@ export class DAEInstanceGeometry {
 
 	static parseArray(parent: Element): Array<DAEInstanceGeometry> {
 		return DAEUtil.parseArray<DAEInstanceGeometry>(
-			this.parse, parent, "instance_geometry"
+			this.parse, parent, DAEInstanceGeometry.TagName
 		);
 	}
 
 	toXML(): Element {
-		var el = document.createElement("instance_geometry");
+		var el = document.createElement(DAEInstanceGeometry.TagName);
 		DAEUtil.setAttribute(el, "sid", this.sid);
 		DAEUtil.setAttribute(el, "name", this.name);
 		DAEUtil.setAttribute(el, "url", this.url);

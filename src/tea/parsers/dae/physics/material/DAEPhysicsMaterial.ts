@@ -7,6 +7,7 @@ import { DAEExtra } from "../../core/extensibility/DAEExtra";
 // parent: library_physics_materials, shape, instance_rigid_body /
 // technique_common, rigid_body / technique_common
 export class DAEPhysicsMaterial {
+	static readonly TagName: string = "physics_material";
 	id?: string;
 	name?: string;
 	asset?: DAEAsset;
@@ -32,10 +33,10 @@ export class DAEPhysicsMaterial {
 		value.id = DAEUtil.stringAttrib(el, "id");
 		value.name = DAEUtil.stringAttrib(el, "name");
 		value.asset = DAEAsset.parse(
-			el.querySelector(":scope > asset")
+			DAEUtil.queryChildSelector(el, DAEAsset.TagName)
 		);
 		value.techniqueCommon = DAETechniqueCommon.parse(
-			el.querySelector(":scope > technique_common")
+			DAEUtil.queryChildSelector(el, DAETechniqueCommon.TagName)
 		);
 		value.techniques = DAETechnique.parseArray(el);
 		value.extras = DAEExtra.parseArray(el);
@@ -44,7 +45,7 @@ export class DAEPhysicsMaterial {
 
 	static parseArray(parent: Element): Array<DAEPhysicsMaterial> {
 		return DAEUtil.parseArray<DAEPhysicsMaterial>(
-			this.parse, parent, "physics_material"
+			this.parse, parent, DAEPhysicsMaterial.TagName
 		);
 	}
 }

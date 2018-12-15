@@ -4,6 +4,7 @@ import { DAEExtra } from "../extensibility/DAEExtra";
 
 // parent: skin
 export class DAEJoints {
+	static readonly TagName: string = "joints";
 	inputs: Array<DAEUnsharedInput>;
 	extras?: Array<DAEExtra>;
 
@@ -24,7 +25,7 @@ export class DAEJoints {
 	}
 
 	toXML(): Element {
-		var el = document.createElement("joints");
+		var el = document.createElement(DAEJoints.TagName);
 		DAEUtil.addXMLArray(el, this.inputs);
 		DAEUtil.addXMLArray(el, this.extras);
 		return el;

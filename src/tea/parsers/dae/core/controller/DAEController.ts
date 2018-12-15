@@ -6,6 +6,7 @@ import { DAEMorph } from "./DAEMorph";
 
 // parent: library_controllers
 export class DAEController {
+	static readonly TagName: string = "controller";
 	id?: string;
 	name?: string;
 	asset?: DAEAsset;
@@ -31,13 +32,13 @@ export class DAEController {
 		value.id = DAEUtil.stringAttrib(el, "id");
 		value.name = DAEUtil.stringAttrib(el, "name");
 		value.asset = DAEAsset.parse(
-			el.querySelector(":scope > asset")
+			DAEUtil.queryChildSelector(el, DAEAsset.TagName)
 		);
 		value.skin = DAESkin.parse(
-			el.querySelector(":scope > skin")
+			DAEUtil.queryChildSelector(el, DAESkin.TagName)
 		);
 		value.morph = DAEMorph.parse(
-			el.querySelector(":scope > morph")
+			DAEUtil.queryChildSelector(el, DAEMorph.TagName)
 		);
 		value.extras = DAEExtra.parseArray(el);
 		return value;
@@ -45,12 +46,12 @@ export class DAEController {
 
 	static parseArray(parent: Element): Array<DAEController> {
 		return DAEUtil.parseArray<DAEController>(
-			this.parse, parent, "controller"
+			this.parse, parent, DAEController.TagName
 		);
 	}
 
 	toXML(): Element {
-		var el = document.createElement("controller");
+		var el = document.createElement(DAEController.TagName);
 		DAEUtil.setAttribute(el, "id", this.id);
 		DAEUtil.setAttribute(el, "name", this.name);
 		DAEUtil.addXML(el, this.asset);

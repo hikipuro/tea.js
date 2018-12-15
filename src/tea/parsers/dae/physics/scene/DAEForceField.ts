@@ -5,6 +5,7 @@ import { DAEExtra } from "../../core/extensibility/DAEExtra";
 
 // parent: library_force_fields
 export class DAEForceField {
+	static readonly TagName: string = "force_field";
 	id?: string;
 	name?: string;
 	asset?: DAEAsset;
@@ -28,7 +29,7 @@ export class DAEForceField {
 		value.id = DAEUtil.stringAttrib(el, "id");
 		value.name = DAEUtil.stringAttrib(el, "name");
 		value.asset = DAEAsset.parse(
-			el.querySelector(":scope > asset")
+			DAEUtil.queryChildSelector(el, DAEAsset.TagName)
 		);
 		value.techniques = DAETechnique.parseArray(el);
 		value.extras = DAEExtra.parseArray(el);
@@ -37,7 +38,7 @@ export class DAEForceField {
 
 	static parseArray(parent: Element): Array<DAEForceField> {
 		return DAEUtil.parseArray<DAEForceField>(
-			this.parse, parent, "force_field"
+			this.parse, parent, DAEForceField.TagName
 		);
 	}
 }

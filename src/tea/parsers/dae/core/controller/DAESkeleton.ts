@@ -2,6 +2,7 @@ import { DAEUtil } from "../../DAEUtil";
 
 // parent: instance_controller
 export class DAESkeleton {
+	static readonly TagName: string = "skeleton";
 	data: string;
 
 	constructor() {
@@ -20,12 +21,12 @@ export class DAESkeleton {
 
 	static parseArray(parent: Element): Array<DAESkeleton> {
 		return DAEUtil.parseArray<DAESkeleton>(
-			this.parse, parent, "skeleton"
+			this.parse, parent, DAESkeleton.TagName
 		);
 	}
 
 	toXML(): Element {
-		var el = document.createElement("skeleton");
+		var el = document.createElement(DAESkeleton.TagName);
 		DAEUtil.setTextContent(el, this.data);
 		return el;
 	}

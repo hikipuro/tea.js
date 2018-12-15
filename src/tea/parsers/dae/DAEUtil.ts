@@ -1,6 +1,10 @@
 import { DAESemanticType } from "./core/data/DAESemanticType";
 
 export class DAEUtil {
+	static queryChildSelector(element: Document | Element, selector: string): Element {
+		return element.querySelector(":scope > " + selector);
+	}
+	
 	static parseArray<T>(parse: (el: Element) => T, parent: Document | Element, selector: string): Array<T> {
 		if (parent == null || selector == null || selector === "") {
 			return null;
