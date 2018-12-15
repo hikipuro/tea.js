@@ -1,5 +1,7 @@
 import * as Tea from "../../../../Tea";
 import { DAEUtil } from "../../DAEUtil";
+import { DAEAsset } from "../metadata/DAEAsset";
+import { DAEArrayElement } from "./DAEArrayElement";
 import { DAEBoolArray } from "./DAEBoolArray";
 import { DAEFloatArray } from "./DAEFloatArray";
 import { DAEIDREFArray } from "./DAEIDREFArray";
@@ -14,25 +16,16 @@ import { DAETechnique } from "../extensibility/DAETechnique";
 export class DAESource {
 	id: string;
 	name?: string;
-	boolArray?: DAEBoolArray;
-	floatArray?: DAEFloatArray;
-	IDREFArray?: DAEIDREFArray;
-	intArray?: DAEIntArray;
-	NameArray?: DAENameArray;
-	SIDREFArray?: DAESIDREFArray;
-	//tokenArray?: any;
+	asset?: DAEAsset;
+	arrayElement?: DAEArrayElement;
 	techniqueCommon: DAETechniqueCommon;
 	techniques?: Array<DAETechnique>;
 
 	constructor() {
 		this.id = "";
 		this.name = null;
-		this.boolArray = null;
-		this.floatArray = null;
-		this.IDREFArray = null;
-		this.intArray = null;
-		this.NameArray = null;
-		this.SIDREFArray = null;
+		this.asset = null;
+		this.arrayElement = null;
 		this.techniqueCommon = null;
 		this.techniques = null;
 	}
@@ -44,24 +37,11 @@ export class DAESource {
 		}
 		var value = new DAESource();
 		value.id = DAEUtil.stringAttrib(el, "id");
-		value.boolArray = DAEBoolArray.parse(
-			el.querySelector(":scope > bool_array")
+		value.name = DAEUtil.stringAttrib(el, "name");
+		value.asset = DAEAsset.parse(
+			el.querySelector(":scope > asset")
 		);
-		value.floatArray = DAEFloatArray.parse(
-			el.querySelector(":scope > float_array")
-		);
-		value.IDREFArray = DAEIDREFArray.parse(
-			el.querySelector(":scope > IDREF_array")
-		);
-		value.intArray = DAEIntArray.parse(
-			el.querySelector(":scope > int_array")
-		);
-		value.NameArray = DAENameArray.parse(
-			el.querySelector(":scope > Name_array")
-		);
-		value.SIDREFArray = DAESIDREFArray.parse(
-			el.querySelector(":scope > SIDREF_array")
-		);
+		value.arrayElement = DAESource.parseArrayElement(el);
 		value.techniqueCommon = DAETechniqueCommon.parse(
 			el.querySelector(":scope > technique_common")
 		);
@@ -75,8 +55,51 @@ export class DAESource {
 		);
 	}
 
+	protected static parseArrayElement(el: Element): DAEArrayElement {
+		var element = el.querySelector(":scope > bool_array");
+		if (element != null) {
+			return DAEBoolArray.parse(element);
+		}
+		element = el.querySelector(":scope > float_array");
+		if (element != null) {
+			return DAEFloatArray.parse(element);
+		}
+		element = el.querySelector(":scope > IDREF_array");
+		if (element != null) {
+			return DAEIDREFArray.parse(element);
+		}
+		element = el.querySelector(":scope > int_array");
+		if (element != null) {
+			return DAEIntArray.parse(element);
+		}
+		element = el.querySelector(":scope > Name_array");
+		if (element != null) {
+			return DAENameArray.parse(element);
+		}
+		element = el.querySelector(":scope > SIDREF_array");
+		if (element != null) {
+			return DAESIDREFArray.parse(element);
+		}
+		element = el.querySelector(":scope > token_array");
+		if (element != null) {
+			//return DAETokenArray.parse(element);
+		}
+		return null;
+	}
+
+	toXML(): Element {
+		var el = document.createElement("source");
+		DAEUtil.setAttribute(el, "id", this.id);
+		DAEUtil.setAttribute(el, "name", this.name);
+		DAEUtil.addXML(el, this.asset);
+		DAEUtil.addXML(el, this.arrayElement);
+		DAEUtil.addXML(el, this.techniqueCommon);
+		DAEUtil.addXMLArray(el, this.techniques);
+		return el;
+	}
+
 	toVector3Array(): Array<Tea.Vector3> {
-		var floatArray = this.floatArray;
+		var floatArray = this.arrayElement as DAEFloatArray;
 		if (floatArray == null) {
 			return null;
 		}

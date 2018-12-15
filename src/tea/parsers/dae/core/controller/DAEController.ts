@@ -48,4 +48,15 @@ export class DAEController {
 			this.parse, parent, "controller"
 		);
 	}
+
+	toXML(): Element {
+		var el = document.createElement("controller");
+		DAEUtil.setAttribute(el, "id", this.id);
+		DAEUtil.setAttribute(el, "name", this.name);
+		DAEUtil.addXML(el, this.asset);
+		DAEUtil.addXML(el, this.skin);
+		DAEUtil.addXML(el, this.morph);
+		DAEUtil.addXMLArray(el, this.extras);
+		return el;
+	}
 }

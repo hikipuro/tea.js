@@ -51,4 +51,17 @@ export class DAEAnimation {
 			this.parse, parent, "animation"
 		);
 	}
+
+	toXML(): Element {
+		var el = document.createElement("animation");
+		DAEUtil.setAttribute(el, "id", this.id);
+		DAEUtil.setAttribute(el, "name", this.name);
+		DAEUtil.addXML(el, this.asset);
+		DAEUtil.addXMLArray(el, this.animations);
+		DAEUtil.addXMLArray(el, this.sources);
+		DAEUtil.addXMLArray(el, this.samplers);
+		DAEUtil.addXMLArray(el, this.channels);
+		DAEUtil.addXMLArray(el, this.extras);
+		return el;
+	}
 }

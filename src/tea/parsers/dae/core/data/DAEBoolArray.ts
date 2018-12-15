@@ -1,7 +1,8 @@
 import { DAEUtil } from "../../DAEUtil";
+import { DAEArrayElement } from "./DAEArrayElement";
 
-// parent: source
-export class DAEBoolArray {
+// parent: source (core)
+export class DAEBoolArray implements DAEArrayElement {
 	count: number;
 	id?: string;
 	name?: string;
@@ -25,5 +26,14 @@ export class DAEBoolArray {
 		value.name = DAEUtil.stringAttrib(el, "name");
 		value.data = DAEUtil.boolArray(el);
 		return value;
+	}
+
+	toXML(): Element {
+		var el = document.createElement("bool_array");
+		DAEUtil.setAttribute(el, "count", this.count);
+		DAEUtil.setAttribute(el, "id", this.id);
+		DAEUtil.setAttribute(el, "name", this.name);
+		DAEUtil.setArrayContent(el, this.data);
+		return el;
 	}
 }

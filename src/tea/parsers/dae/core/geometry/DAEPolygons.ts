@@ -1,5 +1,6 @@
 import { DAEUtil } from "../../DAEUtil";
-import { DAEInput } from "../data/DAEInput";
+import { DAEPrimitiveElement } from "./DAEPrimitiveElement";
+import { DAESharedInput } from "../data/DAESharedInput";
 import { DAEExtra } from "../extensibility/DAEExtra";
 
 export class DAEPolygonsP {
@@ -77,11 +78,11 @@ export class DAEPolygonsPH {
 }
 
 // parent: mesh, convex_mesh
-export class DAEPolygons {
+export class DAEPolygons implements DAEPrimitiveElement {
 	count: number;
 	material: string;
 	name?: string;
-	inputs?: Array<DAEInput>;
+	inputs?: Array<DAESharedInput>;
 	p: Array<DAEPolygonsP>;
 	ph: Array<DAEPolygonsPH>;
 	extras?: Array<DAEExtra>;
@@ -102,10 +103,28 @@ export class DAEPolygons {
 		value.count = DAEUtil.intAttrib(el, "count");
 		value.material = DAEUtil.stringAttrib(el, "material");
 		value.name = DAEUtil.stringAttrib(el, "name");
-		value.inputs = DAEInput.parseArray(el);
+		value.inputs = DAESharedInput.parseArray(el);
 		value.p = DAEPolygonsP.parseArray(el);
 		value.ph = DAEPolygonsPH.parseArray(el);
 		value.extras = DAEExtra.parseArray(el);
 		return value;
+	}
+
+	static parseArray(parent: Element): Array<DAEPolygons> {
+		return DAEUtil.parseArray<DAEPolygons>(
+			this.parse, parent, "polygons"
+		);
+	}
+
+	toXML(): Element {
+		var el = document.createElement("polygons");
+		DAEUtil.setAttribute(el, "count", this.count);
+		DAEUtil.setAttribute(el, "material", this.material);
+		DAEUtil.setAttribute(el, "name", this.name);
+		DAEUtil.addXMLArray(el, this.inputs);
+		DAEUtil.addXMLArray(el, this.p);
+		DAEUtil.addXMLArray(el, this.ph);
+		DAEUtil.addXMLArray(el, this.extras);
+		return el;
 	}
 }

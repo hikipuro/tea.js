@@ -1,3 +1,4 @@
+import { DAEUtil } from "../../DAEUtil";
 import { DAEColor } from "./DAEColor";
 import { DAEFloatValue } from "../data/DAEFloatValue";
 
@@ -34,5 +35,14 @@ export class DAEPoint {
 			el.querySelector(":scope > quadratic_attenuation")
 		);
 		return value;
+	}
+
+	toXML(): Element {
+		var el = document.createElement("point");
+		DAEUtil.addXML(el, this.color);
+		DAEUtil.addXML(el, this.constantAttenuation);
+		DAEUtil.addXML(el, this.linearAttenuation);
+		DAEUtil.addXML(el, this.quadraticAttenuation);
+		return el;
 	}
 }

@@ -23,4 +23,10 @@ export class DAESkeleton {
 			this.parse, parent, "skeleton"
 		);
 	}
+
+	toXML(): Element {
+		var el = document.createElement("skeleton");
+		DAEUtil.setTextContent(el, this.data);
+		return el;
+	}
 }

@@ -1,4 +1,7 @@
 import * as Tea from "../../../../Tea";
+import { DAEUtil } from "../../DAEUtil";
+import { DAEGeometricElement } from "./DAEGeometricElement";
+import { DAEPrimitiveElement } from "./DAEPrimitiveElement";
 import { DAESource } from "../data/DAESource";
 import { DAEVertices } from "./DAEVertices";
 import { DAELines } from "./DAELines";
@@ -9,31 +12,19 @@ import { DAETriangles } from "./DAETriangles";
 import { DAETrifans } from "./DAETrifans";
 import { DAETristrips } from "./DAETristrips";
 import { DAEExtra } from "../extensibility/DAEExtra";
-import { DAESemantic } from "../data/DAESemantic";
+import { DAESemanticType } from "../data/DAESemanticType";
 
 // parent: geometry
-export class DAEMesh {
+export class DAEMesh implements DAEGeometricElement {
 	sources: Array<DAESource>;
 	vertices: DAEVertices;
-	lines?: DAELines;
-	linestrips?: DAELinestrips;
-	polygons?: DAEPolygons;
-	polylist?: DAEPolylist;
-	triangles?: DAETriangles;
-	trifans?: DAETrifans;
-	tristrips?: DAETristrips;
+	primitiveElements?: Array<DAEPrimitiveElement>;
 	extras?: Array<DAEExtra>;
 
 	constructor() {
 		this.sources = [];
 		this.vertices = null;
-		this.lines = null;
-		this.linestrips = null;
-		this.polygons = null;
-		this.polylist = null;
-		this.triangles = null;
-		this.trifans = null;
-		this.tristrips = null;
+		this.primitiveElements = null;
 		this.extras = null;
 	}
 
@@ -47,29 +38,52 @@ export class DAEMesh {
 		value.vertices = DAEVertices.parse(
 			el.querySelector(":scope > vertices")
 		);
-		value.lines = DAELines.parse(
-			el.querySelector(":scope > lines")
-		);
-		value.linestrips = DAELinestrips.parse(
-			el.querySelector(":scope > linestrips")
-		);
-		value.polygons = DAEPolygons.parse(
-			el.querySelector(":scope > polygons")
-		);
-		value.polylist = DAEPolylist.parse(
-			el.querySelector(":scope > polylist")
-		);
-		value.triangles = DAETriangles.parse(
-			el.querySelector(":scope > triangles")
-		);
-		value.trifans = DAETrifans.parse(
-			el.querySelector(":scope > trifans")
-		);
-		value.tristrips = DAETristrips.parse(
-			el.querySelector(":scope > tristrips")
-		);
+		value.primitiveElements = this.parsePrimitiveElements(el);
 		value.extras = DAEExtra.parseArray(el);
 		return value;
+	}
+
+	protected static parsePrimitiveElements(el: Element): Array<DAEPrimitiveElement> {
+		if (el == null || el.childElementCount <= 0) {
+			return null;
+		}
+		var elements = [];
+		var el = el.firstElementChild;
+		while (el != null) {
+			var name = el.tagName;
+			var child = null;
+			switch (name) {
+				case "lines":
+					child = DAELines.parse(el);
+					break;
+				case "linestrips":
+					child = DAELinestrips.parse(el);
+					break;
+				case "polygons":
+					child = DAEPolygons.parse(el);
+					break;
+				case "polylist":
+					child = DAEPolylist.parse(el);
+					break;
+				case "triangles":
+					child = DAETriangles.parse(el);
+					break;
+				case "trifans":
+					child = DAETrifans.parse(el);
+					break;
+				case "tristrips":
+					child = DAETristrips.parse(el);
+					break;
+				default:
+					console.warn("unknown tag:", name);
+					break;
+			}
+			if (child != null) {
+				elements.push(child);
+			}
+			el = el.nextElementSibling;
+		}
+		return elements;
 	}
 
 	findSource(id: string): DAESource {
@@ -87,7 +101,7 @@ export class DAEMesh {
 		if (vertices == null) {
 			return null;
 		}
-		var input = vertices.findInput(DAESemantic.POSITION);
+		var input = vertices.findInput(DAESemanticType.POSITION);
 		if (input == null) {
 			return null;
 		}
@@ -95,6 +109,8 @@ export class DAEMesh {
 	}
 
 	findNormalSource(): DAESource {
+		return null;
+		/*
 		var triangles = this.triangles;
 		if (triangles == null) {
 			return null;
@@ -104,6 +120,7 @@ export class DAEMesh {
 			return null;
 		}
 		return this.findSource(input.source);
+		*/
 	}
 
 	toMesh(): Tea.Mesh {
@@ -115,6 +132,7 @@ export class DAEMesh {
 		}
 		var vertices = vertexSource.toVector3Array();
 		var tmpNormals = normalSource.toVector3Array();
+		/*
 		var triangles = this.triangles.toVector3Array(0, vertices.length * 3, 2);
 		var normals = [];
 		var indices = this.triangles.toVector3Array(1, tmpNormals.length, 2);
@@ -122,13 +140,14 @@ export class DAEMesh {
 			var index = indices[i][0];
 			normals.push(tmpNormals[index]);
 		}
+		*/
 		//console.log(vertices);
 		//console.log(triangles);
 		//console.log(normals);
 		var mesh = new Tea.Mesh();
 		mesh.vertices = vertices;
 		//mesh.normals = normals;
-		mesh.triangles = triangles;
+		//mesh.triangles = triangles;
 		mesh.calculateNormals();
 		mesh.calculateBounds();
 		mesh.uploadMeshData();
@@ -137,6 +156,10 @@ export class DAEMesh {
 
 	toXML(): Element {
 		var el = document.createElement("mesh");
+		DAEUtil.addXMLArray(el, this.sources);
+		DAEUtil.addXML(el, this.vertices);
+		DAEUtil.addXMLArray(el, this.primitiveElements);
+		DAEUtil.addXMLArray(el, this.extras);
 		return el;
 	}
 }

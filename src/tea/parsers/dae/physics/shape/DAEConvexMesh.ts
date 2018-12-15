@@ -1,4 +1,5 @@
 import { DAEUtil } from "../../DAEUtil";
+import { DAEGeometricElement } from "../../core/geometry/DAEGeometricElement";
 import { DAESource } from "../../core/data/DAESource";
 import { DAEVertices } from "../../core/geometry/DAEVertices";
 import { DAELines } from "../../core/geometry/DAELines";
@@ -9,10 +10,10 @@ import { DAETriangles } from "../../core/geometry/DAETriangles";
 import { DAETrifans } from "../../core/geometry/DAETrifans";
 import { DAETristrips } from "../../core/geometry/DAETristrips";
 import { DAEExtra } from "../../core/extensibility/DAEExtra";
-import { DAESemantic } from "../../core/data/DAESemantic";
+import { DAESemanticType } from "../../core/data/DAESemanticType";
 
 // parent: geometry
-export class DAEConvexMesh {
+export class DAEConvexMesh implements DAEGeometricElement {
 	convexHullOf: string;
 	sources: Array<DAESource>;
 	vertices: DAEVertices;
@@ -73,5 +74,10 @@ export class DAEConvexMesh {
 		);
 		value.extras = DAEExtra.parseArray(el);
 		return value;
+	}
+
+	toXML(): Element {
+		var el = document.createElement("convex_mesh");
+		return el;
 	}
 }

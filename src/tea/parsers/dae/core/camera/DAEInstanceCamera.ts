@@ -33,4 +33,13 @@ export class DAEInstanceCamera {
 			this.parse, parent, "instance_camera"
 		);
 	}
+
+	toXML(): Element {
+		var el = document.createElement("instance_camera");
+		DAEUtil.setAttribute(el, "sid", this.sid);
+		DAEUtil.setAttribute(el, "name", this.name);
+		DAEUtil.setAttribute(el, "url", this.url);
+		DAEUtil.addXMLArray(el, this.extras);
+		return el;
+	}
 }

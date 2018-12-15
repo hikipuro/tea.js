@@ -1,3 +1,4 @@
+import { DAEUtil } from "../../DAEUtil";
 import { DAETechniqueCommon } from "../extensibility/DAETechniqueCommon";
 import { DAETechnique } from "../extensibility/DAETechnique";
 import { DAEExtra } from "../extensibility/DAEExtra";
@@ -38,5 +39,15 @@ export class DAEOptics {
 			el.querySelector(":scope > perspective")
 		);
 		return value;
+	}
+
+	toXML(): Element {
+		var el = document.createElement("optics");
+		DAEUtil.addXML(el, this.techniqueCommon);
+		DAEUtil.addXMLArray(el, this.techniques);
+		DAEUtil.addXMLArray(el, this.extras);
+		DAEUtil.addXML(el, this.orthographic);
+		DAEUtil.addXML(el, this.perspective);
+		return el;
 	}
 }

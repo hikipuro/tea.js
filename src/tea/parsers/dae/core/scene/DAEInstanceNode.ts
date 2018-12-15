@@ -36,4 +36,14 @@ export class DAEInstanceNode {
 			this.parse, parent, "instance_node"
 		);
 	}
+
+	toXML(): Element {
+		var el = document.createElement("instance_node");
+		DAEUtil.setAttribute(el, "sid", this.sid);
+		DAEUtil.setAttribute(el, "name", this.name);
+		DAEUtil.setAttribute(el, "url", this.url);
+		DAEUtil.setAttribute(el, "proxy", this.proxy);
+		DAEUtil.addXMLArray(el, this.extras);
+		return el;
+	}
 }

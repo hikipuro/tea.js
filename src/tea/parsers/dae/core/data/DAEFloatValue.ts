@@ -1,6 +1,7 @@
 import { DAEUtil } from "../../DAEUtil";
 
 export class DAEFloatValue {
+	tagName: string;
 	sid?: string;
 	data: number;
 
@@ -16,11 +17,23 @@ export class DAEFloatValue {
 			value.data = defaultValue;
 			return value;
 		}
+		value.tagName = el.tagName;
 		value.sid = DAEUtil.stringAttrib(el, "sid");
 		value.data = DAEUtil.floatContent(el);
 		if (value.data == null) {
 			value.data = defaultValue;
 		}
 		return value;
+	}
+
+	toXML(): Element {
+		var tagName = this.tagName;
+		if (tagName == null || tagName === "") {
+			return null;
+		}
+		var el = document.createElement(tagName);
+		DAEUtil.setAttribute(el, "sid", this.sid);
+		DAEUtil.setTextContent(el, this.data.toString());
+		return el;
 	}
 }

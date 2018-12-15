@@ -1,6 +1,8 @@
 import * as Tea from "../../../../Tea";
 import { DAEUtil } from "../../DAEUtil";
 import { DAEAsset } from "../metadata/DAEAsset";
+import { DAEGeometricElement } from "./DAEGeometricElement";
+import { DAEConvexMesh } from "../../physics/shape/DAEConvexMesh";
 import { DAEMesh } from "./DAEMesh";
 import { DAESpline } from "./DAESpline";
 import { DAEExtra } from "../extensibility/DAEExtra";
@@ -10,18 +12,14 @@ export class DAEGeometry {
 	id?: string;
 	name?: string;
 	asset?: DAEAsset;
-	//convexMesh: any;
-	mesh: DAEMesh;
-	spline: DAESpline;
-	//brep: any;
+	geometricElement: DAEGeometricElement;
 	extras?: Array<DAEExtra>;
 
 	constructor() {
 		this.id = null;
 		this.name = null;
 		this.asset = null;
-		this.mesh = null;
-		this.spline = null;
+		this.geometricElement = null;
 		this.extras = null;
 	}
 
@@ -36,18 +34,33 @@ export class DAEGeometry {
 		value.asset = DAEAsset.parse(
 			el.querySelector(":scope > asset")
 		);
-		value.mesh = DAEMesh.parse(
-			el.querySelector(":scope > mesh")
-		);
-		value.spline = DAESpline.parse(
-			el.querySelector(":scope > spline")
-		);
+		value.geometricElement = this.parseGeometricElement(el);
 		value.extras = DAEExtra.parseArray(el);
 		return value;
 	}
 
+	protected static parseGeometricElement(el: Element): DAEGeometricElement {
+		var element = el.querySelector(":scope > convex_mesh");
+		if (element != null) {
+			return DAEConvexMesh.parse(element);
+		}
+		element = el.querySelector(":scope > mesh");
+		if (element != null) {
+			return DAEMesh.parse(element);
+		}
+		element = el.querySelector(":scope > spline");
+		if (element != null) {
+			return DAESpline.parse(element);
+		}
+		element = el.querySelector(":scope > brep");
+		if (element != null) {
+			//return DAEBRep.parse(element);
+		}
+		return null;
+	}
+
 	toMesh(): Tea.Mesh {
-		var mesh = this.mesh;
+		var mesh = this.geometricElement as DAEMesh;
 		if (mesh == null) {
 			return null;
 		}
@@ -58,9 +71,8 @@ export class DAEGeometry {
 		var el = document.createElement("geometry");
 		DAEUtil.setAttribute(el, "id", this.id);
 		DAEUtil.setAttribute(el, "name", this.name);
-		if (this.mesh) {
-			el.appendChild(this.mesh.toXML());
-		}
+		DAEUtil.addXML(el, this.geometricElement);
+		DAEUtil.addXMLArray(el, this.extras);
 		return el;
 	}
 }

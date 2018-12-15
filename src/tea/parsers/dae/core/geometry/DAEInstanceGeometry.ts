@@ -6,7 +6,7 @@ export class DAEInstanceGeometry {
 	sid?: string;
 	name?: string;
 	url: string;
-	//bindMaterial: any;
+	//bindMaterial: DAEBindMaterial;
 	extras?: Array<DAEExtra>;
 
 	constructor() {
@@ -25,6 +25,7 @@ export class DAEInstanceGeometry {
 		value.sid = DAEUtil.stringAttrib(el, "sid");
 		value.name = DAEUtil.stringAttrib(el, "name");
 		value.url = DAEUtil.stringAttrib(el, "url", "");
+		//value.bindMaterial = DAEBindMaterial.parse(el.queryString("bind_material"));
 		value.extras = DAEExtra.parseArray(el);
 		return value;
 	}
@@ -33,5 +34,15 @@ export class DAEInstanceGeometry {
 		return DAEUtil.parseArray<DAEInstanceGeometry>(
 			this.parse, parent, "instance_geometry"
 		);
+	}
+
+	toXML(): Element {
+		var el = document.createElement("instance_geometry");
+		DAEUtil.setAttribute(el, "sid", this.sid);
+		DAEUtil.setAttribute(el, "name", this.name);
+		DAEUtil.setAttribute(el, "url", this.url);
+		//DAEUtil.addXML(el, this.bindMaterial);
+		DAEUtil.addXMLArray(el, this.extras);
+		return el;
 	}
 }

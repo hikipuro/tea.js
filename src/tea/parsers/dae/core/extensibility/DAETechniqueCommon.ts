@@ -1,3 +1,4 @@
+import { DAEUtil } from "../../DAEUtil";
 import { DAEAccessor } from "../data/DAEAccessor";
 
 // parent: bind_material, instance_rigid_body, light, optics, physics_material, 
@@ -20,5 +21,11 @@ export class DAETechniqueCommon {
 			el.querySelector(":scope > accessor")
 		);
 		return value;
+	}
+
+	toXML(): Element {
+		var el = document.createElement("technique_common");
+		DAEUtil.addXML(el, this.accessor);
+		return el;
 	}
 }

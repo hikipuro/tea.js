@@ -1,8 +1,9 @@
 import { DAEUtil } from "../../DAEUtil";
+import { DAETransformationElement } from "./DAETransformationElement";
 
 // parent:
 // core: node
-export class DAETranslate {
+export class DAETranslate implements DAETransformationElement {
 	sid?: string;
 	data: Array<number>;
 
@@ -26,5 +27,12 @@ export class DAETranslate {
 		return DAEUtil.parseArray<DAETranslate>(
 			this.parse, parent, "translate"
 		);
+	}
+
+	toXML(): Element {
+		var el = document.createElement("translate");
+		DAEUtil.setAttribute(el, "sid", this.sid);
+		DAEUtil.setArrayContent(el, this.data);
+		return el;
 	}
 }

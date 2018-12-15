@@ -33,4 +33,13 @@ export class DAEInstanceAnimation {
 			this.parse, parent, "instance_animation"
 		);
 	}
+
+	toXML(): Element {
+		var el = document.createElement("instance_animation");
+		DAEUtil.setAttribute(el, "sid", this.sid);
+		DAEUtil.setAttribute(el, "name", this.name);
+		DAEUtil.setAttribute(el, "url", this.url);
+		DAEUtil.addXMLArray(el, this.extras);
+		return el;
+	}
 }

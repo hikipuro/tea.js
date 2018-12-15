@@ -1,7 +1,8 @@
 import { DAEUtil } from "../../DAEUtil";
+import { DAETransformationElement } from "./DAETransformationElement";
 
 // parent: node
-export class DAELookat {
+export class DAELookat implements DAETransformationElement {
 	sid?: string;
 	data: Array<number>;
 
@@ -19,5 +20,12 @@ export class DAELookat {
 		value.sid = DAEUtil.stringAttrib(el, "sid");
 		value.data = DAEUtil.floatArray(el);
 		return value;
+	}
+
+	toXML(): Element {
+		var el = document.createElement("Lookat");
+		DAEUtil.setAttribute(el, "sid", this.sid);
+		DAEUtil.setArrayContent(el, this.data);
+		return el;
 	}
 }

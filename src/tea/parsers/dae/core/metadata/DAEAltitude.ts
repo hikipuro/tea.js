@@ -15,8 +15,14 @@ export class DAEAltitude {
 			return null;
 		}
 		var value = new DAEAltitude();
-		value.mode = el.getAttribute("mode");
+		value.mode = DAEUtil.stringAttrib(el, "mode");
 		value.value = DAEUtil.floatContent(el);
 		return value;
+	}
+
+	toXML(): Element {
+		var el = document.createElement("altitude");
+		DAEUtil.setTextContent(el, this.value.toString());
+		return el;
 	}
 }

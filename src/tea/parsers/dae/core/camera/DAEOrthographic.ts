@@ -1,3 +1,4 @@
+import { DAEUtil } from "../../DAEUtil";
 import { DAEFloatValue } from "../data/DAEFloatValue";
 
 // parent: optics / technique_common
@@ -38,5 +39,15 @@ export class DAEOrthographic {
 			el.querySelector(":scope > zfar")
 		);
 		return value;
+	}
+
+	toXML(): Element {
+		var el = document.createElement("orthographic");
+		DAEUtil.addXML(el, this.xmag);
+		DAEUtil.addXML(el, this.ymag);
+		DAEUtil.addXML(el, this.aspectRatio);
+		DAEUtil.addXML(el, this.znear);
+		DAEUtil.addXML(el, this.zfar);
+		return el;
 	}
 }

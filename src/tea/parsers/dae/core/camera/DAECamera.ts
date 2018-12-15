@@ -48,4 +48,15 @@ export class DAECamera {
 			this.parse, parent, "camera"
 		);
 	}
+
+	toXML(): Element {
+		var el = document.createElement("camera");
+		DAEUtil.setAttribute(el, "id", this.id);
+		DAEUtil.setAttribute(el, "name", this.name);
+		DAEUtil.addXML(el, this.asset);
+		DAEUtil.addXML(el, this.optics);
+		DAEUtil.addXML(el, this.imager);
+		DAEUtil.addXMLArray(el, this.extras);
+		return el;
+	}
 }

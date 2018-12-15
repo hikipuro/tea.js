@@ -1,5 +1,6 @@
 import { DAEUtil } from "../../DAEUtil";
 import { DAEAsset } from "../metadata/DAEAsset";
+import { DAETransformationElement } from "../transform/DAETransformationElement";
 import { DAELookat } from "../transform/DAELookat";
 import { DAEMatrix } from "../transform/DAEMatrix";
 import { DAERotate } from "../transform/DAERotate";
@@ -21,12 +22,7 @@ export class DAENode {
 	type?: string;
 	layer?: string;
 	asset?: DAEAsset;
-	lookat?: DAELookat;
-	matrix?: DAEMatrix;
-	rotate?: DAERotate;
-	scale?: DAEScale;
-	skew?: DAESkew;
-	translate?: DAETranslate;
+	transformationElements?: Array<DAETransformationElement>;
 	instanceCameras?: Array<DAEInstanceCamera>;
 	instanceControllers?: Array<DAEInstanceController>;
 	instanceGeometries?: Array<DAEInstanceGeometry>;
@@ -42,12 +38,7 @@ export class DAENode {
 		this.type = null;
 		this.layer = null;
 		this.asset = null;
-		this.lookat = null;
-		this.matrix = null;
-		this.rotate = null;
-		this.scale = null;
-		this.skew = null;
-		this.translate = null;
+		this.transformationElements = null;
 		this.instanceCameras = null;
 		this.instanceControllers = null;
 		this.instanceGeometries = null;
@@ -71,24 +62,7 @@ export class DAENode {
 		value.asset = DAEAsset.parse(
 			el.querySelector(":scope > asset")
 		);
-		value.lookat = DAELookat.parse(
-			el.querySelector(":scope > Lookat")
-		);
-		value.matrix = DAEMatrix.parse(
-			el.querySelector(":scope > matrix")
-		);
-		value.rotate = DAERotate.parse(
-			el.querySelector(":scope > rotate")
-		);
-		value.scale = DAEScale.parse(
-			el.querySelector(":scope > scale")
-		);
-		value.skew = DAESkew.parse(
-			el.querySelector(":scope > skew")
-		);
-		value.translate = DAETranslate.parse(
-			el.querySelector(":scope > translate")
-		);
+		value.transformationElements = DAENode.parseTransformationElements(el);
 		value.instanceCameras = DAEInstanceCamera.parseArray(el);
 		value.instanceControllers = DAEInstanceController.parseArray(el);
 		value.instanceGeometries = DAEInstanceGeometry.parseArray(el);
@@ -103,5 +77,64 @@ export class DAENode {
 		return DAEUtil.parseArray<DAENode>(
 			this.parse, parent, "node"
 		);
+	}
+
+	protected static parseTransformationElements(el: Element): Array<DAETransformationElement> {
+		if (el == null || el.childElementCount <= 0) {
+			return null;
+		}
+		var elements = [];
+		var el = el.firstElementChild;
+		while (el != null) {
+			var name = el.tagName;
+			var child = null;
+			switch (name) {
+				case "Lookat":
+					child = DAELookat.parse(el);
+					break;
+				case "matrix":
+					child = DAEMatrix.parse(el);
+					break;
+				case "rotate":
+					child = DAERotate.parse(el);
+					break;
+				case "scale":
+					child = DAEScale.parse(el);
+					break;
+				case "skew":
+					child = DAESkew.parse(el);
+					break;
+				case "translate":
+					child = DAETranslate.parse(el);
+					break;
+				default:
+					console.warn("unknown tag:", name);
+					break;
+			}
+			if (child != null) {
+				elements.push(child);
+			}
+			el = el.nextElementSibling;
+		}
+		return elements;
+	}
+
+	toXML(): Element {
+		var el = document.createElement("node");
+		DAEUtil.setAttribute(el, "id", this.id);
+		DAEUtil.setAttribute(el, "name", this.name);
+		DAEUtil.setAttribute(el, "sid", this.sid);
+		DAEUtil.setAttribute(el, "type", this.type);
+		DAEUtil.setAttribute(el, "layer", this.layer);
+		DAEUtil.addXML(el, this.asset);
+		DAEUtil.addXMLArray(el, this.transformationElements);
+		DAEUtil.addXMLArray(el, this.instanceCameras);
+		DAEUtil.addXMLArray(el, this.instanceControllers);
+		DAEUtil.addXMLArray(el, this.instanceGeometries);
+		DAEUtil.addXMLArray(el, this.instanceLights);
+		DAEUtil.addXMLArray(el, this.instanceNodes);
+		DAEUtil.addXMLArray(el, this.nodes);
+		DAEUtil.addXMLArray(el, this.extras);
+		return el;
 	}
 }

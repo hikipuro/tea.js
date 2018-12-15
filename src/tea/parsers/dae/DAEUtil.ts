@@ -1,4 +1,4 @@
-import { DAESemantic } from "./core/data/DAESemantic";
+import { DAESemanticType } from "./core/data/DAESemanticType";
 
 export class DAEUtil {
 	static parseArray<T>(parse: (el: Element) => T, parent: Document | Element, selector: string): Array<T> {
@@ -193,12 +193,42 @@ export class DAEUtil {
 		return value;
 	}
 
-	static semanticAttrib(element: Element, name: string = "semantic"): DAESemantic {
+	static semanticAttrib(element: Element, name: string = "semantic"): DAESemanticType {
 		if (element == null || name == null) {
 			return null;
 		}
 		var attr = element.getAttribute(name);
-		return DAESemantic[attr];
+		return DAESemanticType[attr];
+	}
+
+	static addXML(element: Element, obj: any): void {
+		if (element == null || obj == null || obj.toXML == null) {
+			return;
+		}
+		element.appendChild(obj.toXML());
+	}
+
+	static addXMLArray(element: Element, array: Array<any>): void {
+		if (element == null || array == null || array.length <= 0) {
+			return;
+		}
+		var length = array.length;
+		for (var i = 0; i < length; i++) {
+			var item = array[i];
+			if (item == null || item.toXML == null) {
+				continue;
+			}
+			element.appendChild(item.toXML());
+		}
+	}
+
+	static addFloatContent(element: Element, name: string, content: number): void {
+		if (element == null || content == null || isNaN(content)) {
+			return;
+		}
+		var el = document.createElement(name);
+		el.textContent = content.toString();
+		element.appendChild(el);
 	}
 
 	static addTextContent(element: Element, name: string, content: string): void {
@@ -210,13 +240,36 @@ export class DAEUtil {
 		element.appendChild(el);
 	}
 
-	static setAttribute(element: Element, name: string, text: string): void {
-		if (element == null || name == null || text == null || text === "") {
+	static addTextArray(element: Element, name: string, array: Array<string>): void {
+		if (element == null || array == null || array.length <= 0) {
 			return;
 		}
-		element.setAttribute(name, text);
+		var el = document.createElement(name);
+		el.textContent = array.join(" ");
+		element.appendChild(el);
+	}
+
+	static setAttribute(element: Element, name: string, obj: Object): void {
+		if (element == null || name == null || obj == null) {
+			return;
+		}
+		element.setAttribute(name, obj.toString());
 	}
 	
+	static setTextContent(element: Element, content: string): void {
+		if (element == null || content == null) {
+			return;
+		}
+		element.textContent = content;
+	}
+
+	static setArrayContent(element: Element, array: Array<any>): void {
+		if (element == null || array == null || array.length <= 0) {
+			return;
+		}
+		element.textContent = array.join(" ");
+	}
+
 	static formatDate(date: Date, format: string = "YYYY-MM-DDThh:mm:ssZ"): string {
 		format = format.replace(/YYYY/g, date.getFullYear().toString());
 		format = format.replace(/MM/g, ('0' + (date.getMonth() + 1)).slice(-2));

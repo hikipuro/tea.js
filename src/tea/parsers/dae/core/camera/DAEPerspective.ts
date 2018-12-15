@@ -1,3 +1,4 @@
+import { DAEUtil } from "../../DAEUtil";
 import { DAEFloatValue } from "../data/DAEFloatValue";
 
 // parent: optics / technique_common
@@ -38,5 +39,15 @@ export class DAEPerspective {
 			el.querySelector(":scope > zfar")
 		);
 		return value;
+	}
+
+	toXML(): Element {
+		var el = document.createElement("perspective");
+		DAEUtil.addXML(el, this.xfov);
+		DAEUtil.addXML(el, this.yfov);
+		DAEUtil.addXML(el, this.aspectRatio);
+		DAEUtil.addXML(el, this.znear);
+		DAEUtil.addXML(el, this.zfar);
+		return el;
 	}
 }

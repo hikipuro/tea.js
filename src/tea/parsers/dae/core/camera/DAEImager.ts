@@ -1,3 +1,4 @@
+import { DAEUtil } from "../../DAEUtil";
 import { DAETechnique } from "../extensibility/DAETechnique";
 import { DAEExtra } from "../extensibility/DAEExtra";
 
@@ -20,5 +21,12 @@ export class DAEImager {
 		value.techniques = DAETechnique.parseArray(el);
 		value.extras = DAEExtra.parseArray(el);
 		return value;
+	}
+
+	toXML(): Element {
+		var el = document.createElement("imager");
+		DAEUtil.addXMLArray(el, this.techniques);
+		DAEUtil.addXMLArray(el, this.extras);
+		return el;
 	}
 }

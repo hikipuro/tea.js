@@ -27,4 +27,10 @@ export class DAEInstancePhysicsScene {
 		value.extras = DAEExtra.parseArray(el);
 		return value;
 	}
+
+	static parseArray(parent: Element): Array<DAEInstancePhysicsScene> {
+		return DAEUtil.parseArray<DAEInstancePhysicsScene>(
+			this.parse, parent, "instance_physics_scene"
+		);
+	}
 }

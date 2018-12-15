@@ -1,4 +1,5 @@
 import * as Tea from "../Tea";
+import { DAEUtil } from "./dae/DAEUtil";
 import { DAEAsset } from "./dae/core/metadata/DAEAsset";
 import { DAELibraryAnimationClips } from "./dae/core/animation/DAELibraryAnimationClips";
 import { DAELibraryAnimations } from "./dae/core/animation/DAELibraryAnimations";
@@ -138,7 +139,9 @@ export class DAEFile {
 				file.libraryGeometries = geometries;
 				progress(1.0);
 				callback(file);
-				console.log("xml", file);
+				console.log(file);
+				//var xml = new XMLSerializer().serializeToString(file.toXML());
+				console.log("xml", file.toXML());
 			});
 		}, 0);
 	}
@@ -156,10 +159,29 @@ export class DAEFile {
 			"", "", null
 		);
 		var root = this.createRootElement(doc);
-		var asset = this.asset.toXML();
-		root.appendChild(asset);
-		var libraryGeometries = this.libraryGeometries.toXML();
-		root.appendChild(libraryGeometries);
+		DAEUtil.addXML(root, this.asset);
+		DAEUtil.addXML(root, this.libraryAnimationClips);
+		DAEUtil.addXML(root, this.libraryAnimations);
+		//DAEUtil.addXML(root, this.libraryArticulatedSystems);
+		DAEUtil.addXML(root, this.libraryCameras);
+		DAEUtil.addXML(root, this.libraryControllers);
+		//DAEUtil.addXML(root, this.libraryEffects);
+		DAEUtil.addXML(root, this.libraryForceFields);
+		DAEUtil.addXML(root, this.libraryFormulas);
+		DAEUtil.addXML(root, this.libraryGeometries);
+		//DAEUtil.addXML(root, this.libraryImages);
+		//DAEUtil.addXML(root, this.libraryJoints);
+		//DAEUtil.addXML(root, this.libraryKinematicsModels);
+		//DAEUtil.addXML(root, this.libraryKinematicsScenes);
+		DAEUtil.addXML(root, this.libraryLights);
+		//DAEUtil.addXML(root, this.libraryMaterials);
+		DAEUtil.addXML(root, this.libraryNodes);
+		DAEUtil.addXML(root, this.libraryPhysicsMaterials);
+		DAEUtil.addXML(root, this.libraryPhysicsModels);
+		DAEUtil.addXML(root, this.libraryPhysicsScenes);
+		DAEUtil.addXML(root, this.libraryVisualScenes);
+		DAEUtil.addXML(root, this.scene);
+		DAEUtil.addXML(root, this.extras);
 		doc.appendChild(root);
 		return doc;
 	}

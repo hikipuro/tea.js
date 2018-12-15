@@ -34,4 +34,14 @@ export class DAELibraryNodes {
 		value.extras = DAEExtra.parseArray(el);
 		return value;
 	}
+
+	toXML(): Element {
+		var el = document.createElement("library_nodes");
+		DAEUtil.setAttribute(el, "id", this.id);
+		DAEUtil.setAttribute(el, "name", this.name);
+		DAEUtil.addXML(el, this.asset);
+		DAEUtil.addXMLArray(el, this.nodes);
+		DAEUtil.addXMLArray(el, this.extras);
+		return el;
+	}
 }

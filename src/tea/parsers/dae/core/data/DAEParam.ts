@@ -8,14 +8,11 @@ export class DAEParam {
 	type: string;
 	semantic?: string;
 
-	ref: string;
-
 	constructor() {
 		this.name = null;
 		this.sid = null;
 		this.type = null;
 		this.semantic = null;
-		this.ref = null;
 	}
 
 	static parse(el: Element): DAEParam {
@@ -28,7 +25,6 @@ export class DAEParam {
 		value.sid = DAEUtil.stringAttrib(el, "sid");
 		value.type = DAEUtil.stringAttrib(el, "type");
 		value.semantic = DAEUtil.stringAttrib(el, "semantic");
-		value.ref = DAEUtil.stringAttrib(el, "ref");
 		return value;
 	}
 
@@ -36,5 +32,14 @@ export class DAEParam {
 		return DAEUtil.parseArray<DAEParam>(
 			this.parse, parent, "param"
 		);
+	}
+
+	toXML(): Element {
+		var el = document.createElement("param");
+		DAEUtil.setAttribute(el, "name", this.name);
+		DAEUtil.setAttribute(el, "sid", this.sid);
+		DAEUtil.setAttribute(el, "type", this.type);
+		DAEUtil.setAttribute(el, "semantic", this.semantic);
+		return el;
 	}
 }

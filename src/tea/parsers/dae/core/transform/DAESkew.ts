@@ -1,7 +1,8 @@
 import { DAEUtil } from "../../DAEUtil";
+import { DAETransformationElement } from "./DAETransformationElement";
 
 // parent: node
-export class DAESkew {
+export class DAESkew implements DAETransformationElement {
 	sid?: string;
 	data: Array<number>;
 
@@ -19,5 +20,12 @@ export class DAESkew {
 		value.sid = DAEUtil.stringAttrib(el, "sid");
 		value.data = DAEUtil.floatArray(el);
 		return value;
+	}
+
+	toXML(): Element {
+		var el = document.createElement("skew");
+		DAEUtil.setAttribute(el, "sid", this.sid);
+		DAEUtil.setArrayContent(el, this.data);
+		return el;
 	}
 }

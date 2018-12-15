@@ -28,4 +28,11 @@ export class DAETechnique {
 			this.parse, parent, "technique"
 		);
 	}
+
+	toXML(): Element {
+		var el = document.createElement("technique");
+		DAEUtil.setAttribute(el, "profile", this.profile);
+		DAEUtil.setAttribute(el, "xmlns", this.xmlns);
+		return el;
+	}
 }

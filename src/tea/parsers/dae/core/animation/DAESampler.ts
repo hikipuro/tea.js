@@ -1,12 +1,12 @@
 import { DAEUtil } from "../../DAEUtil";
-import { DAEInput } from "../data/DAEInput";
+import { DAEUnsharedInput } from "../data/DAEUnsharedInput";
 
 // parent: animation
 export class DAESampler {
 	id?: string;
 	preBehavior: string;
 	postBehavior: string;
-	inputs: Array<DAEInput>;
+	inputs: Array<DAEUnsharedInput>;
 
 	constructor() {
 		this.id = null;
@@ -24,7 +24,7 @@ export class DAESampler {
 		value.id = DAEUtil.stringAttrib(el, "id");
 		value.preBehavior = DAEUtil.stringAttrib(el, "pre_behavior");
 		value.postBehavior = DAEUtil.stringAttrib(el, "post_behavior");
-		value.inputs = DAEInput.parseArray(el);
+		value.inputs = DAEUnsharedInput.parseArray(el);
 		return value;
 	}
 
@@ -32,5 +32,14 @@ export class DAESampler {
 		return DAEUtil.parseArray<DAESampler>(
 			this.parse, parent, "sampler"
 		);
+	}
+
+	toXML(): Element {
+		var el = document.createElement("sampler");
+		DAEUtil.setAttribute(el, "id", this.id);
+		DAEUtil.setAttribute(el, "pre_behavior", this.preBehavior);
+		DAEUtil.setAttribute(el, "post_behavior", this.postBehavior);
+		DAEUtil.addXMLArray(el, this.inputs);
+		return el;
 	}
 }

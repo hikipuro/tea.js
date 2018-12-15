@@ -1,15 +1,16 @@
 import * as Tea from "../../../../Tea";
 import { DAEUtil } from "../../DAEUtil";
-import { DAEInput } from "../data/DAEInput";
-import { DAESemantic } from "../data/DAESemantic";
+import { DAEPrimitiveElement } from "./DAEPrimitiveElement";
+import { DAESharedInput } from "../data/DAESharedInput";
+import { DAESemanticType } from "../data/DAESemanticType";
 import { DAEExtra } from "../extensibility/DAEExtra";
 
 // parent: mesh, convex_mesh
-export class DAETriangles {
+export class DAETriangles implements DAEPrimitiveElement {
 	name?: string;
 	count: number;
 	material?: string;
-	inputs?: Array<DAEInput>;
+	inputs?: Array<DAESharedInput>;
 	data: Array<number>;
 	extras?: Array<DAEExtra>;
 
@@ -31,7 +32,7 @@ export class DAETriangles {
 		value.name = DAEUtil.stringAttrib(el, "name");
 		value.count = DAEUtil.intAttrib(el, "count");
 		value.material = DAEUtil.stringAttrib(el, "material");
-		value.inputs = DAEInput.parseArray(el);
+		value.inputs = DAESharedInput.parseArray(el);
 		value.data = DAEUtil.intArray(
 			el.querySelector(":scope > p")
 		);
@@ -39,12 +40,33 @@ export class DAETriangles {
 		return value;
 	}
 
-	findInput(semantic: DAESemantic): DAEInput {
+	static parseArray(parent: Element): Array<DAETriangles> {
+		return DAEUtil.parseArray<DAETriangles>(
+			this.parse, parent, "triangles"
+		);
+	}
+
+	toXML(): Element {
+		var el = document.createElement("triangles");
+		DAEUtil.setAttribute(el, "name", this.name);
+		DAEUtil.setAttribute(el, "count", this.count);
+		DAEUtil.setAttribute(el, "material", this.material);
+		DAEUtil.addXMLArray(el, this.inputs);
+		if (this.data != null) {
+			var p = document.createElement("p");
+			DAEUtil.setArrayContent(p, this.data);
+			el.appendChild(p);
+		}
+		DAEUtil.addXMLArray(el, this.extras);
+		return el;
+	}
+
+	findInput(semantic: DAESemanticType): DAESharedInput {
 		var inputs = this.inputs;
 		if (inputs == null || inputs.length <= 0) {
 			return null;
 		}
-		return inputs.find((input: DAEInput): boolean => {
+		return inputs.find((input: DAESharedInput): boolean => {
 			return input.semantic === semantic;
 		});
 	}

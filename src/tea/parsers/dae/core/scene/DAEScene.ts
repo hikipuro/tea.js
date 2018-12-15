@@ -1,14 +1,17 @@
+import { DAEUtil } from "../../DAEUtil";
+import { DAEInstancePhysicsScene } from "../../physics/scene/DAEInstancePhysicsScene";
 import { DAEInstanceVisualScene } from "./DAEInstanceVisualScene";
 import { DAEExtra } from "../extensibility/DAEExtra";
 
 // parent: COLLADA
 export class DAEScene {
-	//instancePhysicsScene: Array<any>;
+	instancePhysicsScenes?: Array<DAEInstancePhysicsScene>;
 	instanceVisualScene?: DAEInstanceVisualScene;
 	//instanceKinematicsScene: any;
 	extras?: Array<DAEExtra>;
 
 	constructor() {
+		this.instancePhysicsScenes = null;
 		this.instanceVisualScene = null;
 		this.extras = null;
 	}
@@ -19,10 +22,19 @@ export class DAEScene {
 			return null;
 		}
 		var value = new DAEScene();
+		value.instancePhysicsScenes = DAEInstancePhysicsScene.parseArray(el);
 		value.instanceVisualScene = DAEInstanceVisualScene.parse(
 			el.querySelector(":scope > instance_visual_scene")
 		);
 		value.extras = DAEExtra.parseArray(el);
 		return value;
+	}
+
+	toXML(): Element {
+		var el = document.createElement("scene");
+		DAEUtil.addXMLArray(el, this.instancePhysicsScenes);
+		DAEUtil.addXML(el, this.instanceVisualScene);
+		DAEUtil.addXMLArray(el, this.extras);
+		return el;
 	}
 }

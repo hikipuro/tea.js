@@ -34,4 +34,14 @@ export class DAEMorph {
 		value.extras = DAEExtra.parseArray(el);
 		return value;
 	}
+
+	toXML(): Element {
+		var el = document.createElement("morph");
+		DAEUtil.setAttribute(el, "source", this.source);
+		DAEUtil.setAttribute(el, "method", this.method);
+		DAEUtil.addXMLArray(el, this.sources);
+		DAEUtil.addXML(el, this.targets);
+		DAEUtil.addXMLArray(el, this.extras);
+		return el;
+	}
 }

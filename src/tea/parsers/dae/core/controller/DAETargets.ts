@@ -1,9 +1,10 @@
-import { DAEInput } from "../data/DAEInput";
+import { DAEUnsharedInput } from "../data/DAEUnsharedInput";
 import { DAEExtra } from "../extensibility/DAEExtra";
+import { DAEUtil } from "../../DAEUtil";
 
 // paernt: morph
 export class DAETargets {
-	inputs: Array<DAEInput>;
+	inputs: Array<DAEUnsharedInput>;
 	extras?: Array<DAEExtra>;
 
 	constructor() {
@@ -17,8 +18,15 @@ export class DAETargets {
 			return null;
 		}
 		var value = new DAETargets();
-		value.inputs = DAEInput.parseArray(el);
+		value.inputs = DAEUnsharedInput.parseArray(el);
 		value.extras = DAEExtra.parseArray(el);
 		return value;
+	}
+
+	toXML(): Element {
+		var el = document.createElement("targets");
+		DAEUtil.addXMLArray(el, this.inputs);
+		DAEUtil.addXMLArray(el, this.extras);
+		return el;
 	}
 }

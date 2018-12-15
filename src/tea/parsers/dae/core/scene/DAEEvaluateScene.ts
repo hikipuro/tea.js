@@ -9,7 +9,7 @@ export class DAEEvaluateScene {
 	sid?: string;
 	enable?: boolean;
 	asset?: DAEAsset;
-	//renders?: Array<any>;
+	//renders?: Array<DAERender>;
 	extras?: Array<DAEExtra>;
 
 	constructor() {
@@ -33,6 +33,7 @@ export class DAEEvaluateScene {
 		value.asset = DAEAsset.parse(
 			el.querySelector(":scope > asset")
 		);
+		//value.renders = DAERender.parseArray(el);
 		value.extras = DAEExtra.parseArray(el);
 		return value;
 	}
@@ -41,5 +42,17 @@ export class DAEEvaluateScene {
 		return DAEUtil.parseArray<DAEEvaluateScene>(
 			this.parse, parent, "evaluate_scene"
 		);
+	}
+
+	toXML(): Element {
+		var el = document.createElement("evaluate_scene");
+		DAEUtil.setAttribute(el, "id", this.id);
+		DAEUtil.setAttribute(el, "name", this.name);
+		DAEUtil.setAttribute(el, "sid", this.sid);
+		DAEUtil.setAttribute(el, "enable", this.enable);
+		DAEUtil.addXML(el, this.asset);
+		//DAEUtil.addXMLArray(el, this.renders);
+		DAEUtil.addXMLArray(el, this.extras);
+		return el;
 	}
 }

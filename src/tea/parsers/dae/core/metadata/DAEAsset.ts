@@ -67,27 +67,31 @@ export class DAEAsset {
 
 	toXML(): Element {
 		var el = document.createElement("asset");
-		if (this.contributor) {
-			el.appendChild(this.contributor.toXML());
-		}
-		if (this.created) {
-			var created = document.createElement("created");
-			created.textContent = DAEUtil.formatDate(this.created);
+		DAEUtil.addXML(el, this.contributor);
+		var created = this.toDateElement("created", this.created);
+		if (created != null) {
 			el.appendChild(created);
 		}
-		if (this.modified) {
-			var modified = document.createElement("modified");
-			modified.textContent = DAEUtil.formatDate(this.modified);
+		DAEUtil.addTextArray(el, "keywords", this.keywords);
+		var modified = this.toDateElement("modified", this.modified);
+		if (modified != null) {
 			el.appendChild(modified);
 		}
-		if (this.unit) {
-			el.appendChild(this.unit.toXML());
+		DAEUtil.addTextContent(el, "revision", this.revision);
+		DAEUtil.addTextContent(el, "subject", this.subject);
+		DAEUtil.addTextContent(el, "title", this.title);
+		DAEUtil.addXML(el, this.unit);
+		DAEUtil.addTextContent(el, "up_axis", this.upAxis);
+		DAEUtil.addXMLArray(el, this.extras);
+		return el;
+	}
+
+	protected toDateElement(name: string, date: Date): Element {
+		if (name == null || date == null) {
+			return null;
 		}
-		if (this.upAxis) {
-			var upAxis = document.createElement("up_axis");
-			upAxis.textContent = this.upAxis;
-			el.appendChild(upAxis);
-		}
+		var el = document.createElement(name);
+		el.textContent = DAEUtil.formatDate(date);
 		return el;
 	}
 }

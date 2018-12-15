@@ -45,4 +45,14 @@ export class DAEExtra {
 			this.parse, parent, "extra"
 		);
 	}
+
+	toXML(): Element {
+		var el = document.createElement("extra");
+		DAEUtil.setAttribute(el, "id", this.id);
+		DAEUtil.setAttribute(el, "name", this.name);
+		DAEUtil.setAttribute(el, "type", this.type);
+		DAEUtil.addXML(el, this.asset);
+		DAEUtil.addXMLArray(el, this.techniques);
+		return el;
+	}
 }

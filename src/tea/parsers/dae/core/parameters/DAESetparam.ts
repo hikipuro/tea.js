@@ -1,5 +1,7 @@
 import { DAEUtil } from "../../DAEUtil";
 
+// TODO: fix parse(), toXML()
+
 // parent:
 // core: instance_formula
 export class DAESetparam {
@@ -35,5 +37,11 @@ export class DAESetparam {
 		return DAEUtil.parseArray<DAESetparam>(
 			this.parse, parent, "setparam"
 		);
+	}
+
+	toXML(): Element {
+		var el = document.createElement("setparam");
+		DAEUtil.setAttribute(el, "ref", this.ref);
+		return el;
 	}
 }

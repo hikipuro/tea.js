@@ -80,14 +80,9 @@ export class DAELibraryGeometries {
 		var el = document.createElement("library_geometries");
 		DAEUtil.setAttribute(el, "id", this.id);
 		DAEUtil.setAttribute(el, "name", this.name);
-		if (this.geometries) {
-			this.geometries.forEach((geometry: DAEGeometry) => {
-				if (geometry == null) {
-					return;
-				}
-				el.appendChild(geometry.toXML());
-			});
-		}
+		DAEUtil.addXML(el, this.asset);
+		DAEUtil.addXMLArray(el, this.geometries);
+		DAEUtil.addXMLArray(el, this.extras);
 		return el;
 	}
 }

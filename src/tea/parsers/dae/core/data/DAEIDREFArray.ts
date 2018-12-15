@@ -1,7 +1,8 @@
 import { DAEUtil } from "../../DAEUtil";
+import { DAEArrayElement } from "./DAEArrayElement";
 
-// parent: source
-export class DAEIDREFArray {
+// parent: source (core)
+export class DAEIDREFArray implements DAEArrayElement {
 	count: number;
 	id?: string;
 	name?: string;
@@ -25,5 +26,14 @@ export class DAEIDREFArray {
 		value.name = DAEUtil.stringAttrib(el, "name");
 		value.data = DAEUtil.stringArray(el);
 		return value;
+	}
+
+	toXML(): Element {
+		var el = document.createElement("IDREF_array");
+		DAEUtil.setAttribute(el, "count", this.count);
+		DAEUtil.setAttribute(el, "id", this.id);
+		DAEUtil.setAttribute(el, "name", this.name);
+		DAEUtil.setArrayContent(el, this.data);
+		return el;
 	}
 }

@@ -1,8 +1,9 @@
 import * as Tea from "../../../../Tea";
 import { DAEUtil } from "./../../DAEUtil";
+import { DAEArrayElement } from "./DAEArrayElement";
 
 // parent: source
-export class DAEFloatArray {
+export class DAEFloatArray implements DAEArrayElement {
 	static readonly DefaultDigits: number = 6;
 	static readonly DefaultMagnitude: number = 38;
 	count: number;
@@ -50,6 +51,19 @@ export class DAEFloatArray {
 			return DAEFloatArray.DefaultMagnitude;
 		}
 		return Math.max(-324, Math.min(308, magnitude));
+	}
+
+	toXML(): Element {
+		var el = document.createElement("float_array");
+		DAEUtil.setAttribute(el, "count", this.count);
+		DAEUtil.setAttribute(el, "id", this.id);
+		DAEUtil.setAttribute(el, "name", this.name);
+		var digits = DAEFloatArray.clampDigits(this.digits);
+		DAEUtil.setAttribute(el, "digits", digits);
+		var magnitude = DAEFloatArray.clampMagnitude(this.magnitude);
+		DAEUtil.setAttribute(el, "magnitude", magnitude);
+		DAEUtil.setArrayContent(el, this.data);
+		return el;
 	}
 
 	toVector3Array(): Array<Tea.Vector3> {

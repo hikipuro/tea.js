@@ -50,4 +50,16 @@ export class DAEFormula {
 			this.parse, parent, "formula"
 		);
 	}
+
+	toXML(): Element {
+		var el = document.createElement("formula");
+		DAEUtil.setAttribute(el, "id", this.id);
+		DAEUtil.setAttribute(el, "name", this.name);
+		DAEUtil.setAttribute(el, "sid", this.sid);
+		DAEUtil.addXMLArray(el, this.newparams);
+		DAEUtil.addXML(el, this.target);
+		DAEUtil.addXML(el, this.techniqueCommon);
+		DAEUtil.addXMLArray(el, this.techniques);
+		return el;
+	}
 }

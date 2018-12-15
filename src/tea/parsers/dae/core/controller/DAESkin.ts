@@ -38,4 +38,14 @@ export class DAESkin {
 		value.extras = DAEExtra.parseArray(el);
 		return value;
 	}
+
+	toXML(): Element {
+		var el = document.createElement("skin");
+		DAEUtil.setAttribute(el, "source", this.source);
+		DAEUtil.addXMLArray(el, this.sources);
+		DAEUtil.addXML(el, this.joints);
+		DAEUtil.addXML(el, this.vertexWeights);
+		DAEUtil.addXMLArray(el, this.extras);
+		return el;
+	}
 }

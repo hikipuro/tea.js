@@ -1,8 +1,9 @@
 import { DAEUtil } from "../../DAEUtil";
+import { DAETransformationElement } from "./DAETransformationElement";
 
 // parent:
 // core: node
-export class DAERotate {
+export class DAERotate implements DAETransformationElement {
 	sid?: string;
 	data: Array<number>;
 
@@ -26,5 +27,12 @@ export class DAERotate {
 		return DAEUtil.parseArray<DAERotate>(
 			this.parse, parent, "rotate"
 		);
+	}
+
+	toXML(): Element {
+		var el = document.createElement("rotate");
+		DAEUtil.setAttribute(el, "sid", this.sid);
+		DAEUtil.setArrayContent(el, this.data);
+		return el;
 	}
 }

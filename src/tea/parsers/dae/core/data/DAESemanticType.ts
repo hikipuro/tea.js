@@ -1,4 +1,4 @@
-export enum DAESemantic {
+export enum DAESemanticType {
 	BINORMAL,
 	COLOR,
 	CONTINUITY,
@@ -24,15 +24,15 @@ export enum DAESemantic {
 	WEIGHT,
 }
 
-export module DAESemantic {
+export module DAESemanticType {
 	export function toString(value: number): string {
-		return DAESemantic[value];
+		return DAESemanticType[value];
 	}
 
 	export function getKeys(): Array<string> {
 		var keys = [];
-		for (var n in DAESemantic) {
-			if (typeof DAESemantic[n] === "number") {
+		for (var n in DAESemanticType) {
+			if (typeof DAESemanticType[n] === "number") {
 				keys.push(n);
 			}
 		}

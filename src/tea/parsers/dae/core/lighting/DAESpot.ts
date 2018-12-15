@@ -1,3 +1,4 @@
+import { DAEUtil } from "../../DAEUtil";
 import { DAEColor } from "./DAEColor";
 import { DAEFloatValue } from "../data/DAEFloatValue";
 
@@ -44,5 +45,16 @@ export class DAESpot {
 			el.querySelector(":scope > falloff_exponent")
 		);
 		return value;
+	}
+
+	toXML(): Element {
+		var el = document.createElement("spot");
+		DAEUtil.addXML(el, this.color);
+		DAEUtil.addXML(el, this.constantAttenuation);
+		DAEUtil.addXML(el, this.linearAttenuation);
+		DAEUtil.addXML(el, this.quadraticAttenuation);
+		DAEUtil.addXML(el, this.falloffAngle);
+		DAEUtil.addXML(el, this.falloffExponent);
+		return el;
 	}
 }

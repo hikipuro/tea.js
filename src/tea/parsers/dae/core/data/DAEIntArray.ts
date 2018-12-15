@@ -1,7 +1,8 @@
 import { DAEUtil } from "../../DAEUtil";
+import { DAEArrayElement } from "./DAEArrayElement";
 
-// parent: source
-export class DAEIntArray {
+// parent: source (core)
+export class DAEIntArray implements DAEArrayElement {
 	static readonly DefaultMinInclusive: number = -2147483648;
 	static readonly DefaultMaxInclusive: number = 2147483647;
 	count: number;
@@ -33,5 +34,16 @@ export class DAEIntArray {
 		value.maxInclusive = DAEUtil.intAttrib(el, "maxInclusive");
 		value.data = DAEUtil.intArray(el);
 		return value;
+	}
+
+	toXML(): Element {
+		var el = document.createElement("int_array");
+		DAEUtil.setAttribute(el, "count", this.count);
+		DAEUtil.setAttribute(el, "id", this.id);
+		DAEUtil.setAttribute(el, "name", this.name);
+		DAEUtil.setAttribute(el, "minInclusive", this.minInclusive);
+		DAEUtil.setAttribute(el, "maxInclusive", this.maxInclusive);
+		DAEUtil.setArrayContent(el, this.data);
+		return el;
 	}
 }

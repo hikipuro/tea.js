@@ -1,10 +1,11 @@
 import { DAEUtil } from "../../DAEUtil";
+import { DAEGeometricElement } from "./DAEGeometricElement";
 import { DAESource } from "../data/DAESource";
 import { DAEControlVertices } from "./DAEControlVertices";
 import { DAEExtra } from "../extensibility/DAEExtra";
 
 // parent: geometry
-export class DAESpline {
+export class DAESpline implements DAEGeometricElement {
 	closed?: boolean;
 	sources: Array<DAESource>;
 	controlVertices: DAEControlVertices;
@@ -30,5 +31,14 @@ export class DAESpline {
 		);
 		value.extras = DAEExtra.parseArray(el);
 		return value;
+	}
+
+	toXML(): Element {
+		var el = document.createElement("spline");
+		DAEUtil.setAttribute(el, "closed", this.closed);
+		DAEUtil.addXMLArray(el, this.sources);
+		DAEUtil.addXML(el, this.controlVertices);
+		DAEUtil.addXMLArray(el, this.extras);
+		return el;
 	}
 }

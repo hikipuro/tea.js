@@ -1,3 +1,4 @@
+import { DAEUtil } from "../../DAEUtil";
 import { DAEColor } from "./DAEColor";
 
 // parent: light/technique_common
@@ -18,5 +19,11 @@ export class DAEDirectional {
 			el.querySelector(":scope > color")
 		);
 		return value;
+	}
+
+	toXML(): Element {
+		var el = document.createElement("directional");
+		DAEUtil.addXML(el, this.color);
+		return el;
 	}
 }

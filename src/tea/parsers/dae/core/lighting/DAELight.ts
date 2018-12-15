@@ -46,4 +46,15 @@ export class DAELight {
 			this.parse, parent, "light"
 		);
 	}
+
+	toXML(): Element {
+		var el = document.createElement("light");
+		DAEUtil.setAttribute(el, "id", this.id);
+		DAEUtil.setAttribute(el, "name", this.name);
+		DAEUtil.addXML(el, this.asset);
+		DAEUtil.addXML(el, this.techniqueCommon);
+		DAEUtil.addXMLArray(el, this.techniques);
+		DAEUtil.addXMLArray(el, this.extras);
+		return el;
+	}
 }

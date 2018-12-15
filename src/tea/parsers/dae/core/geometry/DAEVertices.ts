@@ -1,13 +1,13 @@
 import { DAEUtil } from "../../DAEUtil";
-import { DAEInput } from "../data/DAEInput";
-import { DAESemantic } from "../data/DAESemantic";
+import { DAEUnsharedInput } from "../data/DAEUnsharedInput";
+import { DAESemanticType } from "../data/DAESemanticType";
 import { DAEExtra } from "../extensibility/DAEExtra";
 
 // parent: mesh, convex_mesh, brep
 export class DAEVertices {
 	id: string;
 	name?: string;
-	inputs: Array<DAEInput>;
+	inputs: Array<DAEUnsharedInput>;
 	extras?: Array<DAEExtra>;
 
 	constructor() {
@@ -25,18 +25,27 @@ export class DAEVertices {
 		var value = new DAEVertices();
 		value.id = DAEUtil.stringAttrib(el, "id");
 		value.name = DAEUtil.stringAttrib(el, "name");
-		value.inputs = DAEInput.parseArray(el);
+		value.inputs = DAEUnsharedInput.parseArray(el);
 		value.extras = DAEExtra.parseArray(el);
 		return value;
 	}
 
-	findInput(semantic: DAESemantic): DAEInput {
+	findInput(semantic: DAESemanticType): DAEUnsharedInput {
 		var inputs = this.inputs;
 		if (inputs == null || inputs.length <= 0) {
 			return null;
 		}
-		return inputs.find((input: DAEInput): boolean => {
+		return inputs.find((input: DAEUnsharedInput): boolean => {
 			return input.semantic === semantic;
 		});
+	}
+
+	toXML(): Element {
+		var el = document.createElement("vertices");
+		DAEUtil.setAttribute(el, "id", this.id);
+		DAEUtil.setAttribute(el, "name", this.name);
+		DAEUtil.addXMLArray(el, this.inputs);
+		DAEUtil.addXMLArray(el, this.extras);
+		return el;
 	}
 }

@@ -26,4 +26,11 @@ export class DAEChannel {
 			this.parse, parent, "channel"
 		);
 	}
+
+	toXML(): Element {
+		var el = document.createElement("channel");
+		DAEUtil.setAttribute(el, "source", this.source);
+		DAEUtil.setAttribute(el, "target", this.target);
+		return el;
+	}
 }

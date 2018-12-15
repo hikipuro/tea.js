@@ -33,4 +33,13 @@ export class DAEInstanceFormula {
 			this.parse, parent, "instance_formula"
 		);
 	}
+
+	toXML(): Element {
+		var el = document.createElement("instance_formula");
+		DAEUtil.setAttribute(el, "sid", this.sid);
+		DAEUtil.setAttribute(el, "name", this.name);
+		DAEUtil.setAttribute(el, "url", this.url);
+		DAEUtil.addXMLArray(el, this.setparams);
+		return el;
+	}
 }

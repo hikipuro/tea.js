@@ -23,4 +23,11 @@ export class DAEColor {
 		value.data = DAEUtil.floatArray(el);
 		return value;
 	}
+
+	toXML(): Element {
+		var el = document.createElement("color");
+		DAEUtil.setAttribute(el, "sid", this.sid);
+		DAEUtil.setArrayContent(el, this.data);
+		return el;
+	}
 }

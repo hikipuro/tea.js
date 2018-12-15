@@ -32,4 +32,14 @@ export class DAELibraryAnimationClips {
 		value.extras = DAEExtra.parseArray(el);
 		return value;
 	}
+
+	toXML(): Element {
+		var el = document.createElement("library_animation_clips");
+		DAEUtil.setAttribute(el, "id", this.id);
+		DAEUtil.setAttribute(el, "name", this.name);
+		DAEUtil.addXMLArray(el, this.assets);
+		DAEUtil.addXMLArray(el, this.animationClips);
+		DAEUtil.addXMLArray(el, this.extras);
+		return el;
+	}
 }

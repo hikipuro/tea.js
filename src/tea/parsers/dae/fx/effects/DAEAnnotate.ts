@@ -20,4 +20,10 @@ export class DAEAnnotate {
 		value.value = null;
 		return value;
 	}
+
+	static parseArray(parent: Element): Array<DAEAnnotate> {
+		return DAEUtil.parseArray<DAEAnnotate>(
+			this.parse, parent, "annotate"
+		);
+	}
 }

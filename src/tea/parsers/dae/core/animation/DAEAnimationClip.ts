@@ -50,4 +50,19 @@ export class DAEAnimationClip {
 			this.parse, parent, "animation_clip"
 		);
 	}
+
+	toXML(): Element {
+		var el = document.createElement("animation_clip");
+		DAEUtil.setAttribute(el, "id", this.id);
+		if (this.start !== 0.0) {
+			DAEUtil.setAttribute(el, "start", this.start);
+		}
+		DAEUtil.setAttribute(el, "end", this.end);
+		DAEUtil.setAttribute(el, "name", this.name);
+		DAEUtil.addXML(el, this.asset);
+		DAEUtil.addXMLArray(el, this.instanceAnimations);
+		DAEUtil.addXMLArray(el, this.instanceFormulas);
+		DAEUtil.addXMLArray(el, this.extras);
+		return el;
+	}
 }

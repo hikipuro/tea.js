@@ -34,4 +34,14 @@ export class DAELibraryVisualScenes {
 		value.extras = DAEExtra.parseArray(el);
 		return value;
 	}
+
+	toXML(): Element {
+		var el = document.createElement("library_visual_scenes");
+		DAEUtil.setAttribute(el, "id", this.id);
+		DAEUtil.setAttribute(el, "name", this.name);
+		DAEUtil.addXML(el, this.asset);
+		DAEUtil.addXMLArray(el, this.visualScenes);
+		DAEUtil.addXMLArray(el, this.extras);
+		return el;
+	}
 }

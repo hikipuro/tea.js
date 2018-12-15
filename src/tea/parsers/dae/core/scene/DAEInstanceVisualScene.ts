@@ -27,4 +27,13 @@ export class DAEInstanceVisualScene {
 		value.extras = DAEExtra.parseArray(el);
 		return value;
 	}
+
+	toXML(): Element {
+		var el = document.createElement("instance_visual_scene");
+		DAEUtil.setAttribute(el, "sid", this.sid);
+		DAEUtil.setAttribute(el, "name", this.name);
+		DAEUtil.setAttribute(el, "url", this.url);
+		DAEUtil.addXMLArray(el, this.extras);
+		return el;
+	}
 }

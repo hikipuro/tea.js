@@ -10,7 +10,7 @@ export class DAEVisualScene {
 	name?: string;
 	asset?: DAEAsset;
 	nodes: Array<DAENode>;
-	evaluateScene?: Array<DAEEvaluateScene>;
+	evaluateScenes?: Array<DAEEvaluateScene>;
 	extras?: Array<DAEExtra>;
 
 	constructor() {
@@ -18,7 +18,7 @@ export class DAEVisualScene {
 		this.name = null;
 		this.asset = null;
 		this.nodes = [];
-		this.evaluateScene = null;
+		this.evaluateScenes = null;
 		this.extras = null;
 	}
 
@@ -34,7 +34,7 @@ export class DAEVisualScene {
 			el.querySelector(":scope > asset")
 		);
 		value.nodes = DAENode.parseArray(el);
-		value.evaluateScene = DAEEvaluateScene.parseArray(el);
+		value.evaluateScenes = DAEEvaluateScene.parseArray(el);
 		value.extras = DAEExtra.parseArray(el);
 		return value;
 	}
@@ -43,5 +43,16 @@ export class DAEVisualScene {
 		return DAEUtil.parseArray<DAEVisualScene>(
 			this.parse, parent, "visual_scene"
 		);
+	}
+
+	toXML(): Element {
+		var el = document.createElement("visual_scene");
+		DAEUtil.setAttribute(el, "id", this.id);
+		DAEUtil.setAttribute(el, "name", this.name);
+		DAEUtil.addXML(el, this.asset);
+		DAEUtil.addXMLArray(el, this.nodes);
+		DAEUtil.addXMLArray(el, this.evaluateScenes);
+		DAEUtil.addXMLArray(el, this.extras);
+		return el;
 	}
 }

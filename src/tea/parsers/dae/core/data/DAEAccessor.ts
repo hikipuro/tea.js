@@ -30,4 +30,18 @@ export class DAEAccessor {
 		value.params = DAEParam.parseArray(el);
 		return value;
 	}
+
+	toXML(): Element {
+		var el = document.createElement("accessor");
+		DAEUtil.setAttribute(el, "count", this.count);
+		if (this.offset !== 0) {
+			DAEUtil.setAttribute(el, "offset", this.offset);
+		}
+		DAEUtil.setAttribute(el, "source", this.source);
+		if (this.offset !== 1) {
+			DAEUtil.setAttribute(el, "stride", this.stride);
+		}
+		DAEUtil.addXMLArray(el, this.params);
+		return el;
+	}
 }

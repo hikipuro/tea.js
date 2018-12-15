@@ -29,6 +29,7 @@ export class DAEInstanceController {
 		value.name = DAEUtil.stringAttrib(el, "name");
 		value.url = DAEUtil.stringAttrib(el, "url", "");
 		value.skeletons = DAESkeleton.parseArray(el);
+		//value.bindMaterial = DAEBindMaterial.parse(el.queryString("bind_material"));
 		value.extras = DAEExtra.parseArray(el);
 		return value;
 	}
@@ -37,5 +38,16 @@ export class DAEInstanceController {
 		return DAEUtil.parseArray<DAEInstanceController>(
 			this.parse, parent, "instance_controller"
 		);
+	}
+
+	toXML(): Element {
+		var el = document.createElement("instance_controller");
+		DAEUtil.setAttribute(el, "sid", this.sid);
+		DAEUtil.setAttribute(el, "name", this.name);
+		DAEUtil.setAttribute(el, "url", this.url);
+		DAEUtil.addXMLArray(el, this.skeletons);
+		//DAEUtil.addXML(el, this.bindMaterial);
+		DAEUtil.addXMLArray(el, this.extras);
+		return el;
 	}
 }

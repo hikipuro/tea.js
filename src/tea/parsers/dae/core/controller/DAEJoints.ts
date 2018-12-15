@@ -1,9 +1,10 @@
-import { DAEInput } from "../data/DAEInput";
+import { DAEUtil } from "../../DAEUtil";
+import { DAEUnsharedInput } from "../data/DAEUnsharedInput";
 import { DAEExtra } from "../extensibility/DAEExtra";
 
 // parent: skin
 export class DAEJoints {
-	inputs: Array<DAEInput>;
+	inputs: Array<DAEUnsharedInput>;
 	extras?: Array<DAEExtra>;
 
 	constructor() {
@@ -17,8 +18,15 @@ export class DAEJoints {
 			return null;
 		}
 		var value = new DAEJoints();
-		value.inputs = DAEInput.parseArray(el);
+		value.inputs = DAEUnsharedInput.parseArray(el);
 		value.extras = DAEExtra.parseArray(el);
 		return value;
+	}
+
+	toXML(): Element {
+		var el = document.createElement("joints");
+		DAEUtil.addXMLArray(el, this.inputs);
+		DAEUtil.addXMLArray(el, this.extras);
+		return el;
 	}
 }
