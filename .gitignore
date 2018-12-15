@@ -1,23 +1,22 @@
 todo.txt
 settings.json
-dist
-models
+dist/*
+models/*
 html/main.js
 html/build.js
 html/newProject.js
 html/preferences.js
-html/media
+html/media/*
 html/css/editor.css
 html/css/newProject.css
 html/css/preferences.css
-models/
-test/
+test/*
 
 # Build
-build/
-tea-win32-ia32/
-tea-win32-x64/
-tea-darwin-x64/
+build/*
+tea-win32-ia32/*
+tea-win32-x64/*
+tea-darwin-x64/*
 
 # Logs
 logs
