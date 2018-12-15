@@ -44,7 +44,28 @@ export class DAEFile {
 
 	constructor() {
 		this.asset = null;
+		this.libraryAnimationClips = null;
+		this.libraryAnimations = null;
+		//this.libraryArticulatedSystems = null;
+		this.libraryCameras = null;
+		this.libraryControllers = null;
+		//this.libraryEffects = null;
+		this.libraryForceFields = null;
+		this.libraryFormulas = null;
 		this.libraryGeometries = null;
+		//this.libraryImages = null;
+		//this.libraryJoints = null;
+		//this.libraryKinematicsModels = null;
+		//this.libraryKinematicsScenes = null;
+		this.libraryLights = null;
+		//this.libraryMaterials = null;
+		this.libraryNodes = null;
+		this.libraryPhysicsMaterials = null;
+		this.libraryPhysicsModels = null;
+		this.libraryPhysicsScenes = null;
+		this.libraryVisualScenes = null;
+		this.scene = null;
+		this.extras = null;
 	}
 
 	static load(url: string, callback: (daeFile: DAEFile) => void): void {

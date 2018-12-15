@@ -2,6 +2,7 @@ import { DAEUtil } from "../../DAEUtil";
 
 // parent: texcombiner
 export class DAEAlpha {
+	static readonly TagName: string = "alpha";
 	operator?: string;
 	scale?: string;
 	arguments: Array<string>;

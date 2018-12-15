@@ -1,0 +1,25 @@
+import { DAEUtil } from "../../DAEUtil";
+
+// parent: 
+export class DAESampler3D {
+	static readonly TagName: string = "origin";
+	id?: string;
+
+	constructor() {
+		this.id = null;
+	}
+
+	static parse(el: Element): DAESampler3D {
+		if (el == null) {
+			//console.error("parse error");
+			return null;
+		}
+		var value = new DAESampler3D();
+		return value;
+	}
+
+	toXML(): Element {
+		var el = document.createElement(DAESampler3D.TagName);
+		return el;
+	}
+}

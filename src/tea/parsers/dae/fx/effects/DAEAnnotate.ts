@@ -2,6 +2,7 @@ import { DAEUtil } from "../../DAEUtil";
 
 // parent: effect, technique (FX), pass, newparam
 export class DAEAnnotate {
+	static readonly TagName: string = "annotate";
 	name: string;
 	value: any;
 
@@ -23,7 +24,7 @@ export class DAEAnnotate {
 
 	static parseArray(parent: Element): Array<DAEAnnotate> {
 		return DAEUtil.parseArray<DAEAnnotate>(
-			this.parse, parent, "annotate"
+			this.parse, parent, DAEAnnotate.TagName
 		);
 	}
 }
