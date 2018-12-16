@@ -1,10 +1,11 @@
 import { DAEUtil } from "../../DAEUtil";
+import { DAEValueElement } from "./DAEValueElement";
 
 // parent: effect, technique (FX), pass, newparam
 export class DAEAnnotate {
 	static readonly TagName: string = "annotate";
 	name: string;
-	value: any;
+	value: DAEValueElement;
 
 	constructor() {
 		this.name = null;
@@ -17,7 +18,7 @@ export class DAEAnnotate {
 			return null;
 		}
 		var value = new DAEAnnotate();
-		value.name = DAEUtil.stringAttrib(el, "name");
+		value.name = DAEUtil.getStringAttr(el, "name");
 		value.value = null;
 		return value;
 	}

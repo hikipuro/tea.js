@@ -37,25 +37,24 @@ export class DAEAsset {
 
 	static parse(el: Element): DAEAsset {
 		if (el == null) {
-			//console.error("parse error");
 			return null;
 		}
 		var value = new DAEAsset();
 		value.contributor = DAEContributor.parse(
 			DAEUtil.queryChildSelector(el, DAEContributor.TagName)
 		);
-		value.created = new Date(DAEUtil.textContent(el, "created"));
-		value.keywords = DAEUtil.stringArray(
+		value.created = new Date(DAEUtil.getStringContent(el, "created"));
+		value.keywords = DAEUtil.getStringArrayContent(
 			DAEUtil.queryChildSelector(el, "keywords")
 		);
-		value.modified = new Date(DAEUtil.textContent(el, "modified"));
-		value.revision = DAEUtil.textContent(el, "revision");
-		value.subject = DAEUtil.textContent(el, "subject");
-		value.title = DAEUtil.textContent(el, "title");
+		value.modified = new Date(DAEUtil.getStringContent(el, "modified"));
+		value.revision = DAEUtil.getStringContent(el, "revision");
+		value.subject = DAEUtil.getStringContent(el, "subject");
+		value.title = DAEUtil.getStringContent(el, "title");
 		value.unit = DAEUnit.parse(
 			DAEUtil.queryChildSelector(el, DAEUnit.TagName)
 		);
-		value.upAxis = DAEUtil.textContent(el, "up_axis");
+		value.upAxis = DAEUtil.getStringContent(el, "up_axis");
 		value.extras = DAEExtra.parseArray(el);
 		return value;
 	}
@@ -68,31 +67,16 @@ export class DAEAsset {
 
 	toXML(): Element {
 		var el = document.createElement(DAEAsset.TagName);
-		DAEUtil.addXML(el, this.contributor);
-		var created = this.toDateElement("created", this.created);
-		if (created != null) {
-			el.appendChild(created);
-		}
-		DAEUtil.addTextArray(el, "keywords", this.keywords);
-		var modified = this.toDateElement("modified", this.modified);
-		if (modified != null) {
-			el.appendChild(modified);
-		}
-		DAEUtil.addTextContent(el, "revision", this.revision);
-		DAEUtil.addTextContent(el, "subject", this.subject);
-		DAEUtil.addTextContent(el, "title", this.title);
-		DAEUtil.addXML(el, this.unit);
-		DAEUtil.addTextContent(el, "up_axis", this.upAxis);
-		DAEUtil.addXMLArray(el, this.extras);
-		return el;
-	}
-
-	protected toDateElement(name: string, date: Date): Element {
-		if (name == null || date == null) {
-			return null;
-		}
-		var el = document.createElement(name);
-		el.textContent = DAEUtil.formatDate(date);
+		DAEUtil.addElement(el, this.contributor);
+		DAEUtil.addDateContent(el, "created", this.created);
+		DAEUtil.addStringArrayContent(el, "keywords", this.keywords);
+		DAEUtil.addDateContent(el, "modified", this.modified);
+		DAEUtil.addStringContent(el, "revision", this.revision);
+		DAEUtil.addStringContent(el, "subject", this.subject);
+		DAEUtil.addStringContent(el, "title", this.title);
+		DAEUtil.addElement(el, this.unit);
+		DAEUtil.addStringContent(el, "up_axis", this.upAxis);
+		DAEUtil.addElementArray(el, this.extras);
 		return el;
 	}
 }

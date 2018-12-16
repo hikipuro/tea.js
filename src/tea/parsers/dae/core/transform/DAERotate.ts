@@ -15,12 +15,11 @@ export class DAERotate implements DAETransformationElement {
 
 	static parse(el: Element): DAERotate {
 		if (el == null) {
-			//console.error("parse error");
 			return null;
 		}
 		var value = new DAERotate();
-		value.sid = DAEUtil.stringAttrib(el, "sid");
-		value.data = DAEUtil.floatArray(el);
+		value.sid = DAEUtil.getStringAttr(el, "sid");
+		value.data = DAEUtil.getFloatArrayContent(el);
 		return value;
 	}
 
@@ -32,7 +31,7 @@ export class DAERotate implements DAETransformationElement {
 
 	toXML(): Element {
 		var el = document.createElement(DAERotate.TagName);
-		DAEUtil.setAttribute(el, "sid", this.sid);
+		DAEUtil.setAttr(el, "sid", this.sid);
 		DAEUtil.setArrayContent(el, this.data);
 		return el;
 	}

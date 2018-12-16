@@ -15,7 +15,6 @@ export class DAEJoints {
 
 	static parse(el: Element): DAEJoints {
 		if (el == null) {
-			//console.error("parse error");
 			return null;
 		}
 		var value = new DAEJoints();
@@ -26,8 +25,8 @@ export class DAEJoints {
 
 	toXML(): Element {
 		var el = document.createElement(DAEJoints.TagName);
-		DAEUtil.addXMLArray(el, this.inputs);
-		DAEUtil.addXMLArray(el, this.extras);
+		DAEUtil.addElementArray(el, this.inputs);
+		DAEUtil.addElementArray(el, this.extras);
 		return el;
 	}
 }

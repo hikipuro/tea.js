@@ -29,14 +29,13 @@ export class DAEAnimationClip {
 
 	static parse(el: Element): DAEAnimationClip {
 		if (el == null) {
-			//console.error("parse error");
 			return null;
 		}
 		var value = new DAEAnimationClip();
-		value.id = DAEUtil.stringAttrib(el, "id");
-		value.start = DAEUtil.floatAttrib(el, "start", 0.0);
-		value.end = DAEUtil.floatAttrib(el, "end");
-		value.name = DAEUtil.stringAttrib(el, "name");
+		value.id = DAEUtil.getStringAttr(el, "id");
+		value.start = DAEUtil.getFloatAttr(el, "start", 0.0);
+		value.end = DAEUtil.getFloatAttr(el, "end");
+		value.name = DAEUtil.getStringAttr(el, "name");
 		value.asset = DAEAsset.parse(
 			DAEUtil.queryChildSelector(el, DAEAsset.TagName)
 		);
@@ -54,16 +53,14 @@ export class DAEAnimationClip {
 
 	toXML(): Element {
 		var el = document.createElement(DAEAnimationClip.TagName);
-		DAEUtil.setAttribute(el, "id", this.id);
-		if (this.start !== 0.0) {
-			DAEUtil.setAttribute(el, "start", this.start);
-		}
-		DAEUtil.setAttribute(el, "end", this.end);
-		DAEUtil.setAttribute(el, "name", this.name);
-		DAEUtil.addXML(el, this.asset);
-		DAEUtil.addXMLArray(el, this.instanceAnimations);
-		DAEUtil.addXMLArray(el, this.instanceFormulas);
-		DAEUtil.addXMLArray(el, this.extras);
+		DAEUtil.setAttr(el, "id", this.id);
+		DAEUtil.setAttr(el, "start", this.start, 0.0);
+		DAEUtil.setAttr(el, "end", this.end);
+		DAEUtil.setAttr(el, "name", this.name);
+		DAEUtil.addElement(el, this.asset);
+		DAEUtil.addElementArray(el, this.instanceAnimations);
+		DAEUtil.addElementArray(el, this.instanceFormulas);
+		DAEUtil.addElementArray(el, this.extras);
 		return el;
 	}
 }

@@ -2,7 +2,7 @@ import { DAEUtil } from "../../DAEUtil";
 
 // parent: 
 export class DAETexturePipeline {
-	static readonly TagName: string = "origin";
+	static readonly TagName: string = "texture_pipeline";
 	id?: string;
 
 	constructor() {

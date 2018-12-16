@@ -3,12 +3,19 @@ import { DAEUtil } from "./dae/DAEUtil";
 import { DAEAsset } from "./dae/core/metadata/DAEAsset";
 import { DAELibraryAnimationClips } from "./dae/core/animation/DAELibraryAnimationClips";
 import { DAELibraryAnimations } from "./dae/core/animation/DAELibraryAnimations";
+import { DAELibraryArticulatedSystems } from "./dae/kinematics/articulated/DAELibraryArticulatedSystems";
 import { DAELibraryCameras } from "./dae/core/camera/DAELibraryCameras";
 import { DAELibraryControllers } from "./dae/core/controller/DAELibraryControllers";
+import { DAELibraryEffects } from "./dae/fx/effects/DAELibraryEffects";
 import { DAELibraryForceFields } from "./dae/physics/scene/DAELibraryForceFields";
 import { DAELibraryFormulas } from "./dae/core/math/DAELibraryFormulas";
 import { DAELibraryGeometries } from "./dae/core/geometry/DAELibraryGeometries";
+import { DAELibraryImages } from "./dae/fx/texturing/DAELibraryImages";
+import { DAELibraryJoints } from "./dae/kinematics/joints/DAELibraryJoints";
+import { DAELibraryKinematicsModels } from "./dae/kinematics/models/DAELibraryKinematicsModels";
+import { DAELibraryKinematicsScenes } from "./dae/kinematics/scenes/DAELibraryKinematicsScenes";
 import { DAELibraryLights } from "./dae/core/lighting/DAELibraryLights";
+import { DAELibraryMaterials } from "./dae/fx/materials/DAELibraryMaterials";
 import { DAELibraryNodes } from "./dae/core/scene/DAELibraryNodes";
 import { DAELibraryPhysicsMaterials } from "./dae/physics/material/DAELibraryPhysicsMaterials";
 import { DAELibraryPhysicsModels } from "./dae/physics/model/DAELibraryPhysicsModels";
@@ -21,19 +28,19 @@ export class DAEFile {
 	asset: DAEAsset;
 	libraryAnimationClips?: DAELibraryAnimationClips;
 	libraryAnimations: DAELibraryAnimations;
-	//libraryArticulatedSystems: any;
+	libraryArticulatedSystems: DAELibraryArticulatedSystems;
 	libraryCameras: DAELibraryCameras;
 	libraryControllers: DAELibraryControllers;
-	//libraryEffects: any;
+	libraryEffects: DAELibraryEffects;
 	libraryForceFields: DAELibraryForceFields;
 	libraryFormulas: DAELibraryFormulas;
 	libraryGeometries?: DAELibraryGeometries;
-	//libraryImages: any;
-	//libraryJoints: any;
-	//libraryKinematicsModels: any;
-	//libraryKinematicsScenes: any;
+	libraryImages: DAELibraryImages;
+	libraryJoints: DAELibraryJoints;
+	libraryKinematicsModels: DAELibraryKinematicsModels;
+	libraryKinematicsScenes: DAELibraryKinematicsScenes;
 	libraryLights: DAELibraryLights;
-	//libraryMaterials: any;
+	libraryMaterials: DAELibraryMaterials;
 	libraryNodes: DAELibraryNodes;
 	libraryPhysicsMaterials: DAELibraryPhysicsMaterials;
 	libraryPhysicsModels: DAELibraryPhysicsModels;
@@ -46,19 +53,19 @@ export class DAEFile {
 		this.asset = null;
 		this.libraryAnimationClips = null;
 		this.libraryAnimations = null;
-		//this.libraryArticulatedSystems = null;
+		this.libraryArticulatedSystems = null;
 		this.libraryCameras = null;
 		this.libraryControllers = null;
-		//this.libraryEffects = null;
+		this.libraryEffects = null;
 		this.libraryForceFields = null;
 		this.libraryFormulas = null;
 		this.libraryGeometries = null;
-		//this.libraryImages = null;
-		//this.libraryJoints = null;
-		//this.libraryKinematicsModels = null;
-		//this.libraryKinematicsScenes = null;
+		this.libraryImages = null;
+		this.libraryJoints = null;
+		this.libraryKinematicsModels = null;
+		this.libraryKinematicsScenes = null;
 		this.libraryLights = null;
-		//this.libraryMaterials = null;
+		this.libraryMaterials = null;
 		this.libraryNodes = null;
 		this.libraryPhysicsMaterials = null;
 		this.libraryPhysicsModels = null;
@@ -121,11 +128,17 @@ export class DAEFile {
 			file.libraryAnimations = DAELibraryAnimations.parse(
 				DAEUtil.queryChildSelector(document, DAELibraryAnimations.TagName)
 			);
+			file.libraryArticulatedSystems = DAELibraryArticulatedSystems.parse(
+				DAEUtil.queryChildSelector(document, DAELibraryArticulatedSystems.TagName)
+			);
 			file.libraryCameras = DAELibraryCameras.parse(
 				DAEUtil.queryChildSelector(document, DAELibraryCameras.TagName)
 			);
 			file.libraryControllers = DAELibraryControllers.parse(
 				DAEUtil.queryChildSelector(document, DAELibraryControllers.TagName)
+			);
+			file.libraryEffects = DAELibraryEffects.parse(
+				DAEUtil.queryChildSelector(document, DAELibraryEffects.TagName)
 			);
 			file.libraryForceFields = DAELibraryForceFields.parse(
 				DAEUtil.queryChildSelector(document, DAELibraryForceFields.TagName)
@@ -133,8 +146,23 @@ export class DAEFile {
 			file.libraryFormulas = DAELibraryFormulas.parse(
 				DAEUtil.queryChildSelector(document, DAELibraryFormulas.TagName)
 			);
+			file.libraryImages = DAELibraryImages.parse(
+				DAEUtil.queryChildSelector(document, DAELibraryImages.TagName)
+			);
+			file.libraryJoints = DAELibraryJoints.parse(
+				DAEUtil.queryChildSelector(document, DAELibraryJoints.TagName)
+			);
+			file.libraryKinematicsModels = DAELibraryKinematicsModels.parse(
+				DAEUtil.queryChildSelector(document, DAELibraryKinematicsModels.TagName)
+			);
+			file.libraryKinematicsScenes = DAELibraryKinematicsScenes.parse(
+				DAEUtil.queryChildSelector(document, DAELibraryKinematicsScenes.TagName)
+			);
 			file.libraryLights = DAELibraryLights.parse(
 				DAEUtil.queryChildSelector(document, DAELibraryLights.TagName)
+			);
+			file.libraryMaterials = DAELibraryMaterials.parse(
+				DAEUtil.queryChildSelector(document, DAELibraryMaterials.TagName)
 			);
 			file.libraryNodes = DAELibraryNodes.parse(
 				DAEUtil.queryChildSelector(document, DAELibraryNodes.TagName)
@@ -180,29 +208,29 @@ export class DAEFile {
 			"", "", null
 		);
 		var root = this.createRootElement(doc);
-		DAEUtil.addXML(root, this.asset);
-		DAEUtil.addXML(root, this.libraryAnimationClips);
-		DAEUtil.addXML(root, this.libraryAnimations);
-		//DAEUtil.addXML(root, this.libraryArticulatedSystems);
-		DAEUtil.addXML(root, this.libraryCameras);
-		DAEUtil.addXML(root, this.libraryControllers);
-		//DAEUtil.addXML(root, this.libraryEffects);
-		DAEUtil.addXML(root, this.libraryForceFields);
-		DAEUtil.addXML(root, this.libraryFormulas);
-		DAEUtil.addXML(root, this.libraryGeometries);
-		//DAEUtil.addXML(root, this.libraryImages);
-		//DAEUtil.addXML(root, this.libraryJoints);
-		//DAEUtil.addXML(root, this.libraryKinematicsModels);
-		//DAEUtil.addXML(root, this.libraryKinematicsScenes);
-		DAEUtil.addXML(root, this.libraryLights);
-		//DAEUtil.addXML(root, this.libraryMaterials);
-		DAEUtil.addXML(root, this.libraryNodes);
-		DAEUtil.addXML(root, this.libraryPhysicsMaterials);
-		DAEUtil.addXML(root, this.libraryPhysicsModels);
-		DAEUtil.addXML(root, this.libraryPhysicsScenes);
-		DAEUtil.addXML(root, this.libraryVisualScenes);
-		DAEUtil.addXML(root, this.scene);
-		DAEUtil.addXML(root, this.extras);
+		DAEUtil.addElement(root, this.asset);
+		DAEUtil.addElement(root, this.libraryAnimationClips);
+		DAEUtil.addElement(root, this.libraryAnimations);
+		DAEUtil.addElement(root, this.libraryArticulatedSystems);
+		DAEUtil.addElement(root, this.libraryCameras);
+		DAEUtil.addElement(root, this.libraryControllers);
+		DAEUtil.addElement(root, this.libraryEffects);
+		DAEUtil.addElement(root, this.libraryForceFields);
+		DAEUtil.addElement(root, this.libraryFormulas);
+		DAEUtil.addElement(root, this.libraryGeometries);
+		DAEUtil.addElement(root, this.libraryImages);
+		DAEUtil.addElement(root, this.libraryJoints);
+		DAEUtil.addElement(root, this.libraryKinematicsModels);
+		DAEUtil.addElement(root, this.libraryKinematicsScenes);
+		DAEUtil.addElement(root, this.libraryLights);
+		DAEUtil.addElement(root, this.libraryMaterials);
+		DAEUtil.addElement(root, this.libraryNodes);
+		DAEUtil.addElement(root, this.libraryPhysicsMaterials);
+		DAEUtil.addElement(root, this.libraryPhysicsModels);
+		DAEUtil.addElement(root, this.libraryPhysicsScenes);
+		DAEUtil.addElement(root, this.libraryVisualScenes);
+		DAEUtil.addElement(root, this.scene);
+		DAEUtil.addElement(root, this.extras);
 		doc.appendChild(root);
 		return doc;
 	}

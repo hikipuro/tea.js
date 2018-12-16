@@ -1,12 +1,14 @@
 import { DAEUtil } from "../../DAEUtil";
 
-// parent: 
+// parent: program
 export class DAEBindAttribute {
-	static readonly TagName: string = "origin";
-	id?: string;
+	static readonly TagName: string = "bind_attribute";
+	symbol: string;
+	semantic: string;
 
 	constructor() {
-		this.id = null;
+		this.symbol = null;
+		this.semantic = null;
 	}
 
 	static parse(el: Element): DAEBindAttribute {
@@ -15,6 +17,8 @@ export class DAEBindAttribute {
 			return null;
 		}
 		var value = new DAEBindAttribute();
+		value.symbol = DAEUtil.getStringAttr(el, "symbol");
+		value.semantic = DAEUtil.getStringContent(el, "semantic");
 		return value;
 	}
 

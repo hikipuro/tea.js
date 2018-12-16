@@ -14,12 +14,18 @@ export class DAESphere {
 
 	static parse(el: Element): DAESphere {
 		if (el == null) {
-			//console.error("parse error");
 			return null;
 		}
 		var value = new DAESphere();
-		value.radius = DAEUtil.floatContent(el, "radius");
+		value.radius = DAEUtil.getFloatContent(el, "radius");
 		value.extras = DAEExtra.parseArray(el);
 		return value;
+	}
+
+	toXML(): Element {
+		var el = document.createElement(DAESphere.TagName);
+		DAEUtil.addFloatContent(el, "radius", this.radius);
+		DAEUtil.addElementArray(el, this.extras);
+		return el;
 	}
 }

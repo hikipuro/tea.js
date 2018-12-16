@@ -8,7 +8,7 @@ import { DAEExtra } from "../extensibility/DAEExtra";
 export class DAESkin {
 	static readonly TagName: string = "skin";
 	source: string;
-	//bindShapeMatrix: any;
+	//bindShapeMatrix: DAEBindShapeMatrix;
 	sources: Array<DAESource>;
 	joints: DAEJoints;
 	vertexWeights: DAEVertexWeights;
@@ -24,11 +24,10 @@ export class DAESkin {
 
 	static parse(el: Element): DAESkin {
 		if (el == null) {
-			//console.error("parse error");
 			return null;
 		}
 		var value = new DAESkin();
-		value.source = DAEUtil.stringAttrib(el, "source");
+		value.source = DAEUtil.getStringAttr(el, "source");
 		value.sources = DAESource.parseArray(el);
 		value.joints = DAEJoints.parse(
 			DAEUtil.queryChildSelector(el, DAEJoints.TagName)
@@ -42,11 +41,11 @@ export class DAESkin {
 
 	toXML(): Element {
 		var el = document.createElement(DAESkin.TagName);
-		DAEUtil.setAttribute(el, "source", this.source);
-		DAEUtil.addXMLArray(el, this.sources);
-		DAEUtil.addXML(el, this.joints);
-		DAEUtil.addXML(el, this.vertexWeights);
-		DAEUtil.addXMLArray(el, this.extras);
+		DAEUtil.setAttr(el, "source", this.source);
+		DAEUtil.addElementArray(el, this.sources);
+		DAEUtil.addElement(el, this.joints);
+		DAEUtil.addElement(el, this.vertexWeights);
+		DAEUtil.addElementArray(el, this.extras);
 		return el;
 	}
 }

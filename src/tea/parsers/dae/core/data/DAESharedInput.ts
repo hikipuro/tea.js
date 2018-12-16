@@ -20,14 +20,13 @@ export class DAESharedInput {
 
 	static parse(el: Element): DAESharedInput {
 		if (el == null) {
-			//console.error("parse error");
 			return null;
 		}
 		var value = new DAESharedInput();
-		value.offset = DAEUtil.intAttrib(el, "offset", 0);
-		value.semantic = DAEUtil.semanticAttrib(el);
-		value.source = DAEUtil.stringAttrib(el, "source");
-		value.set = DAEUtil.intAttrib(el, "set");
+		value.offset = DAEUtil.getIntAttr(el, "offset", 0);
+		value.semantic = DAEUtil.getSemanticAttr(el);
+		value.source = DAEUtil.getStringAttr(el, "source");
+		value.set = DAEUtil.getIntAttr(el, "set");
 		return value;
 	}
 
@@ -39,11 +38,11 @@ export class DAESharedInput {
 
 	toXML(): Element {
 		var el = document.createElement(DAESharedInput.TagName);
-		DAEUtil.setAttribute(el, "offset", this.offset);
+		DAEUtil.setAttr(el, "offset", this.offset);
 		var semantic = DAESemanticType.toString(this.semantic);
-		DAEUtil.setAttribute(el, "semantic", semantic);
-		DAEUtil.setAttribute(el, "source", this.source);
-		DAEUtil.setAttribute(el, "set", this.set);
+		DAEUtil.setAttr(el, "semantic", semantic);
+		DAEUtil.setAttr(el, "source", this.source);
+		DAEUtil.setAttr(el, "set", this.set);
 		return el;
 	}
 }

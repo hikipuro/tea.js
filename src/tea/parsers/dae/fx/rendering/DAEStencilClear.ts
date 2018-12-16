@@ -2,7 +2,7 @@ import { DAEUtil } from "../../DAEUtil";
 
 // parent: 
 export class DAEStencilClear {
-	static readonly TagName: string = "origin";
+	static readonly TagName: string = "stencil_clear";
 	id?: string;
 
 	constructor() {

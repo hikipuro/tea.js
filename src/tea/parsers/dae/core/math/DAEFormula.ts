@@ -28,13 +28,12 @@ export class DAEFormula {
 
 	static parse(el: Element): DAEFormula {
 		if (el == null) {
-			//console.error("parse error");
 			return null;
 		}
 		var value = new DAEFormula();
-		value.id = DAEUtil.stringAttrib(el, "id");
-		value.name = DAEUtil.stringAttrib(el, "name");
-		value.sid = DAEUtil.stringAttrib(el, "sid");
+		value.id = DAEUtil.getStringAttr(el, "id");
+		value.name = DAEUtil.getStringAttr(el, "name");
+		value.sid = DAEUtil.getStringAttr(el, "sid");
 		value.newparams = DAENewparam.parseArray(el);
 		value.target = DAETarget.parse(
 			DAEUtil.queryChildSelector(el, DAETarget.TagName)
@@ -54,13 +53,13 @@ export class DAEFormula {
 
 	toXML(): Element {
 		var el = document.createElement(DAEFormula.TagName);
-		DAEUtil.setAttribute(el, "id", this.id);
-		DAEUtil.setAttribute(el, "name", this.name);
-		DAEUtil.setAttribute(el, "sid", this.sid);
-		DAEUtil.addXMLArray(el, this.newparams);
-		DAEUtil.addXML(el, this.target);
-		DAEUtil.addXML(el, this.techniqueCommon);
-		DAEUtil.addXMLArray(el, this.techniques);
+		DAEUtil.setAttr(el, "id", this.id);
+		DAEUtil.setAttr(el, "name", this.name);
+		DAEUtil.setAttr(el, "sid", this.sid);
+		DAEUtil.addElementArray(el, this.newparams);
+		DAEUtil.addElement(el, this.target);
+		DAEUtil.addElement(el, this.techniqueCommon);
+		DAEUtil.addElementArray(el, this.techniques);
 		return el;
 	}
 }

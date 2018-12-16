@@ -12,18 +12,17 @@ export class DAEAltitude {
 
 	static parse(el: Element): DAEAltitude {
 		if (el == null) {
-			//console.error("parse error");
 			return null;
 		}
 		var value = new DAEAltitude();
-		value.mode = DAEUtil.stringAttrib(el, "mode");
-		value.value = DAEUtil.floatContent(el);
+		value.mode = DAEUtil.getStringAttr(el, "mode");
+		value.value = DAEUtil.getFloatContent(el);
 		return value;
 	}
 
 	toXML(): Element {
 		var el = document.createElement(DAEAltitude.TagName);
-		DAEUtil.setTextContent(el, this.value.toString());
+		DAEUtil.setStringContent(el, this.value.toString());
 		return el;
 	}
 }

@@ -18,22 +18,21 @@ export class DAENameArray implements DAEArrayElement {
 
 	static parse(el: Element): DAENameArray {
 		if (el == null) {
-			//console.error("parse error");
 			return null;
 		}
 		var value = new DAENameArray();
-		value.count = DAEUtil.intAttrib(el, "count");
-		value.id = DAEUtil.stringAttrib(el, "id");
-		value.name = DAEUtil.stringAttrib(el, "name");
-		value.data = DAEUtil.stringArray(el);
+		value.count = DAEUtil.getIntAttr(el, "count");
+		value.id = DAEUtil.getStringAttr(el, "id");
+		value.name = DAEUtil.getStringAttr(el, "name");
+		value.data = DAEUtil.getStringArrayContent(el);
 		return value;
 	}
 
 	toXML(): Element {
 		var el = document.createElement(DAENameArray.TagName);
-		DAEUtil.setAttribute(el, "count", this.count);
-		DAEUtil.setAttribute(el, "id", this.id);
-		DAEUtil.setAttribute(el, "name", this.name);
+		DAEUtil.setAttr(el, "count", this.count);
+		DAEUtil.setAttr(el, "id", this.id);
+		DAEUtil.setAttr(el, "name", this.name);
 		DAEUtil.setArrayContent(el, this.data);
 		return el;
 	}

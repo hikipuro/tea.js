@@ -2,7 +2,7 @@ import { DAEUtil } from "../../DAEUtil";
 
 // parent: 
 export class DAETexenv {
-	static readonly TagName: string = "origin";
+	static readonly TagName: string = "texenv";
 	id?: string;
 
 	constructor() {

@@ -1,12 +1,16 @@
 import { DAEUtil } from "../../DAEUtil";
 
-// parent: 
+// parent: RGB, alpha
 export class DAEArgument {
-	static readonly TagName: string = "origin";
-	id?: string;
+	static readonly TagName: string = "argument";
+	source?: string;
+	operand?: string;
+	sampler?: string;
 
 	constructor() {
-		this.id = null;
+		this.source = null;
+		this.operand = null;
+		this.sampler = null;
 	}
 
 	static parse(el: Element): DAEArgument {
@@ -15,7 +19,16 @@ export class DAEArgument {
 			return null;
 		}
 		var value = new DAEArgument();
+		value.source = DAEUtil.getStringAttr(el, "source");
+		value.operand = DAEUtil.getStringAttr(el, "source");
+		value.sampler = DAEUtil.getStringAttr(el, "source");
 		return value;
+	}
+
+	static parseArray(parent: Element): Array<DAEArgument> {
+		return DAEUtil.parseArray<DAEArgument>(
+			this.parse, parent, DAEArgument.TagName
+		);
 	}
 
 	toXML(): Element {

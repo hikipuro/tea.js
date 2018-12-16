@@ -2,7 +2,7 @@ import { DAEUtil } from "../../DAEUtil";
 
 // parent: 
 export class DAEDepthClear {
-	static readonly TagName: string = "origin";
+	static readonly TagName: string = "depth_clear";
 	id?: string;
 
 	constructor() {

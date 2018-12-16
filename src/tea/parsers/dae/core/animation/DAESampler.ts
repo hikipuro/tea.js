@@ -18,13 +18,12 @@ export class DAESampler {
 
 	static parse(el: Element): DAESampler {
 		if (el == null) {
-			//console.error("parse error");
 			return null;
 		}
 		var value = new DAESampler();
-		value.id = DAEUtil.stringAttrib(el, "id");
-		value.preBehavior = DAEUtil.stringAttrib(el, "pre_behavior");
-		value.postBehavior = DAEUtil.stringAttrib(el, "post_behavior");
+		value.id = DAEUtil.getStringAttr(el, "id");
+		value.preBehavior = DAEUtil.getStringAttr(el, "pre_behavior");
+		value.postBehavior = DAEUtil.getStringAttr(el, "post_behavior");
 		value.inputs = DAEUnsharedInput.parseArray(el);
 		return value;
 	}
@@ -37,10 +36,10 @@ export class DAESampler {
 
 	toXML(): Element {
 		var el = document.createElement(DAESampler.TagName);
-		DAEUtil.setAttribute(el, "id", this.id);
-		DAEUtil.setAttribute(el, "pre_behavior", this.preBehavior);
-		DAEUtil.setAttribute(el, "post_behavior", this.postBehavior);
-		DAEUtil.addXMLArray(el, this.inputs);
+		DAEUtil.setAttr(el, "id", this.id);
+		DAEUtil.setAttr(el, "pre_behavior", this.preBehavior);
+		DAEUtil.setAttr(el, "post_behavior", this.postBehavior);
+		DAEUtil.addElementArray(el, this.inputs);
 		return el;
 	}
 }

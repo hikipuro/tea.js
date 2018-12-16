@@ -14,7 +14,6 @@ export class DAETechniqueCommon {
 
 	static parse(el: Element): DAETechniqueCommon {
 		if (el == null) {
-			//console.error("parse error");
 			return null;
 		}
 		var value = new DAETechniqueCommon();
@@ -26,7 +25,7 @@ export class DAETechniqueCommon {
 
 	toXML(): Element {
 		var el = document.createElement(DAETechniqueCommon.TagName);
-		DAEUtil.addXML(el, this.accessor);
+		DAEUtil.addElement(el, this.accessor);
 		return el;
 	}
 }

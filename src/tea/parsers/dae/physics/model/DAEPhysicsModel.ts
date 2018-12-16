@@ -28,12 +28,11 @@ export class DAEPhysicsModel {
 
 	static parse(el: Element): DAEPhysicsModel {
 		if (el == null) {
-			//console.error("parse error");
 			return null;
 		}
 		var value = new DAEPhysicsModel();
-		value.id = DAEUtil.stringAttrib(el, "id");
-		value.name = DAEUtil.stringAttrib(el, "name");
+		value.id = DAEUtil.getStringAttr(el, "id");
+		value.name = DAEUtil.getStringAttr(el, "name");
 		value.asset = DAEAsset.parse(
 			DAEUtil.queryChildSelector(el, DAEAsset.TagName)
 		);
@@ -48,5 +47,17 @@ export class DAEPhysicsModel {
 		return DAEUtil.parseArray<DAEPhysicsModel>(
 			this.parse, parent, DAEPhysicsModel.TagName
 		);
+	}
+
+	toXML(): Element {
+		var el = document.createElement(DAEPhysicsModel.TagName);
+		DAEUtil.setAttr(el, "id", this.id);
+		DAEUtil.setAttr(el, "name", this.name);
+		DAEUtil.addElement(el, this.asset);
+		DAEUtil.addElementArray(el, this.rigidBodies);
+		DAEUtil.addElementArray(el, this.rigidConstraints);
+		DAEUtil.addElementArray(el, this.instancePhysicsModels);
+		DAEUtil.addElementArray(el, this.extras);
+		return el;
 	}
 }

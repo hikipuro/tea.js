@@ -2,7 +2,7 @@ import { DAEUtil } from "../../DAEUtil";
 
 // parent: 
 export class DAEFXSamplerCommon {
-	static readonly TagName: string = "origin";
+	static readonly TagName: string = "fx_sampler_common";
 	id?: string;
 
 	constructor() {

@@ -22,8 +22,8 @@ export class DAEUnit {
 
 	toXML(): Element {
 		var el = document.createElement(DAEUnit.TagName);
-		DAEUtil.setAttribute(el, "name", this.name);
-		DAEUtil.setAttribute(el, "meter", this.meter);
+		DAEUtil.setAttr(el, "name", this.name);
+		DAEUtil.setAttr(el, "meter", this.meter);
 		return el;
 	}
 }

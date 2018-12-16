@@ -4,6 +4,8 @@ import { DAETechniqueCommon } from "../../core/extensibility/DAETechniqueCommon"
 import { DAETechnique } from "../../core/extensibility/DAETechnique";
 import { DAEExtra } from "../../core/extensibility/DAEExtra";
 
+// TODO: add dynamic_friction, restitution, static_friction
+
 // parent: library_physics_materials, shape, instance_rigid_body /
 // technique_common, rigid_body / technique_common
 export class DAEPhysicsMaterial {
@@ -26,12 +28,11 @@ export class DAEPhysicsMaterial {
 
 	static parse(el: Element): DAEPhysicsMaterial {
 		if (el == null) {
-			//console.error("parse error");
 			return null;
 		}
 		var value = new DAEPhysicsMaterial();
-		value.id = DAEUtil.stringAttrib(el, "id");
-		value.name = DAEUtil.stringAttrib(el, "name");
+		value.id = DAEUtil.getStringAttr(el, "id");
+		value.name = DAEUtil.getStringAttr(el, "name");
 		value.asset = DAEAsset.parse(
 			DAEUtil.queryChildSelector(el, DAEAsset.TagName)
 		);
@@ -47,5 +48,16 @@ export class DAEPhysicsMaterial {
 		return DAEUtil.parseArray<DAEPhysicsMaterial>(
 			this.parse, parent, DAEPhysicsMaterial.TagName
 		);
+	}
+
+	toXML(): Element {
+		var el = document.createElement(DAEPhysicsMaterial.TagName);
+		DAEUtil.setAttr(el, "id", this.id);
+		DAEUtil.setAttr(el, "name", this.name);
+		DAEUtil.addElement(el, this.asset);
+		DAEUtil.addElement(el, this.techniqueCommon);
+		DAEUtil.addElementArray(el, this.techniques);
+		DAEUtil.addElementArray(el, this.extras);
+		return el;
 	}
 }

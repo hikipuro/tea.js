@@ -1,12 +1,19 @@
 import { DAEUtil } from "../../DAEUtil";
+import { DAEParameterElement } from "./DAEParameterElement";
 
 // parent: 
+// core: newparam, setparam
+// fx: create_2d, create_3d, create_cube
 export class DAEArray {
-	static readonly TagName: string = "origin";
-	id?: string;
+	static readonly TagName: string = "array";
+	length: number;
+	resizable?: boolean;
+	parameterElements?: Array<DAEParameterElement>;
 
 	constructor() {
-		this.id = null;
+		this.length = 0;
+		this.resizable = false;
+		this.parameterElements = null;
 	}
 
 	static parse(el: Element): DAEArray {
@@ -15,6 +22,8 @@ export class DAEArray {
 			return null;
 		}
 		var value = new DAEArray();
+		value.length = DAEUtil.getIntAttr(el, "length");
+		value.resizable = DAEUtil.getBoolAttr(el, "resizable", false);
 		return value;
 	}
 

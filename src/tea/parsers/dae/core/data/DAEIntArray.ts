@@ -24,26 +24,25 @@ export class DAEIntArray implements DAEArrayElement {
 
 	static parse(el: Element): DAEIntArray {
 		if (el == null) {
-			//console.error("parse error");
 			return null;
 		}
 		var value = new DAEIntArray();
-		value.count = DAEUtil.intAttrib(el, "count");
-		value.id = DAEUtil.stringAttrib(el, "id");
-		value.name = DAEUtil.stringAttrib(el, "name");
-		value.minInclusive = DAEUtil.intAttrib(el, "minInclusive");
-		value.maxInclusive = DAEUtil.intAttrib(el, "maxInclusive");
-		value.data = DAEUtil.intArray(el);
+		value.count = DAEUtil.getIntAttr(el, "count");
+		value.id = DAEUtil.getStringAttr(el, "id");
+		value.name = DAEUtil.getStringAttr(el, "name");
+		value.minInclusive = DAEUtil.getIntAttr(el, "minInclusive");
+		value.maxInclusive = DAEUtil.getIntAttr(el, "maxInclusive");
+		value.data = DAEUtil.getIntArrayContent(el);
 		return value;
 	}
 
 	toXML(): Element {
 		var el = document.createElement(DAEIntArray.TagName);
-		DAEUtil.setAttribute(el, "count", this.count);
-		DAEUtil.setAttribute(el, "id", this.id);
-		DAEUtil.setAttribute(el, "name", this.name);
-		DAEUtil.setAttribute(el, "minInclusive", this.minInclusive);
-		DAEUtil.setAttribute(el, "maxInclusive", this.maxInclusive);
+		DAEUtil.setAttr(el, "count", this.count);
+		DAEUtil.setAttr(el, "id", this.id);
+		DAEUtil.setAttr(el, "name", this.name);
+		DAEUtil.setAttr(el, "minInclusive", this.minInclusive);
+		DAEUtil.setAttr(el, "maxInclusive", this.maxInclusive);
 		DAEUtil.setArrayContent(el, this.data);
 		return el;
 	}

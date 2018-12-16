@@ -14,14 +14,20 @@ export class DAEBox {
 
 	static parse(el: Element): DAEBox {
 		if (el == null) {
-			//console.error("parse error");
 			return null;
 		}
 		var value = new DAEBox();
-		value.halfExtents = DAEUtil.floatArray(
+		value.halfExtents = DAEUtil.getFloatArrayContent(
 			DAEUtil.queryChildSelector(el, "half_extents")
 		);
 		value.extras = DAEExtra.parseArray(el);
 		return value;
+	}
+
+	toXML(): Element {
+		var el = document.createElement(DAEBox.TagName);
+		DAEUtil.addArrayContent(el, "half_extents", this.halfExtents);
+		DAEUtil.addElementArray(el, this.extras);
+		return el;
 	}
 }

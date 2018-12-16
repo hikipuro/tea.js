@@ -19,11 +19,10 @@ export class DAEParamRef {
 
 	static parse(el: Element): DAEParamRef {
 		if (el == null) {
-			//console.error("parse error");
 			return null;
 		}
 		var value = new DAEParamRef();
-		value.ref = DAEUtil.stringAttrib(el, "ref");
+		value.ref = DAEUtil.getStringAttr(el, "ref");
 		return value;
 	}
 
@@ -35,7 +34,7 @@ export class DAEParamRef {
 
 	toXML(): Element {
 		var el = document.createElement(DAEParamRef.TagName);
-		DAEUtil.setAttribute(el, "ref", this.ref);
+		DAEUtil.setAttr(el, "ref", this.ref);
 		return el;
 	}
 }

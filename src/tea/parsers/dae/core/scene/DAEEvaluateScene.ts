@@ -1,6 +1,7 @@
 import { DAEUtil } from "../../DAEUtil";
 import { DAEAsset } from "../metadata/DAEAsset";
 import { DAEExtra } from "../extensibility/DAEExtra";
+import { DAERender } from "../../fx/rendering/DAERender";
 
 // parent: visual_scene
 export class DAEEvaluateScene {
@@ -10,7 +11,7 @@ export class DAEEvaluateScene {
 	sid?: string;
 	enable?: boolean;
 	asset?: DAEAsset;
-	//renders?: Array<DAERender>;
+	renders?: Array<DAERender>;
 	extras?: Array<DAEExtra>;
 
 	constructor() {
@@ -19,22 +20,23 @@ export class DAEEvaluateScene {
 		this.sid = null;
 		this.enable = true;
 		this.asset = null;
+		this.renders = null;
+		this.extras = null;
 	}
 
 	static parse(el: Element): DAEEvaluateScene {
 		if (el == null) {
-			//console.error("parse error");
 			return null;
 		}
 		var value = new DAEEvaluateScene();
-		value.id = DAEUtil.stringAttrib(el, "id");
-		value.name = DAEUtil.stringAttrib(el, "name");
-		value.sid = DAEUtil.stringAttrib(el, "sid");
-		value.enable = DAEUtil.boolAttrib(el, "enable", true);
+		value.id = DAEUtil.getStringAttr(el, "id");
+		value.name = DAEUtil.getStringAttr(el, "name");
+		value.sid = DAEUtil.getStringAttr(el, "sid");
+		value.enable = DAEUtil.getBoolAttr(el, "enable", true);
 		value.asset = DAEAsset.parse(
 			DAEUtil.queryChildSelector(el, DAEAsset.TagName)
 		);
-		//value.renders = DAERender.parseArray(el);
+		value.renders = DAERender.parseArray(el);
 		value.extras = DAEExtra.parseArray(el);
 		return value;
 	}
@@ -47,13 +49,13 @@ export class DAEEvaluateScene {
 
 	toXML(): Element {
 		var el = document.createElement(DAEEvaluateScene.TagName);
-		DAEUtil.setAttribute(el, "id", this.id);
-		DAEUtil.setAttribute(el, "name", this.name);
-		DAEUtil.setAttribute(el, "sid", this.sid);
-		DAEUtil.setAttribute(el, "enable", this.enable);
-		DAEUtil.addXML(el, this.asset);
-		//DAEUtil.addXMLArray(el, this.renders);
-		DAEUtil.addXMLArray(el, this.extras);
+		DAEUtil.setAttr(el, "id", this.id);
+		DAEUtil.setAttr(el, "name", this.name);
+		DAEUtil.setAttr(el, "sid", this.sid);
+		DAEUtil.setAttr(el, "enable", this.enable);
+		DAEUtil.addElement(el, this.asset);
+		DAEUtil.addElementArray(el, this.renders);
+		DAEUtil.addElementArray(el, this.extras);
 		return el;
 	}
 }

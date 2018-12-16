@@ -2,7 +2,7 @@ import { DAEUtil } from "../../DAEUtil";
 
 // parent: 
 export class DAESamplerDepth {
-	static readonly TagName: string = "origin";
+	static readonly TagName: string = "samplerDEPTH";
 	id?: string;
 
 	constructor() {

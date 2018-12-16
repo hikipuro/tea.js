@@ -23,7 +23,6 @@ export class DAESpot {
 
 	static parse(el: Element): DAESpot {
 		if (el == null) {
-			//console.error("parse error");
 			return null;
 		}
 		var value = new DAESpot();
@@ -50,12 +49,12 @@ export class DAESpot {
 
 	toXML(): Element {
 		var el = document.createElement(DAESpot.TagName);
-		DAEUtil.addXML(el, this.color);
-		DAEUtil.addXML(el, this.constantAttenuation);
-		DAEUtil.addXML(el, this.linearAttenuation);
-		DAEUtil.addXML(el, this.quadraticAttenuation);
-		DAEUtil.addXML(el, this.falloffAngle);
-		DAEUtil.addXML(el, this.falloffExponent);
+		DAEUtil.addElement(el, this.color);
+		DAEUtil.addElement(el, this.constantAttenuation);
+		DAEUtil.addElement(el, this.linearAttenuation);
+		DAEUtil.addElement(el, this.quadraticAttenuation);
+		DAEUtil.addElement(el, this.falloffAngle);
+		DAEUtil.addElement(el, this.falloffExponent);
 		return el;
 	}
 }

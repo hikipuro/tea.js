@@ -4,7 +4,7 @@ import { DAESharedInput } from "../data/DAESharedInput";
 import { DAEExtra } from "../extensibility/DAEExtra";
 
 // parent: mesh, convex_mesh
-export class DAETrifans implements DAEPrimitiveElement {
+export class DAETrifans extends DAEPrimitiveElement {
 	static readonly TagName: string = "trifans";
 	name?: string;
 	count: number;
@@ -14,6 +14,7 @@ export class DAETrifans implements DAEPrimitiveElement {
 	extras?: Array<DAEExtra>;
 
 	constructor() {
+		super();
 		this.name = null;
 		this.count = 0;
 		this.material = null;
@@ -24,15 +25,14 @@ export class DAETrifans implements DAEPrimitiveElement {
 
 	static parse(el: Element): DAETrifans {
 		if (el == null) {
-			//console.error("parse error");
 			return null;
 		}
 		var value = new DAETrifans();
-		value.name = DAEUtil.stringAttrib(el, "name");
-		value.count = DAEUtil.intAttrib(el, "count");
-		value.material = DAEUtil.stringAttrib(el, "material");
+		value.name = DAEUtil.getStringAttr(el, "name");
+		value.count = DAEUtil.getIntAttr(el, "count");
+		value.material = DAEUtil.getStringAttr(el, "material");
 		value.inputs = DAESharedInput.parseArray(el);
-		value.data = DAEUtil.intArray(
+		value.data = DAEUtil.getIntArrayContent(
 			DAEUtil.queryChildSelector(el, "p")
 		);
 		value.extras = DAEExtra.parseArray(el);
@@ -47,16 +47,12 @@ export class DAETrifans implements DAEPrimitiveElement {
 
 	toXML(): Element {
 		var el = document.createElement(DAETrifans.TagName);
-		DAEUtil.setAttribute(el, "name", this.name);
-		DAEUtil.setAttribute(el, "count", this.count);
-		DAEUtil.setAttribute(el, "material", this.material);
-		DAEUtil.addXMLArray(el, this.inputs);
-		if (this.data != null) {
-			var p = document.createElement("p");
-			DAEUtil.setArrayContent(p, this.data);
-			el.appendChild(p);
-		}
-		DAEUtil.addXMLArray(el, this.extras);
+		DAEUtil.setAttr(el, "name", this.name);
+		DAEUtil.setAttr(el, "count", this.count);
+		DAEUtil.setAttr(el, "material", this.material);
+		DAEUtil.addElementArray(el, this.inputs);
+		DAEUtil.addArrayContent(el, "p", this.data);
+		DAEUtil.addElementArray(el, this.extras);
 		return el;
 	}
 }

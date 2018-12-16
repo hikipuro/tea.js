@@ -16,13 +16,12 @@ export class DAEGeographicLocation {
 
 	static parse(el: Element): DAEGeographicLocation {
 		if (el == null) {
-			//console.error("parse error");
 			return null;
 		}
 		var value = new DAEGeographicLocation();
-		value.longitude = DAEUtil.floatContent(el, "longitude");
+		value.longitude = DAEUtil.getFloatContent(el, "longitude");
 		value.longitude = this.clampLongitude(value.longitude);
-		value.latitude = DAEUtil.floatContent(el, "latitude");
+		value.latitude = DAEUtil.getFloatContent(el, "latitude");
 		value.latitude = this.clampLatitude(value.latitude);
 		value.altitude = DAEAltitude.parse(
 			DAEUtil.queryChildSelector(el, DAEAltitude.TagName)
@@ -50,7 +49,7 @@ export class DAEGeographicLocation {
 		DAEUtil.addFloatContent(el, "longitude", longitude);
 		var latitude = DAEGeographicLocation.clampLongitude(this.latitude);
 		DAEUtil.addFloatContent(el, "latitude", latitude);
-		DAEUtil.addXML(el, this.altitude);
+		DAEUtil.addElement(el, this.altitude);
 		return el;
 	}
 }

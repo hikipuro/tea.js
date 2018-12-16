@@ -12,7 +12,6 @@ export class DAEAmbient {
 
 	static parse(el: Element): DAEAmbient {
 		if (el == null) {
-			//console.error("parse error");
 			return null;
 		}
 		var value = new DAEAmbient();
@@ -24,7 +23,7 @@ export class DAEAmbient {
 
 	toXML(): Element {
 		var el = document.createElement(DAEAmbient.TagName);
-		DAEUtil.addXML(el, this.color);
+		DAEUtil.addElement(el, this.color);
 		return el;
 	}
 }

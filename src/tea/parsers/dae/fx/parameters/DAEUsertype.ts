@@ -2,7 +2,7 @@ import { DAEUtil } from "../../DAEUtil";
 
 // parent: 
 export class DAEUsertype {
-	static readonly TagName: string = "origin";
+	static readonly TagName: string = "usertype";
 	id?: string;
 
 	constructor() {

@@ -2,7 +2,7 @@ import { DAEUtil } from "../../DAEUtil";
 
 // parent: 
 export class DAEFormat {
-	static readonly TagName: string = "origin";
+	static readonly TagName: string = "format";
 	id?: string;
 
 	constructor() {

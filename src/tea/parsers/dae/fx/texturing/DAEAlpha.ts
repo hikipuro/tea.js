@@ -1,11 +1,12 @@
 import { DAEUtil } from "../../DAEUtil";
+import { DAEArgument } from "./DAEArgument";
 
 // parent: texcombiner
 export class DAEAlpha {
 	static readonly TagName: string = "alpha";
 	operator?: string;
 	scale?: string;
-	arguments: Array<string>;
+	arguments: Array<DAEArgument>;
 
 	constructor() {
 		this.operator = null;
@@ -19,9 +20,9 @@ export class DAEAlpha {
 			return null;
 		}
 		var value = new DAEAlpha();
-		value.operator = DAEUtil.stringAttrib(el, "operator");
-		value.scale = DAEUtil.stringAttrib(el, "scale");
-		value.arguments = null;
+		value.operator = DAEUtil.getStringAttr(el, "operator");
+		value.scale = DAEUtil.getStringAttr(el, "scale");
+		value.arguments = DAEArgument.parseArray(el);
 		return value;
 	}
 }

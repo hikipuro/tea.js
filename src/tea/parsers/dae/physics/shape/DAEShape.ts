@@ -40,7 +40,6 @@ export class DAEShape {
 
 	static parse(el: Element): DAEShape {
 		if (el == null) {
-			//console.error("parse error");
 			return null;
 		}
 		var value = new DAEShape();
@@ -80,5 +79,11 @@ export class DAEShape {
 		return DAEUtil.parseArray<DAEShape>(
 			this.parse, parent, DAEShape.TagName
 		);
+	}
+
+	toXML(): Element {
+		var el = document.createElement(DAEShape.TagName);
+		DAEUtil.addElementArray(el, this.extras);
+		return el;
 	}
 }

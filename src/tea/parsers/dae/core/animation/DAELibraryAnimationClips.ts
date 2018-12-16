@@ -22,12 +22,11 @@ export class DAELibraryAnimationClips {
 
 	static parse(el: Element): DAELibraryAnimationClips {
 		if (el == null) {
-			//console.error("parse error");
 			return null;
 		}
 		var value = new DAELibraryAnimationClips();
-		value.id = DAEUtil.stringAttrib(el, "id");
-		value.name = DAEUtil.stringAttrib(el, "name");
+		value.id = DAEUtil.getStringAttr(el, "id");
+		value.name = DAEUtil.getStringAttr(el, "name");
 		value.assets = DAEAsset.parseArray(el);
 		value.animationClips = DAEAnimationClip.parseArray(el);
 		value.extras = DAEExtra.parseArray(el);
@@ -36,11 +35,11 @@ export class DAELibraryAnimationClips {
 
 	toXML(): Element {
 		var el = document.createElement(DAELibraryAnimationClips.TagName);
-		DAEUtil.setAttribute(el, "id", this.id);
-		DAEUtil.setAttribute(el, "name", this.name);
-		DAEUtil.addXMLArray(el, this.assets);
-		DAEUtil.addXMLArray(el, this.animationClips);
-		DAEUtil.addXMLArray(el, this.extras);
+		DAEUtil.setAttr(el, "id", this.id);
+		DAEUtil.setAttr(el, "name", this.name);
+		DAEUtil.addElementArray(el, this.assets);
+		DAEUtil.addElementArray(el, this.animationClips);
+		DAEUtil.addElementArray(el, this.extras);
 		return el;
 	}
 }

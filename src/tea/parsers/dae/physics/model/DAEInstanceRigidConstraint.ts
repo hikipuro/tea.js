@@ -18,13 +18,12 @@ export class DAEInstanceRigidConstraint {
 
 	static parse(el: Element): DAEInstanceRigidConstraint {
 		if (el == null) {
-			//console.error("parse error");
 			return null;
 		}
 		var value = new DAEInstanceRigidConstraint();
-		value.sid = DAEUtil.stringAttrib(el, "sid");
-		value.name = DAEUtil.stringAttrib(el, "name");
-		value.constraint = DAEUtil.stringAttrib(el, "constraint");
+		value.sid = DAEUtil.getStringAttr(el, "sid");
+		value.name = DAEUtil.getStringAttr(el, "name");
+		value.constraint = DAEUtil.getStringAttr(el, "constraint");
 		value.extras = DAEExtra.parseArray(el);
 		return value;
 	}
@@ -33,5 +32,14 @@ export class DAEInstanceRigidConstraint {
 		return DAEUtil.parseArray<DAEInstanceRigidConstraint>(
 			this.parse, parent, DAEInstanceRigidConstraint.TagName
 		);
+	}
+
+	toXML(): Element {
+		var el = document.createElement(DAEInstanceRigidConstraint.TagName);
+		DAEUtil.setAttr(el, "sid", this.sid);
+		DAEUtil.setAttr(el, "name", this.name);
+		DAEUtil.setAttr(el, "constraint", this.constraint);
+		DAEUtil.addElementArray(el, this.extras);
+		return el;
 	}
 }

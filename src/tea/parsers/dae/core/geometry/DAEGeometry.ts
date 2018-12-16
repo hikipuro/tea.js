@@ -26,12 +26,11 @@ export class DAEGeometry {
 
 	static parse(el: Element): DAEGeometry {
 		if (el == null) {
-			//console.error("parse error");
 			return null;
 		}
 		var value = new DAEGeometry();
-		value.id = DAEUtil.stringAttrib(el, "id");
-		value.name = DAEUtil.stringAttrib(el, "name");
+		value.id = DAEUtil.getStringAttr(el, "id");
+		value.name = DAEUtil.getStringAttr(el, "name");
 		value.asset = DAEAsset.parse(
 			DAEUtil.queryChildSelector(el, DAEAsset.TagName)
 		);
@@ -70,10 +69,10 @@ export class DAEGeometry {
 
 	toXML(): Element {
 		var el = document.createElement(DAEGeometry.TagName);
-		DAEUtil.setAttribute(el, "id", this.id);
-		DAEUtil.setAttribute(el, "name", this.name);
-		DAEUtil.addXML(el, this.geometricElement);
-		DAEUtil.addXMLArray(el, this.extras);
+		DAEUtil.setAttr(el, "id", this.id);
+		DAEUtil.setAttr(el, "name", this.name);
+		DAEUtil.addElement(el, this.geometricElement);
+		DAEUtil.addElementArray(el, this.extras);
 		return el;
 	}
 }

@@ -28,12 +28,11 @@ export class DAERigidConstraint {
 
 	static parse(el: Element): DAERigidConstraint {
 		if (el == null) {
-			//console.error("parse error");
 			return null;
 		}
 		var value = new DAERigidConstraint();
-		value.sid = DAEUtil.stringAttrib(el, "sid");
-		value.name = DAEUtil.stringAttrib(el, "name");
+		value.sid = DAEUtil.getStringAttr(el, "sid");
+		value.name = DAEUtil.getStringAttr(el, "name");
 		value.refAttachment = DAERefAttachment.parse(
 			DAEUtil.queryChildSelector(el, DAERefAttachment.TagName)
 		);
@@ -52,5 +51,16 @@ export class DAERigidConstraint {
 		return DAEUtil.parseArray<DAERigidConstraint>(
 			this.parse, parent, DAERigidConstraint.TagName
 		);
+	}
+
+	toXML(): Element {
+		var el = document.createElement(DAERigidConstraint.TagName);
+		DAEUtil.setAttr(el, "sid", this.sid);
+		DAEUtil.setAttr(el, "name", this.name);
+		DAEUtil.addElement(el, this.refAttachment);
+		DAEUtil.addElement(el, this.attachment);
+		DAEUtil.addElementArray(el, this.techniques);
+		DAEUtil.addElementArray(el, this.extras);
+		return el;
 	}
 }

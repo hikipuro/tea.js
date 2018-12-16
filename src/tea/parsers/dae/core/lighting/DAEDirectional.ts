@@ -12,7 +12,6 @@ export class DAEDirectional {
 
 	static parse(el: Element): DAEDirectional {
 		if (el == null) {
-			//console.error("parse error");
 			return null;
 		}
 		var value = new DAEDirectional();
@@ -24,7 +23,7 @@ export class DAEDirectional {
 
 	toXML(): Element {
 		var el = document.createElement(DAEDirectional.TagName);
-		DAEUtil.addXML(el, this.color);
+		DAEUtil.addElement(el, this.color);
 		return el;
 	}
 }

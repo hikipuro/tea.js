@@ -2,7 +2,7 @@ import { DAEUtil } from "../../DAEUtil";
 
 // parent: 
 export class DAELibraryEffects {
-	static readonly TagName: string = "origin";
+	static readonly TagName: string = "library_effects";
 	id?: string;
 
 	constructor() {

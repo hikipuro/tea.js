@@ -22,12 +22,11 @@ export class DAEForceField {
 
 	static parse(el: Element): DAEForceField {
 		if (el == null) {
-			//console.error("parse error");
 			return null;
 		}
 		var value = new DAEForceField();
-		value.id = DAEUtil.stringAttrib(el, "id");
-		value.name = DAEUtil.stringAttrib(el, "name");
+		value.id = DAEUtil.getStringAttr(el, "id");
+		value.name = DAEUtil.getStringAttr(el, "name");
 		value.asset = DAEAsset.parse(
 			DAEUtil.queryChildSelector(el, DAEAsset.TagName)
 		);
@@ -40,5 +39,15 @@ export class DAEForceField {
 		return DAEUtil.parseArray<DAEForceField>(
 			this.parse, parent, DAEForceField.TagName
 		);
+	}
+
+	toXML(): Element {
+		var el = document.createElement(DAEForceField.TagName);
+		DAEUtil.setAttr(el, "id", this.id);
+		DAEUtil.setAttr(el, "name", this.name);
+		DAEUtil.addElement(el, this.asset);
+		DAEUtil.addElementArray(el, this.techniques);
+		DAEUtil.addElementArray(el, this.extras);
+		return el;
 	}
 }

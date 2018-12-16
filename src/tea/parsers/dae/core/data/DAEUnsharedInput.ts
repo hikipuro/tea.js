@@ -14,12 +14,11 @@ export class DAEUnsharedInput {
 
 	static parse(el: Element): DAEUnsharedInput {
 		if (el == null) {
-			//console.error("parse error");
 			return null;
 		}
 		var value = new DAEUnsharedInput();
-		value.semantic = DAEUtil.semanticAttrib(el);
-		value.source = DAEUtil.stringAttrib(el, "source");
+		value.semantic = DAEUtil.getSemanticAttr(el);
+		value.source = DAEUtil.getStringAttr(el, "source");
 		return value;
 	}
 
@@ -32,8 +31,8 @@ export class DAEUnsharedInput {
 	toXML(): Element {
 		var el = document.createElement(DAEUnsharedInput.TagName);
 		var semantic = DAESemanticType.toString(this.semantic);
-		DAEUtil.setAttribute(el, "semantic", semantic);
-		DAEUtil.setAttribute(el, "source", this.source);
+		DAEUtil.setAttr(el, "semantic", semantic);
+		DAEUtil.setAttr(el, "source", this.source);
 		return el;
 	}
 }

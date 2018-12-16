@@ -21,16 +21,15 @@ export class DAEVertexWeights {
 
 	static parse(el: Element): DAEVertexWeights {
 		if (el == null) {
-			//console.error("parse error");
 			return null;
 		}
 		var value = new DAEVertexWeights();
-		value.count = DAEUtil.intAttrib(el, "count");
+		value.count = DAEUtil.getIntAttr(el, "count");
 		value.inputs = DAESharedInput.parseArray(el);
-		value.vcount = DAEUtil.intArray(
+		value.vcount = DAEUtil.getIntArrayContent(
 			DAEUtil.queryChildSelector(el, "vcount")
 		);
-		value.v = DAEUtil.intArray(
+		value.v = DAEUtil.getIntArrayContent(
 			DAEUtil.queryChildSelector(el, "v")
 		);
 		value.extras = DAEExtra.parseArray(el);
@@ -39,19 +38,11 @@ export class DAEVertexWeights {
 	
 	toXML(): Element {
 		var el = document.createElement(DAEVertexWeights.TagName);
-		DAEUtil.setAttribute(el, "count", this.count);
-		DAEUtil.addXMLArray(el, this.inputs);
-		if (this.vcount != null) {
-			var vcount = document.createElement("vcount");
-			DAEUtil.setArrayContent(vcount, this.vcount);
-			el.appendChild(vcount);
-		}
-		if (this.v != null) {
-			var v = document.createElement("v");
-			DAEUtil.setArrayContent(v, this.v);
-			el.appendChild(v);
-		}
-		DAEUtil.addXMLArray(el, this.extras);
+		DAEUtil.setAttr(el, "count", this.count);
+		DAEUtil.addElementArray(el, this.inputs);
+		DAEUtil.addArrayContent(el, "vcount", this.vcount);
+		DAEUtil.addArrayContent(el, "v", this.v);
+		DAEUtil.addElementArray(el, this.extras);
 		return el;
 	}
 }

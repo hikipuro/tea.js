@@ -4,13 +4,6 @@ import { DAEGeometricElement } from "./DAEGeometricElement";
 import { DAEPrimitiveElement } from "./DAEPrimitiveElement";
 import { DAESource } from "../data/DAESource";
 import { DAEVertices } from "./DAEVertices";
-import { DAELines } from "./DAELines";
-import { DAELinestrips } from "./DAELineStrips";
-import { DAEPolygons } from "./DAEPolygons";
-import { DAEPolylist } from "./DAEPolylist";
-import { DAETriangles } from "./DAETriangles";
-import { DAETrifans } from "./DAETrifans";
-import { DAETristrips } from "./DAETristrips";
 import { DAEExtra } from "../extensibility/DAEExtra";
 import { DAESemanticType } from "../data/DAESemanticType";
 
@@ -31,7 +24,6 @@ export class DAEMesh implements DAEGeometricElement {
 
 	static parse(el: Element): DAEMesh {
 		if (el == null) {
-			//console.error("parse error");
 			return null;
 		}
 		var value = new DAEMesh();
@@ -39,56 +31,9 @@ export class DAEMesh implements DAEGeometricElement {
 		value.vertices = DAEVertices.parse(
 			DAEUtil.queryChildSelector(el, DAEVertices.TagName)
 		);
-		value.primitiveElements = DAEMesh.parsePrimitiveElements(el);
+		value.primitiveElements = DAEPrimitiveElement.parseArray(el);
 		value.extras = DAEExtra.parseArray(el);
 		return value;
-	}
-
-	protected static parsePrimitiveElements(el: Element): Array<DAEPrimitiveElement> {
-		if (el == null || el.childElementCount <= 0) {
-			return null;
-		}
-		var elements = [];
-		var el = el.firstElementChild;
-		while (el != null) {
-			var name = el.tagName;
-			var child = null;
-			switch (name) {
-				case DAELines.TagName:
-					child = DAELines.parse(el);
-					break;
-				case DAELinestrips.TagName:
-					child = DAELinestrips.parse(el);
-					break;
-				case DAEPolygons.TagName:
-					child = DAEPolygons.parse(el);
-					break;
-				case DAEPolylist.TagName:
-					child = DAEPolylist.parse(el);
-					break;
-				case DAETriangles.TagName:
-					child = DAETriangles.parse(el);
-					break;
-				case DAETrifans.TagName:
-					child = DAETrifans.parse(el);
-					break;
-				case DAETristrips.TagName:
-					child = DAETristrips.parse(el);
-					break;
-				case DAESource.TagName:
-				case DAEVertices.TagName:
-				case DAEExtra.TagName:
-					break;
-				default:
-					console.warn("unknown tag:", name);
-					break;
-			}
-			if (child != null) {
-				elements.push(child);
-			}
-			el = el.nextElementSibling;
-		}
-		return elements;
 	}
 
 	findSource(id: string): DAESource {
@@ -161,10 +106,10 @@ export class DAEMesh implements DAEGeometricElement {
 
 	toXML(): Element {
 		var el = document.createElement(DAEMesh.TagName);
-		DAEUtil.addXMLArray(el, this.sources);
-		DAEUtil.addXML(el, this.vertices);
-		DAEUtil.addXMLArray(el, this.primitiveElements);
-		DAEUtil.addXMLArray(el, this.extras);
+		DAEUtil.addElementArray(el, this.sources);
+		DAEUtil.addElement(el, this.vertices);
+		DAEUtil.addElementArray(el, this.primitiveElements);
+		DAEUtil.addElementArray(el, this.extras);
 		return el;
 	}
 }

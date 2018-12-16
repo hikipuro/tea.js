@@ -20,12 +20,11 @@ export class DAEVertices {
 
 	static parse(el: Element): DAEVertices {
 		if (el == null) {
-			//console.error("parse error");
 			return null;
 		}
 		var value = new DAEVertices();
-		value.id = DAEUtil.stringAttrib(el, "id");
-		value.name = DAEUtil.stringAttrib(el, "name");
+		value.id = DAEUtil.getStringAttr(el, "id");
+		value.name = DAEUtil.getStringAttr(el, "name");
 		value.inputs = DAEUnsharedInput.parseArray(el);
 		value.extras = DAEExtra.parseArray(el);
 		return value;
@@ -43,10 +42,10 @@ export class DAEVertices {
 
 	toXML(): Element {
 		var el = document.createElement(DAEVertices.TagName);
-		DAEUtil.setAttribute(el, "id", this.id);
-		DAEUtil.setAttribute(el, "name", this.name);
-		DAEUtil.addXMLArray(el, this.inputs);
-		DAEUtil.addXMLArray(el, this.extras);
+		DAEUtil.setAttr(el, "id", this.id);
+		DAEUtil.setAttr(el, "name", this.name);
+		DAEUtil.addElementArray(el, this.inputs);
+		DAEUtil.addElementArray(el, this.extras);
 		return el;
 	}
 }

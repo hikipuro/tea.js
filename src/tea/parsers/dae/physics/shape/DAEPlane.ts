@@ -4,24 +4,30 @@ import { DAEExtra } from "../../core/extensibility/DAEExtra";
 // parent: shape, surface (B-Rep)
 export class DAEPlane {
 	static readonly TagName: string = "plane";
-	equation: Array<number>;
+	equations: Array<number>;
 	extras?: Array<DAEExtra>;
 
 	constructor() {
-		this.equation = [];
+		this.equations = [];
 		this.extras = null;
 	}
 
 	static parse(el: Element): DAEPlane {
 		if (el == null) {
-			//console.error("parse error");
 			return null;
 		}
 		var value = new DAEPlane();
-		value.equation = DAEUtil.floatArray(
+		value.equations = DAEUtil.getFloatArrayContent(
 			DAEUtil.queryChildSelector(el, "equation")
 		);
 		value.extras = DAEExtra.parseArray(el);
 		return value;
+	}
+
+	toXML(): Element {
+		var el = document.createElement(DAEPlane.TagName);
+		DAEUtil.addArrayContent(el, "equation", this.equations);
+		DAEUtil.addElementArray(el, this.extras);
+		return el;
 	}
 }

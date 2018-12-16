@@ -51,15 +51,14 @@ export class DAENode {
 
 	static parse(el: Element): DAENode {
 		if (el == null) {
-			//console.error("parse error");
 			return null;
 		}
 		var value = new DAENode();
-		value.id = DAEUtil.stringAttrib(el, "id");
-		value.name = DAEUtil.stringAttrib(el, "name");
-		value.sid = DAEUtil.stringAttrib(el, "sid");
-		value.type = DAEUtil.stringAttrib(el, "type");
-		value.layer = DAEUtil.stringAttrib(el, "layer");
+		value.id = DAEUtil.getStringAttr(el, "id");
+		value.name = DAEUtil.getStringAttr(el, "name");
+		value.sid = DAEUtil.getStringAttr(el, "sid");
+		value.type = DAEUtil.getStringAttr(el, "type");
+		value.layer = DAEUtil.getStringAttr(el, "layer");
 		value.asset = DAEAsset.parse(
 			DAEUtil.queryChildSelector(el, DAEAsset.TagName)
 		);
@@ -131,20 +130,20 @@ export class DAENode {
 
 	toXML(): Element {
 		var el = document.createElement(DAENode.TagName);
-		DAEUtil.setAttribute(el, "id", this.id);
-		DAEUtil.setAttribute(el, "name", this.name);
-		DAEUtil.setAttribute(el, "sid", this.sid);
-		DAEUtil.setAttribute(el, "type", this.type);
-		DAEUtil.setAttribute(el, "layer", this.layer);
-		DAEUtil.addXML(el, this.asset);
-		DAEUtil.addXMLArray(el, this.transformationElements);
-		DAEUtil.addXMLArray(el, this.instanceCameras);
-		DAEUtil.addXMLArray(el, this.instanceControllers);
-		DAEUtil.addXMLArray(el, this.instanceGeometries);
-		DAEUtil.addXMLArray(el, this.instanceLights);
-		DAEUtil.addXMLArray(el, this.instanceNodes);
-		DAEUtil.addXMLArray(el, this.nodes);
-		DAEUtil.addXMLArray(el, this.extras);
+		DAEUtil.setAttr(el, "id", this.id);
+		DAEUtil.setAttr(el, "name", this.name);
+		DAEUtil.setAttr(el, "sid", this.sid);
+		DAEUtil.setAttr(el, "type", this.type);
+		DAEUtil.setAttr(el, "layer", this.layer);
+		DAEUtil.addElement(el, this.asset);
+		DAEUtil.addElementArray(el, this.transformationElements);
+		DAEUtil.addElementArray(el, this.instanceCameras);
+		DAEUtil.addElementArray(el, this.instanceControllers);
+		DAEUtil.addElementArray(el, this.instanceGeometries);
+		DAEUtil.addElementArray(el, this.instanceLights);
+		DAEUtil.addElementArray(el, this.instanceNodes);
+		DAEUtil.addElementArray(el, this.nodes);
+		DAEUtil.addElementArray(el, this.extras);
 		return el;
 	}
 }

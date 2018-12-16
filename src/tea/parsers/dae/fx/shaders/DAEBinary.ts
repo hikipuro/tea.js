@@ -1,12 +1,16 @@
 import { DAEUtil } from "../../DAEUtil";
+import { DAERef } from "./DAERef";
+import { DAEHex } from "./DAEHex";
 
-// parent: 
+// parent: compiler, linker
 export class DAEBinary {
-	static readonly TagName: string = "origin";
-	id?: string;
+	static readonly TagName: string = "binary";
+	ref: DAERef;
+	hex: DAEHex;
 
 	constructor() {
-		this.id = null;
+		this.ref = null;
+		this.hex = null;
 	}
 
 	static parse(el: Element): DAEBinary {
@@ -15,6 +19,12 @@ export class DAEBinary {
 			return null;
 		}
 		var value = new DAEBinary();
+		value.ref = DAERef.parse(
+			DAEUtil.queryChildSelector(el, "ref")
+		);
+		value.hex = DAEHex.parse(
+			DAEUtil.queryChildSelector(el, "hex")
+		);
 		return value;
 	}
 

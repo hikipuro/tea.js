@@ -24,7 +24,6 @@ export class DAEOptics {
 
 	static parse(el: Element): DAEOptics {
 		if (el == null) {
-			//console.error("parse error");
 			return null;
 		}
 		var value = new DAEOptics();
@@ -44,11 +43,11 @@ export class DAEOptics {
 
 	toXML(): Element {
 		var el = document.createElement(DAEOptics.TagName);
-		DAEUtil.addXML(el, this.techniqueCommon);
-		DAEUtil.addXMLArray(el, this.techniques);
-		DAEUtil.addXMLArray(el, this.extras);
-		DAEUtil.addXML(el, this.orthographic);
-		DAEUtil.addXML(el, this.perspective);
+		DAEUtil.addElement(el, this.techniqueCommon);
+		DAEUtil.addElementArray(el, this.techniques);
+		DAEUtil.addElementArray(el, this.extras);
+		DAEUtil.addElement(el, this.orthographic);
+		DAEUtil.addElement(el, this.perspective);
 		return el;
 	}
 }

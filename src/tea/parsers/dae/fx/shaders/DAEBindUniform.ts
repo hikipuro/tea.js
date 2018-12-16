@@ -1,12 +1,18 @@
 import { DAEUtil } from "../../DAEUtil";
+import { DAEParamRef } from "../../core/parameters/DAEParamRef";
+import { DAEParameterTypeElement } from "../../core/parameters/DAEParameterTypeElement";
 
-// parent: 
+// parent: shader (CG), program (GLSL2, GLSL)
 export class DAEBindUniform {
-	static readonly TagName: string = "origin";
-	id?: string;
+	static readonly TagName: string = "bind_uniform";
+	symbol: string;
+	param?: DAEParamRef;
+	parameterTypeElement: DAEParameterTypeElement;
 
 	constructor() {
-		this.id = null;
+		this.symbol = null;
+		this.param = null;
+		this.parameterTypeElement = null;
 	}
 
 	static parse(el: Element): DAEBindUniform {
@@ -15,6 +21,11 @@ export class DAEBindUniform {
 			return null;
 		}
 		var value = new DAEBindUniform();
+		value.symbol = DAEUtil.getStringAttr(el, "symbol");
+		value.param = DAEParamRef.parse(
+			DAEUtil.queryChildSelector(el, DAEParamRef.TagName)
+		);
+		//value.parameterTypeElement = DAEParameterTypeElement.parse(el);
 		return value;
 	}
 

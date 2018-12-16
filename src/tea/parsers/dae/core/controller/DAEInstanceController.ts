@@ -1,6 +1,7 @@
 import { DAEUtil } from "../../DAEUtil";
 import { DAEExtra } from "../extensibility/DAEExtra";
 import { DAESkeleton } from "./DAESkeleton";
+import { DAEBindMaterial } from "../../fx/materials/DAEBindMaterial";
 
 // parent: node
 export class DAEInstanceController {
@@ -9,7 +10,7 @@ export class DAEInstanceController {
 	name?: string;
 	url: string;
 	skeletons?: Array<DAESkeleton>;
-	//bindMaterial: any;
+	bindMaterial?: DAEBindMaterial;
 	extras?: Array<DAEExtra>;
 
 	constructor() {
@@ -17,20 +18,22 @@ export class DAEInstanceController {
 		this.name = null;
 		this.url = "";
 		this.skeletons = null;
+		this.bindMaterial = null;
 		this.extras = null;
 	}
 
 	static parse(el: Element): DAEInstanceController {
 		if (el == null) {
-			//console.error("parse error");
 			return null;
 		}
 		var value = new DAEInstanceController();
-		value.sid = DAEUtil.stringAttrib(el, "sid");
-		value.name = DAEUtil.stringAttrib(el, "name");
-		value.url = DAEUtil.stringAttrib(el, "url", "");
+		value.sid = DAEUtil.getStringAttr(el, "sid");
+		value.name = DAEUtil.getStringAttr(el, "name");
+		value.url = DAEUtil.getStringAttr(el, "url", "");
 		value.skeletons = DAESkeleton.parseArray(el);
-		//value.bindMaterial = DAEBindMaterial.parse(el.queryString("bind_material"));
+		value.bindMaterial = DAEBindMaterial.parse(
+			DAEUtil.queryChildSelector(el, DAEBindMaterial.TagName)
+		);
 		value.extras = DAEExtra.parseArray(el);
 		return value;
 	}
@@ -43,12 +46,12 @@ export class DAEInstanceController {
 
 	toXML(): Element {
 		var el = document.createElement(DAEInstanceController.TagName);
-		DAEUtil.setAttribute(el, "sid", this.sid);
-		DAEUtil.setAttribute(el, "name", this.name);
-		DAEUtil.setAttribute(el, "url", this.url);
-		DAEUtil.addXMLArray(el, this.skeletons);
-		//DAEUtil.addXML(el, this.bindMaterial);
-		DAEUtil.addXMLArray(el, this.extras);
+		DAEUtil.setAttr(el, "sid", this.sid);
+		DAEUtil.setAttr(el, "name", this.name);
+		DAEUtil.setAttr(el, "url", this.url);
+		DAEUtil.addElementArray(el, this.skeletons);
+		DAEUtil.addElement(el, this.bindMaterial);
+		DAEUtil.addElementArray(el, this.extras);
 		return el;
 	}
 }

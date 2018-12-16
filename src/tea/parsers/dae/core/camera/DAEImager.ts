@@ -15,7 +15,6 @@ export class DAEImager {
 
 	static parse(el: Element): DAEImager {
 		if (el == null) {
-			//console.error("parse error");
 			return null;
 		}
 		var value = new DAEImager();
@@ -26,8 +25,8 @@ export class DAEImager {
 
 	toXML(): Element {
 		var el = document.createElement(DAEImager.TagName);
-		DAEUtil.addXMLArray(el, this.techniques);
-		DAEUtil.addXMLArray(el, this.extras);
+		DAEUtil.addElementArray(el, this.techniques);
+		DAEUtil.addElementArray(el, this.extras);
 		return el;
 	}
 }

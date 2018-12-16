@@ -1,12 +1,14 @@
 import { DAEUtil } from "../../DAEUtil";
 
-// parent: 
+// parent: profile_CG, profile_GLSL, profile_GLES2
 export class DAECode {
-	static readonly TagName: string = "origin";
-	id?: string;
+	static readonly TagName: string = "code";
+	sid?: string;
+	data: string;
 
 	constructor() {
-		this.id = null;
+		this.sid = null;
+		this.data = null;
 	}
 
 	static parse(el: Element): DAECode {
@@ -15,6 +17,8 @@ export class DAECode {
 			return null;
 		}
 		var value = new DAECode();
+		value.sid = DAEUtil.getStringAttr(el, "sid");
+		value.data = DAEUtil.getStringContent(el);
 		return value;
 	}
 

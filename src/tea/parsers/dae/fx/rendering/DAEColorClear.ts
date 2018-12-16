@@ -1,12 +1,14 @@
 import { DAEUtil } from "../../DAEUtil";
 
-// parent: 
+// parent: evaluate
 export class DAEColorClear {
-	static readonly TagName: string = "origin";
-	id?: string;
+	static readonly TagName: string = "color_clear";
+	index?: number;
+	data?: Array<number>;
 
 	constructor() {
-		this.id = null;
+		this.index = 0;
+		this.data = null;
 	}
 
 	static parse(el: Element): DAEColorClear {
@@ -15,6 +17,8 @@ export class DAEColorClear {
 			return null;
 		}
 		var value = new DAEColorClear();
+		value.index = DAEUtil.getIntAttr(el, "index", 0);
+		value.data = DAEUtil.getFloatArrayContent(el);
 		return value;
 	}
 

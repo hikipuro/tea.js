@@ -1,5 +1,6 @@
 import { DAEUtil } from "../../DAEUtil";
 import { DAEExtra } from "../extensibility/DAEExtra";
+import { DAEBindMaterial } from "../../fx/materials/DAEBindMaterial";
 
 // parent: node, shape
 export class DAEInstanceGeometry {
@@ -7,7 +8,7 @@ export class DAEInstanceGeometry {
 	sid?: string;
 	name?: string;
 	url: string;
-	//bindMaterial: DAEBindMaterial;
+	bindMaterial: DAEBindMaterial;
 	extras?: Array<DAEExtra>;
 
 	constructor() {
@@ -19,14 +20,15 @@ export class DAEInstanceGeometry {
 
 	static parse(el: Element): DAEInstanceGeometry {
 		if (el == null) {
-			//console.error("parse error");
 			return null;
 		}
 		var value = new DAEInstanceGeometry();
-		value.sid = DAEUtil.stringAttrib(el, "sid");
-		value.name = DAEUtil.stringAttrib(el, "name");
-		value.url = DAEUtil.stringAttrib(el, "url", "");
-		//value.bindMaterial = DAEBindMaterial.parse(el.queryString("bind_material"));
+		value.sid = DAEUtil.getStringAttr(el, "sid");
+		value.name = DAEUtil.getStringAttr(el, "name");
+		value.url = DAEUtil.getStringAttr(el, "url", "");
+		value.bindMaterial = DAEBindMaterial.parse(
+			DAEUtil.queryChildSelector(el, DAEBindMaterial.TagName)
+		);
 		value.extras = DAEExtra.parseArray(el);
 		return value;
 	}
@@ -39,11 +41,11 @@ export class DAEInstanceGeometry {
 
 	toXML(): Element {
 		var el = document.createElement(DAEInstanceGeometry.TagName);
-		DAEUtil.setAttribute(el, "sid", this.sid);
-		DAEUtil.setAttribute(el, "name", this.name);
-		DAEUtil.setAttribute(el, "url", this.url);
-		//DAEUtil.addXML(el, this.bindMaterial);
-		DAEUtil.addXMLArray(el, this.extras);
+		DAEUtil.setAttr(el, "sid", this.sid);
+		DAEUtil.setAttr(el, "name", this.name);
+		DAEUtil.setAttr(el, "url", this.url);
+		DAEUtil.addElement(el, this.bindMaterial);
+		DAEUtil.addElementArray(el, this.extras);
 		return el;
 	}
 }

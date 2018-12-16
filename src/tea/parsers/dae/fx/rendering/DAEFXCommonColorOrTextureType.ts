@@ -2,7 +2,7 @@ import { DAEUtil } from "../../DAEUtil";
 
 // parent: 
 export class DAEFXCommonColorOrTextureType {
-	static readonly TagName: string = "origin";
+	static readonly TagName: string = "fx_common_color_or_texture_type";
 	id?: string;
 
 	constructor() {

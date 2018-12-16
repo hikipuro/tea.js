@@ -21,11 +21,10 @@ export class DAESpline implements DAEGeometricElement {
 
 	static parse(el: Element): DAESpline {
 		if (el == null) {
-			//console.error("parse error");
 			return null;
 		}
 		var value = new DAESpline();
-		value.closed = DAEUtil.boolAttrib(el, "closed", false);
+		value.closed = DAEUtil.getBoolAttr(el, "closed", false);
 		value.sources = DAESource.parseArray(el);
 		value.controlVertices = DAEControlVertices.parse(
 			DAEUtil.queryChildSelector(el, DAEControlVertices.TagName)
@@ -36,10 +35,10 @@ export class DAESpline implements DAEGeometricElement {
 
 	toXML(): Element {
 		var el = document.createElement(DAESpline.TagName);
-		DAEUtil.setAttribute(el, "closed", this.closed);
-		DAEUtil.addXMLArray(el, this.sources);
-		DAEUtil.addXML(el, this.controlVertices);
-		DAEUtil.addXMLArray(el, this.extras);
+		DAEUtil.setAttr(el, "closed", this.closed, false);
+		DAEUtil.addElementArray(el, this.sources);
+		DAEUtil.addElement(el, this.controlVertices);
+		DAEUtil.addElementArray(el, this.extras);
 		return el;
 	}
 }

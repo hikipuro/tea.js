@@ -25,18 +25,17 @@ export class DAEFloatArray implements DAEArrayElement {
 
 	static parse(el: Element): DAEFloatArray {
 		if (el == null) {
-			//console.error("parse error");
 			return null;
 		}
 		var value = new DAEFloatArray();
-		value.count = DAEUtil.intAttrib(el, "count");
-		value.id = DAEUtil.stringAttrib(el, "id");
-		value.name = DAEUtil.stringAttrib(el, "name");
-		value.digits = DAEUtil.intAttrib(el, "digits");
+		value.count = DAEUtil.getIntAttr(el, "count");
+		value.id = DAEUtil.getStringAttr(el, "id");
+		value.name = DAEUtil.getStringAttr(el, "name");
+		value.digits = DAEUtil.getIntAttr(el, "digits");
 		value.digits = this.clampDigits(value.digits);
-		value.magnitude = DAEUtil.intAttrib(el, "magnitude");
+		value.magnitude = DAEUtil.getIntAttr(el, "magnitude");
 		value.magnitude = this.clampMagnitude(value.magnitude);
-		value.data = DAEUtil.floatArray(el);
+		value.data = DAEUtil.getFloatArrayContent(el);
 		return value;
 	}
 
@@ -56,17 +55,13 @@ export class DAEFloatArray implements DAEArrayElement {
 
 	toXML(): Element {
 		var el = document.createElement(DAEFloatArray.TagName);
-		DAEUtil.setAttribute(el, "count", this.count);
-		DAEUtil.setAttribute(el, "id", this.id);
-		DAEUtil.setAttribute(el, "name", this.name);
-		if (this.digits != null && this.digits != DAEFloatArray.DefaultDigits) {
-			var digits = DAEFloatArray.clampDigits(this.digits);
-			DAEUtil.setAttribute(el, "digits", digits);
-		}
-		if (this.magnitude != null && this.magnitude != DAEFloatArray.DefaultMagnitude) {
-			var magnitude = DAEFloatArray.clampMagnitude(this.magnitude);
-			DAEUtil.setAttribute(el, "magnitude", magnitude);
-		}
+		DAEUtil.setAttr(el, "count", this.count);
+		DAEUtil.setAttr(el, "id", this.id);
+		DAEUtil.setAttr(el, "name", this.name);
+		var digits = DAEFloatArray.clampDigits(this.digits);
+		DAEUtil.setAttr(el, "digits", digits, DAEFloatArray.DefaultDigits);
+		var magnitude = DAEFloatArray.clampMagnitude(this.magnitude);
+		DAEUtil.setAttr(el, "magnitude", magnitude, DAEFloatArray.DefaultMagnitude);
 		DAEUtil.setArrayContent(el, this.data);
 		return el;
 	}

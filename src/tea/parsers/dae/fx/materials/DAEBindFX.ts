@@ -1,12 +1,14 @@
 import { DAEUtil } from "../../DAEUtil";
 
-// parent: 
+// parent: instance_material (geometry), instance_material (rendering)
 export class DAEBindFX {
-	static readonly TagName: string = "origin";
-	id?: string;
+	static readonly TagName: string = "bind";
+	semantic: string;
+	target: string;
 
 	constructor() {
-		this.id = null;
+		this.semantic = null;
+		this.target = null;
 	}
 
 	static parse(el: Element): DAEBindFX {
@@ -15,6 +17,8 @@ export class DAEBindFX {
 			return null;
 		}
 		var value = new DAEBindFX();
+		value.semantic = DAEUtil.getStringAttr(el, "semantic");
+		value.target = DAEUtil.getStringAttr(el, "target");
 		return value;
 	}
 

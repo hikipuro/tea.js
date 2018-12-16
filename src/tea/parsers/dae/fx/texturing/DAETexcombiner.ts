@@ -2,7 +2,7 @@ import { DAEUtil } from "../../DAEUtil";
 
 // parent: 
 export class DAETexcombiner {
-	static readonly TagName: string = "origin";
+	static readonly TagName: string = "texcombiner";
 	id?: string;
 
 	constructor() {

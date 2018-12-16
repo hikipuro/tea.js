@@ -16,15 +16,22 @@ export class DAECylinder {
 
 	static parse(el: Element): DAECylinder {
 		if (el == null) {
-			//console.error("parse error");
 			return null;
 		}
 		var value = new DAECylinder();
-		value.height = DAEUtil.floatContent(el, "height");
-		value.radius = DAEUtil.floatArray(
+		value.height = DAEUtil.getFloatContent(el, "height");
+		value.radius = DAEUtil.getFloatArrayContent(
 			DAEUtil.queryChildSelector(el, "radius")
 		);
 		value.extras = DAEExtra.parseArray(el);
 		return value;
+	}
+
+	toXML(): Element {
+		var el = document.createElement(DAECylinder.TagName);
+		DAEUtil.addFloatContent(el, "height", this.height);
+		DAEUtil.addArrayContent(el, "radius", this.radius);
+		DAEUtil.addElementArray(el, this.extras);
+		return el;
 	}
 }

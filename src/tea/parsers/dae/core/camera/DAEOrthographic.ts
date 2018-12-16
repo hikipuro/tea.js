@@ -20,7 +20,6 @@ export class DAEOrthographic {
 
 	static parse(el: Element): DAEOrthographic {
 		if (el == null) {
-			//console.error("parse error");
 			return null;
 		}
 		var value = new DAEOrthographic();
@@ -44,11 +43,11 @@ export class DAEOrthographic {
 
 	toXML(): Element {
 		var el = document.createElement(DAEOrthographic.TagName);
-		DAEUtil.addXML(el, this.xmag);
-		DAEUtil.addXML(el, this.ymag);
-		DAEUtil.addXML(el, this.aspectRatio);
-		DAEUtil.addXML(el, this.znear);
-		DAEUtil.addXML(el, this.zfar);
+		DAEUtil.addElement(el, this.xmag);
+		DAEUtil.addElement(el, this.ymag);
+		DAEUtil.addElement(el, this.aspectRatio);
+		DAEUtil.addElement(el, this.znear);
+		DAEUtil.addElement(el, this.zfar);
 		return el;
 	}
 }

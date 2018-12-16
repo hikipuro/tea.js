@@ -18,13 +18,12 @@ export class DAEInstanceForceField {
 
 	static parse(el: Element): DAEInstanceForceField {
 		if (el == null) {
-			//console.error("parse error");
 			return null;
 		}
 		var value = new DAEInstanceForceField();
-		value.sid = DAEUtil.stringAttrib(el, "sid");
-		value.name = DAEUtil.stringAttrib(el, "name");
-		value.url = DAEUtil.stringAttrib(el, "url");
+		value.sid = DAEUtil.getStringAttr(el, "sid");
+		value.name = DAEUtil.getStringAttr(el, "name");
+		value.url = DAEUtil.getStringAttr(el, "url");
 		value.extras = DAEExtra.parseArray(el);
 		return value;
 	}
@@ -33,5 +32,14 @@ export class DAEInstanceForceField {
 		return DAEUtil.parseArray<DAEInstanceForceField>(
 			this.parse, parent, DAEInstanceForceField.TagName
 		);
+	}
+
+	toXML(): Element {
+		var el = document.createElement(DAEInstanceForceField.TagName);
+		DAEUtil.setAttr(el, "sid", this.sid);
+		DAEUtil.setAttr(el, "name", this.name);
+		DAEUtil.setAttr(el, "url", this.url);
+		DAEUtil.addElementArray(el, this.extras);
+		return el;
 	}
 }

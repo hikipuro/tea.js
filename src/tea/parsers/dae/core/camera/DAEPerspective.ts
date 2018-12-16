@@ -20,7 +20,6 @@ export class DAEPerspective {
 
 	static parse(el: Element): DAEPerspective {
 		if (el == null) {
-			//console.error("parse error");
 			return null;
 		}
 		var value = new DAEPerspective();
@@ -44,11 +43,11 @@ export class DAEPerspective {
 
 	toXML(): Element {
 		var el = document.createElement(DAEPerspective.TagName);
-		DAEUtil.addXML(el, this.xfov);
-		DAEUtil.addXML(el, this.yfov);
-		DAEUtil.addXML(el, this.aspectRatio);
-		DAEUtil.addXML(el, this.znear);
-		DAEUtil.addXML(el, this.zfar);
+		DAEUtil.addElement(el, this.xfov);
+		DAEUtil.addElement(el, this.yfov);
+		DAEUtil.addElement(el, this.aspectRatio);
+		DAEUtil.addElement(el, this.znear);
+		DAEUtil.addElement(el, this.zfar);
 		return el;
 	}
 }

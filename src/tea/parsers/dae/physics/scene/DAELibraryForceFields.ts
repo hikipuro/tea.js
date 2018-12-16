@@ -22,17 +22,26 @@ export class DAELibraryForceFields {
 
 	static parse(el: Element): DAELibraryForceFields {
 		if (el == null) {
-			//console.error("parse error");
 			return null;
 		}
 		var value = new DAELibraryForceFields();
-		value.id = DAEUtil.stringAttrib(el, "id");
-		value.name = DAEUtil.stringAttrib(el, "name");
+		value.id = DAEUtil.getStringAttr(el, "id");
+		value.name = DAEUtil.getStringAttr(el, "name");
 		value.asset = DAEAsset.parse(
 			DAEUtil.queryChildSelector(el, DAEAsset.TagName)
 		);
 		value.forceFields = DAEForceField.parseArray(el);
 		value.extras = DAEExtra.parseArray(el);
 		return value;
+	}
+
+	toXML(): Element {
+		var el = document.createElement(DAELibraryForceFields.TagName);
+		DAEUtil.setAttr(el, "id", this.id);
+		DAEUtil.setAttr(el, "name", this.name);
+		DAEUtil.addElement(el, this.asset);
+		DAEUtil.addElementArray(el, this.forceFields);
+		DAEUtil.addElementArray(el, this.extras);
+		return el;
 	}
 }

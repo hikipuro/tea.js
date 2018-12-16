@@ -22,12 +22,11 @@ export class DAELibraryCameras {
 
 	static parse(el: Element): DAELibraryCameras {
 		if (el == null) {
-			//console.error("parse error");
 			return null;
 		}
 		var value = new DAELibraryCameras();
-		value.id = DAEUtil.stringAttrib(el, "id");
-		value.name = DAEUtil.stringAttrib(el, "name");
+		value.id = DAEUtil.getStringAttr(el, "id");
+		value.name = DAEUtil.getStringAttr(el, "name");
 		value.asset = DAEAsset.parse(
 			DAEUtil.queryChildSelector(el, DAEAsset.TagName)
 		);
@@ -38,11 +37,11 @@ export class DAELibraryCameras {
 
 	toXML(): Element {
 		var el = document.createElement(DAELibraryCameras.TagName);
-		DAEUtil.setAttribute(el, "id", this.id);
-		DAEUtil.setAttribute(el, "name", this.name);
-		DAEUtil.addXML(el, this.asset);
-		DAEUtil.addXMLArray(el, this.cameras);
-		DAEUtil.addXMLArray(el, this.extras);
+		DAEUtil.setAttr(el, "id", this.id);
+		DAEUtil.setAttr(el, "name", this.name);
+		DAEUtil.addElement(el, this.asset);
+		DAEUtil.addElementArray(el, this.cameras);
+		DAEUtil.addElementArray(el, this.extras);
 		return el;
 	}
 }

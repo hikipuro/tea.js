@@ -15,7 +15,6 @@ export class DAETargets {
 
 	static parse(el: Element): DAETargets {
 		if (el == null) {
-			//console.error("parse error");
 			return null;
 		}
 		var value = new DAETargets();
@@ -26,8 +25,8 @@ export class DAETargets {
 
 	toXML(): Element {
 		var el = document.createElement(DAETargets.TagName);
-		DAEUtil.addXMLArray(el, this.inputs);
-		DAEUtil.addXMLArray(el, this.extras);
+		DAEUtil.addElementArray(el, this.inputs);
+		DAEUtil.addElementArray(el, this.extras);
 		return el;
 	}
 }

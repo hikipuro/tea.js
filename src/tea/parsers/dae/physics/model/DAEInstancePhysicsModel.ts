@@ -29,14 +29,13 @@ export class DAEInstancePhysicsModel {
 
 	static parse(el: Element): DAEInstancePhysicsModel {
 		if (el == null) {
-			//console.error("parse error");
 			return null;
 		}
 		var value = new DAEInstancePhysicsModel();
-		value.sid = DAEUtil.stringAttrib(el, "sid");
-		value.name = DAEUtil.stringAttrib(el, "name");
-		value.url = DAEUtil.stringAttrib(el, "url");
-		value.parent = DAEUtil.stringAttrib(el, "parent");
+		value.sid = DAEUtil.getStringAttr(el, "sid");
+		value.name = DAEUtil.getStringAttr(el, "name");
+		value.url = DAEUtil.getStringAttr(el, "url");
+		value.parent = DAEUtil.getStringAttr(el, "parent");
 		value.instanceForceFields = DAEInstanceForceField.parseArray(el);
 		value.instanceRigidBodies = DAEInstanceRigidBody.parseArray(el);
 		value.instanceRigidConstraints = DAEInstanceRigidConstraint.parseArray(el);
@@ -48,5 +47,18 @@ export class DAEInstancePhysicsModel {
 		return DAEUtil.parseArray<DAEInstancePhysicsModel>(
 			this.parse, parent, DAEInstancePhysicsModel.TagName
 		);
+	}
+
+	toXML(): Element {
+		var el = document.createElement(DAEInstancePhysicsModel.TagName);
+		DAEUtil.setAttr(el, "sid", this.sid);
+		DAEUtil.setAttr(el, "name", this.name);
+		DAEUtil.setAttr(el, "url", this.url);
+		DAEUtil.setAttr(el, "parent", this.parent);
+		DAEUtil.addElementArray(el, this.instanceForceFields);
+		DAEUtil.addElementArray(el, this.instanceRigidBodies);
+		DAEUtil.addElementArray(el, this.instanceRigidConstraints);
+		DAEUtil.addElementArray(el, this.extras);
+		return el;
 	}
 }

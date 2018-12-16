@@ -2,7 +2,7 @@ import { DAEUtil } from "../../DAEUtil";
 
 // parent: 
 export class DAEBindVertexInput {
-	static readonly TagName: string = "origin";
+	static readonly TagName: string = "bind_vertex_input";
 	id?: string;
 
 	constructor() {

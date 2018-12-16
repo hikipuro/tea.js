@@ -15,7 +15,6 @@ export class DAEControlVertices {
 
 	static parse(el: Element): DAEControlVertices {
 		if (el == null) {
-			//console.error("parse error");
 			return null;
 		}
 		var value = new DAEControlVertices();
@@ -26,8 +25,8 @@ export class DAEControlVertices {
 
 	toXML(): Element {
 		var el = document.createElement(DAEControlVertices.TagName);
-		DAEUtil.addXMLArray(el, this.inputs);
-		DAEUtil.addXMLArray(el, this.extras);
+		DAEUtil.addElementArray(el, this.inputs);
+		DAEUtil.addElementArray(el, this.extras);
 		return el;
 	}
 }

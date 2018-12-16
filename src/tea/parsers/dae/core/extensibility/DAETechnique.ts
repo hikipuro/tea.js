@@ -15,12 +15,11 @@ export class DAETechnique {
 
 	static parse(el: Element): DAETechnique {
 		if (el == null) {
-			//console.error("parse error");
 			return null;
 		}
 		var value = new DAETechnique();
-		value.profile = DAEUtil.stringAttrib(el, "profile");
-		value.xmlns = DAEUtil.stringAttrib(el, "xmlns");
+		value.profile = DAEUtil.getStringAttr(el, "profile");
+		value.xmlns = DAEUtil.getStringAttr(el, "xmlns");
 		return value;
 	}
 
@@ -32,8 +31,8 @@ export class DAETechnique {
 
 	toXML(): Element {
 		var el = document.createElement(DAETechnique.TagName);
-		DAEUtil.setAttribute(el, "profile", this.profile);
-		DAEUtil.setAttribute(el, "xmlns", this.xmlns);
+		DAEUtil.setAttr(el, "profile", this.profile);
+		DAEUtil.setAttr(el, "xmlns", this.xmlns);
 		return el;
 	}
 }

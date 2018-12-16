@@ -22,17 +22,26 @@ export class DAELibraryPhysicsMaterials {
 
 	static parse(el: Element): DAELibraryPhysicsMaterials {
 		if (el == null) {
-			//console.error("parse error");
 			return null;
 		}
 		var value = new DAELibraryPhysicsMaterials();
-		value.id = DAEUtil.stringAttrib(el, "id");
-		value.name = DAEUtil.stringAttrib(el, "name");
+		value.id = DAEUtil.getStringAttr(el, "id");
+		value.name = DAEUtil.getStringAttr(el, "name");
 		value.asset = DAEAsset.parse(
 			DAEUtil.queryChildSelector(el, DAEAsset.TagName)
 		);
 		value.physicsMaterials = DAEPhysicsMaterial.parseArray(el);
 		value.extras = DAEExtra.parseArray(el);
 		return value;
+	}
+
+	toXML(): Element {
+		var el = document.createElement(DAEPhysicsMaterial.TagName);
+		DAEUtil.setAttr(el, "id", this.id);
+		DAEUtil.setAttr(el, "name", this.name);
+		DAEUtil.addElement(el, this.asset);
+		DAEUtil.addElementArray(el, this.physicsMaterials);
+		DAEUtil.addElementArray(el, this.extras);
+		return el;
 	}
 }

@@ -18,14 +18,13 @@ export class DAEParam {
 
 	static parse(el: Element): DAEParam {
 		if (el == null) {
-			//console.error("parse error");
 			return null;
 		}
 		var value = new DAEParam();
-		value.name = DAEUtil.stringAttrib(el, "name");
-		value.sid = DAEUtil.stringAttrib(el, "sid");
-		value.type = DAEUtil.stringAttrib(el, "type");
-		value.semantic = DAEUtil.stringAttrib(el, "semantic");
+		value.name = DAEUtil.getStringAttr(el, "name");
+		value.sid = DAEUtil.getStringAttr(el, "sid");
+		value.type = DAEUtil.getStringAttr(el, "type");
+		value.semantic = DAEUtil.getStringAttr(el, "semantic");
 		return value;
 	}
 
@@ -37,10 +36,10 @@ export class DAEParam {
 
 	toXML(): Element {
 		var el = document.createElement(DAEParam.TagName);
-		DAEUtil.setAttribute(el, "name", this.name);
-		DAEUtil.setAttribute(el, "sid", this.sid);
-		DAEUtil.setAttribute(el, "type", this.type);
-		DAEUtil.setAttribute(el, "semantic", this.semantic);
+		DAEUtil.setAttr(el, "name", this.name);
+		DAEUtil.setAttr(el, "sid", this.sid);
+		DAEUtil.setAttr(el, "type", this.type);
+		DAEUtil.setAttr(el, "semantic", this.semantic);
 		return el;
 	}
 }

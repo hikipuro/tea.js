@@ -11,11 +11,10 @@ export class DAESkeleton {
 
 	static parse(el: Element): DAESkeleton {
 		if (el == null) {
-			//console.error("parse error");
 			return null;
 		}
 		var value = new DAESkeleton();
-		value.data = DAEUtil.textContent(el);
+		value.data = DAEUtil.getStringContent(el);
 		return value;
 	}
 
@@ -27,7 +26,7 @@ export class DAESkeleton {
 
 	toXML(): Element {
 		var el = document.createElement(DAESkeleton.TagName);
-		DAEUtil.setTextContent(el, this.data);
+		DAEUtil.setStringContent(el, this.data);
 		return el;
 	}
 }

@@ -22,12 +22,11 @@ export class DAEMorph {
 
 	static parse(el: Element): DAEMorph {
 		if (el == null) {
-			//console.error("parse error");
 			return null;
 		}
 		var value = new DAEMorph();
-		value.source = DAEUtil.stringAttrib(el, "source");
-		value.method = DAEUtil.stringAttrib(el, "method");
+		value.source = DAEUtil.getStringAttr(el, "source");
+		value.method = DAEUtil.getStringAttr(el, "method");
 		value.sources = DAESource.parseArray(el);
 		value.targets = DAETargets.parse(
 			DAEUtil.queryChildSelector(el, DAETargets.TagName)
@@ -38,11 +37,11 @@ export class DAEMorph {
 
 	toXML(): Element {
 		var el = document.createElement(DAEMorph.TagName);
-		DAEUtil.setAttribute(el, "source", this.source);
-		DAEUtil.setAttribute(el, "method", this.method);
-		DAEUtil.addXMLArray(el, this.sources);
-		DAEUtil.addXML(el, this.targets);
-		DAEUtil.addXMLArray(el, this.extras);
+		DAEUtil.setAttr(el, "source", this.source);
+		DAEUtil.setAttr(el, "method", this.method);
+		DAEUtil.addElementArray(el, this.sources);
+		DAEUtil.addElement(el, this.targets);
+		DAEUtil.addElementArray(el, this.extras);
 		return el;
 	}
 }

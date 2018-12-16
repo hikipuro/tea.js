@@ -25,12 +25,11 @@ export class DAECamera {
 
 	static parse(el: Element): DAECamera {
 		if (el == null) {
-			//console.error("parse error");
 			return null;
 		}
 		var value = new DAECamera();
-		value.id = DAEUtil.stringAttrib(el, "id");
-		value.name = DAEUtil.stringAttrib(el, "name");
+		value.id = DAEUtil.getStringAttr(el, "id");
+		value.name = DAEUtil.getStringAttr(el, "name");
 		value.asset = DAEAsset.parse(
 			DAEUtil.queryChildSelector(el, DAEAsset.TagName)
 		);
@@ -52,12 +51,12 @@ export class DAECamera {
 
 	toXML(): Element {
 		var el = document.createElement(DAECamera.TagName);
-		DAEUtil.setAttribute(el, "id", this.id);
-		DAEUtil.setAttribute(el, "name", this.name);
-		DAEUtil.addXML(el, this.asset);
-		DAEUtil.addXML(el, this.optics);
-		DAEUtil.addXML(el, this.imager);
-		DAEUtil.addXMLArray(el, this.extras);
+		DAEUtil.setAttr(el, "id", this.id);
+		DAEUtil.setAttr(el, "name", this.name);
+		DAEUtil.addElement(el, this.asset);
+		DAEUtil.addElement(el, this.optics);
+		DAEUtil.addElement(el, this.imager);
+		DAEUtil.addElementArray(el, this.extras);
 		return el;
 	}
 }

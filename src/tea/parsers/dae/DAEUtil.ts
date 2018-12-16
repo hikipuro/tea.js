@@ -1,20 +1,30 @@
 import { DAESemanticType } from "./core/data/DAESemanticType";
 
 export class DAEUtil {
+	static getChildSelector(selector: string): string {
+		if (DAEUtil.isNullOrEmpty(selector)) {
+			return "";
+		}
+		return ":scope > " + selector;
+	}
+
 	static queryChildSelector(element: Document | Element, selector: string): Element {
-		return element.querySelector(":scope > " + selector);
+		selector = DAEUtil.getChildSelector(selector);
+		return element.querySelector(selector);
 	}
 	
 	static parseArray<T>(parse: (el: Element) => T, parent: Document | Element, selector: string): Array<T> {
-		if (parent == null || selector == null || selector === "") {
+		if (parse == null
+		||  parent == null
+		||  DAEUtil.isNullOrEmpty(selector)) {
 			return null;
 		}
-		selector = ":scope > " + selector;
+		selector = DAEUtil.getChildSelector(selector);
 		var elements = parent.querySelectorAll(selector);
-		var length = elements.length;
-		if (length <= 0) {
+		if (elements == null || elements.length <= 0) {
 			return null;
 		}
+		var length = elements.length;
 		var result: Array<T> = [];
 		for (var i = 0; i < length; i++) {
 			var el = elements[i];
@@ -27,122 +37,8 @@ export class DAEUtil {
 		return result;
 	}
 
-	static boolContent(element: Element, selector: string = null): boolean {
-		if (element == null) {
-			return null;
-		}
-		var el = element;
-		if (selector != null) {
-			selector = ":scope > " + selector;
-			el = element.querySelector(selector);
-		}
-		if (el == null) {
-			return null;
-		}
-		var value = new Boolean(el.textContent);
-		return value.valueOf();
-	}
-
-	static intContent(element: Element, selector: string = null): number {
-		if (element == null) {
-			return null;
-		}
-		var el = element;
-		if (selector != null) {
-			selector = ":scope > " + selector;
-			el = element.querySelector(selector);
-		}
-		if (el == null) {
-			return null;
-		}
-		return parseInt(el.textContent);
-	}
-
-	static floatContent(element: Element, selector: string = null): number {
-		if (element == null) {
-			return null;
-		}
-		var el = element;
-		if (selector != null) {
-			selector = ":scope > " + selector;
-			el = element.querySelector(selector);
-		}
-		if (el == null) {
-			return null;
-		}
-		return parseFloat(el.textContent);
-	}
-
-	static textContent(element: Element, selector: string = null): string {
-		if (element == null) {
-			return null;
-		}
-		var el = element;
-		if (selector != null) {
-			selector = ":scope > " + selector;
-			el = element.querySelector(selector);
-		}
-		if (el == null) {
-			return null;
-		}
-		return el.textContent;
-	}
-
-	static boolArray(element: Element): Array<boolean> {
-		if (element == null || element.textContent == null) {
-			return null;
-		}
-		var result = [];
-		var content = element.textContent.trim();
-		var values = content.split(/\s+/);
-		var length = values.length;
-		for (var i = 0; i < length; i++) {
-			var n = new Boolean(values[i]);
-			result.push(n.valueOf());
-		}
-		return result;
-	}
-
-	static intArray(element: Element): Array<number> {
-		if (element == null || element.textContent == null) {
-			return null;
-		}
-		var result = [];
-		var content = element.textContent.trim();
-		var numbers = content.split(/\s+/);
-		var length = numbers.length;
-		for (var i = 0; i < length; i++) {
-			var n = parseInt(numbers[i]);
-			result.push(n);
-		}
-		return result;
-	}
-
-	static floatArray(element: Element): Array<number> {
-		if (element == null || element.textContent == null) {
-			return null;
-		}
-		var result = [];
-		var content = element.textContent.trim();
-		var values = content.split(/\s+/);
-		var length = values.length;
-		for (var i = 0; i < length; i++) {
-			var n = parseFloat(values[i]);
-			result.push(n);
-		}
-		return result;
-	}
-
-	static stringArray(element: Element): Array<string> {
-		if (element == null || element.textContent == null) {
-			return null;
-		}
-		var content = element.textContent.trim();
-		return content.split(/\s+/);
-	}
-
-	static boolAttrib(element: Element, name: string, defaultValue: boolean = null): boolean {
-		if (element == null) {
+	static getBoolAttr(element: Element, name: string, defaultValue: boolean = null): boolean {
+		if (element == null || DAEUtil.isNullOrEmpty(name)) {
 			return defaultValue;
 		}
 		var value = element.getAttribute(name);
@@ -156,8 +52,8 @@ export class DAEUtil {
 		return i.valueOf();
 	}
 
-	static intAttrib(element: Element, name: string, defaultValue: number = null): number {
-		if (element == null) {
+	static getIntAttr(element: Element, name: string, defaultValue: number = null): number {
+		if (element == null || DAEUtil.isNullOrEmpty(name)) {
 			return defaultValue;
 		}
 		var value = element.getAttribute(name);
@@ -171,8 +67,8 @@ export class DAEUtil {
 		return i;
 	}
 
-	static floatAttrib(element: Element, name: string, defaultValue: number = null): number {
-		if (element == null) {
+	static getFloatAttr(element: Element, name: string, defaultValue: number = null): number {
+		if (element == null || DAEUtil.isNullOrEmpty(name)) {
 			return defaultValue;
 		}
 		var value = element.getAttribute(name);
@@ -186,8 +82,8 @@ export class DAEUtil {
 		return i;
 	}
 
-	static stringAttrib(element: Element, name: string, defaultValue: string = null): string {
-		if (element == null) {
+	static getStringAttr(element: Element, name: string, defaultValue: string = null): string {
+		if (element == null || DAEUtil.isNullOrEmpty(name)) {
 			return defaultValue;
 		}
 		var value = element.getAttribute(name);
@@ -197,23 +93,159 @@ export class DAEUtil {
 		return value;
 	}
 
-	static semanticAttrib(element: Element, name: string = "semantic"): DAESemanticType {
-		if (element == null || name == null) {
+	static getSemanticAttr(element: Element, name: string = "semantic"): DAESemanticType {
+		if (element == null || DAEUtil.isNullOrEmpty(name)) {
 			return null;
 		}
 		var attr = element.getAttribute(name);
 		return DAESemanticType[attr];
 	}
 
-	static addXML(element: Element, obj: any): void {
+	static getBoolContent(element: Element, selector: string = null): boolean {
+		if (element == null) {
+			return null;
+		}
+		var el = element;
+		if (selector != null) {
+			selector = DAEUtil.getChildSelector(selector);
+			el = element.querySelector(selector);
+		}
+		if (el == null) {
+			return null;
+		}
+		var content = el.textContent;
+		if (content == null || content === "") {
+			return null;
+		}
+		var value = new Boolean(content.trim());
+		return value.valueOf();
+	}
+
+	static getIntContent(element: Element, selector: string = null): number {
+		if (element == null) {
+			return null;
+		}
+		var el = element;
+		if (selector != null) {
+			selector = DAEUtil.getChildSelector(selector);
+			el = element.querySelector(selector);
+		}
+		if (el == null) {
+			return null;
+		}
+		var content = el.textContent;
+		if (content == null || content === "") {
+			return null;
+		}
+		return parseInt(content.trim());
+	}
+
+	static getFloatContent(element: Element, selector: string = null): number {
+		if (element == null) {
+			return null;
+		}
+		var el = element;
+		if (selector != null) {
+			selector = DAEUtil.getChildSelector(selector);
+			el = element.querySelector(selector);
+		}
+		if (el == null) {
+			return null;
+		}
+		var content = el.textContent;
+		if (content == null || content === "") {
+			return null;
+		}
+		return parseFloat(content.trim());
+	}
+
+	static getStringContent(element: Element, selector: string = null): string {
+		if (element == null) {
+			return null;
+		}
+		var el = element;
+		if (selector != null) {
+			selector = DAEUtil.getChildSelector(selector);
+			el = element.querySelector(selector);
+		}
+		if (el == null) {
+			return null;
+		}
+		return el.textContent;
+	}
+
+	static getBoolArrayContent(element: Element): Array<boolean> {
+		if (element == null || element.textContent == null) {
+			return null;
+		}
+		var result = [];
+		var values = DAEUtil.getStringArrayContent(element);
+		var length = values.length;
+		for (var i = 0; i < length; i++) {
+			var n = new Boolean(values[i]);
+			if (n == null) {
+				continue;
+			}
+			result.push(n.valueOf());
+		}
+		return result;
+	}
+
+	static getIntArrayContent(element: Element): Array<number> {
+		if (element == null || element.textContent == null) {
+			return null;
+		}
+		var result = [];
+		var values = DAEUtil.getStringArrayContent(element);
+		var length = values.length;
+		for (var i = 0; i < length; i++) {
+			var n = parseInt(values[i]);
+			if (DAEUtil.isNullOrNaN(n)) {
+				continue;
+			}
+			result.push(n);
+		}
+		return result;
+	}
+
+	static getFloatArrayContent(element: Element): Array<number> {
+		if (element == null || element.textContent == null) {
+			return null;
+		}
+		var result = [];
+		var values = DAEUtil.getStringArrayContent(element);
+		var length = values.length;
+		for (var i = 0; i < length; i++) {
+			var n = parseFloat(values[i]);
+			if (DAEUtil.isNullOrNaN(n)) {
+				continue;
+			}
+			result.push(n);
+		}
+		return result;
+	}
+
+	static getStringArrayContent(element: Element): Array<string> {
+		if (element == null || element.textContent == null) {
+			return null;
+		}
+		var content = element.textContent.trim();
+		return content.split(/\s+/);
+	}
+
+	static addElement(element: Element, obj: any): void {
 		if (element == null || obj == null || obj.toXML == null) {
 			return;
 		}
-		element.appendChild(obj.toXML());
+		var el = obj.toXML();
+		if (el == null) {
+			return;
+		}
+		element.appendChild(el);
 	}
 
-	static addXMLArray(element: Element, array: Array<any>): void {
-		if (element == null || array == null || array.length <= 0) {
+	static addElementArray(element: Element, array: Array<any>): void {
+		if (element == null || DAEUtil.isEmptyArray(array)) {
 			return;
 		}
 		var length = array.length;
@@ -222,12 +254,18 @@ export class DAEUtil {
 			if (item == null || item.toXML == null) {
 				continue;
 			}
-			element.appendChild(item.toXML());
+			var el = item.toXML();
+			if (el == null) {
+				continue;
+			}
+			element.appendChild(el);
 		}
 	}
 
 	static addFloatContent(element: Element, name: string, content: number): void {
-		if (element == null || content == null || isNaN(content)) {
+		if (element == null
+		||  DAEUtil.isNullOrEmpty(name)
+		||  DAEUtil.isNullOrNaN(content)) {
 			return;
 		}
 		var el = document.createElement(name);
@@ -235,8 +273,10 @@ export class DAEUtil {
 		element.appendChild(el);
 	}
 
-	static addTextContent(element: Element, name: string, content: string): void {
-		if (element == null || content == null) {
+	static addStringContent(element: Element, name: string, content: string): void {
+		if (element == null
+		||  DAEUtil.isNullOrEmpty(name)
+		||  DAEUtil.isNullOrEmpty(content)) {
 			return;
 		}
 		var el = document.createElement(name);
@@ -244,8 +284,21 @@ export class DAEUtil {
 		element.appendChild(el);
 	}
 
-	static addTextArray(element: Element, name: string, array: Array<string>): void {
-		if (element == null || array == null || array.length <= 0) {
+	static addDateContent(element: Element, name: string, content: Date): void {
+		if (element == null
+		||  DAEUtil.isNullOrEmpty(name)
+		||  content == null) {
+			return;
+		}
+		var el = document.createElement(name);
+		el.textContent = DAEUtil.formatDate(content);
+		element.appendChild(el);
+	}
+
+	static addStringArrayContent(element: Element, name: string, array: Array<string>): void {
+		if (element == null
+		||  DAEUtil.isNullOrEmpty(name)
+		||  DAEUtil.isEmptyArray(array)) {
 			return;
 		}
 		var el = document.createElement(name);
@@ -253,22 +306,37 @@ export class DAEUtil {
 		element.appendChild(el);
 	}
 
-	static setAttribute(element: Element, name: string, obj: Object): void {
-		if (element == null || name == null || obj == null) {
+	static addArrayContent(element: Element, name: string, array: Array<any>): void {
+		if (element == null
+		||  DAEUtil.isNullOrEmpty(name)
+		||  DAEUtil.isEmptyArray(array)) {
+			return;
+		}
+		var el = document.createElement(name);
+		el.textContent = array.join(" ");
+		element.appendChild(el);
+	}
+
+	static setAttr(element: Element, name: string, obj: Object, defaultValue: Object = null): void {
+		if (element == null
+		||  DAEUtil.isNullOrEmpty(name)
+		||  obj == null
+		||  obj === defaultValue
+		||  obj.toString == null) {
 			return;
 		}
 		element.setAttribute(name, obj.toString());
 	}
 	
-	static setTextContent(element: Element, content: string): void {
-		if (element == null || content == null) {
+	static setStringContent(element: Element, content: string): void {
+		if (element == null || DAEUtil.isNullOrEmpty(content)) {
 			return;
 		}
 		element.textContent = content;
 	}
 
 	static setArrayContent(element: Element, array: Array<any>): void {
-		if (element == null || array == null || array.length <= 0) {
+		if (element == null || DAEUtil.isEmptyArray(array)) {
 			return;
 		}
 		element.textContent = array.join(" ");
@@ -289,5 +357,17 @@ export class DAEUtil {
 			}
 		}
 		return format;
+	}
+
+	protected static isNullOrEmpty(value: string): boolean {
+		return value == null || value === "";
+	}
+
+	protected static isNullOrNaN(value: number): boolean {
+		return value == null || isNaN(value);
+	}
+
+	protected static isEmptyArray(value: Array<any>): boolean {
+		return value == null || value.length <= 0;
 	}
 }

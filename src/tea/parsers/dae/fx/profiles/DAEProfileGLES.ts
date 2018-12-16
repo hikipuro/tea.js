@@ -2,7 +2,7 @@ import { DAEUtil } from "../../DAEUtil";
 
 // parent: 
 export class DAEProfileGLES {
-	static readonly TagName: string = "origin";
+	static readonly TagName: string = "profile_GLES";
 	id?: string;
 
 	constructor() {

@@ -19,7 +19,6 @@ export class DAEPoint {
 
 	static parse(el: Element): DAEPoint {
 		if (el == null) {
-			//console.error("parse error");
 			return null;
 		}
 		var value = new DAEPoint();
@@ -40,10 +39,10 @@ export class DAEPoint {
 
 	toXML(): Element {
 		var el = document.createElement(DAEPoint.TagName);
-		DAEUtil.addXML(el, this.color);
-		DAEUtil.addXML(el, this.constantAttenuation);
-		DAEUtil.addXML(el, this.linearAttenuation);
-		DAEUtil.addXML(el, this.quadraticAttenuation);
+		DAEUtil.addElement(el, this.color);
+		DAEUtil.addElement(el, this.constantAttenuation);
+		DAEUtil.addElement(el, this.linearAttenuation);
+		DAEUtil.addElement(el, this.quadraticAttenuation);
 		return el;
 	}
 }

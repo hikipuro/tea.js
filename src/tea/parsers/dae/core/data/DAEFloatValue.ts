@@ -13,13 +13,12 @@ export class DAEFloatValue {
 	static parse(el: Element, defaultValue: number = null): DAEFloatValue {
 		var value = new DAEFloatValue();
 		if (el == null) {
-			//console.error("parse error");
 			value.data = defaultValue;
 			return value;
 		}
 		value.tagName = el.tagName;
-		value.sid = DAEUtil.stringAttrib(el, "sid");
-		value.data = DAEUtil.floatContent(el);
+		value.sid = DAEUtil.getStringAttr(el, "sid");
+		value.data = DAEUtil.getFloatContent(el);
 		if (value.data == null) {
 			value.data = defaultValue;
 		}
@@ -32,8 +31,8 @@ export class DAEFloatValue {
 			return null;
 		}
 		var el = document.createElement(tagName);
-		DAEUtil.setAttribute(el, "sid", this.sid);
-		DAEUtil.setTextContent(el, this.data.toString());
+		DAEUtil.setAttr(el, "sid", this.sid);
+		DAEUtil.setStringContent(el, this.data.toString());
 		return el;
 	}
 }

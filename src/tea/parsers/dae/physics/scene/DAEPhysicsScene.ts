@@ -6,6 +6,8 @@ import { DAETechniqueCommon } from "../../core/extensibility/DAETechniqueCommon"
 import { DAETechnique } from "../../core/extensibility/DAETechnique";
 import { DAEExtra } from "../../core/extensibility/DAEExtra";
 
+// TODO: add gravity, time_step
+
 // parent: library_physics_scenes
 export class DAEPhysicsScene {
 	static readonly TagName: string = "physics_scene";
@@ -31,12 +33,11 @@ export class DAEPhysicsScene {
 
 	static parse(el: Element): DAEPhysicsScene {
 		if (el == null) {
-			//console.error("parse error");
 			return null;
 		}
 		var value = new DAEPhysicsScene();
-		value.id = DAEUtil.stringAttrib(el, "id");
-		value.name = DAEUtil.stringAttrib(el, "name");
+		value.id = DAEUtil.getStringAttr(el, "id");
+		value.name = DAEUtil.getStringAttr(el, "name");
 		value.asset = DAEAsset.parse(
 			DAEUtil.queryChildSelector(el, DAEAsset.TagName)
 		);
@@ -54,5 +55,18 @@ export class DAEPhysicsScene {
 		return DAEUtil.parseArray<DAEPhysicsScene>(
 			this.parse, parent, DAEPhysicsScene.TagName
 		);
+	}
+
+	toXML(): Element {
+		var el = document.createElement(DAEPhysicsScene.TagName);
+		DAEUtil.setAttr(el, "id", this.id);
+		DAEUtil.setAttr(el, "name", this.name);
+		DAEUtil.addElement(el, this.asset);
+		DAEUtil.addElementArray(el, this.instanceForceFields);
+		DAEUtil.addElementArray(el, this.instancePhysicsModels);
+		DAEUtil.addElement(el, this.techniqueCommon);
+		DAEUtil.addElementArray(el, this.techniques);
+		DAEUtil.addElementArray(el, this.extras);
+		return el;
 	}
 }

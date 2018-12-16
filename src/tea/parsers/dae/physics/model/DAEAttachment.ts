@@ -20,14 +20,22 @@ export class DAEAttachment {
 
 	static parse(el: Element): DAEAttachment {
 		if (el == null) {
-			//console.error("parse error");
 			return null;
 		}
 		var value = new DAEAttachment();
-		value.rigidBody = DAEUtil.stringAttrib(el, "rigid_body");
+		value.rigidBody = DAEUtil.getStringAttr(el, "rigid_body");
 		value.translates = DAETranslate.parseArray(el);
 		value.rotates = DAERotate.parseArray(el);
 		value.extras = DAEExtra.parseArray(el);
 		return value;
+	}
+
+	toXML(): Element {
+		var el = document.createElement(DAEAttachment.TagName);
+		DAEUtil.setAttr(el, "rigid_body", this.rigidBody);
+		DAEUtil.addElementArray(el, this.translates);
+		DAEUtil.addElementArray(el, this.rotates);
+		DAEUtil.addElementArray(el, this.extras);
+		return el;
 	}
 }

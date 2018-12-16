@@ -4,6 +4,7 @@ import { DAESharedInput } from "../data/DAESharedInput";
 import { DAEExtra } from "../extensibility/DAEExtra";
 
 export class DAEPolygonsP {
+	static readonly TagName: string = "p";
 	data: Array<number>;
 
 	constructor() {
@@ -15,18 +16,19 @@ export class DAEPolygonsP {
 			return null;
 		}
 		var value = new DAEPolygonsP();
-		value.data = DAEUtil.intArray(el);
+		value.data = DAEUtil.getIntArrayContent(el);
 		return value;
 	}
 
 	static parseArray(parent: Element): Array<DAEPolygonsP> {
 		return DAEUtil.parseArray<DAEPolygonsP>(
-			this.parse, parent, "p"
+			this.parse, parent, DAEPolygonsP.TagName
 		);
 	}
 }
 
 export class DAEPolygonsH {
+	static readonly TagName: string = "h";
 	data: Array<number>;
 
 	constructor() {
@@ -38,18 +40,19 @@ export class DAEPolygonsH {
 			return null;
 		}
 		var value = new DAEPolygonsH();
-		value.data = DAEUtil.intArray(el);
+		value.data = DAEUtil.getIntArrayContent(el);
 		return value;
 	}
 
 	static parseArray(parent: Element): Array<DAEPolygonsH> {
 		return DAEUtil.parseArray<DAEPolygonsH>(
-			this.parse, parent, "h"
+			this.parse, parent, DAEPolygonsH.TagName
 		);
 	}
 }
 
 export class DAEPolygonsPH {
+	static readonly TagName: string = "ph";
 	p: DAEPolygonsP;
 	h: Array<DAEPolygonsH>;
 
@@ -64,7 +67,7 @@ export class DAEPolygonsPH {
 		}
 		var value = new DAEPolygonsPH();
 		value.p = DAEPolygonsP.parse(
-			DAEUtil.queryChildSelector(el, "p")
+			DAEUtil.queryChildSelector(el, DAEPolygonsP.TagName)
 		);
 		value.h = DAEPolygonsH.parseArray(el);
 		return value;
@@ -72,7 +75,7 @@ export class DAEPolygonsPH {
 
 	static parseArray(parent: Element): Array<DAEPolygonsPH> {
 		return DAEUtil.parseArray<DAEPolygonsPH>(
-			this.parse, parent, "ph"
+			this.parse, parent, DAEPolygonsPH.TagName
 		);
 	}
 }
@@ -97,13 +100,12 @@ export class DAEPolygons implements DAEPrimitiveElement {
 
 	static parse(el: Element): DAEPolygons {
 		if (el == null) {
-			//console.error("parse error");
 			return null;
 		}
 		var value = new DAEPolygons();
-		value.count = DAEUtil.intAttrib(el, "count");
-		value.material = DAEUtil.stringAttrib(el, "material");
-		value.name = DAEUtil.stringAttrib(el, "name");
+		value.count = DAEUtil.getIntAttr(el, "count");
+		value.material = DAEUtil.getStringAttr(el, "material");
+		value.name = DAEUtil.getStringAttr(el, "name");
 		value.inputs = DAESharedInput.parseArray(el);
 		value.p = DAEPolygonsP.parseArray(el);
 		value.ph = DAEPolygonsPH.parseArray(el);
@@ -119,13 +121,13 @@ export class DAEPolygons implements DAEPrimitiveElement {
 
 	toXML(): Element {
 		var el = document.createElement(DAEPolygons.TagName);
-		DAEUtil.setAttribute(el, "count", this.count);
-		DAEUtil.setAttribute(el, "material", this.material);
-		DAEUtil.setAttribute(el, "name", this.name);
-		DAEUtil.addXMLArray(el, this.inputs);
-		DAEUtil.addXMLArray(el, this.p);
-		DAEUtil.addXMLArray(el, this.ph);
-		DAEUtil.addXMLArray(el, this.extras);
+		DAEUtil.setAttr(el, "count", this.count);
+		DAEUtil.setAttr(el, "material", this.material);
+		DAEUtil.setAttr(el, "name", this.name);
+		DAEUtil.addElementArray(el, this.inputs);
+		DAEUtil.addElementArray(el, this.p);
+		DAEUtil.addElementArray(el, this.ph);
+		DAEUtil.addElementArray(el, this.extras);
 		return el;
 	}
 }

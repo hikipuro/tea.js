@@ -2,7 +2,7 @@ import { DAEUtil } from "../../DAEUtil";
 
 // parent: 
 export class DAERender {
-	static readonly TagName: string = "origin";
+	static readonly TagName: string = "render";
 	id?: string;
 
 	constructor() {
@@ -16,6 +16,12 @@ export class DAERender {
 		}
 		var value = new DAERender();
 		return value;
+	}
+
+	static parseArray(parent: Element): Array<DAERender> {
+		return DAEUtil.parseArray<DAERender>(
+			this.parse, parent, DAERender.TagName
+		);
 	}
 
 	toXML(): Element {

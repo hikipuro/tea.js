@@ -16,20 +16,19 @@ export class DAESetparam {
 
 	static parse(el: Element): DAESetparam {
 		if (el == null) {
-			//console.error("parse error");
 			return null;
 		}
 		var value = new DAESetparam();
-		value.ref = DAEUtil.stringAttrib(el, "ref");
-		value.data = DAEUtil.floatContent(el, "float");
+		value.ref = DAEUtil.getStringAttr(el, "ref");
+		value.data = DAEUtil.getFloatContent(el, "float");
 		if (value.data == null) {
-			value.data = DAEUtil.intContent(el, "int");
+			value.data = DAEUtil.getIntContent(el, "int");
 		}
 		if (value.data == null) {
-			value.data = DAEUtil.boolContent(el, "bool");
+			value.data = DAEUtil.getBoolContent(el, "bool");
 		}
 		if (value.data == null) {
-			value.data = DAEUtil.textContent(el, "SIDREF");
+			value.data = DAEUtil.getStringContent(el, "SIDREF");
 		}
 		return value;
 	}
@@ -42,7 +41,8 @@ export class DAESetparam {
 
 	toXML(): Element {
 		var el = document.createElement(DAESetparam.TagName);
-		DAEUtil.setAttribute(el, "ref", this.ref);
+		DAEUtil.setAttr(el, "ref", this.ref);
+		DAEUtil.setStringContent(el, this.data);
 		return el;
 	}
 }

@@ -27,13 +27,12 @@ export class DAEExtra {
 
 	static parse(el: Element): DAEExtra {
 		if (el == null) {
-			//console.error("parse error");
 			return null;
 		}
 		var value = new DAEExtra();
-		value.id = DAEUtil.stringAttrib(el, "id");
-		value.name = DAEUtil.stringAttrib(el, "name");
-		value.type = DAEUtil.stringAttrib(el, "type");
+		value.id = DAEUtil.getStringAttr(el, "id");
+		value.name = DAEUtil.getStringAttr(el, "name");
+		value.type = DAEUtil.getStringAttr(el, "type");
 		value.asset = DAEAsset.parse(
 			DAEUtil.queryChildSelector(el, DAEAsset.TagName)
 		);
@@ -49,11 +48,11 @@ export class DAEExtra {
 
 	toXML(): Element {
 		var el = document.createElement(DAEExtra.TagName);
-		DAEUtil.setAttribute(el, "id", this.id);
-		DAEUtil.setAttribute(el, "name", this.name);
-		DAEUtil.setAttribute(el, "type", this.type);
-		DAEUtil.addXML(el, this.asset);
-		DAEUtil.addXMLArray(el, this.techniques);
+		DAEUtil.setAttr(el, "id", this.id);
+		DAEUtil.setAttr(el, "name", this.name);
+		DAEUtil.setAttr(el, "type", this.type);
+		DAEUtil.addElement(el, this.asset);
+		DAEUtil.addElementArray(el, this.techniques);
 		return el;
 	}
 }

@@ -13,12 +13,11 @@ export class DAEChannel {
 
 	static parse(el: Element): DAEChannel {
 		if (el == null) {
-			//console.error("parse error");
 			return null;
 		}
 		var value = new DAEChannel();
-		value.source = DAEUtil.stringAttrib(el, "source", "");
-		value.target = DAEUtil.stringAttrib(el, "target", "");
+		value.source = DAEUtil.getStringAttr(el, "source", "");
+		value.target = DAEUtil.getStringAttr(el, "target", "");
 		return value;
 	}
 	
@@ -30,8 +29,8 @@ export class DAEChannel {
 
 	toXML(): Element {
 		var el = document.createElement(DAEChannel.TagName);
-		DAEUtil.setAttribute(el, "source", this.source);
-		DAEUtil.setAttribute(el, "target", this.target);
+		DAEUtil.setAttr(el, "source", this.source);
+		DAEUtil.setAttr(el, "target", this.target);
 		return el;
 	}
 }
