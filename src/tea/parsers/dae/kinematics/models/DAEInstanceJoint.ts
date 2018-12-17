@@ -1,20 +1,30 @@
 import { DAEUtil } from "../../DAEUtil";
+import { DAEExtra } from "../../core/extensibility/DAEExtra";
 
-// parent: 
+// parent: kinematics_model/technique_common
 export class DAEInstanceJoint {
 	static readonly TagName: string = "instance_joint";
-	id?: string;
+	sid?: string;
+	name?: string;
+	url: string;
+	extras?: Array<DAEExtra>;
 
 	constructor() {
-		this.id = null;
+		this.sid = null;
+		this.name = null;
+		this.url = "";
+		this.extras = null;
 	}
 
 	static parse(el: Element): DAEInstanceJoint {
 		if (el == null) {
-			//console.error("parse error");
 			return null;
 		}
 		var value = new DAEInstanceJoint();
+		value.sid = DAEUtil.getStringAttr(el, "sid");
+		value.name = DAEUtil.getStringAttr(el, "name");
+		value.url = DAEUtil.getStringAttr(el, "url");
+		value.extras = DAEExtra.parseArray(el);
 		return value;
 	}
 

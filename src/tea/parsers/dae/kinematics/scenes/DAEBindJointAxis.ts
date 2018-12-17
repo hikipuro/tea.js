@@ -1,21 +1,31 @@
 import { DAEUtil } from "../../DAEUtil";
 
-// parent: 
+// TODO: fix
+
+// parent: instance_kinematics_scene
 export class DAEBindJointAxis {
 	static readonly TagName: string = "bind_joint_axis";
-	id?: string;
+	target?: string;
+	//axis:
+	//value:
 
 	constructor() {
-		this.id = null;
+		this.target = null;
 	}
 
 	static parse(el: Element): DAEBindJointAxis {
 		if (el == null) {
-			//console.error("parse error");
 			return null;
 		}
 		var value = new DAEBindJointAxis();
+		value.target = DAEUtil.getStringAttr(el, "target");
 		return value;
+	}
+
+	static parseArray(parent: Element): Array<DAEBindJointAxis> {
+		return DAEUtil.parseArray<DAEBindJointAxis>(
+			this.parse, parent, DAEBindJointAxis.TagName
+		);
 	}
 
 	toXML(): Element {

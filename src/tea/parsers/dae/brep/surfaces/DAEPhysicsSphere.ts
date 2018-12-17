@@ -11,7 +11,6 @@ export class DAEPhysicsSphere {
 
 	static parse(el: Element): DAEPhysicsSphere {
 		if (el == null) {
-			//console.error("parse error");
 			return null;
 		}
 		var value = new DAEPhysicsSphere();

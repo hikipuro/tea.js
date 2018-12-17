@@ -14,7 +14,6 @@ export class DAEAnnotate {
 
 	static parse(el: Element): DAEAnnotate {
 		if (el == null) {
-			//console.error("parse error");
 			return null;
 		}
 		var value = new DAEAnnotate();
@@ -27,5 +26,10 @@ export class DAEAnnotate {
 		return DAEUtil.parseArray<DAEAnnotate>(
 			this.parse, parent, DAEAnnotate.TagName
 		);
+	}
+
+	toXML(): Element {
+		var el = document.createElement(DAEAnnotate.TagName);
+		return el;
 	}
 }

@@ -22,6 +22,12 @@ export class DAEBindAttribute {
 		return value;
 	}
 
+	static parseArray(parent: Element): Array<DAEBindAttribute> {
+		return DAEUtil.parseArray<DAEBindAttribute>(
+			this.parse, parent, DAEBindAttribute.TagName
+		);
+	}
+
 	toXML(): Element {
 		var el = document.createElement(DAEBindAttribute.TagName);
 		return el;

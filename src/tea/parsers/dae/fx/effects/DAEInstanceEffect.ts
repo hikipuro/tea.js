@@ -1,20 +1,38 @@
 import { DAEUtil } from "../../DAEUtil";
+import { DAETechniqueHint } from "./DAETechniqueHint";
+import { DAESetparam } from "../../core/parameters/DAESetParam";
+import { DAEExtra } from "../../core/extensibility/DAEExtra";
 
-// parent: 
+// parent: material
 export class DAEInstanceEffect {
 	static readonly TagName: string = "instance_effect";
-	id?: string;
+	sid?: string;
+	name?: string;
+	url: string;
+	techniqueHints?: Array<DAETechniqueHint>;
+	setparams?: Array<DAESetparam>;
+	extras?: Array<DAEExtra>;
 
 	constructor() {
-		this.id = null;
+		this.sid = null;
+		this.name = null;
+		this.url = null;
+		this.techniqueHints = null;
+		this.setparams = null;
+		this.extras = null;
 	}
 
 	static parse(el: Element): DAEInstanceEffect {
 		if (el == null) {
-			//console.error("parse error");
 			return null;
 		}
 		var value = new DAEInstanceEffect();
+		value.sid = DAEUtil.getStringAttr(el, "sid");
+		value.name = DAEUtil.getStringAttr(el, "name");
+		value.url = DAEUtil.getStringAttr(el, "url");
+		value.techniqueHints = DAETechniqueHint.parseArray(el);
+		value.setparams = DAESetparam.parseArray(el);
+		value.extras = DAEExtra.parseArray(el);
 		return value;
 	}
 

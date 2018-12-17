@@ -15,7 +15,6 @@ export class DAEBinary {
 
 	static parse(el: Element): DAEBinary {
 		if (el == null) {
-			//console.error("parse error");
 			return null;
 		}
 		var value = new DAEBinary();
@@ -26,6 +25,12 @@ export class DAEBinary {
 			DAEUtil.queryChildSelector(el, "hex")
 		);
 		return value;
+	}
+
+	static parseArray(parent: Element): Array<DAEBinary> {
+		return DAEUtil.parseArray<DAEBinary>(
+			this.parse, parent, DAEBinary.TagName
+		);
 	}
 
 	toXML(): Element {

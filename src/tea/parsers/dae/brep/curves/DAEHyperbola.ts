@@ -11,7 +11,6 @@ export class DAEHyperbola {
 
 	static parse(el: Element): DAEHyperbola {
 		if (el == null) {
-			//console.error("parse error");
 			return null;
 		}
 		var value = new DAEHyperbola();

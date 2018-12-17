@@ -1,9 +1,10 @@
 import { DAEUtil } from "../../DAEUtil";
+import { DAEShaderElement } from "./DAEShaderElement";
 
 // TODO: fix
 
 // parent: technique (FX) (profile_COMMON)
-export class DAEBlinn {
+export class DAEBlinn implements DAEShaderElement {
 	static readonly TagName: string = "blinn";
 	emission?: number;
 	ambient?: number;

@@ -1,20 +1,26 @@
 import { DAEUtil } from "../../DAEUtil";
+import { DAEJointType } from "./DAEJointType";
 
-// parent: 
-export class DAEPrismatic {
+// TODO: fix
+
+// parent: joint
+export class DAEPrismatic extends DAEJointType {
 	static readonly TagName: string = "prismatic";
-	id?: string;
+	sid?: string;
+	//axis: 
+	//limits:
 
 	constructor() {
-		this.id = null;
+		super();
+		this.sid = null;
 	}
 
 	static parse(el: Element): DAEPrismatic {
 		if (el == null) {
-			//console.error("parse error");
 			return null;
 		}
 		var value = new DAEPrismatic();
+		value.sid = DAEUtil.getStringAttr(el, "sid");
 		return value;
 	}
 

@@ -93,6 +93,18 @@ export class DAEUtil {
 		return value;
 	}
 
+	static getStringArrayAttr(element: Element, name: string): Array<string> {
+		if (element == null || DAEUtil.isNullOrEmpty(name)) {
+			return null;
+		}
+		var value = element.getAttribute(name);
+		if (value == null) {
+			return null;
+		}
+		value = value.trim();
+		return value.split(/\s+/);
+	}
+
 	static getSemanticAttr(element: Element, name: string = "semantic"): DAESemanticType {
 		if (element == null || DAEUtil.isNullOrEmpty(name)) {
 			return null;
@@ -171,7 +183,7 @@ export class DAEUtil {
 		if (el == null) {
 			return null;
 		}
-		return el.textContent;
+		return el.textContent.trim();
 	}
 
 	static getBoolArrayContent(element: Element): Array<boolean> {
@@ -328,6 +340,13 @@ export class DAEUtil {
 		element.setAttribute(name, obj.toString());
 	}
 	
+	static setFloatContent(element: Element, content: number): void {
+		if (element == null || DAEUtil.isNullOrNaN(content)) {
+			return;
+		}
+		element.textContent = content.toString();
+	}
+
 	static setStringContent(element: Element, content: string): void {
 		if (element == null || DAEUtil.isNullOrEmpty(content)) {
 			return;

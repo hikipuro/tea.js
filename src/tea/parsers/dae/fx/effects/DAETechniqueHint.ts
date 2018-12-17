@@ -11,11 +11,16 @@ export class DAETechniqueHint {
 
 	static parse(el: Element): DAETechniqueHint {
 		if (el == null) {
-			//console.error("parse error");
 			return null;
 		}
 		var value = new DAETechniqueHint();
 		return value;
+	}
+
+	static parseArray(parent: Element): Array<DAETechniqueHint> {
+		return DAEUtil.parseArray<DAETechniqueHint>(
+			this.parse, parent, DAETechniqueHint.TagName
+		);
 	}
 
 	toXML(): Element {

@@ -11,7 +11,6 @@ export class DAEEllipse {
 
 	static parse(el: Element): DAEEllipse {
 		if (el == null) {
-			//console.error("parse error");
 			return null;
 		}
 		var value = new DAEEllipse();

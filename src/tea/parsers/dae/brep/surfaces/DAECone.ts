@@ -11,7 +11,6 @@ export class DAECone {
 
 	static parse(el: Element): DAECone {
 		if (el == null) {
-			//console.error("parse error");
 			return null;
 		}
 		var value = new DAECone();

@@ -1,21 +1,33 @@
 import { DAEUtil } from "../../DAEUtil";
 
-// parent: 
+// parent: instance_material (geometry)
 export class DAEBindVertexInput {
 	static readonly TagName: string = "bind_vertex_input";
-	id?: string;
+	semantic: string;
+	inputSemantic: string;
+	inputSet: number;
 
 	constructor() {
-		this.id = null;
+		this.semantic = null;
+		this.inputSemantic = null;
+		this.inputSet = null;
 	}
 
 	static parse(el: Element): DAEBindVertexInput {
 		if (el == null) {
-			//console.error("parse error");
 			return null;
 		}
 		var value = new DAEBindVertexInput();
+		value.semantic = DAEUtil.getStringAttr(el, "semantic");
+		value.inputSemantic = DAEUtil.getStringAttr(el, "input_semantic");
+		value.inputSet = DAEUtil.getIntAttr(el, "input_set");
 		return value;
+	}
+
+	static parseArray(parent: Element): Array<DAEBindVertexInput> {
+		return DAEUtil.parseArray<DAEBindVertexInput>(
+			this.parse, parent, DAEBindVertexInput.TagName
+		);
 	}
 
 	toXML(): Element {

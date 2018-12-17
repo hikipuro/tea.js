@@ -11,7 +11,6 @@ export class DAECurves {
 
 	static parse(el: Element): DAECurves {
 		if (el == null) {
-			//console.error("parse error");
 			return null;
 		}
 		var value = new DAECurves();

@@ -1,17 +1,31 @@
 import { DAEUtil } from "../../DAEUtil";
+import { DAEShaderElement } from "./DAEShaderElement";
 
-// parent: 
-export class DAELambert {
+// parent: technique (FX) (profile_COMMON)
+export class DAELambert implements DAEShaderElement {
 	static readonly TagName: string = "lambert";
-	id?: string;
+	emission?: number;
+	ambient?: number;
+	diffuse?: number;
+	reflective?: number;
+	reflectivity?: number;
+	transparent?: number;
+	transparency?: number;
+	indexOfRefraction: number;
 
 	constructor() {
-		this.id = null;
+		this.emission = null;
+		this.ambient = null;
+		this.diffuse = null;
+		this.reflective = null;
+		this.reflectivity = null;
+		this.transparent = null;
+		this.transparency = null;
+		this.indexOfRefraction = null;
 	}
 
 	static parse(el: Element): DAELambert {
 		if (el == null) {
-			//console.error("parse error");
 			return null;
 		}
 		var value = new DAELambert();

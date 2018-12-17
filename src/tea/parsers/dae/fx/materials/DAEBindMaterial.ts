@@ -21,7 +21,6 @@ export class DAEBindMaterial {
 
 	static parse(el: Element): DAEBindMaterial {
 		if (el == null) {
-			//console.error("parse error");
 			return null;
 		}
 		var value = new DAEBindMaterial();

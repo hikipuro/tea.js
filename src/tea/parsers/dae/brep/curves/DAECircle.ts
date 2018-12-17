@@ -11,7 +11,6 @@ export class DAECircle {
 
 	static parse(el: Element): DAECircle {
 		if (el == null) {
-			//console.error("parse error");
 			return null;
 		}
 		var value = new DAECircle();

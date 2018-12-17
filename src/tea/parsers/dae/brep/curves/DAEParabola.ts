@@ -11,7 +11,6 @@ export class DAEParabola {
 
 	static parse(el: Element): DAEParabola {
 		if (el == null) {
-			//console.error("parse error");
 			return null;
 		}
 		var value = new DAEParabola();

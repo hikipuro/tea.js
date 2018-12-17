@@ -11,7 +11,6 @@ export class DAELine {
 
 	static parse(el: Element): DAELine {
 		if (el == null) {
-			//console.error("parse error");
 			return null;
 		}
 		var value = new DAELine();

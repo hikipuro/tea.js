@@ -13,13 +13,18 @@ export class DAEBindFX {
 
 	static parse(el: Element): DAEBindFX {
 		if (el == null) {
-			//console.error("parse error");
 			return null;
 		}
 		var value = new DAEBindFX();
 		value.semantic = DAEUtil.getStringAttr(el, "semantic");
 		value.target = DAEUtil.getStringAttr(el, "target");
 		return value;
+	}
+
+	static parseArray(parent: Element): Array<DAEBindFX> {
+		return DAEUtil.parseArray<DAEBindFX>(
+			this.parse, parent, DAEBindFX.TagName
+		);
 	}
 
 	toXML(): Element {

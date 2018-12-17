@@ -1,20 +1,26 @@
 import { DAEUtil } from "../../DAEUtil";
+import { DAEJointType } from "./DAEJointType";
 
-// parent: 
-export class DAERevolute {
+// TODO: fix
+
+// parent: joint
+export class DAERevolute extends DAEJointType {
 	static readonly TagName: string = "revolute";
-	id?: string;
+	sid?: string;
+	//axis: 
+	//limits:
 
 	constructor() {
-		this.id = null;
+		super();
+		this.sid = null;
 	}
 
 	static parse(el: Element): DAERevolute {
 		if (el == null) {
-			//console.error("parse error");
 			return null;
 		}
 		var value = new DAERevolute();
+		value.sid = DAEUtil.getStringAttr(el, "sid");
 		return value;
 	}
 

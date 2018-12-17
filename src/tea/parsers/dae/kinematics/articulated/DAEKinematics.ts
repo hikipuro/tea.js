@@ -1,20 +1,37 @@
 import { DAEUtil } from "../../DAEUtil";
+import { DAEInstanceKinematicsModel } from "../models/DAEInstanceKinematicsModel";
+import { DAETechniqueCommon } from "../../core/extensibility/DAETechniqueCommon";
+import { DAETechnique } from "../../core/extensibility/DAETechnique";
+import { DAEExtra } from "../../core/extensibility/DAEExtra";
 
-// parent: 
+// TODO: add axis_info etc.
+
+// parent: articulated_system
 export class DAEKinematics {
 	static readonly TagName: string = "kinematics";
-	id?: string;
+	instanceKinematicsModels: Array<DAEInstanceKinematicsModel>;
+	techniqueCommon: DAETechniqueCommon;
+	techniques?: Array<DAETechnique>;
+	extras?: Array<DAEExtra>;
 
 	constructor() {
-		this.id = null;
+		this.instanceKinematicsModels = null;
+		this.techniqueCommon = null;
+		this.techniques = null;
+		this.extras = null;
 	}
 
 	static parse(el: Element): DAEKinematics {
 		if (el == null) {
-			//console.error("parse error");
 			return null;
 		}
 		var value = new DAEKinematics();
+		value.instanceKinematicsModels = DAEInstanceKinematicsModel.parseArray(el);
+		value.techniqueCommon = DAETechniqueCommon.parse(
+			DAEUtil.queryChildSelector(el, DAETechniqueCommon.TagName)
+		);
+		value.techniques = DAETechnique.parseArray(el);
+		value.extras = DAEExtra.parseArray(el);
 		return value;
 	}
 

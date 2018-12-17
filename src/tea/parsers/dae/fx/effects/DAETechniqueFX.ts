@@ -11,11 +11,16 @@ export class DAETechniqueFX {
 
 	static parse(el: Element): DAETechniqueFX {
 		if (el == null) {
-			//console.error("parse error");
 			return null;
 		}
 		var value = new DAETechniqueFX();
 		return value;
+	}
+
+	static parseArray(parent: Element): Array<DAETechniqueFX> {
+		return DAEUtil.parseArray<DAETechniqueFX>(
+			this.parse, parent, DAETechniqueFX.TagName
+		);
 	}
 
 	toXML(): Element {

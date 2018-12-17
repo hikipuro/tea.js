@@ -11,7 +11,6 @@ export class DAEOrient {
 
 	static parse(el: Element): DAEOrient {
 		if (el == null) {
-			//console.error("parse error");
 			return null;
 		}
 		var value = new DAEOrient();

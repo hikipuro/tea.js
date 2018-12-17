@@ -11,7 +11,6 @@ export class DAEBrep {
 
 	static parse(el: Element): DAEBrep {
 		if (el == null) {
-			//console.error("parse error");
 			return null;
 		}
 		var value = new DAEBrep();

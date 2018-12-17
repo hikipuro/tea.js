@@ -29,6 +29,12 @@ export class DAEBindUniform {
 		return value;
 	}
 
+	static parseArray(parent: Element): Array<DAEBindUniform> {
+		return DAEUtil.parseArray<DAEBindUniform>(
+			this.parse, parent, DAEBindUniform.TagName
+		);
+	}
+
 	toXML(): Element {
 		var el = document.createElement(DAEBindUniform.TagName);
 		return el;

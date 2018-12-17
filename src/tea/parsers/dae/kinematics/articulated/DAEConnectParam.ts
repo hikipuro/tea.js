@@ -1,20 +1,20 @@
 import { DAEUtil } from "../../DAEUtil";
 
-// parent: 
+// parent: setparam
 export class DAEConnectParam {
 	static readonly TagName: string = "connect_param";
-	id?: string;
+	ref: string;
 
 	constructor() {
-		this.id = null;
+		this.ref = null;
 	}
 
 	static parse(el: Element): DAEConnectParam {
 		if (el == null) {
-			//console.error("parse error");
 			return null;
 		}
 		var value = new DAEConnectParam();
+		value.ref = DAEUtil.getStringAttr(el, "ref");
 		return value;
 	}
 

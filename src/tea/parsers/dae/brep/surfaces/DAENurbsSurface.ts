@@ -11,7 +11,6 @@ export class DAENurbsSurface {
 
 	static parse(el: Element): DAENurbsSurface {
 		if (el == null) {
-			//console.error("parse error");
 			return null;
 		}
 		var value = new DAENurbsSurface();

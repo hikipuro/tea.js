@@ -11,7 +11,6 @@ export class DAESurfaces {
 
 	static parse(el: Element): DAESurfaces {
 		if (el == null) {
-			//console.error("parse error");
 			return null;
 		}
 		var value = new DAESurfaces();

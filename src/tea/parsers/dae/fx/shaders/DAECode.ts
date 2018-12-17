@@ -13,13 +13,18 @@ export class DAECode {
 
 	static parse(el: Element): DAECode {
 		if (el == null) {
-			//console.error("parse error");
 			return null;
 		}
 		var value = new DAECode();
 		value.sid = DAEUtil.getStringAttr(el, "sid");
 		value.data = DAEUtil.getStringContent(el);
 		return value;
+	}
+
+	static parseArray(parent: Element): Array<DAECode> {
+		return DAEUtil.parseArray<DAECode>(
+			this.parse, parent, DAECode.TagName
+		);
 	}
 
 	toXML(): Element {

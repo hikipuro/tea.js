@@ -11,7 +11,6 @@ export class DAEWires {
 
 	static parse(el: Element): DAEWires {
 		if (el == null) {
-			//console.error("parse error");
 			return null;
 		}
 		var value = new DAEWires();

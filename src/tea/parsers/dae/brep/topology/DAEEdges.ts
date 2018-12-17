@@ -11,7 +11,6 @@ export class DAEEdges {
 
 	static parse(el: Element): DAEEdges {
 		if (el == null) {
-			//console.error("parse error");
 			return null;
 		}
 		var value = new DAEEdges();

@@ -1,21 +1,32 @@
 import { DAEUtil } from "../../DAEUtil";
+import { DAEParamRef } from "../../core/parameters/DAEParamRef";
 
-// parent: 
+// TODO: fix
+
+// parent: instance_kinematics_scene
 export class DAEBindKinematicsModel {
 	static readonly TagName: string = "bind_kinematics_model";
-	id?: string;
+	node?: string;
+	param: DAEParamRef;
 
 	constructor() {
-		this.id = null;
+		this.node = null;
+		this.param = null;
 	}
 
 	static parse(el: Element): DAEBindKinematicsModel {
 		if (el == null) {
-			//console.error("parse error");
 			return null;
 		}
 		var value = new DAEBindKinematicsModel();
+		value.node = DAEUtil.getStringAttr(el, "node");
 		return value;
+	}
+
+	static parseArray(parent: Element): Array<DAEBindKinematicsModel> {
+		return DAEUtil.parseArray<DAEBindKinematicsModel>(
+			this.parse, parent, DAEBindKinematicsModel.TagName
+		);
 	}
 
 	toXML(): Element {

@@ -11,7 +11,6 @@ export class DAEShells {
 
 	static parse(el: Element): DAEShells {
 		if (el == null) {
-			//console.error("parse error");
 			return null;
 		}
 		var value = new DAEShells();

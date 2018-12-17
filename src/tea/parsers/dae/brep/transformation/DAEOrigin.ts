@@ -11,7 +11,6 @@ export class DAEOrigin {
 
 	static parse(el: Element): DAEOrigin {
 		if (el == null) {
-			//console.error("parse error");
 			return null;
 		}
 		var value = new DAEOrigin();

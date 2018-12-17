@@ -1,20 +1,28 @@
 import { DAEUtil } from "../../DAEUtil";
+import { DAETranslate } from "../../core/transform/DAETranslate";
+import { DAERotate } from "../../core/transform/DAERotate";
 
-// parent: 
+// parent: kinematics/technique_common
 export class DAEFrameObject {
 	static readonly TagName: string = "frame_object";
-	id?: string;
+	link?: string;
+	translates?: Array<DAETranslate>;
+	rotates?: Array<DAERotate>;
 
 	constructor() {
-		this.id = null;
+		this.link = null;
+		this.translates = null;
+		this.rotates = null;
 	}
 
 	static parse(el: Element): DAEFrameObject {
 		if (el == null) {
-			//console.error("parse error");
 			return null;
 		}
 		var value = new DAEFrameObject();
+		value.link = DAEUtil.getStringAttr(el, "link");
+		value.translates = DAETranslate.parseArray(el);
+		value.rotates = DAETranslate.parseArray(el);
 		return value;
 	}
 

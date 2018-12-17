@@ -1,20 +1,28 @@
 import { DAEUtil } from "../../DAEUtil";
+import { DAEBindKinematics } from "./DAEBindKinematics";
 
-// parent: 
+// TODO: fix
+
+// parent: motion/technique_common
 export class DAEEffectorInfo {
 	static readonly TagName: string = "effector_info";
-	id?: string;
+	sid?: string;
+	name?: string;
+	binds?: Array<DAEBindKinematics>;
 
 	constructor() {
-		this.id = null;
+		this.sid = null;
+		this.name = null;
+		this.binds = null;
 	}
 
 	static parse(el: Element): DAEEffectorInfo {
 		if (el == null) {
-			//console.error("parse error");
 			return null;
 		}
 		var value = new DAEEffectorInfo();
+		value.sid = DAEUtil.getStringAttr(el, "sid");
+		value.name = DAEUtil.getStringAttr(el, "name");
 		return value;
 	}
 

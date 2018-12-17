@@ -11,11 +11,16 @@ export class DAEEffect {
 
 	static parse(el: Element): DAEEffect {
 		if (el == null) {
-			//console.error("parse error");
 			return null;
 		}
 		var value = new DAEEffect();
 		return value;
+	}
+
+	static parseArray(parent: Element): Array<DAEEffect> {
+		return DAEUtil.parseArray<DAEEffect>(
+			this.parse, parent, DAEEffect.TagName
+		);
 	}
 
 	toXML(): Element {

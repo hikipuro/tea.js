@@ -11,11 +11,16 @@ export class DAEShader {
 
 	static parse(el: Element): DAEShader {
 		if (el == null) {
-			//console.error("parse error");
 			return null;
 		}
 		var value = new DAEShader();
 		return value;
+	}
+
+	static parseArray(parent: Element): Array<DAEShader> {
+		return DAEUtil.parseArray<DAEShader>(
+			this.parse, parent, DAEShader.TagName
+		);
 	}
 
 	toXML(): Element {

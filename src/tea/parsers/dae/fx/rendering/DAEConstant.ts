@@ -1,9 +1,10 @@
 import { DAEUtil } from "../../DAEUtil";
+import { DAEShaderElement } from "./DAEShaderElement";
 
 // TODO: fix
 
 // parent: technique (FX) (profile_COMMON)
-export class DAEConstant {
+export class DAEConstant implements DAEShaderElement {
 	static readonly TagName: string = "constant";
 	emission?: number;
 	reflective?: number;

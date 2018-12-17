@@ -11,7 +11,6 @@ export class DAEFaces {
 
 	static parse(el: Element): DAEFaces {
 		if (el == null) {
-			//console.error("parse error");
 			return null;
 		}
 		var value = new DAEFaces();

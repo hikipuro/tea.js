@@ -1,20 +1,20 @@
 import { DAEUtil } from "../../DAEUtil";
 
-// parent: 
+// parent: newparam
 export class DAEModifier {
 	static readonly TagName: string = "modifier";
-	id?: string;
+	data: string;
 
 	constructor() {
-		this.id = null;
+		this.data = null;
 	}
 
 	static parse(el: Element): DAEModifier {
 		if (el == null) {
-			//console.error("parse error");
 			return null;
 		}
 		var value = new DAEModifier();
+		value.data = DAEUtil.getStringContent(el);
 		return value;
 	}
 

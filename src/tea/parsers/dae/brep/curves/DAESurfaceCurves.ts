@@ -11,7 +11,6 @@ export class DAESurfaceCurves {
 
 	static parse(el: Element): DAESurfaceCurves {
 		if (el == null) {
-			//console.error("parse error");
 			return null;
 		}
 		var value = new DAESurfaceCurves();

@@ -11,7 +11,6 @@ export class DAECylinder {
 
 	static parse(el: Element): DAECylinder {
 		if (el == null) {
-			//console.error("parse error");
 			return null;
 		}
 		var value = new DAECylinder();

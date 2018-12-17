@@ -11,7 +11,6 @@ export class DAESolids {
 
 	static parse(el: Element): DAESolids {
 		if (el == null) {
-			//console.error("parse error");
 			return null;
 		}
 		var value = new DAESolids();
