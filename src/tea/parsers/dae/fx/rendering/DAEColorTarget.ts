@@ -23,7 +23,6 @@ export class DAEColorTarget {
 
 	static parse(el: Element): DAEColorTarget {
 		if (el == null) {
-			//console.error("parse error");
 			return null;
 		}
 		var value = new DAEColorTarget();
@@ -42,6 +41,12 @@ export class DAEColorTarget {
 
 	toXML(): Element {
 		var el = document.createElement(DAEColorTarget.TagName);
+		DAEUtil.setAttr(el, "index", this.index, 0);
+		DAEUtil.setAttr(el, "slice", this.slice, 0);
+		DAEUtil.setAttr(el, "mip", this.mip, 0);
+		DAEUtil.setAttr(el, "face", this.face);
+		DAEUtil.addElement(el, this.param);
+		DAEUtil.addElement(el, this.instanceImage);
 		return el;
 	}
 }

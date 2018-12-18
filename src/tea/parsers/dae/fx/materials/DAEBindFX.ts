@@ -29,6 +29,8 @@ export class DAEBindFX {
 
 	toXML(): Element {
 		var el = document.createElement(DAEBindFX.TagName);
+		DAEUtil.setAttr(el, "semantic", this.semantic);
+		DAEUtil.setAttr(el, "target", this.target);
 		return el;
 	}
 }

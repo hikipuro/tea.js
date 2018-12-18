@@ -30,6 +30,7 @@ export class DAEBindJointAxis {
 
 	toXML(): Element {
 		var el = document.createElement(DAEBindJointAxis.TagName);
+		DAEUtil.setAttr(el, "target", this.target);
 		return el;
 	}
 }

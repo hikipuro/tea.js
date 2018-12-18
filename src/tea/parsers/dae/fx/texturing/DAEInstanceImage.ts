@@ -1,7 +1,7 @@
 import { DAEUtil } from "../../DAEUtil";
 import { DAEExtra } from "../../core/extensibility/DAEExtra";
 
-// parent: <sampler*>、color_target、depth_target、stencil_target
+// parent: <sampler*>, color_target, depth_target, stencil_target
 export class DAEInstanceImage {
 	static readonly TagName: string = "instance_image";
 	url: string;
@@ -30,6 +30,10 @@ export class DAEInstanceImage {
 
 	toXML(): Element {
 		var el = document.createElement(DAEInstanceImage.TagName);
+		DAEUtil.setAttr(el, "url", this.url);
+		DAEUtil.setAttr(el, "sid", this.sid);
+		DAEUtil.setAttr(el, "name", this.name);
+		DAEUtil.addElementArray(el, this.extras);
 		return el;
 	}
 }

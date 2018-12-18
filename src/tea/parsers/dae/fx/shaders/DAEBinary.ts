@@ -35,6 +35,8 @@ export class DAEBinary {
 
 	toXML(): Element {
 		var el = document.createElement(DAEBinary.TagName);
+		DAEUtil.addElement(el, this.ref);
+		DAEUtil.addElement(el, this.hex);
 		return el;
 	}
 }

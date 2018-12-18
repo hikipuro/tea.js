@@ -1,8 +1,9 @@
 import { DAEUtil } from "../../DAEUtil";
+import { DAESurfaceElement } from "../../brep/surfaces/DAESurfaceElement";
 import { DAEExtra } from "../../core/extensibility/DAEExtra";
 
 // parent: shape, surface (B-Rep)
-export class DAEPlane {
+export class DAEPlane implements DAESurfaceElement {
 	static readonly TagName: string = "plane";
 	equations: Array<number>;
 	extras?: Array<DAEExtra>;

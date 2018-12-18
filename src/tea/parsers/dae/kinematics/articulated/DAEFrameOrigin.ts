@@ -28,6 +28,9 @@ export class DAEFrameOrigin {
 
 	toXML(): Element {
 		var el = document.createElement(DAEFrameOrigin.TagName);
+		DAEUtil.setAttr(el, "link", this.link);
+		DAEUtil.addElementArray(el, this.translates);
+		DAEUtil.addElementArray(el, this.rotates);
 		return el;
 	}
 }

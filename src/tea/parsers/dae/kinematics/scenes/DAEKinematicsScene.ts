@@ -47,6 +47,12 @@ export class DAEKinematicsScene {
 
 	toXML(): Element {
 		var el = document.createElement(DAEKinematicsScene.TagName);
+		DAEUtil.setAttr(el, "id", this.id);
+		DAEUtil.setAttr(el, "name", this.name);
+		DAEUtil.addElement(el, this.asset);
+		DAEUtil.addElementArray(el, this.instanceKinematicsModels);
+		DAEUtil.addElementArray(el, this.instanceArticulatedSystems);
+		DAEUtil.addElementArray(el, this.extras);
 		return el;
 	}
 }

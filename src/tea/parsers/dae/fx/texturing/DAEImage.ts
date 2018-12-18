@@ -1,5 +1,6 @@
 import { DAEUtil } from "../../DAEUtil";
 import { DAEAsset } from "../../core/metadata/DAEAsset";
+import { DAERenderable } from "./DAERenderable";
 import { DAEInitFrom } from "./DAEInitFrom";
 import { DAECreate2D } from "./DAECreate2D";
 import { DAECreate3D } from "./DAECreate3D";
@@ -13,7 +14,7 @@ export class DAEImage {
 	sid?: string;
 	name?: string;
 	asset?: DAEAsset;
-	//renderable?: DAERenderable;
+	renderable?: DAERenderable;
 	initFrom?: DAEInitFrom;
 	create2d?: DAECreate2D;
 	create3d?: DAECreate3D;
@@ -25,7 +26,7 @@ export class DAEImage {
 		this.sid = null;
 		this.name = null;
 		this.asset = null;
-		//this.renderable = null;
+		this.renderable = null;
 		this.initFrom = null;
 		this.create2d = null;
 		this.create3d = null;
@@ -44,7 +45,9 @@ export class DAEImage {
 		value.asset = DAEAsset.parse(
 			DAEUtil.queryChildSelector(el, DAEAsset.TagName)
 		);
-		//value.renderable = null;
+		value.renderable = DAERenderable.parse(
+			DAEUtil.queryChildSelector(el, DAERenderable.TagName)
+		);
 		value.initFrom = DAEInitFrom.parse(
 			DAEUtil.queryChildSelector(el, DAEInitFrom.TagName)
 		);
@@ -69,6 +72,16 @@ export class DAEImage {
 
 	toXML(): Element {
 		var el = document.createElement(DAEImage.TagName);
+		DAEUtil.setAttr(el, "id", this.id);
+		DAEUtil.setAttr(el, "sid", this.sid);
+		DAEUtil.setAttr(el, "name", this.name);
+		DAEUtil.addElement(el, this.asset);
+		DAEUtil.addElement(el, this.renderable);
+		DAEUtil.addElement(el, this.initFrom);
+		DAEUtil.addElement(el, this.create2d);
+		DAEUtil.addElement(el, this.create3d);
+		DAEUtil.addElement(el, this.createCube);
+		DAEUtil.addElementArray(el, this.extras);
 		return el;
 	}
 }

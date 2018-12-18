@@ -11,7 +11,6 @@ export class DAEFXCommonFloatOrParamType {
 
 	static parse(el: Element): DAEFXCommonFloatOrParamType {
 		if (el == null) {
-			//console.error("parse error");
 			return null;
 		}
 		var value = new DAEFXCommonFloatOrParamType();

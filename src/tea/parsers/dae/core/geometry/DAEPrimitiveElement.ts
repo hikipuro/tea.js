@@ -7,8 +7,12 @@ import { DAETriangles } from "./DAETriangles";
 import { DAETrifans } from "./DAETrifans";
 import { DAETristrips } from "./DAETristrips";
 
-export class DAEPrimitiveElement {
-	static parseArray(el: Element): Array<DAEPrimitiveElement> {
+export interface DAEPrimitiveElement {
+	toXML(): Element;
+}
+
+export module DAEPrimitiveElement {
+	export function parseArray(el: Element): Array<DAEPrimitiveElement> {
 		if (el == null || el.childElementCount <= 0) {
 			return null;
 		}
@@ -55,9 +59,5 @@ export class DAEPrimitiveElement {
 			el = el.nextElementSibling;
 		}
 		return elements;
-	}
-
-	toXML(): Element {
-		return null;
 	}
 }

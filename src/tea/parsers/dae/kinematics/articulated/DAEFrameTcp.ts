@@ -28,6 +28,9 @@ export class DAEFrameTcp {
 
 	toXML(): Element {
 		var el = document.createElement(DAEFrameTcp.TagName);
+		DAEUtil.setAttr(el, "link", this.link);
+		DAEUtil.addElementArray(el, this.translates);
+		DAEUtil.addElementArray(el, this.rotates);
 		return el;
 	}
 }

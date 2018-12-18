@@ -35,6 +35,10 @@ export class DAEBindMaterial {
 
 	toXML(): Element {
 		var el = document.createElement(DAEBindMaterial.TagName);
+		DAEUtil.addElementArray(el, this.params);
+		DAEUtil.addElement(el, this.techniqueCommon);
+		DAEUtil.addElementArray(el, this.techniques);
+		DAEUtil.addElementArray(el, this.extras);
 		return el;
 	}
 }

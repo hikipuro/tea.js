@@ -1,4 +1,5 @@
 import { DAEUtil } from "../../DAEUtil";
+import { DAEProfile } from "./DAEProfile";
 import { DAEAsset } from "../../core/metadata/DAEAsset";
 import { DAENewparam } from "../../core/parameters/DAENewparam";
 import { DAETechniqueFX } from "../effects/DAETechniqueFX";
@@ -7,7 +8,7 @@ import { DAEPass } from "../rendering/DAEPass";
 import { DAEExtra } from "../../core/extensibility/DAEExtra";
 
 // parent: effect
-export class DAEProfileGLES {
+export class DAEProfileGLES implements DAEProfile {
 	static readonly TagName: string = "profile_GLES";
 	id?: string;
 	platform?: string;
@@ -49,6 +50,14 @@ export class DAEProfileGLES {
 
 	toXML(): Element {
 		var el = document.createElement(DAEProfileGLES.TagName);
+		DAEUtil.setAttr(el, "id", this.id);
+		DAEUtil.setAttr(el, "platform", this.platform);
+		DAEUtil.addElement(el, this.asset);
+		DAEUtil.addElementArray(el, this.newparams);
+		DAEUtil.addElementArray(el, this.techniques);
+		DAEUtil.addElementArray(el, this.annotates);
+		DAEUtil.addElementArray(el, this.passes);
+		DAEUtil.addElementArray(el, this.extras);
 		return el;
 	}
 }

@@ -11,7 +11,6 @@ export class DAEFXCommonColorOrTextureType {
 
 	static parse(el: Element): DAEFXCommonColorOrTextureType {
 		if (el == null) {
-			//console.error("parse error");
 			return null;
 		}
 		var value = new DAEFXCommonColorOrTextureType();

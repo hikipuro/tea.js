@@ -1,12 +1,16 @@
 import { DAEUtil } from "../../DAEUtil";
+import { DAECurveElement } from "./DAECurveElement";
+import { DAEExtra } from "../../core/extensibility/DAEExtra";
 
-// parent: 
-export class DAEEllipse {
+// parent: curve
+export class DAEEllipse implements DAECurveElement {
 	static readonly TagName: string = "ellipse";
-	id?: string;
+	radius: number;
+	extras?: Array<DAEExtra>;
 
 	constructor() {
-		this.id = null;
+		this.radius = null;
+		this.extras = null;
 	}
 
 	static parse(el: Element): DAEEllipse {
@@ -14,11 +18,15 @@ export class DAEEllipse {
 			return null;
 		}
 		var value = new DAEEllipse();
+		value.radius = DAEUtil.getFloatContent(el, "radius");
+		value.extras = DAEExtra.parseArray(el);
 		return value;
 	}
 
 	toXML(): Element {
 		var el = document.createElement(DAEEllipse.TagName);
+		DAEUtil.addFloatContent(el, "radius", this.radius);
+		DAEUtil.addElementArray(el, this.extras);
 		return el;
 	}
 }

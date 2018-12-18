@@ -37,6 +37,11 @@ export class DAELibraryMaterials {
 
 	toXML(): Element {
 		var el = document.createElement(DAELibraryMaterials.TagName);
+		DAEUtil.setAttr(el, "id", this.id);
+		DAEUtil.setAttr(el, "name", this.name);
+		DAEUtil.addElement(el, this.asset);
+		DAEUtil.addElementArray(el, this.materials);
+		DAEUtil.addElementArray(el, this.extras);
 		return el;
 	}
 }

@@ -41,6 +41,13 @@ export class DAEInstanceMaterial {
 
 	toXML(): Element {
 		var el = document.createElement(DAEInstanceMaterial.TagName);
+		DAEUtil.setAttr(el, "sid", this.sid);
+		DAEUtil.setAttr(el, "name", this.name);
+		DAEUtil.setAttr(el, "target", this.target);
+		DAEUtil.setAttr(el, "symbol", this.symbol);
+		DAEUtil.addElementArray(el, this.binds);
+		DAEUtil.addElementArray(el, this.bindVertexInputs);
+		DAEUtil.addElementArray(el, this.extras);
 		return el;
 	}
 }

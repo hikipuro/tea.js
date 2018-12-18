@@ -2,6 +2,8 @@ import { DAEUtil } from "../../DAEUtil";
 import { DAEParamRef } from "../../core/parameters/DAEParamRef";
 import { DAEParameterTypeElement } from "../../core/parameters/DAEParameterTypeElement";
 
+// TODO: fix parameter type element
+
 // parent: shader (CG), program (GLSL2, GLSL)
 export class DAEBindUniform {
 	static readonly TagName: string = "bind_uniform";
@@ -17,7 +19,6 @@ export class DAEBindUniform {
 
 	static parse(el: Element): DAEBindUniform {
 		if (el == null) {
-			//console.error("parse error");
 			return null;
 		}
 		var value = new DAEBindUniform();
@@ -37,6 +38,8 @@ export class DAEBindUniform {
 
 	toXML(): Element {
 		var el = document.createElement(DAEBindUniform.TagName);
+		DAEUtil.setAttr(el, "symbol", this.symbol);
+		DAEUtil.addElement(el, this.param);
 		return el;
 	}
 }

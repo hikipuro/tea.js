@@ -36,6 +36,10 @@ export class DAELinker {
 
 	toXML(): Element {
 		var el = document.createElement(DAELinker.TagName);
+		DAEUtil.setAttr(el, "platform", this.platform);
+		DAEUtil.setAttr(el, "target", this.target);
+		DAEUtil.setAttr(el, "options", this.options);
+		DAEUtil.addElementArray(el, this.binaries);
 		return el;
 	}
 }

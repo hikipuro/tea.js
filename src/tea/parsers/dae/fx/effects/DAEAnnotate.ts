@@ -1,6 +1,8 @@
 import { DAEUtil } from "../../DAEUtil";
 import { DAEValueElement } from "./DAEValueElement";
 
+// TODO: fix value
+
 // parent: effect, technique (FX), pass, newparam
 export class DAEAnnotate {
 	static readonly TagName: string = "annotate";
@@ -30,6 +32,7 @@ export class DAEAnnotate {
 
 	toXML(): Element {
 		var el = document.createElement(DAEAnnotate.TagName);
+		DAEUtil.setAttr(el, "name", this.name);
 		return el;
 	}
 }

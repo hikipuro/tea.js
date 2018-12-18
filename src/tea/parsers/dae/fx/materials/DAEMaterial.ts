@@ -45,6 +45,11 @@ export class DAEMaterial {
 
 	toXML(): Element {
 		var el = document.createElement(DAEMaterial.TagName);
+		DAEUtil.setAttr(el, "id", this.id);
+		DAEUtil.setAttr(el, "name", this.name);
+		DAEUtil.addElement(el, this.asset);
+		DAEUtil.addElement(el, this.instanceEffect);
+		DAEUtil.addElementArray(el, this.extras);
 		return el;
 	}
 }

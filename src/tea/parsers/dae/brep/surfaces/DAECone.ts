@@ -1,12 +1,18 @@
 import { DAEUtil } from "../../DAEUtil";
+import { DAESurfaceElement } from "./DAESurfaceElement";
+import { DAEExtra } from "../../core/extensibility/DAEExtra";
 
-// parent: 
-export class DAECone {
+// parent: surfaces/surface
+export class DAECone implements DAESurfaceElement {
 	static readonly TagName: string = "cone";
-	id?: string;
+	radius: number;
+	angle: number;
+	extras?: Array<DAEExtra>;
 
 	constructor() {
-		this.id = null;
+		this.radius = null;
+		this.angle = null;
+		this.extras = null;
 	}
 
 	static parse(el: Element): DAECone {
@@ -14,11 +20,17 @@ export class DAECone {
 			return null;
 		}
 		var value = new DAECone();
+		value.radius = DAEUtil.getFloatContent(el, "radius");
+		value.angle = DAEUtil.getFloatContent(el, "angle");
+		value.extras = DAEExtra.parseArray(el);
 		return value;
 	}
 
 	toXML(): Element {
 		var el = document.createElement(DAECone.TagName);
+		DAEUtil.addFloatContent(el, "radius", this.radius);
+		DAEUtil.addFloatContent(el, "angle", this.angle);
+		DAEUtil.addElementArray(el, this.extras);
 		return el;
 	}
 }

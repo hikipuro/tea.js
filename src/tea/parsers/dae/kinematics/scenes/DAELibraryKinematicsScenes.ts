@@ -37,6 +37,11 @@ export class DAELibraryKinematicsScenes {
 
 	toXML(): Element {
 		var el = document.createElement(DAELibraryKinematicsScenes.TagName);
+		DAEUtil.setAttr(el, "id", this.id);
+		DAEUtil.setAttr(el, "name", this.name);
+		DAEUtil.addElement(el, this.asset);
+		DAEUtil.addElementArray(el, this.kinematicsScenes);
+		DAEUtil.addElementArray(el, this.extras);
 		return el;
 	}
 }

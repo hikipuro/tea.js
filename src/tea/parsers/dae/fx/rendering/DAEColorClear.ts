@@ -13,7 +13,6 @@ export class DAEColorClear {
 
 	static parse(el: Element): DAEColorClear {
 		if (el == null) {
-			//console.error("parse error");
 			return null;
 		}
 		var value = new DAEColorClear();
@@ -24,6 +23,8 @@ export class DAEColorClear {
 
 	toXML(): Element {
 		var el = document.createElement(DAEColorClear.TagName);
+		DAEUtil.setAttr(el, "index", this.index, 0);
+		DAEUtil.setArrayContent(el, this.data);
 		return el;
 	}
 }

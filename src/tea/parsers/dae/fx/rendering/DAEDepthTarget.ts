@@ -1,25 +1,52 @@
 import { DAEUtil } from "../../DAEUtil";
+import { DAEParamRef } from "../../core/parameters/DAEParamRef";
+import { DAEInstanceImage } from "../texturing/DAEInstanceImage";
 
-// parent: 
+// parent: evaluate
 export class DAEDepthTarget {
 	static readonly TagName: string = "depth_target";
-	id?: string;
+	index?: number;
+	slice?: number;
+	mip?: number;
+	face?: string;
+	param?: DAEParamRef;
+	instanceImage?: DAEInstanceImage;
 
 	constructor() {
-		this.id = null;
+		this.index = 0;
+		this.slice = 0;
+		this.mip = 0;
+		this.face = "POSITIVE_X";
+		this.param = null;
+		this.instanceImage = null;
 	}
 
 	static parse(el: Element): DAEDepthTarget {
 		if (el == null) {
-			//console.error("parse error");
 			return null;
 		}
 		var value = new DAEDepthTarget();
+		value.index = DAEUtil.getIntAttr(el, "index", 0);
+		value.slice = DAEUtil.getIntAttr(el, "slice", 0);
+		value.mip = DAEUtil.getIntAttr(el, "mip", 0);
+		value.face = DAEUtil.getStringAttr(el, "face", "POSITIVE_X");
+		value.param = DAEParamRef.parse(
+			DAEUtil.queryChildSelector(el, DAEParamRef.TagName)
+		);
+		value.instanceImage = DAEInstanceImage.parse(
+			DAEUtil.queryChildSelector(el, DAEInstanceImage.TagName)
+		);
 		return value;
 	}
 
 	toXML(): Element {
 		var el = document.createElement(DAEDepthTarget.TagName);
+		DAEUtil.setAttr(el, "index", this.index, 0);
+		DAEUtil.setAttr(el, "slice", this.slice, 0);
+		DAEUtil.setAttr(el, "mip", this.mip, 0);
+		DAEUtil.setAttr(el, "face", this.face, "POSITIVE_X");
+		DAEUtil.addElement(el, this.param);
+		DAEUtil.addElement(el, this.instanceImage);
 		return el;
 	}
 }

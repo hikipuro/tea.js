@@ -126,16 +126,16 @@ export class DAEUtil {
 			return null;
 		}
 		var content = el.textContent;
-		if (content == null || content === "") {
+		if (DAEUtil.isNullOrEmpty(content)) {
 			return null;
 		}
 		var value = new Boolean(content.trim());
 		return value.valueOf();
 	}
 
-	static getIntContent(element: Element, selector: string = null): number {
+	static getIntContent(element: Element, selector: string = null, defaultValue: number = null): number {
 		if (element == null) {
-			return null;
+			return defaultValue;
 		}
 		var el = element;
 		if (selector != null) {
@@ -143,18 +143,22 @@ export class DAEUtil {
 			el = element.querySelector(selector);
 		}
 		if (el == null) {
-			return null;
+			return defaultValue;
 		}
 		var content = el.textContent;
-		if (content == null || content === "") {
-			return null;
+		if (DAEUtil.isNullOrEmpty(content)) {
+			return defaultValue;
 		}
-		return parseInt(content.trim());
+		var value = parseInt(content.trim());
+		if (DAEUtil.isNullOrNaN(value)) {
+			return defaultValue;
+		}
+		return value;
 	}
 
-	static getFloatContent(element: Element, selector: string = null): number {
+	static getFloatContent(element: Element, selector: string = null, defaultValue: number = null): number {
 		if (element == null) {
-			return null;
+			return defaultValue;
 		}
 		var el = element;
 		if (selector != null) {
@@ -162,18 +166,22 @@ export class DAEUtil {
 			el = element.querySelector(selector);
 		}
 		if (el == null) {
-			return null;
+			return defaultValue;
 		}
 		var content = el.textContent;
-		if (content == null || content === "") {
-			return null;
+		if (DAEUtil.isNullOrEmpty(content)) {
+			return defaultValue;
 		}
-		return parseFloat(content.trim());
+		var value = parseFloat(content.trim());
+		if (DAEUtil.isNullOrNaN(value)) {
+			return defaultValue;
+		}
+		return value;
 	}
 
-	static getStringContent(element: Element, selector: string = null): string {
+	static getStringContent(element: Element, selector: string = null, defaultValue: string = null): string {
 		if (element == null) {
-			return null;
+			return defaultValue;
 		}
 		var el = element;
 		if (selector != null) {
@@ -181,17 +189,21 @@ export class DAEUtil {
 			el = element.querySelector(selector);
 		}
 		if (el == null) {
-			return null;
+			return defaultValue;
 		}
-		return el.textContent.trim();
+		var content = el.textContent;
+		if (DAEUtil.isNullOrEmpty(content)) {
+			return defaultValue;
+		}
+		return content.trim();
 	}
 
-	static getBoolArrayContent(element: Element): Array<boolean> {
-		if (element == null || element.textContent == null) {
+	static getBoolArrayContent(element: Element, selector: string = null): Array<boolean> {
+		var values = DAEUtil.getStringArrayContent(element, selector);
+		if (DAEUtil.isEmptyArray(values)) {
 			return null;
 		}
 		var result = [];
-		var values = DAEUtil.getStringArrayContent(element);
 		var length = values.length;
 		for (var i = 0; i < length; i++) {
 			var n = new Boolean(values[i]);
@@ -203,12 +215,12 @@ export class DAEUtil {
 		return result;
 	}
 
-	static getIntArrayContent(element: Element): Array<number> {
-		if (element == null || element.textContent == null) {
+	static getIntArrayContent(element: Element, selector: string = null): Array<number> {
+		var values = DAEUtil.getStringArrayContent(element, selector);
+		if (DAEUtil.isEmptyArray(values)) {
 			return null;
 		}
 		var result = [];
-		var values = DAEUtil.getStringArrayContent(element);
 		var length = values.length;
 		for (var i = 0; i < length; i++) {
 			var n = parseInt(values[i]);
@@ -220,12 +232,12 @@ export class DAEUtil {
 		return result;
 	}
 
-	static getFloatArrayContent(element: Element): Array<number> {
-		if (element == null || element.textContent == null) {
+	static getFloatArrayContent(element: Element, selector: string = null): Array<number> {
+		var values = DAEUtil.getStringArrayContent(element, selector);
+		if (DAEUtil.isEmptyArray(values)) {
 			return null;
 		}
 		var result = [];
-		var values = DAEUtil.getStringArrayContent(element);
 		var length = values.length;
 		for (var i = 0; i < length; i++) {
 			var n = parseFloat(values[i]);
@@ -237,12 +249,23 @@ export class DAEUtil {
 		return result;
 	}
 
-	static getStringArrayContent(element: Element): Array<string> {
-		if (element == null || element.textContent == null) {
+	static getStringArrayContent(element: Element, selector: string = null): Array<string> {
+		if (element == null) {
 			return null;
 		}
-		var content = element.textContent.trim();
-		return content.split(/\s+/);
+		var el = element;
+		if (selector != null) {
+			selector = DAEUtil.getChildSelector(selector);
+			el = element.querySelector(selector);
+		}
+		if (el == null) {
+			return null;
+		}
+		var content = el.textContent;
+		if (DAEUtil.isNullOrEmpty(content)) {
+			return null;
+		}
+		return content.trim().split(/\s+/);
 	}
 
 	static addElement(element: Element, obj: any): void {
@@ -274,10 +297,11 @@ export class DAEUtil {
 		}
 	}
 
-	static addFloatContent(element: Element, name: string, content: number): void {
+	static addIntContent(element: Element, name: string, content: number, defaultValue: number = null): void {
 		if (element == null
 		||  DAEUtil.isNullOrEmpty(name)
-		||  DAEUtil.isNullOrNaN(content)) {
+		||  DAEUtil.isNullOrNaN(content)
+		||  content === defaultValue) {
 			return;
 		}
 		var el = document.createElement(name);
@@ -285,10 +309,23 @@ export class DAEUtil {
 		element.appendChild(el);
 	}
 
-	static addStringContent(element: Element, name: string, content: string): void {
+	static addFloatContent(element: Element, name: string, content: number, defaultValue: number = null): void {
 		if (element == null
 		||  DAEUtil.isNullOrEmpty(name)
-		||  DAEUtil.isNullOrEmpty(content)) {
+		||  DAEUtil.isNullOrNaN(content)
+		||  content === defaultValue) {
+			return;
+		}
+		var el = document.createElement(name);
+		el.textContent = content.toString();
+		element.appendChild(el);
+	}
+
+	static addStringContent(element: Element, name: string, content: string, defaultValue: string = null): void {
+		if (element == null
+		||  DAEUtil.isNullOrEmpty(name)
+		||  DAEUtil.isNullOrEmpty(content)
+		||  content === defaultValue) {
 			return;
 		}
 		var el = document.createElement(name);

@@ -13,7 +13,6 @@ export class DAEHex {
 
 	static parse(el: Element): DAEHex {
 		if (el == null) {
-			//console.error("parse error");
 			return null;
 		}
 		var value = new DAEHex();
@@ -24,6 +23,8 @@ export class DAEHex {
 
 	toXML(): Element {
 		var el = document.createElement(DAEHex.TagName);
+		DAEUtil.setAttr(el, "format", this.format);
+		DAEUtil.setStringContent(el, this.data);
 		return el;
 	}
 }

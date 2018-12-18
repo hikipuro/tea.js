@@ -39,8 +39,21 @@ export class DAEInitFrom {
 		return value;
 	}
 
+	static parseArray(parent: Element): Array<DAEInitFrom> {
+		return DAEUtil.parseArray<DAEInitFrom>(
+			this.parse, parent, DAEInitFrom.TagName
+		);
+	}
+
 	toXML(): Element {
 		var el = document.createElement(DAEInitFrom.TagName);
+		DAEUtil.setAttr(el, "mips_generate", this.mipsGenerate, true);
+		DAEUtil.setAttr(el, "array_index", this.arrayIndex, 0);
+		DAEUtil.setAttr(el, "mip_index", this.mipIndex, 0);
+		DAEUtil.setAttr(el, "depth", this.depth, 0);
+		DAEUtil.setAttr(el, "face", this.face);
+		DAEUtil.addStringContent(el, "ref", this.ref);
+		DAEUtil.addElement(el, this.hex);
 		return el;
 	}
 }

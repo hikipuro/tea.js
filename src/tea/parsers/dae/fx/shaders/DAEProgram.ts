@@ -33,6 +33,10 @@ export class DAEProgram {
 
 	toXML(): Element {
 		var el = document.createElement(DAEProgram.TagName);
+		DAEUtil.addElementArray(el, this.shaders);
+		DAEUtil.addElementArray(el, this.linkers);
+		DAEUtil.addElementArray(el, this.bindAttributes);
+		DAEUtil.addElementArray(el, this.bindUniforms);
 		return el;
 	}
 }

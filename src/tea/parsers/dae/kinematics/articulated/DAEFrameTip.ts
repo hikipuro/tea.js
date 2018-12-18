@@ -28,6 +28,9 @@ export class DAEFrameTip {
 
 	toXML(): Element {
 		var el = document.createElement(DAEFrameTip.TagName);
+		DAEUtil.setAttr(el, "link", this.link);
+		DAEUtil.addElementArray(el, this.translates);
+		DAEUtil.addElementArray(el, this.rotates);
 		return el;
 	}
 }

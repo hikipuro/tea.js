@@ -29,6 +29,8 @@ export class DAECode {
 
 	toXML(): Element {
 		var el = document.createElement(DAECode.TagName);
+		DAEUtil.setAttr(el, "sid", this.sid);
+		DAEUtil.setStringContent(el, this.data);
 		return el;
 	}
 }

@@ -1,6 +1,8 @@
 import { DAEUtil } from "../../DAEUtil";
 import { DAEParameterElement } from "./DAEParameterElement";
 
+// TODO: fix parameter elements
+
 // parent: 
 // core: newparam, setparam
 // fx: create_2d, create_3d, create_cube
@@ -18,7 +20,6 @@ export class DAEArray {
 
 	static parse(el: Element): DAEArray {
 		if (el == null) {
-			//console.error("parse error");
 			return null;
 		}
 		var value = new DAEArray();
@@ -29,6 +30,8 @@ export class DAEArray {
 
 	toXML(): Element {
 		var el = document.createElement(DAEArray.TagName);
+		DAEUtil.setAttr(el, "length", this.length);
+		DAEUtil.setAttr(el, "resizable", this.resizable, false);
 		return el;
 	}
 }

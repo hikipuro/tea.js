@@ -37,6 +37,11 @@ export class DAELibraryEffects {
 
 	toXML(): Element {
 		var el = document.createElement(DAELibraryEffects.TagName);
+		DAEUtil.setAttr(el, "id", this.id);
+		DAEUtil.setAttr(el, "name", this.name);
+		DAEUtil.addElement(el, this.asset);
+		DAEUtil.addElementArray(el, this.effects);
+		DAEUtil.addElementArray(el, this.extras);
 		return el;
 	}
 }

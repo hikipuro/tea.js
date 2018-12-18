@@ -32,6 +32,9 @@ export class DAEBindVertexInput {
 
 	toXML(): Element {
 		var el = document.createElement(DAEBindVertexInput.TagName);
+		DAEUtil.setAttr(el, "semantic", this.semantic);
+		DAEUtil.setAttr(el, "input_semantic", this.inputSemantic);
+		DAEUtil.setAttr(el, "input_set", this.inputSet);
 		return el;
 	}
 }

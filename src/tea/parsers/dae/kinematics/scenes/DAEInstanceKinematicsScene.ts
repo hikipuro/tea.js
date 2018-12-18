@@ -52,6 +52,15 @@ export class DAEInstanceKinematicsScene {
 
 	toXML(): Element {
 		var el = document.createElement(DAEInstanceKinematicsScene.TagName);
+		DAEUtil.setAttr(el, "sid", this.sid);
+		DAEUtil.setAttr(el, "name", this.name);
+		DAEUtil.setAttr(el, "url", this.url);
+		DAEUtil.addElement(el, this.asset);
+		DAEUtil.addElementArray(el, this.newparams);
+		DAEUtil.addElementArray(el, this.setparams);
+		DAEUtil.addElementArray(el, this.bindKinematicsModels);
+		DAEUtil.addElementArray(el, this.bindJointAxes);
+		DAEUtil.addElementArray(el, this.extras);
 		return el;
 	}
 }

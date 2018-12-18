@@ -2,9 +2,7 @@ import * as Tea from "../../../../Tea";
 import { DAEUtil } from "../../DAEUtil";
 import { DAEAsset } from "../metadata/DAEAsset";
 import { DAEGeometricElement } from "./DAEGeometricElement";
-import { DAEConvexMesh } from "../../physics/shape/DAEConvexMesh";
 import { DAEMesh } from "./DAEMesh";
-import { DAESpline } from "./DAESpline";
 import { DAEExtra } from "../extensibility/DAEExtra";
 
 // parent: library_geometries
@@ -34,29 +32,9 @@ export class DAEGeometry {
 		value.asset = DAEAsset.parse(
 			DAEUtil.queryChildSelector(el, DAEAsset.TagName)
 		);
-		value.geometricElement = DAEGeometry.parseGeometricElement(el);
+		value.geometricElement = DAEGeometricElement.parse(el);
 		value.extras = DAEExtra.parseArray(el);
 		return value;
-	}
-
-	protected static parseGeometricElement(el: Element): DAEGeometricElement {
-		var element = DAEUtil.queryChildSelector(el, DAEConvexMesh.TagName);
-		if (element != null) {
-			return DAEConvexMesh.parse(element);
-		}
-		element = DAEUtil.queryChildSelector(el, DAEMesh.TagName);
-		if (element != null) {
-			return DAEMesh.parse(element);
-		}
-		element = DAEUtil.queryChildSelector(el, DAESpline.TagName);
-		if (element != null) {
-			return DAESpline.parse(element);
-		}
-		element = DAEUtil.queryChildSelector(el, "brep");
-		if (element != null) {
-			//return DAEBRep.parse(element);
-		}
-		return null;
 	}
 
 	toMesh(): Tea.Mesh {

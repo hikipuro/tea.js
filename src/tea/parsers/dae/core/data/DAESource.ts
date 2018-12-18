@@ -2,12 +2,7 @@ import * as Tea from "../../../../Tea";
 import { DAEUtil } from "../../DAEUtil";
 import { DAEAsset } from "../metadata/DAEAsset";
 import { DAEArrayElement } from "./DAEArrayElement";
-import { DAEBoolArray } from "./DAEBoolArray";
 import { DAEFloatArray } from "./DAEFloatArray";
-import { DAEIDREFArray } from "./DAEIDREFArray";
-import { DAEIntArray } from "./DAEIntArray";
-import { DAENameArray } from "./DAENameArray";
-import { DAESIDREFArray } from "./DAESIDREFArray";
 import { DAETechniqueCommon } from "../extensibility/DAETechniqueCommon";
 import { DAETechnique } from "../extensibility/DAETechnique";
 
@@ -41,7 +36,7 @@ export class DAESource {
 		value.asset = DAEAsset.parse(
 			DAEUtil.queryChildSelector(el, DAEAsset.TagName)
 		);
-		value.arrayElement = DAESource.parseArrayElement(el);
+		value.arrayElement = DAEArrayElement.parse(el);
 		value.techniqueCommon = DAETechniqueCommon.parse(
 			DAEUtil.queryChildSelector(el, DAETechniqueCommon.TagName)
 		);
@@ -53,38 +48,6 @@ export class DAESource {
 		return DAEUtil.parseArray<DAESource>(
 			this.parse, parent, DAESource.TagName
 		);
-	}
-
-	protected static parseArrayElement(el: Element): DAEArrayElement {
-		var element = DAEUtil.queryChildSelector(el, DAEBoolArray.TagName);
-		if (element != null) {
-			return DAEBoolArray.parse(element);
-		}
-		element = DAEUtil.queryChildSelector(el, DAEFloatArray.TagName);
-		if (element != null) {
-			return DAEFloatArray.parse(element);
-		}
-		element = DAEUtil.queryChildSelector(el, DAEIDREFArray.TagName);
-		if (element != null) {
-			return DAEIDREFArray.parse(element);
-		}
-		element = DAEUtil.queryChildSelector(el, DAEIntArray.TagName);
-		if (element != null) {
-			return DAEIntArray.parse(element);
-		}
-		element = DAEUtil.queryChildSelector(el, DAENameArray.TagName);
-		if (element != null) {
-			return DAENameArray.parse(element);
-		}
-		element = DAEUtil.queryChildSelector(el, DAESIDREFArray.TagName);
-		if (element != null) {
-			return DAESIDREFArray.parse(element);
-		}
-		//element = DAEUtil.queryChildSelector(el, DAETokenArray.TagName);
-		//if (element != null) {
-			//return DAETokenArray.parse(element);
-		//}
-		return null;
 	}
 
 	toXML(): Element {

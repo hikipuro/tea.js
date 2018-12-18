@@ -37,6 +37,10 @@ export class DAEKinematics {
 
 	toXML(): Element {
 		var el = document.createElement(DAEKinematics.TagName);
+		DAEUtil.addElementArray(el, this.instanceKinematicsModels);
+		DAEUtil.addElement(el, this.techniqueCommon);
+		DAEUtil.addElementArray(el, this.techniques);
+		DAEUtil.addElementArray(el, this.extras);
 		return el;
 	}
 }

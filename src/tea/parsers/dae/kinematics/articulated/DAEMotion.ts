@@ -37,6 +37,10 @@ export class DAEMotion {
 
 	toXML(): Element {
 		var el = document.createElement(DAEMotion.TagName);
+		DAEUtil.addElement(el, this.instanceArticulatedSystem);
+		DAEUtil.addElement(el, this.techniqueCommon);
+		DAEUtil.addElementArray(el, this.techniques);
+		DAEUtil.addElementArray(el, this.extras);
 		return el;
 	}
 }

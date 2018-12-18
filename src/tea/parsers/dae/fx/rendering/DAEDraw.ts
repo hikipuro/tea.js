@@ -1,25 +1,26 @@
 import { DAEUtil } from "../../DAEUtil";
 
-// parent: 
+// parent: evaluate
 export class DAEDraw {
 	static readonly TagName: string = "draw";
-	id?: string;
+	data: string;
 
 	constructor() {
-		this.id = null;
+		this.data = null;
 	}
 
 	static parse(el: Element): DAEDraw {
 		if (el == null) {
-			//console.error("parse error");
 			return null;
 		}
 		var value = new DAEDraw();
+		value.data = DAEUtil.getStringContent(el);
 		return value;
 	}
 
 	toXML(): Element {
 		var el = document.createElement(DAEDraw.TagName);
+		DAEUtil.setStringContent(el, this.data);
 		return el;
 	}
 }

@@ -54,6 +54,12 @@ export class DAEPass {
 
 	toXML(): Element {
 		var el = document.createElement(DAEPass.TagName);
+		DAEUtil.setAttr(el, "sid", this.sid);
+		DAEUtil.addElement(el, this.annotate);
+		DAEUtil.addElement(el, this.states);
+		DAEUtil.addElement(el, this.program);
+		DAEUtil.addElement(el, this.evaluate);
+		DAEUtil.addElementArray(el, this.extras);
 		return el;
 	}
 }

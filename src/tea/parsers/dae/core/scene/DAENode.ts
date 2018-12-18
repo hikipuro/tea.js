@@ -1,12 +1,6 @@
 import { DAEUtil } from "../../DAEUtil";
 import { DAEAsset } from "../metadata/DAEAsset";
 import { DAETransformationElement } from "../transform/DAETransformationElement";
-import { DAELookat } from "../transform/DAELookat";
-import { DAEMatrix } from "../transform/DAEMatrix";
-import { DAERotate } from "../transform/DAERotate";
-import { DAEScale } from "../transform/DAEScale";
-import { DAESkew } from "../transform/DAESkew";
-import { DAETranslate } from "../transform/DAETranslate";
 import { DAEInstanceCamera } from "../camera/DAEInstanceCamera";
 import { DAEInstanceController } from "../controller/DAEInstanceController";
 import { DAEInstanceGeometry } from "../geometry/DAEInstanceGeometry";
@@ -62,7 +56,7 @@ export class DAENode {
 		value.asset = DAEAsset.parse(
 			DAEUtil.queryChildSelector(el, DAEAsset.TagName)
 		);
-		value.transformationElements = DAENode.parseTransformationElements(el);
+		value.transformationElements = DAETransformationElement.parseArray(el);
 		value.instanceCameras = DAEInstanceCamera.parseArray(el);
 		value.instanceControllers = DAEInstanceController.parseArray(el);
 		value.instanceGeometries = DAEInstanceGeometry.parseArray(el);
@@ -77,55 +71,6 @@ export class DAENode {
 		return DAEUtil.parseArray<DAENode>(
 			this.parse, parent, DAENode.TagName
 		);
-	}
-
-	protected static parseTransformationElements(el: Element): Array<DAETransformationElement> {
-		if (el == null || el.childElementCount <= 0) {
-			return null;
-		}
-		var elements = [];
-		var el = el.firstElementChild;
-		while (el != null) {
-			var name = el.tagName;
-			var child = null;
-			switch (name) {
-				case DAELookat.TagName:
-					child = DAELookat.parse(el);
-					break;
-				case DAEMatrix.TagName:
-					child = DAEMatrix.parse(el);
-					break;
-				case DAERotate.TagName:
-					child = DAERotate.parse(el);
-					break;
-				case DAEScale.TagName:
-					child = DAEScale.parse(el);
-					break;
-				case DAESkew.TagName:
-					child = DAESkew.parse(el);
-					break;
-				case DAETranslate.TagName:
-					child = DAETranslate.parse(el);
-					break;
-				case DAEAsset.TagName:
-				case DAEInstanceCamera.TagName:
-				case DAEInstanceController.TagName:
-				case DAEInstanceGeometry.TagName:
-				case DAEInstanceLight.TagName:
-				case DAEInstanceNode.TagName:
-				case DAENode.TagName:
-				case DAEExtra.TagName:
-					break;
-				default:
-					console.warn("unknown tag:", name);
-					break;
-			}
-			if (child != null) {
-				elements.push(child);
-			}
-			el = el.nextElementSibling;
-		}
-		return elements;
 	}
 
 	toXML(): Element {

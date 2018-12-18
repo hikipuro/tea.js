@@ -34,6 +34,10 @@ export class DAEInstanceMaterialRendering {
 
 	toXML(): Element {
 		var el = document.createElement(DAEInstanceMaterialRendering.TagName);
+		DAEUtil.setAttr(el, "url", this.url);
+		DAEUtil.addElement(el, this.bind);
+		DAEUtil.addElementArray(el, this.bindVertexInputs);
+		DAEUtil.addElementArray(el, this.extras);
 		return el;
 	}
 }

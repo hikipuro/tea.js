@@ -38,6 +38,12 @@ export class DAEInstanceEffect {
 
 	toXML(): Element {
 		var el = document.createElement(DAEInstanceEffect.TagName);
+		DAEUtil.setAttr(el, "sid", this.sid);
+		DAEUtil.setAttr(el, "name", this.name);
+		DAEUtil.setAttr(el, "url", this.url);
+		DAEUtil.addElementArray(el, this.techniqueHints);
+		DAEUtil.addElementArray(el, this.setparams);
+		DAEUtil.addElementArray(el, this.extras);
 		return el;
 	}
 }

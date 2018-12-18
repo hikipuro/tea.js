@@ -11,7 +11,6 @@ export class DAEFXSamplerCommon {
 
 	static parse(el: Element): DAEFXSamplerCommon {
 		if (el == null) {
-			//console.error("parse error");
 			return null;
 		}
 		var value = new DAEFXSamplerCommon();

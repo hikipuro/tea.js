@@ -51,6 +51,8 @@ export class DAEArticulatedSystem {
 
 	toXML(): Element {
 		var el = document.createElement(DAEArticulatedSystem.TagName);
+		DAEUtil.setAttr(el, "id", this.id);
+		DAEUtil.setAttr(el, "name", this.name);
 		DAEUtil.addElement(el, this.asset);
 		if (this.kinematics != null) {
 			DAEUtil.addElement(el, this.kinematics);

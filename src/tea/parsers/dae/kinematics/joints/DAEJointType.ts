@@ -2,8 +2,12 @@ import { DAEUtil } from "../../DAEUtil";
 import { DAEPrismatic } from "./DAEPrismatic";
 import { DAERevolute } from "./DAERevolute";
 
-export class DAEJointType {
-	static parse(element: Element): DAEJointType {
+export interface DAEJointType {
+	toXML(): Element;
+}
+
+export module DAEJointType {
+	export function parse(element: Element): DAEJointType {
 		if (element == null) {
 			return null;
 		}
@@ -19,10 +23,6 @@ export class DAEJointType {
 		if (el != null) {
 			return DAERevolute.parse(el);
 		}
-		return null;
-	}
-
-	toXML(): Element {
 		return null;
 	}
 }

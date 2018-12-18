@@ -1,4 +1,5 @@
 import { DAEUtil } from "../../DAEUtil";
+import { DAEProfile } from "./DAEProfile";
 import { DAEAsset } from "../../core/metadata/DAEAsset";
 import { DAENewparam } from "../../core/parameters/DAENewparam";
 import { DAETechniqueFX } from "../effects/DAETechniqueFX";
@@ -6,7 +7,7 @@ import { DAEShaderElement } from "../rendering/DAEShaderElement";
 import { DAEExtra } from "../../core/extensibility/DAEExtra";
 
 // parent: effect
-export class DAEProfileCOMMON {
+export class DAEProfileCOMMON implements DAEProfile {
 	static readonly TagName: string = "profile_COMMON";
 	id?: string;
 	asset?: DAEAsset;
@@ -42,6 +43,12 @@ export class DAEProfileCOMMON {
 
 	toXML(): Element {
 		var el = document.createElement(DAEProfileCOMMON.TagName);
+		DAEUtil.setAttr(el, "id", this.id);
+		DAEUtil.addElement(el, this.asset);
+		DAEUtil.addElementArray(el, this.newparams);
+		DAEUtil.addElementArray(el, this.techniques);
+		DAEUtil.addElementArray(el, this.shaderElements);
+		DAEUtil.addElementArray(el, this.extras);
 		return el;
 	}
 }

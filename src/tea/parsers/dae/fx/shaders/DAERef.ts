@@ -11,7 +11,6 @@ export class DAERef {
 
 	static parse(el: Element): DAERef {
 		if (el == null) {
-			//console.error("parse error");
 			return null;
 		}
 		var value = new DAERef();
@@ -21,6 +20,7 @@ export class DAERef {
 
 	toXML(): Element {
 		var el = document.createElement(DAERef.TagName);
+		DAEUtil.setStringContent(el, this.data);
 		return el;
 	}
 }

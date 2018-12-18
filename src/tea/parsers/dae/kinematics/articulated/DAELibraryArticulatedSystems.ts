@@ -37,6 +37,11 @@ export class DAELibraryArticulatedSystems {
 
 	toXML(): Element {
 		var el = document.createElement(DAELibraryArticulatedSystems.TagName);
+		DAEUtil.setAttr(el, "id", this.id);
+		DAEUtil.setAttr(el, "name", this.name);
+		DAEUtil.addElement(el, this.asset);
+		DAEUtil.addElementArray(el, this.articulatedSystems);
+		DAEUtil.addElementArray(el, this.extras);
 		return el;
 	}
 }

@@ -37,6 +37,11 @@ export class DAELibraryJoints {
 
 	toXML(): Element {
 		var el = document.createElement(DAELibraryJoints.TagName);
+		DAEUtil.setAttr(el, "id", this.id);
+		DAEUtil.setAttr(el, "name", this.name);
+		DAEUtil.addElement(el, this.asset);
+		DAEUtil.addElementArray(el, this.joints);
+		DAEUtil.addElementArray(el, this.extras);
 		return el;
 	}
 }

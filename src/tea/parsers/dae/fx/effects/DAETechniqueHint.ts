@@ -1,12 +1,16 @@
 import { DAEUtil } from "../../DAEUtil";
 
-// parent: 
+// parent: instance_effect
 export class DAETechniqueHint {
 	static readonly TagName: string = "technique_hint";
-	id?: string;
+	platform?: string;
+	ref: string;
+	profile?: string;
 
 	constructor() {
-		this.id = null;
+		this.platform = null;
+		this.ref = null;
+		this.profile = null;
 	}
 
 	static parse(el: Element): DAETechniqueHint {
@@ -14,6 +18,9 @@ export class DAETechniqueHint {
 			return null;
 		}
 		var value = new DAETechniqueHint();
+		value.platform = DAEUtil.getStringAttr(el, "platform");
+		value.ref = DAEUtil.getStringAttr(el, "ref");
+		value.profile = DAEUtil.getStringAttr(el, "profile");
 		return value;
 	}
 
@@ -25,6 +32,9 @@ export class DAETechniqueHint {
 
 	toXML(): Element {
 		var el = document.createElement(DAETechniqueHint.TagName);
+		DAEUtil.setAttr(el, "platform", this.platform);
+		DAEUtil.setAttr(el, "ref", this.ref);
+		DAEUtil.setAttr(el, "profile", this.profile);
 		return el;
 	}
 }

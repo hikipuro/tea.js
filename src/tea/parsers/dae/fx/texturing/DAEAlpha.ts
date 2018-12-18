@@ -16,7 +16,6 @@ export class DAEAlpha {
 
 	static parse(el: Element): DAEAlpha {
 		if (el == null) {
-			//console.error("parse error");
 			return null;
 		}
 		var value = new DAEAlpha();
@@ -24,5 +23,13 @@ export class DAEAlpha {
 		value.scale = DAEUtil.getStringAttr(el, "scale");
 		value.arguments = DAEArgument.parseArray(el);
 		return value;
+	}
+
+	toXML(): Element {
+		var el = document.createElement(DAEAlpha.TagName);
+		DAEUtil.setAttr(el, "operator", this.operator);
+		DAEUtil.setAttr(el, "scale", this.scale);
+		DAEUtil.addElementArray(el, this.arguments);
+		return el;
 	}
 }

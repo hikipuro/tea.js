@@ -18,7 +18,6 @@ export class DAECompiler {
 
 	static parse(el: Element): DAECompiler {
 		if (el == null) {
-			//console.error("parse error");
 			return null;
 		}
 		var value = new DAECompiler();
@@ -30,9 +29,19 @@ export class DAECompiler {
 		);
 		return value;
 	}
+	
+	static parseArray(parent: Element): Array<DAECompiler> {
+		return DAEUtil.parseArray<DAECompiler>(
+			this.parse, parent, DAECompiler.TagName
+		);
+	}
 
 	toXML(): Element {
 		var el = document.createElement(DAECompiler.TagName);
+		DAEUtil.setAttr(el, "platform", this.platform);
+		DAEUtil.setAttr(el, "target", this.target);
+		DAEUtil.setAttr(el, "options", this.options);
+		DAEUtil.addElement(el, this.binary);
 		return el;
 	}
 }

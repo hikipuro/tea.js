@@ -6,7 +6,7 @@ import { DAESemanticType } from "../data/DAESemanticType";
 import { DAEExtra } from "../extensibility/DAEExtra";
 
 // parent: mesh, convex_mesh
-export class DAETriangles extends DAEPrimitiveElement {
+export class DAETriangles implements DAEPrimitiveElement {
 	static readonly TagName: string = "triangles";
 	name?: string;
 	count: number;
@@ -16,7 +16,6 @@ export class DAETriangles extends DAEPrimitiveElement {
 	extras?: Array<DAEExtra>;
 
 	constructor() {
-		super();
 		this.name = null;
 		this.count = 0;
 		this.material = null;

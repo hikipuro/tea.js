@@ -15,13 +15,12 @@ export class DAEArgument {
 
 	static parse(el: Element): DAEArgument {
 		if (el == null) {
-			//console.error("parse error");
 			return null;
 		}
 		var value = new DAEArgument();
 		value.source = DAEUtil.getStringAttr(el, "source");
-		value.operand = DAEUtil.getStringAttr(el, "source");
-		value.sampler = DAEUtil.getStringAttr(el, "source");
+		value.operand = DAEUtil.getStringAttr(el, "operand");
+		value.sampler = DAEUtil.getStringAttr(el, "sampler");
 		return value;
 	}
 
@@ -33,6 +32,9 @@ export class DAEArgument {
 
 	toXML(): Element {
 		var el = document.createElement(DAEArgument.TagName);
+		DAEUtil.setAttr(el, "source", this.source);
+		DAEUtil.setAttr(el, "operand", this.operand);
+		DAEUtil.setAttr(el, "sampler", this.sampler);
 		return el;
 	}
 }

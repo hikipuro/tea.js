@@ -4,14 +4,13 @@ import { DAEJointType } from "./DAEJointType";
 // TODO: fix
 
 // parent: joint
-export class DAERevolute extends DAEJointType {
+export class DAERevolute implements DAEJointType {
 	static readonly TagName: string = "revolute";
 	sid?: string;
 	//axis: 
 	//limits:
 
 	constructor() {
-		super();
 		this.sid = null;
 	}
 
@@ -26,6 +25,7 @@ export class DAERevolute extends DAEJointType {
 
 	toXML(): Element {
 		var el = document.createElement(DAERevolute.TagName);
+		DAEUtil.setAttr(el, "sid", this.sid);
 		return el;
 	}
 }

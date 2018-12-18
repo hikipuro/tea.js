@@ -1,12 +1,12 @@
 import { DAEUtil } from "../../DAEUtil";
 
-// parent: 
+// parent: curve, line, surface (B-rep), swept_surface
 export class DAEOrigin {
 	static readonly TagName: string = "origin";
-	id?: string;
+	data: Array<number>;
 
 	constructor() {
-		this.id = null;
+		this.data = null;
 	}
 
 	static parse(el: Element): DAEOrigin {
@@ -14,11 +14,19 @@ export class DAEOrigin {
 			return null;
 		}
 		var value = new DAEOrigin();
+		value.data = DAEUtil.getFloatArrayContent(el);
 		return value;
+	}
+
+	static parseArray(parent: Element): Array<DAEOrigin> {
+		return DAEUtil.parseArray<DAEOrigin>(
+			this.parse, parent, DAEOrigin.TagName
+		);
 	}
 
 	toXML(): Element {
 		var el = document.createElement(DAEOrigin.TagName);
+		DAEUtil.setArrayContent(el, this.data);
 		return el;
 	}
 }

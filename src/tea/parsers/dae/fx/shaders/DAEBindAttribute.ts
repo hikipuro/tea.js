@@ -13,7 +13,6 @@ export class DAEBindAttribute {
 
 	static parse(el: Element): DAEBindAttribute {
 		if (el == null) {
-			//console.error("parse error");
 			return null;
 		}
 		var value = new DAEBindAttribute();
@@ -30,6 +29,8 @@ export class DAEBindAttribute {
 
 	toXML(): Element {
 		var el = document.createElement(DAEBindAttribute.TagName);
+		DAEUtil.setAttr(el, "symbol", this.symbol);
+		DAEUtil.addStringContent(el, "semantic", this.semantic);
 		return el;
 	}
 }

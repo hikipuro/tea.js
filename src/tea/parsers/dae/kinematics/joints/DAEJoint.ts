@@ -40,6 +40,11 @@ export class DAEJoint {
 
 	toXML(): Element {
 		var el = document.createElement(DAEJoint.TagName);
+		DAEUtil.setAttr(el, "id", this.id);
+		DAEUtil.setAttr(el, "name", this.name);
+		DAEUtil.setAttr(el, "sid", this.sid);
+		DAEUtil.addElement(el, this.jointType);
+		DAEUtil.addElementArray(el, this.extras);
 		return el;
 	}
 }

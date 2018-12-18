@@ -48,6 +48,13 @@ export class DAEInstanceKinematicsModel {
 
 	toXML(): Element {
 		var el = document.createElement(DAEInstanceKinematicsModel.TagName);
+		DAEUtil.setAttr(el, "sid", this.sid);
+		DAEUtil.setAttr(el, "name", this.name);
+		DAEUtil.setAttr(el, "url", this.url);
+		DAEUtil.addElementArray(el, this.binds);
+		DAEUtil.addElementArray(el, this.setparams);
+		DAEUtil.addElementArray(el, this.newparams);
+		DAEUtil.addElementArray(el, this.extras);
 		return el;
 	}
 }

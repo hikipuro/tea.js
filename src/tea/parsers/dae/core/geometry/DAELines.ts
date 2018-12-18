@@ -4,7 +4,7 @@ import { DAESharedInput } from "../data/DAESharedInput";
 import { DAEExtra } from "../extensibility/DAEExtra";
 
 // parent: mesh, convex_mesh
-export class DAELines extends DAEPrimitiveElement {
+export class DAELines implements DAEPrimitiveElement {
 	static readonly TagName: string = "lines";
 	name?: string;
 	count: number;
@@ -14,7 +14,6 @@ export class DAELines extends DAEPrimitiveElement {
 	extras?: Array<DAEExtra>;
 
 	constructor() {
-		super();
 		this.name = null;
 		this.count = 0;
 		this.material = null;

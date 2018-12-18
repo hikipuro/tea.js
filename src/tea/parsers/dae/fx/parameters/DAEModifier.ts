@@ -20,6 +20,7 @@ export class DAEModifier {
 
 	toXML(): Element {
 		var el = document.createElement(DAEModifier.TagName);
+		DAEUtil.setStringContent(el, this.data);
 		return el;
 	}
 }

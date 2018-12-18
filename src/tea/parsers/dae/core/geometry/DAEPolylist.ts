@@ -4,7 +4,7 @@ import { DAESharedInput } from "../data/DAESharedInput";
 import { DAEExtra } from "../extensibility/DAEExtra";
 
 // parent: mesh
-export class DAEPolylist extends DAEPrimitiveElement {
+export class DAEPolylist implements DAEPrimitiveElement {
 	static readonly TagName: string = "polylist";
 	name?: string;
 	count: number;
@@ -15,7 +15,6 @@ export class DAEPolylist extends DAEPrimitiveElement {
 	extras?: Array<DAEExtra>;
 
 	constructor() {
-		super();
 		this.name = null;
 		this.count = 0;
 		this.material = null;

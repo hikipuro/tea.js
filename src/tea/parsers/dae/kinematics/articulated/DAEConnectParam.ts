@@ -20,6 +20,7 @@ export class DAEConnectParam {
 
 	toXML(): Element {
 		var el = document.createElement(DAEConnectParam.TagName);
+		DAEUtil.setAttr(el, "ref", this.ref);
 		return el;
 	}
 }

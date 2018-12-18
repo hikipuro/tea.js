@@ -28,6 +28,8 @@ export class DAEEffectorInfo {
 
 	toXML(): Element {
 		var el = document.createElement(DAEEffectorInfo.TagName);
+		DAEUtil.setAttr(el, "sid", this.sid);
+		DAEUtil.setAttr(el, "name", this.name);
 		return el;
 	}
 }

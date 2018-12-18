@@ -1,9 +1,10 @@
 import { DAEUtil } from "../../DAEUtil";
+import { DAEProfile } from "./DAEProfile";
 import { DAEAsset } from "../../core/metadata/DAEAsset";
 import { DAEExtra } from "../../core/extensibility/DAEExtra";
 
 // parent: effect
-export class DAEProfileBRIDGE {
+export class DAEProfileBRIDGE implements DAEProfile {
 	static readonly TagName: string = "profile_BRIDGE";
 	id?: string;
 	platform?: string;
@@ -36,6 +37,10 @@ export class DAEProfileBRIDGE {
 
 	toXML(): Element {
 		var el = document.createElement(DAEProfileBRIDGE.TagName);
+		DAEUtil.setAttr(el, "id", this.id);
+		DAEUtil.setAttr(el, "platform", this.platform);
+		DAEUtil.setAttr(el, "url", this.url);
+		DAEUtil.addElementArray(el, this.extras);
 		return el;
 	}
 }

@@ -44,6 +44,11 @@ export class DAERender {
 
 	toXML(): Element {
 		var el = document.createElement(DAERender.TagName);
+		DAEUtil.setAttr(el, "name", this.name);
+		DAEUtil.setAttr(el, "sid", this.sid);
+		DAEUtil.setAttr(el, "camera_node", this.cameraNode);
+		DAEUtil.addElement(el, this.instanceMaterial);
+		DAEUtil.addElementArray(el, this.extras);
 		return el;
 	}
 }

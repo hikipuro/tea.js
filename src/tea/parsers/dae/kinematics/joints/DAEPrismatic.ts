@@ -4,14 +4,13 @@ import { DAEJointType } from "./DAEJointType";
 // TODO: fix
 
 // parent: joint
-export class DAEPrismatic extends DAEJointType {
+export class DAEPrismatic implements DAEJointType {
 	static readonly TagName: string = "prismatic";
 	sid?: string;
 	//axis: 
 	//limits:
 
 	constructor() {
-		super();
 		this.sid = null;
 	}
 
@@ -26,6 +25,7 @@ export class DAEPrismatic extends DAEJointType {
 
 	toXML(): Element {
 		var el = document.createElement(DAEPrismatic.TagName);
+		DAEUtil.setAttr(el, "sid", this.sid);
 		return el;
 	}
 }

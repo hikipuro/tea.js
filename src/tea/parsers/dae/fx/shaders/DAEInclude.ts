@@ -7,8 +7,8 @@ export class DAEInclude {
 	url: string;
 
 	constructor() {
-		this.sid = null;
-		this.url = null;
+		this.sid = "";
+		this.url = "";
 	}
 
 	static parse(el: Element): DAEInclude {
@@ -16,8 +16,8 @@ export class DAEInclude {
 			return null;
 		}
 		var value = new DAEInclude();
-		value.sid = DAEUtil.getStringAttr(el, "sid");
-		value.url = DAEUtil.getStringAttr(el, "url");
+		value.sid = DAEUtil.getStringAttr(el, "sid", "");
+		value.url = DAEUtil.getStringAttr(el, "url", "");
 		return value;
 	}
 
@@ -29,6 +29,8 @@ export class DAEInclude {
 
 	toXML(): Element {
 		var el = document.createElement(DAEInclude.TagName);
+		DAEUtil.setAttr(el, "sid", this.sid);
+		DAEUtil.setAttr(el, "url", this.url);
 		return el;
 	}
 }

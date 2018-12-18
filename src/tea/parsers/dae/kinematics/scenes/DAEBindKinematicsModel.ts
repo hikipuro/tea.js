@@ -31,6 +31,7 @@ export class DAEBindKinematicsModel {
 
 	toXML(): Element {
 		var el = document.createElement(DAEBindKinematicsModel.TagName);
+		DAEUtil.setAttr(el, "node", this.node);
 		return el;
 	}
 }

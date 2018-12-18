@@ -1,25 +1,39 @@
 import { DAEUtil } from "../../DAEUtil";
 
-// parent: 
+// TODO: fix constant
+
+// parent: texture_pipeline
 export class DAETexenv {
 	static readonly TagName: string = "texenv";
-	id?: string;
+	operator?: string;
+	sampler?: string;
+	//constant?:
 
 	constructor() {
-		this.id = null;
+		this.operator = null;
+		this.sampler = null;
 	}
 
 	static parse(el: Element): DAETexenv {
 		if (el == null) {
-			//console.error("parse error");
 			return null;
 		}
 		var value = new DAETexenv();
+		value.operator = DAEUtil.getStringAttr(el, "operator");
+		value.sampler = DAEUtil.getStringAttr(el, "sampler");
 		return value;
+	}
+
+	static parseArray(parent: Element): Array<DAETexenv> {
+		return DAEUtil.parseArray<DAETexenv>(
+			this.parse, parent, DAETexenv.TagName
+		);
 	}
 
 	toXML(): Element {
 		var el = document.createElement(DAETexenv.TagName);
+		DAEUtil.setAttr(el, "operator", this.operator);
+		DAEUtil.setAttr(el, "sampler", this.sampler);
 		return el;
 	}
 }
