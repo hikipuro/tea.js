@@ -38,9 +38,12 @@ export class DAESource {
 		);
 		value.arrayElement = DAEArrayElement.parse(el);
 		value.techniqueCommon = DAETechniqueCommon.parse(
-			DAEUtil.queryChildSelector(el, DAETechniqueCommon.TagName)
+			DAEUtil.queryChildSelector(el, DAETechniqueCommon.TagName),
+			[DAEAsset]
 		);
-		value.techniques = DAETechnique.parseArray(el);
+		value.techniques = DAETechnique.parseArray(
+			el, [DAEAsset]
+		);
 		return value;
 	}
 

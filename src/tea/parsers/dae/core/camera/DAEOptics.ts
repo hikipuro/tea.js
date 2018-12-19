@@ -11,15 +11,15 @@ export class DAEOptics {
 	techniqueCommon: DAETechniqueCommon;
 	techniques?: Array<DAETechnique>;
 	extras?: Array<DAEExtra>;
-	orthographic?: DAEOrthographic;
-	perspective?: DAEPerspective;
+	//orthographic?: DAEOrthographic;
+	//perspective?: DAEPerspective;
 
 	constructor() {
 		this.techniqueCommon = null;
 		this.techniques = null;
 		this.extras = null;
-		this.orthographic = null;
-		this.perspective = null;
+		//this.orthographic = null;
+		//this.perspective = null;
 	}
 
 	static parse(el: Element): DAEOptics {
@@ -28,16 +28,19 @@ export class DAEOptics {
 		}
 		var value = new DAEOptics();
 		value.techniqueCommon = DAETechniqueCommon.parse(
-			DAEUtil.queryChildSelector(el, DAETechniqueCommon.TagName)
+			DAEUtil.queryChildSelector(el, DAETechniqueCommon.TagName),
+			[DAEPerspective, DAEOrthographic]
 		);
-		value.techniques = DAETechnique.parseArray(el);
+		value.techniques = DAETechnique.parseArray(
+			el, [DAEPerspective, DAEOrthographic]
+		);
 		value.extras = DAEExtra.parseArray(el);
-		value.orthographic = DAEOrthographic.parse(
-			DAEUtil.queryChildSelector(el, DAEOrthographic.TagName)
-		);
-		value.perspective = DAEPerspective.parse(
-			DAEUtil.queryChildSelector(el, DAEPerspective.TagName)
-		);
+		//value.orthographic = DAEOrthographic.parse(
+		//	DAEUtil.queryChildSelector(el, DAEOrthographic.TagName)
+		//);
+		//value.perspective = DAEPerspective.parse(
+		//	DAEUtil.queryChildSelector(el, DAEPerspective.TagName)
+		//);
 		return value;
 	}
 
@@ -46,8 +49,8 @@ export class DAEOptics {
 		DAEUtil.addElement(el, this.techniqueCommon);
 		DAEUtil.addElementArray(el, this.techniques);
 		DAEUtil.addElementArray(el, this.extras);
-		DAEUtil.addElement(el, this.orthographic);
-		DAEUtil.addElement(el, this.perspective);
+		//DAEUtil.addElement(el, this.orthographic);
+		//DAEUtil.addElement(el, this.perspective);
 		return el;
 	}
 }

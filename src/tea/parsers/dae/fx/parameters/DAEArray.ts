@@ -6,6 +6,7 @@ import { DAEParameterElement } from "./DAEParameterElement";
 // parent: 
 // core: newparam, setparam
 // fx: create_2d, create_3d, create_cube
+// profile: CG, GLES2, GLSL
 export class DAEArray {
 	static readonly TagName: string = "array";
 	length: number;

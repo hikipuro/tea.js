@@ -2,6 +2,10 @@ import { DAEUtil } from "../../DAEUtil";
 import { DAEAsset } from "../metadata/DAEAsset";
 import { DAETechniqueCommon } from "../extensibility/DAETechniqueCommon";
 import { DAETechnique } from "../extensibility/DAETechnique";
+import { DAEAmbient } from "./DAEAmbient";
+import { DAEDirectional } from "./DAEDirectional";
+import { DAEPoint } from "./DAEPoint";
+import { DAESpot } from "./DAESpot";
 import { DAEExtra } from "../extensibility/DAEExtra";
 
 // parent: library_lights
@@ -34,9 +38,12 @@ export class DAELight {
 			DAEUtil.queryChildSelector(el, DAEAsset.TagName)
 		);
 		value.techniqueCommon = DAETechniqueCommon.parse(
-			DAEUtil.queryChildSelector(el, DAETechniqueCommon.TagName)
+			DAEUtil.queryChildSelector(el, DAETechniqueCommon.TagName),
+			[DAEAmbient, DAEDirectional, DAEPoint, DAESpot]
 		);
-		value.techniques = DAETechnique.parseArray(el);
+		value.techniques = DAETechnique.parseArray(
+			el, [DAEAmbient, DAEDirectional, DAEPoint, DAESpot]
+		);
 		value.extras = DAEExtra.parseArray(el);
 		return value;
 	}

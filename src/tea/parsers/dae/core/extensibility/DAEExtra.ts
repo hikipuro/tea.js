@@ -1,6 +1,7 @@
 import { DAEUtil } from "../../DAEUtil";
 import { DAEAsset } from "../metadata/DAEAsset";
 import { DAETechnique } from "./DAETechnique";
+import { DAEElement } from "../../DAEElement";
 
 // parent:
 // core:

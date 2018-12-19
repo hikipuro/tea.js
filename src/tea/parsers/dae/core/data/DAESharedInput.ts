@@ -1,8 +1,10 @@
 import { DAEUtil } from "../../DAEUtil";
 import { DAESemanticType } from "./DAESemanticType";
 
-// parent: lines, linestrips, polygons, polylist, triangles, trifans,
+// parent:
+// core: lines, linestrips, polygons, polylist, triangles, trifans,
 // tristrips, vertex_weights
+// brep: edges, faces, pcurves, shells, solids, wires
 // (unshared): joints, sampler, targets, vertices, control_vertices
 export class DAESharedInput {
 	static readonly TagName: string = "input";

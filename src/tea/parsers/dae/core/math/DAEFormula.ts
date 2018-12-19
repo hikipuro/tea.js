@@ -4,6 +4,8 @@ import { DAETarget } from "../controller/DAETarget";
 import { DAETechniqueCommon } from "../extensibility/DAETechniqueCommon";
 import { DAETechnique } from "../extensibility/DAETechnique";
 
+// TODO: fix techniqueCommon
+
 // parent: library_formulas, animation_clip,
 // kinematics_model/technique_common, kinematics/axis_info
 export class DAEFormula {

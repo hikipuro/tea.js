@@ -33,7 +33,6 @@ export class DAESamplerImage {
 		DAEUtil.setAttr(el, "url", this.url);
 		DAEUtil.setAttr(el, "sid", this.sid);
 		DAEUtil.setAttr(el, "name", this.name);
-		DAEUtil.addElement(el, this.instanceEffect);
 		DAEUtil.addElementArray(el, this.extras);
 		return el;
 	}

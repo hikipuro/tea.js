@@ -2,6 +2,7 @@ import { DAEUtil } from "../../DAEUtil";
 import { DAEParam } from "../../core/data/DAEParam";
 import { DAETechniqueCommon } from "../../core/extensibility/DAETechniqueCommon";
 import { DAETechnique } from "../../core/extensibility/DAETechnique";
+import { DAEInstanceMaterial } from "./DAEInstanceMaterial";
 import { DAEExtra } from "../../core/extensibility/DAEExtra";
 
 // parent: instance_geometry, instance_controller
@@ -26,9 +27,12 @@ export class DAEBindMaterial {
 		var value = new DAEBindMaterial();
 		value.params = DAEParam.parseArray(el);
 		value.techniqueCommon = DAETechniqueCommon.parse(
-			DAEUtil.queryChildSelector(el, DAETechniqueCommon.TagName)
+			DAEUtil.queryChildSelector(el, DAETechniqueCommon.TagName),
+			[DAEInstanceMaterial]
 		);
-		value.techniques = DAETechnique.parseArray(el);
+		value.techniques = DAETechnique.parseArray(
+			el, [DAEInstanceMaterial]
+		);
 		value.extras = DAEExtra.parseArray(el);
 		return value;
 	}
