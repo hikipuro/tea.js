@@ -116,7 +116,7 @@ export class EditorSceneRenderer extends SceneRenderer {
 			this.frustumPlanes.clearLines();
 			this.lightRange.clearLines();
 		}
-		this.outline.setObject(object3d);
+		this.outline.setObject(object3d, this.camera);
 	}
 
 	protected updateObject3D(object3d: Tea.Object3D): void {

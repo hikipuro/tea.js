@@ -28,7 +28,7 @@ export class Outline {
 		this.renderer = renderer;
 	}
 
-	setObject(object3d: Tea.Object3D): void {
+	setObject(object3d: Tea.Object3D, camera: Tea.Camera): void {
 		this.meshFilter.mesh = null;
 		if (object3d == null || object3d.isActive === false) {
 			this.object3d.update();
@@ -44,6 +44,12 @@ export class Outline {
 		}
 		this.meshFilter.data = meshFilter.data;
 		this.meshFilter.mesh = meshFilter.mesh;
+		var distance = camera.object3d.position.distance(object3d.position);
+		//var scale = (object3d.scale[0] + object3d.scale[1] + object3d.scale[2]) / 3;
+		distance = 0.06 + 0.002 * distance;
+		this.renderer.material.setFloat("CameraDistance", distance);
+		this.renderer.material.setFloat("Scale", 1);
+		//console.log(distance, scale);
 		//this.renderer.update();
 		this.object3d.localPosition.copy(object3d.position);
 		this.object3d.localRotation.copy(object3d.rotation);

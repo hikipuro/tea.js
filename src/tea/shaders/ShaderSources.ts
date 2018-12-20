@@ -383,10 +383,14 @@ export module ShaderSources {
 		attribute vec3 vertex;
 		attribute vec3 normal;
 		uniform mat4 TEA_MATRIX_MVP;
+		uniform mat4 TEA_MATRIX_P;
+		uniform float CameraDistance;
+		uniform float Scale;
 
 		void main() {
-			vec4 position = vec4(vertex * 1.1, 1.0);
-			gl_Position = TEA_MATRIX_MVP * position;
+			vec4 pos = TEA_MATRIX_MVP * vec4(vertex * 1.0, 1.0);
+			pos.xyz += normal * Scale * CameraDistance;
+			gl_Position = pos;
 		}
 	`;
 

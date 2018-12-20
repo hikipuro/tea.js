@@ -349,6 +349,17 @@ export class Renderer extends Component {
 		}
 		//u.uniformMatrix4fv("TEA_MATRIX_MV", mvMatrix);
 
+		/*
+		location = shader.getUniformLocation("TEA_MATRIX_IT_MV");
+		if (location != null) {
+			if (enableMV === false) {
+				mvMatrix.copy(view);
+				mvMatrix.mul$(model);
+			}
+			gl.uniformMatrix4fv(location, false, mvMatrix.inverse);
+		}
+		*/
+
 		location = shader.getUniformLocation("TEA_MATRIX_MVP");
 		if (location != null) {
 			if (enableMV === false) {
