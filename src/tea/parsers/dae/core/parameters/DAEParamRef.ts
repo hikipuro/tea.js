@@ -12,9 +12,19 @@ import { DAEUtil } from "../../DAEUtil";
 export class DAEParamRef {
 	static readonly TagName: string = "param";
 	ref: string;
+	name?: string;
+	sid?: string;
+	semantic?: string;
+	type: string;
+	data: string;
 
 	constructor() {
 		this.ref = null;
+		this.name = null;
+		this.sid = null;
+		this.semantic = null;
+		this.type = null;
+		this.data = null;
 	}
 
 	static parse(el: Element): DAEParamRef {
@@ -23,6 +33,11 @@ export class DAEParamRef {
 		}
 		var value = new DAEParamRef();
 		value.ref = DAEUtil.getStringAttr(el, "ref");
+		value.name = DAEUtil.getStringAttr(el, "name");
+		value.sid = DAEUtil.getStringAttr(el, "sid");
+		value.semantic = DAEUtil.getStringAttr(el, "semantic");
+		value.type = DAEUtil.getStringAttr(el, "type");
+		value.data = DAEUtil.getStringContent(el);
 		return value;
 	}
 
@@ -35,6 +50,10 @@ export class DAEParamRef {
 	toXML(): Element {
 		var el = document.createElement(DAEParamRef.TagName);
 		DAEUtil.setAttr(el, "ref", this.ref);
+		DAEUtil.setAttr(el, "name", this.name);
+		DAEUtil.setAttr(el, "sid", this.sid);
+		DAEUtil.setAttr(el, "semantic", this.semantic);
+		DAEUtil.setStringContent(el, this.data);
 		return el;
 	}
 }

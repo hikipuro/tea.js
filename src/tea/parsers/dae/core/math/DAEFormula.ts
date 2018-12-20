@@ -1,6 +1,6 @@
 import { DAEUtil } from "../../DAEUtil";
 import { DAENewparam } from "../parameters/DAENewparam";
-import { DAETarget } from "../controller/DAETarget";
+import { DAETarget } from "./DAETarget";
 import { DAETechniqueCommon } from "../extensibility/DAETechniqueCommon";
 import { DAETechnique } from "../extensibility/DAETechnique";
 
