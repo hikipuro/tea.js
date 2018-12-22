@@ -4,7 +4,7 @@ import { EditorScriptLoader } from "./EditorScriptLoader";
 
 export class EditorSceneLoader extends SceneLoader {
 	protected static loadScript(app: Tea.App, json: any, callback: (component: Tea.Component) => void): void {
-		if (json == null || json._type !== "Script") {
+		if (Tea.JSONUtil.isValidSceneJSON(json, Tea.Script.className) === false) {
 			callback(null);
 			return;
 		}

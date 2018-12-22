@@ -274,6 +274,7 @@ class SceneComponents {
 }
 
 export class Scene extends EventDispatcher {
+	static readonly className: string = "Scene";
 	app: Tea.App;
 	renderSettings: Tea.RenderSettings;
 	physics: Tea.Physics;
@@ -702,7 +703,7 @@ export class Scene extends EventDispatcher {
 
 	/*
 	static fromJSON(app: Tea.App, json: any): Scene {
-		if (json == null || json._type !== "Scene") {
+		if (json == null || json[Tea.JSONUtil.TypeName] !== "Scene") {
 			return null;
 		}
 		var scene = new Scene(app);
@@ -720,13 +721,12 @@ export class Scene extends EventDispatcher {
 	//*/
 
 	toJSON(): Object {
-		var json = {
-			_type: "Scene",
-			physics: this.physics.toJSON(),
-			renderSettings: this.renderSettings.toJSON(),
-			enablePostProcessing: this.enablePostProcessing,
-			children: []
-		};
+		var json: any = {};
+		json[Tea.JSONUtil.TypeName] = Scene.className;
+		json.physics = this.physics.toJSON();
+		json.renderSettings = this.renderSettings.toJSON();
+		json.enablePostProcessing = this.enablePostProcessing;
+		json.children = [];
 		var children = this.children;
 		var length = children.length;
 		for (var i = length; i >= 0; i--) {

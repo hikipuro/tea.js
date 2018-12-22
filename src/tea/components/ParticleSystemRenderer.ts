@@ -2,6 +2,7 @@ import * as Tea from "../Tea";
 import { Renderer } from "./Renderer";
 
 export class ParticleSystemRenderer extends Renderer {
+	static readonly className: string = "ParticleSystemRenderer";
 	vertexBuffer: WebGLBuffer;
 	indexBuffer: WebGLBuffer;
 	particlesBuffer: WebGLBuffer;
@@ -83,7 +84,7 @@ export class ParticleSystemRenderer extends Renderer {
 	}
 
 	static fromJSON(app: Tea.App, json: any, callback: (component: Tea.Component) => void): void {
-		if (json == null || json._type !== "ParticleSystemRenderer") {
+		if (Tea.JSONUtil.isValidSceneJSON(json, ParticleSystemRenderer.className) === false) {
 			callback(null);
 			return;
 		}
@@ -96,9 +97,9 @@ export class ParticleSystemRenderer extends Renderer {
 
 	toJSON(): Object {
 		var json = super.toJSON();
-		Object.assign(json, {
-			_type: "ParticleSystemRenderer"
-		});
+		json[Tea.JSONUtil.TypeName] = ParticleSystemRenderer.className;
+		//Object.assign(json, {
+		//});
 		return json;
 	}
 

@@ -2,6 +2,7 @@ import * as Tea from "../../Tea";
 import { MinMaxCurve } from "../MinMaxCurve";
 
 export class ShapeModule {
+	static readonly className: string = "ShapeModule";
 	enabled: boolean;
 	alignToDirection: boolean;
 	angle: number;
@@ -142,7 +143,7 @@ export class ShapeModule {
 	}
 
 	static fromJSON(app: Tea.App, json: any): ShapeModule {
-		if (json == null || json._type !== "ShapeModule") {
+		if (Tea.JSONUtil.isValidSceneJSON(json, ShapeModule.className) === false) {
 			return null;
 		}
 		var module = new ShapeModule();
@@ -186,8 +187,9 @@ export class ShapeModule {
 	}
 
 	toJSON(): Object {
-		var json = {
-			_type: "ShapeModule",
+		var json: any = {};
+		json[Tea.JSONUtil.TypeName] = ShapeModule.className;
+		Object.assign(json, {
 			enabled: this.enabled,
 			alignToDirection: this.alignToDirection,
 			angle: this.angle,
@@ -225,7 +227,7 @@ export class ShapeModule {
 			textureUVChannel: this.textureUVChannel,
 			useMeshColors: this.useMeshColors,
 			useMeshMaterialIndex: this.useMeshMaterialIndex
-		};
+		});
 		return json;
 	}
 

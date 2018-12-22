@@ -2,6 +2,7 @@ import * as Tea from "../Tea";
 import { Component } from "./Component";
 
 export class Rigidbody extends Component {
+	static readonly className: string = "Rigidbody";
 	useGravity: boolean;
 	mass: number;
 	velocity: Tea.Vector3;
@@ -307,14 +308,14 @@ export class Rigidbody extends Component {
 
 	toJSON(): Object {
 		var json = super.toJSON();
-		Object.assign(json, {
-			_type: "Rigidbody"
-		});
+		json[Tea.JSONUtil.TypeName] = Rigidbody.className;
+		//Object.assign(json, {
+		//});
 		return json;
 	}
 
 	static fromJSON(app: Tea.App, json: any, callback: (component: Tea.Component) => void): void {
-		if (json == null || json._type !== "Rigidbody") {
+		if (Tea.JSONUtil.isValidSceneJSON(json, Rigidbody.className) === false) {
 			callback(null);
 			return;
 		}

@@ -37,6 +37,7 @@ class Attributes {
 }
 
 export class Renderer extends Component {
+	static readonly className: string = "Renderer";
 	static drawCallCount: number = 0;
 	static readonly MaxLightCount: number = 4;
 	static readonly attributes: Attributes = new Attributes();
@@ -118,8 +119,8 @@ export class Renderer extends Component {
 
 	toJSON(): Object {
 		var json = super.toJSON();
+		json[Tea.JSONUtil.TypeName] = Renderer.className;
 		Object.assign(json, {
-			_type: "Renderer",
 			material: this.material.toJSON()
 		});
 		return json;

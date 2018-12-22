@@ -1,6 +1,7 @@
 import * as Tea from "../Tea";
 
 export class ShaderStencil {
+	static readonly className: string = "ShaderStencil";
 	frontFunc: Tea.ShaderTestFunc;
 	frontRef: number;
 	frontMask: number;
@@ -60,7 +61,7 @@ export class ShaderStencil {
 	}
 
 	static fromJSON(json: any): ShaderStencil {
-		if (json == null || json._type !== "ShaderStencil") {
+		if (Tea.JSONUtil.isValidSceneJSON(json, ShaderStencil.className) === false) {
 			return null;
 		}
 		var shaderStencil = new ShaderStencil();
@@ -80,8 +81,9 @@ export class ShaderStencil {
 	}
 
 	toJSON(): Object {
-		var json = {
-			_type: "ShaderStencil",
+		var json: any = {};
+		json[Tea.JSONUtil.TypeName] = ShaderStencil.className;
+		Object.assign(json, {
 			frontFunc: Tea.ShaderTestFunc.toString(this.frontFunc),
 			frontRef: this.frontRef,
 			frontMask: this.frontMask,
@@ -94,7 +96,7 @@ export class ShaderStencil {
 			backFail: Tea.ShaderStencilOp.toString(this.backFail),
 			backZfail: Tea.ShaderStencilOp.toString(this.backZfail),
 			backZpass: Tea.ShaderStencilOp.toString(this.backZpass)
-		};
+		});
 		return json;
 	}
 }

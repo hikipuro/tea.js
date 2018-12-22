@@ -3,6 +3,7 @@ import { Component } from "./Component";
 import * as Modules from "../particles/ParticleSystemModules";
 
 export class ParticleSystem extends Component {
+	static readonly className: string = "ParticleSystem";
 	//automaticCullingEnabled: boolean;
 	//collision: Modules.CollisionModule;
 	//colorBySpeed: Modules.ColorBySpeedModule;
@@ -262,7 +263,7 @@ export class ParticleSystem extends Component {
 	//}
 
 	static fromJSON(app: Tea.App, json: any, callback: (component: Tea.Component) => void): void {
-		if (json == null || json._type !== "ParticleSystem") {
+		if (Tea.JSONUtil.isValidSceneJSON(json, ParticleSystem.className) === false) {
 			callback(null);
 			return;
 		}
@@ -277,14 +278,12 @@ export class ParticleSystem extends Component {
 	}
 	
 	toJSON(): Object {
-		var json = super.toJSON();
-		Object.assign(json, {
-			_type: "ParticleSystem",
-			colorOverLifetime: this.colorOverLifetime.toJSON(),
-			emission: this.emission.toJSON(),
-			shape: this.shape.toJSON(),
-			main: this.main.toJSON()
-		});
+		var json: any = super.toJSON();
+		json[Tea.JSONUtil.TypeName] = ParticleSystem.className;
+		json.colorOverLifetime = this.colorOverLifetime.toJSON();
+		json.emission = this.emission.toJSON();
+		json.shape = this.shape.toJSON();
+		json.main = this.main.toJSON();
 		return json;
 	}
 

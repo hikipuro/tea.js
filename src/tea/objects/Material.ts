@@ -106,6 +106,7 @@ class UniformItem {
 }
 
 export class Material {
+	static readonly className: string = "Material";
 	renderQueue: number;
 	protected _isDefault: boolean;
 	protected _shader: Tea.Shader;
@@ -364,10 +365,9 @@ export class Material {
 	}
 
 	toJSON(): Object {
-		var json = {
-			_type: "Material",
-			isDefault: false
-		} as any;
+		var json: any = {};
+		json[Tea.JSONUtil.TypeName] = Material.className;
+		json.isDefault = false;
 		if (this._isDefault) {
 			json.isDefault = true;
 			return json;
@@ -398,7 +398,7 @@ export class Material {
 	}
 
 	static fromJSON(app: Tea.App, json: any): Material {
-		if (json == null || json._type !== "Material") {
+		if (Tea.JSONUtil.isValidSceneJSON(json, Material.className) === false) {
 			return null;
 		}
 		var material = new Material(app);

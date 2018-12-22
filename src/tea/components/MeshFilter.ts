@@ -3,6 +3,7 @@ import { Component } from "./Component";
 import { BufferData } from "./BufferData";
 
 export class MeshFilter extends Component {
+	static readonly className: string = "MeshFilter";
 	mesh: Tea.Mesh;
 	data: BufferData;
 	
@@ -36,15 +37,15 @@ export class MeshFilter extends Component {
 	
 	toJSON(): Object {
 		var json = super.toJSON();
+		json[Tea.JSONUtil.TypeName] = MeshFilter.className;
 		Object.assign(json, {
-			_type: "MeshFilter",
 			mesh: this.mesh.toJSON()
 		});
 		return json;
 	}
 
 	static fromJSON(app: Tea.App, json: any, callback: (component: Tea.Component) => void): void {
-		if (json == null || json._type !== "MeshFilter") {
+		if (Tea.JSONUtil.isValidSceneJSON(json, MeshFilter.className) === false) {
 			callback(null);
 			return;
 		}

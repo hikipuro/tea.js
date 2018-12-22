@@ -1,6 +1,7 @@
 import * as Tea from "../Tea";
 
 export class RenderSettings {
+	static readonly className: string = "RenderSettings";
 	ambientLight: Tea.Color;
 	skybox: Tea.Skybox;
 
@@ -10,7 +11,7 @@ export class RenderSettings {
 	}
 
 	static fromJSON(app: Tea.App, json: any): RenderSettings {
-		if (json == null || json._type !== "RenderSettings") {
+		if (Tea.JSONUtil.isValidSceneJSON(json, RenderSettings.className) === false) {
 			return null;
 		}
 		var renderSettings = new RenderSettings(app);
@@ -20,11 +21,10 @@ export class RenderSettings {
 	}
 
 	toJSON(): Object {
-		var json = {
-			_type: "RenderSettings",
-			ambientLight: this.ambientLight,
-			skybox: this.skybox.toJSON()
-		};
+		var json: any = {};
+		json[Tea.JSONUtil.TypeName] = RenderSettings.className;
+		json.ambientLight = this.ambientLight;
+		json.skybox = this.skybox.toJSON();
 		return json;
 	}
 }

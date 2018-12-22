@@ -54,6 +54,7 @@ class Prev {
 
 export class Camera extends Component {
 	protected static _skyboxCamera: Camera;
+	static readonly className: string = "Camera";
 	depth: number;
 	clearFlags: Tea.CameraClearFlags;
 	fieldOfView: number;
@@ -473,8 +474,8 @@ export class Camera extends Component {
 
 	toJSON(): Object {
 		var json = super.toJSON();
+		json[Tea.JSONUtil.TypeName] = Camera.className;
 		Object.assign(json, {
-			_type: "Camera",
 			depth: this.depth,
 			clearFlags: Tea.CameraClearFlags.toString(this.clearFlags),
 			fieldOfView: this.fieldOfView,
@@ -493,7 +494,7 @@ export class Camera extends Component {
 	}
 
 	static fromJSON(app: Tea.App, json: any, callback: (component: Tea.Component) => void): void {
-		if (json == null || json._type !== "Camera") {
+		if (Tea.JSONUtil.isValidSceneJSON(json, Camera.className) === false) {
 			callback(null);
 			return;
 		}

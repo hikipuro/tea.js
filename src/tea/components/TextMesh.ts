@@ -2,6 +2,7 @@ import * as Tea from "../Tea";
 import { Component } from "./Component";
 
 export class TextMesh extends Component {
+	static readonly className: string = "TextMesh";
 	protected static readonly DefaultFontSize: number = 14;
 	material: Tea.Material;
 	texture: Tea.Texture;
@@ -214,8 +215,8 @@ export class TextMesh extends Component {
 
 	toJSON(): Object {
 		var json = super.toJSON();
+		json[Tea.JSONUtil.TypeName] = TextMesh.className;
 		Object.assign(json, {
-			_type: "TextMesh",
 			//material: this.material.toJSON(),
 			characterSize: this._characterSize,
 			lineSpacing: this._lineSpacing,
@@ -232,7 +233,7 @@ export class TextMesh extends Component {
 	}
 
 	static fromJSON(app: Tea.App, json: any, callback: (component: Tea.Component) => void): void {
-		if (json == null || json._type !== "TextMesh") {
+		if (Tea.JSONUtil.isValidSceneJSON(json, TextMesh.className) === false) {
 			callback(null);
 			return;
 		}

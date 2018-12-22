@@ -9,6 +9,7 @@ type TextureImage = (
 );
 
 export class Texture {
+	static readonly className: string = "Texture";
 	app: Tea.App;
 	url: string;
 	texture: WebGLTexture;
@@ -227,17 +228,16 @@ export class Texture {
 	}
 
 	toJSON(): Object {
-		var json = {
-			_type: "Texture",
-			url: this.url,
-			isEmpty: this._isEmpty,
-			emptyColor: this._emptyColor
-		};
+		var json: any = {};
+		json[Tea.JSONUtil.TypeName] = Texture.className;
+		json.url = this.url;
+		json.isEmpty = this._isEmpty;
+		json.emptyColor = this._emptyColor;
 		return json;
 	}
 
 	static fromJSON(app: Tea.App, json: any): Texture {
-		if (json == null || json._type !== "Texture") {
+		if (Tea.JSONUtil.isValidSceneJSON(json, Texture.className) === false) {
 			return null;
 		}
 		var texture = null;

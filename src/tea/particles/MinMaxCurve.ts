@@ -3,6 +3,7 @@ import { AnimationCurve } from "../utils/AnimationCurve"
 import { ParticleSystemCurveMode } from "./enums/ParticleSystemCurveMode";
 
 export class MinMaxCurve {
+	static readonly className: string = "MinMaxCurve";
 	constant: number;
 	constantMax: number;
 	constantMin: number;
@@ -66,7 +67,7 @@ export class MinMaxCurve {
 	}
 
 	static fromJSON(app: Tea.App, json: any): MinMaxCurve {
-		if (json == null || json._type !== "MinMaxCurve") {
+		if (Tea.JSONUtil.isValidSceneJSON(json, MinMaxCurve.className) === false) {
 			return null;
 		}
 		var minMaxCurve: MinMaxCurve = null;
@@ -106,8 +107,9 @@ export class MinMaxCurve {
 		if (this.curveMin != null) {
 			curveMin = this.curveMin.toJSON();
 		}
-		var json = {
-			_type: "MinMaxCurve",
+		var json: any = {};
+		json[Tea.JSONUtil.TypeName] = MinMaxCurve.className;
+		Object.assign(json, {
 			constant: this.constant,
 			constantMax: this.constantMax,
 			constantMin: this.constantMin,
@@ -116,7 +118,7 @@ export class MinMaxCurve {
 			curveMin: curveMin,
 			curveMultiplier: this.curveMultiplier,
 			mode: ParticleSystemCurveMode.toString(this.mode)
-		};
+		});
 		return json;
 	}
 }

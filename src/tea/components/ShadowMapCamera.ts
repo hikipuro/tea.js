@@ -2,6 +2,7 @@ import * as Tea from "../Tea";
 import { Camera } from "./Camera";
 
 export class ShadowMapCamera extends Camera {
+	static readonly className: string = "ShadowMapCamera";
 	shader: Tea.Shader;
 
 	constructor(app: Tea.App) {
@@ -28,14 +29,14 @@ export class ShadowMapCamera extends Camera {
 
 	toJSON(): Object {
 		var json = super.toJSON();
-		Object.assign(json, {
-			_type: "ShadowMapCamera"
-		});
+		json[Tea.JSONUtil.TypeName] = ShadowMapCamera.className;
+		//Object.assign(json, {
+		//});
 		return json;
 	}
 
 	static fromJSON(app: Tea.App, json: any, callback: (component: Tea.Component) => void): void {
-		if (json == null || json._type !== "ShadowMapCamera") {
+		if (Tea.JSONUtil.isValidSceneJSON(json, ShadowMapCamera.className) === false) {
 			callback(null);
 			return;
 		}

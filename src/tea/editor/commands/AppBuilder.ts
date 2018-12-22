@@ -1,4 +1,5 @@
 import * as Electron from "electron";
+import * as Tea from "../../Tea";
 import { LocalDirectory } from "../LocalDirectory";
 import { LocalFile } from "../LocalFile";
 
@@ -58,7 +59,7 @@ export class AppBuilder {
 			var length = children.length;
 			for (var i = 0; i < length; i++) {
 				var child = children[i];
-				if (child._type !== "Object3D") {
+				if (child[Tea.JSONUtil.TypeName] !== Tea.Object3D.className) {
 					continue;
 				}
 				var components = child.components as Array<any>;
@@ -67,7 +68,7 @@ export class AppBuilder {
 				}
 				scripts.push.apply(scripts,
 					components.filter((component: any) => {
-						return component._type === "Script";
+						return component[Tea.JSONUtil.TypeName] === Tea.Script.className;
 					}
 				));
 			}

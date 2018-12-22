@@ -1,6 +1,7 @@
 import * as Tea from "../Tea";
 
 export class GradientAlphaKey {
+	static readonly className: string = "GradientAlphaKey";
 	alpha: number;
 	time: number;
 
@@ -10,7 +11,7 @@ export class GradientAlphaKey {
 	}
 
 	static fromJSON(app: Tea.App, json: any): GradientAlphaKey {
-		if (json == null || json._type !== "GradientAlphaKey") {
+		if (Tea.JSONUtil.isValidSceneJSON(json, GradientAlphaKey.className) === false) {
 			return null;
 		}
 		return new GradientAlphaKey(
@@ -23,11 +24,10 @@ export class GradientAlphaKey {
 	}
 
 	toJSON(): Object {
-		var json = {
-			_type: "GradientAlphaKey",
-			alpha: this.alpha,
-			time: this.time
-		};
+		var json: any = {};
+		json[Tea.JSONUtil.TypeName] = GradientAlphaKey.className;
+		json.alpha = this.alpha;
+		json.time = this.time;
 		return json;
 	}
 }

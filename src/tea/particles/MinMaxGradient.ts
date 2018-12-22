@@ -1,6 +1,7 @@
 import * as Tea from "../Tea";
 
 export class MinMaxGradient {
+	static readonly className: string = "MinMaxGradient";
 	color: Tea.Color;
 	colorMax: Tea.Color;
 	colorMin: Tea.Color;
@@ -66,7 +67,7 @@ export class MinMaxGradient {
 	}
 
 	static fromJSON(app: Tea.App, json: any): MinMaxGradient {
-		if (json == null || json._type !== "MinMaxGradient") {
+		if (Tea.JSONUtil.isValidSceneJSON(json, MinMaxGradient.className) === false) {
 			return null;
 		}
 		var minMaxGradient = null;
@@ -117,8 +118,9 @@ export class MinMaxGradient {
 		if (this.gradientMin != null) {
 			gradientMin = this.gradientMin.toJSON();
 		}
-		var json = {
-			_type: "MinMaxGradient",
+		var json: any = {};
+		json[Tea.JSONUtil.TypeName] = MinMaxGradient.className;
+		Object.assign(json, {
 			color: this.color,
 			colorMax: this.colorMax,
 			colorMin: this.colorMin,
@@ -126,7 +128,7 @@ export class MinMaxGradient {
 			gradientMax: gradientMax,
 			gradientMin: gradientMin,
 			mode: Tea.ParticleSystemGradientMode.toString(this.mode)
-		};
+		});
 		return json;
 	}
 }

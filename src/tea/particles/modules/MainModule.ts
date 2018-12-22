@@ -3,6 +3,7 @@ import { MinMaxCurve } from "../MinMaxCurve";
 import { MinMaxGradient } from "../MinMaxGradient";
 
 export class MainModule {
+	static readonly className: string = "MainModule";
 	//customSimulationSpace: Transform;
 	duration: number;
 	//emitterVelocityMode: Tea.ParticleSystemEmitterVelocityMode;
@@ -90,7 +91,7 @@ export class MainModule {
 	}
 
 	static fromJSON(app: Tea.App, json: any): MainModule {
-		if (json == null || json._type !== "MainModule") {
+		if (Tea.JSONUtil.isValidSceneJSON(json, MainModule.className) === false) {
 			return null;
 		}
 		var module = new MainModule();
@@ -108,8 +109,9 @@ export class MainModule {
 	}
 
 	toJSON(): Object {
-		var json = {
-			_type: "MainModule",
+		var json: any = {};
+		json[Tea.JSONUtil.TypeName] = MainModule.className;
+		Object.assign(json, {
 			duration: this.duration,
 			flipRotation: this.flipRotation,
 			gravityModifier: this.gravityModifier.toJSON(),
@@ -120,7 +122,7 @@ export class MainModule {
 			startRotation: this.startRotation.toJSON(),
 			startSize: this.startSize.toJSON(),
 			startSpeed: this.startSpeed.toJSON(),
-		};
+		});
 		return json;
 	}
 }

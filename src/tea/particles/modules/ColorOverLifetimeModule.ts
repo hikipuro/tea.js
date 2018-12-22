@@ -2,6 +2,7 @@ import * as Tea from "../../Tea";
 import { MinMaxGradient } from "../MinMaxGradient";
 
 export class ColorOverLifetimeModule {
+	static readonly className: string = "ColorOverLifetimeModule";
 	enabled: boolean;
 	color: MinMaxGradient;
 
@@ -12,7 +13,7 @@ export class ColorOverLifetimeModule {
 	}
 
 	static fromJSON(app: Tea.App, json: any): ColorOverLifetimeModule {
-		if (json == null || json._type !== "ColorOverLifetimeModule") {
+		if (Tea.JSONUtil.isValidSceneJSON(json, ColorOverLifetimeModule.className) === false) {
 			return null;
 		}
 		var module = new ColorOverLifetimeModule();
@@ -22,11 +23,10 @@ export class ColorOverLifetimeModule {
 	}
 
 	toJSON(): Object {
-		var json = {
-			_type: "ColorOverLifetimeModule",
-			enabled: this.enabled,
-			color: this.color.toJSON()
-		};
+		var json: any = {};
+		json[Tea.JSONUtil.TypeName] = ColorOverLifetimeModule.className;
+		json.enabled = this.enabled;
+		json.color = this.color.toJSON();
 		return json;
 	}
 }

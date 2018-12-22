@@ -3,6 +3,7 @@ import { Burst } from "../Burst";
 import { MinMaxCurve } from "../MinMaxCurve";
 
 export class EmissionModule {
+	static readonly className: string = "EmissionModule";
 	enabled: boolean;
 	rateOverDistance: MinMaxCurve;
 	rateOverTime: MinMaxCurve;
@@ -73,7 +74,7 @@ export class EmissionModule {
 	//}
 
 	static fromJSON(app: Tea.App, json: any): EmissionModule {
-		if (json == null || json._type !== "EmissionModule") {
+		if (Tea.JSONUtil.isValidSceneJSON(json, EmissionModule.className) === false) {
 			return null;
 		}
 		var module = new EmissionModule();
@@ -84,12 +85,13 @@ export class EmissionModule {
 	}
 
 	toJSON(): Object {
-		var json = {
-			_type: "EmissionModule",
+		var json: any = {};
+		json[Tea.JSONUtil.TypeName] = EmissionModule.className;
+		Object.assign(json, {
 			enabled: this.enabled,
 			rateOverDistance: this.rateOverDistance.toJSON(),
 			rateOverTime: this.rateOverTime.toJSON()
-		};
+		});
 		return json;
 	}
 }

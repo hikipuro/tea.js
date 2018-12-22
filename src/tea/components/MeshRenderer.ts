@@ -2,6 +2,7 @@ import * as Tea from "../Tea";
 import { Renderer } from "./Renderer";
 
 export class MeshRenderer extends Renderer {
+	static readonly className: string = "MeshRenderer";
 	receiveShadows: boolean;
 	protected _meshFilter: Tea.MeshFilter;
 	protected _bounds: Tea.Bounds;
@@ -97,8 +98,8 @@ export class MeshRenderer extends Renderer {
 
 	toJSON(): Object {
 		var json = super.toJSON();
+		json[Tea.JSONUtil.TypeName] = MeshRenderer.className;
 		Object.assign(json, {
-			_type: "MeshRenderer",
 			receiveShadows: this.receiveShadows,
 			wireframe: this._wireframe
 		});
@@ -106,7 +107,7 @@ export class MeshRenderer extends Renderer {
 	}
 
 	static fromJSON(app: Tea.App, json: any, callback: (component: Tea.Component) => void): void {
-		if (json == null || json._type !== "MeshRenderer") {
+		if (Tea.JSONUtil.isValidSceneJSON(json, MeshRenderer.className) === false) {
 			callback(null);
 			return;
 		}

@@ -2,6 +2,7 @@ import * as Tea from "../Tea";
 
 export class Component {
 	static editorView: any;
+	static readonly className: string = "Component";
 	app: Tea.App;
 	object3d: Tea.Object3D;
 	enabled: boolean;
@@ -16,7 +17,7 @@ export class Component {
 		if (json == null) {
 			return null;
 		}
-		var componentClass = Tea[json._type];
+		var componentClass = Tea[json[Tea.JSONUtil.TypeName]];
 		if (componentClass == null) {
 			return null;
 		}
@@ -47,10 +48,9 @@ export class Component {
 	//}
 
 	toJSON(): Object {
-		var json = {
-			_type: "Component",
-			enabled: this.enabled
-		};
+		var json: any = {};
+		json[Tea.JSONUtil.TypeName] = Component.className;
+		json.enabled = this.enabled;
 		return json;
 	}
 }

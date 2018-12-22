@@ -42,6 +42,7 @@ class BufferAttribute {
 }
 
 export class SpriteRenderer extends Renderer {
+	static readonly className: string = "SpriteRenderer";
 	vertexBuffer: WebGLBuffer;
 	indexBuffer: WebGLBuffer;
 	mvpMatrix: Tea.Matrix4x4;
@@ -152,16 +153,14 @@ export class SpriteRenderer extends Renderer {
 	}
 
 	toJSON(): Object {
-		var json = super.toJSON();
-		Object.assign(json, {
-			_type: "SpriteRenderer",
-			wireframe: this._wireframe
-		});
+		var json: any = super.toJSON();
+		json[Tea.JSONUtil.TypeName] = SpriteRenderer.className;
+		json.wireframe = this._wireframe;
 		return json;
 	}
 
 	static fromJSON(app: Tea.App, json: any, callback: (component: Tea.Component) => void): void {
-		if (json == null || json._type !== "MeshRenderer") {
+		if (Tea.JSONUtil.isValidSceneJSON(json, SpriteRenderer.className) === false) {
 			callback(null);
 			return;
 		}

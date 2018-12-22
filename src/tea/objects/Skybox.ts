@@ -1,6 +1,7 @@
 import * as Tea from "../Tea";
 
 export class Skybox {
+	static readonly className: string = "Skybox";
 	object3d: Tea.Object3D;
 	renderer: Tea.MeshRenderer;
 	front: Tea.Texture;
@@ -12,7 +13,7 @@ export class Skybox {
 
 	constructor(app: Tea.App) {
 		var object3d = new Tea.Object3D(app);
-		object3d.name = "Skybox";
+		object3d.name = Skybox.className;
 		var shader = new Tea.Shader(app);
 		shader.attach(
 			Tea.ShaderSources.skyboxVS,
@@ -52,7 +53,7 @@ export class Skybox {
 	}
 
 	static fromJSON(app: Tea.App, json: any): Skybox {
-		if (json == null || json._type !== "Skybox") {
+		if (Tea.JSONUtil.isValidSceneJSON(json, Skybox.className) === false) {
 			return null;
 		}
 		var skybox = new Skybox(app);
@@ -66,15 +67,16 @@ export class Skybox {
 	}
 
 	toJSON(): Object {
-		var json = {
-			_type: "Skybox",
+		var json: any = {};
+		json[Tea.JSONUtil.TypeName] = Skybox.className;
+		Object.assign(json, {
 			front: this.front.toJSON(),
 			back: this.back.toJSON(),
 			up: this.up.toJSON(),
 			down: this.down.toJSON(),
 			left: this.left.toJSON(),
 			right: this.right.toJSON()
-		};
+		});
 		return json;
 	}
 }

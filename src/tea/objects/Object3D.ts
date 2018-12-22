@@ -64,6 +64,7 @@ class Movement {
 }
 
 export class Object3D {
+	static readonly className: string = "Object3D";
 	protected static _nextId: number = 0;
 	app: Tea.App;
 	id: number;
@@ -383,8 +384,9 @@ export class Object3D {
 	}
 
 	toJSON(): Object {
-		var json = {
-			_type: "Object3D",
+		var json: any = {};
+		json[Tea.JSONUtil.TypeName] = Object3D.className;
+		Object.assign(json, {
 			name: this.name,
 			isActive: this.isActive,
 			localPosition: this.localPosition,
@@ -392,7 +394,7 @@ export class Object3D {
 			localScale: this.localScale,
 			components: [],
 			children: []
-		};
+		});
 		var length = this._components.length;
 		for (var i = 0; i < length; i++) {
 			var component = this._components[i];
@@ -414,7 +416,7 @@ export class Object3D {
 
 	/*
 	static fromJSON(app: Tea.App, json: any): Object3D {
-		if (json == null || json._type !== "Object3D") {
+		if (json == null || json[Tea.JSONUtil.TypeName] !== "Object3D") {
 			return null;
 		}
 		var object3d = new Object3D(app);
@@ -426,11 +428,11 @@ export class Object3D {
 		var length = json.components.length;
 		for (var i = 0; i < length; i++) {
 			var item = json.components[i];
-			var componentClass = Tea[item._type];
+			var componentClass = Tea[item[Tea.JSONUtil.TypeName]];
 			if (componentClass == null) {
 				continue;
 			}
-			if (item._type === "Script") {
+			if (json[Tea.JSONUtil.TypeName] === "Script") {
 				componentClass.fromJSON(app, item, (script: Tea.Script) => {
 					if (script == null) {
 						return;
@@ -441,7 +443,7 @@ export class Object3D {
 				continue;
 			}
 			if (componentClass.fromJSON == null) {
-				console.error("componentClass.fromJSON not found:", item._type);
+				console.error("componentClass.fromJSON not found:", item[Tea.JSONUtil.TypeName]);
 				continue;
 			}
 			var component = componentClass.fromJSON(app, item);

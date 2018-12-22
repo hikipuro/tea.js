@@ -2,7 +2,7 @@ import * as Tea from "../Tea";
 
 export class SceneLoader {
 	static load(app: Tea.App, json: any, callback: (scene: Tea.Scene) => void): void {
-		if (json == null || json._type !== "Scene") {
+		if (Tea.JSONUtil.isValidSceneJSON(json, Tea.Scene.className) === false) {
 			callback(null);
 			return;
 		}
@@ -31,7 +31,7 @@ export class SceneLoader {
 	}
 
 	static loadObject3D(app: Tea.App, json: any, callback: (object3d: Tea.Object3D) => void): void {
-		if (json == null || json._type !== "Object3D") {
+		if (Tea.JSONUtil.isValidSceneJSON(json, Tea.Object3D.className) === false) {
 			callback(null);
 			return;
 		}
@@ -67,12 +67,12 @@ export class SceneLoader {
 
 		for (var i = 0; i < length; i++) {
 			var item = json.components[i];
-			var componentClass = Tea[item._type];
+			var componentClass = Tea[item[Tea.JSONUtil.TypeName]];
 			if (componentClass == null) {
 				onLoad();
 				continue;
 			}
-			if (item._type === "Script") {
+			if (item[Tea.JSONUtil.TypeName] === Tea.Script.className) {
 				this.loadScript(app, item, (component: Tea.Component) => {
 					if (component != null) {
 						component.object3d = object3d;
@@ -83,7 +83,7 @@ export class SceneLoader {
 				continue;
 			}
 			if (componentClass.fromJSON == null) {
-				console.error("componentClass.fromJSON not found:", item._type);
+				console.error("componentClass.fromJSON not found:", item[Tea.JSONUtil.TypeName]);
 				onLoad();
 				continue;
 			}
@@ -111,7 +111,7 @@ export class SceneLoader {
 	}
 
 	protected static loadScript(app: Tea.App, json: any, callback: (component: Tea.Component) => void): void {
-		if (json == null || json._type !== "Script") {
+		if (Tea.JSONUtil.isValidSceneJSON(json, Tea.Script.className) === false) {
 			callback(null);
 			return;
 		}

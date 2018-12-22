@@ -460,7 +460,7 @@ export class ProjectView extends Vue {
 				return;
 			}
 			var json = JSON.parse(data);
-			if (json._type === "Scene") {
+			if (json[Tea.JSONUtil.TypeName] === Tea.Scene.className) {
 				editor.command.loadScene(path);
 			} else {
 				Electron.shell.openItem(path);

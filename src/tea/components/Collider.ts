@@ -2,6 +2,7 @@ import * as Tea from "../Tea";
 import { Component } from "./Component";
 
 export class Collider extends Component {
+	static readonly className: string = "Collider";
 	bounds: Tea.Bounds;
 	
 	constructor(app: Tea.App) {
@@ -19,8 +20,8 @@ export class Collider extends Component {
 
 	toJSON(): Object {
 		var json = super.toJSON();
+		json[Tea.JSONUtil.TypeName] = Collider.className;
 		Object.assign(json, {
-			_type: "Collider",
 			bounds: this.bounds
 		});
 		return json;

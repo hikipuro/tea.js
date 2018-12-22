@@ -1,6 +1,7 @@
 import * as Tea from "../Tea";
 
 export class ShaderBlend {
+	static readonly className: string = "ShaderBlend";
 	srcRGB: Tea.ShaderBlendFunc;
 	dstRGB: Tea.ShaderBlendFunc;
 	srcAlpha: Tea.ShaderBlendFunc;
@@ -26,7 +27,7 @@ export class ShaderBlend {
 	}
 
 	static fromJSON(json: any): ShaderBlend {
-		if (json == null || json._type !== "ShaderBlend") {
+		if (Tea.JSONUtil.isValidSceneJSON(json, ShaderBlend.className) === false) {
 			return null;
 		}
 		var shaderBlend = new ShaderBlend();
@@ -44,8 +45,9 @@ export class ShaderBlend {
 	}
 
 	toJSON(): Object {
-		var json = {
-			_type: "ShaderBlend",
+		var json = {};
+		json[Tea.JSONUtil.TypeName] = ShaderBlend.className;
+		Object.assign(json, {
 			srcRGB: Tea.ShaderBlendFunc.toString(this.srcRGB),
 			dstRGB: Tea.ShaderBlendFunc.toString(this.dstRGB),
 			srcAlpha: Tea.ShaderBlendFunc.toString(this.srcAlpha),
@@ -56,7 +58,7 @@ export class ShaderBlend {
 			green: this.green,
 			blue: this.blue,
 			alpha: this.alpha
-		};
+		});
 		return json;
 	}
 }

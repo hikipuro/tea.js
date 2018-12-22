@@ -2,6 +2,7 @@ import * as Tea from "../Tea";
 import { Component } from "./Component";
 
 export class Light extends Component {
+	static readonly className: string = "Light";
 	color: Tea.Color;
 	intensity: number;
 	range: number;
@@ -44,8 +45,8 @@ export class Light extends Component {
 
 	toJSON(): Object {
 		var json = super.toJSON();
+		json[Tea.JSONUtil.TypeName] = Light.className;
 		Object.assign(json, {
-			_type: "Light",
 			color: this.color,
 			intensity: this.intensity,
 			range: this.range,
@@ -56,7 +57,7 @@ export class Light extends Component {
 	}
 
 	static fromJSON(app: Tea.App, json: any, callback: (component: Tea.Component) => void): void {
-		if (json == null || json._type !== "Light") {
+		if (Tea.JSONUtil.isValidSceneJSON(json, Light.className) === false) {
 			callback(null);
 			return;
 		}

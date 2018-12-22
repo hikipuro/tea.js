@@ -2,6 +2,7 @@ import * as Tea from "../Tea";
 import { Collider } from "./Collider";
 
 export class BoxCollider extends Collider {
+	static readonly className: string = "BoxCollider";
 	center: Tea.Vector3;
 	size: Tea.Vector3;
 
@@ -128,17 +129,15 @@ export class BoxCollider extends Collider {
 	}
 
 	toJSON(): Object {
-		var json = super.toJSON();
-		Object.assign(json, {
-			_type: "BoxCollider",
-			center: this.center,
-			size: this.size
-		});
+		var json: any = super.toJSON();
+		json[Tea.JSONUtil.TypeName] = BoxCollider.className;
+		json.center = this.center;
+		json.size = this.size;
 		return json;
 	}
 
 	static fromJSON(app: Tea.App, json: any, callback: (component: Tea.Component) => void): void {
-		if (json == null || json._type !== "BoxCollider") {
+		if (Tea.JSONUtil.isValidSceneJSON(json, BoxCollider.className) === false) {
 			callback(null);
 			return;
 		}

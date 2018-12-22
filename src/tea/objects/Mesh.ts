@@ -1,6 +1,7 @@
 import * as Tea from "../Tea";
 
 export class Mesh {
+	static readonly className: string = "Mesh";
 	vertices: Array<Tea.Vector3>;
 	triangles: Array<Tea.Vector3>;
 	normals: Array<Tea.Vector3>;
@@ -306,16 +307,15 @@ export class Mesh {
 	}
 
 	toJSON(): Object {
-		var json = {
-			_type: "Mesh",
-			isPrimitive: this.isPrimitive,
-			primitiveType: Tea.PrimitiveType.toString(this.primitiveType)
-		};
+		var json: any = {};
+		json[Tea.JSONUtil.TypeName] = Mesh.className;
+		json.isPrimitive = this.isPrimitive;
+		json.primitiveType = Tea.PrimitiveType.toString(this.primitiveType);
 		return json;
 	}
 
 	static fromJSON(app: Tea.App, json: any): Mesh {
-		if (json == null || json._type !== "Mesh") {
+		if (Tea.JSONUtil.isValidSceneJSON(json, Mesh.className) === false) {
 			return null;
 		}
 		if (json.isPrimitive) {

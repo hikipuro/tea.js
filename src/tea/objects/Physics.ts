@@ -1,6 +1,7 @@
 import * as Tea from "../Tea";
 
 export class Physics {
+	static readonly className: string = "Physics";
 	gravity: Tea.Vector3;
 
 	constructor() {
@@ -8,7 +9,7 @@ export class Physics {
 	}
 
 	static fromJSON(app: Tea.App, json: any): Physics {
-		if (json == null || json._type !== "Physics") {
+		if (Tea.JSONUtil.isValidSceneJSON(json, Physics.className) === false) {
 			return null;
 		}
 		var physics = new Physics();
@@ -17,10 +18,9 @@ export class Physics {
 	}
 
 	toJSON(): Object {
-		var json = {
-			_type: "Physics",
-			gravity: this.gravity
-		};
+		var json: any = {};
+		json[Tea.JSONUtil.TypeName] = Physics.className;
+		json.gravity = this.gravity;
 		return json;
 	}
 }

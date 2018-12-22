@@ -2,6 +2,7 @@ import * as Tea from "../Tea";
 import { Component } from "./Component";
 
 export class Script extends Component {
+	static readonly className: string = "Script";
 	path: string;
 	name: string;
 	isStarted: boolean;
@@ -15,7 +16,7 @@ export class Script extends Component {
 	}
 
 	static fromJSON(app: Tea.App, json: any, callback: (component: Tea.Component) => void): void {
-		if (json == null || json._type !== "Script") {
+		if (Tea.JSONUtil.isValidSceneJSON(json, Script.className) === false) {
 			callback(null);
 			return;
 		}
@@ -173,12 +174,10 @@ export class Script extends Component {
 
 	toJSON(): Object {
 		var json = super.toJSON() as any;
-		Object.assign(json, {
-			_type: "Script",
-			//class: this.constructor.name,
-			path: this.path,
-			members: []
-		});
+		json[Tea.JSONUtil.TypeName] = Script.className;
+		//json.class = this.constructor.name;
+		json.path = this.path;
+		json.members = [];
 		var keys1 = Object.keys(new Script(null));
 		var keys2 = Object.keys(this);
 		var keys = keys2.filter((value) => {

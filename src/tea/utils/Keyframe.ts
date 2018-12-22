@@ -1,6 +1,7 @@
 import * as Tea from "../Tea";
 
 export class Keyframe {
+	static readonly className: string = "Keyframe";
 	time: number;
 	value: number;
 	inTangent: number;
@@ -23,10 +24,10 @@ export class Keyframe {
 	}
 
 	static fromJSON(app: Tea.App, json: any): Keyframe {
-		if (json == null || json._type !== "Keyframe") {
+		if (Tea.JSONUtil.isValidSceneJSON(json, Keyframe.className) === false) {
 			return null;
 		}
-		var keyFrame = new Keyframe(
+		var keyframe = new Keyframe(
 			json.time,
 			json.value,
 			json.inTangent,
@@ -35,12 +36,13 @@ export class Keyframe {
 			//json.outWeight
 		);
 		//keyFrame.weightedMode = Tea.WeightedMode[json.weightedMode as string];
-		return keyFrame;
+		return keyframe;
 	}
 
 	toJSON(): Object {
-		var json = {
-			_type: "Keyframe",
+		var json: any = {};
+		json[Tea.JSONUtil.TypeName] = Keyframe.className;
+		Object.assign(json, {
 			time: this.time,
 			value: this.value,
 			inTangent: this.inTangent,
@@ -48,7 +50,7 @@ export class Keyframe {
 			//inWeight: this.inWeight,
 			//outWeight: this.outWeight,
 			//weightedMode: Tea.WeightedMode.toString(this.weightedMode)
-		};
+		});
 		return json;
 	}
 

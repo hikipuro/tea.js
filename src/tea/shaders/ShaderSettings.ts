@@ -1,6 +1,7 @@
 import * as Tea from "../Tea";
 
 export class ShaderSettings {
+	static readonly className: string = "ShaderSettings";
 	enableBlend: boolean;
 	enableCullFace: boolean;
 	enableDither: boolean;
@@ -36,7 +37,7 @@ export class ShaderSettings {
 	}
 
 	static fromJSON(json: any): ShaderSettings {
-		if (json == null || json._type !== "ShaderSettings") {
+		if (Tea.JSONUtil.isValidSceneJSON(json, ShaderSettings.className) === false) {
 			return null;
 		}
 		var shaderSettings = new ShaderSettings();
@@ -55,8 +56,9 @@ export class ShaderSettings {
 	}
 
 	toJSON(): Object {
-		var json = {
-			_type: "ShaderSettings",
+		var json: any = {};
+		json[Tea.JSONUtil.TypeName] = ShaderSettings.className;
+		Object.assign(json, {
 			enableBlend: this.enableBlend,
 			enableCullFace: this.enableCullFace,
 			enableDither: this.enableDither,
@@ -68,7 +70,7 @@ export class ShaderSettings {
 			depthFunc: Tea.ShaderTestFunc.toString(this.depthFunc),
 			blend: this.blend.toJSON(),
 			stencil: this.stencil.toJSON()
-		};
+		});
 		return json;
 	}
 }

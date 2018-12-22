@@ -2,6 +2,7 @@ import * as Tea from "../Tea";
 import { Collider } from "./Collider";
 
 export class SphereCollider extends Collider {
+	static readonly className: string = "SphereCollider";
 	center: Tea.Vector3;
 	radius: number;
 
@@ -50,17 +51,15 @@ export class SphereCollider extends Collider {
 	}
 
 	toJSON(): Object {
-		var json = super.toJSON();
-		Object.assign(json, {
-			_type: "SphereCollider",
-			center: this.center,
-			radius: this.radius
-		});
+		var json: any = super.toJSON();
+		json[Tea.JSONUtil.TypeName] = SphereCollider.className;
+		json.center = this.center;
+		json.radius = this.radius;
 		return json;
 	}
 
 	static fromJSON(app: Tea.App, json: any, callback: (component: Tea.Component) => void): void {
-		if (json == null || json._type !== "SphereCollider") {
+		if (Tea.JSONUtil.isValidSceneJSON(json, SphereCollider.className) === false) {
 			callback(null);
 			return;
 		}

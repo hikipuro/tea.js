@@ -1,4 +1,7 @@
+import * as Tea from "../Tea";
+
 export class ShaderColorMask {
+	static readonly className: string = "ShaderColorMask";
 	red: boolean;
 	green: boolean;
 	blue: boolean;
@@ -12,7 +15,7 @@ export class ShaderColorMask {
 	}
 
 	static fromJSON(json: any): ShaderColorMask {
-		if (json == null || json._type !== "ShaderColorMask") {
+		if (Tea.JSONUtil.isValidSceneJSON(json, ShaderColorMask.className) === false) {
 			return null;
 		}
 		var shaderColorMask = new ShaderColorMask();
@@ -31,13 +34,12 @@ export class ShaderColorMask {
 	}
 
 	toJSON(): Object {
-		var json = {
-			_type: "ShaderColorMask",
-			red: this.red,
-			green: this.green,
-			blue: this.blue,
-			alpha: this.alpha
-		};
+		var json: any = {};
+		json[Tea.JSONUtil.TypeName] = ShaderColorMask.className;
+		json.red = this.red;
+		json.green = this.green;
+		json.blue = this.blue;
+		json.alpha = this.alpha;
 		return json;
 	}
 }

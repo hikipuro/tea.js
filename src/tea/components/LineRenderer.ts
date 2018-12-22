@@ -2,6 +2,7 @@ import * as Tea from "../Tea";
 import { Renderer } from "./Renderer";
 
 export class LineRenderer extends Renderer {
+	static readonly className: string = "LineRenderer";
 	points: Array<Tea.Vector3>;
 	vertexBuffer: WebGLBuffer;
 	shader: Tea.Shader;
@@ -87,14 +88,14 @@ export class LineRenderer extends Renderer {
 	
 	toJSON(): Object {
 		var json = super.toJSON();
+		json[Tea.JSONUtil.TypeName] = LineRenderer.className;
 		Object.assign(json, {
-			_type: "LineRenderer"
 		});
 		return json;
 	}
 
 	static fromJSON(app: Tea.App, json: any, callback: (component: Tea.Component) => void): void {
-		if (json == null || json._type !== "LineRenderer") {
+		if (Tea.JSONUtil.isValidSceneJSON(json, LineRenderer.className) === false) {
 			callback(null);
 			return;
 		}

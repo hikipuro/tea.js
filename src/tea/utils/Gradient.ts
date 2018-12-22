@@ -1,6 +1,7 @@
 import * as Tea from "../Tea";
 
 export class Gradient {
+	static readonly className: string = "Gradient";
 	alphaKeys: Array<Tea.GradientAlphaKey>;
 	colorKeys: Array<Tea.GradientColorKey>;
 	mode: Tea.GradientMode;
@@ -84,7 +85,7 @@ export class Gradient {
 	}
 
 	static fromJSON(app: Tea.App, json: any): Gradient {
-		if (json == null || json._type !== "Gradient") {
+		if (Tea.JSONUtil.isValidSceneJSON(json, Gradient.className) === false) {
 			return null;
 		}
 		var alphaKeys = [];
@@ -119,12 +120,11 @@ export class Gradient {
 		this.colorKeys.forEach((colorKey: Tea.GradientColorKey) => {
 			colorKeys.push(colorKey.toJSON());
 		});
-		var json = {
-			_type: "Gradient",
-			alphaKeys: alphaKeys,
-			colorKeys: colorKeys,
-			mode: Tea.GradientMode.toString(this.mode)
-		};
+		var json: any = {};
+		json[Tea.JSONUtil.TypeName] = Gradient.className;
+		json.alphaKeys = alphaKeys;
+		json.colorKeys = colorKeys;
+		json.mode = Tea.GradientMode.toString(this.mode);
 		return json;
 	}
 

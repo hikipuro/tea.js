@@ -1,6 +1,7 @@
 import * as Tea from "../Tea";
 
 export class Ray {
+	static readonly className: string = "Ray";
 	origin: Tea.Vector3;
 	protected _direction: Tea.Vector3;
 
@@ -34,11 +35,10 @@ export class Ray {
 	}
 
 	toJSON(): Object {
-		var json = {
-			_type: "Ray",
-			origin: this.origin,
-			direction: this._direction
-		};
+		var json: any = {};
+		json[Tea.JSONUtil.TypeName] = Ray.className;
+		json.origin = this.origin;
+		json.direction = this._direction;
 		return json;
 	}
 }

@@ -1,6 +1,7 @@
 import * as Tea from "../Tea";
 
 export class GradientColorKey {
+	static readonly className: string = "GradientColorKey";
 	color: Tea.Color;
 	time: number;
 
@@ -10,7 +11,7 @@ export class GradientColorKey {
 	}
 
 	static fromJSON(app: Tea.App, json: any): GradientColorKey {
-		if (json == null || json._type !== "GradientColorKey") {
+		if (Tea.JSONUtil.isValidSceneJSON(json, GradientColorKey.className) === false) {
 			return null;
 		}
 		return new GradientColorKey(
@@ -23,11 +24,10 @@ export class GradientColorKey {
 	}
 	
 	toJSON(): Object {
-		var json = {
-			_type: "GradientColorKey",
-			color: this.color,
-			time: this.time
-		};
+		var json: any = {};
+		json[Tea.JSONUtil.TypeName] = GradientColorKey.className;
+		json.color = this.color;
+		json.time = this.time;
 		return json;
 	}
 }

@@ -1,6 +1,7 @@
 import * as Tea from "../Tea";
 
 export class AnimationCurve {
+	static readonly className: string = "AnimationCurve";
 	keys: Array<Tea.Keyframe>;
 	preWrapMode: Tea.WrapMode;
 	postWrapMode: Tea.WrapMode;
@@ -105,7 +106,7 @@ export class AnimationCurve {
 	}
 
 	static fromJSON(app: Tea.App, json: any): AnimationCurve {
-		if (json == null || json._type !== "AnimationCurve") {
+		if (Tea.JSONUtil.isValidSceneJSON(json, AnimationCurve.className) === false) {
 			return null;
 		}
 		var keys = [];
@@ -125,12 +126,11 @@ export class AnimationCurve {
 		this.keys.forEach((keyFrame: Tea.Keyframe) => {
 			keys.push(keyFrame.toJSON());
 		});
-		var json = {
-			_type: "AnimationCurve",
-			keys: keys,
-			preWrapMode: Tea.WrapMode.toString(this.preWrapMode),
-			postWrapMode: Tea.WrapMode.toString(this.postWrapMode)
-		};
+		var json: any = {};
+		json[Tea.JSONUtil.TypeName] = AnimationCurve.className;
+		json.keys = keys;
+		json.preWrapMode = Tea.WrapMode.toString(this.preWrapMode);
+		json.postWrapMode = Tea.WrapMode.toString(this.postWrapMode);
 		return json;
 	}
 

@@ -1,6 +1,7 @@
 import * as Tea from "../Tea";
 
 export class Shader {
+	static readonly className: string = "Shader";
 	app: Tea.App;
 	program: WebGLProgram;
 	vertexShader: WebGLShader;
@@ -209,17 +210,16 @@ export class Shader {
 	}
 
 	toJSON(): Object {
-		var json = {
-			_type: "Shader",
-			settings: this.settings.toJSON(),
-			vsSource: this._vsSource,
-			fsSource: this._fsSource
-		};
+		var json: any = {};
+		json[Tea.JSONUtil.TypeName] = Shader.className;
+		json.settings = this.settings.toJSON();
+		json.vsSource = this._vsSource;
+		json.fsSource = this._fsSource;
 		return json;
 	}
 
 	static fromJSON(app: Tea.App, json: any): Shader {
-		if (json == null || json._type !== "Shader") {
+		if (Tea.JSONUtil.isValidSceneJSON(json, Shader.className) === false) {
 			return null;
 		}
 		var shader = new Shader(app);
