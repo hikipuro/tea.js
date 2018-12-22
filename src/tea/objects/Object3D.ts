@@ -1,67 +1,5 @@
 import * as Tea from "../Tea";
-
-class Movement {
-	position: Tea.Vector3;
-	rotation: Tea.Quaternion;
-	scale: Tea.Vector3;
-	localToWorldMatrix: Tea.Matrix4x4;
-	worldToLocalMatrix: Tea.Matrix4x4;
-	isMovedPrevFrame: boolean;
-
-	constructor() {
-		this.position = new Tea.Vector3(0.001, 0.002, 0.003);
-		this.rotation = new Tea.Quaternion(0.001, 0.002, 0.003);
-		this.scale = new Tea.Vector3(0.001, 0.002, 0.003);
-		this.localToWorldMatrix = new Tea.Matrix4x4();
-		this.worldToLocalMatrix = new Tea.Matrix4x4();
-	}
-
-	destroy(): void {
-		this.position = undefined;
-		this.rotation = undefined;
-		this.scale = undefined;
-		this.localToWorldMatrix = undefined;
-		this.worldToLocalMatrix = undefined;
-	}
-
-	update(object3d: Object3D): void {
-		var isMoved = this.isMoved(object3d);
-		this.isMovedPrevFrame = isMoved;
-		if (isMoved) {
-			this.trs();
-		}
-	}
-
-	isMoved(object3d: Object3D): boolean {
-		var p = object3d.position;
-		var r = object3d.rotation;
-		var s = object3d.scale;
-		var b = false;
-		if (!this.position.equals(p)) {
-			b = true;
-			this.position.copy(p);
-		}
-		if (!this.rotation.equals(r)) {
-			b = true;
-			this.rotation.copy(r);
-		}
-		if (!this.scale.equals(s)) {
-			b = true;
-			this.scale.copy(s);
-		}
-		return b;
-	}
-
-	trs(): void {
-		this.localToWorldMatrix.setTRS(
-			this.position,
-			this.rotation,
-			this.scale
-		);
-		this.localToWorldMatrix.toggleHand();
-		this.worldToLocalMatrix = this.localToWorldMatrix.inverse;
-	}
-}
+import { Object3DStatus } from "./Object3DStatus";
 
 export class Object3D {
 	static readonly className: string = "Object3D";
@@ -78,7 +16,7 @@ export class Object3D {
 	children: Array<Object3D>;
 	tag: string;
 	layer: number;
-	protected _m: Movement;
+	protected _status: Object3DStatus;
 	protected _parent: Object3D;
 	protected _components: Array<Tea.Component>;
 	protected _toDestroy: boolean;
@@ -96,7 +34,7 @@ export class Object3D {
 		this.children = [];
 		this.tag = "";
 		this.layer = 0;
-		this._m = new Movement();
+		this._status = new Object3DStatus();
 		this._parent = null;
 		this._components = [];
 		this._toDestroy = false;
@@ -121,7 +59,7 @@ export class Object3D {
 	}
 
 	get isMoved(): boolean {
-		return this._m.isMovedPrevFrame;
+		return this._status.isMovedPrevFrame;
 	}
 
 	get isActiveInHierarchy(): boolean {
@@ -298,7 +236,7 @@ export class Object3D {
 	}
 
 	get localToWorldMatrix(): Tea.Matrix4x4 {
-		return this._m.localToWorldMatrix;
+		return this._status.localToWorldMatrix;
 		/*
 		var m = Tea.Matrix4x4.trs(
 			this.position,
@@ -311,7 +249,7 @@ export class Object3D {
 	}
 
 	get worldToLocalMatrix(): Tea.Matrix4x4 {
-		return this._m.worldToLocalMatrix;
+		return this._status.worldToLocalMatrix;
 	}
 
 	get root(): Tea.Object3D {
@@ -372,8 +310,8 @@ export class Object3D {
 		this.localPosition = undefined;
 		this.localRotation = undefined;
 		this.localScale = undefined;
-		this._m.destroy();
-		this._m = undefined;
+		this._status.destroy();
+		this._status = undefined;
 		this._components = [];
 		this._toDestroy = undefined;
 		this.id = undefined;
@@ -731,7 +669,7 @@ export class Object3D {
 			return;
 		}
 
-		this._m.update(this);
+		this._status.update(this);
 
 		if (isEditing) {
 			this.updateComponentsEditor();

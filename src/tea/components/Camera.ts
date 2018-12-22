@@ -1,56 +1,6 @@
 import * as Tea from "../Tea";
 import { Component } from "./Component";
-
-class Prev {
-	position: Tea.Vector3;
-	rotation: Tea.Quaternion;
-
-	fieldOfView: number;
-	aspect: number;
-	nearClipPlane: number;
-	farClipPlane: number;
-	orthographicSize: number;
-
-	constructor() {
-		this.position = new Tea.Vector3(0.0001, 0.0002, 0.0003);
-		this.rotation = new Tea.Quaternion(0.0001, 0.0002, 0.0003);
-
-		this.fieldOfView = 0;
-		this.aspect = 0;
-		this.nearClipPlane = 0;
-		this.farClipPlane = 0;
-		this.orthographicSize = 0;
-	}
-
-	destroy(): void {
-		this.position = undefined;
-		this.rotation = undefined;
-		this.fieldOfView = undefined;
-		this.aspect = undefined;
-		this.nearClipPlane = undefined;
-		this.farClipPlane = undefined;
-		this.orthographicSize = undefined;
-	}
-
-	isViewChanged(object3d: Tea.Object3D): boolean {
-		return !this.position.equals(object3d.position)
-			|| !this.rotation.equals(object3d.rotation);
-	}
-
-	isPerspectiveChanged(camera: Tea.Camera, aspect: number): boolean {
-		return this.fieldOfView != camera.fieldOfView
-			|| this.aspect != aspect
-			|| this.nearClipPlane != camera.nearClipPlane
-			|| this.farClipPlane != camera.farClipPlane;
-	}
-
-	isOrthoChanged(camera: Tea.Camera, aspect: number): boolean {
-		return this.aspect != aspect
-			|| this.orthographicSize != camera.orthographicSize
-			|| this.nearClipPlane != camera.nearClipPlane
-			|| this.farClipPlane != camera.farClipPlane;
-	}
-}
+import { CameraStatus } from "./CameraStatus";
 
 export class Camera extends Component {
 	protected static _skyboxCamera: Camera;
@@ -77,7 +27,7 @@ export class Camera extends Component {
 	protected _projectionMatrix: Tea.Matrix4x4;
 	protected _viewProjectionMatrix: Tea.Matrix4x4;
 	protected _inverseViewProjectionMatrix: Tea.Matrix4x4;
-	protected _prev: Prev;
+	protected _status: CameraStatus;
 	protected _viewportRect: Tea.Rect;
 	protected _enableStereo: boolean;
 
@@ -109,7 +59,7 @@ export class Camera extends Component {
 		this._projectionMatrix = new Tea.Matrix4x4();
 		this._viewProjectionMatrix = new Tea.Matrix4x4();
 		this._inverseViewProjectionMatrix = new Tea.Matrix4x4();
-		this._prev = new Prev();
+		this._status = new CameraStatus();
 		this._viewportRect = new Tea.Rect();
 		this._enableStereo = false;
 		//this.update();
@@ -132,7 +82,7 @@ export class Camera extends Component {
 		return this._orthographic;
 	}
 	set orthographic(value: boolean) {
-		this._prev.aspect = 0.0;
+		this._status.aspect = 0.0;
 		this._orthographic = value;
 	}
 
@@ -156,8 +106,8 @@ export class Camera extends Component {
 		return this._enableStereo;
 	}
 	set enableStereo(value: boolean) {
-		this._prev.aspect = 0.0;
-		this._prev.position.set(0.0001, 0.0002, 0.0003);
+		this._status.aspect = 0.0;
+		this._status.position.set(0.0001, 0.0002, 0.0003);
 		this._enableStereo = value;
 	}
 
@@ -183,8 +133,8 @@ export class Camera extends Component {
 		this._projectionMatrix = undefined;
 		this._viewProjectionMatrix = undefined;
 		this._inverseViewProjectionMatrix = undefined;
-		this._prev.destroy();
-		this._prev = undefined;
+		this._status.destroy();
+		this._status = undefined;
 		this._cameraToWorldMatrix = undefined;
 		this._enableStereo = undefined;
 		super.destroy();
@@ -193,7 +143,7 @@ export class Camera extends Component {
 	updateMatrix(): void {
 		var isChanged = false;
 		var object3d = this.object3d;
-		if (this._prev.isViewChanged(object3d)) {
+		if (this._status.isViewChanged(object3d)) {
 			this._cameraToWorldMatrix.setTR(
 				object3d.position,
 				object3d.rotation
@@ -201,14 +151,14 @@ export class Camera extends Component {
 			this._cameraToWorldMatrix.toggleHand();
 			this._worldToCameraMatrix = this._cameraToWorldMatrix.inverse;
 
-			this._prev.position.copy(object3d.position);
-			this._prev.rotation.copy(object3d.rotation);
+			this._status.position.copy(object3d.position);
+			this._status.rotation.copy(object3d.rotation);
 			isChanged = true;
 		}
 
 		if (this.orthographic) {
 			var aspect = this.aspect;
-			if (this._prev.isOrthoChanged(this, aspect)) {
+			if (this._status.isOrthoChanged(this, aspect)) {
 				var h = this.orthographicSize;
 				var w = h * aspect;
 				this._projectionMatrix.ortho(
@@ -216,25 +166,25 @@ export class Camera extends Component {
 					this.nearClipPlane,
 					this.farClipPlane
 				);
-				this._prev.aspect = aspect;
-				this._prev.orthographicSize = this.orthographicSize;
-				this._prev.nearClipPlane = this.nearClipPlane;
-				this._prev.farClipPlane = this.farClipPlane;
+				this._status.aspect = aspect;
+				this._status.orthographicSize = this.orthographicSize;
+				this._status.nearClipPlane = this.nearClipPlane;
+				this._status.farClipPlane = this.farClipPlane;
 				isChanged = true;
 			}
 		} else {
 			var aspect = this.aspect;
-			if (this._prev.isPerspectiveChanged(this, aspect)) {
+			if (this._status.isPerspectiveChanged(this, aspect)) {
 				this._projectionMatrix.perspective(
 					this.fieldOfView,
 					aspect,
 					this.nearClipPlane,
 					this.farClipPlane
 				);
-				this._prev.fieldOfView = this.fieldOfView;
-				this._prev.aspect = aspect;
-				this._prev.nearClipPlane = this.nearClipPlane;
-				this._prev.farClipPlane = this.farClipPlane;
+				this._status.fieldOfView = this.fieldOfView;
+				this._status.aspect = aspect;
+				this._status.nearClipPlane = this.nearClipPlane;
+				this._status.farClipPlane = this.farClipPlane;
 				isChanged = true;
 			}
 		}

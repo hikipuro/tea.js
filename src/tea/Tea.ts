@@ -102,6 +102,8 @@ export * from "./objects/Scene";
 export * from "./objects/SceneLoader";
 export * from "./objects/Skybox";
 export * from "./objects/Texture";
+export * from "./objects/UniformItem";
+export * from "./objects/UniformType";
 
 export * from "./parsers/DAEFile";
 export * from "./parsers/FBXFile";
