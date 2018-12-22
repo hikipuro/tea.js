@@ -67,16 +67,13 @@ export class Skybox {
 	}
 
 	toJSON(): Object {
-		var json: any = {};
-		json[Tea.JSONUtil.TypeName] = Skybox.className;
-		Object.assign(json, {
-			front: this.front.toJSON(),
-			back: this.back.toJSON(),
-			up: this.up.toJSON(),
-			down: this.down.toJSON(),
-			left: this.left.toJSON(),
-			right: this.right.toJSON()
-		});
+		var json = Tea.JSONUtil.createSceneJSON(Skybox.className);
+		json.front = this.front.toJSON();
+		json.back = this.back.toJSON();
+		json.up = this.up.toJSON();
+		json.down = this.down.toJSON();
+		json.left = this.left.toJSON();
+		json.right = this.right.toJSON();
 		return json;
 	}
 }

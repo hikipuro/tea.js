@@ -21,8 +21,7 @@ export class RenderSettings {
 	}
 
 	toJSON(): Object {
-		var json: any = {};
-		json[Tea.JSONUtil.TypeName] = RenderSettings.className;
+		var json = Tea.JSONUtil.createSceneJSON(RenderSettings.className);
 		json.ambientLight = this.ambientLight;
 		json.skybox = this.skybox.toJSON();
 		return json;

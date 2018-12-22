@@ -721,8 +721,7 @@ export class Scene extends EventDispatcher {
 	//*/
 
 	toJSON(): Object {
-		var json: any = {};
-		json[Tea.JSONUtil.TypeName] = Scene.className;
+		var json = Tea.JSONUtil.createSceneJSON(Scene.className);
 		json.physics = this.physics.toJSON();
 		json.renderSettings = this.renderSettings.toJSON();
 		json.enablePostProcessing = this.enablePostProcessing;

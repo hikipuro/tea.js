@@ -30,8 +30,6 @@ export class ShadowMapCamera extends Camera {
 	toJSON(): Object {
 		var json = super.toJSON();
 		json[Tea.JSONUtil.TypeName] = ShadowMapCamera.className;
-		//Object.assign(json, {
-		//});
 		return json;
 	}
 

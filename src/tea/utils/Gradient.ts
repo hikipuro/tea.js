@@ -112,18 +112,9 @@ export class Gradient {
 	}
 
 	toJSON(): Object {
-		var alphaKeys = [];
-		var colorKeys = [];
-		this.alphaKeys.forEach((alphaKey: Tea.GradientAlphaKey) => {
-			alphaKeys.push(alphaKey.toJSON());
-		});
-		this.colorKeys.forEach((colorKey: Tea.GradientColorKey) => {
-			colorKeys.push(colorKey.toJSON());
-		});
-		var json: any = {};
-		json[Tea.JSONUtil.TypeName] = Gradient.className;
-		json.alphaKeys = alphaKeys;
-		json.colorKeys = colorKeys;
+		var json = Tea.JSONUtil.createSceneJSON(Gradient.className);
+		json.alphaKeys = Tea.JSONUtil.arrayToJSON(this.alphaKeys);
+		json.colorKeys = Tea.JSONUtil.arrayToJSON(this.colorKeys);
 		json.mode = Tea.GradientMode.toString(this.mode);
 		return json;
 	}

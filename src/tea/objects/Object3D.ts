@@ -384,33 +384,16 @@ export class Object3D {
 	}
 
 	toJSON(): Object {
-		var json: any = {};
-		json[Tea.JSONUtil.TypeName] = Object3D.className;
+		var json = Tea.JSONUtil.createSceneJSON(Object3D.className);
 		Object.assign(json, {
 			name: this.name,
 			isActive: this.isActive,
 			localPosition: this.localPosition,
 			localRotation: this.localRotation,
 			localScale: this.localScale,
-			components: [],
-			children: []
+			components: Tea.JSONUtil.arrayToJSON(this._components),
+			children: Tea.JSONUtil.arrayToJSON(this.children)
 		});
-		var length = this._components.length;
-		for (var i = 0; i < length; i++) {
-			var component = this._components[i];
-			if (component == null) {
-				continue;
-			}
-			json.components.push(component.toJSON());
-		}
-		length = this.children.length;
-		for (var i = 0; i < length; i++) {
-			var child = this.children[i];
-			if (child == null) {
-				continue;
-			}
-			json.children.push(child.toJSON());
-		}
 		return json;
 	}
 

@@ -97,12 +97,10 @@ export class MeshRenderer extends Renderer {
 	}
 
 	toJSON(): Object {
-		var json = super.toJSON();
+		var json: any = super.toJSON();
 		json[Tea.JSONUtil.TypeName] = MeshRenderer.className;
-		Object.assign(json, {
-			receiveShadows: this.receiveShadows,
-			wireframe: this._wireframe
-		});
+		json.receiveShadows = this.receiveShadows;
+		json.wireframe = this._wireframe;
 		return json;
 	}
 

@@ -118,11 +118,9 @@ export class Renderer extends Component {
 	}
 
 	toJSON(): Object {
-		var json = super.toJSON();
+		var json: any = super.toJSON();
 		json[Tea.JSONUtil.TypeName] = Renderer.className;
-		Object.assign(json, {
-			material: this.material.toJSON()
-		});
+		json.material = this.material.toJSON();
 		return json;
 	}
 

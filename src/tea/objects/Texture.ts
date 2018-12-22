@@ -228,8 +228,7 @@ export class Texture {
 	}
 
 	toJSON(): Object {
-		var json: any = {};
-		json[Tea.JSONUtil.TypeName] = Texture.className;
+		var json = Tea.JSONUtil.createSceneJSON(Texture.className);
 		json.url = this.url;
 		json.isEmpty = this._isEmpty;
 		json.emptyColor = this._emptyColor;

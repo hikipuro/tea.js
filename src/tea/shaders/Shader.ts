@@ -210,8 +210,7 @@ export class Shader {
 	}
 
 	toJSON(): Object {
-		var json: any = {};
-		json[Tea.JSONUtil.TypeName] = Shader.className;
+		var json = Tea.JSONUtil.createSceneJSON(Shader.className);
 		json.settings = this.settings.toJSON();
 		json.vsSource = this._vsSource;
 		json.fsSource = this._fsSource;

@@ -106,27 +106,14 @@ export class MinMaxGradient {
 	}
 
 	toJSON(): Object {
-		var gradient = null;
-		var gradientMax = null;
-		var gradientMin = null;
-		if (this.gradient != null) {
-			gradient = this.gradient.toJSON();
-		}
-		if (this.gradientMax != null) {
-			gradientMax = this.gradientMax.toJSON();
-		}
-		if (this.gradientMin != null) {
-			gradientMin = this.gradientMin.toJSON();
-		}
-		var json: any = {};
-		json[Tea.JSONUtil.TypeName] = MinMaxGradient.className;
+		var json = Tea.JSONUtil.createSceneJSON(MinMaxGradient.className);
 		Object.assign(json, {
 			color: this.color,
 			colorMax: this.colorMax,
 			colorMin: this.colorMin,
-			gradient: gradient,
-			gradientMax: gradientMax,
-			gradientMin: gradientMin,
+			gradient: Tea.JSONUtil.toJSON(this.gradient),
+			gradientMax: Tea.JSONUtil.toJSON(this.gradientMax),
+			gradientMin: Tea.JSONUtil.toJSON(this.gradientMin),
 			mode: Tea.ParticleSystemGradientMode.toString(this.mode)
 		});
 		return json;

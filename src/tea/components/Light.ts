@@ -44,15 +44,13 @@ export class Light extends Component {
 	}
 
 	toJSON(): Object {
-		var json = super.toJSON();
+		var json: any = super.toJSON();
 		json[Tea.JSONUtil.TypeName] = Light.className;
-		Object.assign(json, {
-			color: this.color,
-			intensity: this.intensity,
-			range: this.range,
-			spotAngle: this.spotAngle,
-			type: Tea.LightType.toString(this.type),
-		});
+		json.color = this.color;
+		json.intensity = this.intensity;
+		json.range = this.range;
+		json.spotAngle = this.spotAngle;
+		json.type = Tea.LightType.toString(this.type);
 		return json;
 	}
 

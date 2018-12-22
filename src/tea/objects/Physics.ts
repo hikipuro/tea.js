@@ -18,8 +18,7 @@ export class Physics {
 	}
 
 	toJSON(): Object {
-		var json: any = {};
-		json[Tea.JSONUtil.TypeName] = Physics.className;
+		var json = Tea.JSONUtil.createSceneJSON(Physics.className);
 		json.gravity = this.gravity;
 		return json;
 	}

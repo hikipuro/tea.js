@@ -48,8 +48,7 @@ export class Component {
 	//}
 
 	toJSON(): Object {
-		var json: any = {};
-		json[Tea.JSONUtil.TypeName] = Component.className;
+		var json = Tea.JSONUtil.createSceneJSON(Component.className);
 		json.enabled = this.enabled;
 		return json;
 	}

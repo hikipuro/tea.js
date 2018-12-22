@@ -36,11 +36,9 @@ export class MeshFilter extends Component {
 	}
 	
 	toJSON(): Object {
-		var json = super.toJSON();
+		var json: any = super.toJSON();
 		json[Tea.JSONUtil.TypeName] = MeshFilter.className;
-		Object.assign(json, {
-			mesh: this.mesh.toJSON()
-		});
+		json.mesh = this.mesh.toJSON();
 		return json;
 	}
 

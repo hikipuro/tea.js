@@ -81,8 +81,7 @@ export class ShaderStencil {
 	}
 
 	toJSON(): Object {
-		var json: any = {};
-		json[Tea.JSONUtil.TypeName] = ShaderStencil.className;
+		var json = Tea.JSONUtil.createSceneJSON(ShaderStencil.className);
 		Object.assign(json, {
 			frontFunc: Tea.ShaderTestFunc.toString(this.frontFunc),
 			frontRef: this.frontRef,

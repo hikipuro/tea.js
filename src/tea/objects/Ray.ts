@@ -35,8 +35,7 @@ export class Ray {
 	}
 
 	toJSON(): Object {
-		var json: any = {};
-		json[Tea.JSONUtil.TypeName] = Ray.className;
+		var json = Tea.JSONUtil.createSceneJSON(Ray.className);
 		json.origin = this.origin;
 		json.direction = this._direction;
 		return json;

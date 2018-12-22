@@ -45,8 +45,7 @@ export class ShaderBlend {
 	}
 
 	toJSON(): Object {
-		var json = {};
-		json[Tea.JSONUtil.TypeName] = ShaderBlend.className;
+		var json = Tea.JSONUtil.createSceneJSON(ShaderBlend.className);
 		Object.assign(json, {
 			srcRGB: Tea.ShaderBlendFunc.toString(this.srcRGB),
 			dstRGB: Tea.ShaderBlendFunc.toString(this.dstRGB),

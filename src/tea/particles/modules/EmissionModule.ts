@@ -85,13 +85,10 @@ export class EmissionModule {
 	}
 
 	toJSON(): Object {
-		var json: any = {};
-		json[Tea.JSONUtil.TypeName] = EmissionModule.className;
-		Object.assign(json, {
-			enabled: this.enabled,
-			rateOverDistance: this.rateOverDistance.toJSON(),
-			rateOverTime: this.rateOverTime.toJSON()
-		});
+		var json = Tea.JSONUtil.createSceneJSON(EmissionModule.className);
+		json.enabled = this.enabled;
+		json.rateOverDistance = this.rateOverDistance.toJSON();
+		json.rateOverTime = this.rateOverTime.toJSON();
 		return json;
 	}
 }

@@ -24,8 +24,7 @@ export class GradientColorKey {
 	}
 	
 	toJSON(): Object {
-		var json: any = {};
-		json[Tea.JSONUtil.TypeName] = GradientColorKey.className;
+		var json = Tea.JSONUtil.createSceneJSON(GradientColorKey.className);
 		json.color = this.color;
 		json.time = this.time;
 		return json;

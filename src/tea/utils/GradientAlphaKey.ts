@@ -24,8 +24,7 @@ export class GradientAlphaKey {
 	}
 
 	toJSON(): Object {
-		var json: any = {};
-		json[Tea.JSONUtil.TypeName] = GradientAlphaKey.className;
+		var json = Tea.JSONUtil.createSceneJSON(GradientAlphaKey.className);
 		json.alpha = this.alpha;
 		json.time = this.time;
 		return json;

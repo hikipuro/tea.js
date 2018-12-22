@@ -109,20 +109,17 @@ export class MainModule {
 	}
 
 	toJSON(): Object {
-		var json: any = {};
-		json[Tea.JSONUtil.TypeName] = MainModule.className;
-		Object.assign(json, {
-			duration: this.duration,
-			flipRotation: this.flipRotation,
-			gravityModifier: this.gravityModifier.toJSON(),
-			loop: this.loop,
-			maxParticles: this.maxParticles,
-			startColor: this.startColor.toJSON(),
-			startLifetime: this.startLifetime.toJSON(),
-			startRotation: this.startRotation.toJSON(),
-			startSize: this.startSize.toJSON(),
-			startSpeed: this.startSpeed.toJSON(),
-		});
+		var json = Tea.JSONUtil.createSceneJSON(MainModule.className);
+		json.duration = this.duration;
+		json.flipRotation = this.flipRotation;
+		json.gravityModifier = this.gravityModifier.toJSON();
+		json.loop = this.loop;
+		json.maxParticles = this.maxParticles;
+		json.startColor = this.startColor.toJSON();
+		json.startLifetime = this.startLifetime.toJSON();
+		json.startRotation = this.startRotation.toJSON();
+		json.startSize = this.startSize.toJSON();
+		json.startSpeed = this.startSpeed.toJSON();
 		return json;
 	}
 }

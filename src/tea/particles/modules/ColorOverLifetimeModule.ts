@@ -23,8 +23,7 @@ export class ColorOverLifetimeModule {
 	}
 
 	toJSON(): Object {
-		var json: any = {};
-		json[Tea.JSONUtil.TypeName] = ColorOverLifetimeModule.className;
+		var json = Tea.JSONUtil.createSceneJSON(ColorOverLifetimeModule.className);
 		json.enabled = this.enabled;
 		json.color = this.color.toJSON();
 		return json;

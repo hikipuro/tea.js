@@ -365,8 +365,7 @@ export class Material {
 	}
 
 	toJSON(): Object {
-		var json: any = {};
-		json[Tea.JSONUtil.TypeName] = Material.className;
+		var json = Tea.JSONUtil.createSceneJSON(Material.className);
 		json.isDefault = false;
 		if (this._isDefault) {
 			json.isDefault = true;

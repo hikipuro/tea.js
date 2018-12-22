@@ -98,8 +98,6 @@ export class ParticleSystemRenderer extends Renderer {
 	toJSON(): Object {
 		var json = super.toJSON();
 		json[Tea.JSONUtil.TypeName] = ParticleSystemRenderer.className;
-		//Object.assign(json, {
-		//});
 		return json;
 	}
 

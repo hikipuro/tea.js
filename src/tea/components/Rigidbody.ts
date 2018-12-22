@@ -309,8 +309,6 @@ export class Rigidbody extends Component {
 	toJSON(): Object {
 		var json = super.toJSON();
 		json[Tea.JSONUtil.TypeName] = Rigidbody.className;
-		//Object.assign(json, {
-		//});
 		return json;
 	}
 

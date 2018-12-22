@@ -89,8 +89,6 @@ export class LineRenderer extends Renderer {
 	toJSON(): Object {
 		var json = super.toJSON();
 		json[Tea.JSONUtil.TypeName] = LineRenderer.className;
-		Object.assign(json, {
-		});
 		return json;
 	}
 

@@ -473,23 +473,21 @@ export class Camera extends Component {
 	*/
 
 	toJSON(): Object {
-		var json = super.toJSON();
+		var json: any = super.toJSON();
 		json[Tea.JSONUtil.TypeName] = Camera.className;
-		Object.assign(json, {
-			depth: this.depth,
-			clearFlags: Tea.CameraClearFlags.toString(this.clearFlags),
-			fieldOfView: this.fieldOfView,
-			nearClipPlane: this.nearClipPlane,
-			farClipPlane: this.farClipPlane,
-			backgroundColor: this.backgroundColor,
-			orthographic: this._orthographic,
-			orthographicSize: this.orthographicSize,
-			rect: this.rect,
-			//targetTexture: this.targetTexture,
-			enableStereo: this._enableStereo,
-			stereoDistance: this.stereoDistance,
-			stereoMode: Tea.CameraStereoMode.toString(this.stereoMode)
-		});
+		json.depth = this.depth;
+		json.clearFlags = Tea.CameraClearFlags.toString(this.clearFlags);
+		json.fieldOfView = this.fieldOfView;
+		json.nearClipPlane = this.nearClipPlane;
+		json.farClipPlane = this.farClipPlane;
+		json.backgroundColor = this.backgroundColor;
+		json.orthographic = this._orthographic;
+		json.orthographicSize = this.orthographicSize;
+		json.rect = this.rect;
+		//json.targetTexture = this.targetTexture;
+		json.enableStereo = this._enableStereo;
+		json.stereoDistance = this.stereoDistance;
+		json.stereoMode = Tea.CameraStereoMode.toString(this.stereoMode);
 		return json;
 	}
 

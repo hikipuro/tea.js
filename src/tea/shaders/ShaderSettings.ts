@@ -56,8 +56,7 @@ export class ShaderSettings {
 	}
 
 	toJSON(): Object {
-		var json: any = {};
-		json[Tea.JSONUtil.TypeName] = ShaderSettings.className;
+		var json = Tea.JSONUtil.createSceneJSON(ShaderSettings.className);
 		Object.assign(json, {
 			enableBlend: this.enableBlend,
 			enableCullFace: this.enableCullFace,

@@ -122,13 +122,8 @@ export class AnimationCurve {
 	}
 
 	toJSON(): Object {
-		var keys = [];
-		this.keys.forEach((keyFrame: Tea.Keyframe) => {
-			keys.push(keyFrame.toJSON());
-		});
-		var json: any = {};
-		json[Tea.JSONUtil.TypeName] = AnimationCurve.className;
-		json.keys = keys;
+		var json = Tea.JSONUtil.createSceneJSON(AnimationCurve.className);
+		json.keys = Tea.JSONUtil.arrayToJSON(this.keys);
 		json.preWrapMode = Tea.WrapMode.toString(this.preWrapMode);
 		json.postWrapMode = Tea.WrapMode.toString(this.postWrapMode);
 		return json;

@@ -34,8 +34,7 @@ export class ShaderColorMask {
 	}
 
 	toJSON(): Object {
-		var json: any = {};
-		json[Tea.JSONUtil.TypeName] = ShaderColorMask.className;
+		var json = Tea.JSONUtil.createSceneJSON(ShaderColorMask.className);
 		json.red = this.red;
 		json.green = this.green;
 		json.blue = this.blue;

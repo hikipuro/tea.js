@@ -307,8 +307,7 @@ export class Mesh {
 	}
 
 	toJSON(): Object {
-		var json: any = {};
-		json[Tea.JSONUtil.TypeName] = Mesh.className;
+		var json = Tea.JSONUtil.createSceneJSON(Mesh.className);
 		json.isPrimitive = this.isPrimitive;
 		json.primitiveType = Tea.PrimitiveType.toString(this.primitiveType);
 		return json;

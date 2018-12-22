@@ -95,27 +95,14 @@ export class MinMaxCurve {
 	}
 
 	toJSON(): Object {
-		var curve: Object = null;
-		var curveMax: Object = null;
-		var curveMin: Object = null;
-		if (this.curve != null) {
-			curve = this.curve.toJSON();
-		}
-		if (this.curveMax != null) {
-			curveMax = this.curveMax.toJSON();
-		}
-		if (this.curveMin != null) {
-			curveMin = this.curveMin.toJSON();
-		}
-		var json: any = {};
-		json[Tea.JSONUtil.TypeName] = MinMaxCurve.className;
+		var json = Tea.JSONUtil.createSceneJSON(MinMaxCurve.className);
 		Object.assign(json, {
 			constant: this.constant,
 			constantMax: this.constantMax,
 			constantMin: this.constantMin,
-			curve: curve,
-			curveMax: curveMax,
-			curveMin: curveMin,
+			curve: Tea.JSONUtil.toJSON(this.curve),
+			curveMax: Tea.JSONUtil.toJSON(this.curveMax),
+			curveMin: Tea.JSONUtil.toJSON(this.curveMin),
 			curveMultiplier: this.curveMultiplier,
 			mode: ParticleSystemCurveMode.toString(this.mode)
 		});

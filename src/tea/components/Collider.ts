@@ -19,11 +19,9 @@ export class Collider extends Component {
 	}
 
 	toJSON(): Object {
-		var json = super.toJSON();
+		var json: any = super.toJSON();
 		json[Tea.JSONUtil.TypeName] = Collider.className;
-		Object.assign(json, {
-			bounds: this.bounds
-		});
+		json.bounds = this.bounds;
 		return json;
 	}
 }

@@ -214,21 +214,19 @@ export class TextMesh extends Component {
 	}
 
 	toJSON(): Object {
-		var json = super.toJSON();
+		var json: any = super.toJSON();
 		json[Tea.JSONUtil.TypeName] = TextMesh.className;
-		Object.assign(json, {
-			//material: this.material.toJSON(),
-			characterSize: this._characterSize,
-			lineSpacing: this._lineSpacing,
-			anchor: Tea.TextAnchor.toString(this._anchor),
-			alignment: Tea.TextAlignment.toString(this._alignment),
-			color: this._color,
-			font: this._font,
-			fontSize: this._fontSize,
-			fontStyle: Tea.FontStyle.toString(this._fontStyle),
-			text: this._text,
-			padding: this._padding
-		});
+		//json.material = this.material.toJSON();
+		json.characterSize = this._characterSize;
+		json.lineSpacing = this._lineSpacing;
+		json.anchor = Tea.TextAnchor.toString(this._anchor);
+		json.alignment = Tea.TextAlignment.toString(this._alignment);
+		json.color = this._color;
+		json.font = this._font;
+		json.fontSize = this._fontSize;
+		json.fontStyle = Tea.FontStyle.toString(this._fontStyle);
+		json.text = this._text;
+		json.padding = this._padding;
 		return json;
 	}
 
