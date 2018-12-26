@@ -35,7 +35,7 @@ export class Scene extends EventDispatcher {
 			Tea.ShaderSources.antialiasPostProcessingFS
 		);
 		this.postProcessingRenderer.material.shader = shader;
-		this.app.renderer.on("resize", this.onResize);
+		this.app.renderer.on("resize", Tea.debounce(this.onResize, 50));
 	}
 
 	get isEditing(): boolean {
@@ -600,11 +600,9 @@ export class Scene extends EventDispatcher {
 	}
 
 	protected onResize = () => {
-		Tea.debounce(() => {
-			if (this.renderTexture) {
-				this.renderTexture.destroy();
-			}
-			this.refreshRenderTexture();
-		}, 30);
+		if (this.renderTexture) {
+			this.renderTexture.destroy();
+		}
+		this.refreshRenderTexture();
 	}
 }
