@@ -38,6 +38,8 @@ export class BufferData {
 	protected _mesh: Tea.Mesh;
 	protected _hasIndices: boolean;
 	protected _has32BitIndices: boolean;
+	protected _vertexCount: number;
+	protected _triangleCount: number;
 	protected _attributes: BufferAttributes;
 
 	constructor(app: Tea.App) {
@@ -46,6 +48,8 @@ export class BufferData {
 		this._mesh = null;
 		this._hasIndices = false;
 		this._has32BitIndices = false;
+		this._vertexCount = 0;
+		this._triangleCount = 0;
 		this._attributes = new BufferAttributes();
 		this.createBuffers();
 		//var gl = this.gl;
@@ -61,10 +65,20 @@ export class BufferData {
 		return this._has32BitIndices;
 	}
 
+	get vertexCount(): number {
+		return this._vertexCount;
+	}
+
+	get triangleCount(): number {
+		return this._triangleCount;
+	}
+
 	destroy(): void {
 		this.app = undefined;
 		this._hasIndices = undefined;
 		this._has32BitIndices = undefined;
+		this._vertexCount = undefined;
+		this._triangleCount = undefined;
 		this._attributes = undefined;
 		var gl = this.gl;
 		if (this.vertexBuffer != null) {
@@ -236,6 +250,7 @@ export class BufferData {
 		gl.bindBuffer(target, this.vertexBuffer);
 		gl.bufferData(target, null, gl.STATIC_DRAW);
 		gl.bindBuffer(target, null);
+		this._vertexCount = 0;
 	}
 
 	protected clearIndexBuffer(): void {
@@ -244,11 +259,13 @@ export class BufferData {
 		gl.bindBuffer(target, this.indexBuffer);
 		gl.bufferData(target, null, gl.STATIC_DRAW);
 		gl.bindBuffer(target, null);
+		this._triangleCount = 0;
 	}
 
 	protected setVertexBufferData(mesh: Tea.Mesh): void {
 		var gl = this.gl;
 		var data = mesh.createVertexBufferData();
+		this._vertexCount = mesh.vertexCount;
 		var target = gl.ARRAY_BUFFER;
 		gl.bindBuffer(target, this.vertexBuffer);
 		gl.bufferData(target, data, gl.STATIC_DRAW);
@@ -263,6 +280,7 @@ export class BufferData {
 			return;
 		}
 		this._hasIndices = true;
+		this._triangleCount = mesh.triangles.length;
 		var triangles = null;
 		var array = Tea.ArrayUtil.unroll(mesh.triangles);
 		if (mesh.vertices.length > 0xFFFF) {

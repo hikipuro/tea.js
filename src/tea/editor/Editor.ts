@@ -320,6 +320,10 @@ export module Editor {
 	export type BoxCollider = TeaComponents.BoxCollider;
 	export var  Camera = TeaComponents.Camera;
 	export type Camera = TeaComponents.Camera;
+	export var  Canvas = TeaComponents.Canvas;
+	export type Canvas = TeaComponents.Canvas;
+	export var  CanvasRenderer = TeaComponents.CanvasRenderer;
+	export type CanvasRenderer = TeaComponents.CanvasRenderer;
 	export var  Light = TeaComponents.Light;
 	export type Light = TeaComponents.Light;
 	export var  LineRenderer = TeaComponents.LineRenderer;
@@ -336,6 +340,8 @@ export module Editor {
 	export type Script = TeaComponents.Script;
 	export var  SphereCollider = TeaComponents.SphereCollider;
 	export type SphereCollider = TeaComponents.SphereCollider;
+	export var  Text = TeaComponents.UIText;
+	export type Text = TeaComponents.UIText;
 	export var  TextMesh = TeaComponents.TextMesh;
 	export type TextMesh = TeaComponents.TextMesh;
 }

@@ -120,6 +120,11 @@
 			},
 			"Camera": {
 				"Title": "Camera"
+			},
+			"UI": {
+				"Title": "UI",
+				"Canvas": "Canvas",
+				"Text": "Text"
 			}
 		}
 	},
@@ -219,6 +224,12 @@
 			"StereoDistance": "Stereo Distance",
 			"StereoMode": "Stereo Mode"
 		},
+		"Canvas": {
+			"Title": "Canvas"
+		},
+		"CanvasRenderer": {
+			"Title": "CanvasRenderer"
+		},
 		"Light": {
 			"Title": "Light",
 			"Type": "Type",
@@ -246,6 +257,16 @@
 		},
 		"Script": {
 			"Title": "Script"
+		},
+		"Text": {
+			"Title": "Text",
+			"Text": "Text",
+			"LineSpacing": "Line Spacing",
+			"Alignment": "Alignment",
+			"FontSize": "Font Size",
+			"FontStyle": "Font Style",
+			"Font": "Font",
+			"Color": "Color"
 		},
 		"TextMesh": {
 			"Title": "Text Mesh",

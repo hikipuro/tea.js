@@ -188,45 +188,37 @@ export class MeshRenderer extends Renderer {
 
 	protected draw(): void {
 		var gl = this.gl;
-		var mesh = this._meshFilter.mesh;
-		var count = mesh.triangles.length * 3;
+		var count = this._meshFilter.data.triangleCount * 3;
 		gl.drawElements(gl.TRIANGLES, count, gl.UNSIGNED_SHORT, 0);
 	}
 
 	protected draw32(): void {
 		var gl = this.gl;
-		var mesh = this._meshFilter.mesh;
-		var count = mesh.triangles.length * 3;
+		var count = this._meshFilter.data.triangleCount * 3;
 		gl.drawElements(gl.TRIANGLES, count, gl.UNSIGNED_INT, 0);
 	}
 
 	protected drawArrays(): void {
 		var gl = this.gl;
-		var mesh = this._meshFilter.mesh;
-		gl.drawArrays(
-			gl.TRIANGLES, 0, mesh.vertices.length
-		);
+		var count = this._meshFilter.data.vertexCount;
+		gl.drawArrays(gl.TRIANGLES, 0, count);
 	}
 
 	protected drawWireframe(): void {
 		var gl = this.gl;
-		var mesh = this._meshFilter.mesh;
-		var count = mesh.triangles.length * 3;
+		var count = this._meshFilter.data.triangleCount * 3;
 		gl.drawElements(gl.LINES, count, gl.UNSIGNED_SHORT, 0);
 	}
 
 	protected drawWireframe32(): void {
 		var gl = this.gl;
-		var mesh = this._meshFilter.mesh;
-		var count = mesh.triangles.length * 3;
+		var count = this._meshFilter.data.triangleCount * 3;
 		gl.drawElements(gl.LINES, count, gl.UNSIGNED_INT, 0);
 	}
 
 	protected drawArraysWireframe(): void {
 		var gl = this.gl;
-		var mesh = this._meshFilter.mesh;
-		gl.drawArrays(
-			gl.LINES, 0, mesh.vertices.length
-		);
+		var count = this._meshFilter.data.vertexCount;
+		gl.drawArrays(gl.LINES, 0, count);
 	}
 }

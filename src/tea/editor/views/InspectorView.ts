@@ -2,6 +2,7 @@ import Vue, { VueConstructor } from "vue";
 import Component from "vue-class-component";
 import { Editor } from "../Editor";
 import { InspectorViewCommand } from "../commands/InspectorViewCommand";
+import { ObjectInspector } from "./ObjectInspector";
 
 @Component({
 	template: `
@@ -41,6 +42,14 @@ export class InspectorView extends Vue {
 
 	getComponent(): Vue {
 		return this.$refs.component as Vue;
+	}
+
+	getObjectInspector(): ObjectInspector {
+		var component = this.$refs.component;
+		if (component instanceof ObjectInspector) {
+			return component;
+		}
+		return null;
 	}
 
 	hasFocus(): boolean {

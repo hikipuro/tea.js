@@ -36,6 +36,7 @@ export class Main {
 				this.debug();
 				return;
 			}
+			//this.debug();
 			this.init();
 		});
 	}
@@ -91,12 +92,20 @@ export class Main {
 
 	debug(): void {
 		this.count = 0;
-		this.app = new Tea.App("canvas", {
+		var app = new Tea.App("canvas", {
 			antialias: false,
 			alpha: false,
 			//premultipliedAlpha: false
 		});
+		this.app = app;
 		global["app"] = this.app;
+		editor.setApp(app);
+		app.status.isEditor = true;
+		app.isEditing = true;
+		app.enableUint32Index();
+		app.width = app.canvas.parentElement.clientWidth;
+		app.height = app.canvas.parentElement.clientHeight;
+
 		this.app.status.isEditor = true;
 		this.app.isEditing = true;
 		this.app.enableUint32Index();
@@ -288,12 +297,12 @@ export class Main {
 		//var script = new TestScript();
 
 		var skybox = scene.renderSettings.skybox;
-		skybox.front.load("models/skybox/Sunny_01A_front.jpg");
-		skybox.back.load("models/skybox/Sunny_01A_back.jpg");
-		skybox.up.load("models/skybox/Sunny_01A_up.jpg");
-		skybox.down.load("models/skybox/Sunny_01A_down.jpg");
-		skybox.left.load("models/skybox/Sunny_01A_left.jpg");
-		skybox.right.load("models/skybox/Sunny_01A_right.jpg");
+		skybox.front.load("../models/skybox/Sunny_01A_front.jpg");
+		skybox.back.load("../models/skybox/Sunny_01A_back.jpg");
+		skybox.up.load("../models/skybox/Sunny_01A_up.jpg");
+		skybox.down.load("../models/skybox/Sunny_01A_down.jpg");
+		skybox.left.load("../models/skybox/Sunny_01A_left.jpg");
+		skybox.right.load("../models/skybox/Sunny_01A_right.jpg");
 
 		var cube = Tea.Object3D.createPrimitive(this.app, Tea.PrimitiveType.Cube);
 		//cube.name = "cube";
@@ -597,23 +606,23 @@ export class Main {
 
 		var objList = [
 			{
-				path: "./models/teapot/teapot.obj",
+				path: "../models/teapot/teapot.obj",
 				scale: 0.04
 			},
 			{
-				path: "./models/bunny.obj",
+				path: "../models/bunny.obj",
 				scale: 2
 			},
 			{
-				path: "./models/dragon.obj",
+				path: "../models/dragon.obj",
 				scale: 4
 			},
 			{
-				path: "./models/CornellBox/CornellBox-Original.obj",
+				path: "../models/CornellBox/CornellBox-Original.obj",
 				scale: 2
 			},
 			{
-				path: "./models/bedroom/iscv2.obj",
+				path: "../models/bedroom/iscv2.obj",
 				scale: 2
 			}
 		];
@@ -628,7 +637,7 @@ export class Main {
 		});
 		//*/
 
-		Tea.File.readImage("models/texture.png", (err, image) => {
+		Tea.File.readImage("../models/texture.png", (err, image) => {
 			var texture = this.app.createTexture(image);
 			let r = plane.getComponent(Tea.Renderer);
 			r.material.setTexture("_NormalTex", texture);
@@ -637,7 +646,7 @@ export class Main {
 		});
 
 		var texture = new Tea.Texture(this.app);
-		texture.load("models/google.jpg", (err, url) => {
+		texture.load("../models/google.jpg", (err, url) => {
 			if (err) {
 				return;
 			}
@@ -666,7 +675,7 @@ export class Main {
 			r.material.mainTexture = texture;
 		});
 
-		Tea.File.readImage("models/earth.jpg", (err, image) => {
+		Tea.File.readImage("../models/earth.jpg", (err, image) => {
 			//document.body.appendChild(image);
 			var texture = this.app.createTexture(image);
 			//sphere.renderer.shader.texture = texture;
@@ -703,6 +712,15 @@ export class Main {
 		console.log("plane", p.getDistanceToPoint(Tea.vec3(-1,1,1)));
 		console.log("plane", p.getDistanceToPoint(Tea.vec3()));
 		console.log("plane", p.getSide(Tea.vec3(0, 1, 0)));
+
+		var canvasObject = app.createCanvas();
+		scene.addChild(canvasObject);
+
+		var text = canvasObject.find("Text").getComponent(Tea.UI.Text);
+		//var canvas = text.canvas;
+		//canvas.style.top = "0";
+		//canvas.style.position = "fixed";
+		//document.body.appendChild(canvas);
 
 		//var json = JSON.stringify(scene.toJSON(), null, 2);
 		//console.log(json, json.length);

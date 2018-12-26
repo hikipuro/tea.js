@@ -318,6 +318,14 @@ export class App {
 		return ObjectFactory.createTextMesh(this);
 	}
 
+	createCanvas(): Tea.Object3D {
+		return ObjectFactory.createCanvas(this);
+	}
+
+	createUIText(): Tea.Object3D {
+		return ObjectFactory.createUIText(this);
+	}
+
 	readObjFile(url: string, callback: (object3d: Tea.Object3D) => void): void {
 		if (callback == null) {
 			return;

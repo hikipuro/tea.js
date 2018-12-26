@@ -12,27 +12,29 @@ import { Translator } from "../translate/Translator";
 				:isActive="isActive"
 				:name="name"
 				@update="onUpdateTitle"></ObjectTitle>
-			<Vector3
-				ref="position"
-				:x="position[0]"
-				:y="position[1]"
-				:z="position[2]"
-				@update="onUpdatePosition"
-				@change="onChangePosition">{{ translator.position }}</Vector3>
-			<Vector3
-				ref="rotation"
-				:x="rotation[0]"
-				:y="rotation[1]"
-				:z="rotation[2]"
-				@update="onUpdateRotation"
-				@change="onChangeRotation">{{ translator.rotation }}</Vector3>
-			<Vector3
-				ref="scale"
-				:x="scale[0]"
-				:y="scale[1]"
-				:z="scale[2]"
-				@update="onUpdateScale"
-				@change="onChangeScale">{{ translator.scale }}</Vector3>
+			<template v-if="is3DObject">
+				<Vector3
+					ref="position"
+					:x="position[0]"
+					:y="position[1]"
+					:z="position[2]"
+					@update="onUpdatePosition"
+					@change="onChangePosition">{{ translator.position }}</Vector3>
+				<Vector3
+					ref="rotation"
+					:x="rotation[0]"
+					:y="rotation[1]"
+					:z="rotation[2]"
+					@update="onUpdateRotation"
+					@change="onChangeRotation">{{ translator.rotation }}</Vector3>
+				<Vector3
+					ref="scale"
+					:x="scale[0]"
+					:y="scale[1]"
+					:z="scale[2]"
+					@update="onUpdateScale"
+					@change="onChangeScale">{{ translator.scale }}</Vector3>
+			</template>
 			<ComponentPanel
 				ref="components"
 				v-for="(item, index) in components"
@@ -54,6 +56,7 @@ import { Translator } from "../translate/Translator";
 		return {
 			translator: {},
 			name: "",
+			is3DObject: true,
 			isActive: false,
 			position: [0, 0, 0],
 			rotation: [0, 0, 0],
@@ -69,6 +72,7 @@ export class ObjectInspector extends Vue {
 	_object3d: Tea.Object3D;
 	translator: any;
 	name: string;
+	is3DObject: boolean;
 	isActive: boolean;
 	position: Array<number>;
 	rotation: Array<number>;

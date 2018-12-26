@@ -332,6 +332,20 @@ export class EditorMenu {
 			{
 				id: "Camera",
 				label: translator.getText("Camera/Title"),
+			},
+			{
+				id: "UI",
+				label: translator.getText("UI/Title"),
+				submenu: [
+					{
+						id: "UI/Canvas",
+						label: translator.getText("UI/Canvas"),
+					},
+					{
+						id: "UI/Text",
+						label: translator.getText("UI/Text"),
+					}
+				]
 			}
 		];
 		var item = hierarchyView.getSelectedItem();

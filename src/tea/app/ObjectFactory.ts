@@ -174,4 +174,32 @@ export class ObjectFactory {
 		object3d.name = "Text Mesh";
 		return object3d;
 	}
+
+	static createCanvas(app: Tea.App): Tea.Object3D {
+		var object3d = new Tea.Object3D(app);
+		object3d.addComponent(Tea.Canvas);
+		object3d.name = "Canvas";
+		var renderer = object3d.addComponent(Tea.CanvasRenderer);
+		var shader = new Tea.Shader(app);
+		shader.attach(
+			Tea.ShaderSources.uiComponentVS,
+			Tea.ShaderSources.uiComponentFS
+		);
+		shader.settings.enableBlend = true;
+		shader.settings.blend.srcRGB = Tea.ShaderBlendFunc.SrcAlpha;
+		shader.settings.blend.dstRGB = Tea.ShaderBlendFunc.OneMinusSrcAlpha;
+		shader.settings.blend.srcAlpha = Tea.ShaderBlendFunc.One;
+		shader.settings.blend.dstAlpha = Tea.ShaderBlendFunc.One;
+		renderer.material = Tea.Material.getDefault(app);
+		renderer.material.renderQueue = 4000;
+		renderer.material.shader = shader;
+		return object3d;
+	}
+
+	static createUIText(app: Tea.App): Tea.Object3D {
+		var object3d = new Tea.Object3D(app);
+		object3d.addComponent(Tea.UI.Text);
+		object3d.name = "Text";
+		return object3d;
+	}
 }

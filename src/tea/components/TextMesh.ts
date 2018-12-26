@@ -4,6 +4,7 @@ import { Component } from "./Component";
 export class TextMesh extends Component {
 	static readonly className: string = "TextMesh";
 	protected static readonly DefaultFontSize: number = 14;
+	protected static readonly DefaultFont: string = "sans-serif";
 	material: Tea.Material;
 	texture: Tea.Texture;
 	protected _isChanged: boolean;
@@ -37,15 +38,15 @@ export class TextMesh extends Component {
 		//this.texture.image = this._canvas;
 
 		this._isChanged = true;
+		this._characterSize = 1;
+		this._lineSpacing = 1;
+		this._anchor = Tea.TextAnchor.MiddleCenter;
+		this._alignment = Tea.TextAlignment.Left;
 		this._color = Tea.Color.white.clone();
-		this._font = "sans-serif";
+		this._font = TextMesh.DefaultFont;
 		this._fontSize = TextMesh.DefaultFontSize;
 		this._fontStyle = Tea.FontStyle.Normal;
 		this._text = "Text";
-		this._alignment = Tea.TextAlignment.Left;
-		this._anchor = Tea.TextAnchor.MiddleCenter;
-		this._characterSize = 1;
-		this._lineSpacing = 1;
 		this._padding = 1;
 
 		//this.updateContext();

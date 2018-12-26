@@ -1,6 +1,8 @@
 import { AudioSource } from "./AudioSource";
 import { BoxCollider } from "./BoxCollider";
 import { Camera } from "./Camera";
+import { Canvas } from "./Canvas";
+import { CanvasRenderer } from "./CanvasRenderer";
 import { Light } from "./Light";
 import { LineRenderer } from "./LineRenderer";
 import { MeshFilter } from "./MeshFilter";
@@ -9,12 +11,15 @@ import { ParticleSystem } from "./ParticleSystem";
 import { Rigidbody } from "./Rigidbody";
 import { Script } from "./Script";
 import { SphereCollider } from "./SphereCollider";
+import { UIText } from "./UIText";
 import { TextMesh } from "./TextMesh";
 
 export {
 	AudioSource,
 	BoxCollider,
 	Camera,
+	Canvas,
+	CanvasRenderer,
 	Light,
 	LineRenderer,
 	MeshFilter,
@@ -23,6 +28,7 @@ export {
 	Rigidbody,
 	Script,
 	SphereCollider,
+	UIText,
 	TextMesh
 }
 
@@ -31,6 +37,8 @@ export function getComponents(): Object {
 		AudioSource: AudioSource,
 		BoxCollider: BoxCollider,
 		Camera: Camera,
+		Canvas: Canvas,
+		CanvasRenderer: CanvasRenderer,
 		Light: Light,
 		LineRenderer: LineRenderer,
 		MeshFilter: MeshFilter,
@@ -39,6 +47,7 @@ export function getComponents(): Object {
 		Rigidbody: Rigidbody,
 		Script: Script,
 		SphereCollider: SphereCollider,
+		UIText: UIText,
 		TextMesh: TextMesh,
 	}
 }

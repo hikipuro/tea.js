@@ -10,6 +10,8 @@ export * from "./collisions/Sphere";
 
 export * from "./components/BoxCollider";
 export * from "./components/Camera";
+export * from "./components/Canvas";
+export * from "./components/CanvasRenderer";
 export * from "./components/Collider";
 export * from "./components/Component";
 export * from "./components/Light";
@@ -26,6 +28,14 @@ export * from "./components/SphereCollider";
 export * from "./components/SpriteRenderer";
 export * from "./components/TextMesh";
 //export * from "./components/Transform";
+
+import * as UIComponents from "./components/ui/UIComponents";
+export module UI {
+	export var  UIComponent = UIComponents.UIComponent;
+	export type UIComponent = UIComponents.UIComponent;
+	export var  Text = UIComponents.Text;
+	export type Text = UIComponents.Text;
+}
 
 export * from "./enums/CameraClearFlags";
 export * from "./enums/CameraStereoMode";

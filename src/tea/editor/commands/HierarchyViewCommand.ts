@@ -190,6 +190,12 @@ export class HierarchyViewCommand {
 			case "Camera":
 				object3d = app.createCamera();
 				break;
+			case "UI/Canvas":
+				object3d = app.createCanvas();
+				break;
+			case "UI/Text":
+				object3d = app.createUIText();
+				break;
 			case "Rename":
 				var i = hierarchyView.getSelectedItem();
 				if (i) {
