@@ -38,6 +38,28 @@ export class CanvasRenderer extends Renderer {
 		);
 	}
 
+	static fromJSON(app: Tea.App, json: any, callback: (component: Tea.Component) => void): void {
+		if (Tea.JSONUtil.isValidSceneJSON(json, CanvasRenderer.className) === false) {
+			callback(null);
+			return;
+		}
+		var renderer = new CanvasRenderer(app);
+		var shader = new Tea.Shader(app);
+		shader.attach(
+			Tea.ShaderSources.uiComponentVS,
+			Tea.ShaderSources.uiComponentFS
+		);
+		shader.settings.enableBlend = true;
+		shader.settings.blend.srcRGB = Tea.ShaderBlendFunc.SrcAlpha;
+		shader.settings.blend.dstRGB = Tea.ShaderBlendFunc.OneMinusSrcAlpha;
+		shader.settings.blend.srcAlpha = Tea.ShaderBlendFunc.One;
+		shader.settings.blend.dstAlpha = Tea.ShaderBlendFunc.One;
+		renderer.material = Tea.Material.getDefault(app);
+		renderer.material.renderQueue = 4000;
+		renderer.material.shader = shader;
+		callback(renderer);
+	}
+
 	destroy(): void {
 		super.destroy();
 	}

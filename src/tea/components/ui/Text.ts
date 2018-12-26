@@ -155,6 +155,15 @@ export class Text extends UIComponent {
 		this._isChanged = true;
 	}
 
+	static fromJSON(app: Tea.App, json: any, callback: (component: Tea.Component) => void): void {
+		if (Tea.JSONUtil.isValidSceneJSON(json, Text.className) === false) {
+			callback(null);
+			return;
+		}
+		var text = new Text(app);
+		callback(text);
+	}
+
 	destroy(): void {
 		if (this._graphics != null) {
 			this._graphics.destroy();

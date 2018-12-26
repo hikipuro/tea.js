@@ -69,6 +69,9 @@ export class SceneLoader {
 			var item = json.components[i];
 			var componentClass = Tea[item[Tea.JSONUtil.TypeName]];
 			if (componentClass == null) {
+				componentClass = Tea.UI[item[Tea.JSONUtil.TypeName]];
+			}
+			if (componentClass == null) {
 				onLoad();
 				continue;
 			}

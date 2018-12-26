@@ -8,6 +8,15 @@ export class Canvas extends Component {
 		super(app);
 	}
 
+	static fromJSON(app: Tea.App, json: any, callback: (component: Tea.Component) => void): void {
+		if (Tea.JSONUtil.isValidSceneJSON(json, Canvas.className) === false) {
+			callback(null);
+			return;
+		}
+		var canvas = new Canvas(app);
+		callback(canvas);
+	}
+
 	destroy(): void {
 		super.destroy();
 	}
