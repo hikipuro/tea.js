@@ -16,6 +16,14 @@ export module RigidbodyConstraints {
 		return RigidbodyConstraints[value];
 	}
 
+	export function fromString(key: string): RigidbodyConstraints {
+		var value = RigidbodyConstraints[key];
+		if (value == null) {
+			return RigidbodyConstraints.None;
+		}
+		return value;
+	}
+
 	export function getKeys(): Array<string> {
 		var keys = [];
 		for (var n in RigidbodyConstraints) {

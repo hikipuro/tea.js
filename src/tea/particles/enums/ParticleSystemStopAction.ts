@@ -10,6 +10,14 @@ export module ParticleSystemStopAction {
 		return ParticleSystemStopAction[value];
 	}
 
+	export function fromString(key: string): ParticleSystemStopAction {
+		var value = ParticleSystemStopAction[key];
+		if (value == null) {
+			return ParticleSystemStopAction.None;
+		}
+		return value;
+	}
+
 	export function getKeys(): Array<string> {
 		var keys = [];
 		for (var n in ParticleSystemStopAction) {

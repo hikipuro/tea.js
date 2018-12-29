@@ -9,6 +9,14 @@ export module ParticleSystemMeshShapeType {
 		return ParticleSystemMeshShapeType[value];
 	}
 
+	export function fromString(key: string): ParticleSystemMeshShapeType {
+		var value = ParticleSystemMeshShapeType[key];
+		if (value == null) {
+			return ParticleSystemMeshShapeType.Vertex;
+		}
+		return value;
+	}
+
 	export function getKeys(): Array<string> {
 		var keys = [];
 		for (var n in ParticleSystemMeshShapeType) {

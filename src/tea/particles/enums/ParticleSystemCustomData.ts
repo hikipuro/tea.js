@@ -8,6 +8,14 @@ export module ParticleSystemCustomData {
 		return ParticleSystemCustomData[value];
 	}
 
+	export function fromString(key: string): ParticleSystemCustomData {
+		var value = ParticleSystemCustomData[key];
+		if (value == null) {
+			return ParticleSystemCustomData.Custom1;
+		}
+		return value;
+	}
+
 	export function getKeys(): Array<string> {
 		var keys = [];
 		for (var n in ParticleSystemCustomData) {

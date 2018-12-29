@@ -10,6 +10,14 @@ export module LightType {
 		return LightType[value];
 	}
 
+	export function fromString(key: string): LightType {
+		var value = LightType[key];
+		if (value == null) {
+			return LightType.Directional;
+		}
+		return value;
+	}
+
 	export function getKeys(): Array<string> {
 		var keys = [];
 		for (var n in LightType) {

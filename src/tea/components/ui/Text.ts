@@ -19,8 +19,6 @@ export class Text extends UIComponent {
 	
 	constructor(app: Tea.App) {
 		super(app);
-		this._x = 20;
-		this._y = 30;
 		this._width = 50;
 		this._height = 33;
 		var graphics = new Graphics2D(64, 64);
@@ -161,6 +159,14 @@ export class Text extends UIComponent {
 			return;
 		}
 		var text = new Text(app);
+		text._lineSpacing = json.lineSpacing;
+		text._alignment = Tea.TextAlignment.fromString(json.alignment);
+		text._color = Tea.Color.fromArray(json.color);
+		text._font = json.font;
+		text._fontSize = json.fontSize;
+		text._fontStyle = Tea.FontStyle.fromString(json.fontStyle);
+		text._text = json.text;
+		text._padding = json.padding;
 		callback(text);
 	}
 
@@ -190,32 +196,27 @@ export class Text extends UIComponent {
 	}
 
 	toJSON(): Object {
-		var json = super.toJSON();
+		var json: any = super.toJSON();
 		json[Tea.JSONUtil.TypeName] = Text.className;
+		json.lineSpacing = this._lineSpacing;
+		json.alignment = Tea.TextAlignment.toString(this._alignment);
+		json.color = this._color;
+		json.font = this._font;
+		json.fontSize = this._fontSize;
+		json.fontStyle = Tea.FontStyle.toString(this._fontStyle);
+		json.text = this._text;
+		json.padding = this._padding;
 		return json;
 	}
 
 	protected getFont(): string {
-		var font = this._font;
-		var size = this._fontSize;
-		if (size <= 0) {
-			size = Text.DefaultFontSize;
-		}
-		var style = "";
-		switch (this._fontStyle) {
-			case Tea.FontStyle.Normal:
-				break;
-			case Tea.FontStyle.Bold:
-				style = "bold ";
-				break;
-			case Tea.FontStyle.Italic:
-				style = "italic ";
-				break;
-			case Tea.FontStyle.BoldAndItalic:
-				style = "bold italic ";
-				break;
-		}
-		return style + size + "px " + font;
+		var style = Tea.FontStyle.toCssString(this._fontStyle);
+		var size = this.getFontSize();
+		var values = [];
+		values.push(style);
+		values.push(size + Tea.HTMLScale.px);
+		values.push(this._font);
+		return values.join(" ");
 	}
 
 	protected getFontSize(): number {
@@ -238,12 +239,15 @@ export class Text extends UIComponent {
 
 	protected resizeCanvas(): any {
 		var graphics = this._graphics;
+		graphics.font = this.getFont();
+
 		var text = this._text.split(/\r\n|\r|\n/);
 		var width = graphics.width;
 		var height = graphics.height;
 		var fontSize = this.getFontSize();
 		var lineSpacing = this._lineSpacing * 1.2;
 		var padding = this._padding * 2;
+
 		var textWidth = 0;
 		var textHeight = (fontSize * (text.length - 1)) * lineSpacing + padding;
 		if (textHeight < 0) {

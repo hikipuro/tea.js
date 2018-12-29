@@ -35,6 +35,7 @@ import { Translator } from "../translate/Translator";
 				ref="fontSize"
 				class="number"
 				:value="fontSize"
+				:min="1"
 				@update="onUpdateFontSize">{{ translator.fontSize }}</InputNumber>
 			<SelectEnum
 				ref="fontStyle"

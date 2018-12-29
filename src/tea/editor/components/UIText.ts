@@ -3,7 +3,6 @@ import Component from "vue-class-component";
 import * as Tea from "../../Tea";
 import { Translator } from "../translate/Translator";
 import { Editor } from "../Editor";
-import { ObjectInspector } from "../views/ObjectInspector";
 
 @Component({
 	template: `
@@ -27,6 +26,7 @@ import { ObjectInspector } from "../views/ObjectInspector";
 				ref="fontSize"
 				class="number"
 				:value="fontSize"
+				:min="1"
 				@update="onUpdateFontSize">{{ translator.fontSize }}</InputNumber>
 			<SelectEnum
 				ref="fontStyle"
@@ -95,11 +95,13 @@ export class UIText extends Vue {
 	}
 
 	protected mounted(): void {
+		/*
 		var editor = this.$root as Editor;
 		var inspector = editor.inspectorView.getObjectInspector();
 		if (inspector != null) {
 			inspector.is3DObject = false;
 		}
+		*/
 
 		var component = this._component;
 		if (component == null) {

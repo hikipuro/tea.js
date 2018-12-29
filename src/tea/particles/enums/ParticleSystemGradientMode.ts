@@ -11,6 +11,14 @@ export module ParticleSystemGradientMode {
 		return ParticleSystemGradientMode[value];
 	}
 
+	export function fromString(key: string): ParticleSystemGradientMode {
+		var value = ParticleSystemGradientMode[key];
+		if (value == null) {
+			return ParticleSystemGradientMode.Color;
+		}
+		return value;
+	}
+
 	export function getKeys(): Array<string> {
 		var keys = [];
 		for (var n in ParticleSystemGradientMode) {

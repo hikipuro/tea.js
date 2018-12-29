@@ -33,6 +33,9 @@ export class Color extends Array<number> {
 	}
 
 	static fromArray(array: Array<number>): Color {
+		if (array == null) {
+			return new Color();
+		}
 		var r = array[0], g = array[1], b = array[2], a = array[3];
 		r = r != null ? r : 0.0;
 		g = g != null ? g : 0.0;

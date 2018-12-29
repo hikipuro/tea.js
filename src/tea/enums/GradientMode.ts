@@ -8,6 +8,14 @@ export module GradientMode {
 		return GradientMode[value];
 	}
 
+	export function fromString(key: string): GradientMode {
+		var value = GradientMode[key];
+		if (value == null) {
+			return GradientMode.Blend;
+		}
+		return value;
+	}
+
 	export function getKeys(): Array<string> {
 		var keys = [];
 		for (var n in GradientMode) {

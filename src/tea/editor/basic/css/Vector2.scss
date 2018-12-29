@@ -1,0 +1,26 @@
+#{$parent} {
+	div.Vector2 {
+		display: inline-flex;
+		box-sizing: border-box;
+		align-items: center;
+		padding: 1px;
+		width: 100%;
+
+		> .title {
+			flex: 1;
+			margin-right: 2px;
+			white-space: nowrap;
+			overflow: hidden;
+		}
+
+		> .value {
+			display: inline-flex;
+			min-width: 60%;
+			justify-content: space-evenly;
+
+			> .InputNumber {
+				padding: 0;
+			}
+		}
+	}
+}

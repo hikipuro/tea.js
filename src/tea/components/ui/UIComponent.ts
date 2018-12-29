@@ -3,34 +3,16 @@ import { Component } from "../Component";
 
 export class UIComponent extends Component {
 	static readonly className: string = "UIComponent";
-	protected _x: number;
-	protected _y: number;
 	protected _width: number;
 	protected _height: number;
 	texture: Tea.Texture;
 	
 	constructor(app: Tea.App) {
 		super(app);
-		this._x = 0.0;
-		this._y = 0.0;
 		this._width = 0.0;
 		this._height = 0.0;
 		this.texture = new Tea.Texture(app);
 		this.texture.filterMode = Tea.FilterMode.Point;
-	}
-
-	get x(): number {
-		return this._x;
-	}
-	set x(value: number) {
-		this._x = value;
-	}
-
-	get y(): number {
-		return this._y;
-	}
-	set y(value: number) {
-		this._y = value;
 	}
 
 	get width(): number {
@@ -48,13 +30,20 @@ export class UIComponent extends Component {
 	}
 
 	destroy(): void {
-		this.x = undefined;
-		this.y = undefined;
 		this._width = undefined;
+		this._height = undefined;
 		if (this.texture != null) {
 			this.texture.destroy();
 			this.texture = undefined;
 		}
 		super.destroy();
+	}
+
+	toJSON(): Object {
+		var json: any = super.toJSON();
+		json[Tea.JSONUtil.TypeName] = UIComponent.className;
+		json.width = this._width;
+		json.height = this._height;
+		return json;
 	}
 }

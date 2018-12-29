@@ -14,6 +14,14 @@ export module TextureDimension {
 		return TextureDimension[value];
 	}
 
+	export function fromString(key: string): TextureDimension {
+		var value = TextureDimension[key];
+		if (value == null) {
+			return TextureDimension.None;
+		}
+		return value;
+	}
+
 	export function getKeys(): Array<string> {
 		var keys = [];
 		for (var n in TextureDimension) {

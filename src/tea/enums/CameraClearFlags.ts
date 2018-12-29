@@ -10,6 +10,14 @@ export module CameraClearFlags {
 		return CameraClearFlags[value];
 	}
 
+	export function fromString(key: string): CameraClearFlags {
+		var value = CameraClearFlags[key];
+		if (value == null) {
+			return CameraClearFlags.SolidColor;
+		}
+		return value;
+	}
+
 	export function getKeys(): Array<string> {
 		var keys = [];
 		for (var n in CameraClearFlags) {

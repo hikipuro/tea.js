@@ -13,6 +13,14 @@ export module PrimitiveType {
 		return PrimitiveType[value];
 	}
 
+	export function fromString(key: string): PrimitiveType {
+		var value = PrimitiveType[key];
+		if (value == null) {
+			return PrimitiveType.Null;
+		}
+		return value;
+	}
+
 	export function getKeys(): Array<string> {
 		var keys = [];
 		for (var n in PrimitiveType) {

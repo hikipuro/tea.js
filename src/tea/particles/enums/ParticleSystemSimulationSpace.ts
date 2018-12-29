@@ -9,6 +9,14 @@ export module ParticleSystemSimulationSpace {
 		return ParticleSystemSimulationSpace[value];
 	}
 
+	export function fromString(key: string): ParticleSystemSimulationSpace {
+		var value = ParticleSystemSimulationSpace[key];
+		if (value == null) {
+			return ParticleSystemSimulationSpace.Local;
+		}
+		return value;
+	}
+
 	export function getKeys(): Array<string> {
 		var keys = [];
 		for (var n in ParticleSystemSimulationSpace) {

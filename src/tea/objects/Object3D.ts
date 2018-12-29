@@ -13,11 +13,11 @@ export class Object3D {
 	localPosition: Tea.Vector3;
 	localRotation: Tea.Quaternion;
 	localScale: Tea.Vector3;
-	children: Array<Object3D>;
 	tag: string;
 	layer: number;
 	protected _status: Object3DStatus;
 	protected _parent: Object3D;
+	protected _children: Array<Object3D>;
 	protected _components: Array<Tea.Component>;
 	protected _toDestroy: boolean;
 
@@ -31,11 +31,11 @@ export class Object3D {
 		this.localPosition = Tea.Vector3.zero.clone();
 		this.localRotation = Tea.Quaternion.identity.clone();
 		this.localScale = Tea.Vector3.one.clone();
-		this.children = [];
 		this.tag = "";
 		this.layer = 0;
 		this._status = new Object3DStatus();
 		this._parent = null;
+		this._children = [];
 		this._components = [];
 		this._toDestroy = false;
 	}
@@ -63,11 +63,12 @@ export class Object3D {
 	}
 
 	get isActiveInHierarchy(): boolean {
-		if (this._parent != null) {
-			return this._parent.isActiveInHierarchy
-				&& this.isActive;
+		var parent = this._parent;
+		if (parent == null) {
+			return this.isActive;
 		}
-		return this.isActive;
+		return this.isActive
+			&& parent.isActiveInHierarchy;
 	}
 
 	get parent(): Object3D {
@@ -88,12 +89,12 @@ export class Object3D {
 		if (parent != null && value == null) {
 			this._parent = null;
 			parent.adjustChildPosition(this, false);
-			var index = parent.children.indexOf(this);
-			parent.children.splice(index, 1);
+			var index = parent._children.indexOf(this);
+			parent._children.splice(index, 1);
 			if (scene != null) {
 				this.scene = null;
 				scene.removeComponents(this);
-				var children = this.children;
+				var children = this._children;
 				var length = children.length;
 				for (var i = 0; i < length; i++) {
 					var child = children[i];
@@ -108,12 +109,12 @@ export class Object3D {
 		}
 		if (parent != null) {
 			parent.adjustChildPosition(this, false);
-			var index = parent.children.indexOf(this);
-			parent.children.splice(index, 1);
+			var index = parent._children.indexOf(this);
+			parent._children.splice(index, 1);
 		}
 		this._parent = value;
 		value.adjustChildPosition(this, true);
-		value.children.push(this);
+		value._children.push(this);
 		if (scene != null && scene.childIndex(this) >= 0) {
 			scene.removeChild(this);
 		}
@@ -121,7 +122,7 @@ export class Object3D {
 		if (scene != null) {
 			this.scene = scene;
 			scene.addComponents(this);
-			var children = this.children;
+			var children = this._children;
 			var length = children.length;
 			for (var i = 0; i < length; i++) {
 				var child = children[i];
@@ -135,66 +136,99 @@ export class Object3D {
 	}
 
 	get position(): Tea.Vector3 {
-		if (this._parent != null) {
-			var p = this._parent.position;
-			var r = this._parent.rotation;
-			var s = this._parent.scale;
-			var lp = this.localPosition.clone();
-			lp.scale$(s);
-			lp.applyQuaternion(r);
-			return lp.add$(p);
+		var parent = this._parent;
+		if (parent == null) {
+			return this.localPosition.clone();
 		}
-		return this.localPosition;
+		var position = this.localPosition.clone();
+		while (parent != null) {
+			position.scale$(parent.localScale);
+			position.applyQuaternion(parent.localRotation);
+			position.add$(parent.localPosition);
+			parent = parent.parent;
+		}
+		return position;
 	}
 
 	set position(value: Tea.Vector3) {
-		if (this._parent != null) {
-			var p = this._parent.position;
-			var r = this._parent.rotation;
-			var s = this._parent.scale.clone();
-			p = value.sub(p);
-			p.applyQuaternion(r.inversed);
-			this.reverseScale$(s);
-			p.scale$(s);
-			this.localPosition = p;
+		if (value == null) {
+			this.localPosition.set(0.0, 0.0, 0.0);
 			return;
 		}
-		this.localPosition.copy(value);
+		var parent = this._parent;
+		if (parent == null) {
+			this.localPosition.copy(value);
+			return;
+		}
+		var p = parent.position;
+		var r = parent.rotation.inversed;
+		var s = parent.scale.clone();
+		p = value.sub(p);
+		p.applyQuaternion(r);
+		s[0] = s[0] !== 0.0 ? 1.0 / s[0] : 0.0;
+		s[1] = s[1] !== 0.0 ? 1.0 / s[1] : 0.0;
+		s[2] = s[2] !== 0.0 ? 1.0 / s[2] : 0.0;
+		p.scale$(s);
+		this.localPosition = p;
 	}
 
 	get rotation(): Tea.Quaternion {
-		if (this._parent != null) {
-			var r = this._parent.rotation;
-			return r.mul(this.localRotation);
+		var parent = this._parent;
+		if (parent == null) {
+			return this.localRotation.clone();
 		}
-		return this.localRotation;
+		var rotation = this.localRotation.clone();
+		while (parent != null) {
+			rotation.mul$(parent.localRotation);
+			parent = parent.parent;
+		}
+		return rotation;
 	}
 
 	set rotation(value: Tea.Quaternion) {
-		if (this._parent != null) {
-			var r = this._parent.rotation;
-			this.localRotation = r.inversed.mul(value);
+		if (value == null) {
+			this.localRotation.set(0.0, 0.0, 0.0, 1.0);
 			return;
 		}
-		this.localRotation.copy(value);
+		var parent = this._parent;
+		if (parent == null) {
+			this.localRotation.copy(value);
+			return;
+		}
+		var r = parent.rotation.inversed;
+		r.mul$(value);
+		this.localRotation = r;
 	}
 
 	get scale(): Tea.Vector3 {
-		if (this._parent != null) {
-			var s = this._parent.scale;
-			return s.scale(this.localScale);
+		var parent = this._parent;
+		if (parent == null) {
+			return this.localScale.clone();
 		}
-		return this.localScale;
+		var scale = this.localScale.clone();
+		while (parent != null) {
+			scale.scale$(parent.localScale);
+			parent = parent.parent;
+		}
+		return scale;
 	}
 
 	set scale(value: Tea.Vector3) {
-		if (this._parent != null) {
-			var s = this._parent.scale.clone();
-			this.reverseScale$(s);
-			this.localScale = value.scale(s);
+		if (value == null) {
+			this.localScale.set(0.0, 0.0, 0.0);
 			return;
 		}
-		this.localScale.copy(value);
+		var parent = this._parent;
+		if (parent == null) {
+			this.localScale.copy(value);
+			return;
+		}
+		var s = parent.scale.clone();
+		s[0] = s[0] !== 0.0 ? 1.0 / s[0] : 0.0;
+		s[1] = s[1] !== 0.0 ? 1.0 / s[1] : 0.0;
+		s[2] = s[2] !== 0.0 ? 1.0 / s[2] : 0.0;
+		s.scale$(value);
+		this.localScale = s;
 	}
 
 	get localEulerAngles(): Tea.Vector3 {
@@ -214,7 +248,11 @@ export class Object3D {
 	}
 
 	get childCount(): number {
-		return this.children.length;
+		return this._children.length;
+	}
+
+	get children(): Array<Object3D> {
+		return this._children;
 	}
 
 	get forward(): Tea.Vector3 {
@@ -253,10 +291,11 @@ export class Object3D {
 	}
 
 	get root(): Tea.Object3D {
+		var parent = this._parent;
 		if (parent == null) {
 			return this;
 		}
-		return this._parent.root;
+		return parent.root;
 	}
 
 	get path(): string {
@@ -290,11 +329,11 @@ export class Object3D {
 			this.scene.removeChild(this);
 		}
 		this.parent = null;
-		var length = this.children.length;
+		var length = this._children.length;
 		for (var i = length - 1; i >= 0; i--) {
-			var child = this.children[i];
+			var child = this._children[i];
 			child._destroy();
-			delete this.children[i];
+			delete this._children[i];
 		}
 		var keys = Object.keys(this._components);
 		for (var i = 0; i < keys.length; i++) {
@@ -302,7 +341,7 @@ export class Object3D {
 			this._components[key].destroy();
 			delete this._components[key];
 		}
-		this.children = [];
+		this._children = [];
 		this.app = undefined;
 		this.name = undefined;
 		this.isActive = undefined;
@@ -330,7 +369,7 @@ export class Object3D {
 			localRotation: this.localRotation,
 			localScale: this.localScale,
 			components: Tea.JSONUtil.arrayToJSON(this._components),
-			children: Tea.JSONUtil.arrayToJSON(this.children)
+			children: Tea.JSONUtil.arrayToJSON(this._children)
 		});
 		return json;
 	}
@@ -387,7 +426,7 @@ export class Object3D {
 	}
 	//*/
 
-	addChild(object3d: Object3D): void {
+	addChild(object3d: Object3D, worldPositionStays: boolean = true): void {
 		if (object3d == null) {
 			return;
 		}
@@ -398,7 +437,7 @@ export class Object3D {
 		if (object3d == null) {
 			return;
 		}
-		if (this.children.indexOf(object3d) < 0) {
+		if (this._children.indexOf(object3d) < 0) {
 			return;
 		}
 		object3d.parent = null;
@@ -480,47 +519,101 @@ export class Object3D {
 	}
 
 	getComponents<T extends Tea.Component>(component: {new (app: Tea.App): T}): Array<T> {
-		return this._components.filter((c) => {
+		return this._components.filter((c: Tea.Component): boolean => {
 			return c instanceof component;
 		}) as Array<T>;
+	}
+
+	getComponentInParent<T extends Tea.Component>(
+		component: {new (app: Tea.App): T},
+		includeInactive: boolean = false): T
+	{
+		if (includeInactive === false && this.isActive === false) {
+			return null;
+		}
+		var parent = this._parent;
+		if (parent == null) {
+			return this.getComponent(component);
+		}
+		if (includeInactive === false && parent.isActive === false) {
+			return this.getComponent(component);
+		}
+		return parent.getComponentInParent(
+			component, includeInactive
+		);
 	}
 
 	getComponentsInParent<T extends Tea.Component>(
 		component: {new (app: Tea.App): T},
 		includeInactive: boolean = false): Array<T>
 	{
-		var array = [];
-		if (this._parent != null) {
-			if (includeInactive === true || this._parent.isActive === true) {
-				var c = this._parent.getComponentsInParent(
-					component, includeInactive
-				);
-				array.push(c);
+		if (includeInactive === false && this.isActive === false) {
+			return [];
+		}
+		var parent = this._parent;
+		if (parent == null) {
+			return this.getComponents(component);
+		}
+		if (includeInactive === false && parent.isActive === false) {
+			return this.getComponents(component);
+		}
+		var components = parent.getComponentsInParent(
+			component, includeInactive
+		);
+		components.push(...this.getComponents(component));
+		return components;
+	}
+
+	getComponentInChildren<T extends Tea.Component>(
+		component: {new (app: Tea.App): T},
+		includeInactive: boolean = false): T
+	{
+		if (includeInactive === false && this.isActive === false) {
+			return null;
+		}
+		var children = this._children;
+		var length = children.length;
+		for (var i = 0; i < length; i++) {
+			var child = children[i];
+			if (child == null) {
+				continue;
+			}
+			if (includeInactive === false && child.isActive === false) {
+				continue;
+			}
+			var c = child.getComponentInChildren(
+				component, includeInactive
+			);
+			if (c != null) {
+				return c;
 			}
 		}
-		array.push(this.getComponents(component));
-		return array;
+		return this.getComponent(component);
 	}
 
 	getComponentsInChildren<T extends Tea.Component>(
 		component: {new (app: Tea.App): T},
 		includeInactive: boolean = false): Array<T>
 	{
-		if (this.isActive === false) {
+		if (includeInactive === false && this.isActive === false) {
 			return [];
 		}
-		var array = [];
-		var length = this.children.length;
+		var array = this.getComponents(component);
+		var children = this._children;
+		var length = children.length;
 		for (var i = 0; i < length; i++) {
-			var child = this.children[i];
-			if (includeInactive === true || child.isActive === true) {
-				var c = child.getComponentsInChildren(
-					component, includeInactive
-				);
-				array.push.apply(array, c);
+			var child = children[i];
+			if (child == null) {
+				continue;
 			}
+			if (includeInactive === false && child.isActive === false) {
+				continue;
+			}
+			var components = child.getComponentsInChildren(
+				component, includeInactive
+			);
+			array.push(...components);
 		}
-		array.push.apply(array, this.getComponents(component));
 		return array;
 	}
 
@@ -560,15 +653,60 @@ export class Object3D {
 			return;
 		}
 		if (this.childCount > 0) {
-			this.children.forEach((child) => {
+			this._children.forEach((child) => {
 				child.broadcastMessage(methodName, args);
 			});
 		}
 		this.sendMessage(methodName, args);
 	}
 
+	detachChildren(): void {
+		var children = this._children;
+		if (children == null || children.length <= 0) {
+			return;
+		}
+		var length = children.length;
+		for (var i = 0; i < length; i++) {
+			var child = children[i];
+			if (child == null) {
+				continue;
+			}
+			child.parent = null;
+		}
+		this._children = [];
+	}
+
+	find(name: string): Object3D {
+		var children = this._children;
+		if (children == null || children.length <= 0) {
+			return null;
+		}
+		var length = children.length;
+		for (var i = 0; i < length; i++) {
+			var child = children[i];
+			if (child == null) {
+				continue;
+			}
+			if (child.name === name) {
+				return child;
+			}
+		}
+		return null;
+	}
+
 	getChild(index: number): Object3D {
-		return this.children[index];
+		return this._children[index];
+	}
+
+	getSiblingIndex(): number {
+		var parent = this._parent;
+		if (parent == null) {
+			if (this.scene == null) {
+				return -1;
+			}
+			return this.scene.children.indexOf(this);
+		}
+		return parent._children.indexOf(this);
 	}
 
 	isChildOf(parent: Object3D): boolean {
@@ -578,78 +716,32 @@ export class Object3D {
 		if (parent === this) {
 			return true;
 		}
-		if (parent.children.indexOf(this) >= 0) {
-			return true;
-		}
-		return parent.children.some((child) => {
-			if (this.isChildOf(child)) {
-				return true;
-			}
-		});
-	}
-
-	getSiblingIndex(): number {
-		if (this._parent == null) {
-			if (this.scene == null) {
-				return -1;
-			}
-			return this.scene.children.indexOf(this);
-		}
-		return this._parent.children.indexOf(this);
-	}
-
-	detachChildren(): void {
-		this.children.forEach((child) => {
-			child.parent = null;
-		});
-		this.children = [];
-	}
-
-	find(name: string): Object3D {
-		var children = this.children;
+		var children = parent._children;
 		if (children == null || children.length <= 0) {
-			return null;
+			return false;
+		}
+		if (children.indexOf(this) >= 0) {
+			return true;
 		}
 		var length = children.length;
 		for (var i = 0; i < length; i++) {
 			var child = children[i];
-			if (child.name === name) {
-				return child;
+			if (child == null) {
+				continue;
+			}
+			if (this.isChildOf(child)) {
+				return true;
 			}
 		}
-		return null;
-	}
-
-	translate(translation: Tea.Vector3): void;
-	translate(x: number, y: number, z: number): void;
-	translate(a: number | Tea.Vector3, b?: number, c?: number): void {
-		if (a instanceof Tea.Vector3) {
-			this.localPosition.add$(a);
-			return;
-		}
-		this.localPosition.add$(new Tea.Vector3(a, b, c));
-	}
-
-	rotate(eulerAngles: Tea.Vector3): void;
-	rotate(xAngle: number, yAngle: number, zAngle: number): void;
-	rotate(a: number | Tea.Vector3, b?: number, c?: number): void {
-		if (a instanceof Tea.Vector3) {
-			this.localRotation.rotateEuler(a);
-			return;
-		}
-		this.localRotation.rotateEuler(a, b, c);
-	}
-
-	rotateAround(point: Tea.Vector3, axis: Tea.Vector3, angle: number): void {
-		var q = Tea.Quaternion.euler(axis.normalized.mul(angle));
-		var p = this.position.sub(point);
-		this.localRotation = q.mul(this.rotation);
-		this.localPosition = point.add(q.mul(p));
+		return false;
 	}
 
 	lookAt(worldPosition: Tea.Vector3, worldUp?: Tea.Vector3): void;
 	lookAt(target: Object3D, worldUp?: Tea.Vector3): void;
 	lookAt(target: Object3D | Tea.Vector3, worldUp: Tea.Vector3 = Tea.Vector3.up): void {
+		if (target == null) {
+			return;
+		}
 		if (target instanceof Tea.Vector3) {
 			var d = target.sub(this.position);
 			var q = Tea.Quaternion.lookRotation(d, worldUp);
@@ -659,6 +751,150 @@ export class Object3D {
 		var d = target.position.sub(this.position);
 		var q = Tea.Quaternion.lookRotation(d, worldUp);
 		this.localRotation = q;
+	}
+
+	rotate(eulerAngles: Tea.Vector3): void;
+	rotate(xAngle: number, yAngle: number, zAngle: number): void;
+	rotate(a: number | Tea.Vector3, b?: number, c?: number): void {
+		if (a == null) {
+			return;
+		}
+		if (a instanceof Tea.Vector3) {
+			this.localRotation.rotateEuler(a);
+			return;
+		}
+		this.localRotation.rotateEuler(a, b, c);
+	}
+
+	rotateAround(point: Tea.Vector3, axis: Tea.Vector3, angle: number): void {
+		if (point == null || axis == null) {
+			return;
+		}
+		var q = Tea.Quaternion.euler(axis.normalized.mul(angle));
+		var p = this.position.sub(point);
+		this.localRotation = q.mul(this.rotation);
+		this.localPosition = point.add(q.mul(p));
+	}
+
+	setAsFirstSibling(): void {
+		var index = this.getSiblingIndex();
+		if (index < 0) {
+			return;
+		}
+		var scene = this.scene;
+		var parent = this._parent;
+		var children: Array<Object3D> = null;
+		if (parent == null) {
+			if (scene == null) {
+				return;
+			}
+			children = scene.children;
+		} else {
+			children = parent._children;
+		}
+		if (children == null || children.length <= 1) {
+			return;
+		}
+		children.splice(index, 1);
+		children.unshift(this);
+	}
+
+	setAsLastSibling(): void {
+		var index = this.getSiblingIndex();
+		if (index < 0) {
+			return;
+		}
+		var scene = this.scene;
+		var parent = this._parent;
+		var children: Array<Object3D> = null;
+		if (parent == null) {
+			if (scene == null) {
+				return;
+			}
+			children = scene.children;
+		} else {
+			children = parent._children;
+		}
+		if (children == null || children.length <= 1) {
+			return;
+		}
+		children.splice(index, 1);
+		children.push(this);
+	}
+
+	setSiblingIndex(index: number): void {
+		var i = this.getSiblingIndex();
+		if (i < 0) {
+			return;
+		}
+		var scene = this.scene;
+		var parent = this._parent;
+		var children: Array<Object3D> = null;
+		if (parent == null) {
+			if (scene == null) {
+				return;
+			}
+			children = scene.children;
+		} else {
+			children = parent._children;
+		}
+		if (children == null || children.length <= 1) {
+			return;
+		}
+		if (i === index) {
+			return;
+		}
+		children.splice(i, 1);
+		children.splice(index, 0, this);
+	}
+
+	transformDirection(direction: Tea.Vector3): Tea.Vector3;
+	transformDirection(x: number, y: number, z: number): Tea.Vector3;
+	transformDirection(a: number | Tea.Vector3, b?: number, c?: number): Tea.Vector3 {
+		return null;
+	}
+
+	transformPoint(position: Tea.Vector3): Tea.Vector3;
+	transformPoint(x: number, y: number, z: number): Tea.Vector3;
+	transformPoint(a: number | Tea.Vector3, b?: number, c?: number): Tea.Vector3 {
+		if (a == null) {
+			return new Tea.Vector3();
+		}
+		var position: Tea.Vector3 = null;
+		if (a instanceof Tea.Vector3) {
+			position = a.clone();
+		} else {
+			position = new Tea.Vector3(a, b, c);
+		}
+		var parent = this._parent;
+		if (parent == null) {
+			return position;
+		}
+		position.scale$(parent.scale);
+		position.applyQuaternion(parent.rotation);
+		return position.add$(parent.position);
+	}
+
+	transformVector(vector: Tea.Vector3): Tea.Vector3;
+	transformVector(x: number, y: number, z: number): Tea.Vector3;
+	transformVector(a: number | Tea.Vector3, b?: number, c?: number): Tea.Vector3 {
+		return null;
+	}
+
+	translate(translation: Tea.Vector3): void;
+	translate(x: number, y: number, z: number): void;
+	translate(a: number | Tea.Vector3, b?: number, c?: number): void {
+		if (a == null) {
+			return;
+		}
+		if (a instanceof Tea.Vector3) {
+			this.localPosition.add$(a);
+			return;
+		}
+		var position = this.localPosition;
+		position[0] += a;
+		position[1] += b;
+		position[2] += c;
 	}
 
 	update(isEditing: boolean = false): void {
@@ -737,13 +973,6 @@ export class Object3D {
 		}
 	}
 
-	protected reverseScale$(scale: Tea.Vector3): Tea.Vector3 {
-		scale[0] = scale[0] !== 0.0 ? 1.0 / scale[0] : 0.0;
-		scale[1] = scale[1] !== 0.0 ? 1.0 / scale[1] : 0.0;
-		scale[2] = scale[2] !== 0.0 ? 1.0 / scale[2] : 0.0;
-		return scale;
-	}
-
 	protected adjustChildPosition(child: Tea.Object3D, isAppend: boolean): void {
 		if (isAppend) {
 			var rotation = this.rotation.clone();
@@ -751,7 +980,9 @@ export class Object3D {
 			child.localPosition.applyQuaternion(rotation.inverse$());
 			child.localRotation = rotation.mul(child.localRotation);
 			var scale = this.scale.clone();
-			this.reverseScale$(scale);
+			scale[0] = scale[0] !== 0.0 ? 1.0 / scale[0] : 0.0;
+			scale[1] = scale[1] !== 0.0 ? 1.0 / scale[1] : 0.0;
+			scale[2] = scale[2] !== 0.0 ? 1.0 / scale[2] : 0.0;
 			child.localPosition.scale$(scale);
 			child.localScale.scale$(scale);
 			return;

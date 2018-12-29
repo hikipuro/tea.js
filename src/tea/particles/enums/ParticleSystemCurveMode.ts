@@ -10,6 +10,14 @@ export module ParticleSystemCurveMode {
 		return ParticleSystemCurveMode[value];
 	}
 
+	export function fromString(key: string): ParticleSystemCurveMode {
+		var value = ParticleSystemCurveMode[key];
+		if (value == null) {
+			return ParticleSystemCurveMode.Constant;
+		}
+		return value;
+	}
+
 	export function getKeys(): Array<string> {
 		var keys = [];
 		for (var n in ParticleSystemCurveMode) {

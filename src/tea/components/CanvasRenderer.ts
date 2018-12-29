@@ -143,12 +143,13 @@ export class CanvasRenderer extends Renderer {
 			if (component == null || component.texture == null) {
 				continue;
 			}
+			var object3d = component.object3d;
 			scale[0] = component.width * screenWidth;
 			scale[1] = component.height * screenHeight;
 			position[0] = scale[0] - 1.0;
 			position[1] = 1.0 - scale[1];
-			position[0] += component.x * screenWidth;
-			position[1] -= component.y * screenHeight;
+			position[0] += object3d.position[0] * screenWidth;
+			position[1] -= object3d.position[1] * screenHeight;
 
 			//mvpMatrix.setIdentity();
 			mvpMatrix.setTRS(position, rotation, scale);

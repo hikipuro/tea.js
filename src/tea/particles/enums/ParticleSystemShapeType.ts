@@ -20,6 +20,14 @@ export module ParticleSystemShapeType {
 		return ParticleSystemShapeType[value];
 	}
 
+	export function fromString(key: string): ParticleSystemShapeType {
+		var value = ParticleSystemShapeType[key];
+		if (value == null) {
+			return ParticleSystemShapeType.Cone;
+		}
+		return value;
+	}
+
 	export function getKeys(): Array<string> {
 		var keys = [];
 		for (var n in ParticleSystemShapeType) {

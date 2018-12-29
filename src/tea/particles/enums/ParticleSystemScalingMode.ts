@@ -9,6 +9,14 @@ export module ParticleSystemScalingMode {
 		return ParticleSystemScalingMode[value];
 	}
 
+	export function fromString(key: string): ParticleSystemScalingMode {
+		var value = ParticleSystemScalingMode[key];
+		if (value == null) {
+			return ParticleSystemScalingMode.Hierarchy;
+		}
+		return value;
+	}
+
 	export function getKeys(): Array<string> {
 		var keys = [];
 		for (var n in ParticleSystemScalingMode) {

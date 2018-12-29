@@ -10,6 +10,14 @@ export module ParticleSystemShapeMultiModeValue {
 		return ParticleSystemShapeMultiModeValue[value];
 	}
 
+	export function fromString(key: string): ParticleSystemShapeMultiModeValue {
+		var value = ParticleSystemShapeMultiModeValue[key];
+		if (value == null) {
+			return ParticleSystemShapeMultiModeValue.Random;
+		}
+		return value;
+	}
+
 	export function getKeys(): Array<string> {
 		var keys = [];
 		for (var n in ParticleSystemShapeMultiModeValue) {

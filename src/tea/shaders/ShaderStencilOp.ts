@@ -22,6 +22,14 @@ export module ShaderStencilOp {
 		return ShaderStencilOp[value];
 	}
 
+	export function fromString(key: string): ShaderStencilOp {
+		var value = ShaderStencilOp[key];
+		if (value == null) {
+			return ShaderStencilOp.Zero;
+		}
+		return value;
+	}
+
 	export function getKeys(): Array<string> {
 		var keys = [];
 		for (var n in ShaderStencilOp) {

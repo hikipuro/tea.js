@@ -11,6 +11,14 @@ export module ScreenOrientation {
 		return ScreenOrientation[value];
 	}
 
+	export function fromString(key: string): ScreenOrientation {
+		var value = ScreenOrientation[key];
+		if (value == null) {
+			return ScreenOrientation.AutoRotation;
+		}
+		return value;
+	}
+
 	export function getKeys(): Array<string> {
 		var keys = [];
 		for (var n in ScreenOrientation) {

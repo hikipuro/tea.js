@@ -8,6 +8,14 @@ export module ParticleSystemInheritVelocityMode {
 		return ParticleSystemInheritVelocityMode[value];
 	}
 
+	export function fromString(key: string): ParticleSystemInheritVelocityMode {
+		var value = ParticleSystemInheritVelocityMode[key];
+		if (value == null) {
+			return ParticleSystemInheritVelocityMode.Initial;
+		}
+		return value;
+	}
+
 	export function getKeys(): Array<string> {
 		var keys = [];
 		for (var n in ParticleSystemInheritVelocityMode) {

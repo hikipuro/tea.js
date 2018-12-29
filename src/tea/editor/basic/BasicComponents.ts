@@ -20,6 +20,7 @@ import { SelectEnum } from "./SelectEnum";
 import { TextArea } from "./TextArea";
 import { TreeView } from "./TreeView";
 import { TreeViewItem } from "./TreeViewItem";
+import { Vector2 } from "./Vector2";
 import { Vector3 } from "./Vector3";
 import { VResizeBar } from "./VResizeBar";
 
@@ -46,6 +47,7 @@ export {
 	TextArea,
 	TreeView,
 	TreeViewItem,
+	Vector2,
 	Vector3,
 	VResizeBar,
 }
@@ -71,6 +73,7 @@ export function getComponents(): Object {
 		SelectEnum: SelectEnum,
 		TextArea: TextArea,
 		TreeView: TreeView,
+		Vector2: Vector2,
 		Vector3: Vector3,
 		VResizeBar: VResizeBar,
 	}

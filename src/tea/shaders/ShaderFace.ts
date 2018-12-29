@@ -12,6 +12,14 @@ export module ShaderFace {
 		return ShaderFace[value];
 	}
 
+	export function fromString(key: string): ShaderFace {
+		var value = ShaderFace[key];
+		if (value == null) {
+			return ShaderFace.Front;
+		}
+		return value;
+	}
+
 	export function getKeys(): Array<string> {
 		var keys = [];
 		for (var n in ShaderFace) {

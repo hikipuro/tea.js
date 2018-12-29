@@ -9,6 +9,14 @@ export module ParticleSystemOverlapAction {
 		return ParticleSystemOverlapAction[value];
 	}
 
+	export function fromString(key: string): ParticleSystemOverlapAction {
+		var value = ParticleSystemOverlapAction[key];
+		if (value == null) {
+			return ParticleSystemOverlapAction.Ignore;
+		}
+		return value;
+	}
+
 	export function getKeys(): Array<string> {
 		var keys = [];
 		for (var n in ParticleSystemOverlapAction) {

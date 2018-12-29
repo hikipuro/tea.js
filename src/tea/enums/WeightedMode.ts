@@ -10,6 +10,14 @@ export module WeightedMode {
 		return WeightedMode[value];
 	}
 
+	export function fromString(key: string): WeightedMode {
+		var value = WeightedMode[key];
+		if (value == null) {
+			return WeightedMode.None;
+		}
+		return value;
+	}
+
 	export function getKeys(): Array<string> {
 		var keys = [];
 		for (var n in WeightedMode) {

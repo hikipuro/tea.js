@@ -120,6 +120,11 @@
 			},
 			"Camera": {
 				"Title": "カメラ"
+			},
+			"UI": {
+				"Title": "UI",
+				"Canvas": "キャンバス",
+				"Text": "テキスト"
 			}
 		}
 	},
@@ -208,6 +213,12 @@
 			"StereoDistance": "ステレオ距離",
 			"StereoMode": "ステレオモード"
 		},
+		"Canvas": {
+			"Title": "キャンバス"
+		},
+		"CanvasRenderer": {
+			"Title": "キャンバスレンダラ"
+		},
 		"Light": {
 			"Title": "ライト",
 			"Type": "種類",
@@ -235,6 +246,16 @@
 		},
 		"Script": {
 			"Title": "スクリプト"
+		},
+		"Text": {
+			"Title": "テキスト",
+			"Text": "テキスト",
+			"LineSpacing": "行間隔",
+			"Alignment": "行揃え",
+			"FontSize": "フォントサイズ",
+			"FontStyle": "フォントスタイル",
+			"Font": "フォント",
+			"Color": "色"
 		},
 		"TextMesh": {
 			"Title": "テキストメッシュ",

@@ -12,6 +12,14 @@ export module ShaderHint {
 		return ShaderHint[value];
 	}
 
+	export function fromString(key: string): ShaderHint {
+		var value = ShaderHint[key];
+		if (value == null) {
+			return ShaderHint.DontCare;
+		}
+		return value;
+	}
+
 	export function getKeys(): Array<string> {
 		var keys = [];
 		for (var n in ShaderHint) {

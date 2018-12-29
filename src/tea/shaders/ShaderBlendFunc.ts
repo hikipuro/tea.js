@@ -36,6 +36,14 @@ export module ShaderBlendFunc {
 		return ShaderBlendFunc[value];
 	}
 
+	export function fromString(key: string): ShaderBlendFunc {
+		var value = ShaderBlendFunc[key];
+		if (value == null) {
+			return ShaderBlendFunc.Zero;
+		}
+		return value;
+	}
+
 	export function getKeys(): Array<string> {
 		var keys = [];
 		for (var n in ShaderBlendFunc) {

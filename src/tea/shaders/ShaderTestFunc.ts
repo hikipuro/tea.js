@@ -22,6 +22,14 @@ export module ShaderTestFunc {
 		return ShaderTestFunc[value];
 	}
 
+	export function fromString(key: string): ShaderTestFunc {
+		var value = ShaderTestFunc[key];
+		if (value == null) {
+			return ShaderTestFunc.Always;
+		}
+		return value;
+	}
+
 	export function getKeys(): Array<string> {
 		var keys = [];
 		for (var n in ShaderTestFunc) {

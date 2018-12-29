@@ -35,6 +35,14 @@ import { Translator } from "../translate/Translator";
 					@update="onUpdateScale"
 					@change="onChangeScale">{{ translator.scale }}</Vector3>
 			</template>
+			<template v-if="is3DObject === false">
+				<Vector2
+					ref="position2d"
+					:x="position[0]"
+					:y="position[1]"
+					@update="onUpdatePosition2D"
+					@change="onChangePosition2D">{{ translator.position }}</Vector2>
+			</template>
 			<ComponentPanel
 				ref="components"
 				v-for="(item, index) in components"
@@ -90,6 +98,10 @@ export class ObjectInspector extends Vue {
 		this.setPosition(object3d.localPosition);
 		this.setRotation(object3d.localRotation.eulerAngles);
 		this.setScale(object3d.localScale);
+		var canvas = object3d.getComponentsInParent(Tea.Canvas);
+		if (canvas != null && canvas.length >= 1) {
+			this.is3DObject = false;
+		}
 		this.clearComponents();
 		var components = object3d.getComponents(Tea.Component);
 		components.forEach((component: Tea.Component) => {
@@ -251,6 +263,16 @@ export class ObjectInspector extends Vue {
 		this.$emit("update", "ObjectInspector", "rotation", scale);
 	}
 
+	protected onUpdatePosition2D(x: number, y: number): void {
+		var position = this.position;
+		this.$set(position, 0, x);
+		this.$set(position, 1, y);
+		if (this._object3d != null) {
+			this._object3d.localPosition.set(x, y, 0.0);
+		}
+		this.$emit("update", "ObjectInspector", "position", position);
+	}
+
 	protected onChangePosition(x: number, y: number, z: number): void {
 		console.log("onChangePosition", x, y, z);
 		this.$emit("change", "position", {
@@ -275,6 +297,15 @@ export class ObjectInspector extends Vue {
 			x: x,
 			y: y,
 			z: z
+		});
+	}
+
+	protected onChangePosition2D(x: number, y: number): void {
+		console.log("onChangePosition2D", x, y, 0.0);
+		this.$emit("change", "position", {
+			x: x,
+			y: y,
+			z: 0.0
 		});
 	}
 

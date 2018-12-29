@@ -9,6 +9,14 @@ export module FilterMode {
 		return FilterMode[value];
 	}
 
+	export function fromString(key: string): FilterMode {
+		var value = FilterMode[key];
+		if (value == null) {
+			return FilterMode.Point;
+		}
+		return value;
+	}
+
 	export function getKeys(): Array<string> {
 		var keys = [];
 		for (var n in FilterMode) {

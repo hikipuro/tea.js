@@ -11,6 +11,14 @@ export module WrapMode {
 		return WrapMode[value];
 	}
 
+	export function fromString(key: string): WrapMode {
+		var value = WrapMode[key];
+		if (value == null) {
+			return WrapMode.Default;
+		}
+		return value;
+	}
+
 	export function getKeys(): Array<string> {
 		var keys = [];
 		for (var n in WrapMode) {

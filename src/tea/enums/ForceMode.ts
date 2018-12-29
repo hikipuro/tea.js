@@ -10,6 +10,14 @@ export module ForceMode {
 		return ForceMode[value];
 	}
 
+	export function fromString(key: string): ForceMode {
+		var value = ForceMode[key];
+		if (value == null) {
+			return ForceMode.Force;
+		}
+		return value;
+	}
+
 	export function getKeys(): Array<string> {
 		var keys = [];
 		for (var n in ForceMode) {

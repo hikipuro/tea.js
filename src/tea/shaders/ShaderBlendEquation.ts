@@ -12,6 +12,14 @@ export module ShaderBlendEquation {
 		return ShaderBlendEquation[value];
 	}
 
+	export function fromString(key: string): ShaderBlendEquation {
+		var value = ShaderBlendEquation[key];
+		if (value == null) {
+			return ShaderBlendEquation.Add;
+		}
+		return value;
+	}
+
 	export function getKeys(): Array<string> {
 		var keys = [];
 		for (var n in ShaderBlendEquation) {

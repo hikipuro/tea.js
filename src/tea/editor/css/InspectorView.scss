@@ -58,6 +58,18 @@
 			}
 		}
 
+		div.Vector2 {
+			> .value > .InputNumber {
+				> .title {
+					flex: 0;
+					min-width: 0.7em;
+				}
+				> input {
+					flex: 1;
+				}
+			}
+		}
+
 		div.Vector3 {
 			> .value > .InputNumber {
 				> .title {

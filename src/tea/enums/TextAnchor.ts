@@ -15,6 +15,14 @@ export module TextAnchor {
 		return TextAnchor[value];
 	}
 
+	export function fromString(key: string): TextAnchor {
+		var value = TextAnchor[key];
+		if (value == null) {
+			return TextAnchor.UpperLeft;
+		}
+		return value;
+	}
+
 	export function getKeys(): Array<string> {
 		var keys = [];
 		for (var n in TextAnchor) {
