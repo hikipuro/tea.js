@@ -326,7 +326,7 @@ export class Camera extends Component {
 		var far = this.screenToWorldPoint(p);
 		return new Tea.Ray(
 			near,
-			far.sub$(near).normalize$()
+			far.subSelf(near).normalizeSelf()
 		);
 	}
 
@@ -392,12 +392,12 @@ export class Camera extends Component {
 		var p = position.clone();
 		p[2] = 1.0;
 		var far = this.unproject$(p);
-		var ray = far.sub$(pos).normalize$();
+		var ray = far.subSelf(pos).normalizeSelf();
 
 		var direction = new Tea.Vector3(0.0, 0.0, 1.0);
 		direction.applyQuaternion(this.object3d.rotation);
 		var d = ray.dot(direction);
-		return pos.add(ray.mul$(position.z / d));
+		return pos.add(ray.mulSelf(position.z / d));
 	}
 
 	unproject(viewport: Tea.Vector3): Tea.Vector3 {

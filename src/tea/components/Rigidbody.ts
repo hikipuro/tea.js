@@ -77,21 +77,21 @@ export class Rigidbody extends Component {
 		if (this._force.equals(Tea.Vector3.zero) === false) {
 			var force = this._tmpVec3[0];
 			force.copy(this._force);
-			//force.div$(this.mass);
-			force.mul$(time);
-			this.velocity.add$(force);
+			//force.divSelf(this.mass);
+			force.mulSelf(time);
+			this.velocity.addSelf(force);
 			this._force.set(0.0, 0.0, 0.0);
 		}
 		if (this.drag > 0) {
-			this.velocity.mul$(1.0 - (this.drag / 100.0));
+			this.velocity.mulSelf(1.0 - (this.drag / 100.0));
 		}
 		if (this.useGravity) {
 			var gravity = this._tmpVec3[0];
 			gravity.copy(this.app.scene.physics.gravity);
-			//gravity.mul$(0.5);
-			//gravity.mul$(time);
-			gravity.mul$(Math.pow(time, 2.0));
-			this.velocity.add$(gravity);
+			//gravity.mulSelf(0.5);
+			//gravity.mulSelf(time);
+			gravity.mulSelf(Math.pow(time, 2.0));
+			this.velocity.addSelf(gravity);
 			//console.log(this.velocity);
 		}
 		if (this.velocity.equals(Tea.Vector3.zero) === false) {
@@ -106,16 +106,16 @@ export class Rigidbody extends Component {
 			}
 			var velocity = this._tmpVec3[0];
 			velocity.copy(this.velocity);
-			//velocity.mul$(time);
+			//velocity.mulSelf(time);
 			this.addPosition(velocity);
 		}
 		
 		if (this._torque.equals(Tea.Vector3.zero) === false) {
-			this.angularVelocity.add$(this._torque);
+			this.angularVelocity.addSelf(this._torque);
 			this._torque.set(0.0, 0.0, 0.0);
 		}
 		if (this.angularDrag > 0) {
-			this.angularVelocity.mul$(1.0 - this.angularDrag);
+			this.angularVelocity.mulSelf(1.0 - this.angularDrag);
 		}
 		if (this.angularVelocity.equals(Tea.Vector3.zero) === false) {
 			if (Math.abs(this.angularVelocity.x) < 0.0005) {
@@ -129,7 +129,7 @@ export class Rigidbody extends Component {
 			}
 			var angularVelocity = this._tmpVec3[0];
 			angularVelocity.copy(this.angularVelocity);
-			//angularVelocity.mul$(time);
+			//angularVelocity.mulSelf(time);
 			this.object3d.rotation.rotateEuler(angularVelocity);
 		}
 	}
@@ -162,20 +162,20 @@ export class Rigidbody extends Component {
 		var time = 1.0 / 50.0;
 		switch (mode) {
 			case Tea.ForceMode.Force:
-				force.div$(this.mass);
-				force.mul$(time);
-				this._force.add$(force);
+				force.divSelf(this.mass);
+				force.mulSelf(time);
+				this._force.addSelf(force);
 				break;
 			case Tea.ForceMode.Impulse:
-				force.div$(this.mass);
-				this._force.add$(force);
+				force.divSelf(this.mass);
+				this._force.addSelf(force);
 				break;
 			case Tea.ForceMode.Acceleration:
-				force.mul$(time);
-				this._force.add$(force);
+				force.mulSelf(time);
+				this._force.addSelf(force);
 				break;
 			case Tea.ForceMode.VelocityChange:
-				this._force.add$(force);
+				this._force.addSelf(force);
 				break;
 		}
 	}
@@ -201,20 +201,20 @@ export class Rigidbody extends Component {
 		var time = 1.0 / 50.0;
 		switch (mode) {
 			case Tea.ForceMode.Force:
-				force.div$(this.mass);
-				force.mul$(time);
-				this._force.add$(force);
+				force.divSelf(this.mass);
+				force.mulSelf(time);
+				this._force.addSelf(force);
 				break;
 			case Tea.ForceMode.Impulse:
-				force.div$(this.mass);
-				this._force.add$(force);
+				force.divSelf(this.mass);
+				this._force.addSelf(force);
 				break;
 			case Tea.ForceMode.Acceleration:
-				force.mul$(time);
-				this._force.add$(force);
+				force.mulSelf(time);
+				this._force.addSelf(force);
 				break;
 			case Tea.ForceMode.VelocityChange:
-				this._force.add$(force);
+				this._force.addSelf(force);
 				break;
 		}
 	}
@@ -241,20 +241,20 @@ export class Rigidbody extends Component {
 		var time = 1.0 / 50.0;
 		switch (mode) {
 			case Tea.ForceMode.Force:
-				torque.div$(this.mass);
-				torque.mul$(time);
-				this._torque.add$(torque);
+				torque.divSelf(this.mass);
+				torque.mulSelf(time);
+				this._torque.addSelf(torque);
 				break;
 			case Tea.ForceMode.Impulse:
-				torque.div$(this.mass);
-				this._torque.add$(torque);
+				torque.divSelf(this.mass);
+				this._torque.addSelf(torque);
 				break;
 			case Tea.ForceMode.Acceleration:
-				torque.mul$(time);
-				this._torque.add$(torque);
+				torque.mulSelf(time);
+				this._torque.addSelf(torque);
 				break;
 			case Tea.ForceMode.VelocityChange:
-				this._torque.add$(torque);
+				this._torque.addSelf(torque);
 				break;
 		}
 	}
@@ -280,20 +280,20 @@ export class Rigidbody extends Component {
 		var time = 1.0 / 50.0;
 		switch (mode) {
 			case Tea.ForceMode.Force:
-				torque.div$(this.mass);
-				torque.mul$(time);
-				this._torque.add$(torque);
+				torque.divSelf(this.mass);
+				torque.mulSelf(time);
+				this._torque.addSelf(torque);
 				break;
 			case Tea.ForceMode.Impulse:
-				torque.div$(this.mass);
-				this._torque.add$(torque);
+				torque.divSelf(this.mass);
+				this._torque.addSelf(torque);
 				break;
 			case Tea.ForceMode.Acceleration:
-				torque.mul$(time);
-				this._torque.add$(torque);
+				torque.mulSelf(time);
+				this._torque.addSelf(torque);
 				break;
 			case Tea.ForceMode.VelocityChange:
-				this._torque.add$(torque);
+				this._torque.addSelf(torque);
 				break;
 		}
 	}
@@ -335,7 +335,7 @@ export class Rigidbody extends Component {
 		if ((constraints & Tea.RigidbodyConstraints.FreezePositionZ) > 0) {
 			p[2] = 0.0
 		}
-		p.add$(this.object3d.position);
+		p.addSelf(this.object3d.position);
 		this.object3d.position = p;
 	}
 }

@@ -7,7 +7,7 @@ export class HitTest {
 		}
 		var r = box.object3d.rotation.inversed;
 		var p = ray.origin.clone();
-		p.sub$(box.object3d.position);
+		p.subSelf(box.object3d.position);
 		p.applyQuaternion(r);
 		var d = ray.direction.clone();
 		d.applyQuaternion(r);

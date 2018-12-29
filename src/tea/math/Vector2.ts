@@ -132,7 +132,7 @@ export class Vector2 extends Array<number> {
 		var ma = this.sqrMagnitude;
 		var mb = value.sqrMagnitude;
 		if (ma === 0.0 && mb === 0.0) {
-			return 0;
+			return 0.0;
 		}
 		var cos = this.dot(value) / Math.sqrt(ma * mb);
 		return Math.acos(cos);
@@ -154,7 +154,7 @@ export class Vector2 extends Array<number> {
 
 	distance(value: Vector2): number {
 		var t = Vector2._tmp;
-		t.copy(this).sub$(value);
+		t.copy(this).subSelf(value);
 		var x = t[0], y = t[1];
 		return Math.sqrt(x * x + y * y);
 	}
@@ -202,7 +202,7 @@ export class Vector2 extends Array<number> {
 		var n = inNormal;
 		var d = this.dot(n) * -2.0;
 		var t = Vector2._tmp;
-		t.copy(n).mul$(d).add$(this);
+		t.copy(n).mulSelf(d).addSelf(this);
 		return t.clone(); 
 	}
 
@@ -229,7 +229,7 @@ export class Vector2 extends Array<number> {
 		);
 	}
 
-	add$(value: Vector2): Vector2 {
+	addSelf(value: Vector2): Vector2 {
 		this[0] += value[0];
 		this[1] += value[1];
 		return this;
@@ -242,7 +242,7 @@ export class Vector2 extends Array<number> {
 		);
 	}
 
-	sub$(value: Vector2): Vector2 {
+	subSelf(value: Vector2): Vector2 {
 		this[0] -= value[0];
 		this[1] -= value[1];
 		return this;
@@ -255,7 +255,7 @@ export class Vector2 extends Array<number> {
 		);
 	}
 
-	mul$(value: number): Vector2 {
+	mulSelf(value: number): Vector2 {
 		this[0] *= value;
 		this[1] *= value;
 		return this;
@@ -268,7 +268,7 @@ export class Vector2 extends Array<number> {
 		);
 	}
 
-	div$(value: number): Vector2 {
+	divSelf(value: number): Vector2 {
 		this[0] /= value;
 		this[1] /= value;
 		return this;
@@ -286,7 +286,7 @@ export class Vector2 extends Array<number> {
 		);
 	}
 
-	scale$(value: Vector2): Vector2 {
+	scaleSelf(value: Vector2): Vector2 {
 		this[0] *= value[0];
 		this[1] *= value[1];
 		return this;

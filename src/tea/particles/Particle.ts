@@ -36,9 +36,9 @@ export class Particle {
 		var t = 1.0 - this.lifetime / this.maxLifetime;
 		this.lifetime--;
 		this.color.copy(this.startColor);
-		this.color.scale$(this.lifetimeColor.evaluate(t));
-		this.position.add$(this.velocity);
-		this.velocity.add$(this.gravity);
+		this.color.scaleSelf(this.lifetimeColor.evaluate(t));
+		this.position.addSelf(this.velocity);
+		this.velocity.addSelf(this.gravity);
 		return false;
 	}
 }

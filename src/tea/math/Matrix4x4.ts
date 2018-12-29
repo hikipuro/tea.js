@@ -780,7 +780,7 @@ export class Matrix4x4 extends Array<number> {
 		}
 	}
 
-	mul$(value: Matrix4x4): Matrix4x4 {
+	mulSelf(value: Matrix4x4): Matrix4x4 {
 		if (value == null) {
 			return this;
 		}

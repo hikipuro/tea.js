@@ -70,7 +70,7 @@ export class LightRange {
 		for (var i = 0; i < 4; i++) {
 			var point1 = object3d.position.clone();
 			var d = directions[i];
-			point1.add$(d);
+			point1.addSelf(d);
 			var forward = object3d.forward;
 			var point2 = point1.add(forward);
 			renderer.add(point1);
@@ -123,17 +123,17 @@ export class LightRange {
 		var angle = light.spotAngle * Math.PI / 360.0;
 		var range = light.range;
 		var radius = Math.tan(angle) * range;
-		var forward = object3d.forward.mul$(-1);
+		var forward = object3d.forward.mulSelf(-1);
 		for (var i = 0; i < 4; i++) {
 			var point2 = point1.sub(forward.mul(light.range));
 			var d = directions[i];
-			point2.add$(d.mul(radius));
+			point2.addSelf(d.mul(radius));
 			renderer.add(point1);
 			renderer.add(point2);
 		}
 
 		var center = object3d.position.clone();
-		center.add$(object3d.forward.mul(light.range));
+		center.addSelf(object3d.forward.mul(light.range));
 		var direction = light.direction.clone();
 		var rotation = Tea.Quaternion.fromToRotation(
 			new Tea.Vector3(0, 0, 1), direction

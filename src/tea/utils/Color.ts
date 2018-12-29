@@ -201,7 +201,7 @@ export class Color extends Array<number> {
 		return color;
 	}
 
-	add$(value: Color): Color {
+	addSelf(value: Color): Color {
 		this[0] += value[0];
 		this[1] += value[1];
 		this[2] += value[2];
@@ -218,7 +218,7 @@ export class Color extends Array<number> {
 		return color;
 	}
 
-	sub$(value: Color): Color {
+	subSelf(value: Color): Color {
 		this[0] -= value[0];
 		this[1] -= value[1];
 		this[2] -= value[2];
@@ -237,7 +237,7 @@ export class Color extends Array<number> {
 		return color;
 	}
 
-	mul$(value: number, alpha?: boolean): Color {
+	mulSelf(value: number, alpha?: boolean): Color {
 		this[0] *= value;
 		this[1] *= value;
 		this[2] *= value;
@@ -256,7 +256,7 @@ export class Color extends Array<number> {
 		return color;
 	}
 
-	scale$(value: Color): Color {
+	scaleSelf(value: Color): Color {
 		this[0] *= value[0];
 		this[1] *= value[1];
 		this[2] *= value[2];

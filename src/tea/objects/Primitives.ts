@@ -589,7 +589,7 @@ export class Primitives {
 			0, 1, 1, 0
 		];
 		for (var i = 0; i < normals.length; i++) {
-			normals[i].normalize$();
+			normals[i].normalizeSelf();
 		}
 		var mesh = new Tea.Mesh();
 		mesh.isPrimitive = true;

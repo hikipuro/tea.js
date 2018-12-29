@@ -232,7 +232,7 @@ export class Gradient {
 		var c0 = k0.color.mul(1.0 - t);
 		var c1 = this._tmpColor;
 		c1.copy(k1.color);
-		c1.mul$(t);
-		return c0.add$(c1);
+		c1.mulSelf(t);
+		return c0.addSelf(c1);
 	}
 }

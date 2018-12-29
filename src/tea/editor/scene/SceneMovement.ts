@@ -33,7 +33,7 @@ export class SceneMovement extends Script {
 		if (wheelY !== 0) {
 			var object3d = this.object3d;
 			object3d.translate(
-				object3d.forward.mul$(wheelY * -this.wheelSpeed)
+				object3d.forward.mulSelf(wheelY * -this.wheelSpeed)
 			);
 		}
 	}
@@ -51,29 +51,29 @@ export class SceneMovement extends Script {
 
 		if (keyboard.isHeld(keyCode.KeyW)) {
 			object3d.translate(
-				object3d.forward.mul$(speed)
+				object3d.forward.mulSelf(speed)
 			);
 		} else if (keyboard.isHeld(keyCode.KeyS)) {
 			object3d.translate(
-				object3d.forward.mul$(-speed)
+				object3d.forward.mulSelf(-speed)
 			);
 		}
 		if (keyboard.isHeld(keyCode.KeyD)) {
 			object3d.translate(
-				object3d.right.mul$(speed)
+				object3d.right.mulSelf(speed)
 			);
 		} else if (keyboard.isHeld(keyCode.KeyA)) {
 			object3d.translate(
-				object3d.right.mul$(-speed)
+				object3d.right.mulSelf(-speed)
 			);
 		}
 		if (keyboard.isHeld(keyCode.KeyE)) {
 			object3d.translate(
-				object3d.up.mul$(speed)
+				object3d.up.mulSelf(speed)
 			);
 		} else if (keyboard.isHeld(keyCode.KeyQ)) {
 			object3d.translate(
-				object3d.up.mul$(-speed)
+				object3d.up.mulSelf(-speed)
 			);
 		}
 	}
@@ -124,7 +124,7 @@ export class SceneMovement extends Script {
 		|| keyboard.isHeld(keyCode.ShiftRight)) {
 			speed *= 3;
 		}
-		position.mul$(speed);
+		position.mulSelf(speed);
 		position.applyQuaternion(camera.object3d.rotation);
 		camera.object3d.translate(position);
 	}

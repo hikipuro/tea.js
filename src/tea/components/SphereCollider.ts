@@ -19,7 +19,7 @@ export class SphereCollider extends Collider {
 			return center;
 		}
 		center.applyQuaternion(object3d.rotation);
-		return center.add$(object3d.position);
+		return center.addSelf(object3d.position);
 	}
 
 	containsPoint(point: Tea.Vector3): boolean {
@@ -37,8 +37,8 @@ export class SphereCollider extends Collider {
 		}
 		var center = this.worldCenter;
 		var v = point.sub(center);
-		v.normalize$();
-		v.mul$(this.radius);
+		v.normalizeSelf();
+		v.mulSelf(this.radius);
 		return v.add(center);
 	}
 

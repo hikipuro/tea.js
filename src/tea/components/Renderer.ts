@@ -343,7 +343,7 @@ export class Renderer extends Component {
 		if (location != null) {
 			enableMV = true;
 			mvMatrix.copy(view);
-			mvMatrix.mul$(model);
+			mvMatrix.mulSelf(model);
 			gl.uniformMatrix4fv(location, false, mvMatrix);
 		}
 		//u.uniformMatrix4fv("TEA_MATRIX_MV", mvMatrix);
@@ -353,7 +353,7 @@ export class Renderer extends Component {
 		if (location != null) {
 			if (enableMV === false) {
 				mvMatrix.copy(view);
-				mvMatrix.mul$(model);
+				mvMatrix.mulSelf(model);
 			}
 			gl.uniformMatrix4fv(location, false, mvMatrix.inverse);
 		}
@@ -363,11 +363,11 @@ export class Renderer extends Component {
 		if (location != null) {
 			if (enableMV === false) {
 				mvMatrix.copy(view);
-				mvMatrix.mul$(model);
+				mvMatrix.mulSelf(model);
 			}
 			var mvpMatrix = this._mvpMatrix;
 			mvpMatrix.copy(projection);
-			mvpMatrix.mul$(mvMatrix);
+			mvpMatrix.mulSelf(mvMatrix);
 			gl.uniformMatrix4fv(location, false, mvpMatrix);
 		}
 		//u.uniformMatrix4fv("TEA_MATRIX_MVP", mvpMatrix);

@@ -37,7 +37,7 @@ export class GeometryUtil {
 				//d = pmat.getValue(3, 3) + pmat.getValue(r, 3);
 			}
 			vec3.set(a, b, c);
-			var normal = vec3.normalize$().mul$(-1.0);
+			var normal = vec3.normalizeSelf().mulSelf(-1.0);
 			normal.applyQuaternion(rotation);
 			planes[i] = new Tea.Plane(normal, position);
 		}
@@ -47,12 +47,12 @@ export class GeometryUtil {
 			m31 + m21,
 			m32 + m22
 		);
-		var normal = vec3.normalize$().mul$(-1.0);
+		var normal = vec3.normalizeSelf().mulSelf(-1.0);
 		normal.applyQuaternion(rotation);
 		var p = this._tmpVec3;
 		p.copy(forward);
-		p.mul$(near);
-		p.add$(position);
+		p.mulSelf(near);
+		p.addSelf(position);
 		planes[4] = new Tea.Plane(normal, p);
 
 		vec3.set(
@@ -60,11 +60,11 @@ export class GeometryUtil {
 			m31 - m21,
 			m32 - m22
 		);
-		normal = vec3.normalize$().mul$(-1.0);
+		normal = vec3.normalizeSelf().mulSelf(-1.0);
 		normal.applyQuaternion(rotation);
 		p.copy(forward);
-		p.mul$(far);
-		p.add$(position);
+		p.mulSelf(far);
+		p.addSelf(position);
 		planes[5] = new Tea.Plane(normal, p);
 		return planes;
 	}
@@ -139,10 +139,10 @@ export class GeometryUtil {
 	protected static getPositivePoint(bounds: Tea.Bounds, normal: Tea.Vector3): Tea.Vector3 {
 		var result = this._positivePoint;
 		result.copy(bounds.center);
-		result.sub$(bounds.extents);
+		result.subSelf(bounds.extents);
 		var size = this._tmpVec3;
 		size.copy(bounds.extents);
-		size.mul$(2);
+		size.mulSelf(2);
 		if (normal[0] > 0.0) {
 			result[0] += size[0];
 		}

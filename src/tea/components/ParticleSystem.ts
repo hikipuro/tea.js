@@ -180,9 +180,9 @@ export class ParticleSystem extends Component {
 				this.shape.apply(this.time, particle);
 			}
 			particle.size = startSize;
-			particle.velocity.mul$(startSpeed);
+			particle.velocity.mulSelf(startSpeed);
 			if (velocityOverLifetime.enabled) {
-				particle.velocity.add$(new Tea.Vector3(
+				particle.velocity.addSelf(new Tea.Vector3(
 					velocityOverLifetime.x.evaluate(0) / (60.0),
 					velocityOverLifetime.y.constant,
 					velocityOverLifetime.z.constant
@@ -210,7 +210,7 @@ export class ParticleSystem extends Component {
 			particle.maxLifetime = lifetime;
 
 			particle.position.applyQuaternion(rotation);
-			particle.position.add$(position);
+			particle.position.addSelf(position);
 			particle.velocity.applyQuaternion(rotation);
 			this.particles.push(particle);
 		}
@@ -313,8 +313,8 @@ export class ParticleSystem extends Component {
 			return Tea.Vector3.zero.clone();
 		}
 		var gravity = this.object3d.scene.physics.gravity.clone();
-		gravity.div$(60.0 * 60.0);
-		gravity.mul$(this.main.gravityModifier.evaluate(t));
+		gravity.divSelf(60.0 * 60.0);
+		gravity.mulSelf(this.main.gravityModifier.evaluate(t));
 		return gravity;
 	}
 }

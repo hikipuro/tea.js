@@ -22,17 +22,17 @@ export class BoxCollider extends Collider {
 			return center;
 		}
 		center.applyQuaternion(object3d.rotation);
-		return center.add$(object3d.position);
+		return center.addSelf(object3d.position);
 	}
 
 	get extents(): Tea.Vector3 {
 		var object3d = this.object3d;
 		var extents = this.size.clone();
-		extents.mul$(0.5);
+		extents.mulSelf(0.5);
 		if (object3d == null) {
 			return extents;
 		}
-		return extents.scale$(object3d.scale);
+		return extents.scaleSelf(object3d.scale);
 	}
 
 	containsPoint(point: Tea.Vector3): boolean {
@@ -106,11 +106,11 @@ export class BoxCollider extends Collider {
 			var p1 = directions[i];
 			var s = p0.dot(p1) / length;
 			if (s > 1.0) {
-				p1.mul$((1.0 - s) * length);
-				result.add$(p1);
+				p1.mulSelf((1.0 - s) * length);
+				result.addSelf(p1);
 			} else if (s < -1.0) {
-				p1.mul$(-(1.0 + s) * length);
-				result.add$(p1);
+				p1.mulSelf(-(1.0 + s) * length);
+				result.addSelf(p1);
 			}
 		}
 		return result;

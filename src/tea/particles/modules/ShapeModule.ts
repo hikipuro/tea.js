@@ -272,8 +272,8 @@ export class ShapeModule {
 			position[1] + vec3[1] * radius * scale[1],
 			position[2] + vec3[2] * radius * scale[2]
 		);
-		vec3.mul$(speed);
-		vec3.scale$(scale);
+		vec3.mulSelf(speed);
+		vec3.scaleSelf(scale);
 		particle.velocity.copy(vec3);
 	}
 
@@ -295,8 +295,8 @@ export class ShapeModule {
 			position[1] + vec3[1] * radius * scale[1],
 			position[2] + vec3[2] * radius * scale[2]
 		);
-		vec3.mul$(speed);
-		vec3.scale$(scale);
+		vec3.mulSelf(speed);
+		vec3.scaleSelf(scale);
 		particle.velocity.copy(vec3);
 	}
 

@@ -69,7 +69,7 @@ export class Plane {
 		var d = this.getDistanceToPoint(point);
 		var n = this._tmpVec3;
 		n.copy(this.normal);
-		n.mul$(d);
+		n.mulSelf(d);
 		return point.sub(n);
 	}
 
@@ -81,8 +81,8 @@ export class Plane {
 	getDistanceToPoint(point: Tea.Vector3): number {
 		var p = this._tmpVec3;
 		p.copy(this.normal);
-		p.mul$(this.distance);
-		p.add$(point);
+		p.mulSelf(this.distance);
+		p.addSelf(point);
 		return p.dot(this.normal);
 	}
 
@@ -142,7 +142,7 @@ export class Plane {
 		}
 		var u = this._tmpVec3;
 		u.copy(this.normal);
-		u.cross$(plane.normal);
+		u.crossSelf(plane.normal);
 		
 		var ax = u[0] >= 0 ? u[0] : -u[0];
 		var ay = u[1] >= 0 ? u[1] : -u[1];

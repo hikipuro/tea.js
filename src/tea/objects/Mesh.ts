@@ -156,7 +156,7 @@ export class Mesh {
 		var vertices = this.vertices;
 		var length = vertices.length;
 		for (var i = 0; i < length; i++) {
-			vertices[i].mul$(value);
+			vertices[i].mulSelf(value);
 		}
 	}
 
@@ -237,13 +237,13 @@ export class Mesh {
 			var v1 = vertices[y];
 			var v2 = vertices[z];
 			var n = v1.sub(v0).cross(v2.sub(v1));
-			normals[x].add$(n);
-			normals[y].add$(n);
-			normals[z].add$(n);
+			normals[x].addSelf(n);
+			normals[y].addSelf(n);
+			normals[z].addSelf(n);
 		}
 		length = normals.length;
 		for (var i = 0; i < length; i++) {
-			normals[i].normalize$();
+			normals[i].normalizeSelf();
 		}
 		this.normals = normals;
 	}

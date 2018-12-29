@@ -142,9 +142,9 @@ export class Object3D {
 		}
 		var position = this.localPosition.clone();
 		while (parent != null) {
-			position.scale$(parent.localScale);
+			position.scaleSelf(parent.localScale);
 			position.applyQuaternion(parent.localRotation);
-			position.add$(parent.localPosition);
+			position.addSelf(parent.localPosition);
 			parent = parent.parent;
 		}
 		return position;
@@ -168,7 +168,7 @@ export class Object3D {
 		s[0] = s[0] !== 0.0 ? 1.0 / s[0] : 0.0;
 		s[1] = s[1] !== 0.0 ? 1.0 / s[1] : 0.0;
 		s[2] = s[2] !== 0.0 ? 1.0 / s[2] : 0.0;
-		p.scale$(s);
+		p.scaleSelf(s);
 		this.localPosition = p;
 	}
 
@@ -179,7 +179,7 @@ export class Object3D {
 		}
 		var rotation = this.localRotation.clone();
 		while (parent != null) {
-			rotation.mul$(parent.localRotation);
+			rotation.mulSelf(parent.localRotation);
 			parent = parent.parent;
 		}
 		return rotation;
@@ -196,7 +196,7 @@ export class Object3D {
 			return;
 		}
 		var r = parent.rotation.inversed;
-		r.mul$(value);
+		r.mulSelf(value);
 		this.localRotation = r;
 	}
 
@@ -207,7 +207,7 @@ export class Object3D {
 		}
 		var scale = this.localScale.clone();
 		while (parent != null) {
-			scale.scale$(parent.localScale);
+			scale.scaleSelf(parent.localScale);
 			parent = parent.parent;
 		}
 		return scale;
@@ -227,7 +227,7 @@ export class Object3D {
 		s[0] = s[0] !== 0.0 ? 1.0 / s[0] : 0.0;
 		s[1] = s[1] !== 0.0 ? 1.0 / s[1] : 0.0;
 		s[2] = s[2] !== 0.0 ? 1.0 / s[2] : 0.0;
-		s.scale$(value);
+		s.scaleSelf(value);
 		this.localScale = s;
 	}
 
@@ -870,9 +870,9 @@ export class Object3D {
 		if (parent == null) {
 			return position;
 		}
-		position.scale$(parent.scale);
+		position.scaleSelf(parent.scale);
 		position.applyQuaternion(parent.rotation);
-		return position.add$(parent.position);
+		return position.addSelf(parent.position);
 	}
 
 	transformVector(vector: Tea.Vector3): Tea.Vector3;
@@ -888,7 +888,7 @@ export class Object3D {
 			return;
 		}
 		if (a instanceof Tea.Vector3) {
-			this.localPosition.add$(a);
+			this.localPosition.addSelf(a);
 			return;
 		}
 		var position = this.localPosition;
@@ -976,21 +976,21 @@ export class Object3D {
 	protected adjustChildPosition(child: Tea.Object3D, isAppend: boolean): void {
 		if (isAppend) {
 			var rotation = this.rotation.clone();
-			child.localPosition.sub$(this.position);
-			child.localPosition.applyQuaternion(rotation.inverse$());
+			child.localPosition.subSelf(this.position);
+			child.localPosition.applyQuaternion(rotation.inverseSelf());
 			child.localRotation = rotation.mul(child.localRotation);
 			var scale = this.scale.clone();
 			scale[0] = scale[0] !== 0.0 ? 1.0 / scale[0] : 0.0;
 			scale[1] = scale[1] !== 0.0 ? 1.0 / scale[1] : 0.0;
 			scale[2] = scale[2] !== 0.0 ? 1.0 / scale[2] : 0.0;
-			child.localPosition.scale$(scale);
-			child.localScale.scale$(scale);
+			child.localPosition.scaleSelf(scale);
+			child.localScale.scaleSelf(scale);
 			return;
 		}
-		child.localPosition.scale$(this.scale);
+		child.localPosition.scaleSelf(this.scale);
 		child.localPosition.applyQuaternion(this.rotation);
-		child.localPosition.add$(this.position);
+		child.localPosition.addSelf(this.position);
 		child.localRotation = this.rotation.mul(child.localRotation);
-		child.localScale.scale$(this.scale);
+		child.localScale.scaleSelf(this.scale);
 	}
 }

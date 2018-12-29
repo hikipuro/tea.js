@@ -64,7 +64,7 @@ export class EditorSceneRenderer extends SceneRenderer {
 		}
 		var position = object3d.position.clone();
 		var camera = this.cameraObject;
-		position.add$(camera.forward.mul$(-5.0));
+		position.addSelf(camera.forward.mulSelf(-5.0));
 		this.cameraObject.localPosition.copy(position);
 	}
 

@@ -40,7 +40,7 @@ export class Light extends Component {
 		d[1] = 0.0;
 		d[2] = -1.0;
 		d.applyQuaternion(this.object3d.rotation);
-		d.normalize$();
+		d.normalizeSelf();
 	}
 
 	toJSON(): Object {

@@ -32,15 +32,15 @@ export class MeshRenderer extends Renderer {
 
 		this._bounds.copy(this._meshFilter.mesh.bounds);
 		var bounds = this._bounds;
-		bounds.center.scale$(scale);
-		bounds.center.add$(position);
+		bounds.center.scaleSelf(scale);
+		bounds.center.addSelf(position);
 		
 		bounds.extents.applyQuaternion(rotation);
 		var extents = bounds.extents;
 		extents[0] = Math.abs(extents[0]);
 		extents[1] = Math.abs(extents[1]);
 		extents[2] = Math.abs(extents[2]);
-		bounds.extents.scale$(scale);
+		bounds.extents.scaleSelf(scale);
 		return bounds;
 	}
 

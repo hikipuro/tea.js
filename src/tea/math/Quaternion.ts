@@ -124,6 +124,12 @@ export class Quaternion extends Array<number> {
 		this[3] = value;
 	}
 
+	get xyz(): Tea.Vector3 {
+		return new Tea.Vector3(
+			this[0], this[1], this[2]
+		);
+	}
+
 	get eulerAngles(): Tea.Vector3 {
 		var x = this[0], y = this[1], z = this[2], w = this[3];
 		var x2 = x * x, y2 = y * y, z2 = z * z, w2 = w * w;
@@ -381,9 +387,9 @@ export class Quaternion extends Array<number> {
 		);
 	}
 
-	mul$(value: number): Quaternion;
-	mul$(value: Quaternion): Quaternion;
-	mul$(value: number | Quaternion): Quaternion {
+	mulSelf(value: number): Quaternion;
+	mulSelf(value: Quaternion): Quaternion;
+	mulSelf(value: number | Quaternion): Quaternion {
 		if (value == null) {
 			return this;
 		}
@@ -403,7 +409,7 @@ export class Quaternion extends Array<number> {
 		return this;
 	}
 
-	inverse$(): Quaternion {
+	inverseSelf(): Quaternion {
 		var x = this[0], y = this[1], z = this[2], w = this[3];
 		var m = x * x + y * y + z * z + w * w;
 		if (m === 0.0) {
@@ -482,7 +488,7 @@ export class Quaternion extends Array<number> {
 			aw * sz + cz * az,
 			aw * cz - az * sz
 		);
-		this.mul$(q);
+		this.mulSelf(q);
 		return this;
 	}
 

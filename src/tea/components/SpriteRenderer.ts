@@ -72,7 +72,7 @@ export class SpriteRenderer extends Renderer {
 		}
 		this._bounds.copy(this._mesh.bounds);
 		var bounds = this._bounds;
-		bounds.center.add$(this.object3d.position);
+		bounds.center.addSelf(this.object3d.position);
 		
 		var rotation = this.object3d.rotation;
 		bounds.extents.applyQuaternion(rotation);
@@ -80,7 +80,7 @@ export class SpriteRenderer extends Renderer {
 		extents[0] = Math.abs(extents[0]);
 		extents[1] = Math.abs(extents[1]);
 		extents[2] = Math.abs(extents[2]);
-		bounds.extents.scale$(this.object3d.scale);
+		bounds.extents.scaleSelf(this.object3d.scale);
 		return this._bounds;
 	}
 

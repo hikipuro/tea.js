@@ -26,7 +26,7 @@ export class Ray {
 
 	getPoint(distance: number): Tea.Vector3 {
 		var point = this.origin.clone();
-		point.add$(this._direction.mul(distance));
+		point.addSelf(this._direction.mul(distance));
 		return point;
 	}
 

@@ -53,13 +53,13 @@ export class MinMaxGradient {
 			case Tea.ParticleSystemGradientMode.TwoColors:
 				var min = this.colorMin;
 				var max = this.colorMax;
-				return min.add(max.sub(min).mul$(Math.random()));
+				return min.add(max.sub(min).mulSelf(Math.random()));
 			case Tea.ParticleSystemGradientMode.Gradient:
 				return this.gradient.evaluate(time);
 			case Tea.ParticleSystemGradientMode.TwoGradients:
 				var min = this.gradientMin.evaluate(time);
 				var max = this.gradientMax.evaluate(time);
-				return min.add(max.sub(min).mul$(Math.random()));
+				return min.add(max.sub(min).mulSelf(Math.random()));
 			case Tea.ParticleSystemGradientMode.RandomColor:
 				return Tea.Random.colorHSV();
 		}

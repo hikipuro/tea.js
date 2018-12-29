@@ -276,7 +276,7 @@ export class Vector3 extends Array<number> {
 		var n = inNormal;
 		var d = this.dot(n) * -2.0;
 		var t = Vector3._tmp;
-		t.copy(n).mul$(d).add$(this);
+		t.copy(n).mulSelf(d).addSelf(this);
 		return t.clone(); 
 	}
 
@@ -342,9 +342,9 @@ export class Vector3 extends Array<number> {
 		);
 	}
 
-	add$(value: number): Vector3;
-	add$(value: Vector3): Vector3;
-	add$(value: number | Vector3): Vector3 {
+	addSelf(value: number): Vector3;
+	addSelf(value: Vector3): Vector3;
+	addSelf(value: number | Vector3): Vector3 {
 		if (value instanceof Vector3) {
 			this[0] += value[0];
 			this[1] += value[1];
@@ -374,9 +374,9 @@ export class Vector3 extends Array<number> {
 		);
 	}
 
-	sub$(value: number): Vector3;
-	sub$(value: Vector3): Vector3;
-	sub$(value: number | Vector3): Vector3 {
+	subSelf(value: number): Vector3;
+	subSelf(value: Vector3): Vector3;
+	subSelf(value: number | Vector3): Vector3 {
 		if (value instanceof Vector3) {
 			this[0] -= value[0];
 			this[1] -= value[1];
@@ -397,7 +397,7 @@ export class Vector3 extends Array<number> {
 		);
 	}
 
-	mul$(value: number): Vector3 {
+	mulSelf(value: number): Vector3 {
 		this[0] *= value;
 		this[1] *= value;
 		this[2] *= value;
@@ -412,7 +412,7 @@ export class Vector3 extends Array<number> {
 		);
 	}
 
-	div$(value: number): Vector3 {
+	divSelf(value: number): Vector3 {
 		this[0] /= value;
 		this[1] /= value;
 		this[2] /= value;
@@ -434,7 +434,7 @@ export class Vector3 extends Array<number> {
 		);
 	}
 
-	cross$(value: Vector3): Vector3 {
+	crossSelf(value: Vector3): Vector3 {
 		var x = this[0], y = this[1], z = this[2];
 		this[0] = y * value[2] - z * value[1];
 		this[1] = z * value[0] - x * value[2];
@@ -450,7 +450,7 @@ export class Vector3 extends Array<number> {
 		);
 	}
 
-	scale$(value: Vector3): Vector3 {
+	scaleSelf(value: Vector3): Vector3 {
 		this[0] *= value[0];
 		this[1] *= value[1];
 		this[2] *= value[2];
@@ -468,7 +468,7 @@ export class Vector3 extends Array<number> {
 		);
 	}
 
-	rotateX$(radian: number): Vector3 {
+	rotateXSelf(radian: number): Vector3 {
 		var y = this[1], z = this[2];
 		var sin = Math.sin(radian);
 		var cos = Math.cos(radian);
@@ -488,7 +488,7 @@ export class Vector3 extends Array<number> {
 		);
 	}
 
-	rotateY$(radian: number): Vector3 {
+	rotateYSelf(radian: number): Vector3 {
 		var x = this[0], z = this[2];
 		var sin = Math.sin(radian);
 		var cos = Math.cos(radian);
@@ -508,7 +508,7 @@ export class Vector3 extends Array<number> {
 		);
 	}
 
-	rotateZ$(radian: number): Vector3 {
+	rotateZSelf(radian: number): Vector3 {
 		var x = this[0], y = this[1];
 		var sin = Math.sin(radian);
 		var cos = Math.cos(radian);
@@ -530,7 +530,7 @@ export class Vector3 extends Array<number> {
 		);
 	}
 
-	rotate$(vector: Vector3): Vector3 {
+	rotateSelf(vector: Vector3): Vector3 {
 		var x = this[0], y = this[1], z = this[2];
 		var sin = Math.sin, cos = Math.cos;
 		y = cos(vector[0]) * y + -sin(vector[0]) * z;
@@ -542,7 +542,7 @@ export class Vector3 extends Array<number> {
 		return this;
 	}
 
-	normalize$(): Vector3 {
+	normalizeSelf(): Vector3 {
 		var x = this[0], y = this[1], z = this[2];
 		var magnitude = Math.sqrt(x * x + y * y + z * z);
 		if (magnitude === 0.0) {
@@ -563,9 +563,17 @@ export class Vector3 extends Array<number> {
 			return;
 		}
 		var ax = q[0], ay = q[1], az = q[2], aw = q[3];
-		if (ax === 0.0 && ay === 0.0 && az === 0.0 && aw === 0.0) {
-			return;
-		}
+		//if (ax === 0.0 && ay === 0.0 && az === 0.0 && aw === 0.0) {
+		//	return;
+		//}
+		var bx = this[0], by = this[1], bz = this[2];
+		var tx = (ay * bz - az * by) * 2.0;
+		var ty = (az * bx - ax * bz) * 2.0;
+		var tz = (ax * by - ay * bx) * 2.0;
+		this[0] += aw * tx + ay * tz - az * ty;
+		this[1] += aw * ty + az * tx - ax * tz;
+		this[2] += aw * tz + ax * ty - ay * tx;
+		/*
 		var bx = this[0], by = this[1], bz = this[2], bw = 0.0;
 		var q = Tea.Quaternion._tmp;
 		q[0] = aw * bx + ay * bz - by * az;
@@ -577,6 +585,7 @@ export class Vector3 extends Array<number> {
 		this[0] = aw * bx + bw * ax + ay * bz - by * az;
 		this[1] = aw * by + bw * ay + az * bx - bz * ax;
 		this[2] = aw * bz + bw * az + ax * by - bx * ay;
+		//*/
 	}
 
 	applyMatrix4(m: Tea.Matrix4x4): void {
