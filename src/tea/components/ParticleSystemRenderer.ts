@@ -76,7 +76,7 @@ export class ParticleSystemRenderer extends Renderer {
 		super.render(camera, lights, renderSettings);
 		var mesh = this.mesh;
 		if (mesh.isModified === true) {
-			this.setMeshData(mesh, particleSystem);
+			this.setMeshData(mesh);
 		}
 		this.sortParticles(particleSystem, camera);
 		this.setVertexBuffer(mesh, particleSystem);
@@ -154,7 +154,7 @@ export class ParticleSystemRenderer extends Renderer {
 		);
 	}
 
-	protected setMeshData(mesh: Tea.Mesh, particleSystem: Tea.ParticleSystem): void {
+	protected setMeshData(mesh: Tea.Mesh): void {
 		if (mesh.vertices == null || mesh.vertices.length <= 0) {
 			return;
 		}
@@ -347,6 +347,9 @@ export class ParticleSystemRenderer extends Renderer {
 		var view = camera.cameraToWorldMatrix;
 		gl.uniform3f(right, view[0], view[1], view[2]);
 		gl.uniform3f(up, view[4], view[5], view[6]);
+
+		var TRIANGLES = gl.TRIANGLES;
+		var UNSIGNED_SHORT = gl.UNSIGNED_SHORT;
 		var count = particleSystem.particleCount;
 		var particles = particleSystem.particles;
 		var triangles = mesh.triangles.length * 3;
@@ -358,7 +361,7 @@ export class ParticleSystemRenderer extends Renderer {
 			gl.uniform3f(position, p[0], p[1], p[2]);
 			gl.uniform4f(color, c[0], c[1], c[2], c[3]);
 			gl.uniform1f(size, particle.size);
-			gl.drawElements(gl.TRIANGLES, triangles, gl.UNSIGNED_SHORT, 0);
+			gl.drawElements(TRIANGLES, triangles, UNSIGNED_SHORT, 0);
 		}
 		Renderer.drawCallCount += count;
 	}

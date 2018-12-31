@@ -124,9 +124,20 @@ export class ParticleSystem extends Component {
 			return;
 		}
 		for (var i = length - 1; i >= 0; i--) {
-			if (particles[i].update()) {
+			var p = particles[i];
+			if (p.lifetime <= 0) {
 				particles.splice(i, 1);
+				continue;
 			}
+			var t = 1.0 - p.lifetime / p.maxLifetime; 
+			p.lifetime--;
+			p.color.copy(p.startColor);
+			p.color.scaleSelf(p.lifetimeColor.evaluate(t));
+			p.position.addSelf(p.velocity);
+			p.velocity.addSelf(p.gravity);
+			//if (particles[i].update()) {
+			//	particles.splice(i, 1);
+			//}
 		}
 		if (this.emission.enabled) {
 			var count = this.emission.evaluate(
@@ -229,7 +240,7 @@ export class ParticleSystem extends Component {
 			var position = particle.position;
 			var color = particle.color;
 			var size = particle.size;
-			data[index + 0] = position[0];
+			data[index    ] = position[0];
 			data[index + 1] = position[1];
 			data[index + 2] = position[2];
 			data[index + 3] = color[0];
@@ -267,7 +278,7 @@ export class ParticleSystem extends Component {
 			callback(null);
 			return;
 		}
-		app.enableInstancedArrays();
+		//app.enableInstancedArrays();
 		var particleSystem = new ParticleSystem(app);
 		particleSystem.enabled = json.enabled;
 		particleSystem.colorOverLifetime = Modules.ColorOverLifetimeModule.fromJSON(app, json.colorOverLifetime);
