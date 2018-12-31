@@ -103,16 +103,22 @@ export class Scene extends EventDispatcher {
 		object3d.scene = this;
 		this._components.add(object3d);
 		this.children.unshift(object3d);
-		var children = object3d.children;
-		var length = children.length;
-		for (var i = 0; i < length; i++) {
-			var child = children[i];
-			if (child == null) {
-				continue;
+		var setSceneToChildren = (children: Array<Tea.Object3D>) => {
+			if (children == null || children.length <= 0) {
+				return;
 			}
-			child.scene = this;
-			this._components.add(child);
-		}
+			var length = children.length;
+			for (var i = 0; i < length; i++) {
+				var child = children[i];
+				if (child == null) {
+					continue;
+				}
+				child.scene = this;
+				this._components.add(child);
+				setSceneToChildren(child.children);
+			}
+		};
+		setSceneToChildren(object3d.children);
 		this.emit("addChild");
 	}
 
@@ -127,16 +133,22 @@ export class Scene extends EventDispatcher {
 		object3d.scene = null;
 		this._components.remove(object3d);
 		this.children.splice(index, 1);
-		var children = object3d.children;
-		var length = children.length;
-		for (var i = 0; i < length; i++) {
-			var child = children[i];
-			if (child == null) {
-				continue;
+		var removeSceneFromChildren = (children: Array<Tea.Object3D>) => {
+			if (children == null || children.length <= 0) {
+				return;
 			}
-			child.scene = null;
-			this._components.remove(child);
-		}
+			var length = children.length;
+			for (var i = 0; i < length; i++) {
+				var child = children[i];
+				if (child == null) {
+					continue;
+				}
+				child.scene = null;
+				this._components.remove(child);
+				removeSceneFromChildren(child.children);
+			}
+		};
+		removeSceneFromChildren(object3d.children);
 		this.emit("removeChild");
 	}
 

@@ -3,8 +3,8 @@ import { Object3DStatus } from "./Object3DStatus";
 
 export class Object3D {
 	static readonly className: string = "Object3D";
+	protected static readonly MaxDepth: number = 1000;
 	protected static _nextId: number = 0;
-	app: Tea.App;
 	id: number;
 	name: string;
 	isDestroyed: boolean;
@@ -15,6 +15,7 @@ export class Object3D {
 	localScale: Tea.Vector3;
 	tag: string;
 	layer: number;
+	protected _app: Tea.App;
 	protected _status: Object3DStatus;
 	protected _parent: Object3D;
 	protected _children: Array<Object3D>;
@@ -22,7 +23,7 @@ export class Object3D {
 	protected _toDestroy: boolean;
 
 	constructor(app: Tea.App) {
-		this.app = app;
+		this._app = app;
 		this.id = Object3D._nextId++;
 		this.name = "";
 		this.isDestroyed = false;
@@ -177,9 +178,9 @@ export class Object3D {
 		if (parent == null) {
 			return this.localRotation.clone();
 		}
-		var rotation = this.localRotation.clone();
+		var rotation = this.localRotation;
 		while (parent != null) {
-			rotation.mulSelf(parent.localRotation);
+			rotation = parent.localRotation.mul(rotation);
 			parent = parent.parent;
 		}
 		return rotation;
@@ -256,21 +257,21 @@ export class Object3D {
 	}
 
 	get forward(): Tea.Vector3 {
-		var f = Tea.Vector3.forward.clone();
-		f.applyQuaternion(this.rotation);
-		return f;
+		var vec3 = new Tea.Vector3(0.0, 0.0, 1.0);
+		vec3.applyQuaternion(this.rotation);
+		return vec3;
 	}
 
 	get up(): Tea.Vector3 {
-		var u = Tea.Vector3.up.clone();
-		u.applyQuaternion(this.rotation);
-		return u;
+		var vec3 = new Tea.Vector3(0.0, 1.0, 0.0);
+		vec3.applyQuaternion(this.rotation);
+		return vec3;
 	}
 
 	get right(): Tea.Vector3 {
-		var r = Tea.Vector3.right.clone();
-		r.applyQuaternion(this.rotation);
-		return r;
+		var vec3 = new Tea.Vector3(1.0, 0.0, 0.0);
+		vec3.applyQuaternion(this.rotation);
+		return vec3;
 	}
 
 	get localToWorldMatrix(): Tea.Matrix4x4 {
@@ -295,7 +296,13 @@ export class Object3D {
 		if (parent == null) {
 			return this;
 		}
-		return parent.root;
+		for (var i = 0; i < Object3D.MaxDepth; i++) {
+			if (parent.parent == null) {
+				return parent;
+			}
+			parent = parent.parent;
+		}
+		return this;
 	}
 
 	get path(): string {
@@ -303,12 +310,13 @@ export class Object3D {
 			return "";
 		}
 		var path = "";
-		for (var i = 0; i < 100; i++) {
-			var parent = this.parent;
+		var parent = this.parent;
+		for (var i = 0; i < Object3D.MaxDepth; i++) {
 			if (parent == null) {
 				break;
 			}
-			path = parent.name + "/";
+			path = parent.name + "/" + path;
+			parent = parent.parent;
 		}
 		path += this.name;
 		return path;
@@ -342,7 +350,7 @@ export class Object3D {
 			delete this._components[key];
 		}
 		this._children = [];
-		this.app = undefined;
+		this._app = undefined;
 		this.name = undefined;
 		this.isActive = undefined;
 		this.scene = undefined;
@@ -362,15 +370,13 @@ export class Object3D {
 
 	toJSON(): Object {
 		var json = Tea.JSONUtil.createSceneJSON(Object3D.className);
-		Object.assign(json, {
-			name: this.name,
-			isActive: this.isActive,
-			localPosition: this.localPosition,
-			localRotation: this.localRotation,
-			localScale: this.localScale,
-			components: Tea.JSONUtil.arrayToJSON(this._components),
-			children: Tea.JSONUtil.arrayToJSON(this._children)
-		});
+		json.name = this.name;
+		json.isActive = this.isActive;
+		json.localPosition = this.localPosition;
+		json.localRotation = this.localRotation;
+		json.localScale = this.localScale;
+		json.components = Tea.JSONUtil.arrayToJSON(this._components);
+		json.children = Tea.JSONUtil.arrayToJSON(this._children);
 		return json;
 	}
 
@@ -430,16 +436,48 @@ export class Object3D {
 		if (object3d == null) {
 			return;
 		}
-		object3d.parent = this;
+		var parent = object3d._parent;
+		if (parent === this) {
+			return;
+		}
+		if (parent != null) {
+			parent.adjustChildPosition(this, false, worldPositionStays);
+			var index = parent._children.indexOf(this);
+			parent._children.splice(index, 1);
+		}
+		object3d._parent = this;
+		this.adjustChildPosition(object3d, true, worldPositionStays);
+		this._children.push(object3d);
+		var scene = this.scene;
+		if (scene != null) {
+			if (scene.childIndex(object3d) >= 0) {
+				scene.removeChild(object3d);
+			}
+			object3d.scene = scene;
+			scene.addComponents(object3d);
+			var children = object3d._children;
+			var length = children.length;
+			for (var i = 0; i < length; i++) {
+				var child = children[i];
+				if (child == null) {
+					continue;
+				}
+				child.scene = scene;
+				scene.addComponents(child);
+			}
+		}
 	}
 
 	removeChild(object3d: Object3D): void {
 		if (object3d == null) {
 			return;
 		}
-		if (this._children.indexOf(object3d) < 0) {
+		var children = this._children;
+		var index = children.indexOf(object3d);
+		if (index < 0) {
 			return;
 		}
+		children.splice(index, 1);
 		object3d.parent = null;
 	}
 
@@ -466,7 +504,7 @@ export class Object3D {
 		if (c) {
 			return c;
 		}
-		c = new component(this.app);
+		c = new component(this._app);
 		c.object3d = this;
 		this._components.push(c);
 		if (this.scene != null) {
@@ -652,10 +690,18 @@ export class Object3D {
 		if (methodName == null || methodName === "") {
 			return;
 		}
-		if (this.childCount > 0) {
-			this._children.forEach((child) => {
-				child.broadcastMessage(methodName, args);
-			});
+		var children = this._children;
+		if (children == null) {
+			this.sendMessage(methodName, args);
+			return;
+		}
+		var length = children.length;
+		for (var i = 0; i < length; i++) {
+			var child = children[i];
+			if (child == null) {
+				continue;
+			}
+			child.broadcastMessage(methodName, args);
 		}
 		this.sendMessage(methodName, args);
 	}
@@ -973,23 +1019,30 @@ export class Object3D {
 		}
 	}
 
-	protected adjustChildPosition(child: Tea.Object3D, isAppend: boolean): void {
+	protected adjustChildPosition(child: Tea.Object3D, isAppend: boolean, worldPositionStays: boolean = true): void {
+		if (worldPositionStays === false) {
+			return;
+		}
 		if (isAppend) {
-			var rotation = this.rotation.clone();
-			child.localPosition.subSelf(this.position);
-			child.localPosition.applyQuaternion(rotation.inverseSelf());
-			child.localRotation = rotation.mul(child.localRotation);
 			var scale = this.scale.clone();
 			scale[0] = scale[0] !== 0.0 ? 1.0 / scale[0] : 0.0;
 			scale[1] = scale[1] !== 0.0 ? 1.0 / scale[1] : 0.0;
 			scale[2] = scale[2] !== 0.0 ? 1.0 / scale[2] : 0.0;
-			child.localPosition.scaleSelf(scale);
+			var rotation = this.rotation.inversed;
+			var position = child.localPosition;
+			position.subSelf(this.position);
+			position.applyQuaternion(rotation);
+			position.scaleSelf(scale);
+			rotation.mulSelf(child.localRotation);
+			child.localRotation = rotation;
 			child.localScale.scaleSelf(scale);
 			return;
 		}
-		child.localPosition.scaleSelf(this.scale);
-		child.localPosition.applyQuaternion(this.rotation);
-		child.localPosition.addSelf(this.position);
+		// remove
+		var position = child.localPosition;
+		position.scaleSelf(this.scale);
+		position.applyQuaternion(this.rotation);
+		position.addSelf(this.position);
 		child.localRotation = this.rotation.mul(child.localRotation);
 		child.localScale.scaleSelf(this.scale);
 	}

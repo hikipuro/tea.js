@@ -106,7 +106,7 @@ export class SceneLoader {
 			var item = json.children[i];
 			this.loadObject3D(app, item, (child: Tea.Object3D) => {
 				if (child != null) {
-					object3d.addChild(child);
+					object3d.addChild(child, false);
 				}
 				onLoad();
 			});
