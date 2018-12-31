@@ -680,6 +680,7 @@ export module ShaderSources {
 		uniform vec2 uv_MainTex;
 		uniform vec2 _MainTex_ST;
 		uniform vec4 color;
+		uniform float _Cutoff;
 		varying vec2 vTexCoord;
 		void main() {
 			if (TEA_CAMERA_STEREO != 0) {
@@ -689,7 +690,7 @@ export module ShaderSources {
 				}
 			}
 			vec4 tex = texture2D(_MainTex, (uv_MainTex + vTexCoord) / _MainTex_ST);
-			if (tex.a <= 0.0) {
+			if (tex.a <= _Cutoff) {
 				discard;
 			}
 			gl_FragColor = tex * color;
@@ -721,6 +722,7 @@ export module ShaderSources {
 		uniform sampler2D _MainTex;
 		uniform vec2 uv_MainTex;
 		uniform vec2 _MainTex_ST;
+		uniform float _Cutoff;
 		varying vec2 vTexCoord;
 		varying vec4 vColor;
 		void main() {
@@ -731,7 +733,7 @@ export module ShaderSources {
 				}
 			}
 			vec4 tex = texture2D(_MainTex, (uv_MainTex + vTexCoord) / _MainTex_ST);
-			if (tex.a <= 0.0) {
+			if (tex.a <= _Cutoff) {
 				discard;
 			}
 			gl_FragColor = tex * vColor;

@@ -143,6 +143,8 @@ export class ObjectFactory {
 		object3d.addComponent(Tea.ParticleSystem);
 		var renderer = object3d.addComponent(Tea.ParticleSystemRenderer);
 		renderer.material = Tea.Material.getDefault(app);
+		renderer.material.renderQueue = 3000;
+		renderer.material.setFloat("_Cutoff", 0.0);
 		renderer.material.shader = shader;
 		renderer.material.mainTexture = Tea.Texture.getDefaultParticle(app);
 		object3d.name = "Particle System";

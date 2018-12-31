@@ -78,9 +78,29 @@ export class ParticleSystemRenderer extends Renderer {
 		if (mesh.isModified === true) {
 			this.setMeshData(mesh, particleSystem);
 		}
+		this.sortParticles(particleSystem, camera);
 		this.setVertexBuffer(mesh, particleSystem);
 		this._draw(camera, particleSystem, mesh);
 		this.disableAllAttributes();
+	}
+
+	protected sortParticles(particleSystem: Tea.ParticleSystem, camera: Tea.Camera): void {
+		var q = camera.object3d.rotation.inversed;
+		var ax = q[0], ay = q[1], az = q[2], aw = q[3];
+		particleSystem.particles.sort((a: Tea.Particle, b: Tea.Particle) => {
+			var ap = a.position, bp = b.position;
+			var bx = ap[0], by = ap[1], bz = ap[2];
+			var tx = ay * bz - az * by;
+			var ty = az * bx - ax * bz;
+			var tz = ax * by - ay * bx;
+			var apz = bz + 2.0 * (aw * tz + ax * ty - ay * tx);
+			bx = bp[0], by = bp[1], bz = bp[2];
+			tx = ay * bz - az * by;
+			ty = az * bx - ax * bz;
+			tz = ax * by - ay * bx;
+			var bpz = bz + 2.0 * (aw * tz + ax * ty - ay * tx);
+			return bpz - apz;
+		});
 	}
 
 	static fromJSON(app: Tea.App, json: any, callback: (component: Tea.Component) => void): void {
@@ -88,9 +108,34 @@ export class ParticleSystemRenderer extends Renderer {
 			callback(null);
 			return;
 		}
+		app.enableInstancedArrays();
+		var object3d = new Tea.Object3D(app);
+		object3d.rotate(-90.0, 0.0, 0.0);
+		var shader = new Tea.Shader(app);
+		if (app.status.ANGLE_instanced_arrays != null) {
+			shader.attach(
+				Tea.ShaderSources.particleInstancingVS,
+				Tea.ShaderSources.particleInstancingFS
+			);
+		} else {
+			shader.attach(
+				Tea.ShaderSources.particleVS,
+				Tea.ShaderSources.particleFS
+			);
+		}
+		//shader.settings.enableDepthTest = false;
+		shader.settings.depthWriteMask = false;
+		shader.settings.enableBlend = true;
+		shader.settings.blend.srcRGB = Tea.ShaderBlendFunc.SrcAlpha;
+		shader.settings.blend.dstRGB = Tea.ShaderBlendFunc.OneMinusSrcAlpha;
+		shader.settings.blend.srcAlpha = Tea.ShaderBlendFunc.One;
+		shader.settings.blend.dstAlpha = Tea.ShaderBlendFunc.One;
 		var renderer = new ParticleSystemRenderer(app);
 		renderer.enabled = json.enabled;
 		renderer.material = Tea.Material.fromJSON(app, json.material);
+		renderer.material.renderQueue = 3000;
+		renderer.material.setFloat("_Cutoff", 0.0);
+		renderer.material.shader = shader;
 		renderer.material.mainTexture = Tea.Texture.getDefaultParticle(app);
 		callback(renderer);
 	}
