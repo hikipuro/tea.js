@@ -306,6 +306,9 @@ export class HierarchyView extends Vue {
 		if (object3dSrc == null || object3dDst == null) {
 			return;
 		}
+		if (object3dDst.isChildOf(object3dSrc)) {
+			return;
+		}
 		//console.log(mode);
 		var item: Editor.TreeViewItem = null;
 		switch (mode) {
