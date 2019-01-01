@@ -309,7 +309,13 @@ export class Graphics2D {
 		return this.context.createImageData(arg0 as any, arg1);
 	}
 
-    getImageData(sx: number, sy: number, sw: number, sh: number): ImageData {
+    getImageData(sx: number, sy: number, sw: number = null, sh: number = null): ImageData {
+		if (sw == null) {
+			sw = this.canvas.width;
+		}
+		if (sh == null) {
+			sh = this.canvas.height;
+		}
 		return this.context.getImageData(sx, sy, sw, sh);
 	}
 
@@ -340,6 +346,26 @@ export class Graphics2D {
 		canvas.width = Tea.Mathf.closestPowerOfTwo(width);
 		canvas.height = Tea.Mathf.closestPowerOfTwo(height);
 		//this.context = this.getContext();
+	}
+
+	transformColor(color: Tea.Color): void {
+		var image = this.getImageData(0, 0);
+		var data = image.data;
+		var length = data.length;
+		var r = color[0] * 255;
+		var g = color[1] * 255;
+		var b = color[2] * 255;
+		var a = color[3];
+		for (var i = 0; i < length; i += 4) {
+			if (data[i + 3] <= 0) {
+				continue;
+			}
+			data[i    ] = r;
+			data[i + 1] = g;
+			data[i + 2] = b;
+			data[i + 3] *= a;
+		}
+		this.putImageData(image, 0, 0);
 	}
 
 	protected getContext(): CanvasRenderingContext2D {

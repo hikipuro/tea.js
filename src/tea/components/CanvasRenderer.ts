@@ -56,6 +56,7 @@ export class CanvasRenderer extends Renderer {
 		shader.settings.blend.dstAlpha = Tea.ShaderBlendFunc.One;
 		renderer.material = Tea.Material.getDefault(app);
 		renderer.material.renderQueue = 4000;
+		renderer.material.setFloat("_Cutoff", 0.0);
 		renderer.material.shader = shader;
 		callback(renderer);
 	}

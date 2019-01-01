@@ -22,6 +22,7 @@ export class Text extends UIComponent {
 		this._width = 50;
 		this._height = 33;
 		var graphics = new Graphics2D(64, 64);
+		//graphics.canvas.style["webkitFontSmoothing"] = "none";
 		/*
 		graphics.textBaseline = "top";
 		graphics.fillStyle = "black";
@@ -229,11 +230,14 @@ export class Text extends UIComponent {
 
 	protected updateContext(): void {
 		var graphics = this._graphics;
-		//context.imageSmoothingEnabled = false;
+		//graphics.imageSmoothingEnabled = false;
 		graphics.textAlign = "start";
 		graphics.textBaseline = "top";
 		graphics.fillStyle = this._color.toCssColor();
-		graphics.clear();
+		//graphics.fillStyle = "black";
+		//graphics.shadowColor = "#000";
+		//graphics.shadowBlur = 1;
+		//graphics.clear();
 		graphics.font = this.getFont();
 	}
 
@@ -279,6 +283,7 @@ export class Text extends UIComponent {
 
 	protected draw(): void {
 		var textSize = this.resizeCanvas();
+		var textWidth = textSize.width;
 		var graphics = this._graphics;
 		var text = this._text.split(/\r\n|\r|\n/);
 		var fontSize = this.getFontSize();
@@ -292,12 +297,14 @@ export class Text extends UIComponent {
 			var metrics = graphics.measureText(line);
 			switch (this._alignment) {
 				case Tea.TextAlignment.Center:
-					x = (textSize.width - metrics.width) / 2;
+					x = (textWidth - metrics.width) / 2;
 					break;
 				case Tea.TextAlignment.Right:
-					x = textSize.width - metrics.width;
+					x = textWidth - metrics.width;
 					break;
 			}
+			//x = Math.floor(x);
+			//y = Math.floor(y);
 			graphics.fillText(line, x, y);
 		}
 		this.texture.image = graphics.canvas;
