@@ -216,8 +216,9 @@ export class EditorBehavior {
 			}
 		}
 		var zoom = window.outerWidth / window.innerWidth;
-		app.width = width * zoom;
-		app.height = height * zoom;
+		app.pixelRatio = zoom;
+		app.width = width;
+		app.height = height;
 		//console.log("updateScreenSize", width, height);
 	}
 
