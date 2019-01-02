@@ -261,8 +261,8 @@ export class Mesh {
 		if (positions == null || positions.length <= 0) {
 			return;
 		}
-		var min = new Tea.Vector3();
-		var max = new Tea.Vector3();
+		var min = Tea.Vector3.positiveInfinity.clone();
+		var max = Tea.Vector3.negativeInfinity.clone();
 		var length = positions.length;
 		for (var i = 0; i < length; i++) {
 			var position = positions[i];
@@ -271,28 +271,27 @@ export class Mesh {
 			}
 			if (position[0] < min[0]) {
 				min[0] = position[0];
+			} else if (position[0] > max[0]) {
+				max[0] = position[0];
 			}
 			if (position[1] < min[1]) {
 				min[1] = position[1];
+			} else if (position[1] > max[1]) {
+				max[1] = position[1];
 			}
 			if (position[2] < min[2]) {
 				min[2] = position[2];
-			}
-			if (position[0] > max[0]) {
-				max[0] = position[0];
-			}
-			if (position[1] > max[1]) {
-				max[1] = position[1];
-			}
-			if (position[2] > max[2]) {
+			} else if (position[2] > max[2]) {
 				max[2] = position[2];
 			}
 		}
-		var size = max.sub(min);
-		var extents = size.div(2);
-		var bounds = new Tea.Bounds();
-		bounds.extents = extents;
-		bounds.center = min.add(extents);
+		var sx = max[0] - min[0];
+		var sy = max[1] - min[1];
+		var sz = max[2] - min[2];
+		var size = new Tea.Vector3(sx, sy, sz);
+		var center = size.mul(0.5);
+		center.addSelf(min);
+		var bounds = new Tea.Bounds(center, size);
 		this.bounds = bounds;
 	}
 

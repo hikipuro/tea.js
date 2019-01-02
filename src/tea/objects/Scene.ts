@@ -394,6 +394,9 @@ export class Scene extends EventDispatcher {
 						continue;
 					}
 					//*/
+					if (this.frustumCulling(renderer, camera.frustumPlanes)) {
+						continue;
+					}
 					this.renderCamera(camera, lights, renderer);
 				}
 			}

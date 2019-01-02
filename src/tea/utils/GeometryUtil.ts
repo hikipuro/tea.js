@@ -66,6 +66,9 @@ export class GeometryUtil {
 		p.mulSelf(far);
 		p.addSelf(position);
 		planes[5] = new Tea.Plane(normal, p);
+		//for (var i = 0; i < 6; i++) {
+		//	console.log(planes[i].normal);
+		//}
 		return planes;
 	}
 
@@ -94,13 +97,13 @@ export class GeometryUtil {
 			var far = camera.unproject(p);
 			var direction = far.sub(near).normalized;
 			var z = 0.0;
-			if (position.z > 0) {
+			if (position[2] > 0) {
 				z = camera.farClipPlane - camera.nearClipPlane;
 			}
 			corners[i] = near.add(direction.mul(z));
 		}
 		planes.push(new Tea.Plane(
-			corners[0], corners[3], corners[4]
+			corners[0], corners[4], corners[3]
 		));
 		planes.push(new Tea.Plane(
 			corners[1], corners[2], corners[5]
@@ -112,11 +115,14 @@ export class GeometryUtil {
 			corners[0], corners[1], corners[4]
 		));
 		planes.push(new Tea.Plane(
-			corners[0], corners[1], corners[2]
+			corners[0], corners[2], corners[1]
 		));
 		planes.push(new Tea.Plane(
 			corners[4], corners[5], corners[6]
 		));
+		//for (var i = 0; i < 6; i++) {
+		//	console.log(planes[i].normal);
+		//}
 		return planes;
 	}
 
@@ -124,12 +130,40 @@ export class GeometryUtil {
 		if (bounds == null) {
 			return false;
 		}
+		//var inCount = 0;
+		if (GeometryUtil.pointInFrustum(planes, bounds.center)) {
+			return true;
+		}
+		for (var i = 0; i < 8; i++) {
+			var point = bounds.getPoint(i);
+			if (GeometryUtil.pointInFrustum(planes, point)) {
+				//inCount++;
+				return true;
+			}
+		}
+		return false;
+		//console.log(inCount);
+		//return inCount > 0;
+		/*
 		var length = planes.length;
 		for (var i = 0; i < length; i++) {
 			var normal = planes[i].normal;
 			var vp = this.getPositivePoint(bounds, normal);
 			var dp = planes[i].getDistanceToPoint(vp);
 			if (dp < 0.0) {
+				return false;
+			}
+		}
+		return true;
+		*/
+	}
+
+	protected static pointInFrustum(planes: Array<Tea.Plane>, point: Tea.Vector3): boolean {
+		var length = planes.length;
+		for (var i = 0; i < length; i++) {
+			var plane = planes[i];
+			var distance = plane.getDistanceToPoint(point);
+			if (distance < 0.0) {
 				return false;
 			}
 		}

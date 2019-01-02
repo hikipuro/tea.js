@@ -14,33 +14,62 @@ export class MeshRenderer extends Renderer {
 		var gl = this.gl;
 		this.receiveShadows = true;
 		this._meshFilter = null;
-		this._bounds = new Tea.Bounds();
+		this._bounds = null;
 		this._wireframe = false;
 		this._frontFace = gl.CCW;
 	}
 
 	get bounds(): Tea.Bounds {
-		if (this._meshFilter == null) {
+		if (this._meshFilter == null
+		||  this._meshFilter.mesh == null) {
 			return null;
 		}
-		if (this._meshFilter.mesh == null) {
-			return null;
+		if (this._bounds != null) {
+			return this._bounds;
 		}
 		var position = this.object3d.position;
 		var rotation = this.object3d.rotation;
 		var scale = this.object3d.scale;
 
-		this._bounds.copy(this._meshFilter.mesh.bounds);
-		var bounds = this._bounds;
-		bounds.center.scaleSelf(scale);
-		bounds.center.addSelf(position);
-		
-		bounds.extents.applyQuaternion(rotation);
+		var bounds = this._meshFilter.mesh.bounds.clone();
+		var center = bounds.center;
 		var extents = bounds.extents;
-		extents[0] = Math.abs(extents[0]);
-		extents[1] = Math.abs(extents[1]);
-		extents[2] = Math.abs(extents[2]);
-		bounds.extents.scaleSelf(scale);
+		center[0] *= scale[0];
+		center[1] *= scale[1];
+		center[2] *= scale[2];
+		center.applyQuaternion(rotation);
+		center[0] += position[0];
+		center[1] += position[1];
+		center[2] += position[2];
+		
+		var min = Tea.Vector3.positiveInfinity.clone();
+		var max = Tea.Vector3.negativeInfinity.clone();
+		for (var i = 0; i < 8; i++) {
+			var point = bounds.getPoint(i);
+			point[0] = point[0] * scale[0] - center[0];
+			point[1] = point[1] * scale[1] - center[1];
+			point[2] = point[2] * scale[2] - center[2];
+			point.applyQuaternion(rotation);
+			if (min[0] > point[0]) {
+				min[0] = point[0];
+			} else if (max[0] < point[0]) {
+				max[0] = point[0];
+			}
+			if (min[1] > point[1]) {
+				min[1] = point[1];
+			} else if (max[1] < point[1]) {
+				max[1] = point[1];
+			}
+			if (min[2] > point[2]) {
+				min[2] = point[2];
+			} else if (max[2] < point[2]) {
+				max[2] = point[2];
+			}
+		}
+		extents[0] = (max[0] - min[0]) * 0.5;
+		extents[1] = (max[1] - min[1]) * 0.5;
+		extents[2] = (max[2] - min[2]) * 0.5;
+		this._bounds = bounds;
 		return bounds;
 	}
 
@@ -78,6 +107,7 @@ export class MeshRenderer extends Renderer {
 		}
 		component.createData();
 		this._meshFilter = component;
+		this._bounds = null;
 	}
 
 	render(camera: Tea.Camera, lights: Array<Tea.Light>, renderSettings: Tea.RenderSettings): void {

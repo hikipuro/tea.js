@@ -12,7 +12,7 @@ export class Bounds {
 			size = new Tea.Vector3();
 		}
 		this.center = center;
-		this.extents = size.div(2.0);
+		this.extents = size.mul(0.5);
 	}
 
 	get min(): Tea.Vector3 {
@@ -54,6 +54,54 @@ export class Bounds {
 		}
 		return this.center.approxEquals(value.center)
 			&& this.extents.approxEquals(value.extents);
+	}
+
+	getPoint(index: number): Tea.Vector3 {
+		var center = this.center.clone();
+		var extents = this.extents;
+		switch (index) {
+			case 0:
+				center[0] -= extents[0];
+				center[1] += extents[1];
+				center[2] -= extents[2];
+				return center;
+			case 1:
+				center[0] += extents[0];
+				center[1] += extents[1];
+				center[2] -= extents[2];
+				return center;
+			case 2:
+				center[0] -= extents[0];
+				center[1] -= extents[1];
+				center[2] -= extents[2];
+				return center;
+			case 3:
+				center[0] += extents[0];
+				center[1] -= extents[1];
+				center[2] -= extents[2];
+				return center;
+			case 4:
+				center[0] -= extents[0];
+				center[1] += extents[1];
+				center[2] += extents[2];
+				return center;
+			case 5:
+				center[0] += extents[0];
+				center[1] += extents[1];
+				center[2] += extents[2];
+				return center;
+			case 6:
+				center[0] -= extents[0];
+				center[1] -= extents[1];
+				center[2] += extents[2];
+				return center;
+			case 7:
+				center[0] += extents[0];
+				center[1] -= extents[1];
+				center[2] += extents[2];
+				return center;
+		}
+		return null;
 	}
 
 	contains(point: Tea.Vector3): boolean {

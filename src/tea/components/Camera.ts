@@ -194,7 +194,7 @@ export class Camera extends Component {
 				this._worldToCameraMatrix
 			);
 			this._inverseViewProjectionMatrix = this._viewProjectionMatrix.inverse;
-			//this.frustumPlanes = Tea.GeometryUtil.calculateFrustumPlanes(this);
+			this.frustumPlanes = Tea.GeometryUtil.calculateFrustumPlanes(this);
 		}
 	}
 

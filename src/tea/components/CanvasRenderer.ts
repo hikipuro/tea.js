@@ -49,6 +49,7 @@ export class CanvasRenderer extends Renderer {
 			Tea.ShaderSources.uiComponentVS,
 			Tea.ShaderSources.uiComponentFS
 		);
+		shader.settings.enableDepthTest = false;
 		shader.settings.enableBlend = true;
 		shader.settings.blend.srcRGB = Tea.ShaderBlendFunc.SrcAlpha;
 		shader.settings.blend.dstRGB = Tea.ShaderBlendFunc.OneMinusSrcAlpha;
