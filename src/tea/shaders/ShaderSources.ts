@@ -614,17 +614,20 @@ export module ShaderSources {
 		uniform vec2 _MainTex_ST;
 		varying vec2 vTexCoord;
 		void main() {
+			/*
 			if (TEA_CAMERA_STEREO != 0) {
 				float stereoMod = float(TEA_CAMERA_STEREO - 1);
 				if (mod(floor(gl_FragCoord.y), 2.0) == stereoMod) {
 					discard;
 				}
 			}
+			*/
 			vec4 color = texture2D(_MainTex, (uv_MainTex + vTexCoord) / _MainTex_ST);
+			color = (color * _ColorMultiplier) + _ColorOffset;
 			if (color.a <= _Cutoff) {
 				discard;
 			}
-			gl_FragColor = (color * _ColorMultiplier) + _ColorOffset;
+			gl_FragColor = color;
 		}
 	`;
 

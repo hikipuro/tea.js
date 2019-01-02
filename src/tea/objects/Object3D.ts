@@ -138,16 +138,31 @@ export class Object3D {
 
 	get position(): Tea.Vector3 {
 		var parent = this._parent;
+		var localPosition = this.localPosition;
+		var position = new Tea.Vector3(
+			localPosition[0],
+			localPosition[1],
+			localPosition[2]
+		);
 		if (parent == null) {
-			return this.localPosition.clone();
+			return position;
 		}
-		var position = this.localPosition.clone();
+		var status = parent._status;
+		position[0] *= status.scale[0];
+		position[1] *= status.scale[1];
+		position[2] *= status.scale[2];
+		position.applyQuaternion(status.rotation);
+		position[0] += status.position[0];
+		position[1] += status.position[1];
+		position[2] += status.position[2];
+		/*
 		while (parent != null) {
 			position.scaleSelf(parent.localScale);
 			position.applyQuaternion(parent.localRotation);
 			position.addSelf(parent.localPosition);
 			parent = parent.parent;
 		}
+		*/
 		return position;
 	}
 
@@ -175,10 +190,35 @@ export class Object3D {
 
 	get rotation(): Tea.Quaternion {
 		var parent = this._parent;
+		var localRotation = this.localRotation;
+		var rotation = new Tea.Quaternion(
+			localRotation[0],
+			localRotation[1],
+			localRotation[2],
+			localRotation[3]
+		);
 		if (parent == null) {
-			return this.localRotation.clone();
+			return rotation;
 		}
-		var rotation = this.localRotation.clone();
+		var status = parent._status;
+		//var r = Tea.Quaternion._tmp;
+		var pr = status.rotation;
+		//r[0] = pr[0];
+		//r[1] = pr[1];
+		//r[2] = pr[2];
+		//r[3] = pr[3];
+		//r.mulSelf(rotation);
+		var ax = pr[0], ay = pr[1], az = pr[2], aw = pr[3];
+		var bx = rotation[0], by = rotation[1], bz = rotation[2], bw = rotation[3];
+		rotation[0] = aw * bx + bw * ax + ay * bz - by * az;
+		rotation[1] = aw * by + bw * ay + az * bx - bz * ax;
+		rotation[2] = aw * bz + bw * az + ax * by - bx * ay;
+		rotation[3] = aw * bw - ax * bx - ay * by - az * bz;
+		//rotation[0] = r[0];
+		//rotation[1] = r[1];
+		//rotation[2] = r[2];
+		//rotation[3] = r[3];
+		/*
 		var r = Tea.Quaternion._tmp;
 		while (parent != null) {
 			r.copy(parent.localRotation);
@@ -187,6 +227,7 @@ export class Object3D {
 			//rotation = parent.localRotation.mul(rotation);
 			parent = parent.parent;
 		}
+		*/
 		return rotation;
 	}
 
@@ -207,14 +248,25 @@ export class Object3D {
 
 	get scale(): Tea.Vector3 {
 		var parent = this._parent;
+		var localScale = this.localScale;
+		var scale = new Tea.Vector3(
+			localScale[0],
+			localScale[1],
+			localScale[2]
+		);
 		if (parent == null) {
-			return this.localScale.clone();
+			return scale;
 		}
-		var scale = this.localScale.clone();
+		var status = parent._status;
+		scale[0] *= status.scale[0];
+		scale[1] *= status.scale[1];
+		scale[2] *= status.scale[2];
+		/*
 		while (parent != null) {
 			scale.scaleSelf(parent.localScale);
 			parent = parent.parent;
 		}
+		*/
 		return scale;
 	}
 

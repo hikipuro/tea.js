@@ -26,14 +26,6 @@ export class Object3DStatus {
 	}
 
 	update(object3d: Object3D): void {
-		var isMoved = this.isMoved(object3d);
-		this.isMovedPrevFrame = isMoved;
-		if (isMoved) {
-			this.trs();
-		}
-	}
-
-	isMoved(object3d: Object3D): boolean {
 		var p = null, r = null, s = null;
 		if (object3d.parent == null) {
 			p = object3d.localPosition;
@@ -44,29 +36,49 @@ export class Object3DStatus {
 			r = object3d.rotation;
 			s = object3d.scale;
 		}
-		var b = false;
-		if (!this.position.equals(p)) {
-			b = true;
-			this.position.copy(p);
+		var tp = this.position;
+		var tr = this.rotation;
+		var ts = this.scale;
+		var isMoved = false;
+		if (tp[0] !== p[0]
+		||  tp[1] !== p[1]
+		||  tp[2] !== p[2]) {
+			isMoved = true;
+			tp[0] = p[0];
+			tp[1] = p[1];
+			tp[2] = p[2];
 		}
-		if (!this.rotation.equals(r)) {
-			b = true;
-			this.rotation.copy(r);
+		if (tr[0] !== r[0]
+		||  tr[1] !== r[1]
+		||  tr[2] !== r[2]
+		||  tr[3] !== r[3]) {
+			isMoved = true;
+			tr[0] = r[0];
+			tr[1] = r[1];
+			tr[2] = r[2];
+			tr[3] = r[3];
 		}
-		if (!this.scale.equals(s)) {
-			b = true;
-			this.scale.copy(s);
+		if (ts[0] !== s[0]
+		||  ts[1] !== s[1]
+		||  ts[2] !== s[2]) {
+			isMoved = true;
+			ts[0] = s[0];
+			ts[1] = s[1];
+			ts[2] = s[2];
 		}
-		return b;
-	}
-
-	trs(): void {
+		this.isMovedPrevFrame = isMoved;
+		if (isMoved === false) {
+			return;
+		}
 		this.localToWorldMatrix.setTRS(
-			this.position,
-			this.rotation,
-			this.scale
+			tp, tr, ts
 		);
-		this.localToWorldMatrix.toggleHand();
+		//this.localToWorldMatrix.toggleHand();
+		var m = this.localToWorldMatrix;
+		m[8]  *= -1.0;
+		m[9]  *= -1.0;
+		m[10] *= -1.0;
+		m[11] *= -1.0;
 		this.worldToLocalMatrix = this.localToWorldMatrix.inverse;
 	}
 }
