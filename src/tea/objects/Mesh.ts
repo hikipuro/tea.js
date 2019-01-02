@@ -1,7 +1,16 @@
 import * as Tea from "../Tea";
+import { BufferData } from "../components/BufferData";
 
 export class Mesh {
 	static readonly className: string = "Mesh";
+	protected static _primitives = {
+		sphere: null,
+		capsule: null,
+		cylinder: null,
+		cube: null,
+		plane: null,
+		quad: null
+	};
 	vertices: Array<Tea.Vector3>;
 	triangles: Array<Tea.Vector3>;
 	normals: Array<Tea.Vector3>;
@@ -14,8 +23,47 @@ export class Mesh {
 	isPrimitive: boolean;
 	primitiveType: Tea.PrimitiveType;
 
+	protected _bufferData: BufferData;
+
 	constructor() {
 		this.clear();
+	}
+
+	static getSharedPrimitive(type: Tea.PrimitiveType): Mesh {
+		var primitives = Mesh._primitives;
+		switch (type) {
+			case Tea.PrimitiveType.Sphere:
+				if (primitives.sphere == null) {
+					primitives.sphere = Tea.Primitives.createSphereMesh(10, 10);
+				}
+				return primitives.sphere;
+			case Tea.PrimitiveType.Capsule:
+				if (primitives.capsule == null) {
+					primitives.capsule = Tea.Primitives.createCapsuleMesh(10, 10);
+				}
+				return primitives.capsule;
+			case Tea.PrimitiveType.Cylinder:
+				if (primitives.cylinder == null) {
+					primitives.cylinder = Tea.Primitives.createCylinderMesh(20);
+				}
+				return primitives.cylinder;
+			case Tea.PrimitiveType.Cube:
+				if (primitives.cube == null) {
+					primitives.cube = Tea.Primitives.createCubeMesh();
+				}
+				return primitives.cube;
+			case Tea.PrimitiveType.Plane:
+				if (primitives.plane == null) {
+					primitives.plane = Tea.Primitives.createPlaneMesh(10);
+				}
+				return primitives.plane;
+			case Tea.PrimitiveType.Quad:
+				if (primitives.quad == null) {
+					primitives.quad = Tea.Primitives.createQuadMesh();
+				}
+				return primitives.quad;
+		}
+		return null;
 	}
 
 	static createPrimitive(type: Tea.PrimitiveType): Mesh {
@@ -34,6 +82,10 @@ export class Mesh {
 				return Tea.Primitives.createQuadMesh();
 		}
 		return null;
+	}
+
+	get bufferData(): BufferData {
+		return this._bufferData;
 	}
 
 	get vertexCount(): number {
@@ -59,6 +111,13 @@ export class Mesh {
 			count++;
 		}
 		return count;
+	}
+
+	get triangleCount(): number {
+		if (this.hasTriangles === false) {
+			return 0;
+		}
+		return this.triangles.length;
 	}
 
 	get hasTriangles(): boolean {
@@ -89,6 +148,19 @@ export class Mesh {
 		this.colors = undefined;
 		this.bounds = undefined;
 		this.isModified = undefined;
+		if (this._bufferData != null) {
+			this._bufferData.destroy();
+			this._bufferData = undefined;
+		}
+		var primitives = Mesh._primitives;
+		var keys = Object.keys(primitives);
+		keys.some((key: string): boolean => {
+			if (primitives[key] == this) {
+				primitives[key] = null;
+				return true;
+			}
+			return false;
+		});
 	}
 
 	clear(): void {
@@ -126,6 +198,17 @@ export class Mesh {
 		mesh.isPrimitive = this.isPrimitive;
 		mesh.primitiveType = this.primitiveType;
 		return mesh;
+	}
+
+	createData(app: Tea.App): void {
+		if (this.isModified === false) {
+			return;
+		}
+		if (this._bufferData == null) {
+			this._bufferData = new BufferData(app);
+		}
+		this._bufferData.setMeshData(this);
+		this.isModified = false;
 	}
 
 	setVertices(array: Array<number>): void {

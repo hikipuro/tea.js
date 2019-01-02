@@ -211,7 +211,7 @@ export class HierarchyViewCommand {
 		if (object3d != null) {
 			var selectedObject = hierarchyView.getSelectedObject();
 			if (selectedObject) {
-				selectedObject.addChild(object3d);
+				selectedObject.addChild(object3d, false);
 			} else {
 				scene.addChild(object3d);
 			}

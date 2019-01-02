@@ -6,15 +6,22 @@ export class Object3DStatus {
 	rotation: Tea.Quaternion;
 	scale: Tea.Vector3;
 	localToWorldMatrix: Tea.Matrix4x4;
-	worldToLocalMatrix: Tea.Matrix4x4;
 	isMovedPrevFrame: boolean;
+	protected _worldToLocalMatrix: Tea.Matrix4x4;
 
 	constructor() {
 		this.position = new Tea.Vector3(0.001, 0.002, 0.003);
 		this.rotation = new Tea.Quaternion(0.001, 0.002, 0.003);
 		this.scale = new Tea.Vector3(0.001, 0.002, 0.003);
 		this.localToWorldMatrix = new Tea.Matrix4x4();
-		this.worldToLocalMatrix = new Tea.Matrix4x4();
+		this._worldToLocalMatrix = null;
+	}
+
+	get worldToLocalMatrix(): Tea.Matrix4x4 {
+		if (this._worldToLocalMatrix == null) {
+			this._worldToLocalMatrix = this.localToWorldMatrix.inverse;
+		}
+		return this._worldToLocalMatrix;
 	}
 
 	destroy(): void {
@@ -22,7 +29,7 @@ export class Object3DStatus {
 		this.rotation = undefined;
 		this.scale = undefined;
 		this.localToWorldMatrix = undefined;
-		this.worldToLocalMatrix = undefined;
+		this._worldToLocalMatrix = undefined;
 	}
 
 	update(object3d: Object3D): void {
@@ -79,6 +86,6 @@ export class Object3DStatus {
 		m[9]  *= -1.0;
 		m[10] *= -1.0;
 		m[11] *= -1.0;
-		this.worldToLocalMatrix = this.localToWorldMatrix.inverse;
+		this._worldToLocalMatrix = null;
 	}
 }

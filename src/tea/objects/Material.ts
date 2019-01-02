@@ -300,7 +300,8 @@ export class Material {
 		var material = new Material(app);
 		if (json.isDefault) {
 			material._isDefault = true;
-			material._shader = app.createDefaultShader();
+			//material._shader = app.createDefaultShader();
+			material._shader = Tea.Shader.find(app, "default");
 			return material;
 		}
 		material.renderQueue = json.renderQueue;

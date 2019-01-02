@@ -71,6 +71,7 @@ export class ObjectFactory {
 		return object3d;
 	}
 
+	/*
 	static createDefaultShader(app: Tea.App): Tea.Shader {
 		var shader = new Tea.Shader(app);
 		shader.attach(
@@ -79,6 +80,7 @@ export class ObjectFactory {
 		);
 		return shader;
 	}
+	*/
 
 	static createShader(app: Tea.App, vs: string, fs: string): Tea.Shader {
 		var shader = new Tea.Shader(app);

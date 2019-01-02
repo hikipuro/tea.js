@@ -2,13 +2,16 @@ import * as Tea from "../Tea";
 
 export class Shader {
 	static readonly className: string = "Shader";
-	app: Tea.App;
+	protected static _shaders = {
+		default: null
+	};
 	program: WebGLProgram;
 	vertexShader: WebGLShader;
 	fragmentShader: WebGLShader;
 	settings: Tea.ShaderSettings;
 	uniforms: Array<Tea.ShaderActiveInfo>;
 	attributes: Array<Tea.ShaderActiveInfo>;
+	protected _app: Tea.App;
 	protected gl: WebGLRenderingContext;
 	protected _locationsCache: object;
 	protected _attribLocationsCache: object;
@@ -16,7 +19,7 @@ export class Shader {
 	protected _fsSource: string;
 
 	constructor(app: Tea.App) {
-		this.app = app;
+		this._app = app;
 		this.gl = app.gl;
 		this._locationsCache = {};
 		this._attribLocationsCache = {};
@@ -27,6 +30,22 @@ export class Shader {
 		this.settings = new Tea.ShaderSettings();
 		this.uniforms = [];
 		this.attributes = [];
+	}
+
+	static find(app: Tea.App, name: string): Shader {
+		var shaders = Shader._shaders;
+		switch (name) {
+			case "default":
+				if (shaders.default == null) {
+					shaders.default = new Shader(app);
+					shaders.default.attach(
+						Tea.ShaderSources.defaultVS,
+						Tea.ShaderSources.defaultFS
+					);
+				}
+				return shaders.default;
+		}
+		return null;
 	}
 
 	static getBlendEquationValue(gl: WebGLRenderingContext, value: Tea.ShaderBlendEquation): number {
@@ -174,7 +193,13 @@ export class Shader {
 	}
 
 	destroy(): void {
-		var gl = this.app.gl;
+		if (this === Shader._shaders.default) {
+			return;
+		}
+		if (this._app == null) {
+			return;
+		}
+		var gl = this._app.gl;
 		if (this.program != null) {
 			gl.detachShader(this.program, this.vertexShader);
 			gl.detachShader(this.program, this.fragmentShader);
@@ -189,7 +214,7 @@ export class Shader {
 			gl.deleteShader(this.fragmentShader);
 			this.fragmentShader = undefined;
 		}
-		this.app = undefined;
+		this._app = undefined;
 		this.settings = undefined;
 		this.gl = undefined;
 		this._locationsCache = undefined;

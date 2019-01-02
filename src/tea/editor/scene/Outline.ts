@@ -42,7 +42,7 @@ export class Outline {
 			this.object3d.update();
 			return;
 		}
-		this.meshFilter.data = meshFilter.data;
+		//this.meshFilter.data = meshFilter.data;
 		this.meshFilter.mesh = meshFilter.mesh;
 		var distance = camera.object3d.position.distance(object3d.position);
 		//var scale = (object3d.scale[0] + object3d.scale[1] + object3d.scale[2]) / 3;

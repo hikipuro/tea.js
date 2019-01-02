@@ -369,7 +369,7 @@ export class HierarchyView extends Vue {
 		if (filename.indexOf("assets") !== 0) {
 			return;
 		}
-		//filename = LocalFile.relative("assets", filename);
+		filename = LocalFile.join(process.cwd(), filename);
 		var ext = LocalFile.extname(filename);
 		var app = editor.status.app;
 		switch (ext) {

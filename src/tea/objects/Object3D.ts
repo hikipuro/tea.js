@@ -29,9 +29,9 @@ export class Object3D {
 		this.isDestroyed = false;
 		this.isActive = true;
 		this.scene = null;
-		this.localPosition = Tea.Vector3.zero.clone();
-		this.localRotation = Tea.Quaternion.identity.clone();
-		this.localScale = Tea.Vector3.one.clone();
+		this.localPosition = new Tea.Vector3();
+		this.localRotation = new Tea.Quaternion(0.0, 0.0, 0.0, 1.0);
+		this.localScale = new Tea.Vector3(1.0, 1.0, 1.0);
 		this.tag = "";
 		this.layer = 0;
 		this._status = new Object3DStatus();
@@ -39,18 +39,16 @@ export class Object3D {
 		this._children = [];
 		this._components = [];
 		this._toDestroy = false;
+		this._status.update(this);
 	}
 
 	static createPrimitive(app: Tea.App, type: Tea.PrimitiveType): Object3D {
 		var name = Tea.PrimitiveType.toString(type);
-		var mesh = Tea.Mesh.createPrimitive(type);
+		//var mesh = Tea.Mesh.createPrimitive(type);
+		var mesh = Tea.Mesh.getSharedPrimitive(type);
 		var object3d = new Tea.Object3D(app);
 		object3d.name = name;
-		var shader = new Tea.Shader(app);
-		shader.attach(
-			Tea.ShaderSources.defaultVS,
-			Tea.ShaderSources.defaultFS
-		);
+		var shader = Tea.Shader.find(app, "default");
 		var meshFilter = object3d.addComponent(Tea.MeshFilter);
 		meshFilter.mesh = mesh;
 		var renderer = object3d.addComponent(Tea.MeshRenderer);
@@ -1007,13 +1005,12 @@ export class Object3D {
 			return;
 		}
 
-		this._status.update(this);
-
 		if (isEditing) {
 			this.updateComponentsEditor();
 		} else {
 			this.updateComponents();
 		}
+		this._status.update(this);
 
 		if (this._toDestroy) {
 			this._destroy();

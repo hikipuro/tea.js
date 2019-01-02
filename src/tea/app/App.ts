@@ -290,9 +290,9 @@ export class App {
 		return ObjectFactory.createShadowMapCamera(this);
 	}
 
-	createDefaultShader(): Tea.Shader {
-		return ObjectFactory.createDefaultShader(this);
-	}
+	//createDefaultShader(): Tea.Shader {
+	//	return ObjectFactory.createDefaultShader(this);
+	//}
 
 	createShader(vs: string, fs: string): Tea.Shader {
 		return ObjectFactory.createShader(this, vs, fs);

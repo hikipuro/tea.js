@@ -5,11 +5,11 @@ import { BufferData } from "./BufferData";
 export class MeshFilter extends Component {
 	static readonly className: string = "MeshFilter";
 	mesh: Tea.Mesh;
-	data: BufferData;
+	//data: BufferData;
 	
 	constructor(app: Tea.App) {
 		super(app);
-		this.data = new BufferData(app);
+		//this.data = new BufferData(app);
 	}
 
 	destroy(): void {
@@ -17,10 +17,12 @@ export class MeshFilter extends Component {
 			this.mesh.destroy();
 			this.mesh = undefined;
 		}
+		/*
 		if (this.data != null) {
 			this.data.destroy();
 			this.data = undefined;
 		}
+		*/
 		super.destroy();
 	}
 
@@ -28,11 +30,14 @@ export class MeshFilter extends Component {
 		if (this.mesh == null) {
 			return;
 		}
+		this.mesh.createData(this.app);
+		/*
 		if (this.mesh.isModified === false) {
 			return;
 		}
 		this.data.setMeshData(this.mesh);
 		this.mesh.isModified = false;
+		*/
 	}
 	
 	toJSON(): Object {

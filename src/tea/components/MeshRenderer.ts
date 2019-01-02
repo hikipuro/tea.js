@@ -67,10 +67,11 @@ export class MeshRenderer extends Renderer {
 	}
 
 	update(): void {
-		if (this.object3d == null) {
+		var object3d = this.object3d;
+		if (object3d == null) {
 			return;
 		}
-		var component = this.object3d.getComponent(Tea.MeshFilter);
+		var component = object3d.getComponent(Tea.MeshFilter);
 		if (component == null) {
 			this._meshFilter = null;
 			return;
@@ -88,7 +89,7 @@ export class MeshRenderer extends Renderer {
 		}
 		super.render(camera, lights, renderSettings);
 		var meshFilter = this._meshFilter;
-		meshFilter.data.setBuffers(this.material.shader);
+		meshFilter.mesh.bufferData.setBuffers(this.material.shader);
 		this.setFrontFace();
 		var draw = this.getDrawFunc(this._meshFilter.mesh);
 		draw.apply(this);
@@ -125,7 +126,8 @@ export class MeshRenderer extends Renderer {
 			this.material != null &&
 			this.material.shader != null &&
 			this._meshFilter != null &&
-			this._meshFilter.mesh != null
+			this._meshFilter.mesh != null &&
+			this._meshFilter.mesh.vertices != null
 		);
 	}
 
@@ -188,37 +190,37 @@ export class MeshRenderer extends Renderer {
 
 	protected draw(): void {
 		var gl = this.gl;
-		var count = this._meshFilter.data.triangleCount * 3;
+		var count = this._meshFilter.mesh.triangleCount * 3;
 		gl.drawElements(gl.TRIANGLES, count, gl.UNSIGNED_SHORT, 0);
 	}
 
 	protected draw32(): void {
 		var gl = this.gl;
-		var count = this._meshFilter.data.triangleCount * 3;
+		var count = this._meshFilter.mesh.triangleCount * 3;
 		gl.drawElements(gl.TRIANGLES, count, gl.UNSIGNED_INT, 0);
 	}
 
 	protected drawArrays(): void {
 		var gl = this.gl;
-		var count = this._meshFilter.data.vertexCount;
+		var count = this._meshFilter.mesh.vertexCount;
 		gl.drawArrays(gl.TRIANGLES, 0, count);
 	}
 
 	protected drawWireframe(): void {
 		var gl = this.gl;
-		var count = this._meshFilter.data.triangleCount * 3;
+		var count = this._meshFilter.mesh.triangleCount * 3;
 		gl.drawElements(gl.LINES, count, gl.UNSIGNED_SHORT, 0);
 	}
 
 	protected drawWireframe32(): void {
 		var gl = this.gl;
-		var count = this._meshFilter.data.triangleCount * 3;
+		var count = this._meshFilter.mesh.triangleCount * 3;
 		gl.drawElements(gl.LINES, count, gl.UNSIGNED_INT, 0);
 	}
 
 	protected drawArraysWireframe(): void {
 		var gl = this.gl;
-		var count = this._meshFilter.data.vertexCount;
+		var count = this._meshFilter.mesh.vertexCount;
 		gl.drawArrays(gl.LINES, 0, count);
 	}
 }
