@@ -178,9 +178,13 @@ export class Object3D {
 		if (parent == null) {
 			return this.localRotation.clone();
 		}
-		var rotation = this.localRotation;
+		var rotation = this.localRotation.clone();
+		var r = Tea.Quaternion._tmp;
 		while (parent != null) {
-			rotation = parent.localRotation.mul(rotation);
+			r.copy(parent.localRotation);
+			r.mulSelf(rotation);
+			rotation.copy(r);
+			//rotation = parent.localRotation.mul(rotation);
 			parent = parent.parent;
 		}
 		return rotation;

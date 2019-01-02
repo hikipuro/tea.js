@@ -34,9 +34,16 @@ export class Object3DStatus {
 	}
 
 	isMoved(object3d: Object3D): boolean {
-		var p = object3d.position;
-		var r = object3d.rotation;
-		var s = object3d.scale;
+		var p = null, r = null, s = null;
+		if (object3d.parent == null) {
+			p = object3d.localPosition;
+			r = object3d.localRotation;
+			s = object3d.localScale;
+		} else {
+			p = object3d.position;
+			r = object3d.rotation;
+			s = object3d.scale;
+		}
 		var b = false;
 		if (!this.position.equals(p)) {
 			b = true;
