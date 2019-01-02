@@ -608,6 +608,8 @@ export module ShaderSources {
 		uniform sampler2D _MainTex;
 		uniform int TEA_CAMERA_STEREO;
 		uniform float _Cutoff;
+		uniform vec4 _ColorOffset;
+		uniform vec4 _ColorMultiplier;
 		uniform vec2 uv_MainTex;
 		uniform vec2 _MainTex_ST;
 		varying vec2 vTexCoord;
@@ -622,7 +624,7 @@ export module ShaderSources {
 			if (color.a <= _Cutoff) {
 				discard;
 			}
-			gl_FragColor = color;
+			gl_FragColor = (color * _ColorMultiplier) + _ColorOffset;
 		}
 	`;
 

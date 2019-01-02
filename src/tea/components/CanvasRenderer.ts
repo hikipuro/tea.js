@@ -118,10 +118,14 @@ export class CanvasRenderer extends Renderer {
 		var texLocation = shader.getUniformLocation("_MainTex");
 		var texUVLocation = shader.getUniformLocation("uv_MainTex");
 		var texSTLocation = shader.getUniformLocation("_MainTex_ST");
+		var colorOffsetLocation = shader.getUniformLocation("_ColorOffset");
+		var colorMultiplierLocation = shader.getUniformLocation("_ColorMultiplier");
 		if (mvpLocation == null
 		||  texLocation == null
 		||  texUVLocation == null
-		||  texSTLocation == null) {
+		||  texSTLocation == null
+		||  colorOffsetLocation == null
+		||  colorMultiplierLocation == null) {
 			return;
 		}
 
@@ -155,6 +159,9 @@ export class CanvasRenderer extends Renderer {
 			//mvpMatrix.setIdentity();
 			mvpMatrix.setTRS(position, rotation, scale);
 			gl.uniformMatrix4fv(mvpLocation, false, mvpMatrix);
+
+			gl.uniform4fv(colorOffsetLocation, component.colorOffset);
+			gl.uniform4fv(colorMultiplierLocation, component.colorMultiplier);
 
 			gl.bindTexture(gl.TEXTURE_2D, component.texture.texture);
 			gl.uniform1i(texLocation, 0);

@@ -348,22 +348,30 @@ export class Graphics2D {
 		//this.context = this.getContext();
 	}
 
-	transformColor(color: Tea.Color): void {
+	transformColor(offset: Tea.Color, multiplier: Tea.Color = null): void {
 		var image = this.getImageData(0, 0);
 		var data = image.data;
 		var length = data.length;
-		var r = color[0] * 255;
-		var g = color[1] * 255;
-		var b = color[2] * 255;
-		var a = color[3];
+		var or = offset[0] * 255;
+		var og = offset[1] * 255;
+		var ob = offset[2] * 255;
+		var oa = offset[3] * 255;
+		var mr = 1.0, mg = 1.0, mb = 1.0, ma = 1.0;
+		if (multiplier != null) {
+			mr = multiplier[0];
+			mg = multiplier[1];
+			mb = multiplier[2];
+			ma = multiplier[3];
+		}
 		for (var i = 0; i < length; i += 4) {
-			if (data[i + 3] <= 0) {
-				continue;
-			}
-			data[i    ] = r;
-			data[i + 1] = g;
-			data[i + 2] = b;
-			data[i + 3] *= a;
+			data[i    ] = (data[i    ] * mr) + or;
+			data[i + 1] = (data[i + 1] * mg) + og;
+			data[i + 2] = (data[i + 2] * mb) + ob;
+			data[i + 3] = (data[i + 3] * ma) + oa;
+			data[i    ] = Math.max(Math.min(data[i    ], 255), 0);
+			data[i + 1] = Math.max(Math.min(data[i + 1], 255), 0);
+			data[i + 2] = Math.max(Math.min(data[i + 2], 255), 0);
+			data[i + 3] = Math.max(Math.min(data[i + 3], 255), 0);
 		}
 		this.putImageData(image, 0, 0);
 	}

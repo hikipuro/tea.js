@@ -104,6 +104,8 @@ export class Text extends UIComponent {
 			return;
 		}
 		this._color.copy(value);
+		this._colorOffset.set(value[0], value[1], value[2], 0.0);
+		this._colorMultiplier.set(1.0, 1.0, 1.0, value[3]);
 		this._isChanged = true;
 	}
 
@@ -162,7 +164,7 @@ export class Text extends UIComponent {
 		var text = new Text(app);
 		text._lineSpacing = json.lineSpacing;
 		text._alignment = Tea.TextAlignment.fromString(json.alignment);
-		text._color = Tea.Color.fromArray(json.color);
+		text.color = Tea.Color.fromArray(json.color);
 		text._font = json.font;
 		text._fontSize = json.fontSize;
 		text._fontStyle = Tea.FontStyle.fromString(json.fontStyle);
@@ -233,8 +235,8 @@ export class Text extends UIComponent {
 		//graphics.imageSmoothingEnabled = false;
 		graphics.textAlign = "start";
 		graphics.textBaseline = "top";
-		graphics.fillStyle = this._color.toCssColor();
-		//graphics.fillStyle = "black";
+		//graphics.fillStyle = this._color.toCssColor();
+		graphics.fillStyle = "black";
 		//graphics.shadowColor = "#000";
 		//graphics.shadowBlur = 1;
 		//graphics.clear();

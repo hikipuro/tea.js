@@ -13,6 +13,8 @@ export class Texture {
 	app: Tea.App;
 	url: string;
 	texture: WebGLTexture;
+	flipY: boolean = true;
+	premultiplyAlpha: boolean = false;
 
 	protected gl: WebGLRenderingContext;
 	protected _image: TextureImage;
@@ -170,7 +172,12 @@ export class Texture {
 		this._image = image;
 		this.bind();
 		var gl = this.gl;
-		gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, 1);
+		if (this.flipY) {
+			gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, 1);
+		}
+		if (this.premultiplyAlpha) {
+			gl.pixelStorei(gl.UNPACK_PREMULTIPLY_ALPHA_WEBGL, 1);
+		}
 		gl.texImage2D(
 			gl.TEXTURE_2D, 0,
 			gl.RGBA, gl.RGBA,
@@ -181,7 +188,12 @@ export class Texture {
 		this.filterMode = this._filterMode;
 		this.wrapMode = this._wrapMode;
 		this.unbind();
-		gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, 0);
+		if (this.flipY) {
+			gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, 0);
+		}
+		if (this.premultiplyAlpha) {
+			gl.pixelStorei(gl.UNPACK_PREMULTIPLY_ALPHA_WEBGL, 0);
+		}
 		this._updateCount++;
 	}
 
