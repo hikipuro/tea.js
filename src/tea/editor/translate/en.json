@@ -124,7 +124,8 @@
 			"UI": {
 				"Title": "UI",
 				"Canvas": "Canvas",
-				"Text": "Text"
+				"Text": "Text",
+				"Image": "Image"
 			}
 		}
 	},
@@ -257,6 +258,9 @@
 		},
 		"Script": {
 			"Title": "Script"
+		},
+		"Image": {
+			"Title": "Image"
 		},
 		"Text": {
 			"Title": "Text",

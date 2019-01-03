@@ -12,7 +12,8 @@ import { LocalFile } from "../LocalFile";
 				:value="color"
 				@update="onUpdateColor">Color</ColorPicker>
 			<ImageSelector
-				ref="mainTexture">Main Texture</ImageSelector>
+				ref="mainTexture"
+				@update="onUpdateMainTexture">Main Texture</ImageSelector>
 		</div>
 	`,
 	data: () => {
@@ -50,5 +51,12 @@ export class Material extends Vue {
 			this._material.color.copy(value);
 		}
 		this.$emit("update", "color");
+	}
+
+	protected onUpdateMainTexture(value: string): void {
+		if (this._material) {
+			this._material.mainTexture.load(value);
+		}
+		this.$emit("update", "mainTexture");
 	}
 }

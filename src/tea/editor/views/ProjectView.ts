@@ -835,6 +835,7 @@ export class ProjectView extends Vue {
 	}
 
 	protected onFocusFileList(): void {
+		/*
 		var item = this.getSelectedFileItem();
 		if (item == null) {
 			return;
@@ -843,6 +844,7 @@ export class ProjectView extends Vue {
 			var item = this.getSelectedFileItem();
 			this.onSelectFile(item);
 		}, 100);
+		//*/
 	}
 
 	protected onSelectFile(item: Editor.TreeViewItem): void {

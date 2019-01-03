@@ -326,6 +326,10 @@ export class App {
 		return ObjectFactory.createUIText(this);
 	}
 
+	createUIImage(): Tea.Object3D {
+		return ObjectFactory.createUIImage(this);
+	}
+
 	readObjFile(url: string, callback: (object3d: Tea.Object3D) => void): void {
 		if (callback == null) {
 			return;

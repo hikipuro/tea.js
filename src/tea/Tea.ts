@@ -35,6 +35,8 @@ export module UI {
 	export type UIComponent = UIComponents.UIComponent;
 	export var  Text = UIComponents.Text;
 	export type Text = UIComponents.Text;
+	export var  Image = UIComponents.Image;
+	export type Image = UIComponents.Image;
 }
 
 export * from "./enums/CameraClearFlags";

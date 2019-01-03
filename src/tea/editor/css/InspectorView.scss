@@ -82,6 +82,22 @@
 			}
 		}
 
+		div.ImageSelector {
+			box-sizing: border-box;
+			align-items: center;
+			padding: 2px 0;
+
+			> .title {
+				flex: 1;
+			}
+			> .value {
+				justify-content: flex-end;
+				margin-right: 2px;
+				width: 64px;
+				border: 1px solid gray;
+			}
+		}
+
 		> div.FileInspector {
 			> .title {
 				padding: 2px 1px 4px 1px;

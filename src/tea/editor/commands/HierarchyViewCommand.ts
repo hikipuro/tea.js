@@ -196,6 +196,9 @@ export class HierarchyViewCommand {
 			case "UI/Text":
 				object3d = app.createUIText();
 				break;
+			case "UI/Image":
+				object3d = app.createUIImage();
+				break;
 			case "Rename":
 				var i = hierarchyView.getSelectedItem();
 				if (i) {

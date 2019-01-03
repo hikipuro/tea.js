@@ -149,6 +149,18 @@ export class CanvasRenderer extends Renderer {
 			if (component == null || component.texture == null) {
 				continue;
 			}
+			var texWidth = component.width;
+			texWidth = Tea.Mathf.closestPowerOfTwo(texWidth) / texWidth;
+			var texHeight = component.height;
+			texHeight = Tea.Mathf.closestPowerOfTwo(texHeight) / texHeight;
+
+			if (texWidth === 0.0 || texHeight === 0.0) {
+				continue;
+			}
+
+			gl.uniform2f(texSTLocation, texWidth, texHeight);
+			gl.uniform2f(texUVLocation, 0.0, texHeight - 1.0);
+
 			var object3d = component.object3d;
 			scale[0] = component.width * screenWidth;
 			scale[1] = component.height * screenHeight;
@@ -166,13 +178,6 @@ export class CanvasRenderer extends Renderer {
 
 			gl.bindTexture(gl.TEXTURE_2D, component.texture.texture);
 			gl.uniform1i(texLocation, 0);
-
-			var texWidth = component.width;
-			texWidth = Tea.Mathf.closestPowerOfTwo(texWidth) / texWidth;
-			var texHeight = component.height;
-			texHeight = Tea.Mathf.closestPowerOfTwo(texHeight) / texHeight;
-			gl.uniform2f(texSTLocation, texWidth, texHeight);
-			gl.uniform2f(texUVLocation, 0.0, texHeight - 1.0);
 
 			gl.drawElements(
 				TRIANGLES, triangleCount,

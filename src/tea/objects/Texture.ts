@@ -10,6 +10,7 @@ type TextureImage = (
 
 export class Texture {
 	static readonly className: string = "Texture";
+	protected static _emptyImageData: ImageData;
 	app: Tea.App;
 	url: string;
 	texture: WebGLTexture;
@@ -38,13 +39,18 @@ export class Texture {
 	}
 
 	static getEmpty(app: Tea.App, r: number = 1.0, g: number = 1.0, b: number = 1.0, a: number = 1.0): Texture {
-		var texture = new Tea.Texture(app);
-		var array = new Uint8ClampedArray([255.0 * r, 255.0 * g, 255.0 * b, 255.0 * a]);
-		var imageData = new ImageData(array, 1, 1);
-		texture.image = imageData;
-		texture._isEmpty = true;
-		texture._emptyColor.set(r, g, b, a);
-		return texture;
+		if (r === 1.0 && g === 1.0 && b === 1.0 && a === 1.0) {
+			if (Texture._emptyImageData == null) {
+				Texture._emptyImageData = Texture.createEmptyImageData();
+			}
+			var t = Texture.createEmptyTexture(app, Texture._emptyImageData);
+			t._emptyColor.set(r, g, b, a);
+			return t;
+		}
+		var imageData = Texture.createEmptyImageData(r, g, b, a);
+		var t = Texture.createEmptyTexture(app, imageData);
+		t._emptyColor.set(r, g, b, a);
+		return t;
 	}
 
 	static getDefaultParticle(app: Tea.App): Texture {
@@ -73,6 +79,18 @@ export class Texture {
 		var array = new Uint8ClampedArray(data);
 		var imageData = new ImageData(array, size, size);
 		texture.image = imageData;
+		return texture;
+	}
+
+	protected static createEmptyImageData(r: number = 1.0, g: number = 1.0, b: number = 1.0, a: number = 1.0): ImageData {
+		var array = new Uint8ClampedArray([255.0 * r, 255.0 * g, 255.0 * b, 255.0 * a]);
+		return new ImageData(array, 1, 1);
+	}
+
+	protected static createEmptyTexture(app: Tea.App, imageData: ImageData): Texture {
+		var texture = new Tea.Texture(app);
+		texture.image = imageData;
+		texture._isEmpty = true;
 		return texture;
 	}
 
@@ -258,7 +276,7 @@ export class Texture {
 				app, color[0], color[1], color[2], color[3]
 			);
 		} else {
-			texture = new Texture(app);
+			texture = Texture.getEmpty(app);
 			if (json.url) {
 				texture.load(json.url);
 			}

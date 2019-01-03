@@ -344,6 +344,10 @@ export class EditorMenu {
 					{
 						id: "UI/Text",
 						label: translator.getText("UI/Text"),
+					},
+					{
+						id: "UI/Image",
+						label: translator.getText("UI/Image"),
 					}
 				]
 			}

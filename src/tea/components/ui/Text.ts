@@ -19,8 +19,8 @@ export class Text extends UIComponent {
 	
 	constructor(app: Tea.App) {
 		super(app);
-		this._width = 50;
-		this._height = 33;
+		//this._width = 50;
+		//this._height = 33;
 		var graphics = new Graphics2D(64, 64);
 		//graphics.canvas.style["webkitFontSmoothing"] = "none";
 		/*
@@ -34,7 +34,10 @@ export class Text extends UIComponent {
 		this._graphics = graphics;
 		this._lineSpacing = 1;
 		this._alignment = Tea.TextAlignment.Left;
-		this._color = Tea.Color.white.clone();
+		var color = Tea.Color.white.clone();
+		this._color = color;
+		this._colorOffset.set(color[0], color[1], color[2], 0.0);
+		this._colorMultiplier.set(1.0, 1.0, 1.0, color[3]);
 		this._font = Text.DefaultFont;
 		this._fontSize = Text.DefaultFontSize;
 		this._fontStyle = Tea.FontStyle.Normal;
