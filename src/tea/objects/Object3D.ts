@@ -58,7 +58,7 @@ export class Object3D {
 	}
 
 	get isMoved(): boolean {
-		return this._status.isMovedPrevFrame;
+		return this._status.isMoved;
 	}
 
 	get isActiveInHierarchy(): boolean {

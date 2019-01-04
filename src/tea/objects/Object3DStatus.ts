@@ -5,16 +5,35 @@ export class Object3DStatus {
 	position: Tea.Vector3;
 	rotation: Tea.Quaternion;
 	scale: Tea.Vector3;
-	localToWorldMatrix: Tea.Matrix4x4;
-	isMovedPrevFrame: boolean;
+	isMoved: boolean;
+	protected _isDirty: boolean;
+	protected _localToWorldMatrix: Tea.Matrix4x4;
 	protected _worldToLocalMatrix: Tea.Matrix4x4;
 
 	constructor() {
 		this.position = new Tea.Vector3(0.001, 0.002, 0.003);
 		this.rotation = new Tea.Quaternion(0.001, 0.002, 0.003);
 		this.scale = new Tea.Vector3(0.001, 0.002, 0.003);
-		this.localToWorldMatrix = new Tea.Matrix4x4();
+		this._isDirty = true;
+		this._localToWorldMatrix = new Tea.Matrix4x4();
 		this._worldToLocalMatrix = null;
+	}
+
+	get localToWorldMatrix(): Tea.Matrix4x4 {
+		if (this._isDirty) {
+			this._localToWorldMatrix.setTRS(
+				this.position,
+				this.rotation,
+				this.scale
+			);
+			var m = this._localToWorldMatrix;
+			m[8]  *= -1.0;
+			m[9]  *= -1.0;
+			m[10] *= -1.0;
+			m[11] *= -1.0;
+			this._isDirty = false;
+		}
+		return this._localToWorldMatrix;
 	}
 
 	get worldToLocalMatrix(): Tea.Matrix4x4 {
@@ -28,7 +47,8 @@ export class Object3DStatus {
 		this.position = undefined;
 		this.rotation = undefined;
 		this.scale = undefined;
-		this.localToWorldMatrix = undefined;
+		this._isDirty = undefined;
+		this._localToWorldMatrix = undefined;
 		this._worldToLocalMatrix = undefined;
 	}
 
@@ -73,10 +93,12 @@ export class Object3DStatus {
 			ts[1] = s[1];
 			ts[2] = s[2];
 		}
-		this.isMovedPrevFrame = isMoved;
+		this.isMoved = isMoved;
 		if (isMoved === false) {
 			return;
 		}
+		this._isDirty = true;
+		/*
 		this.localToWorldMatrix.setTRS(
 			tp, tr, ts
 		);
@@ -86,6 +108,7 @@ export class Object3DStatus {
 		m[9]  *= -1.0;
 		m[10] *= -1.0;
 		m[11] *= -1.0;
+		*/
 		this._worldToLocalMatrix = null;
 	}
 }
