@@ -40,8 +40,15 @@ import { Translator } from "../translate/Translator";
 					ref="position2d"
 					:x="position[0]"
 					:y="position[1]"
+					:step="1"
 					@update="onUpdatePosition2D"
 					@change="onChangePosition2D">{{ translator.position }}</Vector2>
+				<Vector2
+					ref="scale2d"
+					:x="scale[0]"
+					:y="scale[1]"
+					@update="onUpdateScale2D"
+					@change="onChangeScale2D">{{ translator.scale }}</Vector2>
 			</template>
 			<ComponentPanel
 				ref="components"
@@ -260,7 +267,7 @@ export class ObjectInspector extends Vue {
 		if (this._object3d != null) {
 			this._object3d.localScale.set(x, y, z);
 		}
-		this.$emit("update", "ObjectInspector", "rotation", scale);
+		this.$emit("update", "ObjectInspector", "scale", scale);
 	}
 
 	protected onUpdatePosition2D(x: number, y: number): void {
@@ -271,6 +278,16 @@ export class ObjectInspector extends Vue {
 			this._object3d.localPosition.set(x, y, 0.0);
 		}
 		this.$emit("update", "ObjectInspector", "position", position);
+	}
+
+	protected onUpdateScale2D(x: number, y: number): void {
+		var scale = this.scale;
+		this.$set(scale, 0, x);
+		this.$set(scale, 1, y);
+		if (this._object3d != null) {
+			this._object3d.localScale.set(x, y, 1.0);
+		}
+		this.$emit("update", "ObjectInspector", "scale", scale);
 	}
 
 	protected onChangePosition(x: number, y: number, z: number): void {
@@ -301,8 +318,17 @@ export class ObjectInspector extends Vue {
 	}
 
 	protected onChangePosition2D(x: number, y: number): void {
-		console.log("onChangePosition2D", x, y, 0.0);
+		//console.log("onChangePosition2D", x, y, 0.0);
 		this.$emit("change", "position", {
+			x: x,
+			y: y,
+			z: 0.0
+		});
+	}
+
+	protected onChangeScale2D(x: number, y: number): void {
+		console.log("onChangeScale2D", x, y, 0.0);
+		this.$emit("change", "scale", {
 			x: x,
 			y: y,
 			z: 0.0

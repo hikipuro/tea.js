@@ -596,10 +596,22 @@ export module ShaderSources {
 		attribute vec3 vertex;
 		attribute vec2 texcoord;
 		uniform mat4 MATRIX_MVP;
+		uniform vec2 _ScreenSize;
+		uniform vec2 _Position;
+		uniform vec2 _Size;
+		uniform vec2 _Anchor;
 		varying vec2 vTexCoord;
 		void main() {
 			vTexCoord = texcoord;
-			gl_Position = MATRIX_MVP * vec4(vertex, 1.0);
+			float sx = _Size.x / _ScreenSize.x;
+			float px = sx * -_Anchor.x + _Anchor.x;
+			px += _Position.x * 2.0 / _ScreenSize.x;
+			px += vertex.x * sx;
+			float sy = _Size.y / _ScreenSize.y;
+			float py = -_Anchor.y - sy * -_Anchor.y;
+			py -= _Position.y * 2.0 / _ScreenSize.y;
+			py += vertex.y * sy;
+			gl_Position = vec4(px, py, 0.0, 1.0);
 		}
 	`;
 
@@ -622,7 +634,17 @@ export module ShaderSources {
 				}
 			}
 			*/
-			vec4 color = texture2D(_MainTex, (uv_MainTex + vTexCoord) / _MainTex_ST);
+			vec2 position = (uv_MainTex + vTexCoord) / _MainTex_ST;
+			//vec2 position = vTexCoord;
+			/*
+			if (position.x < 0.0
+			||  position.x > 1.0
+			||  position.y < 0.0
+			||  position.y > 1.0) {
+				discard;
+			}
+			*/
+			vec4 color = texture2D(_MainTex, position);
 			color = (color * _ColorMultiplier) + _ColorOffset;
 			if (color.a <= _Cutoff) {
 				discard;

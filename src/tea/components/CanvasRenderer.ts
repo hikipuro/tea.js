@@ -94,13 +94,14 @@ export class CanvasRenderer extends Renderer {
 		if (!this.isRenderable) {
 			return;
 		}
-		super.render(camera, lights, renderSettings);
+		//super.render(camera, lights, renderSettings);
+		this.gl.useProgram(this.material.shader.program);
+		this.setShaderSettings();
 		this._data.setBuffers(this.material.shader);
 		this.setFrontFace();
 		//console.log(this._components.length)
 		this.draw();
 		//this.disableAllAttributes();
-		Renderer.drawCallCount++;
 	}
 
 	toJSON(): Object {
@@ -115,33 +116,26 @@ export class CanvasRenderer extends Renderer {
 	
 	protected draw(): void {
 		var shader = this.material.shader;
-		var mvpLocation = shader.getUniformLocation("MATRIX_MVP");
-		var texLocation = shader.getUniformLocation("_MainTex");
-		var texUVLocation = shader.getUniformLocation("uv_MainTex");
-		var texSTLocation = shader.getUniformLocation("_MainTex_ST");
-		var colorOffsetLocation = shader.getUniformLocation("_ColorOffset");
-		var colorMultiplierLocation = shader.getUniformLocation("_ColorMultiplier");
-		if (mvpLocation == null
-		||  texLocation == null
-		||  texUVLocation == null
-		||  texSTLocation == null
-		||  colorOffsetLocation == null
-		||  colorMultiplierLocation == null) {
-			return;
-		}
+		var locations = {
+			texture: shader.getUniformLocation("_MainTex"),
+			textureUV: shader.getUniformLocation("uv_MainTex"),
+			textureST: shader.getUniformLocation("_MainTex_ST"),
+			screenSize: shader.getUniformLocation("_ScreenSize"),
+			anchor: shader.getUniformLocation("_Anchor"),
+			position: shader.getUniformLocation("_Position"),
+			size: shader.getUniformLocation("_Size"),
+			colorOffset: shader.getUniformLocation("_ColorOffset"),
+			colorMultiplier: shader.getUniformLocation("_ColorMultiplier"),
+		};
 
 		var gl = this.gl;
 		var TRIANGLES = gl.TRIANGLES;
 		var UNSIGNED_SHORT = gl.UNSIGNED_SHORT;
 		gl.activeTexture(gl.TEXTURE0);
-		var triangleCount = this._data.triangleCount * 3;
-		var screenWidth = 1.0 / this.app.width;
-		var screenHeight = 1.0 / this.app.height;
-		var position = this._position;
-		var rotation = this._rotation;
-		var scale = this._scale;
-		var mvpMatrix = this._mvpMatrix;
+		gl.uniform1i(locations.texture, 0);
+		gl.uniform2f(locations.screenSize, this.app.width, this.app.height);
 
+		var triangleCount = this._data.triangleCount * 3;
 		var components = this._components;
 		var componentCount = components.length;
 		for (var i = 0; i < componentCount; i++) {
@@ -149,40 +143,39 @@ export class CanvasRenderer extends Renderer {
 			if (component == null || component.texture == null) {
 				continue;
 			}
-			var texWidth = component.width;
-			texWidth = Tea.Mathf.closestPowerOfTwo(texWidth) / texWidth;
-			var texHeight = component.height;
-			texHeight = Tea.Mathf.closestPowerOfTwo(texHeight) / texHeight;
-
+			var width = component.width;
+			var height = component.height;
+			var texWidth = Tea.Mathf.closestPowerOfTwo(width) / width;
+			var texHeight = Tea.Mathf.closestPowerOfTwo(height) / height;
 			if (texWidth === 0.0 || texHeight === 0.0) {
 				continue;
 			}
-
-			gl.uniform2f(texSTLocation, texWidth, texHeight);
-			gl.uniform2f(texUVLocation, 0.0, texHeight - 1.0);
+			gl.uniform2f(locations.textureST, texWidth, texHeight);
+			gl.uniform2f(locations.textureUV, 0.0, texHeight - 1.0);
+			//gl.uniform2f(locations.textureST, 1.0, 1.0);
+			//gl.uniform2f(locations.textureUV, 0.0, 0.0);
 
 			var object3d = component.object3d;
-			scale[0] = component.width * screenWidth;
-			scale[1] = component.height * screenHeight;
-			position[0] = scale[0] - 1.0;
-			position[1] = 1.0 - scale[1];
-			position[0] += object3d.position[0] * screenWidth;
-			position[1] -= object3d.position[1] * screenHeight;
+			var p = object3d.position;
+			var s = object3d.scale;
+			gl.uniform2f(locations.anchor, -1.0, -1.0);
+			gl.uniform2f(locations.position, p[0], p[1]);
+			gl.uniform2f(
+				locations.size,
+				width * s[0],
+				height * s[1]
+			);
 
-			//mvpMatrix.setIdentity();
-			mvpMatrix.setTRS(position, rotation, scale);
-			gl.uniformMatrix4fv(mvpLocation, false, mvpMatrix);
-
-			gl.uniform4fv(colorOffsetLocation, component.colorOffset);
-			gl.uniform4fv(colorMultiplierLocation, component.colorMultiplier);
+			gl.uniform4fv(locations.colorOffset, component.colorOffset);
+			gl.uniform4fv(locations.colorMultiplier, component.colorMultiplier);
 
 			gl.bindTexture(gl.TEXTURE_2D, component.texture.texture);
-			gl.uniform1i(texLocation, 0);
 
 			gl.drawElements(
 				TRIANGLES, triangleCount,
 				UNSIGNED_SHORT, 0
 			);
 		}
+		Renderer.drawCallCount += componentCount;
 	}
 }

@@ -34,7 +34,7 @@ import Component from "vue-class-component";
 		},
 		step: {
 			type: Number,
-			default: 1.0
+			default: 0.03
 		}
 	}
 })

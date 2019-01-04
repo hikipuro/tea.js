@@ -51,7 +51,7 @@ export class Text extends UIComponent {
 	//}
 
 	get width(): number {
-		return this._graphics.width;
+		return this._width;
 	}
 	set width(value: number) {
 		if (value == null || value === this._width) {
@@ -63,7 +63,7 @@ export class Text extends UIComponent {
 	}
 
 	get height(): number {
-		return this._graphics.height;
+		return this._height;
 	}
 	set height(value: number) {
 		if (value == null || value === this._height) {
@@ -246,7 +246,7 @@ export class Text extends UIComponent {
 		graphics.font = this.getFont();
 	}
 
-	protected resizeCanvas(): any {
+	protected resizeCanvas(): void {
 		var graphics = this._graphics;
 		graphics.font = this.getFont();
 
@@ -258,11 +258,12 @@ export class Text extends UIComponent {
 		var padding = this._padding * 2;
 
 		var textWidth = 0;
-		var textHeight = (fontSize * (text.length - 1)) * lineSpacing + padding;
+		//var textHeight = (fontSize * (text.length - 1)) * lineSpacing + padding;
+		var textHeight = (fontSize * text.length) * lineSpacing + padding;
 		if (textHeight < 0) {
 			textHeight = 0;
 		}
-		textHeight += fontSize;
+		//textHeight += fontSize;
 
 		var length = text.length;
 		for (var i = 0; i < length; i++) {
@@ -279,16 +280,14 @@ export class Text extends UIComponent {
 		if (height !== textHeight) {
 			graphics.height = textHeight;
 		}
+		this._width = textWidth;
+		this._height = textHeight;
 		this.updateContext();
-		return {
-			width: textWidth,
-			height: textHeight
-		};
 	}
 
 	protected draw(): void {
-		var textSize = this.resizeCanvas();
-		var textWidth = textSize.width;
+		this.resizeCanvas();
+		var textWidth = this._width;
 		var graphics = this._graphics;
 		var text = this._text.split(/\r\n|\r|\n/);
 		var fontSize = this.getFontSize();

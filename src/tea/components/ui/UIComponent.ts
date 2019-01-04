@@ -16,6 +16,7 @@ export class UIComponent extends Component {
 		this._colorOffset = new Tea.Color();
 		this._colorMultiplier = new Tea.Color(1.0, 1.0, 1.0, 1.0);
 		this.texture = Tea.Texture.getEmpty(app);
+		this.texture.wrapMode = Tea.TextureWrapMode.Clamp;
 		this.texture.filterMode = Tea.FilterMode.Point;
 	}
 
