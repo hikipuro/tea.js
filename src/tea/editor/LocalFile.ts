@@ -125,6 +125,9 @@ export class LocalFile {
 	}
 
 	static createFolder(path: string): void {
+		if (fs.existsSync(path)) {
+			return;
+		}
 		fs.mkdirSync(path, { recursive: true });
 	}
 

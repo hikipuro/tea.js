@@ -38,7 +38,7 @@ export class AppBuilder {
 				var destPath = "";
 				if (LocalFile.isFolder(srcPath)) {
 					destPath = LocalFile.join(dest, file.name);
-					LocalFile.copyFile(srcPath, destPath);
+					LocalFile.createFolder(destPath);
 					this.copyFolder(srcPath, destPath);
 					return;
 				}
