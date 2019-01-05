@@ -272,11 +272,13 @@ export class TextMesh extends Component {
 		}
 		var padding = this._padding;
 		var lineSpacing = this._lineSpacing * 1.2;
+		var halfLineHeight = fontSize;
+		halfLineHeight *= 0.5;
 		var length = text.length;
 		for (var i = 0; i < length; i++) {
 			var line = text[i];
 			var x = padding;
-			var y = padding + (fontSize * i) * lineSpacing;
+			var y = padding + (fontSize * i) * lineSpacing + halfLineHeight;
 			var metrics = context.measureText(line);
 			switch (this._alignment) {
 				case Tea.TextAlignment.Center:
@@ -350,8 +352,8 @@ export class TextMesh extends Component {
 		var context = this._context;
 		//context.imageSmoothingEnabled = false;
 		context.textAlign = "start";
-		context.textBaseline = "top";
-		context.fillStyle = "#000";
+		context.textBaseline = "middle";
+		context.fillStyle = "black";
 		this.clearRect();
 		this.updateFont();
 	}
