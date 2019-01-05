@@ -16,7 +16,10 @@ export class SceneLoader {
 		}
 		var loaded = 0;
 		var length = json.children.length;
-		for (var i = 0; i < length; i++) {
+		var loadNext = (i: number) => {
+			if (i >= length) {
+				return;
+			}
 			var item = json.children[i];
 			this.loadObject3D(app, item, (object3d: Tea.Object3D) => {
 				if (object3d != null) {
@@ -26,8 +29,10 @@ export class SceneLoader {
 				if (loaded >= length) {
 					callback(scene);
 				}
+				loadNext(i + 1);
 			});
-		}
+		};
+		loadNext(0);
 	}
 
 	static loadObject3D(app: Tea.App, json: any, callback: (object3d: Tea.Object3D) => void): void {
@@ -99,17 +104,26 @@ export class SceneLoader {
 			});
 		}
 		length = 0;
-		if (json.children) {
-			length = json.children.length;
-		}
-		for (var i = 0; i < length; i++) {
+		var loadNext = (i: number) => {
+			if (i >= length) {
+				return;
+			}
 			var item = json.children[i];
+			if (item == null) {
+				loadNext(i + 1);
+				return;
+			}
 			this.loadObject3D(app, item, (child: Tea.Object3D) => {
 				if (child != null) {
 					object3d.addChild(child, false);
 				}
 				onLoad();
+				loadNext(i + 1);
 			});
+		};
+		if (json.children) {
+			length = json.children.length;
+			loadNext(0);
 		}
 	}
 

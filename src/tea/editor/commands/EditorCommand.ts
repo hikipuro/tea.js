@@ -361,11 +361,11 @@ export class EditorCommand extends EventDispatcher {
 				var type = component[Tea.JSONUtil.TypeName];
 				switch (type) {
 					case "Script":
-						component.path = LocalFile.relativeFromAssets(component.path);
+						component.path = this.resolveAssetsPath(component.path);
 						//console.log(component.path);
 						break;
 					case "Image":
-						component.url = LocalFile.relativeFromAssets(component.url);
+						component.url = this.resolveAssetsPath(component.url);
 						break;
 				}
 				if (component.material != null) {
@@ -375,7 +375,7 @@ export class EditorCommand extends EventDispatcher {
 						||  texture.value.url == null) {
 							return;
 						}
-						var url = LocalFile.relativeFromAssets(texture.value.url);
+						var url = this.resolveAssetsPath(texture.value.url);
 						//console.log("Texture", texture.value.url, url);
 						texture.value.url = url;
 					});
@@ -397,6 +397,17 @@ export class EditorCommand extends EventDispatcher {
 		};
 		forEachChildren(json.children);
 		return;
+	}
+
+	protected resolveAssetsPath(path: string): string {
+		if (path == null || path === "") {
+			return path;
+		}
+		if (path.indexOf("/") === 0 || path.match(/^[a-z]:\\/i)) {
+			path = LocalFile.relativeFromAssets(path);
+		}
+		path = path.replace(/\\/g, "/");
+		return path;
 	}
 
 	protected openNewProjectWindow(tab: string = null): void {
