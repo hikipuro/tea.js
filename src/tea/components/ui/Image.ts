@@ -3,14 +3,18 @@ import { UIComponent } from "./UIComponent";
 
 export class Image extends UIComponent {
 	static readonly className: string = "Image";
+	protected _graphics: Tea.Graphics2D;
 	protected _image: HTMLImageElement;
+	protected _url: string;
 	
 	constructor(app: Tea.App) {
 		super(app);
 		//this._width = 64;
 		//this._height = 64;
+		this._graphics = new Tea.Graphics2D(64, 64);
 		this._image = document.createElement("img") as HTMLImageElement;
 		this._image.addEventListener("load", this.onLoadImage);
+		this._url = null;
 	}
 
 	static fromJSON(app: Tea.App, json: any, callback: (component: Tea.Component) => void): void {
@@ -19,19 +23,42 @@ export class Image extends UIComponent {
 			return;
 		}
 		var image = new Image(app);
-		image.src = json.src;
-		callback(image);
+		if (json.url == null || json.url === "") {
+			callback(image);
+			return;
+		}
+		var onLoad = () => {
+			image._image.removeEventListener("load", onLoad);
+			callback(image);
+		};
+		image._image.addEventListener("load", onLoad);
+		image.url = json.url;
 	}
 
-	get src(): string {
-		return this._image.src;
+	get url(): string {
+		return this._url;
 	}
-	set src(value: string) {
-		//console.log("set src", value);
+	set url(value: string) {
+		if (this._url === value) {
+			return;
+		}
+		this._url = value;
+		if (value == null) {
+			this.texture.image = null;
+			return;
+		}
+		if (this.app.status.isEditor
+		&&  value.indexOf("/") !== 0) {
+			value = process.cwd() + "/assets/" + value;
+		}
 		this._image.src = value;
 	}
 
 	destroy(): void {
+		if (this._graphics != null) {
+			this._graphics.destroy();
+			this._graphics = undefined;
+		}
 		if (this._image != null) {
 			this._image.removeEventListener("load", this.onLoadImage);
 			this._image = undefined;
@@ -45,7 +72,7 @@ export class Image extends UIComponent {
 	toJSON(): Object {
 		var json: any = super.toJSON();
 		json[Tea.JSONUtil.TypeName] = Image.className;
-		json.src = this.src;
+		json.url = this.url;
 		return json;
 	}
 
@@ -54,6 +81,9 @@ export class Image extends UIComponent {
 		var image = this._image;
 		this._width = image.width;
 		this._height = image.height;
-		this.texture.image = image;
+		this._graphics.resize(image.width, image.height);
+		this._graphics.drawImage(image, 0, 0);
+		//this._image.src = "";
+		this.texture.image = this._graphics.canvas;
 	}
 }

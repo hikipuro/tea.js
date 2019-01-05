@@ -132,12 +132,18 @@ export class ParticleSystemRenderer extends Renderer {
 		shader.settings.blend.dstAlpha = Tea.ShaderBlendFunc.One;
 		var renderer = new ParticleSystemRenderer(app);
 		renderer.enabled = json.enabled;
-		renderer.material = Tea.Material.fromJSON(app, json.material);
-		renderer.material.renderQueue = 3000;
-		renderer.material.setFloat("_Cutoff", 0.0);
-		renderer.material.shader = shader;
-		renderer.material.mainTexture = Tea.Texture.getDefaultParticle(app);
-		callback(renderer);
+		Tea.Material.fromJSON(app, json.material, (material: Tea.Material) => {
+			if (material == null) {
+				callback(renderer);
+				return;
+			}
+			renderer.material = material;
+			renderer.material.renderQueue = 3000;
+			renderer.material.setFloat("_Cutoff", 0.0);
+			renderer.material.shader = shader;
+			renderer.material.mainTexture = Tea.Texture.getDefaultParticle(app);
+			callback(renderer);
+		});
 	}
 
 	toJSON(): Object {

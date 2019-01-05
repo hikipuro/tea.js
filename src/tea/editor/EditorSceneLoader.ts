@@ -12,8 +12,13 @@ export class EditorSceneLoader extends SceneLoader {
 			callback(null);
 			return;
 		}
+		var path = json.path;
+		if (app.status.isEditor
+		&&  path.indexOf("/") !== 0) {
+			path = process.cwd() + "/assets/" + path;
+		}
 		EditorScriptLoader.load(
-			app, json.path,
+			app, path,
 			(script: Tea.Script) => {
 				if (script == null) {
 					callback(script);

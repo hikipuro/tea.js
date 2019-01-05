@@ -140,7 +140,9 @@ export class CanvasRenderer extends Renderer {
 		var componentCount = components.length;
 		for (var i = 0; i < componentCount; i++) {
 			var component = components[i];
-			if (component == null || component.texture == null) {
+			if (component == null
+			||  component.texture == null
+			||  component.texture.image == null) {
 				continue;
 			}
 			var width = component.width;

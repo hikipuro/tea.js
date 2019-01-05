@@ -336,6 +336,7 @@ export class EditorCommand extends EventDispatcher {
 		var filename = this.editor.status.scenePath;
 		var scene = this.editor.status.scene;
 		var json = scene.toJSON();
+		this.resolveSceneDataPath(json);
 		var text = JSON.stringify(json, null, "\t");
 		if (text.indexOf("\r\n") <= 0) {
 			text = text.replace(/\n/g, "\r\n");
@@ -343,6 +344,59 @@ export class EditorCommand extends EventDispatcher {
 		LocalFile.writeText(filename, text);
 		this.editor.status.isChanged = false;
 		this.emit("save", filename);
+	}
+
+	protected resolveSceneDataPath(json: any): void {
+		if (json == null) {
+			return;
+		}
+		var forEachComponents = (components: any) => {
+			if (components == null || components.length <= 0) {
+				return;
+			}
+			components.forEach((component: any) => {
+				if (component == null) {
+					return;
+				}
+				var type = component[Tea.JSONUtil.TypeName];
+				switch (type) {
+					case "Script":
+						component.path = LocalFile.relativeFromAssets(component.path);
+						//console.log(component.path);
+						break;
+					case "Image":
+						component.url = LocalFile.relativeFromAssets(component.url);
+						break;
+				}
+				if (component.material != null) {
+					component.material.textures.forEach((texture: any) => {
+						if (texture == null
+						||  texture.value == null
+						||  texture.value.url == null) {
+							return;
+						}
+						var url = LocalFile.relativeFromAssets(texture.value.url);
+						//console.log("Texture", texture.value.url, url);
+						texture.value.url = url;
+					});
+				}
+			});
+		};
+		var forEachChildren = (children: any) => {
+			if (children == null || children.length <= 0) {
+				return;
+			}
+			children.forEach((child: any) => {
+				if (child == null) {
+					return;
+				}
+				//console.log(child.name);
+				forEachComponents(child.components);
+				forEachChildren(child.children);
+			});
+		};
+		forEachChildren(json.children);
+		return;
 	}
 
 	protected openNewProjectWindow(tab: string = null): void {

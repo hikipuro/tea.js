@@ -167,9 +167,15 @@ export class SpriteRenderer extends Renderer {
 		var renderer = new SpriteRenderer(app);
 		renderer.enabled = json.enabled;
 		renderer._wireframe = json.wireframe;
-		renderer.material = Tea.Material.fromJSON(app, json.material);
+		Tea.Material.fromJSON(app, json.material, (material: Tea.Material) => {
+			if (material == null) {
+				callback(renderer);
+				return;
+			}
+			renderer.material = material;
+			callback(renderer);
+		});
 		//meshRenderer.material.shader = Tea.Shader.fromJSON(app, json);
-		callback(renderer);
 	}
 
 	protected get isRenderable(): boolean {

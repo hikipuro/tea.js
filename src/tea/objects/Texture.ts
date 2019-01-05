@@ -11,6 +11,7 @@ type TextureImage = (
 export class Texture {
 	static readonly className: string = "Texture";
 	protected static _emptyImageData: ImageData;
+	protected static _graphics: Tea.Graphics2D;
 	app: Tea.App;
 	url: string;
 	texture: WebGLTexture;
@@ -36,6 +37,10 @@ export class Texture {
 		this._emptyColor = Tea.Color.white.clone();
 		var gl = this.gl;
 		this.texture = gl.createTexture();
+	}
+
+	static init(): void {
+		Texture._graphics = new Tea.Graphics2D(8, 8);
 	}
 
 	static getEmpty(app: Tea.App, r: number = 1.0, g: number = 1.0, b: number = 1.0, a: number = 1.0): Texture {
@@ -196,6 +201,7 @@ export class Texture {
 		if (this.premultiplyAlpha) {
 			gl.pixelStorei(gl.UNPACK_PREMULTIPLY_ALPHA_WEBGL, 1);
 		}
+		image = this.resizeImage(image);
 		gl.texImage2D(
 			gl.TEXTURE_2D, 0,
 			gl.RGBA, gl.RGBA,
@@ -224,6 +230,10 @@ export class Texture {
 			}
 			return;
 		}
+		if (this.app.status.isEditor
+		&&  url.indexOf("/") !== 0) {
+			url = process.cwd() + "/assets/" + url;
+		}
 		Tea.File.readImage(url, (err, image) => {
 			if (err) {
 				console.error("Texture.load()", url, err);
@@ -232,6 +242,7 @@ export class Texture {
 				}
 				return;
 			}
+			//console.log("load texture", url);
 			this._isEmpty = false;
 			this.url = url;
 			this.image = image;
@@ -265,11 +276,12 @@ export class Texture {
 		return json;
 	}
 
-	static fromJSON(app: Tea.App, json: any): Texture {
+	static fromJSON(app: Tea.App, json: any, callback: (texture: Texture) => void): void {
 		if (Tea.JSONUtil.isValidSceneJSON(json, Texture.className) === false) {
-			return null;
+			callback(null);
+			return;
 		}
-		var texture = null;
+		var texture: Texture = null;
 		if (json.isEmpty) {
 			var color = Tea.Color.fromArray(json.emptyColor);
 			texture = Texture.getEmpty(
@@ -278,10 +290,17 @@ export class Texture {
 		} else {
 			texture = Texture.getEmpty(app);
 			if (json.url) {
-				texture.load(json.url);
+				texture.load(json.url, (err: string, url: string) => {
+					if (err) {
+						callback(null);
+						return;
+					}
+					callback(texture);
+				});
+				return;
 			}
 		}
-		return texture;
+		callback(texture);
 	}
 
 	protected generateMipmap(image: TextureImage): void {
@@ -325,4 +344,19 @@ export class Texture {
 		}
 		return gl.REPEAT;
 	}
+
+	protected resizeImage(image: TextureImage): TextureImage {
+		if (image == null) {
+			return null;
+		}
+		if (Tea.Mathf.isPowerOf2(image.width, image.height)) {
+			return image;
+		}
+		var graphics = Texture._graphics;
+		graphics.resize(image.width, image.height);
+		graphics.drawImage(image, 0, 0, graphics.width, graphics.height);
+		return graphics.canvas;
+	}
 }
+
+Texture.init();

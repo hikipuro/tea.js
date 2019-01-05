@@ -16,7 +16,8 @@ import { Translator } from "../translate/Translator";
 				:value="wireframe"
 				@update="onUpdateWireframe">{{ translator.wireframe }}</CheckBox>
 			<Material
-				ref="material"></Material>
+				ref="material"
+				@update="onUpdateMaterial"></Material>
 		</div>
 	`,
 	data: () => {
@@ -81,6 +82,10 @@ export class MeshRenderer extends Vue {
 			this._component.wireframe = value;
 		}
 		this.$emit("update", "wireframe");
+	}
+
+	protected onUpdateMaterial(name: string): void {
+		this.$emit("update", name);
 	}
 }
 

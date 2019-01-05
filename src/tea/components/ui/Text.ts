@@ -1,13 +1,12 @@
 import * as Tea from "../../Tea";
 import { UIComponent } from "./UIComponent";
-import { Graphics2D } from "./Graphics2D";
 
 export class Text extends UIComponent {
 	static readonly className: string = "Text";
 	protected static readonly DefaultFontSize: number = 14;
 	protected static readonly DefaultFont: string = "sans-serif";
 	protected _isChanged: boolean;
-	protected _graphics: Graphics2D;
+	protected _graphics: Tea.Graphics2D;
 	protected _lineSpacing: number;
 	protected _alignment: Tea.TextAlignment;
 	protected _color: Tea.Color;
@@ -21,7 +20,7 @@ export class Text extends UIComponent {
 		super(app);
 		//this._width = 50;
 		//this._height = 33;
-		var graphics = new Graphics2D(64, 64);
+		var graphics = new Tea.Graphics2D(64, 64);
 		//graphics.canvas.style["webkitFontSmoothing"] = "none";
 		/*
 		graphics.textBaseline = "top";
@@ -237,7 +236,7 @@ export class Text extends UIComponent {
 		var graphics = this._graphics;
 		//graphics.imageSmoothingEnabled = false;
 		graphics.textAlign = "start";
-		graphics.textBaseline = "top";
+		graphics.textBaseline = "middle";
 		//graphics.fillStyle = this._color.toCssColor();
 		graphics.fillStyle = "black";
 		//graphics.shadowColor = "#000";
@@ -263,7 +262,7 @@ export class Text extends UIComponent {
 		if (textHeight < 0) {
 			textHeight = 0;
 		}
-		//textHeight += fontSize;
+		textHeight += fontSize;
 
 		var length = text.length;
 		for (var i = 0; i < length; i++) {
@@ -293,11 +292,19 @@ export class Text extends UIComponent {
 		var fontSize = this.getFontSize();
 		var padding = this._padding;
 		var lineSpacing = this._lineSpacing * 1.2;
+		var halfLineHeight = fontSize;
+		/*
+		halfLineHeight *= lineSpacing;
+		if (halfLineHeight < fontSize) {
+			halfLineHeight = fontSize;
+		}
+		*/
+		halfLineHeight *= 0.5;
 		var length = text.length;
 		for (var i = 0; i < length; i++) {
 			var line = text[i];
 			var x = padding;
-			var y = padding + (fontSize * i) * lineSpacing;
+			var y = padding + (fontSize * i) * lineSpacing + halfLineHeight;
 			var metrics = graphics.measureText(line);
 			switch (this._alignment) {
 				case Tea.TextAlignment.Center:

@@ -89,6 +89,7 @@ export * from "./utils/GeometryUtil";
 export * from "./utils/Gradient";
 export * from "./utils/GradientAlphaKey";
 export * from "./utils/GradientColorKey";
+export * from "./utils/Graphics2D";
 export * from "./utils/HTMLScale";
 export * from "./utils/JSONUtil";
 export * from "./utils/Keyframe";

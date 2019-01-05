@@ -248,7 +248,7 @@ export class BufferData {
 		var gl = this.gl;
 		var target = gl.ARRAY_BUFFER;
 		gl.bindBuffer(target, this.vertexBuffer);
-		gl.bufferData(target, null, gl.STATIC_DRAW);
+		gl.bufferData(target, new Float32Array(0), gl.STATIC_DRAW);
 		gl.bindBuffer(target, null);
 		this._vertexCount = 0;
 	}
@@ -257,7 +257,7 @@ export class BufferData {
 		var gl = this.gl;
 		var target = gl.ELEMENT_ARRAY_BUFFER;
 		gl.bindBuffer(target, this.indexBuffer);
-		gl.bufferData(target, null, gl.STATIC_DRAW);
+		gl.bufferData(target, new Float32Array(0), gl.STATIC_DRAW);
 		gl.bindBuffer(target, null);
 		this._triangleCount = 0;
 	}

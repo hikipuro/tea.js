@@ -35,6 +35,19 @@ export class LocalFile {
 		return nodePath.relative(from, to);
 	}
 
+	static relativeFromAssets(path: string): string {
+		if (path == null || path === "") {
+			return path;
+		}
+		var currentPath = process.cwd();
+		path = LocalFile.relative(currentPath, path);
+		if (path.indexOf("assets") !== 0) {
+			return null;
+		}
+		path = LocalFile.relative("assets", path);
+		return path;
+	}
+
 	static isFolder(path: string): boolean {
 		if (this.exists(path) === false) {
 			return false;

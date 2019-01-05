@@ -1,5 +1,12 @@
 import * as Tea from "../Tea";
 
+declare global {
+	interface Window {
+		AudioContext: any;
+		webkitAudioContext: any;
+	}
+}
+
 export class AppAudio {
 	context: AudioContext;
 	protected _app: Tea.App;
@@ -10,11 +17,16 @@ export class AppAudio {
 
 	constructor(app: Tea.App) {
 		this._app = app;
-		this.context = new AudioContext();
+		var audioContext = window.AudioContext || window.webkitAudioContext;
+		this.context = new audioContext();
 		this._gainNode = this.context.createGain();
-		this._pannerNode = this.context.createStereoPanner();
-		this._gainNode.connect(this._pannerNode);
-		this._pannerNode.connect(this.context.destination);
+		this._pannerNode = this.createStereoPanner();
+		if (this._pannerNode != null) {
+			this._gainNode.connect(this._pannerNode);
+			this._pannerNode.connect(this.context.destination);
+		} else {
+			this._gainNode.connect(this.context.destination);
+		}
 		this._isMuted = false;
 		this._mutedVolume = 0.0;
 		app.renderer.on("pause", () => {
@@ -54,9 +66,15 @@ export class AppAudio {
 	}
 
 	get pan(): number {
+		if (this._pannerNode == null) {
+			return 0;
+		}
 		return this._pannerNode.pan.value;
 	}
 	set pan(value: number) {
+		if (this._pannerNode == null) {
+			return;
+		}
 		var pan = this._pannerNode.pan;
 		pan.value = Tea.Mathf.clamp01(value);
 	}
@@ -106,5 +124,12 @@ export class AppAudio {
 				callback(error, null);
 			}
 		);
+	}
+
+	protected createStereoPanner(): StereoPannerNode {
+		if (this.context.createStereoPanner == null) {
+			return null;
+		}
+		return this.context.createStereoPanner();
 	}
 }

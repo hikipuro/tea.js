@@ -119,7 +119,8 @@ export class MeshRenderer extends Renderer {
 		}
 		super.render(camera, lights, renderSettings);
 		var meshFilter = this._meshFilter;
-		meshFilter.mesh.bufferData.setBuffers(this.material.shader);
+		var bufferData = meshFilter.mesh.bufferData;
+		bufferData.setBuffers(this.material.shader);
 		this.setFrontFace();
 		var draw = this.getDrawFunc(this._meshFilter.mesh);
 		draw.apply(this);
@@ -144,9 +145,15 @@ export class MeshRenderer extends Renderer {
 		meshRenderer.enabled = json.enabled;
 		meshRenderer.receiveShadows = json.receiveShadows;
 		meshRenderer._wireframe = json.wireframe;
-		meshRenderer.material = Tea.Material.fromJSON(app, json.material);
+		Tea.Material.fromJSON(app, json.material, (material: Tea.Material) => {
+			if (material == null) {
+				callback(meshRenderer);
+				return;
+			}
+			meshRenderer.material = material;
+			callback(meshRenderer);
+		});
 		//meshRenderer.material.shader = Tea.Shader.fromJSON(app, json);
-		callback(meshRenderer);
 	}
 
 	protected get isRenderable(): boolean {

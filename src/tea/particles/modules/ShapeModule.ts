@@ -174,7 +174,9 @@ export class ShapeModule {
 		module.shapeType = Tea.ParticleSystemShapeType[json.shapeType as string];
 		//module.skinnedMeshRenderer = Tea.SkinnedMeshRenderer.fromJSON(app, json.skinnedMeshRenderer);
 		module.sphericalDirectionAmount = json.sphericalDirectionAmount;
-		module.texture = Tea.Texture.fromJSON(app, json.texture);
+		Tea.Texture.fromJSON(app, json.texture, (texture: Tea.Texture) => {
+			module.texture = texture;
+		});
 		module.textureAlphaAffectsParticles = json.textureAlphaAffectsParticles;
 		module.textureBilinearFiltering = json.textureBilinearFiltering;
 		module.textureClipChannel = Tea.ParticleSystemShapeTextureChannel[json.textureClipChannel as string];

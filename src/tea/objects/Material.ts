@@ -293,16 +293,18 @@ export class Material {
 		return json;
 	}
 
-	static fromJSON(app: Tea.App, json: any): Material {
+	static fromJSON(app: Tea.App, json: any, callback: (material: Material) => void): void {
 		if (Tea.JSONUtil.isValidSceneJSON(json, Material.className) === false) {
-			return null;
+			callback(null);
+			return;
 		}
 		var material = new Material(app);
 		if (json.isDefault) {
 			material._isDefault = true;
 			//material._shader = app.createDefaultShader();
 			material._shader = Tea.Shader.find(app, "default");
-			return material;
+			callback(material);
+			return;
 		}
 		material.renderQueue = json.renderQueue;
 		var length = json.uniforms.length;
@@ -313,13 +315,14 @@ export class Material {
 		length = json.textures.length;
 		for (var i = 0; i < length; i++) {
 			var texture = json.textures[i];
-			material.setTexture(
-				texture.key,
-				Tea.Texture.fromJSON(app, texture.value)
-			);
+			Tea.Texture.fromJSON(app, texture.value, (tex: Tea.Texture) => {
+				material.setTexture(
+					texture.key, tex
+				);
+			});
 		}
 		material._shader = Tea.Shader.fromJSON(app, json.shader);
-		return material;
+		callback(material);
 	}
 
 	protected getValue(name: string, type: UniformType): UniformValue {

@@ -151,7 +151,8 @@ export class ImageSelector extends Vue {
 		}
 		this._isHovering = false;
 		el.classList.remove("dragEnter");
-		this.url = tag.path;
-		this.$emit("update", tag.path);
+		var path = tag.path;
+		this.url = path;
+		this.$emit("update", path);
 	}
 }

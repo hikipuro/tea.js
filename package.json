@@ -8,6 +8,7 @@
     "watch-tsc": "tsc -p . --watch",
     "watch": "webpack -w",
     "build-player": "webpack --config webpack.build.config.js",
+    "watch-player": "webpack -w --config webpack.build.config.js",
     "test": "mocha -r jsdom-global/register ./dist/tea/test/",
     "typedoc": "typedoc --out ./docs",
     "start": "webpack-dev-server --mode=development",

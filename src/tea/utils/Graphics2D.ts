@@ -1,4 +1,4 @@
-import * as Tea from "../../Tea";
+import * as Tea from "../Tea";
 
 declare global {
 	interface CanvasRenderingContext2D {

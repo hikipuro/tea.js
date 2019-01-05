@@ -48,8 +48,9 @@ export class UIImage extends Vue {
 		}
 		this.enabled = component.enabled;
 		var image = this.$refs.image as ImageSelector;
-		var url = component.src;
+		var url = component.url;
 		if (url) {
+			url = LocalFile.resolve("assets", url);
 			image.url = url;
 			//image.url = LocalFile.resolve(url);
 		}
@@ -57,7 +58,7 @@ export class UIImage extends Vue {
 
 	protected onUpdateImage(value: string): void {
 		if (this._component) {
-			this._component.src = value;
+			this._component.url = value;
 		}
 		this.$emit("update", "src");
 	}
