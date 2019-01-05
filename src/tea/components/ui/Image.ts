@@ -47,10 +47,7 @@ export class Image extends UIComponent {
 			this.texture.image = null;
 			return;
 		}
-		if (this.app.status.isEditor
-		&&  value.indexOf("/") !== 0) {
-			value = process.cwd() + "/assets/" + value;
-		}
+		value = this.app.resolvePath(value);
 		this._image.src = value;
 	}
 

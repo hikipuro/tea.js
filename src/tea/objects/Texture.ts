@@ -230,10 +230,7 @@ export class Texture {
 			}
 			return;
 		}
-		if (this.app.status.isEditor
-		&&  url.indexOf("/") !== 0) {
-			url = process.cwd() + "/assets/" + url;
-		}
+		url = this.app.resolvePath(url);
 		Tea.File.readImage(url, (err, image) => {
 			if (err) {
 				console.error("Texture.load()", url, err);

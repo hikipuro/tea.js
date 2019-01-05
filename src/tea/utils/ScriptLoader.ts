@@ -4,10 +4,7 @@ export class ScriptLoader {
 	static readonly MaxMatchLength = 2048;
 
 	static load(app: Tea.App, path: string, callback: (script: Tea.Script) => void): void {
-		if (app.status.isEditor
-		&&  path.indexOf("/") !== 0) {
-			path = process.cwd() + "/assets/" + path;
-		}
+		path = app.resolvePath(path);
 		Tea.File.readText(path, (err: any, data: string) => {
 			if (err) {
 				console.error(err);

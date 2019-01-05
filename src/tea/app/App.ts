@@ -338,6 +338,16 @@ export class App {
 		reader.readFile(url, callback);
 	}
 
+	resolvePath(path: string): string {
+		if (!this.status.isEditor) {
+			return path;
+		}
+		if (path.indexOf("/") !== 0 && !path.match(/^[a-z]:\\/i)) {
+			path = process.cwd() + "/assets/" + path;
+		}
+		return path;
+	}
+
 	protected init(canvasId: string): void {
 		this._canvas = document.getElementById(canvasId) as HTMLCanvasElement;
 		this._canvas.addEventListener(
