@@ -197,39 +197,67 @@ export class ObjectInspectorCommand {
 			return;
 		}
 
+		var editor = this.editor;
+		var app = editor.status.app;
 		var component = null;
 		switch (item.id) {
 			case "Audio/Audio Source":
-				component = Tea.AudioSource;
+				component = new Tea.AudioSource(app);
 				break;
 			case "Effects/Line Renderer":
-				component = Tea.LineRenderer;
+				component = new Tea.LineRenderer(app);
 				break;
 			case "Mesh/Mesh Filter":
-				component = Tea.MeshFilter;
+				component = new Tea.MeshFilter(app);
 				break;
 			case "Mesh/Mesh Renderer":
-				component = Tea.MeshRenderer;
+				component = new Tea.MeshRenderer(app);
 				break;
 			case "Physics/BoxCollider":
-				component = Tea.BoxCollider;
+				component = new Tea.BoxCollider(app);
 				break;
 			case "Physics/SphereCollider":
-				component = Tea.SphereCollider;
+				component = new Tea.SphereCollider(app);
 				break;
 			case "Physics/Rigidbody":
-				component = Tea.Rigidbody;
+				component = new Tea.Rigidbody(app);
 				break;
 			case "Rendering/Camera":
-				component = Tea.Camera;
+				component = new Tea.Camera(app);
 				break;
 			case "Rendering/Light":
-				component = Tea.Light;
+				component = new Tea.Light(app);
+				break;
+			case "UI/Canvas":
+				component = new Tea.Canvas(app);
+				break;
+			case "UI/CanvasRenderer":
+				component = new Tea.CanvasRenderer(app);
+				var shader = new Tea.Shader(app);
+				shader.attach(
+					Tea.ShaderSources.uiComponentVS,
+					Tea.ShaderSources.uiComponentFS
+				);
+				shader.settings.enableDepthTest = false;
+				shader.settings.enableBlend = true;
+				shader.settings.blend.srcRGB = Tea.ShaderBlendFunc.SrcAlpha;
+				shader.settings.blend.dstRGB = Tea.ShaderBlendFunc.OneMinusSrcAlpha;
+				shader.settings.blend.srcAlpha = Tea.ShaderBlendFunc.One;
+				shader.settings.blend.dstAlpha = Tea.ShaderBlendFunc.One;
+				component.material = Tea.Material.getDefault(app);
+				component.material.renderQueue = 4000;
+				component.material.setFloat("_Cutoff", 0.0);
+				component.material.shader = shader;
+				break;
+			case "UI/Text":
+				component = new Tea.UI.Text(app);
+				break;
+			case "UI/Image":
+				component = new Tea.UI.Image(app);
 				break;
 		}
 		if (component != null) {
-			object3d.addComponent(component);
-			var editor = this.editor;
+			object3d.addComponentInstance(component);
 			editor.hierarchyView.command.selectItem(object3d);
 			editor.status.isChanged = true;
 		}

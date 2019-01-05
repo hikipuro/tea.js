@@ -179,6 +179,13 @@
 				"Title": "Rendering",
 				"Camera": "Camera",
 				"Light": "Light"
+			},
+			"UI": {
+				"Title": "UI",
+				"Canvas": "Canvas",
+				"CanvasRenderer": "CanvasRenderer",
+				"Text": "Text",
+				"Image": "Image"
 			}
 		}
 	},

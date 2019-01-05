@@ -466,6 +466,28 @@ export class EditorMenu {
 						label: translator.getText("Rendering/Light")
 					}
 				]
+			},
+			{
+				id: "UI",
+				label: translator.getText("UI/Title"),
+				submenu: [
+					{
+						id: "UI/Canvas",
+						label: translator.getText("UI/Canvas"),
+					},
+					{
+						id: "UI/CanvasRenderer",
+						label: translator.getText("UI/CanvasRenderer"),
+					},
+					{
+						id: "UI/Text",
+						label: translator.getText("UI/Text"),
+					},
+					{
+						id: "UI/Image",
+						label: translator.getText("UI/Image"),
+					}
+				]
 			}
 		];
 		EditorMenu.setMenuItemHandler(
