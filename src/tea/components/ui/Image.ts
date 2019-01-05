@@ -29,9 +29,16 @@ export class Image extends UIComponent {
 		}
 		var onLoad = () => {
 			image._image.removeEventListener("load", onLoad);
+			image._image.removeEventListener("error", onError);
+			callback(image);
+		};
+		var onError = () => {
+			image._image.removeEventListener("load", onLoad);
+			image._image.removeEventListener("error", onError);
 			callback(image);
 		};
 		image._image.addEventListener("load", onLoad);
+		image._image.addEventListener("error", onError);
 		image.url = json.url;
 	}
 

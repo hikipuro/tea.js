@@ -313,13 +313,16 @@ export class Material {
 			material._uniforms[uniform.key] = UniformItem.fromJSON(uniform.value);
 		}
 		length = json.textures.length;
-		for (var i = 0; i < length; i++) {
-			var texture = json.textures[i];
+		var loadTexture = (texture: any) => {
 			Tea.Texture.fromJSON(app, texture.value, (tex: Tea.Texture) => {
 				material.setTexture(
 					texture.key, tex
 				);
 			});
+		};
+		for (var i = 0; i < length; i++) {
+			var texture = json.textures[i];
+			loadTexture(texture);
 		}
 		material._shader = Tea.Shader.fromJSON(app, json.shader);
 		callback(material);

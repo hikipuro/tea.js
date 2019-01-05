@@ -345,6 +345,11 @@ export class App {
 		if (path.indexOf("/") !== 0 && !path.match(/^[a-z]:\\/i)) {
 			path = process.cwd() + "/assets/" + path;
 		}
+		/*
+		if (process.platform === "win32") {
+			path = path.replace(/\//g, "\\");
+		}
+		//*/
 		return path;
 	}
 

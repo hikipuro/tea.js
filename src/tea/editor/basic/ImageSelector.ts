@@ -21,7 +21,9 @@ import { LocalFile } from "../LocalFile";
 				@drop="onDrop">
 				<img
 					ref="image"
-					:src="url">
+					:src="url"
+					@load="onLoadImage"
+					@error="onErrorImage">
 				</img>
 			</div>
 		</div>
@@ -154,5 +156,13 @@ export class ImageSelector extends Vue {
 		var path = tag.path;
 		this.url = path;
 		this.$emit("update", path);
+	}
+
+	protected onLoadImage(e: Event): void {
+		this.image.style.display = null;
+	}
+
+	protected onErrorImage(e: Event): void {
+		this.image.style.display = "none";
 	}
 }
