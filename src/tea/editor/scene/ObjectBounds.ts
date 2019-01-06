@@ -28,6 +28,10 @@ export class ObjectBounds {
 		var bounds = meshRenderer.bounds;
 		var renderer = this.renderer;
 		renderer.clear();
+		if (bounds == null) {
+			renderer.update();
+			return;
+		}
 
 		var points = [];
 		for (var i = 0; i < 8; i++) {

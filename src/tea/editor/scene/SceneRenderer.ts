@@ -39,10 +39,10 @@ export class EditorSceneRenderer extends SceneRenderer {
 		this.update();
 		Tea.Renderer.drawCallCount = 0;
 		var camera = this.camera;
+		renderers.unshift(this.grid.renderer);
 		renderers.unshift(this.objectBounds.renderer);
 		renderers.unshift(this.collider.renderer);
 		renderers.unshift(this.outline.renderer);
-		renderers.unshift(this.grid.renderer);
 		renderers.unshift(this.frustumPlanes.renderer);
 		renderers.unshift(this.lightRange.renderer);
 		var renderSettings = this.scene.renderSettings;

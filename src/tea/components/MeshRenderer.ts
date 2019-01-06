@@ -243,21 +243,21 @@ export class MeshRenderer extends Renderer {
 		gl.drawArrays(gl.TRIANGLES, 0, count);
 	}
 
+	protected drawArraysWireframe(): void {
+		var gl = this.gl;
+		var count = this._meshFilter.mesh.vertexCount;
+		gl.drawArrays(gl.LINES, 0, count);
+	}
+
 	protected drawWireframe(): void {
 		var gl = this.gl;
 		var count = this._meshFilter.mesh.triangleCount * 3;
-		gl.drawElements(gl.LINES, count, gl.UNSIGNED_SHORT, 0);
+		gl.drawElements(gl.LINE_STRIP, count, gl.UNSIGNED_SHORT, 0);
 	}
 
 	protected drawWireframe32(): void {
 		var gl = this.gl;
 		var count = this._meshFilter.mesh.triangleCount * 3;
-		gl.drawElements(gl.LINES, count, gl.UNSIGNED_INT, 0);
-	}
-
-	protected drawArraysWireframe(): void {
-		var gl = this.gl;
-		var count = this._meshFilter.mesh.vertexCount;
-		gl.drawArrays(gl.LINES, 0, count);
+		gl.drawElements(gl.LINE_STRIP, count, gl.UNSIGNED_INT, 0);
 	}
 }
