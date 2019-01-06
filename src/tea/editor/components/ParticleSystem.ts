@@ -19,42 +19,42 @@ const vueComponents = {
 				ref="duration"
 				class="number"
 				:value="duration"
-				@update="onUpdateDuration">Duration</InputNumber>
+				@update="onUpdateDuration">{{ translator.duration }}</InputNumber>
 			<CheckBox
 				ref="looping"
 				:value="looping"
-				@update="onUpdateLooping">Looping</CheckBox>
+				@update="onUpdateLooping">{{ translator.looping }}</CheckBox>
 			<InputNumber
 				ref="startLifetime"
 				class="number"
 				:value="startLifetime"
-				@update="onUpdateStartLifetime">Start Lifetime</InputNumber>
+				@update="onUpdateStartLifetime">{{ translator.startLifetime }}</InputNumber>
 			<InputNumber
 				ref="startSpeed"
 				class="number"
 				:value="startSpeed"
-				@update="onUpdateStartSpeed">Start Speed</InputNumber>
+				@update="onUpdateStartSpeed">{{ translator.startSpeed }}</InputNumber>
 			<InputNumber
 				ref="startSize"
 				class="number"
 				:value="startSize"
-				@update="onUpdateStartSize">Start Size</InputNumber>
+				@update="onUpdateStartSize">{{ translator.startSize }}</InputNumber>
 			<ColorPicker
 				ref="startColor"
 				:value="startColor"
-				@update="onUpdateStartColor">Start Color</ColorPicker>
+				@update="onUpdateStartColor">{{ translator.startColor }}</ColorPicker>
 			<AnimationCurve
 				ref="gravityModifier"
 				class="number"
 				:value="gravityModifier"
-				@update="onUpdateGravityModifier">Gravity Modifier</AnimationCurve>
+				@update="onUpdateGravityModifier">{{ translator.gravityModifier }}</AnimationCurve>
 			<InputNumber
 				ref="maxParticles"
 				class="number"
 				:value="maxParticles"
 				:step="1"
 				:min="0"
-				@update="onUpdateMaxParticles">Max Particles</InputNumber>
+				@update="onUpdateMaxParticles">{{ translator.maxParticles }}</InputNumber>
 			<EmissionModule
 				ref="emission"></EmissionModule>
 			<ShapeModule
@@ -123,6 +123,14 @@ export class ParticleSystem extends Vue {
 		var translator = Translator.getInstance();
 		translator.basePath = "Components/ParticleSystem";
 		this.name = translator.getText("Title");
+		this.translator.duration = translator.getText("Duration");
+		this.translator.looping = translator.getText("Looping");
+		this.translator.startLifetime = translator.getText("StartLifetime");
+		this.translator.startSpeed = translator.getText("StartSpeed");
+		this.translator.startSize = translator.getText("StartSize");
+		this.translator.startColor = translator.getText("StartColor");
+		this.translator.gravityModifier = translator.getText("GravityModifier");
+		this.translator.maxParticles = translator.getText("MaxParticles");
 	}
 
 	protected mounted(): void {

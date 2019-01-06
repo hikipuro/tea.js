@@ -1,6 +1,7 @@
 import Vue from "vue";
 import Component from "vue-class-component";
 import * as Tea from "../../Tea";
+import { Translator } from "../translate/Translator";
 import { ImageSelector } from "../basic/ImageSelector";
 import { LocalFile } from "../LocalFile";
 
@@ -10,14 +11,15 @@ import { LocalFile } from "../LocalFile";
 			<ColorPicker
 				ref="color"
 				:value="color"
-				@update="onUpdateColor">Color</ColorPicker>
+				@update="onUpdateColor">{{ translator.color }}</ColorPicker>
 			<ImageSelector
 				ref="mainTexture"
-				@update="onUpdateMainTexture">Main Texture</ImageSelector>
+				@update="onUpdateMainTexture">{{ translator.mainTexture }}</ImageSelector>
 		</div>
 	`,
 	data: () => {
 		return {
+			translator: {},
 			name: "Material",
 			color: ""
 		}
@@ -25,12 +27,9 @@ import { LocalFile } from "../LocalFile";
 })
 export class Material extends Vue {
 	_material: Tea.Material;
+	translator: any;
 	name: string;
 	color: string;
-
-	protected updated(): void {
-		this.setMaterial(this._material);
-	}
 
 	setMaterial(material: Tea.Material): void {
 		this._material = material;
@@ -43,6 +42,17 @@ export class Material extends Vue {
 		if (url) {
 			mainTexture.url = LocalFile.resolve(url);
 		}
+	}
+
+	protected created(): void {
+		var translator = Translator.getInstance();
+		translator.basePath = "Components/Material";
+		this.translator.color = translator.getText("Color");
+		this.translator.mainTexture = translator.getText("MainTexture");
+	}
+
+	protected updated(): void {
+		this.setMaterial(this._material);
 	}
 
 	protected onUpdateColor(value: Tea.Color): void {

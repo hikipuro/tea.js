@@ -1,6 +1,7 @@
 import Vue from "vue";
 import Component from "vue-class-component";
 import * as Tea from "../../../Tea";
+import { Translator } from "../../translate/Translator";
 import { TitleBar } from "../TitleBar";
 
 @Component({
@@ -21,22 +22,23 @@ import { TitleBar } from "../TitleBar";
 					ref="shape"
 					:keys="shapeKeys"
 					:value="shape"
-					@update="onUpdateShape">Shape</SelectEnum>
+					@update="onUpdateShape">{{ name }}</SelectEnum>
 				<InputNumber
 					ref="angle"
 					class="number"
 					:value="angle"
-					@update="onUpdateAngle">Angle</InputNumber>
+					@update="onUpdateAngle">{{ translator.angle }}</InputNumber>
 				<InputNumber
 					ref="radius"
 					class="number"
 					:value="radius"
-					@update="onUpdateRadius">Radius</InputNumber>
+					@update="onUpdateRadius">{{ translator.radius }}</InputNumber>
 			</div>
 		</div>
 	`,
 	data: () => {
 		return {
+			translator: {},
 			name: "Shape",
 			enabled: false,
 			shapeKeys: [],
@@ -57,6 +59,7 @@ import { TitleBar } from "../TitleBar";
 })
 export class ShapeModule extends Vue {
 	_module: Tea.ParticleSystem.ShapeModule;
+	translator: any;
 	name: string;
 	enabled: boolean;
 	shapeKeys: Array<string>;
@@ -74,6 +77,14 @@ export class ShapeModule extends Vue {
 		this.shape = Tea.ParticleSystemShapeType[module.shapeType];
 		this.angle = module.angle;
 		this.radius = module.radius;
+	}
+
+	protected created(): void {
+		var translator = Translator.getInstance();
+		translator.basePath = "Components/ParticleSystem/ShapeModule";
+		this.name = translator.getText("Title");
+		this.translator.angle = translator.getText("Angle");
+		this.translator.radius = translator.getText("Radius");
 	}
 
 	protected onUpdateEnabled(value: boolean): void {

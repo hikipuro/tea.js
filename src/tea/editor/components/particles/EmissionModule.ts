@@ -1,6 +1,7 @@
 import Vue from "vue";
 import Component from "vue-class-component";
 import * as Tea from "../../../Tea";
+import { Translator } from "../../translate/Translator";
 import { TitleBar } from "../TitleBar";
 
 @Component({
@@ -21,12 +22,13 @@ import { TitleBar } from "../TitleBar";
 					ref="rateOverTime"
 					class="number"
 					:value="rateOverTime"
-					@update="onUpdateRateOverTime">Rate over Time</InputNumber>
+					@update="onUpdateRateOverTime">{{ translator.rateOverTime }}</InputNumber>
 			</div>
 		</div>
 	`,
 	data: () => {
 		return {
+			translator: {},
 			name: "Emission",
 			enabled: false,
 			rateOverTime: 0,
@@ -44,6 +46,7 @@ import { TitleBar } from "../TitleBar";
 })
 export class EmissionModule extends Vue {
 	_module: Tea.ParticleSystem.EmissionModule;
+	translator: any;
 	name: string;
 	enabled: boolean;
 	rateOverTime: number;
@@ -55,6 +58,13 @@ export class EmissionModule extends Vue {
 		}
 		this.enabled = module.enabled;
 		this.rateOverTime = module.rateOverTime.constant;
+	}
+
+	protected created(): void {
+		var translator = Translator.getInstance();
+		translator.basePath = "Components/ParticleSystem/EmissionModule";
+		this.name = translator.getText("Title");
+		this.translator.rateOverTime = translator.getText("RateOverTime");
 	}
 
 	protected onUpdateEnabled(value: boolean): void {

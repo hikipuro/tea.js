@@ -1,6 +1,7 @@
 import Vue from "vue";
 import Component from "vue-class-component";
 import * as Tea from "../../../Tea";
+import { Translator } from "../../translate/Translator";
 import { TitleBar } from "../TitleBar";
 import { Gradient } from "../../basic/Gradient";
 
@@ -20,12 +21,13 @@ import { Gradient } from "../../basic/Gradient";
 				}">
 				<Gradient
 					ref="color"
-					@update="onUpdateColor">Color</Gradient>
+					@update="onUpdateColor">{{ translator.color }}</Gradient>
 			</div>
 		</div>
 	`,
 	data: () => {
 		return {
+			translator: {},
 			name: "Color over Lifetime",
 			enabled: false
 		}
@@ -42,6 +44,7 @@ import { Gradient } from "../../basic/Gradient";
 })
 export class ColorOverLifetimeModule extends Vue {
 	_module: Tea.ParticleSystem.ColorOverLifetimeModule;
+	translator: any;
 	name: string;
 	enabled: boolean;
 
@@ -54,6 +57,13 @@ export class ColorOverLifetimeModule extends Vue {
 		var color = this.$refs.color as Gradient;
 		color._gradient = module.color.gradient;
 		color.updateImage();
+	}
+
+	protected created(): void {
+		var translator = Translator.getInstance();
+		translator.basePath = "Components/ParticleSystem/ColorOverLifetimeModule";
+		this.name = translator.getText("Title");
+		this.translator.color = translator.getText("Color");
 	}
 
 	protected onUpdateEnabled(value: boolean): void {

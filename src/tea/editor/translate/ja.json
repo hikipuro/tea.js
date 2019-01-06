@@ -124,7 +124,8 @@
 			"UI": {
 				"Title": "UI",
 				"Canvas": "キャンバス",
-				"Text": "テキスト"
+				"Text": "テキスト",
+				"Image": "画像"
 			}
 		}
 	},
@@ -156,19 +157,35 @@
 		},
 		"AddComponentMenu": {
 			"Audio": {
-				"Title": "オーディオ"
+				"Title": "オーディオ",
+				"AudioSource": "オーディオソース"
 			},
 			"Effects": {
-				"Title": "エフェクト"
+				"Title": "エフェクト",
+				"LineRenderer": "ラインレンダラ"
 			},
 			"Mesh": {
-				"Title": "メッシュ"
+				"Title": "メッシュ",
+				"MeshFilter": "メッシュフィルタ",
+				"MeshRenderer": "メッシュレンダラ"
 			},
 			"Physics": {
-				"Title": "物理"
+				"Title": "物理",
+				"BoxCollider": "ボックスコライダ",
+				"SphereCollider": "スフィアコライダ",
+				"Rigidbody": "剛体"
 			},
 			"Rendering": {
-				"Title": "レンダリング"
+				"Title": "レンダリング",
+				"Camera": "カメラ",
+				"Light": "ライト"
+			},
+			"UI": {
+				"Title": "UI",
+				"Canvas": "キャンバス",
+				"CanvasRenderer": "キャンバスレンダラ",
+				"Text": "テキスト",
+				"Image": "画像"
 			}
 		}
 	},
@@ -207,6 +224,8 @@
 			"Size": "縦幅",
 			"FieldOfView": "視野角",
 			"ClippingPlanes": "クリッピング平面",
+			"Near": "最近",
+			"Far": "最遠",
 			"ViewportRect": "ビューポート",
 			"Depth": "深度",
 			"EnableStereo": "ステレオ",
@@ -230,6 +249,10 @@
 		"LineRenderer": {
 			"Title": "ラインレンダラ"
 		},
+		"Material": {
+			"Color": "色",
+			"MainTexture": "メインテクスチャ"
+		},
 		"MeshFilter": {
 			"Title": "メッシュフィルタ"
 		},
@@ -239,7 +262,31 @@
 			"Wireframe": "ワイヤーフレーム"
 		},
 		"ParticleSystem": {
-			"Title": "パーティクルシステム"
+			"Title": "パーティクルシステム",
+			"Duration": "継続時間",
+			"Looping": "ループ",
+			"StartLifetime": "生存期間",
+			"StartSpeed": "開始時の速度",
+			"StartSize": "開始時の大きさ",
+			"StartColor": "開始時の色",
+			"GravityModifier": "重力の大きさ",
+			"MaxParticles": "最大個数",
+			"ColorOverLifetimeModule": {
+				"Title": "生存期間の色",
+				"Color": "色"
+			},
+			"EmissionModule": {
+				"Title": "放射",
+				"RateOverTime": "時間ごとの率"
+			},
+			"ShapeModule": {
+				"Title": "形状",
+				"Angle": "角度",
+				"Radius": "半径"
+			},
+			"VelocityOverLifetimeModule": {
+				"Title": "生存期間の加速度"
+			}
 		},
 		"Rigidbody": {
 			"Title": "剛体"
@@ -247,22 +294,25 @@
 		"Script": {
 			"Title": "スクリプト"
 		},
-		"Text": {
-			"Title": "テキスト",
-			"Text": "テキスト",
-			"LineSpacing": "行間隔",
-			"Alignment": "行揃え",
-			"FontSize": "フォントサイズ",
-			"FontStyle": "フォントスタイル",
-			"Font": "フォント",
-			"Color": "色"
-		},
 		"TextMesh": {
 			"Title": "テキストメッシュ",
 			"Text": "テキスト",
 			"CharacterSize": "文字サイズ",
 			"LineSpacing": "行間隔",
 			"Anchor": "アンカー",
+			"Alignment": "行揃え",
+			"FontSize": "フォントサイズ",
+			"FontStyle": "フォントスタイル",
+			"Font": "フォント",
+			"Color": "色"
+		},
+		"Image": {
+			"Title": "画像"
+		},
+		"Text": {
+			"Title": "テキスト",
+			"Text": "テキスト",
+			"LineSpacing": "行間隔",
 			"Alignment": "行揃え",
 			"FontSize": "フォントサイズ",
 			"FontStyle": "フォントスタイル",

@@ -249,6 +249,10 @@
 		"LineRenderer": {
 			"Title": "Line Renderer"
 		},
+		"Material": {
+			"Color": "Color",
+			"MainTexture": "Main Texture"
+		},
 		"MeshFilter": {
 			"Title": "Mesh Filter"
 		},
@@ -258,13 +262,49 @@
 			"Wireframe": "Wireframe"
 		},
 		"ParticleSystem": {
-			"Title": "Particle System"
+			"Title": "Particle System",
+			"Duration": "Duration",
+			"Looping": "Looping",
+			"StartLifetime": "Start Lifetime",
+			"StartSpeed": "Start Speed",
+			"StartSize": "Start Size",
+			"StartColor": "Start Color",
+			"GravityModifier": "Gravity Modifier",
+			"MaxParticles": "Max Particles",
+			"ColorOverLifetimeModule": {
+				"Title": "Color over Lifetime",
+				"Color": "Color"
+			},
+			"EmissionModule": {
+				"Title": "Emission",
+				"RateOverTime": "Rate over Time"
+			},
+			"ShapeModule": {
+				"Title": "Shape",
+				"Angle": "Angle",
+				"Radius": "Radius"
+			},
+			"VelocityOverLifetimeModule": {
+				"Title": "Velocity over Lifetime"
+			}
 		},
 		"Rigidbody": {
 			"Title": "Rigidbody"
 		},
 		"Script": {
 			"Title": "Script"
+		},
+		"TextMesh": {
+			"Title": "Text Mesh",
+			"Text": "Text",
+			"CharacterSize": "Character Size",
+			"LineSpacing": "Line Spacing",
+			"Anchor": "Anchor",
+			"Alignment": "Alignment",
+			"FontSize": "Font Size",
+			"FontStyle": "Font Style",
+			"Font": "Font",
+			"Color": "Color"
 		},
 		"Image": {
 			"Title": "Image"
@@ -273,18 +313,6 @@
 			"Title": "Text",
 			"Text": "Text",
 			"LineSpacing": "Line Spacing",
-			"Alignment": "Alignment",
-			"FontSize": "Font Size",
-			"FontStyle": "Font Style",
-			"Font": "Font",
-			"Color": "Color"
-		},
-		"TextMesh": {
-			"Title": "Text Mesh",
-			"Text": "Text",
-			"CharacterSize": "Character Size",
-			"LineSpacing": "Line Spacing",
-			"Anchor": "Anchor",
 			"Alignment": "Alignment",
 			"FontSize": "Font Size",
 			"FontStyle": "Font Style",

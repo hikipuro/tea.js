@@ -10,7 +10,7 @@ import { LocalFile } from "../LocalFile";
 		<div class="Image">
 			<ImageSelector
 				ref="image"
-				@update="onUpdateImage">Image</ImageSelector>
+				@update="onUpdateImage">{{ name }}</ImageSelector>
 		</div>
 	`,
 	data: () => {

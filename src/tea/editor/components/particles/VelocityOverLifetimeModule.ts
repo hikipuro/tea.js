@@ -1,6 +1,7 @@
 import Vue from "vue";
 import Component from "vue-class-component";
 import * as Tea from "../../../Tea";
+import { Translator } from "../../translate/Translator";
 import { TitleBar } from "../TitleBar";
 
 @Component({
@@ -37,6 +38,7 @@ import { TitleBar } from "../TitleBar";
 	`,
 	data: () => {
 		return {
+			translator: {},
 			name: "Velocity over Lifetime",
 			enabled: false,
 			x: 0,
@@ -56,6 +58,7 @@ import { TitleBar } from "../TitleBar";
 })
 export class VelocityOverLifetimeModule extends Vue {
 	_module: Tea.ParticleSystem.VelocityOverLifetimeModule;
+	translator: any;
 	name: string;
 	enabled: boolean;
 	x: number;
@@ -70,6 +73,12 @@ export class VelocityOverLifetimeModule extends Vue {
 		//console.log("update");
 		this.enabled = module.enabled;
 		this.x = module.x.constant;
+	}
+
+	protected created(): void {
+		var translator = Translator.getInstance();
+		translator.basePath = "Components/ParticleSystem/VelocityOverLifetimeModule";
+		this.name = translator.getText("Title");
 	}
 
 	protected onUpdateEnabled(value: boolean): void {
