@@ -1,4 +1,5 @@
 import * as Tea from "../Tea";
+import { SequentialLoader } from "../utils/SequentialLoader";
 
 export class SceneLoader {
 	static load(app: Tea.App, json: any, callback: (scene: Tea.Scene) => void): void {
@@ -14,25 +15,19 @@ export class SceneLoader {
 			callback(scene);
 			return;
 		}
-		var loaded = 0;
 		var length = json.children.length;
-		var loadNext = (i: number) => {
-			if (i >= length) {
-				return;
-			}
+		var loader = new SequentialLoader(length, scene);
+		loader.on("load", (i: number) => {
 			var item = json.children[i];
 			this.loadObject3D(app, item, (object3d: Tea.Object3D) => {
 				if (object3d != null) {
 					scene.addChild(object3d);
 				}
-				loaded++;
-				if (loaded >= length) {
-					callback(scene);
-				}
-				loadNext(i + 1);
+				loader.next();
 			});
-		};
-		loadNext(0);
+		});
+		loader.once("complete", callback);
+		loader.start();
 	}
 
 	static loadObject3D(app: Tea.App, json: any, callback: (object3d: Tea.Object3D) => void): void {
@@ -46,85 +41,88 @@ export class SceneLoader {
 		object3d.localPosition = Tea.Vector3.fromArray(json.localPosition);
 		object3d.localRotation = Tea.Quaternion.fromArray(json.localRotation);
 		object3d.localScale = Tea.Vector3.fromArray(json.localScale);
+		this.loadComponents(app, json, object3d, () => {
+			this.loadChildren(app, json, object3d, () => {
+				callback(object3d);
+			});
+		});
+	}
 
-		var loaded = 0;
-		var total = 0;
-		var length = 0;
-		if (json.components) {
-			length = json.components.length;
-			total += length;
-		}
-		if (json.children) {
-			total += json.children.length;
-		}
-		if (total <= 0) {
-			callback(object3d);
+	protected static loadChildren(app: Tea.App, json: any, object3d: Tea.Object3D, callback: () => void): void {
+		if (json == null
+		||  json.children == null
+		||  json.children.length <= 0) {
+			callback();
 			return;
 		}
-
-		var onLoad = (): void => {
-			loaded++;
-			if (loaded >= total) {
-				callback(object3d);
-				onload = undefined;
-			}
-		}
-
-		for (var i = 0; i < length; i++) {
-			var item = json.components[i];
-			var componentClass = Tea[item[Tea.JSONUtil.TypeName]];
-			if (componentClass == null) {
-				componentClass = Tea.UI[item[Tea.JSONUtil.TypeName]];
-			}
-			if (componentClass == null) {
-				onLoad();
-				continue;
-			}
-			if (item[Tea.JSONUtil.TypeName] === Tea.Script.className) {
-				this.loadScript(app, item, (component: Tea.Component) => {
-					if (component != null) {
-						component.object3d = object3d;
-						object3d.addComponentInstance(component);
-					}
-					onLoad();
-				});
-				continue;
-			}
-			if (componentClass.fromJSON == null) {
-				console.error("componentClass.fromJSON not found:", item[Tea.JSONUtil.TypeName]);
-				onLoad();
-				continue;
-			}
-			componentClass.fromJSON(app, item, (component: Tea.Component) => {
-				if (component != null) {
-					component.object3d = object3d;
-					object3d.addComponentInstance(component);
-				}
-				onLoad();
-			});
-		}
-		length = 0;
-		var loadNext = (i: number) => {
-			if (i >= length) {
-				return;
-			}
+		var length = json.children.length;
+		var loader = new SequentialLoader(length);
+		loader.on("load", (i: number) => {
 			var item = json.children[i];
 			if (item == null) {
-				loadNext(i + 1);
+				loader.next();
 				return;
 			}
 			this.loadObject3D(app, item, (child: Tea.Object3D) => {
 				if (child != null) {
 					object3d.addChild(child, false);
 				}
-				onLoad();
-				loadNext(i + 1);
+				loader.next();
 			});
-		};
-		if (json.children) {
-			length = json.children.length;
-			loadNext(0);
+		});
+		loader.once("complete", callback);
+		loader.start();
+	}
+
+	protected static loadComponents(app: Tea.App, json: any, object3d: Tea.Object3D, callback: () => void): void {
+		if (json == null
+		||  json.components == null
+		||  json.components.length <= 0) {
+			callback();
+			return;
 		}
+		var typeName = Tea.JSONUtil.TypeName;
+		var length = json.components.length;
+		var loader = new SequentialLoader(length);
+		loader.on("load", (i: number) => {
+			var item = json.components[i];
+			if (item == null) {
+				loader.next();
+				return;
+			}
+			var componentClass = Tea[item[typeName]];
+			if (componentClass == null) {
+				componentClass = Tea.UI[item[typeName]];
+			}
+			if (componentClass == null) {
+				loader.next();
+				return;
+			}
+			if (item[typeName] === Tea.Script.className) {
+				this.loadScript(app, item, (component: Tea.Component) => {
+					if (component != null) {
+						component.object3d = object3d;
+						object3d.addComponentInstance(component);
+					}
+					loader.next();
+				});
+				return;
+			}
+			if (componentClass.fromJSON == null) {
+				console.error("componentClass.fromJSON not found:", item[typeName]);
+				loader.next();
+				return;
+			}
+			componentClass.fromJSON(app, item, (component: Tea.Component) => {
+				if (component != null) {
+					component.object3d = object3d;
+					object3d.addComponentInstance(component);
+				}
+				loader.next();
+			});
+		});
+		loader.once("complete", callback);
+		loader.start();
 	}
 
 	protected static loadScript(app: Tea.App, json: any, callback: (component: Tea.Component) => void): void {

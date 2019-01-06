@@ -1,4 +1,5 @@
 import * as Tea from "../Tea";
+import { SequentialLoader } from "../utils/SequentialLoader";
 
 export class Skybox {
 	static readonly className: string = "Skybox";
@@ -52,30 +53,29 @@ export class Skybox {
 		renderer.material.setTexture("_Right", this.right);
 	}
 
-	static fromJSON(app: Tea.App, json: any): Skybox {
+	static fromJSON(app: Tea.App, json: any, callback: (skybox: Skybox) => void): void {
 		if (Tea.JSONUtil.isValidSceneJSON(json, Skybox.className) === false) {
 			return null;
 		}
+		var keys = [
+			"front",
+			"back",
+			"up",
+			"down",
+			"left",
+			"right"
+		];
 		var skybox = new Skybox(app);
-		Tea.Texture.fromJSON(app, json.front, (texture: Tea.Texture) => {
-			skybox.front = texture;
+		var loader = new SequentialLoader(keys.length, skybox);
+		loader.on("load", (i: number) => {
+			var key = keys[i];
+			Tea.Texture.fromJSON(app, json[key], (texture: Tea.Texture) => {
+				skybox[key] = texture;
+				loader.next();
+			});
 		});
-		Tea.Texture.fromJSON(app, json.back, (texture: Tea.Texture) => {
-			skybox.back = texture;
-		});
-		Tea.Texture.fromJSON(app, json.up, (texture: Tea.Texture) => {
-			skybox.up = texture;
-		});
-		Tea.Texture.fromJSON(app, json.down, (texture: Tea.Texture) => {
-			skybox.down = texture;
-		});
-		Tea.Texture.fromJSON(app, json.left, (texture: Tea.Texture) => {
-			skybox.left = texture;
-		});
-		Tea.Texture.fromJSON(app, json.right, (texture: Tea.Texture) => {
-			skybox.right = texture;
-		});
-		return skybox;
+		loader.once("complete", callback);
+		loader.start();
 	}
 
 	toJSON(): Object {

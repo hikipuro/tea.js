@@ -1,6 +1,7 @@
 import * as Tea from "../Tea";
 import { UniformType } from "./UniformType";
 import { UniformValue, UniformItem } from "./UniformItem";
+import { SequentialLoader } from "../utils/SequentialLoader";
 
 export class Material {
 	static readonly className: string = "Material";
@@ -312,20 +313,26 @@ export class Material {
 			var uniform = json.uniforms[i];
 			material._uniforms[uniform.key] = UniformItem.fromJSON(uniform.value);
 		}
-		length = json.textures.length;
-		var loadTexture = (texture: any) => {
-			Tea.Texture.fromJSON(app, texture.value, (tex: Tea.Texture) => {
-				material.setTexture(
-					texture.key, tex
-				);
-			});
-		};
-		for (var i = 0; i < length; i++) {
-			var texture = json.textures[i];
-			loadTexture(texture);
-		}
 		material._shader = Tea.Shader.fromJSON(app, json.shader);
-		callback(material);
+		if (json.textures == null || json.textures.length <= 0) {
+			callback(material);
+			return;
+		}
+		length = json.textures.length;
+		var loader = new SequentialLoader(length, material);
+		loader.on("load", (i: number) => {
+			var texture = json.textures[i];
+			if (texture == null) {
+				loader.next();
+				return;
+			}
+			Tea.Texture.fromJSON(app, texture.value, (t: Tea.Texture) => {
+				material.setTexture(texture.key, t);
+				loader.next();
+			});
+		});
+		loader.once("complete", callback);
+		loader.start();
 	}
 
 	protected getValue(name: string, type: UniformType): UniformValue {

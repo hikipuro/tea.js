@@ -16,7 +16,9 @@ export class RenderSettings {
 		}
 		var renderSettings = new RenderSettings(app);
 		renderSettings.ambientLight = Tea.Color.fromArray(json.ambientLight);
-		//renderSettings.skybox = ;
+		Tea.Skybox.fromJSON(app, json.skybox, (skybox: Tea.Skybox) => {
+			renderSettings.skybox = skybox;
+		});
 		return renderSettings;
 	}
 
