@@ -13,6 +13,7 @@ export class Mouse {
 	protected _element: HTMLElement;
 	protected _buttonCount: number = 5;
 	protected _isMoved: boolean;
+	protected _uiPosition: Tea.Vector2;
 	protected _position: Tea.Vector3;
 	protected _isPassiveSupported: boolean;
 
@@ -20,6 +21,7 @@ export class Mouse {
 		this._app = app;
 		this._element = element;
 		this._isMoved = false;
+		this._uiPosition = new Tea.Vector2();
 		this._position = new Tea.Vector3();
 		this._isPassiveSupported = false;
 		this.checkPassiveSupported();
@@ -33,6 +35,9 @@ export class Mouse {
 		return this._element;
 	}
 	set element(value: HTMLElement) {
+		if (this._element === value) {
+			return;
+		}
 		this.removeEvents(this._element);
 		this._element = value;
 		this.addEvents(value);
@@ -45,6 +50,10 @@ export class Mouse {
 
 	get position(): Tea.Vector3 {
 		return this._position;
+	}
+
+	get uiPosition(): Tea.Vector2 {
+		return this._uiPosition;
 	}
 
 	isDown(button: number): boolean {
@@ -132,11 +141,18 @@ export class Mouse {
 		//e.stopPropagation();
 		var width = this._app.width;
 		var height = this._app.height;
-		var clientWidth = this._element.clientWidth;
-		var clientHeight = this._element.clientHeight;
-		this.x = width * e.offsetX / clientWidth;
-		this.y = height * (1.0 - (e.offsetY / clientHeight));
-		this._position.set(this.x, this.y, 0);
+		var element = this._element;
+		var clientWidth = element.clientWidth;
+		var clientHeight = element.clientHeight;
+		var x = width * e.offsetX / clientWidth;
+		var y = height * (1.0 - (e.offsetY / clientHeight));
+		this.x = x;
+		this.y = y;
+		this._position[0] = x;
+		this._position[1] = y;
+		this._position[2] = 0.0;
+		this._uiPosition[0] = x;
+		this._uiPosition[1] = height - y;
 		this._isMoved = true;
 	}
 

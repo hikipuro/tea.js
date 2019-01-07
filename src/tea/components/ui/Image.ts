@@ -70,9 +70,6 @@ export class Image extends UIComponent {
 		super.destroy();
 	}
 
-	update(): void {
-	}
-
 	toJSON(): Object {
 		var json: any = super.toJSON();
 		json[Tea.JSONUtil.TypeName] = Image.className;

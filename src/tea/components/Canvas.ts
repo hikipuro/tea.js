@@ -21,6 +21,37 @@ export class Canvas extends Component {
 		super.destroy();
 	}
 
+	update(): void {
+		var object3d = this.object3d;
+		if (object3d == null) {
+			return;
+		}
+		var mouse = this.app.mouse;
+		var mousePosition = mouse.uiPosition;
+		var isMouseDown = mouse.isDown(0);
+		var isMouseUp = mouse.isUp(0);
+		var components = object3d.getComponentsInChildren(Tea.UI.UIComponent);
+		if (components == null || components.length <= 0) {
+			return;
+		}
+		var length = components.length;
+		for (var i = 0; i < length; i++) {
+			var component = components[i];
+			if (component == null || component.object3d == null) {
+				return;
+			}
+			if (component.collider.containsPoint(mousePosition)) {
+				component.object3d.sendMessage("onMouseOver");
+				if (isMouseDown) {
+					component.object3d.sendMessage("onMouseDown");
+				} else if (isMouseUp) {
+					component.object3d.sendMessage("onMouseUp");
+				}
+				//console.log("mouse over", component.object3d.name);
+			}
+		}
+	}
+
 	toJSON(): Object {
 		var json = super.toJSON();
 		json[Tea.JSONUtil.TypeName] = Canvas.className;

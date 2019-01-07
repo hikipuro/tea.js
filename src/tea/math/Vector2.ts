@@ -291,6 +291,19 @@ export class Vector2 extends Array<number> {
 		this[1] *= value[1];
 		return this;
 	}
+
+	applyQuaternion(q: Tea.Quaternion): void {
+		if (q == null) {
+			return;
+		}
+		var ax = q[0], ay = q[1], az = q[2], aw = q[3];
+		var bx = this[0], by = this[1];
+		var tx = (-az * by) * 2.0;
+		var ty = (az * bx) * 2.0;
+		var tz = (ax * by - ay * bx) * 2.0;
+		this[0] += aw * tx + ay * tz - az * ty;
+		this[1] += aw * ty + az * tx - ax * tz;
+	}
 }
 
 Vector2.init();

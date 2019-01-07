@@ -58,6 +58,7 @@ export class Text extends UIComponent {
 		}
 		this._width = value;
 		this._graphics.resize(value, this._height);
+		this._isSizeChanged = true;
 		this._isChanged = true;
 	}
 
@@ -70,6 +71,7 @@ export class Text extends UIComponent {
 		}
 		this._height = value;
 		this._graphics.resize(this._width, value);
+		this._isSizeChanged = true;
 		this._isChanged = true;
 	}
 
@@ -193,6 +195,7 @@ export class Text extends UIComponent {
 	}
 
 	update(): void {
+		super.update();
 		if (this._isChanged === false) {
 			return;
 		}
