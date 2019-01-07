@@ -64,6 +64,10 @@ export class Camera extends Component {
 	set aspect(value: number) {
 		this._aspect = value;
 	}
+
+	get viewportRect(): Tea.Rect {
+		return this.getViewportRect();
+	}
 	
 	get orthographic(): boolean {
 		return this._status.orthographic;

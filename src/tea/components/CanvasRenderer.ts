@@ -100,7 +100,7 @@ export class CanvasRenderer extends Renderer {
 		this._data.setBuffers(this.material.shader);
 		this.setFrontFace();
 		//console.log(this._components.length)
-		this.draw();
+		this.draw(camera);
 		//this.disableAllAttributes();
 	}
 
@@ -114,7 +114,7 @@ export class CanvasRenderer extends Renderer {
 		this.app.status.setFrontFace(this._frontFace);
 	}
 	
-	protected draw(): void {
+	protected draw(camera: Tea.Camera): void {
 		var shader = this.material.shader;
 		var locations = {
 			texture: shader.getUniformLocation("_MainTex"),
@@ -127,6 +127,16 @@ export class CanvasRenderer extends Renderer {
 			colorOffset: shader.getUniformLocation("_ColorOffset"),
 			colorMultiplier: shader.getUniformLocation("_ColorMultiplier"),
 		};
+
+		var viewportRect = camera.viewportRect;
+		var viewportWidth = 0.0;
+		var viewportHeight = 0.0;
+		if (viewportRect[2] !== 0.0) {
+			viewportWidth = 1.0 / viewportRect[2];
+		}
+		if (viewportRect[3] !== 0.0) {
+			viewportHeight = 1.0 / viewportRect[3];
+		}
 
 		var gl = this.gl;
 		var TRIANGLES = gl.TRIANGLES;
@@ -161,11 +171,15 @@ export class CanvasRenderer extends Renderer {
 			var p = object3d.position;
 			var s = object3d.scale;
 			gl.uniform2f(locations.anchor, -1.0, -1.0);
-			gl.uniform2f(locations.position, p[0], p[1]);
+			gl.uniform2f(
+				locations.position,
+				p[0] * viewportWidth,
+				p[1] * viewportHeight
+			);
 			gl.uniform2f(
 				locations.size,
-				width * s[0],
-				height * s[1]
+				width * s[0] * viewportWidth,
+				height * s[1] * viewportHeight
 			);
 
 			gl.uniform4fv(locations.colorOffset, component.colorOffset);
