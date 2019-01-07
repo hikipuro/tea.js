@@ -24,6 +24,7 @@ declare global {
 				type="text"
 				size="1"
 				:value="value"
+				:disabled="disabled"
 				@change="onChange"
 				@keydown="onKeyDown"
 				@keyup="onKeyUp"
@@ -49,6 +50,10 @@ declare global {
 			type: Number,
 			default: Number.POSITIVE_INFINITY
 		},
+		disabled: {
+			type: Boolean,
+			default: false
+		},
 		enablePointerLock: {
 			type: Boolean,
 			default: true
@@ -60,6 +65,7 @@ export class InputNumber extends Vue {
 	step: number;
 	min: number;
 	max: number;
+	disabled: boolean;
 	enablePointerLock: boolean;
 	protected _prev: number;
 	protected _mouseDownValue: number;
@@ -102,6 +108,9 @@ export class InputNumber extends Vue {
 	}
 
 	protected onKeyDown(e: KeyboardEvent): void {
+		if (this.disabled) {
+			return;
+		}
 		var value = this.value;
 		switch (e.key) {
 			case "ArrowUp":
@@ -118,10 +127,16 @@ export class InputNumber extends Vue {
 	}
 
 	protected onKeyUp(e: KeyboardEvent): void {
+		if (this.disabled) {
+			return;
+		}
 		this.update();
 	}
 
 	protected onKeyPress(e: KeyboardEvent): void {
+		if (this.disabled) {
+			return;
+		}
 		if (e.type === "paste") {
 			e.returnValue = false;
 			e.preventDefault();
@@ -136,11 +151,17 @@ export class InputNumber extends Vue {
 	}
 
 	protected onFocus(e: FocusEvent): void {
+		if (this.disabled) {
+			return;
+		}
 		var el = this.$refs.text as HTMLInputElement;
 		el.setSelectionRange(0, el.value.length);
 	}
 
 	protected onMouseDownTitle(e: MouseEvent): void {
+		if (this.disabled) {
+			return;
+		}
 		this._mouseDownValue = this.value;
 		if (this.enablePointerLock) {
 			document.addEventListener("mousemove", this.onMouseMoveTitle);
@@ -158,6 +179,9 @@ export class InputNumber extends Vue {
 	}
 
 	protected onMouseMoveTitle(e: MouseEvent): void {
+		if (this.disabled) {
+			return;
+		}
 		if (this.enablePointerLock) {
 			this._mouseDownX += e.movementX;
 			this._mouseDownY -= e.movementY;
@@ -182,6 +206,9 @@ export class InputNumber extends Vue {
 	}
 
 	protected onMouseUpTitle(e: MouseEvent): void {
+		if (this.disabled) {
+			return;
+		}
 		this.$emit("change", this.value);
 		if (this.enablePointerLock) {
 			document.removeEventListener("mousemove", this.onMouseMoveTitle);
