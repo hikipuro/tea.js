@@ -17,16 +17,9 @@ export class Camera extends Component {
 	stereoDistance: number;
 	stereoMode: Tea.CameraStereoMode;
 	isStereoLeft: boolean;
-	frustumPlanes: Array<Tea.Plane>;
 
 	protected gl: WebGLRenderingContext;
 	protected _aspect: number;
-	protected _orthographic: boolean;
-	protected _cameraToWorldMatrix: Tea.Matrix4x4;
-	protected _worldToCameraMatrix: Tea.Matrix4x4;
-	protected _projectionMatrix: Tea.Matrix4x4;
-	protected _viewProjectionMatrix: Tea.Matrix4x4;
-	protected _inverseViewProjectionMatrix: Tea.Matrix4x4;
 	protected _status: CameraStatus;
 	protected _viewportRect: Tea.Rect;
 	protected _enableStereo: boolean;
@@ -48,18 +41,12 @@ export class Camera extends Component {
 		this.nearClipPlane = 0.3;
 		this.farClipPlane = 1000.0;
 		this.backgroundColor = Tea.Color.background.clone();
-		this._orthographic = false;
 		this.orthographicSize = 5.0;
 		this.rect = new Tea.Rect(0.0, 0.0, 1.0, 1.0);
 		this.stereoDistance = 0.1;
 		this.stereoMode = Tea.CameraStereoMode.SideBySide;
 		this.isStereoLeft = true;
-		this._cameraToWorldMatrix = new Tea.Matrix4x4();
-		this._worldToCameraMatrix = new Tea.Matrix4x4();
-		this._projectionMatrix = new Tea.Matrix4x4();
-		this._viewProjectionMatrix = new Tea.Matrix4x4();
-		this._inverseViewProjectionMatrix = new Tea.Matrix4x4();
-		this._status = new CameraStatus();
+		this._status = new CameraStatus(this);
 		this._viewportRect = new Tea.Rect();
 		this._enableStereo = false;
 		//this.update();
@@ -79,27 +66,27 @@ export class Camera extends Component {
 	}
 	
 	get orthographic(): boolean {
-		return this._orthographic;
+		return this._status.orthographic;
 	}
 	set orthographic(value: boolean) {
 		this._status.aspect = 0.0;
-		this._orthographic = value;
+		this._status.orthographic = value;
 	}
 
 	get cameraToWorldMatrix(): Tea.Matrix4x4 {
-		return this._cameraToWorldMatrix;
+		return this._status.cameraToWorldMatrix;
 	}
 
 	get worldToCameraMatrix(): Tea.Matrix4x4 {
-		return this._worldToCameraMatrix;
+		return this._status.worldToCameraMatrix;
 	}
 
 	get projectionMatrix(): Tea.Matrix4x4 {
-		return this._projectionMatrix;
+		return this._status.projectionMatrix;
 	}
 
 	get viewProjectionMatrix(): Tea.Matrix4x4 {
-		return this._viewProjectionMatrix;
+		return this._status.viewProjectionMatrix;
 	}
 
 	get enableStereo(): boolean {
@@ -109,6 +96,10 @@ export class Camera extends Component {
 		this._status.aspect = 0.0;
 		this._status.position.set(0.0001, 0.0002, 0.0003);
 		this._enableStereo = value;
+	}
+
+	get frustumPlanes(): Array<Tea.Plane> {
+		return this._status.frustumPlanes;
 	}
 
 	destroy(): void {
@@ -125,77 +116,16 @@ export class Camera extends Component {
 		this.stereoDistance = undefined;
 		this.stereoMode = undefined;
 		this.isStereoLeft = undefined;
-		this.frustumPlanes = undefined;
 		this.gl = undefined;
 		this._aspect = undefined;
-		this._cameraToWorldMatrix = undefined;
-		this._worldToCameraMatrix = undefined;
-		this._projectionMatrix = undefined;
-		this._viewProjectionMatrix = undefined;
-		this._inverseViewProjectionMatrix = undefined;
 		this._status.destroy();
 		this._status = undefined;
-		this._cameraToWorldMatrix = undefined;
 		this._enableStereo = undefined;
 		super.destroy();
 	}
 
 	updateMatrix(): void {
-		var isChanged = false;
-		var object3d = this.object3d;
-		if (this._status.isViewChanged(object3d)) {
-			this._cameraToWorldMatrix.setTR(
-				object3d.position,
-				object3d.rotation
-			);
-			this._cameraToWorldMatrix.toggleHand();
-			this._worldToCameraMatrix = this._cameraToWorldMatrix.inverse;
-
-			this._status.position.copy(object3d.position);
-			this._status.rotation.copy(object3d.rotation);
-			isChanged = true;
-		}
-
-		if (this.orthographic) {
-			var aspect = this.aspect;
-			if (this._status.isOrthoChanged(this, aspect)) {
-				var h = this.orthographicSize;
-				var w = h * aspect;
-				this._projectionMatrix.ortho(
-					-w, w, -h, h,
-					this.nearClipPlane,
-					this.farClipPlane
-				);
-				this._status.aspect = aspect;
-				this._status.orthographicSize = this.orthographicSize;
-				this._status.nearClipPlane = this.nearClipPlane;
-				this._status.farClipPlane = this.farClipPlane;
-				isChanged = true;
-			}
-		} else {
-			var aspect = this.aspect;
-			if (this._status.isPerspectiveChanged(this, aspect)) {
-				this._projectionMatrix.perspective(
-					this.fieldOfView,
-					aspect,
-					this.nearClipPlane,
-					this.farClipPlane
-				);
-				this._status.fieldOfView = this.fieldOfView;
-				this._status.aspect = aspect;
-				this._status.nearClipPlane = this.nearClipPlane;
-				this._status.farClipPlane = this.farClipPlane;
-				isChanged = true;
-			}
-		}
-
-		if (isChanged) {
-			this._viewProjectionMatrix = this._projectionMatrix.mul(
-				this._worldToCameraMatrix
-			);
-			this._inverseViewProjectionMatrix = this._viewProjectionMatrix.inverse;
-			this.frustumPlanes = Tea.GeometryUtil.calculateFrustumPlanes(this);
-		}
+		this._status.updateMatrix();
 	}
 
 	update(): void {
@@ -221,40 +151,7 @@ export class Camera extends Component {
 	}
 
 	updateLeft(setViewport: boolean = true): void {
-		var position = this.object3d.position.clone();
-		position.x -= this.stereoDistance;
-
-		this._cameraToWorldMatrix.setTR(
-			position,
-			this.object3d.rotation
-		);
-		this._cameraToWorldMatrix.toggleHand();
-		this._worldToCameraMatrix = this._cameraToWorldMatrix.inverse;
-
-		if (this.orthographic) {
-			var aspect = this.aspect;
-			var h = this.orthographicSize;
-			var w = h * aspect;
-			this._projectionMatrix.ortho(
-				-w, w, -h, h,
-				this.nearClipPlane,
-				this.farClipPlane
-			);
-		} else {
-			this._projectionMatrix.perspective(
-				this.fieldOfView,
-				this.aspect,
-				this.nearClipPlane,
-				this.farClipPlane
-			);
-		}
-
-		this._viewProjectionMatrix = this._projectionMatrix.mul(
-			this._worldToCameraMatrix
-		);
-		this._inverseViewProjectionMatrix = this._viewProjectionMatrix.inverse;
-		//this.frustumPlanes = Tea.GeometryUtil.calculateFrustumPlanes(this);
-		
+		this._status.updateStereo(true);
 		this.isStereoLeft = true;
 		if (setViewport) {
 			var scene = this.object3d.scene;
@@ -269,40 +166,7 @@ export class Camera extends Component {
 	}
 
 	updateRight(setViewport: boolean = true): void {
-		var position = this.object3d.position.clone();
-		position.x += this.stereoDistance;
-
-		this._cameraToWorldMatrix.setTR(
-			position,
-			this.object3d.rotation
-		);
-		this._cameraToWorldMatrix.toggleHand();
-		this._worldToCameraMatrix = this._cameraToWorldMatrix.inverse;
-
-		if (this.orthographic) {
-			var aspect = this.aspect;
-			var h = this.orthographicSize;
-			var w = h * aspect;
-			this._projectionMatrix.ortho(
-				-w, w, -h, h,
-				this.nearClipPlane,
-				this.farClipPlane
-			);
-		} else {
-			this._projectionMatrix.perspective(
-				this.fieldOfView,
-				this.aspect,
-				this.nearClipPlane,
-				this.farClipPlane
-			);
-		}
-
-		this._viewProjectionMatrix = this._projectionMatrix.mul(
-			this._worldToCameraMatrix
-		);
-		this._inverseViewProjectionMatrix = this._viewProjectionMatrix.inverse;
-		//this.frustumPlanes = Tea.GeometryUtil.calculateFrustumPlanes(this);
-		
+		this._status.updateStereo(false);
 		this.isStereoLeft = false;
 		if (setViewport) {
 			var scene = this.object3d.scene;
@@ -404,14 +268,14 @@ export class Camera extends Component {
 		var world = viewport.clone();
 		world[0] = world[0] * 2.0 - 1.0;
 		world[1] = world[1] * 2.0 - 1.0;
-		world.applyMatrix4(this._inverseViewProjectionMatrix);
+		world.applyMatrix4(this._status.inverseViewProjectionMatrix);
 		return world;
 	}
 
 	unproject$(viewport: Tea.Vector3): Tea.Vector3 {
 		viewport[0] = viewport[0] * 2.0 - 1.0;
 		viewport[1] = viewport[1] * 2.0 - 1.0;
-		viewport.applyMatrix4(this._inverseViewProjectionMatrix);
+		viewport.applyMatrix4(this._status.inverseViewProjectionMatrix);
 		return viewport;
 	}
 
@@ -431,7 +295,7 @@ export class Camera extends Component {
 		json.nearClipPlane = this.nearClipPlane;
 		json.farClipPlane = this.farClipPlane;
 		json.backgroundColor = this.backgroundColor;
-		json.orthographic = this._orthographic;
+		json.orthographic = this._status.orthographic;
 		json.orthographicSize = this.orthographicSize;
 		json.rect = this.rect;
 		//json.targetTexture = this.targetTexture;

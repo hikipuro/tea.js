@@ -53,11 +53,18 @@ export class AppStatus {
 		if (color == null) {
 			return;
 		}
-		if (this.clearColor.equals(color)) {
+		var clearColor = this.clearColor;
+		if (clearColor[0] === color[0]
+		&&  clearColor[1] === color[1]
+		&&  clearColor[2] === color[2]
+		&&  clearColor[3] === color[3]) {
 			return;
 		}
 		this._gl.clearColor(color[0], color[1], color[2], color[3]);
-		this.clearColor.copy(color);
+		clearColor[0] = color[0];
+		clearColor[1] = color[1];
+		clearColor[2] = color[2];
+		clearColor[3] = color[3];
 	}
 
 	setFrontFace(face: number): void {
