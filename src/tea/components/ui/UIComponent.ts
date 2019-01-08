@@ -5,6 +5,7 @@ import { UIStatus } from "./UIStatus";
 
 export class UIComponent extends Component {
 	static readonly className: string = "UIComponent";
+	useMouseEvents: boolean;
 	protected _width: number;
 	protected _height: number;
 	protected _isSizeChanged: boolean;
@@ -15,6 +16,7 @@ export class UIComponent extends Component {
 	
 	constructor(app: Tea.App) {
 		super(app);
+		this.useMouseEvents = true;
 		this._width = 0.0;
 		this._height = 0.0;
 		this._isSizeChanged = true;
@@ -67,6 +69,7 @@ export class UIComponent extends Component {
 	}
 
 	destroy(): void {
+		this.useMouseEvents = undefined;
 		this._width = undefined;
 		this._height = undefined;
 		this._isSizeChanged = undefined;
@@ -91,7 +94,9 @@ export class UIComponent extends Component {
 			collider.size[1] = height;
 			this._isSizeChanged = false;
 		}
-		this.updateMouseStatus();
+		if (this.useMouseEvents) {
+			this.updateMouseStatus();
+		}
 	}
 
 	protected updateMouseStatus(): void {
