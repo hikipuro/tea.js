@@ -14,24 +14,26 @@ export class MeshRenderer extends Renderer {
 		var gl = this.gl;
 		this.receiveShadows = true;
 		this._meshFilter = null;
-		this._bounds = null;
+		this._bounds = new Tea.Bounds();
 		this._wireframe = false;
 		this._frontFace = gl.CCW;
 	}
 
 	get bounds(): Tea.Bounds {
-		if (this._meshFilter == null
-		||  this._meshFilter.mesh == null) {
-			return null;
-		}
-		if (this._bounds != null) {
+		var object3d = this.object3d;
+		if (object3d == null
+		||  !object3d.isMoved
+		||  this._meshFilter == null) {
 			return this._bounds;
 		}
-		var position = this.object3d.position;
-		var rotation = this.object3d.rotation;
-		var scale = this.object3d.scale;
+		var position = object3d.position;
+		var rotation = object3d.rotation;
+		var scale = object3d.scale;
 
-		var bounds = this._meshFilter.mesh.bounds.clone();
+		var bounds = this._bounds;
+		if (this._meshFilter.mesh != null) {
+			bounds.copy(this._meshFilter.mesh.bounds);
+		}
 		var center = bounds.center;
 		var extents = bounds.extents;
 		center[0] *= scale[0];
@@ -69,7 +71,7 @@ export class MeshRenderer extends Renderer {
 		extents[0] = (max[0] - min[0]) * 0.5;
 		extents[1] = (max[1] - min[1]) * 0.5;
 		extents[2] = (max[2] - min[2]) * 0.5;
-		this._bounds = bounds;
+		//this._bounds = bounds;
 		return bounds;
 	}
 
@@ -107,7 +109,7 @@ export class MeshRenderer extends Renderer {
 		}
 		component.createData();
 		this._meshFilter = component;
-		this._bounds = null;
+		//this._bounds = null;
 	}
 
 	render(camera: Tea.Camera, lights: Array<Tea.Light>, renderSettings: Tea.RenderSettings): void {

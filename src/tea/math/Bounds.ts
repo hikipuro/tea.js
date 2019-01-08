@@ -35,8 +35,19 @@ export class Bounds {
 	}
 
 	copy(value: Bounds): Bounds {
-		this.center.copy(value.center);
-		this.extents.copy(value.extents);
+		if (value == null) {
+			return;
+		}
+		var c = this.center;
+		var e = this.extents;
+		var vc = value.center;
+		var ve = value.extents;
+		c[0] = vc[0];
+		c[1] = vc[1];
+		c[2] = vc[2];
+		e[0] = ve[0];
+		e[1] = ve[1];
+		e[2] = ve[2];
 		return this;
 	}
 
