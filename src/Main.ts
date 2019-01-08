@@ -29,16 +29,18 @@ export class Main {
 		//console.log(Tea.Screen.fullscreen);
 		console.log(Electron.remote.app.getGPUFeatureStatus());
 
-		var config = Electron.ipcRenderer.sendSync("getConfig");
 		editor = Editor.instance;
-		editor.$nextTick(() => {
-			if (config.isDebug) {
-				this.debug();
-				return;
-			}
-			//this.debug();
-			this.init();
-		});
+		editor.$nextTick(this.startEditor);
+	}
+
+	startEditor = (): void => {
+		var config = Electron.ipcRenderer.sendSync("getConfig");
+		if (config.isDebug) {
+			this.debug();
+			return;
+		}
+		//this.debug();
+		this.init();
 	}
 
 	init(): void {

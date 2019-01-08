@@ -347,11 +347,7 @@ export class Scene extends EventDispatcher {
 		this._components.sortRenderers();
 		var cameras = this._components.availableCameras;
 		//var renderers = this._components.availableRenderers;
-		var renderers = this._renderers.sort((a, b) => {
-			var renderQueueA = a.material.renderQueue;
-			var renderQueueB = b.material.renderQueue;
-			return renderQueueA - renderQueueB;
-		});
+		var renderers = this._renderers.sort(this.sortRenderers);
 		var lights = this._components.availableLights;
 
 		var canvasRenderers = [];
@@ -600,6 +596,12 @@ export class Scene extends EventDispatcher {
 			renderer.material.shader = shader;
 		}
 	}
+
+	protected sortRenderers(a: Tea.Renderer, b: Tea.Renderer): number {
+		var renderQueueA = a.material.renderQueue;
+		var renderQueueB = b.material.renderQueue;
+		return renderQueueA - renderQueueB;
+	};
 
 	protected clear(): void {
 		var app = this.app;

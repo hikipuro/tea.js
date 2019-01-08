@@ -94,10 +94,9 @@ class NodeMain {
 			return;
 		}
 		this.mainWindow = new MainWindow();
-		this.mainWindow.browserWindow.once("close", () => {
-			console.log("close mainWindow");
-			this.mainWindow = null;
-		});
+		this.mainWindow.browserWindow.once(
+			"close", this.onCloseMainWindow
+		);
 		this.mainWindow.show();
 	}
 
@@ -109,10 +108,9 @@ class NodeMain {
 		this.newProjectWindow = new NewProjectWindow(
 			null, tab
 		);
-		this.newProjectWindow.browserWindow.once("close", () => {
-			console.log("close newProjectWindow");
-			this.newProjectWindow = null;
-		});
+		this.newProjectWindow.browserWindow.once(
+			"close", this.onCloseNewProjectWindow
+		);
 		this.newProjectWindow.show();
 	}
 
@@ -148,6 +146,16 @@ class NodeMain {
 		var menu = this.createProjectMenu();
 		Electron.Menu.setApplicationMenu(menu);
 		this.showNewProjectWindow();
+	}
+
+	protected onCloseMainWindow = () => {
+		console.log("close mainWindow");
+		this.mainWindow = null;
+	}
+
+	protected onCloseNewProjectWindow = () => {
+		console.log("close newProjectWindow");
+		this.newProjectWindow = null;
 	}
 
 	protected onWindowAllClosed = () => {

@@ -393,67 +393,71 @@ export class Renderer extends Component {
 	}
 
 	protected setMaterialUniforms(): void {
+		this.material.eachProperty(
+			this.eachMaterialProperty
+		);
+	}
+
+	protected eachMaterialProperty = (name: string, item: Tea.UniformItem): void => {
 		var gl = this.gl;
 		var shader = this.material.shader;
-		this.material.eachProperty((name, item) => {
-			var location = shader.getUniformLocation(name);
-			if (location == null) {
-				return;
-			}
+		var location = shader.getUniformLocation(name);
+		if (location == null) {
+			return;
+		}
 
-			switch (item.type) {
-				case Tea.UniformType.Int:
-					gl.uniform1i(
-						location, item.value as number
-					);
-					break;
-				case Tea.UniformType.Float:
-					gl.uniform1f(
-						location, item.value as number
-					);
-					break;
-				case Tea.UniformType.Vector2:
-					gl.uniform2fv(
-						location, item.value as Tea.Vector2
-					);
-					break;
-				case Tea.UniformType.Vector4:
-					gl.uniform4fv(
-						location, item.value as Tea.Vector4
-					);
-					break;
-				case Tea.UniformType.Matrix:
-					gl.uniformMatrix4fv(
-						location, false, item.value as Tea.Matrix4x4
-					);
-					break;
-				case Tea.UniformType.Color:
-					gl.uniform4fv(
-						location, item.value as Tea.Color
-					);
-					break;
-				case Tea.UniformType.FloatArray:
-					gl.uniform1fv(
-						location, item.value as Array<number>
-					);
-					break;
-				case Tea.UniformType.Vector4Array:
-					gl.uniform4fv(
-						location, Tea.ArrayUtil.unroll(item.value as Array<Tea.Vector4>)
-					);
-					break;
-				case Tea.UniformType.MatrixArray:
-					gl.uniformMatrix4fv(
-						location, false, Tea.ArrayUtil.unroll(item.value as Array<Tea.Matrix4x4>)
-					);
-					break;
-				case Tea.UniformType.ColorArray:
-					gl.uniform4fv(
-						location, Tea.ArrayUtil.unroll(item.value as Array<Tea.Color>)
-					);
-					break;
-			}
-		});
+		switch (item.type) {
+			case Tea.UniformType.Int:
+				gl.uniform1i(
+					location, item.value as number
+				);
+				break;
+			case Tea.UniformType.Float:
+				gl.uniform1f(
+					location, item.value as number
+				);
+				break;
+			case Tea.UniformType.Vector2:
+				gl.uniform2fv(
+					location, item.value as Tea.Vector2
+				);
+				break;
+			case Tea.UniformType.Vector4:
+				gl.uniform4fv(
+					location, item.value as Tea.Vector4
+				);
+				break;
+			case Tea.UniformType.Matrix:
+				gl.uniformMatrix4fv(
+					location, false, item.value as Tea.Matrix4x4
+				);
+				break;
+			case Tea.UniformType.Color:
+				gl.uniform4fv(
+					location, item.value as Tea.Color
+				);
+				break;
+			case Tea.UniformType.FloatArray:
+				gl.uniform1fv(
+					location, item.value as Array<number>
+				);
+				break;
+			case Tea.UniformType.Vector4Array:
+				gl.uniform4fv(
+					location, Tea.ArrayUtil.unroll(item.value as Array<Tea.Vector4>)
+				);
+				break;
+			case Tea.UniformType.MatrixArray:
+				gl.uniformMatrix4fv(
+					location, false, Tea.ArrayUtil.unroll(item.value as Array<Tea.Matrix4x4>)
+				);
+				break;
+			case Tea.UniformType.ColorArray:
+				gl.uniform4fv(
+					location, Tea.ArrayUtil.unroll(item.value as Array<Tea.Color>)
+				);
+				break;
+		}
 	}
 
 	protected setLightUniforms(lights: Array<Tea.Light>, renderSettings: Tea.RenderSettings): void {

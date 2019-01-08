@@ -253,20 +253,28 @@ export class SceneComponents {
 	}
 
 	sortCameras(): void {
-		this.cameras = this.cameras.sort((a, b) => {
-			var at = a.targetTexture ? 1000 : 0;
-			var bt = b.targetTexture ? 1000 : 0;
-			at -= a.depth;
-			bt -= b.depth;
-			return bt - at;
-		});
+		this.cameras = this.cameras.sort(
+			this._sortCameras
+		);
 	}
 
 	sortRenderers(): void {
-		this.renderers = this.renderers.sort((a, b) => {
-			var renderQueueA = a.material.renderQueue;
-			var renderQueueB = b.material.renderQueue;
-			return renderQueueA - renderQueueB;
-		});
+		this.renderers = this.renderers.sort(
+			this._sortRenderers
+		);
+	}
+
+	protected _sortCameras(a: Tea.Camera, b: Tea.Camera): number {
+		var at = a.targetTexture ? 1000 : 0;
+		var bt = b.targetTexture ? 1000 : 0;
+		at -= a.depth;
+		bt -= b.depth;
+		return bt - at;
+	}
+
+	protected _sortRenderers(a: Tea.Renderer, b: Tea.Renderer): number {
+		var renderQueueA = a.material.renderQueue;
+		var renderQueueB = b.material.renderQueue;
+		return renderQueueA - renderQueueB;
 	}
 }
