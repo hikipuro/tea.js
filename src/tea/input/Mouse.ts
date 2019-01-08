@@ -12,6 +12,7 @@ export class Mouse {
 	protected _app: Tea.App;
 	protected _element: HTMLElement;
 	protected _buttonCount: number = 5;
+	protected _doubleClickButtons: Array<boolean>;
 	protected _isMoved: boolean;
 	protected _uiPosition: Tea.Vector2;
 	protected _position: Tea.Vector3;
@@ -20,6 +21,7 @@ export class Mouse {
 	constructor(app: Tea.App, element: HTMLElement) {
 		this._app = app;
 		this._element = element;
+		this._doubleClickButtons = new Array(this._buttonCount);
 		this._isMoved = false;
 		this._uiPosition = new Tea.Vector2();
 		this._position = new Tea.Vector3();
@@ -71,6 +73,10 @@ export class Mouse {
 			&& this.prevButtons[button] === true;
 	}
 
+	isDoubleClick(button: number): boolean {
+		return this._doubleClickButtons[button] === true;
+	}
+
 	update(): void {
 		this.prevX = this.x;
 		this.prevY = this.y;
@@ -81,6 +87,7 @@ export class Mouse {
 		var length = this._buttonCount;
 		for (var i = 0; i < length; i++) {
 			this.prevButtons[i] = buttons[i];
+			this._doubleClickButtons[i] = false;
 		}
 	}
 
@@ -97,6 +104,7 @@ export class Mouse {
 		element.addEventListener("mousemove", this.onMouseMove, options);
 		element.addEventListener("mousedown", this.onMouseDown, options);
 		window.addEventListener("mouseup", this.onMouseUp, options);
+		element.addEventListener("dblclick", this.onDoubleClick, options);
 		options.passive = false;
 		element.addEventListener("wheel", this.onWheel, options);
 
@@ -113,6 +121,7 @@ export class Mouse {
 		element.removeEventListener("mousemove", this.onMouseMove);
 		element.removeEventListener("mousedown", this.onMouseDown);
 		window.removeEventListener("mouseup", this.onMouseUp);
+		element.removeEventListener("dblclick", this.onDoubleClick);
 		element.removeEventListener("wheel", this.onWheel);
 
 		//element.removeEventListener("mouseup", this.onMouseUp);
@@ -165,6 +174,10 @@ export class Mouse {
 	protected onMouseUp = (e: MouseEvent): void => {
 		//e.stopPropagation();
 		this.buttons[e.button] = false;
+	}
+
+	protected onDoubleClick = (e: MouseEvent): void => {
+		this._doubleClickButtons[e.button] = true;
 	}
 
 	protected onWheel = (e: WheelEvent): void => {

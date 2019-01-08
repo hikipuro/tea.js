@@ -22,6 +22,7 @@ export class Canvas extends Component {
 	}
 
 	update(): void {
+		/*
 		var object3d = this.object3d;
 		if (object3d == null) {
 			return;
@@ -50,6 +51,7 @@ export class Canvas extends Component {
 				//console.log("mouse over", component.object3d.name);
 			}
 		}
+		*/
 	}
 
 	toJSON(): Object {
