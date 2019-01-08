@@ -27,6 +27,9 @@ class NodeMain {
 	newProjectWindow: NewProjectWindow;
 
 	constructor(app: Electron.App) {
+		app.commandLine.appendSwitch("enable-color-correct-rendering", "false");
+		app.commandLine.appendSwitch("enable-draw-occlusion", "true");
+		app.commandLine.appendSwitch("force-color-profile", "sRGB");
 		//app.commandLine.appendSwitch("force-gpu-rasterization");
 		//app.commandLine.appendSwitch("ignore-gpu-blacklist");
 		//console.log(app.getGPUFeatureStatus());
