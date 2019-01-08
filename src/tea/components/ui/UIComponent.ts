@@ -99,9 +99,17 @@ export class UIComponent extends Component {
 		if (object3d == null) {
 			return;
 		}
+		var status = this._status;
 		var mouse = this.app.mouse;
 		var mousePosition = mouse.uiPosition;
-		var status = this._status;
+		if (mousePosition.x === Infinity) {
+			if (status.isMouseOver === true) {
+				object3d.sendMessage("onMouseLeave");
+				status.isMouseOver = false;
+				status.isMouseDown = false;
+			}
+			return;
+		}
 		if (this.collider.containsPoint(mousePosition)) {
 			//console.log("mouse over", component.object3d.name);
 			var isMouseDown = mouse.isDown(0);

@@ -104,6 +104,7 @@ export class Mouse {
 		element.addEventListener("mousemove", this.onMouseMove, options);
 		element.addEventListener("mousedown", this.onMouseDown, options);
 		window.addEventListener("mouseup", this.onMouseUp, options);
+		element.addEventListener("mouseleave", this.onMouseLeave, options);
 		element.addEventListener("dblclick", this.onDoubleClick, options);
 		options.passive = false;
 		element.addEventListener("wheel", this.onWheel, options);
@@ -121,6 +122,7 @@ export class Mouse {
 		element.removeEventListener("mousemove", this.onMouseMove);
 		element.removeEventListener("mousedown", this.onMouseDown);
 		window.removeEventListener("mouseup", this.onMouseUp);
+		element.removeEventListener("mouseleave", this.onMouseLeave);
 		element.removeEventListener("dblclick", this.onDoubleClick);
 		element.removeEventListener("wheel", this.onWheel);
 
@@ -174,6 +176,18 @@ export class Mouse {
 	protected onMouseUp = (e: MouseEvent): void => {
 		//e.stopPropagation();
 		this.buttons[e.button] = false;
+	}
+
+	protected onMouseLeave = (e: MouseEvent): void => {
+		var x = Infinity, y = Infinity;
+		this.x = x;
+		this.y = y;
+		this._position[0] = x;
+		this._position[1] = y;
+		this._position[2] = 0.0;
+		this._uiPosition[0] = x;
+		this._uiPosition[1] = y;
+		this._isMoved = true;
 	}
 
 	protected onDoubleClick = (e: MouseEvent): void => {
