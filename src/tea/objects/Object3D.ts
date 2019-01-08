@@ -62,12 +62,14 @@ export class Object3D {
 	}
 
 	get isActiveInHierarchy(): boolean {
+		if (this.isActive === false) {
+			return false;
+		}
 		var parent = this._parent;
 		if (parent == null) {
-			return this.isActive;
+			return true;
 		}
-		return this.isActive
-			&& parent.isActiveInHierarchy;
+		return parent.isActiveInHierarchy;
 	}
 
 	get parent(): Object3D {

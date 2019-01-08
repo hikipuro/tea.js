@@ -17,6 +17,7 @@ export class Scene extends EventDispatcher {
 	protected _isCleared: boolean;
 	protected _children: Array<Tea.Object3D>;
 	protected _components: SceneComponents;
+	protected _renderers: Array<Tea.Renderer>;
 
 	constructor(app: Tea.App) {
 		super();
@@ -30,6 +31,7 @@ export class Scene extends EventDispatcher {
 		this._isCleared = false;
 		this._children = [];
 		this._components = new SceneComponents();
+		this._renderers = [];
 		var shader = this.app.createShader(
 			Tea.ShaderSources.antialiasPostProcessingVS,
 			Tea.ShaderSources.antialiasPostProcessingFS
@@ -86,6 +88,7 @@ export class Scene extends EventDispatcher {
 		this._children = undefined;
 		this._components.destroy();
 		this._components = undefined;
+		this._renderers = undefined;
 	}
 
 	childIndex(object3d: Tea.Object3D): number {
@@ -343,7 +346,12 @@ export class Scene extends EventDispatcher {
 		this._components.sortCameras();
 		this._components.sortRenderers();
 		var cameras = this._components.availableCameras;
-		var renderers = this._components.availableRenderers;
+		//var renderers = this._components.availableRenderers;
+		var renderers = this._renderers.sort((a, b) => {
+			var renderQueueA = a.material.renderQueue;
+			var renderQueueB = b.material.renderQueue;
+			return renderQueueA - renderQueueB;
+		});
 		var lights = this._components.availableLights;
 
 		var canvasRenderers = [];
@@ -440,6 +448,7 @@ export class Scene extends EventDispatcher {
 				this._isCleared = true;
 			}
 		}
+		this._renderers.splice(0, this._renderers.length);
 		//this._renderers.length = 0;
 		//console.log("drawCallCount", Tea.Renderer.drawCallCount);
 	}
@@ -507,6 +516,12 @@ export class Scene extends EventDispatcher {
 			return;
 		}
 		object3d.update(this._isEditing);
+		if (object3d.isActiveInHierarchy) {
+			var renderers = object3d.getComponents(Tea.Renderer);
+			if (renderers != null && renderers.length > 0) {
+				this._renderers.push(...renderers);
+			}
+		}
 		var children = object3d.children;
 		var length = children.length;
 		for (var i = 0; i < length; i++) {
