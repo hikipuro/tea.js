@@ -66,7 +66,8 @@ export class ComponentPanel extends Vue {
 
 	protected onClickTitle(): void {
 		var component = this.$refs.component as Vue;
-		var style = component.$el.style;
+		var el = component.$el as HTMLElement;
+		var style = el.style;
 		if (style.display == "none") {
 			style.display = "block";
 		} else {

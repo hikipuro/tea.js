@@ -63,7 +63,7 @@ export class HierarchyView extends Vue {
 
 	focus(): void {
 		var treeView = this.$refs.hierarchy as TreeView;
-		treeView.$el.focus();
+		(treeView.$el as HTMLElement).focus();
 	}
 
 	expandAll(): void {

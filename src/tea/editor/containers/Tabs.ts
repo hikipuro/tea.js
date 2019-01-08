@@ -182,11 +182,13 @@ export class TabItem extends Vue {
 	name: string;
 
 	show(): void {
-		this.$el.style.display = null;
+		var el = this.$el as HTMLElement;
+		el.style.display = null;
 	}
 
 	hide(): void {
-		this.$el.style.display = "none";
+		var el = this.$el as HTMLElement;
+		el.style.display = "none";
 	}
 }
 

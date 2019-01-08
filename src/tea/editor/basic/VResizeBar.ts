@@ -62,7 +62,8 @@ export class VResizeBar extends Vue {
 		}
 		var parent = this.$parent;
 		if (parent && parent.$el) {
-			parent.$el.style.height = y + "px";
+			var el = parent.$el as HTMLElement;
+			el.style.height = y + "px";
 		}
 		this.$emit("resize");
 	}
