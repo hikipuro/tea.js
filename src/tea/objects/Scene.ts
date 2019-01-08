@@ -346,6 +346,15 @@ export class Scene extends EventDispatcher {
 		var renderers = this._components.availableRenderers;
 		var lights = this._components.availableLights;
 
+		var canvasRenderers = [];
+		for (var i = renderers.length - 1; i >= 0; i--) {
+			var renderer = renderers[i];
+			if (renderer instanceof Tea.CanvasRenderer) {
+				renderers.splice(i, 1);
+				canvasRenderers.push(renderer);
+			}
+		}
+
 		if (this.enablePostProcessing) {
 			var texture = this.renderTexture;
 			this.postProcessingRenderer.renderTexture = texture;
@@ -356,7 +365,6 @@ export class Scene extends EventDispatcher {
 		var cameraCount = cameras.length;
 		var rendererCount = renderers.length;
 		var haveNormalCamera = false;
-		var light = false;
 		for (var n = 0; n < cameraCount; n++) {
 			var camera = cameras[n];
 			if (haveNormalCamera === false && camera.constructor.name === "Camera") {
@@ -385,15 +393,6 @@ export class Scene extends EventDispatcher {
 				camera.update();
 				for (var i = 0; i < rendererCount; i++) {
 					var renderer = renderers[i];
-					//if (renderer.object3d.isActiveInHierarchy === false) {
-					//	continue;
-					//}
-					/*
-					if (camera.orthographic === false
-					&& this.frustumCulling(renderer, camera.frustumPlanes)) {
-						continue;
-					}
-					//*/
 					if (this.frustumCulling(renderer, camera.frustumPlanes)) {
 						continue;
 					}
@@ -409,6 +408,16 @@ export class Scene extends EventDispatcher {
 			this.renderTexture.unbindFramebuffer();
 			if (haveNormalCamera) {
 				this.postProcessingRenderer.render();
+			}
+		}
+		if (canvasRenderers.length >= 1) {
+			var app = this.app;
+			this.app.status.setViewport(
+				0.0, 0.0, app.width, app.height
+			);
+			var length = canvasRenderers.length;
+			for (var i = 0; i < length; i++) {
+				canvasRenderers[i].render(null, null, null);
 			}
 		}
 		if (haveNormalCamera && this.stats && this.stats.enabled) {

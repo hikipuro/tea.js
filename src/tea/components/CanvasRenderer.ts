@@ -88,9 +88,6 @@ export class CanvasRenderer extends Renderer {
 	}
 
 	render(camera: Tea.Camera, lights: Array<Tea.Light>, renderSettings: Tea.RenderSettings): void {
-		if (camera == null) {
-			return;
-		}
 		if (!this.isRenderable) {
 			return;
 		}
@@ -128,14 +125,16 @@ export class CanvasRenderer extends Renderer {
 			colorMultiplier: shader.getUniformLocation("_ColorMultiplier"),
 		};
 
-		var viewportRect = camera.viewportRect;
-		var viewportWidth = 0.0;
-		var viewportHeight = 0.0;
-		if (viewportRect[2] !== 0.0) {
-			viewportWidth = 1.0 / viewportRect[2];
-		}
-		if (viewportRect[3] !== 0.0) {
-			viewportHeight = 1.0 / viewportRect[3];
+		var viewportWidth = 1.0;
+		var viewportHeight = 1.0;
+		if (camera != null) {
+			var viewportRect = camera.viewportRect;
+			if (viewportRect[2] !== 0.0) {
+				viewportWidth = 1.0 / viewportRect[2];
+			}
+			if (viewportRect[3] !== 0.0) {
+				viewportHeight = 1.0 / viewportRect[3];
+			}
 		}
 
 		var gl = this.gl;
