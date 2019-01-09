@@ -330,6 +330,10 @@ export class App {
 		return ObjectFactory.createUIImage(this);
 	}
 
+	createUIButton(): Tea.Object3D {
+		return ObjectFactory.createUIButton(this);
+	}
+
 	readObjFile(url: string, callback: (object3d: Tea.Object3D) => void): void {
 		if (callback == null) {
 			return;

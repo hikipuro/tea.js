@@ -107,7 +107,11 @@ export class UIComponent extends Component {
 		var status = this._status;
 		var mouse = this.app.mouse;
 		var mousePosition = mouse.uiPosition;
-		if (mousePosition.x === Infinity) {
+		var isMouseUp = mouse.isUp(0);
+		if (isMouseUp) {
+			status.isMouseDown = false;
+		}
+		if (mousePosition[0] === Infinity) {
 			if (status.isMouseOver === true) {
 				object3d.sendMessage("onMouseLeave");
 				status.isMouseOver = false;
@@ -116,9 +120,8 @@ export class UIComponent extends Component {
 			return;
 		}
 		if (this.collider.containsPoint(mousePosition)) {
-			//console.log("mouse over", component.object3d.name);
+			//console.log("mouse over", object3d.name);
 			var isMouseDown = mouse.isDown(0);
-			var isMouseUp = mouse.isUp(0);
 			var isDoubleClick = mouse.isDoubleClick(0);
 			if (status.isMouseOver === false) {
 				status.isMouseOver = true;
@@ -143,7 +146,6 @@ export class UIComponent extends Component {
 			if (status.isMouseOver === true) {
 				object3d.sendMessage("onMouseLeave");
 				status.isMouseOver = false;
-				status.isMouseDown = false;
 			}
 		}
 	}

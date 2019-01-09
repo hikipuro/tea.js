@@ -342,6 +342,10 @@ export class EditorMenu {
 						label: translator.getText("UI/Canvas"),
 					},
 					{
+						id: "UI/Button",
+						label: translator.getText("UI/Button"),
+					},
+					{
 						id: "UI/Text",
 						label: translator.getText("UI/Text"),
 					},

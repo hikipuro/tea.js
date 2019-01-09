@@ -124,8 +124,9 @@
 			"UI": {
 				"Title": "UI",
 				"Canvas": "Canvas",
-				"Text": "Text",
-				"Image": "Image"
+				"Button": "Button",
+				"Image": "Image",
+				"Text": "Text"
 			}
 		}
 	},
@@ -305,6 +306,12 @@
 			"FontStyle": "Font Style",
 			"Font": "Font",
 			"Color": "Color"
+		},
+		"Button": {
+			"Title": "Button",
+			"Text": "Text",
+			"FontSize": "Font Size",
+			"Font": "Font"
 		},
 		"Image": {
 			"Title": "Image"

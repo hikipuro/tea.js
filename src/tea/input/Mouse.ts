@@ -1,12 +1,12 @@
 import * as Tea from "../Tea";
 
 export class Mouse {
-	x: number = 0;
-	y: number = 0;
-	wheelX: number = 0;
-	wheelY: number = 0;
-	prevX: number = 0;
-	prevY: number = 0;
+	x: number = Infinity;
+	y: number = Infinity;
+	wheelX: number = 0.0;
+	wheelY: number = 0.0;
+	prevX: number = Infinity;
+	prevY: number = Infinity;
 	buttons: Array<boolean>;
 	prevButtons: Array<boolean>;
 	protected _app: Tea.App;
@@ -23,8 +23,8 @@ export class Mouse {
 		this._element = element;
 		this._doubleClickButtons = new Array(this._buttonCount);
 		this._isMoved = false;
-		this._uiPosition = new Tea.Vector2();
-		this._position = new Tea.Vector3();
+		this._uiPosition = new Tea.Vector2(this.x, this.y);
+		this._position = new Tea.Vector3(this.x, this.y, 0.0);
 		this._isPassiveSupported = false;
 		this.checkPassiveSupported();
 		this.addEvents(element);
@@ -80,8 +80,8 @@ export class Mouse {
 	update(): void {
 		this.prevX = this.x;
 		this.prevY = this.y;
-		this.wheelX = 0;
-		this.wheelY = 0;
+		this.wheelX = 0.0;
+		this.wheelY = 0.0;
 		this._isMoved = false;
 		var buttons = this.buttons;
 		var length = this._buttonCount;

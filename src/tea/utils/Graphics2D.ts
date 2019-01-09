@@ -17,35 +17,65 @@ declare global {
 export class Graphics2D {
 	canvas: HTMLCanvasElement;
 	context: CanvasRenderingContext2D;
+	protected _width: number;
+	protected _height: number;
 	protected _alpha: boolean;
+	protected _lineSpacing: number;
+	protected _fontSize: number;
 
-	constructor(width: number = 2, height: number = 2, alpha: boolean = true) {
+	constructor(width: number = 1, height: number = 1, alpha: boolean = true) {
+		if (width <= 0) {
+			width = 1;
+		}
+		if (height <= 0) {
+			height = 1;
+		}
 		var canvas = document.createElement("canvas");
 		canvas.width = Tea.Mathf.closestPowerOfTwo(width);
 		canvas.height = Tea.Mathf.closestPowerOfTwo(height);
+		this._width = width;
+		this._height = height;
 		this._alpha = alpha;
+		this._lineSpacing = 1.0;
+		this._fontSize = 12;
 		this.canvas = canvas;
 		this.context = this.getContext();
 	}
 
 	get width(): number {
-		return this.canvas.width;
+		return this._width;
 	}
 	set width(value: number) {
+		if (value <= 0) {
+			value = 1;
+		}
+		if (value === this._width) {
+			return;
+		}
+		this._width = value;
 		this.canvas.width = Tea.Mathf.closestPowerOfTwo(value);
 		//this.context = this.getContext();
 	}
 
 	get height(): number {
-		return this.canvas.height;
+		return this._height;
 	}
 	set height(value: number) {
+		if (value <= 0) {
+			value = 1;
+		}
+		if (value === this._height) {
+			return;
+		}
+		this._height = value;
 		this.canvas.height = Tea.Mathf.closestPowerOfTwo(value);
 		//this.context = this.getContext();
 	}
 
 	get lineWidth(): number { return this.context.lineWidth; }
 	set lineWidth(value: number) { this.context.lineWidth = value; }
+	get lineSpacing(): number { return this._lineSpacing; }
+	set lineSpacing(value: number) { this._lineSpacing = value; }
 	get lineCap(): string { return this.context.lineCap; }
 	set lineCap(value: string) { this.context.lineCap = value as any; }
 	get lineJoin(): string { return this.context.lineJoin; }
@@ -56,7 +86,18 @@ export class Graphics2D {
 	set lineDashOffset(value: number) { this.context.lineDashOffset = value; }
 
 	get font(): string { return this.context.font; }
-	set font(value: string) { this.context.font = value; }
+	set font(value: string) {
+		this.context.font = value;
+		var values = value.split(/\s+/);
+		for (var i = 0; i < values.length; i++) {
+			var matches = values[i].match(/(.+)px/);
+			if (matches) {
+				this._fontSize = parseFloat(matches[1]);
+				break;
+			}
+		}
+	}
+	get fontSize(): number { return this._fontSize; }
 	get textAlign(): string { return this.context.textAlign; }
 	set textAlign(value: string) { this.context.textAlign = value as any; }
 	get textBaseline(): string { return this.context.textBaseline; }
@@ -97,7 +138,10 @@ export class Graphics2D {
 	destroy(): void {
 		this.context = undefined;
 		this.canvas = undefined;
+		this._width = undefined;
+		this._height = undefined;
 		this._alpha = undefined;
+		this._lineSpacing = undefined;
 	}
 
 	clear(): void {
@@ -112,16 +156,49 @@ export class Graphics2D {
 
 	fillRect(x: number = 0, y: number = 0, width: number = null, height: number = null): void {
 		if (width == null) {
-			width = this.canvas.width;
+			width = this._width;
 		}
 		if (height == null) {
-			height = this.canvas.height;
+			height = this._height;
 		}
 		this.context.fillRect(x, y, width, height);
 	}
 
-	storokeRect(x: number, y: number, width: number, height: number): void {
+	storokeRect(x: number = 0, y: number = 0, width: number = null, height: number = null): void {
+		if (width == null) {
+			width = this._width;
+		}
+		if (height == null) {
+			height = this._height;
+		}
 		this.context.strokeRect(x, y, width, height);
+	}
+
+	fillRoundRect(x: number, y: number, width: number, height: number, radius: number): void {
+		this.drawRoundRect(x, y, width, height, radius);
+		this.context.fill();
+	}
+
+	storokeRoundRect(x: number, y: number, width: number, height: number, radius: number): void {
+		this.drawRoundRect(x, y, width, height, radius);
+		this.context.stroke();
+	}
+
+	protected drawRoundRect(x: number, y: number, width: number, height: number, radius: number): void {
+		var context = this.context;
+		var right = x + width;
+		var bottom = y + height;
+		context.beginPath();
+		context.moveTo(x + radius, y);
+		context.lineTo(right - radius, y);
+		context.quadraticCurveTo(right, y, right, y + radius);
+		context.lineTo(right, bottom - radius);
+		context.quadraticCurveTo(right, bottom, right - radius, bottom);
+		context.lineTo(x + radius, bottom);
+		context.quadraticCurveTo(x, bottom, x, bottom - radius);
+		context.lineTo(x, y + radius);
+		context.quadraticCurveTo(x, y, x + radius, y);
+		context.closePath();
 	}
 
 	fillText(text: string, x: number, y: number, maxWidth?: number): void {
@@ -134,6 +211,36 @@ export class Graphics2D {
 
 	measureText(text: string): TextMetrics {
 		return this.context.measureText(text);
+	}
+
+	fillTextMultiLine(text: string, x: number, y: number, maxWidth?: number): void {
+		if (text == null || text === "") {
+			return;
+		}
+		var lines = text.split(/\r\n|\r|\n/);
+		var lineCount = lines.length;
+		if (lineCount <= 1) {
+			this.fillText(text, x, y, maxWidth);
+			return;
+		}
+		var fontSize = this._fontSize;
+		var lineSpacing = this._lineSpacing * 1.2;
+		var lineHeight = fontSize * lineSpacing;
+		var textBaseline = this.textBaseline.toLowerCase();
+		for (var i = 0; i < lineCount; i++) {
+			var line = lines[i];
+			var ty = y;
+			switch (textBaseline) {
+				case "middle":
+					var ratio = (i / (lineCount - 1) - 0.5) * 2.0;
+					ty += lineHeight * ratio * (lineCount / 2.0 - 0.5);
+					break;
+				default:
+					ty += lineHeight * i;
+					break;
+			}
+			this.fillText(line, x, ty, maxWidth);
+		}
 	}
 
 	getLineDash(): number[] {
@@ -311,10 +418,10 @@ export class Graphics2D {
 
     getImageData(sx: number, sy: number, sw: number = null, sh: number = null): ImageData {
 		if (sw == null) {
-			sw = this.canvas.width;
+			sw = this._width;
 		}
 		if (sh == null) {
-			sh = this.canvas.height;
+			sh = this._height;
 		}
 		return this.context.getImageData(sx, sy, sw, sh);
 	}
@@ -343,6 +450,8 @@ export class Graphics2D {
 
 	resize(width: number, height: number): void {
 		var canvas = this.canvas;
+		this._width = width;
+		this._height = height;
 		canvas.width = Tea.Mathf.closestPowerOfTwo(width);
 		canvas.height = Tea.Mathf.closestPowerOfTwo(height);
 		//this.context = this.getContext();

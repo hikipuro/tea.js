@@ -11,6 +11,7 @@ import { ParticleSystem } from "./ParticleSystem";
 import { Rigidbody } from "./Rigidbody";
 import { Script } from "./Script";
 import { SphereCollider } from "./SphereCollider";
+import { UIButton } from "./UIButton";
 import { UIImage } from "./UIImage";
 import { UIText } from "./UIText";
 import { TextMesh } from "./TextMesh";
@@ -29,6 +30,7 @@ export {
 	Rigidbody,
 	Script,
 	SphereCollider,
+	UIButton,
 	UIImage,
 	UIText,
 	TextMesh
@@ -49,6 +51,7 @@ export function getComponents(): Object {
 		Rigidbody: Rigidbody,
 		Script: Script,
 		SphereCollider: SphereCollider,
+		UIButton: UIButton,
 		UIImage: UIImage,
 		UIText: UIText,
 		TextMesh: TextMesh,
