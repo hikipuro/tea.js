@@ -118,16 +118,24 @@ export class UIComponent extends Component {
 			}
 			return;
 		}
-		if (this.collider.containsPoint(mousePosition)) {
+		if (mouse.isMoved) {
+			if (this.collider.containsPoint(mousePosition)) {
+				if (status.isMouseOver === false) {
+					status.isMouseOver = true;
+					object3d.sendMessage("onMouseEnter");
+				} else {
+					object3d.sendMessage("onMouseOver");
+				}
+			} else {
+				if (status.isMouseOver === true) {
+					object3d.sendMessage("onMouseLeave");
+					status.isMouseOver = false;
+				}
+			}
+		}
+		if (status.isMouseOver) {
 			//console.log("mouse over", object3d.name);
 			var isMouseDown = mouse.isDown(0);
-			var isDoubleClick = mouse.isDoubleClick(0);
-			if (status.isMouseOver === false) {
-				status.isMouseOver = true;
-				object3d.sendMessage("onMouseEnter");
-			} else {
-				object3d.sendMessage("onMouseOver");
-			}
 			if (isMouseDown) {
 				status.isMouseDown = true;
 				object3d.sendMessage("onMouseDown");
@@ -136,16 +144,12 @@ export class UIComponent extends Component {
 					object3d.sendMessage("onClick");
 				}
 				status.isMouseDown = false;
-				if (isDoubleClick) {
+				if (mouse.isDoubleClick(0)) {
 					object3d.sendMessage("onDoubleClick");
 				}
 				object3d.sendMessage("onMouseUp");
 			}
 		} else {
-			if (status.isMouseOver === true) {
-				object3d.sendMessage("onMouseLeave");
-				status.isMouseOver = false;
-			}
 			if (isMouseUp) {
 				status.isMouseDown = false;
 			}
