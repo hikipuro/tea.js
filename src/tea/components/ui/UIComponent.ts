@@ -108,13 +108,12 @@ export class UIComponent extends Component {
 		var mouse = this.app.mouse;
 		var mousePosition = mouse.uiPosition;
 		var isMouseUp = mouse.isUp(0);
-		if (isMouseUp) {
-			status.isMouseDown = false;
-		}
 		if (mousePosition[0] === Infinity) {
 			if (status.isMouseOver === true) {
 				object3d.sendMessage("onMouseLeave");
 				status.isMouseOver = false;
+			}
+			if (isMouseUp) {
 				status.isMouseDown = false;
 			}
 			return;
@@ -146,6 +145,9 @@ export class UIComponent extends Component {
 			if (status.isMouseOver === true) {
 				object3d.sendMessage("onMouseLeave");
 				status.isMouseOver = false;
+			}
+			if (isMouseUp) {
+				status.isMouseDown = false;
 			}
 		}
 	}
