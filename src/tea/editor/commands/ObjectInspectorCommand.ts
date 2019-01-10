@@ -249,11 +249,14 @@ export class ObjectInspectorCommand {
 				component.material.setFloat("_Cutoff", 0.0);
 				component.material.shader = shader;
 				break;
-			case "UI/Text":
-				component = new Tea.UI.Text(app);
+			case "UI/Button":
+				component = new Tea.UI.Button(app);
 				break;
 			case "UI/Image":
 				component = new Tea.UI.Image(app);
+				break;
+			case "UI/Text":
+				component = new Tea.UI.Text(app);
 				break;
 		}
 		if (component != null) {

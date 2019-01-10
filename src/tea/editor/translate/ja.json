@@ -124,8 +124,9 @@
 			"UI": {
 				"Title": "UI",
 				"Canvas": "キャンバス",
-				"Text": "テキスト",
-				"Image": "画像"
+				"Button": "ボタン",
+				"Image": "画像",
+				"Text": "テキスト"
 			}
 		}
 	},
@@ -184,8 +185,9 @@
 				"Title": "UI",
 				"Canvas": "キャンバス",
 				"CanvasRenderer": "キャンバスレンダラ",
-				"Text": "テキスト",
-				"Image": "画像"
+				"Button": "ボタン",
+				"Image": "画像",
+				"Text": "テキスト"
 			}
 		}
 	},
@@ -305,6 +307,13 @@
 			"FontStyle": "フォントスタイル",
 			"Font": "フォント",
 			"Color": "色"
+		},
+		"Button": {
+			"Title": "ボタン",
+			"Size": "サイズ",
+			"Text": "テキスト",
+			"FontSize": "フォントサイズ",
+			"Font": "フォント"
 		},
 		"Image": {
 			"Title": "画像"

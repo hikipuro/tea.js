@@ -83,6 +83,14 @@ export class UIComponent extends Component {
 		super.destroy();
 	}
 
+	toJSON(): Object {
+		var json: any = super.toJSON();
+		json[Tea.JSONUtil.TypeName] = UIComponent.className;
+		json.width = this._width;
+		json.height = this._height;
+		return json;
+	}
+
 	update(): void {
 		if (this._isSizeChanged) {
 			var collider = this._status.collider;
@@ -154,13 +162,5 @@ export class UIComponent extends Component {
 				status.isMouseDown = false;
 			}
 		}
-	}
-
-	toJSON(): Object {
-		var json: any = super.toJSON();
-		json[Tea.JSONUtil.TypeName] = UIComponent.className;
-		json.width = this._width;
-		json.height = this._height;
-		return json;
 	}
 }

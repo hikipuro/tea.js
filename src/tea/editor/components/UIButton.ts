@@ -6,6 +6,12 @@ import { Translator } from "../translate/Translator";
 @Component({
 	template: `
 		<div class="Button">
+			<Vector2
+				ref="size"
+				:x="size[0]"
+				:y="size[1]"
+				:step="1"
+				@update="onUpdateSize">{{ translator.size }}</Vector2>
 			<TextArea
 				ref="text"
 				:value="text"
@@ -27,6 +33,7 @@ import { Translator } from "../translate/Translator";
 			translator: {},
 			name: "Button",
 			enabled: false,
+			size: [0, 0],
 			text: "",
 			fontSize: 0,
 			font: ""
@@ -44,6 +51,7 @@ export class UIButton extends Vue {
 	translator: any;
 	name: string;
 	enabled: boolean;
+	size: Array<number>;
 	text: string;
 	fontSize: number;
 	font: string;
@@ -52,6 +60,7 @@ export class UIButton extends Vue {
 		var translator = Translator.getInstance();
 		translator.basePath = "Components/Button";
 		this.name = translator.getText("Title");
+		this.translator.size = translator.getText("Size");
 		this.translator.text = translator.getText("Text");
 		this.translator.fontSize = translator.getText("FontSize");
 		this.translator.font = translator.getText("Font");
@@ -63,9 +72,21 @@ export class UIButton extends Vue {
 			return;
 		}
 		this.enabled = component.enabled;
+		this.$set(this.size, 0, component.width);
+		this.$set(this.size, 1, component.height);
 		this.text = component.text;
 		this.fontSize = component.fontSize;
 		this.font = component.font;
+	}
+
+	protected onUpdateSize(x: number, y: number): void {
+		this.$set(this.size, 0, x);
+		this.$set(this.size, 1, y);
+		if (this._component != null) {
+			this._component.width = x;
+			this._component.height = y;
+		}
+		this.$emit("update", "size");
 	}
 
 	protected onUpdateText(value: string): void {

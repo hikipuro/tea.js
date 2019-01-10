@@ -185,8 +185,9 @@
 				"Title": "UI",
 				"Canvas": "Canvas",
 				"CanvasRenderer": "CanvasRenderer",
-				"Text": "Text",
-				"Image": "Image"
+				"Button": "Button",
+				"Image": "Image",
+				"Text": "Text"
 			}
 		}
 	},
@@ -309,6 +310,7 @@
 		},
 		"Button": {
 			"Title": "Button",
+			"Size": "Size",
 			"Text": "Text",
 			"FontSize": "Font Size",
 			"Font": "Font"

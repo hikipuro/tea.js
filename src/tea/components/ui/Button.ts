@@ -22,6 +22,32 @@ export class Button extends UIComponent {
 		this._fontSize = Button.DefaultFontSize;
 	}
 
+	get width(): number {
+		return this._width;
+	}
+	set width(value: number) {
+		if (value == null || value === this._width) {
+			return;
+		}
+		this._width = value;
+		this._graphics.resize(value, this._height);
+		this._isSizeChanged = true;
+		this._isChanged = true;
+	}
+
+	get height(): number {
+		return this._height;
+	}
+	set height(value: number) {
+		if (value == null || value === this._height) {
+			return;
+		}
+		this._height = value;
+		this._graphics.resize(this._width, value);
+		this._isSizeChanged = true;
+		this._isChanged = true;
+	}
+
 	get text(): string {
 		return this._text;
 	}
@@ -64,6 +90,9 @@ export class Button extends UIComponent {
 			return;
 		}
 		var button = new Button(app);
+		button._width = json.width;
+		button._height = json.height;
+		button._graphics.resize(json.width, json.height);
 		button._text = json.text;
 		button._fontSize = json.fontSize;
 		button._font = json.font;
@@ -136,8 +165,8 @@ export class Button extends UIComponent {
 		var g = this._graphics;
 		var lineWidth = 1;
 		var padding = lineWidth / 2;
-		var w = g.width - lineWidth;
-		var h = g.height - lineWidth;
+		var w = this._width - lineWidth;
+		var h = this._height - lineWidth;
 		var gradient = g.createLinearGradient(
 			0, padding, 0, h
 		);
@@ -148,13 +177,12 @@ export class Button extends UIComponent {
 		g.lineWidth = lineWidth;
 		g.fillRoundRect(padding, padding, w, h, 5);
 		g.storokeRoundRect(padding, padding, w, h, 5);
-
 	}
 
 	protected drawButtonText(): void {
 		var g = this._graphics;
-		var w = g.width;
-		var h = g.height;
+		var w = this._width;
+		var h = this._height;
 		g.textAlign = "center";
 		g.textBaseline = "middle";
 		g.font = this.getFont();
