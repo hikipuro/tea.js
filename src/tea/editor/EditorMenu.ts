@@ -346,6 +346,10 @@ export class EditorMenu {
 						label: translator.getText("UI/Button"),
 					},
 					{
+						id: "UI/Checkbox",
+						label: translator.getText("UI/Checkbox"),
+					},
+					{
 						id: "UI/Text",
 						label: translator.getText("UI/Text"),
 					},
@@ -486,6 +490,10 @@ export class EditorMenu {
 					{
 						id: "UI/Button",
 						label: translator.getText("UI/Button"),
+					},
+					{
+						id: "UI/Checkbox",
+						label: translator.getText("UI/Checkbox"),
 					},
 					{
 						id: "UI/Text",

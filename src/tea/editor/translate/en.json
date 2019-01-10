@@ -125,6 +125,7 @@
 				"Title": "UI",
 				"Canvas": "Canvas",
 				"Button": "Button",
+				"Checkbox": "Checkbox",
 				"Image": "Image",
 				"Text": "Text"
 			}
@@ -186,6 +187,7 @@
 				"Canvas": "Canvas",
 				"CanvasRenderer": "CanvasRenderer",
 				"Button": "Button",
+				"Checkbox": "Checkbox",
 				"Image": "Image",
 				"Text": "Text"
 			}
@@ -310,6 +312,13 @@
 		},
 		"Button": {
 			"Title": "Button",
+			"Size": "Size",
+			"Text": "Text",
+			"FontSize": "Font Size",
+			"Font": "Font"
+		},
+		"Checkbox": {
+			"Title": "Checkbox",
 			"Size": "Size",
 			"Text": "Text",
 			"FontSize": "Font Size",

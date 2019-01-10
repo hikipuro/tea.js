@@ -196,6 +196,9 @@ export class HierarchyViewCommand {
 			case "UI/Button":
 				object3d = app.createUIButton();
 				break;
+			case "UI/Checkbox":
+				object3d = app.createUICheckbox();
+				break;
 			case "UI/Image":
 				object3d = app.createUIImage();
 				break;

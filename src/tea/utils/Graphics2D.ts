@@ -214,13 +214,36 @@ export class Graphics2D {
 	}
 
 	fillTextMultiLine(text: string, x: number, y: number, maxWidth?: number): void {
+		var context = this.context;
+		this.drawTextMultiLine(
+			text, x, y, maxWidth,
+			(text: string, x: number, y: number, maxWidth: number) => {
+				context.fillText(text, x, y, maxWidth);
+			}
+		);
+	}
+
+	strokeTextMultiLine(text: string, x: number, y: number, maxWidth?: number): void {
+		var context = this.context;
+		this.drawTextMultiLine(
+			text, x, y, maxWidth,
+			(text: string, x: number, y: number, maxWidth: number) => {
+				context.strokeText(text, x, y, maxWidth);
+			}
+		);
+	}
+
+	protected drawTextMultiLine(
+		text: string, x: number, y: number, maxWidth: number,
+		callback: (text: string, x: number, y: number, maxWidth: number) => void
+	): void {
 		if (text == null || text === "") {
 			return;
 		}
 		var lines = text.split(/\r\n|\r|\n/);
 		var lineCount = lines.length;
 		if (lineCount <= 1) {
-			this.fillText(text, x, y, maxWidth);
+			callback(text, x, y, maxWidth);
 			return;
 		}
 		var fontSize = this._fontSize;
@@ -239,7 +262,7 @@ export class Graphics2D {
 					ty += lineHeight * i;
 					break;
 			}
-			this.fillText(line, x, ty, maxWidth);
+			callback(line, x, ty, maxWidth);
 		}
 	}
 

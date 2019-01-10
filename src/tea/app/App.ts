@@ -334,6 +334,10 @@ export class App {
 		return ObjectFactory.createUIButton(this);
 	}
 
+	createUICheckbox(): Tea.Object3D {
+		return ObjectFactory.createUICheckbox(this);
+	}
+
 	readObjFile(url: string, callback: (object3d: Tea.Object3D) => void): void {
 		if (callback == null) {
 			return;

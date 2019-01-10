@@ -33,12 +33,14 @@ import * as UIComponents from "./components/ui/UIComponents";
 export module UI {
 	export var  UIComponent = UIComponents.UIComponent;
 	export type UIComponent = UIComponents.UIComponent;
-	export var  Text = UIComponents.Text;
-	export type Text = UIComponents.Text;
-	export var  Image = UIComponents.Image;
-	export type Image = UIComponents.Image;
 	export var  Button = UIComponents.Button;
 	export type Button = UIComponents.Button;
+	export var  Checkbox = UIComponents.Checkbox;
+	export type Checkbox = UIComponents.Checkbox;
+	export var  Image = UIComponents.Image;
+	export type Image = UIComponents.Image;
+	export var  Text = UIComponents.Text;
+	export type Text = UIComponents.Text;
 }
 
 export * from "./enums/CameraClearFlags";

@@ -220,4 +220,11 @@ export class ObjectFactory {
 		object3d.name = "Button";
 		return object3d;
 	}
+
+	static createUICheckbox(app: Tea.App): Tea.Object3D {
+		var object3d = new Tea.Object3D(app);
+		object3d.addComponent(Tea.UI.Checkbox);
+		object3d.name = "Checkbox";
+		return object3d;
+	}
 }

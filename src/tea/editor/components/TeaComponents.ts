@@ -12,6 +12,7 @@ import { Rigidbody } from "./Rigidbody";
 import { Script } from "./Script";
 import { SphereCollider } from "./SphereCollider";
 import { UIButton } from "./UIButton";
+import { UICheckbox } from "./UICheckbox";
 import { UIImage } from "./UIImage";
 import { UIText } from "./UIText";
 import { TextMesh } from "./TextMesh";
@@ -31,6 +32,7 @@ export {
 	Script,
 	SphereCollider,
 	UIButton,
+	UICheckbox,
 	UIImage,
 	UIText,
 	TextMesh
@@ -52,6 +54,7 @@ export function getComponents(): Object {
 		Script: Script,
 		SphereCollider: SphereCollider,
 		UIButton: UIButton,
+		UICheckbox: UICheckbox,
 		UIImage: UIImage,
 		UIText: UIText,
 		TextMesh: TextMesh,

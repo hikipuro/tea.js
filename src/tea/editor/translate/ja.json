@@ -125,6 +125,7 @@
 				"Title": "UI",
 				"Canvas": "キャンバス",
 				"Button": "ボタン",
+				"Checkbox": "チェックボックス",
 				"Image": "画像",
 				"Text": "テキスト"
 			}
@@ -186,6 +187,7 @@
 				"Canvas": "キャンバス",
 				"CanvasRenderer": "キャンバスレンダラ",
 				"Button": "ボタン",
+				"Checkbox": "チェックボックス",
 				"Image": "画像",
 				"Text": "テキスト"
 			}
@@ -310,6 +312,13 @@
 		},
 		"Button": {
 			"Title": "ボタン",
+			"Size": "サイズ",
+			"Text": "テキスト",
+			"FontSize": "フォントサイズ",
+			"Font": "フォント"
+		},
+		"Checkbox": {
+			"Title": "チェックボックス",
 			"Size": "サイズ",
 			"Text": "テキスト",
 			"FontSize": "フォントサイズ",
