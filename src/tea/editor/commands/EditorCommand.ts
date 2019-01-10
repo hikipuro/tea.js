@@ -283,7 +283,8 @@ export class EditorCommand extends EventDispatcher {
 			message: translator.getText("Message"),
 			detail: translator.getText("Detail"),
 			buttons: buttons,
-			defaultId: 0
+			defaultId: 0,
+			cancelId: 1
 		};
 		Dialog.showMessageBox(
 			browserWindow, options,
