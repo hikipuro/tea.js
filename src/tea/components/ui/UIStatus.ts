@@ -25,8 +25,15 @@ export class UIStatus {
 			return screenPosition;
 		}
 		var position = object3d.position;
+		var scale = object3d.scale;
 		var x = screenPosition[0] - position[0];
 		var y = screenPosition[1] - position[1];
+		if (scale[0] != 0) {
+			x /= scale[0];
+		}
+		if (scale[1] != 0) {
+			y /= scale[1];
+		}
 		return new Tea.Vector2(x, y);
 	}
 }
