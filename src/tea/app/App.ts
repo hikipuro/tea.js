@@ -346,6 +346,10 @@ export class App {
 		return ObjectFactory.createUISlider(this);
 	}
 
+	createUIPanel(): Tea.Object3D {
+		return ObjectFactory.createUIPanel(this);
+	}
+
 	readObjFile(url: string, callback: (object3d: Tea.Object3D) => void): void {
 		if (callback == null) {
 			return;

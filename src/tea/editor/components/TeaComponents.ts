@@ -17,6 +17,7 @@ import { UICheckbox } from "./UICheckbox";
 import { UIImage } from "./UIImage";
 import { UIText } from "./UIText";
 import { UISlider } from "./UISlider";
+import { UIPanel } from "./UIPanel";
 import { TextMesh } from "./TextMesh";
 
 export {
@@ -39,6 +40,7 @@ export {
 	UIImage,
 	UIText,
 	UISlider,
+	UIPanel,
 	TextMesh
 }
 
@@ -63,6 +65,7 @@ export function getComponents(): Object {
 		UIImage: UIImage,
 		UIText: UIText,
 		UISlider: UISlider,
+		UIPanel: UIPanel,
 		TextMesh: TextMesh,
 	}
 }

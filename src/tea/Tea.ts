@@ -45,6 +45,8 @@ export module UI {
 	export type Text = UIComponents.Text;
 	export var  Slider = UIComponents.Slider;
 	export type Slider = UIComponents.Slider;
+	export var  Panel = UIComponents.Panel;
+	export type Panel = UIComponents.Panel;
 }
 
 export * from "./enums/CameraClearFlags";

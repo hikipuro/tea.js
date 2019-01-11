@@ -129,7 +129,8 @@
 				"Checkbox": "Checkbox",
 				"Image": "Image",
 				"Text": "Text",
-				"Slider": "Slider"
+				"Slider": "Slider",
+				"Panel": "Panel"
 			}
 		}
 	},
@@ -193,7 +194,8 @@
 				"Checkbox": "Checkbox",
 				"Image": "Image",
 				"Text": "Text",
-				"Slider": "Slider"
+				"Slider": "Slider",
+				"Panel": "Panel"
 			}
 		}
 	},
@@ -352,6 +354,10 @@
 			"Title": "Slider",
 			"Size": "Size",
 			"Value": "Value"
+		},
+		"Panel": {
+			"Title": "Panel",
+			"Size": "Size"
 		}
 	}
 }

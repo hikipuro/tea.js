@@ -267,6 +267,9 @@ export class ObjectInspectorCommand {
 			case "UI/Slider":
 				component = new Tea.UI.Slider(app);
 				break;
+			case "UI/Panel":
+				component = new Tea.UI.Panel(app);
+				break;
 		}
 		if (component != null) {
 			object3d.addComponentInstance(component);
