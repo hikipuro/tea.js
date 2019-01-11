@@ -1,5 +1,9 @@
 #{$parent} {
 	div.HierarchyView {
 		height: 100%;
+
+		.TreeView > ul > li {
+			padding-bottom: 1.5em;
+		}
 	}
 }
