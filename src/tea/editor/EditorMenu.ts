@@ -360,6 +360,10 @@ export class EditorMenu {
 					{
 						id: "UI/Image",
 						label: translator.getText("UI/Image"),
+					},
+					{
+						id: "UI/Slider",
+						label: translator.getText("UI/Slider"),
 					}
 				]
 			}
@@ -510,6 +514,10 @@ export class EditorMenu {
 					{
 						id: "UI/Image",
 						label: translator.getText("UI/Image"),
+					},
+					{
+						id: "UI/Slider",
+						label: translator.getText("UI/Slider"),
 					}
 				]
 			}

@@ -122,6 +122,11 @@ export class Checkbox extends UIComponent {
 			this._graphics.destroy();
 			this._graphics = undefined;
 		}
+		this._isChanged = undefined;
+		this._checked = undefined;
+		this._text = undefined;
+		this._font = undefined;
+		this._fontSize = undefined;
 		super.destroy();
 	}
 
@@ -178,6 +183,9 @@ export class Checkbox extends UIComponent {
 	}
 
 	onMouseUp(): void {
+		if (!this._status.isMouseOver) {
+			return;
+		}
 		var color = this._colorMultiplier;
 		color[0] = 1.1;
 		color[1] = 1.1;

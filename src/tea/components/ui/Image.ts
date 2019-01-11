@@ -67,6 +67,7 @@ export class Image extends UIComponent {
 			this._image.removeEventListener("load", this.onLoadImage);
 			this._image = undefined;
 		}
+		this._url = undefined;
 		super.destroy();
 	}
 

@@ -118,11 +118,14 @@ export class UIComponent extends Component {
 		var isMouseUp = mouse.isUp(0);
 		if (mousePosition[0] === Infinity) {
 			if (status.isMouseOver === true) {
-				object3d.sendMessage("onMouseLeave");
 				status.isMouseOver = false;
+				object3d.sendMessage("onMouseLeave");
 			}
 			if (isMouseUp) {
-				status.isMouseDown = false;
+				if (status.isMouseDown === true) {
+					status.isMouseDown = false;
+					object3d.sendMessage("onMouseUp");
+				}
 			}
 			return;
 		}
@@ -132,12 +135,14 @@ export class UIComponent extends Component {
 					status.isMouseOver = true;
 					object3d.sendMessage("onMouseEnter");
 				} else {
-					object3d.sendMessage("onMouseOver");
+					var downPosition = status.toLocalPosition(mousePosition);
+					status.mouseMovePosition.copy(downPosition);
+					object3d.sendMessage("onMouseMove");
 				}
 			} else {
 				if (status.isMouseOver === true) {
-					object3d.sendMessage("onMouseLeave");
 					status.isMouseOver = false;
+					object3d.sendMessage("onMouseLeave");
 				}
 			}
 		}
@@ -146,12 +151,14 @@ export class UIComponent extends Component {
 			var isMouseDown = mouse.isDown(0);
 			if (isMouseDown) {
 				status.isMouseDown = true;
+				var downPosition = status.toLocalPosition(mousePosition);
+				status.mouseDownPosition.copy(downPosition);
 				object3d.sendMessage("onMouseDown");
 			} else if (isMouseUp) {
 				if (status.isMouseDown === true) {
+					status.isMouseDown = false;
 					object3d.sendMessage("onClick");
 				}
-				status.isMouseDown = false;
 				if (mouse.isDoubleClick(0)) {
 					object3d.sendMessage("onDoubleClick");
 				}
@@ -159,7 +166,10 @@ export class UIComponent extends Component {
 			}
 		} else {
 			if (isMouseUp) {
-				status.isMouseDown = false;
+				if (status.isMouseDown === true) {
+					status.isMouseDown = false;
+					object3d.sendMessage("onMouseUp");
+				}
 			}
 		}
 	}

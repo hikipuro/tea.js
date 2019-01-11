@@ -128,7 +128,8 @@
 				"RadioButton": "ラジオボタン",
 				"Checkbox": "チェックボックス",
 				"Image": "画像",
-				"Text": "テキスト"
+				"Text": "テキスト",
+				"Slider": "スライダ"
 			}
 		}
 	},
@@ -191,7 +192,8 @@
 				"RadioButton": "ラジオボタン",
 				"Checkbox": "チェックボックス",
 				"Image": "画像",
-				"Text": "テキスト"
+				"Text": "テキスト",
+				"Slider": "スライダ"
 			}
 		}
 	},
@@ -345,6 +347,11 @@
 			"FontStyle": "フォントスタイル",
 			"Font": "フォント",
 			"Color": "色"
+		},
+		"Slider": {
+			"Title": "スライダ",
+			"Size": "サイズ",
+			"Value": "値"
 		}
 	}
 }

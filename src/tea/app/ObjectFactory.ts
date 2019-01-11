@@ -200,13 +200,6 @@ export class ObjectFactory {
 		return object3d;
 	}
 
-	static createUIText(app: Tea.App): Tea.Object3D {
-		var object3d = new Tea.Object3D(app);
-		object3d.addComponent(Tea.UI.Text);
-		object3d.name = "Text";
-		return object3d;
-	}
-
 	static createUIImage(app: Tea.App): Tea.Object3D {
 		var object3d = new Tea.Object3D(app);
 		object3d.addComponent(Tea.UI.Image);
@@ -232,6 +225,20 @@ export class ObjectFactory {
 		var object3d = new Tea.Object3D(app);
 		object3d.addComponent(Tea.UI.Checkbox);
 		object3d.name = "Checkbox";
+		return object3d;
+	}
+
+	static createUIText(app: Tea.App): Tea.Object3D {
+		var object3d = new Tea.Object3D(app);
+		object3d.addComponent(Tea.UI.Text);
+		object3d.name = "Text";
+		return object3d;
+	}
+
+	static createUISlider(app: Tea.App): Tea.Object3D {
+		var object3d = new Tea.Object3D(app);
+		object3d.addComponent(Tea.UI.Slider);
+		object3d.name = "Slider";
 		return object3d;
 	}
 }

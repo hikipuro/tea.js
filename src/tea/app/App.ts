@@ -322,10 +322,6 @@ export class App {
 		return ObjectFactory.createCanvas(this);
 	}
 
-	createUIText(): Tea.Object3D {
-		return ObjectFactory.createUIText(this);
-	}
-
 	createUIImage(): Tea.Object3D {
 		return ObjectFactory.createUIImage(this);
 	}
@@ -340,6 +336,14 @@ export class App {
 
 	createUICheckbox(): Tea.Object3D {
 		return ObjectFactory.createUICheckbox(this);
+	}
+
+	createUIText(): Tea.Object3D {
+		return ObjectFactory.createUIText(this);
+	}
+
+	createUISlider(): Tea.Object3D {
+		return ObjectFactory.createUISlider(this);
 	}
 
 	readObjFile(url: string, callback: (object3d: Tea.Object3D) => void): void {

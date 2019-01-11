@@ -128,7 +128,8 @@
 				"RadioButton": "RadioButton",
 				"Checkbox": "Checkbox",
 				"Image": "Image",
-				"Text": "Text"
+				"Text": "Text",
+				"Slider": "Slider"
 			}
 		}
 	},
@@ -191,7 +192,8 @@
 				"RadioButton": "RadioButton",
 				"Checkbox": "Checkbox",
 				"Image": "Image",
-				"Text": "Text"
+				"Text": "Text",
+				"Slider": "Slider"
 			}
 		}
 	},
@@ -345,6 +347,11 @@
 			"FontStyle": "Font Style",
 			"Font": "Font",
 			"Color": "Color"
+		},
+		"Slider": {
+			"Title": "Slider",
+			"Size": "Size",
+			"Value": "Value"
 		}
 	}
 }

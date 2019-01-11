@@ -16,6 +16,7 @@ import { UIRadioButton } from "./UIRadioButton";
 import { UICheckbox } from "./UICheckbox";
 import { UIImage } from "./UIImage";
 import { UIText } from "./UIText";
+import { UISlider } from "./UISlider";
 import { TextMesh } from "./TextMesh";
 
 export {
@@ -37,6 +38,7 @@ export {
 	UICheckbox,
 	UIImage,
 	UIText,
+	UISlider,
 	TextMesh
 }
 
@@ -60,6 +62,7 @@ export function getComponents(): Object {
 		UICheckbox: UICheckbox,
 		UIImage: UIImage,
 		UIText: UIText,
+		UISlider: UISlider,
 		TextMesh: TextMesh,
 	}
 }
