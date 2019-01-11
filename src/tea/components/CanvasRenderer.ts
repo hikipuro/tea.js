@@ -123,6 +123,7 @@ export class CanvasRenderer extends Renderer {
 			size: shader.getUniformLocation("_Size"),
 			colorOffset: shader.getUniformLocation("_ColorOffset"),
 			colorMultiplier: shader.getUniformLocation("_ColorMultiplier"),
+			clippingRect: shader.getUniformLocation("_ClippingRect"),
 		};
 
 		var viewportWidth = 1.0;
@@ -140,9 +141,10 @@ export class CanvasRenderer extends Renderer {
 		var gl = this.gl;
 		var TRIANGLES = gl.TRIANGLES;
 		var UNSIGNED_SHORT = gl.UNSIGNED_SHORT;
+		var screenHeight = this.app.height;
 		gl.activeTexture(gl.TEXTURE0);
 		gl.uniform1i(locations.texture, 0);
-		gl.uniform2f(locations.screenSize, this.app.width, this.app.height);
+		gl.uniform2f(locations.screenSize, this.app.width, screenHeight);
 
 		var triangleCount = this._data.triangleCount * 3;
 		var components = this._components;
@@ -183,6 +185,24 @@ export class CanvasRenderer extends Renderer {
 
 			gl.uniform4fv(locations.colorOffset, component.colorOffset);
 			gl.uniform4fv(locations.colorMultiplier, component.colorMultiplier);
+
+			var rect = component.parentClippingRect;
+			if (rect != null) {
+				//rect = rect.clone();
+				gl.uniform4f(
+					locations.clippingRect,
+					rect[0],
+					screenHeight - rect[1],
+					rect[0] + rect[2],
+					screenHeight - (rect[1] + rect[3])
+				);
+			} else {
+				gl.uniform4f(
+					locations.clippingRect,
+					-Infinity, Infinity,
+					Infinity, -Infinity
+				);
+			}
 
 			gl.bindTexture(gl.TEXTURE_2D, component.texture.texture);
 

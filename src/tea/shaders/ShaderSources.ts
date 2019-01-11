@@ -624,6 +624,7 @@ export module ShaderSources {
 		uniform vec4 _ColorMultiplier;
 		uniform vec2 uv_MainTex;
 		uniform vec2 _MainTex_ST;
+		uniform vec4 _ClippingRect;
 		varying vec2 vTexCoord;
 		void main() {
 			/*
@@ -634,6 +635,12 @@ export module ShaderSources {
 				}
 			}
 			*/
+			if (gl_FragCoord.x < _ClippingRect.x
+			||  gl_FragCoord.x > _ClippingRect.z
+			||  gl_FragCoord.y > _ClippingRect.y
+			||  gl_FragCoord.y < _ClippingRect.w) {
+				discard;
+			}
 			vec2 position = (uv_MainTex + vTexCoord) / _MainTex_ST;
 			//vec2 position = vTexCoord;
 			/*

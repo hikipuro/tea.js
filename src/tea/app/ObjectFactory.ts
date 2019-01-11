@@ -217,7 +217,7 @@ export class ObjectFactory {
 	static createUIRadioButton(app: Tea.App): Tea.Object3D {
 		var object3d = new Tea.Object3D(app);
 		object3d.addComponent(Tea.UI.RadioButton);
-		object3d.name = "RadioButton";
+		object3d.name = "Radio Button";
 		return object3d;
 	}
 
@@ -246,6 +246,13 @@ export class ObjectFactory {
 		var object3d = new Tea.Object3D(app);
 		object3d.addComponent(Tea.UI.Panel);
 		object3d.name = "Panel";
+		return object3d;
+	}
+
+	static createUIScrollView(app: Tea.App): Tea.Object3D {
+		var object3d = new Tea.Object3D(app);
+		object3d.addComponent(Tea.UI.ScrollView);
+		object3d.name = "Scroll View";
 		return object3d;
 	}
 }

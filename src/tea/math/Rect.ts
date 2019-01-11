@@ -114,6 +114,10 @@ export class Rect extends Array<number> {
 		);
 	}
 
+	get isEmpty(): boolean {
+		return this[2] === 0.0 && this[3] === 0.0;
+	}
+
 	set(x: number, y: number, width: number, height: number): Rect {
 		this[0] = x;
 		this[1] = y;
@@ -158,11 +162,45 @@ export class Rect extends Array<number> {
 	}
 
 	contains(point: Vector2): boolean {
-		var x = point[0], y = point[1];
+		var x = this[0], y = this[1], w = this[2], h = this[3];
+		var px = point[0], py = point[1];
 		return (
-			this[0] <= x && x <= this[2] &&
-			this[1] <= y && y <= this[3]
+			x <= px && px <= x + w &&
+			y <= py && py <= y + h
 		);
+	}
+
+	intersect(rect: Rect): Rect {
+		if (rect == null || this.isEmpty || rect.isEmpty) {
+			return new Rect();
+		}
+		var tx1 = this[0];
+		var ty1 = this[1];
+		var tx2 = tx1 + this[2];
+		var ty2 = ty1 + this[3];
+		var rx1 = rect[0];
+		var ry1 = rect[1];
+		var rx2 = rx1 + rect[2];
+		var ry2 = ry1 + rect[3];
+		if (tx1 > rx2 || rx1 > tx2
+		||  ty1 > ry2 || ry1 > ty2) {
+			return new Rect();
+		}
+		if (tx1 < rx1) {
+			tx1 = rx1;	
+		}
+		if (ty1 < ry1) {
+			ty1 = ry1;
+		}
+		if (tx2 > rx2) {
+			tx2 = rx2;
+		}
+		if (ty2 > ry2) {
+			ty2 = ry2;
+		}
+		tx2 -= tx1;
+		ty2 -= ty1;
+		return new Rect(tx1, ty1, tx2, ty2);
 	}
 
 	toString(): string {

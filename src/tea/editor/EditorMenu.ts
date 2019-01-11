@@ -368,6 +368,10 @@ export class EditorMenu {
 					{
 						id: "UI/Panel",
 						label: translator.getText("UI/Panel"),
+					},
+					{
+						id: "UI/ScrollView",
+						label: translator.getText("UI/ScrollView"),
 					}
 				]
 			}
@@ -526,6 +530,10 @@ export class EditorMenu {
 					{
 						id: "UI/Panel",
 						label: translator.getText("UI/Panel"),
+					},
+					{
+						id: "UI/ScrollView",
+						label: translator.getText("UI/ScrollView"),
 					}
 				]
 			}

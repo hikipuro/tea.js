@@ -350,6 +350,10 @@ export class App {
 		return ObjectFactory.createUIPanel(this);
 	}
 
+	createUIScrollView(): Tea.Object3D {
+		return ObjectFactory.createUIScrollView(this);
+	}
+
 	readObjFile(url: string, callback: (object3d: Tea.Object3D) => void): void {
 		if (callback == null) {
 			return;

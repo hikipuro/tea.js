@@ -125,12 +125,13 @@
 				"Title": "UI",
 				"Canvas": "Canvas",
 				"Button": "Button",
-				"RadioButton": "RadioButton",
+				"RadioButton": "Radio Button",
 				"Checkbox": "Checkbox",
 				"Image": "Image",
 				"Text": "Text",
 				"Slider": "Slider",
-				"Panel": "Panel"
+				"Panel": "Panel",
+				"ScrollView": "Scroll View"
 			}
 		}
 	},
@@ -188,14 +189,15 @@
 			"UI": {
 				"Title": "UI",
 				"Canvas": "Canvas",
-				"CanvasRenderer": "CanvasRenderer",
+				"CanvasRenderer": "Canvas Renderer",
 				"Button": "Button",
-				"RadioButton": "RadioButton",
+				"RadioButton": "Radio Button",
 				"Checkbox": "Checkbox",
 				"Image": "Image",
 				"Text": "Text",
 				"Slider": "Slider",
-				"Panel": "Panel"
+				"Panel": "Panel",
+				"ScrollView": "Scroll View"
 			}
 		}
 	},
@@ -246,7 +248,7 @@
 			"Title": "Canvas"
 		},
 		"CanvasRenderer": {
-			"Title": "CanvasRenderer"
+			"Title": "Canvas Renderer"
 		},
 		"Light": {
 			"Title": "Light",
@@ -324,7 +326,7 @@
 			"Font": "Font"
 		},
 		"RadioButton": {
-			"Title": "RadioButton",
+			"Title": "Radio Button",
 			"Size": "Size",
 			"Text": "Text",
 			"FontSize": "Font Size",
@@ -357,6 +359,10 @@
 		},
 		"Panel": {
 			"Title": "Panel",
+			"Size": "Size"
+		},
+		"ScrollView": {
+			"Title": "Scroll View",
 			"Size": "Size"
 		}
 	}

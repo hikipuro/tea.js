@@ -11,6 +11,7 @@ import { ParticleSystem } from "./ParticleSystem";
 import { Rigidbody } from "./Rigidbody";
 import { Script } from "./Script";
 import { SphereCollider } from "./SphereCollider";
+import { TextMesh } from "./TextMesh";
 import { UIButton } from "./UIButton";
 import { UIRadioButton } from "./UIRadioButton";
 import { UICheckbox } from "./UICheckbox";
@@ -18,7 +19,7 @@ import { UIImage } from "./UIImage";
 import { UIText } from "./UIText";
 import { UISlider } from "./UISlider";
 import { UIPanel } from "./UIPanel";
-import { TextMesh } from "./TextMesh";
+import { UIScrollView } from "./UIScrollView";
 
 export {
 	AudioSource,
@@ -34,6 +35,7 @@ export {
 	Rigidbody,
 	Script,
 	SphereCollider,
+	TextMesh,
 	UIButton,
 	UIRadioButton,
 	UICheckbox,
@@ -41,7 +43,7 @@ export {
 	UIText,
 	UISlider,
 	UIPanel,
-	TextMesh
+	UIScrollView,
 }
 
 export function getComponents(): Object {
@@ -59,6 +61,7 @@ export function getComponents(): Object {
 		Rigidbody: Rigidbody,
 		Script: Script,
 		SphereCollider: SphereCollider,
+		TextMesh: TextMesh,
 		UIButton: UIButton,
 		UIRadioButton: UIRadioButton,
 		UICheckbox: UICheckbox,
@@ -66,6 +69,6 @@ export function getComponents(): Object {
 		UIText: UIText,
 		UISlider: UISlider,
 		UIPanel: UIPanel,
-		TextMesh: TextMesh,
+		UIScrollView: UIScrollView,
 	}
 }
