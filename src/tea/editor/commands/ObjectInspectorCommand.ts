@@ -252,6 +252,9 @@ export class ObjectInspectorCommand {
 			case "UI/Button":
 				component = new Tea.UI.Button(app);
 				break;
+			case "UI/RadioButton":
+				component = new Tea.UI.RadioButton(app);
+				break;
 			case "UI/Checkbox":
 				component = new Tea.UI.Checkbox(app);
 				break;

@@ -35,6 +35,8 @@ export module UI {
 	export type UIComponent = UIComponents.UIComponent;
 	export var  Button = UIComponents.Button;
 	export type Button = UIComponents.Button;
+	export var  RadioButton = UIComponents.RadioButton;
+	export type RadioButton = UIComponents.RadioButton;
 	export var  Checkbox = UIComponents.Checkbox;
 	export type Checkbox = UIComponents.Checkbox;
 	export var  Image = UIComponents.Image;

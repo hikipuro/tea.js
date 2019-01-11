@@ -221,6 +221,13 @@ export class ObjectFactory {
 		return object3d;
 	}
 
+	static createUIRadioButton(app: Tea.App): Tea.Object3D {
+		var object3d = new Tea.Object3D(app);
+		object3d.addComponent(Tea.UI.RadioButton);
+		object3d.name = "RadioButton";
+		return object3d;
+	}
+
 	static createUICheckbox(app: Tea.App): Tea.Object3D {
 		var object3d = new Tea.Object3D(app);
 		object3d.addComponent(Tea.UI.Checkbox);

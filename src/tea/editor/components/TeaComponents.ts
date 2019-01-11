@@ -12,6 +12,7 @@ import { Rigidbody } from "./Rigidbody";
 import { Script } from "./Script";
 import { SphereCollider } from "./SphereCollider";
 import { UIButton } from "./UIButton";
+import { UIRadioButton } from "./UIRadioButton";
 import { UICheckbox } from "./UICheckbox";
 import { UIImage } from "./UIImage";
 import { UIText } from "./UIText";
@@ -32,6 +33,7 @@ export {
 	Script,
 	SphereCollider,
 	UIButton,
+	UIRadioButton,
 	UICheckbox,
 	UIImage,
 	UIText,
@@ -54,6 +56,7 @@ export function getComponents(): Object {
 		Script: Script,
 		SphereCollider: SphereCollider,
 		UIButton: UIButton,
+		UIRadioButton: UIRadioButton,
 		UICheckbox: UICheckbox,
 		UIImage: UIImage,
 		UIText: UIText,

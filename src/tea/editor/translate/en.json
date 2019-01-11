@@ -125,6 +125,7 @@
 				"Title": "UI",
 				"Canvas": "Canvas",
 				"Button": "Button",
+				"RadioButton": "RadioButton",
 				"Checkbox": "Checkbox",
 				"Image": "Image",
 				"Text": "Text"
@@ -187,6 +188,7 @@
 				"Canvas": "Canvas",
 				"CanvasRenderer": "CanvasRenderer",
 				"Button": "Button",
+				"RadioButton": "RadioButton",
 				"Checkbox": "Checkbox",
 				"Image": "Image",
 				"Text": "Text"
@@ -312,6 +314,13 @@
 		},
 		"Button": {
 			"Title": "Button",
+			"Size": "Size",
+			"Text": "Text",
+			"FontSize": "Font Size",
+			"Font": "Font"
+		},
+		"RadioButton": {
+			"Title": "RadioButton",
 			"Size": "Size",
 			"Text": "Text",
 			"FontSize": "Font Size",

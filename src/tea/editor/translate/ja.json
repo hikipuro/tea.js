@@ -125,6 +125,7 @@
 				"Title": "UI",
 				"Canvas": "キャンバス",
 				"Button": "ボタン",
+				"RadioButton": "ラジオボタン",
 				"Checkbox": "チェックボックス",
 				"Image": "画像",
 				"Text": "テキスト"
@@ -187,6 +188,7 @@
 				"Canvas": "キャンバス",
 				"CanvasRenderer": "キャンバスレンダラ",
 				"Button": "ボタン",
+				"RadioButton": "ラジオボタン",
 				"Checkbox": "チェックボックス",
 				"Image": "画像",
 				"Text": "テキスト"
@@ -312,6 +314,13 @@
 		},
 		"Button": {
 			"Title": "ボタン",
+			"Size": "サイズ",
+			"Text": "テキスト",
+			"FontSize": "フォントサイズ",
+			"Font": "フォント"
+		},
+		"RadioButton": {
+			"Title": "ラジオボタン",
 			"Size": "サイズ",
 			"Text": "テキスト",
 			"FontSize": "フォントサイズ",

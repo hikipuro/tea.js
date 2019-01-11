@@ -334,6 +334,10 @@ export class App {
 		return ObjectFactory.createUIButton(this);
 	}
 
+	createUIRadioButton(): Tea.Object3D {
+		return ObjectFactory.createUIRadioButton(this);
+	}
+
 	createUICheckbox(): Tea.Object3D {
 		return ObjectFactory.createUICheckbox(this);
 	}

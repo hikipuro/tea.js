@@ -1,12 +1,12 @@
 import * as Tea from "../../Tea";
 import { UIComponent } from "./UIComponent";
 
-export class Checkbox extends UIComponent {
-	static readonly className: string = "Checkbox";
+export class RadioButton extends UIComponent {
+	static readonly className: string = "RadioButton";
 	protected static readonly DefaultFontSize: number = 14;
 	protected static readonly DefaultButtonSize: number = 20;
 	protected static readonly DefaultFont: string = "sans-serif";
-	protected static readonly DefaultText: string = "Check";
+	protected static readonly DefaultText: string = "Radio";
 	protected _graphics: Tea.Graphics2D;
 	protected _isChanged: boolean;
 	protected _checked: boolean;
@@ -23,9 +23,9 @@ export class Checkbox extends UIComponent {
 		);
 		this._isChanged = true;
 		this._checked = false;
-		this._text = Checkbox.DefaultText;
-		this._font = Checkbox.DefaultFont;
-		this._fontSize = Checkbox.DefaultFontSize;
+		this._text = RadioButton.DefaultText;
+		this._font = RadioButton.DefaultFont;
+		this._fontSize = RadioButton.DefaultFontSize;
 	}
 
 	get width(): number {
@@ -84,7 +84,7 @@ export class Checkbox extends UIComponent {
 			return;
 		}
 		if (value === "") {
-			value = Checkbox.DefaultFont;
+			value = RadioButton.DefaultFont;
 		}
 		this._font = value;
 		this._isChanged = true;
@@ -102,19 +102,19 @@ export class Checkbox extends UIComponent {
 	}
 
 	static fromJSON(app: Tea.App, json: any, callback: (component: Tea.Component) => void): void {
-		if (Tea.JSONUtil.isValidSceneJSON(json, Checkbox.className) === false) {
+		if (Tea.JSONUtil.isValidSceneJSON(json, RadioButton.className) === false) {
 			callback(null);
 			return;
 		}
-		var checkbox = new Checkbox(app);
-		checkbox._width = json.width;
-		checkbox._height = json.height;
-		checkbox._graphics.resize(json.width, json.height);
-		checkbox._checked = json.checked;
-		checkbox._text = json.text;
-		checkbox._fontSize = json.fontSize;
-		checkbox._font = json.font;
-		callback(checkbox);
+		var radio = new RadioButton(app);
+		radio._width = json.width;
+		radio._height = json.height;
+		radio._graphics.resize(json.width, json.height);
+		radio._checked = json.checked;
+		radio._text = json.text;
+		radio._fontSize = json.fontSize;
+		radio._font = json.font;
+		callback(radio);
 	}
 
 	destroy(): void {
@@ -127,7 +127,7 @@ export class Checkbox extends UIComponent {
 
 	toJSON(): Object {
 		var json: any = super.toJSON();
-		json[Tea.JSONUtil.TypeName] = Checkbox.className;
+		json[Tea.JSONUtil.TypeName] = RadioButton.className;
 		json.checked = this._checked;
 		json.text = this._text;
 		json.fontSize = this._fontSize;
@@ -185,19 +185,45 @@ export class Checkbox extends UIComponent {
 	}
 
 	onClick(): void {
-		this.checked = !this._checked;
+		var checked = this._checked;
+		if (checked) {
+			return;
+		}
+		this.uncheckSiblings();
+		this.checked = true;
+	}
+
+	protected uncheckSiblings(): void {
+		var object3d = this.object3d;
+		if (object3d == null || object3d.parent == null) {
+			return;
+		}
+		var children = object3d.parent.children;
+		if (children == null || children.length <= 0) {
+			return;
+		}
+		var length = children.length;
+		for (var i = 0; i < length; i++) {
+			var child = children[i];
+			var items = child.getComponents(Tea.UI.RadioButton);
+			if (items == null || items.length <= 0) {
+				continue;;
+			}
+			for (var n = 0; n < items.length; n++) {
+				items[n].checked = false;
+			}
+		}
 	}
 
 	protected drawButtonFace(): void {
 		var g = this._graphics;
-		var size = Checkbox.DefaultButtonSize;
+		var size = RadioButton.DefaultButtonSize;
 		var lineWidth = 1;
 		var paddingX = lineWidth / 2;
 		var paddingY = lineWidth / 2 + (this._height - size) / 2;
-		var w = size - lineWidth;
-		var h = size - lineWidth;
+		size -= lineWidth;
 		var gradient = g.createLinearGradient(
-			0, 0, 0, h
+			0, 0, 0, size
 		);
 		gradient.addColorStop(0, "#FFF");
 		gradient.addColorStop(1, "#AAA");
@@ -206,32 +232,28 @@ export class Checkbox extends UIComponent {
 		g.strokeStyle = "#888";
 		g.lineWidth = lineWidth;
 		g.translate(paddingX, paddingY);
-		g.fillRoundRect(0, 0, w, h, 5);
-		g.storokeRoundRect(0, 0, w, h, 5);
+		size /= 2;
+		g.fillCircle(size, size, size);
+		g.strokeCircle(size, size, size);
 		g.restore();
 	}
 
 	protected drawCheck(): void {
 		var g = this._graphics;
-		var size = Checkbox.DefaultButtonSize;
+		var size = RadioButton.DefaultButtonSize;
 		var paddingY = (this._height - size) / 2;
 		g.save();
-		g.strokeStyle = "#333";
-		g.lineWidth = size / 6;
-		g.lineJoin = "round";
-		g.lineCap = "round";
+		g.fillStyle = "#333";
 		g.translate(0, paddingY);
-		g.beginPath();
-		g.moveTo(size / 4, size / 1.7);
-		g.lineTo(size / 2.3, size * 3 / 4);
-		g.lineTo(size * 3 / 4, size / 4);
-		g.stroke();
+		var radius = size / 5;
+		size /= 2;
+		g.fillCircle(size, size, radius);
 		g.restore();
 	}
 
 	protected drawButtonText(): void {
 		var g = this._graphics;
-		var x = Checkbox.DefaultButtonSize + 4;
+		var x = RadioButton.DefaultButtonSize + 4;
 		var y = this._height / 2;
 		g.save();
 		g.textAlign = "left";
@@ -259,7 +281,7 @@ export class Checkbox extends UIComponent {
 	protected getFontSize(): number {
 		var fontSize = this._fontSize;
 		if (fontSize <= 0) {
-			fontSize = Checkbox.DefaultFontSize;
+			fontSize = RadioButton.DefaultFontSize;
 		}
 		return fontSize;
 	}

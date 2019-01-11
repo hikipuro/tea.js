@@ -319,6 +319,20 @@ export class Graphics2D {
 		this.context.arcTo(x1, y1, x2, y2, radius);
 	}
 
+	fillCircle(x: number, y: number, radius: number): void {
+		var context = this.context;
+		context.beginPath();
+		context.arc(x, y, radius, 0, Math.PI * 2);
+		context.fill();
+	}
+
+	strokeCircle(x: number, y: number, radius: number): void {
+		var context = this.context;
+		context.beginPath();
+		context.arc(x, y, radius, 0, Math.PI * 2);
+		context.stroke();
+	}
+
 	ellipse(x: number, y: number, radiusX: number, radiusY: number, rotation: number, startAngle: number, endAngle: number, anticlockwise?: boolean): void {
 		this.context.ellipse(x, y, radiusX, radiusY, rotation, startAngle, endAngle, anticlockwise);
 	}
