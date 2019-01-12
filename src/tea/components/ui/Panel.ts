@@ -24,6 +24,7 @@ export class Panel extends ScrollView {
 			return;
 		}
 		this._width = value;
+		this._clippingRect[2] = value - ScrollView.ClipMargin * 2;
 		this._graphics.resize(value, this._height);
 		this._isSizeChanged = true;
 		this._isChanged = true;
@@ -37,6 +38,7 @@ export class Panel extends ScrollView {
 			return;
 		}
 		this._height = value;
+		this._clippingRect[3] = value - ScrollView.ClipMargin * 2;
 		this._graphics.resize(this._width, value);
 		this._isSizeChanged = true;
 		this._isChanged = true;

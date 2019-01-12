@@ -358,6 +358,11 @@
 		"Panel": {
 			"Title": "パネル",
 			"Size": "サイズ"
+		},
+		"ScrollView": {
+			"Title": "スクロールビュー",
+			"Size": "サイズ",
+			"Scroll": "スクロール"
 		}
 	}
 }

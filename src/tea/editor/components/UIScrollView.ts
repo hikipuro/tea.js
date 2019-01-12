@@ -12,6 +12,12 @@ import { Translator } from "../translate/Translator";
 				:y="size[1]"
 				:step="1"
 				@update="onUpdateSize">{{ translator.size }}</Vector2>
+			<Vector2
+				ref="scroll"
+				:x="scroll[0]"
+				:y="scroll[1]"
+				:step="1"
+				@update="onUpdateScroll">{{ translator.scroll }}</Vector2>
 		</div>
 	`,
 	data: () => {
@@ -19,7 +25,8 @@ import { Translator } from "../translate/Translator";
 			translator: {},
 			name: "ScrollView",
 			enabled: false,
-			size: [0, 0]
+			size: [0, 0],
+			scroll: [0, 0]
 		}
 	},
 	watch: {
@@ -35,12 +42,14 @@ export class UIScrollView extends Vue {
 	name: string;
 	enabled: boolean;
 	size: Array<number>;
+	scroll: Array<number>;
 
 	protected created(): void {
 		var translator = Translator.getInstance();
 		translator.basePath = "Components/ScrollView";
 		this.name = translator.getText("Title");
 		this.translator.size = translator.getText("Size");
+		this.translator.scroll = translator.getText("Scroll");
 	}
 
 	protected mounted(): void {
@@ -51,6 +60,8 @@ export class UIScrollView extends Vue {
 		this.enabled = component.enabled;
 		this.$set(this.size, 0, component.width);
 		this.$set(this.size, 1, component.height);
+		this.$set(this.scroll, 0, component.localScroll[0]);
+		this.$set(this.scroll, 1, component.localScroll[1]);
 	}
 
 	protected onUpdateSize(x: number, y: number): void {
@@ -59,6 +70,15 @@ export class UIScrollView extends Vue {
 		if (this._component != null) {
 			this._component.width = x;
 			this._component.height = y;
+		}
+		this.$emit("update", "size");
+	}
+
+	protected onUpdateScroll(x: number, y: number): void {
+		this.$set(this.scroll, 0, x);
+		this.$set(this.scroll, 1, y);
+		if (this._component != null) {
+			this._component.localScroll.set(x, y);
 		}
 		this.$emit("update", "size");
 	}

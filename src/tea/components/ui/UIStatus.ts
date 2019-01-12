@@ -12,7 +12,7 @@ export class UIStatus {
 
 	constructor(component: UIComponent) {
 		this.component = component;
-		this.collider = new UICollider(component.app, component);
+		this.collider = new UICollider(component);
 		this.isMouseOver = false;
 		this.isMouseDown = false;
 		this.mouseDownPosition = new Tea.Vector2();

@@ -6,10 +6,10 @@ export class UICollider {
 	center: Tea.Vector2;
 	size: Tea.Vector2;
 
-	constructor(app: Tea.App, uiComponent: Tea.UI.UIComponent) {
+	constructor(uiComponent: Tea.UI.UIComponent) {
 		this.uiComponent = uiComponent;
 		this.center = new Tea.Vector2();
-		this.size = Tea.Vector2.one.clone();
+		this.size = new Tea.Vector2(1.0, 1.0);
 	}
 
 	get object3d(): Tea.Object3D {
@@ -44,6 +44,13 @@ export class UICollider {
 		extents[0] *= s[0];
 		extents[1] *= s[1];
 		return extents;
+	}
+
+	clone(): UICollider {
+		var collider = new UICollider(this.uiComponent);
+		collider.center.copy(this.center);
+		collider.size.copy(this.size);
+		return collider;
 	}
 
 	containsPoint(point: Tea.Vector2): boolean {

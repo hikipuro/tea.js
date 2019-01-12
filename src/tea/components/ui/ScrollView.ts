@@ -4,10 +4,10 @@ import { UIComponent } from "./UIComponent";
 export class ScrollView extends UIComponent {
 	static readonly className: string = "ScrollView";
 	static readonly ClipMargin: number = 1;
+	localScroll: Tea.Vector2;
 	protected _graphics: Tea.Graphics2D;
 	protected _isChanged: boolean;
 	protected _clippingRect: Tea.Rect;
-	protected _scroll: Tea.Vector2;
 	
 	constructor(app: Tea.App) {
 		super(app);
@@ -20,7 +20,7 @@ export class ScrollView extends UIComponent {
 			this._width, this._height
 		);
 		this._isChanged = true;
-		this._scroll = new Tea.Vector2();
+		this.localScroll = new Tea.Vector2();
 	}
 
 	get width(): number {
@@ -57,6 +57,9 @@ export class ScrollView extends UIComponent {
 			return this._clippingRect;
 		}
 		var rect = this._clippingRect.clone();
+		//var scroll = this._scroll;
+		//rect[0] -= scroll[0];
+		//rect[1] -= scroll[1];
 		var s = object3d.scale;
 		rect[2] *= s[0];
 		rect[3] *= s[1];
@@ -71,6 +74,9 @@ export class ScrollView extends UIComponent {
 			if (view == null) {
 				break;
 			}
+			var scroll = view.localScroll;
+			rect[0] -= scroll[0];
+			rect[1] -= scroll[1];
 			parentRect.copy(view._clippingRect);
 			var s = parent.scale;
 			parentRect[2] *= s[0];
@@ -79,6 +85,37 @@ export class ScrollView extends UIComponent {
 			parent = parent.parent;
 		}
 		return rect;
+	}
+
+	get scroll(): Tea.Vector2 {
+		var object3d = this.object3d;
+		if (object3d == null) {
+			return this.localScroll;
+		}
+		var scroll = this.localScroll.clone();
+		var s = object3d.scale;
+		scroll[0] *= s[0];
+		scroll[1] *= s[1];
+		var parentScroll = new Tea.Vector2();
+		var parent = object3d.parent;
+		var length = Tea.Object3D.MaxDepth;
+		for (var i = 0; i < length; i++) {
+			if (parent == null) {
+				break;
+			}
+			var view = parent.getComponent(Tea.UI.ScrollView);
+			if (view == null) {
+				break;
+			}
+			parentScroll.copy(view.localScroll);
+			var s = parent.scale;
+			parentScroll[0] *= s[0];
+			parentScroll[1] *= s[1];
+			scroll[0] += parentScroll[0];
+			scroll[1] += parentScroll[1];
+			parent = parent.parent;
+		}
+		return scroll;
 	}
 
 	static fromJSON(app: Tea.App, json: any, callback: (component: Tea.Component) => void): void {
@@ -93,6 +130,9 @@ export class ScrollView extends UIComponent {
 		var margin = ScrollView.ClipMargin * 2;
 		view._clippingRect[2] = json.width - margin;
 		view._clippingRect[3] = json.height - margin;
+		if (json.scroll) {
+			view.localScroll = Tea.Vector2.fromArray(json.scroll);
+		}
 		callback(view);
 	}
 
@@ -103,13 +143,14 @@ export class ScrollView extends UIComponent {
 		}
 		this._isChanged = undefined;
 		this._clippingRect = undefined;
-		this._scroll = undefined;
+		this.localScroll = undefined;
 		super.destroy();
 	}
 
 	toJSON(): Object {
 		var json: any = super.toJSON();
 		json[Tea.JSONUtil.TypeName] = ScrollView.className;
+		json.localScroll = this.localScroll;
 		return json;
 	}
 

@@ -175,19 +175,23 @@ export class UIComponent extends Component {
 	}
 
 	protected hitTest(position: Tea.Vector2): boolean {
-		if (this.collider.containsPoint(position) === false) {
-			return false;
-		}
 		var object3d = this.object3d;
 		if (object3d == null || object3d.parent == null) {
-			return true;
+			return this.collider.containsPoint(position);
 		}
 		var parent = object3d.parent;
 		var component = parent.getComponent(Tea.UI.ScrollView);
 		if (component == null) {
-			return true;
+			return this.collider.containsPoint(position);
 		}
 		var rect = component.clippingRect;
-		return rect.contains(position);
+		if (rect.contains(position) === false) {
+			return false;
+		}
+		var collider = this.collider.clone();
+		var scroll = component.scroll;
+		collider.center[0] -= scroll[0];
+		collider.center[1] -= scroll[1];
+		return collider.containsPoint(position);
 	}
 }

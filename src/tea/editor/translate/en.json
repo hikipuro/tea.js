@@ -363,7 +363,8 @@
 		},
 		"ScrollView": {
 			"Title": "Scroll View",
-			"Size": "Size"
+			"Size": "Size",
+			"Scroll": "Scroll"
 		}
 	}
 }

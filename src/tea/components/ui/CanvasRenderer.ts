@@ -7,11 +7,12 @@ export class CanvasRenderer extends Renderer {
 	protected _mesh: Tea.Mesh;
 	protected _data: BufferData;
 	protected _frontFace: number;
-	protected _clippingRect: Tea.Rect;
 	protected _drawCallCount: number;
 	protected _isClipped: boolean;
 	protected _locations: any;
 	protected _viewport: Tea.Vector2;
+	protected _clippingRect: Tea.Rect;
+	protected _scroll: Tea.Vector2;
 	
 	constructor(app: Tea.App) {
 		super(app);
@@ -21,11 +22,12 @@ export class CanvasRenderer extends Renderer {
 		this._data.setMeshData(this._mesh);
 		this._mesh.isModified = false;
 		this._frontFace = gl.CCW;
-		this._clippingRect = null;
 		this._drawCallCount = 0;
 		this._isClipped = false;
 		this._locations = null;
 		this._viewport = new Tea.Vector2();
+		this._clippingRect = null;
+		this._scroll = new Tea.Vector2();
 	}
 
 	protected get isRenderable(): boolean {
@@ -72,11 +74,12 @@ export class CanvasRenderer extends Renderer {
 			this._data = undefined;
 		}
 		this._frontFace = undefined;
-		this._clippingRect = undefined;
 		this._drawCallCount = undefined;
 		this._isClipped = undefined;
 		this._locations = undefined;
 		this._viewport = undefined;
+		this._clippingRect = undefined;
+		this._scroll = undefined;
 		super.destroy();
 	}
 
@@ -127,12 +130,14 @@ export class CanvasRenderer extends Renderer {
 		var clippingRect = this._clippingRect;
 		if (clippingRect != null) {
 			var screenHeight = this.app.height;
+			var clippingX = clippingRect[0];
+			var clippingY = clippingRect[1];
 			gl.uniform4f(
 				locations.clippingRect,
-				clippingRect[0],
-				screenHeight - clippingRect[1],
-				clippingRect[0] + clippingRect[2],
-				screenHeight - (clippingRect[1] + clippingRect[3])
+				clippingX,
+				screenHeight - clippingY,
+				clippingX + clippingRect[2],
+				screenHeight - (clippingY + clippingRect[3])
 			);
 			this._isClipped = true;
 		} else if (this._isClipped === true) {
@@ -144,20 +149,10 @@ export class CanvasRenderer extends Renderer {
 			this._isClipped  = false;
 		}
 
-		if (component instanceof Tea.UI.ScrollView) {
-			if (clippingRect != null) {
-				this._clippingRect = clippingRect.intersect(
-					component.clippingRect
-				);
-			} else {
-				this._clippingRect = component.clippingRect;
-			}
-		}
-
 		var width = component.width;
 		var height = component.height;
-		var texWidth = Tea.Mathf.closestPowerOfTwo(width) / width;
-		var texHeight = Tea.Mathf.closestPowerOfTwo(height) / height;
+		var texWidth = component.texture.width / width;
+		var texHeight = component.texture.height / height;
 		if (texWidth === 0.0 || texHeight === 0.0) {
 			this.drawChildren(object3d.children);
 			return;
@@ -168,14 +163,15 @@ export class CanvasRenderer extends Renderer {
 		//gl.uniform2f(locations.textureUV, 0.0, 0.0);
 
 		var viewport = this._viewport;
+		var scroll = this._scroll;
 		var object3d = component.object3d;
 		var p = object3d.position;
 		var s = object3d.scale;
 		gl.uniform2f(locations.anchor, -1.0, -1.0);
 		gl.uniform2f(
 			locations.position,
-			p[0] * viewport[0],
-			p[1] * viewport[1]
+			p[0] * viewport[0] - scroll[0],
+			p[1] * viewport[1] - scroll[1]
 		);
 		gl.uniform2f(
 			locations.size,
@@ -193,13 +189,33 @@ export class CanvasRenderer extends Renderer {
 			gl.UNSIGNED_SHORT, 0
 		);
 		this._drawCallCount++;
+
 		var children = object3d.children;
 		if (children == null || children.length <= 0) {
 			return;
 		}
+		var clippingRectOrg = this._clippingRect;
+		var scrollX = this._scroll[0];
+		var scrollY = this._scroll[1];
+		var isScrollView = component instanceof Tea.UI.ScrollView;
+		if (isScrollView) {
+			if (clippingRectOrg != null) {
+				clippingRectOrg = clippingRectOrg.clone();
+			}
+			this._clippingRect = (component as Tea.UI.ScrollView).clippingRect;
+			this._scroll[0] = scroll[0];
+			this._scroll[1] = scroll[1];
+		}
+		
 		var length = children.length;
 		for (var i = 0; i < length; i++) {
 			this.drawObject3D(children[i]);
+		}
+		
+		if (isScrollView) {
+			this._clippingRect = clippingRectOrg;
+			this._scroll[0] = scrollX;
+			this._scroll[1] = scrollY;
 		}
 	}
 	
@@ -229,7 +245,6 @@ export class CanvasRenderer extends Renderer {
 			};
 		}
 		var viewport = this._viewport;
-		viewport.set(1.0, 1.0);
 		if (camera != null) {
 			var viewportRect = camera.viewportRect;
 			if (viewportRect[2] !== 0.0) {
@@ -238,6 +253,9 @@ export class CanvasRenderer extends Renderer {
 			if (viewportRect[3] !== 0.0) {
 				viewport[1] = 1.0 / viewportRect[3];
 			}
+		} else {
+			viewport[0] = 1.0;
+			viewport[1] = 1.0;
 		}
 
 		var gl = this.gl;
@@ -251,6 +269,8 @@ export class CanvasRenderer extends Renderer {
 		for (var i = 0; i < length; i++) {
 			this._clippingRect = null;
 			this._isClipped = true;
+			this._scroll[0] = 0.0;
+			this._scroll[1] = 0.0;
 			this.drawObject3D(children[i]);
 		}
 		Renderer.drawCallCount += this._drawCallCount;
