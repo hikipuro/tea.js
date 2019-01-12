@@ -1,7 +1,7 @@
 import * as Tea from "../../Tea";
-import { UIComponent } from "./UIComponent";
+import { ScrollView } from "./ScrollView";
 
-export class Panel extends UIComponent {
+export class Panel extends ScrollView {
 	static readonly className: string = "Panel";
 	protected _graphics: Tea.Graphics2D;
 	protected _isChanged: boolean;
@@ -51,6 +51,9 @@ export class Panel extends UIComponent {
 		panel._width = json.width;
 		panel._height = json.height;
 		panel._graphics.resize(json.width, json.height);
+		var margin = ScrollView.ClipMargin * 2;
+		panel._clippingRect[2] = json.width - margin;
+		panel._clippingRect[3] = json.height - margin;
 		callback(panel);
 	}
 

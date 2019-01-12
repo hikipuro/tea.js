@@ -11,7 +11,6 @@ export class UIComponent extends Component {
 	protected _isSizeChanged: boolean;
 	protected _colorOffset: Tea.Color;
 	protected _colorMultiplier: Tea.Color;
-	protected _clippingRect: Tea.Rect;
 	protected _status: UIStatus;
 	texture: Tea.Texture;
 	
@@ -23,7 +22,6 @@ export class UIComponent extends Component {
 		this._isSizeChanged = true;
 		this._colorOffset = new Tea.Color();
 		this._colorMultiplier = new Tea.Color(1.0, 1.0, 1.0, 1.0);
-		this._clippingRect = null;
 		this._status = new UIStatus(this);
 		this.texture = Tea.Texture.getEmpty(app);
 		this.texture.wrapMode = Tea.TextureWrapMode.Clamp;
@@ -64,38 +62,6 @@ export class UIComponent extends Component {
 	}
 	set colorMultiplier(value: Tea.Color) {
 		this._colorMultiplier = value;
-	}
-
-	get clippingRect(): Tea.Rect {
-		if (this._clippingRect == null) {
-			var object3d = this.object3d;
-			if (object3d == null || object3d.parent == null) {
-				return null;
-			}
-			var component = object3d.parent.getComponent(UIComponent);
-			if (component == null) {
-				return null;
-			}
-			return component.clippingRect;
-		}
-		return this._clippingRect;
-	}
-
-	get parentClippingRect(): Tea.Rect {
-		var object3d = this.object3d;
-		if (object3d == null || object3d.parent == null) {
-			return null;
-		}
-		var parent = object3d.parent;
-		var component = parent.getComponent(UIComponent);
-		if (component == null || component.clippingRect == null) {
-			return null;
-		}
-		var s = parent.scale;
-		var rect = component.clippingRect.clone();
-		rect[2] *= s[0];
-		rect[3] *= s[1];
-		return rect;
 	}
 
 	get collider(): UICollider {
@@ -212,10 +178,16 @@ export class UIComponent extends Component {
 		if (this.collider.containsPoint(position) === false) {
 			return false;
 		}
-		var rect = this.parentClippingRect;
-		if (rect == null) {
+		var object3d = this.object3d;
+		if (object3d == null || object3d.parent == null) {
 			return true;
 		}
+		var parent = object3d.parent;
+		var component = parent.getComponent(Tea.UI.ScrollView);
+		if (component == null) {
+			return true;
+		}
+		var rect = component.clippingRect;
 		return rect.contains(position);
 	}
 }

@@ -3,7 +3,7 @@ import { Object3DStatus } from "./Object3DStatus";
 
 export class Object3D {
 	static readonly className: string = "Object3D";
-	protected static readonly MaxDepth: number = 1000;
+	static readonly MaxDepth: number = 1000;
 	protected static _nextId: number = 0;
 	id: number;
 	name: string;

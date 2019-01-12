@@ -203,6 +203,51 @@ export class Rect extends Array<number> {
 		return new Rect(tx1, ty1, tx2, ty2);
 	}
 
+	intersectSelf(rect: Rect): Rect {
+		if (rect == null || this.isEmpty || rect.isEmpty) {
+			this[0] = 0.0;
+			this[1] = 0.0;
+			this[2] = 0.0;
+			this[3] = 0.0;
+			return this;
+		}
+		var tx1 = this[0];
+		var ty1 = this[1];
+		var tx2 = tx1 + this[2];
+		var ty2 = ty1 + this[3];
+		var rx1 = rect[0];
+		var ry1 = rect[1];
+		var rx2 = rx1 + rect[2];
+		var ry2 = ry1 + rect[3];
+		if (tx1 > rx2 || rx1 > tx2
+		||  ty1 > ry2 || ry1 > ty2) {
+			this[0] = 0.0;
+			this[1] = 0.0;
+			this[2] = 0.0;
+			this[3] = 0.0;
+			return this;
+		}
+		if (tx1 < rx1) {
+			tx1 = rx1;	
+		}
+		if (ty1 < ry1) {
+			ty1 = ry1;
+		}
+		if (tx2 > rx2) {
+			tx2 = rx2;
+		}
+		if (ty2 > ry2) {
+			ty2 = ry2;
+		}
+		tx2 -= tx1;
+		ty2 -= ty1;
+		this[0] = tx1;
+		this[1] = ty1;
+		this[2] = tx2;
+		this[3] = ty2;
+		return this;
+	}
+
 	toString(): string {
 		var t = this;
 		return (
