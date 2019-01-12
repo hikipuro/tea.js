@@ -49,7 +49,7 @@ export class EditorSceneRenderer extends SceneRenderer {
 		var rendererCount = renderers.length;
 		for (var i = 0; i < rendererCount; i++) {
 			var renderer = renderers[i];
-			if (renderer instanceof Tea.CanvasRenderer) {
+			if (renderer instanceof Tea.UI.CanvasRenderer) {
 				continue;
 			}
 			if (renderer.material != null) {

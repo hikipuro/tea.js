@@ -10,8 +10,6 @@ export * from "./collisions/Sphere";
 
 export * from "./components/BoxCollider";
 export * from "./components/Camera";
-export * from "./components/Canvas";
-export * from "./components/CanvasRenderer";
 export * from "./components/Collider";
 export * from "./components/Component";
 export * from "./components/Light";
@@ -33,6 +31,10 @@ import * as UIComponents from "./components/ui/UIComponents";
 export module UI {
 	export var  UIComponent = UIComponents.UIComponent;
 	export type UIComponent = UIComponents.UIComponent;
+	export var  Canvas = UIComponents.Canvas;
+	export type Canvas = UIComponents.Canvas;
+	export var  CanvasRenderer = UIComponents.CanvasRenderer;
+	export type CanvasRenderer = UIComponents.CanvasRenderer;
 	export var  Button = UIComponents.Button;
 	export type Button = UIComponents.Button;
 	export var  RadioButton = UIComponents.RadioButton;

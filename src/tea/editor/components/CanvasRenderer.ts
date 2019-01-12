@@ -23,7 +23,7 @@ import { Translator } from "../translate/Translator";
 	}
 })
 export class CanvasRenderer extends Vue {
-	_component: Tea.CanvasRenderer;
+	_component: Tea.UI.CanvasRenderer;
 	translator: any;
 	name: string;
 	enabled: boolean;
@@ -43,4 +43,4 @@ export class CanvasRenderer extends Vue {
 	}
 }
 
-Tea.CanvasRenderer.editorView = CanvasRenderer;
+Tea.UI.CanvasRenderer.editorView = CanvasRenderer;

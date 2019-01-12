@@ -23,7 +23,7 @@ import { Translator } from "../translate/Translator";
 	}
 })
 export class Canvas extends Vue {
-	_component: Tea.Canvas;
+	_component: Tea.UI.Canvas;
 	translator: any;
 	name: string;
 	enabled: boolean;
@@ -43,4 +43,4 @@ export class Canvas extends Vue {
 	}
 }
 
-Tea.Canvas.editorView = Canvas;
+Tea.UI.Canvas.editorView = Canvas;

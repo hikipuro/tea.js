@@ -229,10 +229,10 @@ export class ObjectInspectorCommand {
 				component = new Tea.Light(app);
 				break;
 			case "UI/Canvas":
-				component = new Tea.Canvas(app);
+				component = new Tea.UI.Canvas(app);
 				break;
 			case "UI/CanvasRenderer":
-				component = new Tea.CanvasRenderer(app);
+				component = new Tea.UI.CanvasRenderer(app);
 				var shader = new Tea.Shader(app);
 				shader.attach(
 					Tea.ShaderSources.uiComponentVS,

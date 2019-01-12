@@ -1,5 +1,5 @@
-import * as Tea from "../Tea";
-import { Component } from "./Component";
+import * as Tea from "../../Tea";
+import { Component } from "../Component";
 
 export class Canvas extends Component {
 	static readonly className: string = "Canvas";

@@ -105,7 +105,7 @@ export class ObjectInspector extends Vue {
 		this.setPosition(object3d.localPosition);
 		this.setRotation(object3d.localRotation.eulerAngles);
 		this.setScale(object3d.localScale);
-		var canvas = object3d.getComponentInParent(Tea.Canvas);
+		var canvas = object3d.getComponentInParent(Tea.UI.Canvas);
 		if (canvas != null) {
 			this.is3DObject = false;
 		}

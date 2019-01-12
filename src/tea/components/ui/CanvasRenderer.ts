@@ -1,6 +1,6 @@
-import * as Tea from "../Tea";
-import { Renderer } from "./Renderer";
-import { BufferData } from "./BufferData";
+import * as Tea from "../../Tea";
+import { Renderer } from "../Renderer";
+import { BufferData } from "../BufferData";
 
 export class CanvasRenderer extends Renderer {
 	static readonly className: string = "CanvasRenderer";
@@ -72,7 +72,7 @@ export class CanvasRenderer extends Renderer {
 			this._components = null;
 			return;
 		}
-		var canvas = object3d.getComponent(Tea.Canvas);
+		var canvas = object3d.getComponent(Tea.UI.Canvas);
 		if (canvas != null && canvas.enabled === true) {
 			var components = object3d.getComponentsInChildren(Tea.UI.UIComponent);
 			this._components = components.filter((component: Tea.UI.UIComponent) => {

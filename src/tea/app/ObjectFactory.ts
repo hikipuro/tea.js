@@ -181,9 +181,9 @@ export class ObjectFactory {
 
 	static createCanvas(app: Tea.App): Tea.Object3D {
 		var object3d = new Tea.Object3D(app);
-		object3d.addComponent(Tea.Canvas);
+		object3d.addComponent(Tea.UI.Canvas);
 		object3d.name = "Canvas";
-		var renderer = object3d.addComponent(Tea.CanvasRenderer);
+		var renderer = object3d.addComponent(Tea.UI.CanvasRenderer);
 		var shader = new Tea.Shader(app);
 		shader.attach(
 			Tea.ShaderSources.uiComponentVS,

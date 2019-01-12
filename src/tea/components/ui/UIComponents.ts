@@ -1,4 +1,6 @@
 export * from "./UIComponent";
+export * from "./Canvas";
+export * from "./CanvasRenderer";
 export * from "./Button";
 export * from "./RadioButton";
 export * from "./Checkbox";
