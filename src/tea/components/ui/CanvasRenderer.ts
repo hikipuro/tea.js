@@ -194,26 +194,28 @@ export class CanvasRenderer extends Renderer {
 		if (children == null || children.length <= 0) {
 			return;
 		}
-		var clippingRectOrg = this._clippingRect;
-		var scrollX = this._scroll[0];
-		var scrollY = this._scroll[1];
-		var isScrollView = component instanceof Tea.UI.ScrollView;
-		if (isScrollView) {
-			if (clippingRectOrg != null) {
-				clippingRectOrg = clippingRectOrg.clone();
-			}
-			this._clippingRect = (component as Tea.UI.ScrollView).clippingRect;
-			this._scroll[0] = scroll[0];
-			this._scroll[1] = scroll[1];
+		//var clippingRectOrg = this._clippingRect;
+		var scrollX = scroll[0];
+		var scrollY = scroll[1];
+		var isScrollView = false;
+		if (component instanceof Tea.UI.ScrollView) {
+			isScrollView = true;
+			//if (clippingRectOrg != null) {
+			//	clippingRectOrg = clippingRectOrg.clone();
+			//}
+			this._clippingRect = component.clippingRect;
+			var componentScroll = component.scroll;
+			this._scroll[0] = componentScroll[0];
+			this._scroll[1] = componentScroll[1];
 		}
-		
+
 		var length = children.length;
 		for (var i = 0; i < length; i++) {
 			this.drawObject3D(children[i]);
 		}
 		
 		if (isScrollView) {
-			this._clippingRect = clippingRectOrg;
+			this._clippingRect = clippingRect;
 			this._scroll[0] = scrollX;
 			this._scroll[1] = scrollY;
 		}

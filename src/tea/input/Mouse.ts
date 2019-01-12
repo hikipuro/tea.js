@@ -153,17 +153,19 @@ export class Mouse {
 		var width = this._app.width;
 		var height = this._app.height;
 		var element = this._element;
+		var offsetX = e.offsetX;
+		var offsetY = e.offsetY;
 		var clientWidth = element.clientWidth;
 		var clientHeight = element.clientHeight;
-		var x = width * e.offsetX / clientWidth;
-		var y = height * (1.0 - (e.offsetY / clientHeight));
+		var x = width * offsetX / clientWidth;
+		var y = height * (1.0 - (offsetY / clientHeight));
 		this.x = x;
 		this.y = y;
 		this._position[0] = x;
 		this._position[1] = y;
 		this._position[2] = 0.0;
-		this._uiPosition[0] = x;
-		this._uiPosition[1] = height - y;
+		this._uiPosition[0] = offsetX;
+		this._uiPosition[1] = offsetY;
 		this._isMoved = true;
 	}
 
