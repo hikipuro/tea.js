@@ -132,7 +132,8 @@
 				"Slider": "Slider",
 				"Panel": "Panel",
 				"ScrollView": "Scroll View",
-				"HScrollBar": "HScroll Bar"
+				"HScrollBar": "HScroll Bar",
+				"VScrollBar": "VScroll Bar"
 			}
 		}
 	},
@@ -199,7 +200,8 @@
 				"Slider": "Slider",
 				"Panel": "Panel",
 				"ScrollView": "Scroll View",
-				"HScrollBar": "HScroll Bar"
+				"HScrollBar": "HScroll Bar",
+				"VScrollBar": "VScroll Bar"
 			}
 		}
 	},
@@ -370,6 +372,13 @@
 		},
 		"HScrollBar": {
 			"Title": "HScroll Bar",
+			"Size": "Size",
+			"Value": "Value",
+			"Max": "Max",
+			"ThumbRatio": "Thumb Ratio"
+		},
+		"VScrollBar": {
+			"Title": "VScroll Bar",
 			"Size": "Size",
 			"Value": "Value",
 			"Max": "Max",

@@ -220,6 +220,9 @@ export class HierarchyViewCommand {
 			case "UI/HScrollBar":
 				object3d = app.createUIHScrollBar();
 				break;
+			case "UI/VScrollBar":
+				object3d = app.createUIVScrollBar();
+				break;
 			case "Rename":
 				var i = hierarchyView.getSelectedItem();
 				if (i) {

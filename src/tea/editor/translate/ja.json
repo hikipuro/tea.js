@@ -130,7 +130,10 @@
 				"Image": "画像",
 				"Text": "テキスト",
 				"Slider": "スライダ",
-				"Panel": "パネル"
+				"Panel": "パネル",
+				"ScrollView": "スクロールビュー",
+				"HScrollBar": "水平スクロールバー",
+				"VScrollBar": "垂直スクロールバー"
 			}
 		}
 	},
@@ -195,7 +198,10 @@
 				"Image": "画像",
 				"Text": "テキスト",
 				"Slider": "スライダ",
-				"Panel": "パネル"
+				"Panel": "パネル",
+				"ScrollView": "スクロールビュー",
+				"HScrollBar": "水平スクロールバー",
+				"VScrollBar": "垂直スクロールバー"
 			}
 		}
 	},
@@ -363,6 +369,20 @@
 			"Title": "スクロールビュー",
 			"Size": "サイズ",
 			"Scroll": "スクロール"
+		},
+		"HScrollBar": {
+			"Title": "水平スクロールバー",
+			"Size": "サイズ",
+			"Value": "値",
+			"Max": "最大値",
+			"ThumbRatio": "つまみの割合"
+		},
+		"VScrollBar": {
+			"Title": "垂直スクロールバー",
+			"Size": "サイズ",
+			"Value": "値",
+			"Max": "最大値",
+			"ThumbRatio": "つまみの割合"
 		}
 	}
 }

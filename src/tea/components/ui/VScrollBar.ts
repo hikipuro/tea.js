@@ -1,8 +1,8 @@
 import * as Tea from "../../Tea";
 import { UIComponent } from "./UIComponent";
 
-export class HScrollBar extends UIComponent {
-	static readonly className: string = "HScrollBar";
+export class VScrollBar extends UIComponent {
+	static readonly className: string = "VScrollBar";
 	protected _graphics: Tea.Graphics2D;
 	protected _isChanged: boolean;
 	protected _value: number;
@@ -13,8 +13,8 @@ export class HScrollBar extends UIComponent {
 	
 	constructor(app: Tea.App) {
 		super(app);
-		this._width = 100;
-		this._height = 16;
+		this._width = 16;
+		this._height = 100;
 		this._graphics = new Tea.Graphics2D(
 			this._width, this._height
 		);
@@ -94,18 +94,18 @@ export class HScrollBar extends UIComponent {
 		var lineWidth = 1;
 		var width = this._width - lineWidth;
 		var height = this._height - lineWidth;
-		var size = width * this._thumbRatio;
-		size = Math.min(size, width);
-		size = Math.max(size, height);
+		var size = height * this._thumbRatio;
+		size = Math.max(size, width);
+		size = Math.min(size, height);
 		return size;
 	}
 
 	static fromJSON(app: Tea.App, json: any, callback: (component: Tea.Component) => void): void {
-		if (Tea.JSONUtil.isValidSceneJSON(json, HScrollBar.className) === false) {
+		if (Tea.JSONUtil.isValidSceneJSON(json, VScrollBar.className) === false) {
 			callback(null);
 			return;
 		}
-		var scrollBar = new HScrollBar(app);
+		var scrollBar = new VScrollBar(app);
 		scrollBar._width = json.width;
 		scrollBar._height = json.height;
 		scrollBar._graphics.resize(json.width, json.height);
@@ -132,7 +132,7 @@ export class HScrollBar extends UIComponent {
 
 	toJSON(): Object {
 		var json: any = super.toJSON();
-		json[Tea.JSONUtil.TypeName] = HScrollBar.className;
+		json[Tea.JSONUtil.TypeName] = VScrollBar.className;
 		json.value = this._value;
 		json.max = this._max;
 		json.thumbRatio = this._thumbRatio;
@@ -153,16 +153,16 @@ export class HScrollBar extends UIComponent {
 
 	onMouseDown(): void {
 		var position = this._status.mouseDownPosition;
-		var x = position[0];
+		var y = position[1];
 		var ratio = this._value / this._max;
 		var lineWidth = 1;
 		var thumbSize = this.thumbSize;
-		var width = this._width - lineWidth - thumbSize;
-		var left = ratio * width;
-		var right = left + thumbSize;
-		if (x < left || x > right) {
-			x -= thumbSize / 2;
-			var value = x / width;
+		var height = this._height - lineWidth - thumbSize;
+		var top = ratio * height;
+		var bottom = top + thumbSize;
+		if (y < top || y > bottom) {
+			y -= thumbSize / 2;
+			var value = y / height;
 			this.value = Math.max(0, Math.min(1, value)) * this._max;
 		}
 		this._mouseDownValue = this._value;
@@ -179,9 +179,9 @@ export class HScrollBar extends UIComponent {
 		}
 		var downPosition = this._status.mouseDownPosition;
 		var position = this._status.mouseMovePosition;
-		var width = this._width - this.thumbSize;
-		var x = position[0] - downPosition[0];
-		var value = x / width;
+		var height = this._height - this.thumbSize;
+		var y = position[1] - downPosition[1];
+		var value = y / height;
 		value = this._mouseDownValue + value * this._max;
 		this.value = Math.max(0, Math.min(this._max, value));
 	}
@@ -206,19 +206,19 @@ export class HScrollBar extends UIComponent {
 	protected drawButton(): void {
 		var g = this._graphics;
 		var lineWidth = 1;
-		var width = this._width - lineWidth;
+		var height = this._height - lineWidth;
 		var ratio = this._value / this._max;
 		var thumbSize = this.thumbSize;
-		var paddingX = lineWidth / 2 + ratio * (width - thumbSize);
-		var paddingY = lineWidth / 2;
-		var h = this._height - lineWidth;
+		var paddingX = lineWidth / 2;
+		var paddingY = lineWidth / 2 + ratio * (height - thumbSize);
+		var w = this._width - lineWidth;
 		g.save();
 		g.fillStyle = "#DDD";
 		g.strokeStyle = "#888";
 		g.lineWidth = lineWidth;
 		g.translate(paddingX, paddingY);
-		g.fillRoundRect(0, 0, thumbSize, h, 5);
-		g.storokeRoundRect(0, 0, thumbSize, h, 5);
+		g.fillRoundRect(0, 0, w, thumbSize, 5);
+		g.storokeRoundRect(0, 0, w, thumbSize, 5);
 		g.restore();
 	}
 }

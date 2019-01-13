@@ -358,6 +358,10 @@ export class App {
 		return ObjectFactory.createUIHScrollBar(this);
 	}
 
+	createUIVScrollBar(): Tea.Object3D {
+		return ObjectFactory.createUIVScrollBar(this);
+	}
+
 	readObjFile(url: string, callback: (object3d: Tea.Object3D) => void): void {
 		if (callback == null) {
 			return;

@@ -262,4 +262,11 @@ export class ObjectFactory {
 		object3d.name = "HScroll Bar";
 		return object3d;
 	}
+
+	static createUIVScrollBar(app: Tea.App): Tea.Object3D {
+		var object3d = new Tea.Object3D(app);
+		object3d.addComponent(Tea.UI.VScrollBar);
+		object3d.name = "VScroll Bar";
+		return object3d;
+	}
 }

@@ -376,6 +376,10 @@ export class EditorMenu {
 					{
 						id: "UI/HScrollBar",
 						label: translator.getText("UI/HScrollBar"),
+					},
+					{
+						id: "UI/VScrollBar",
+						label: translator.getText("UI/VScrollBar"),
 					}
 				]
 			}
@@ -542,6 +546,10 @@ export class EditorMenu {
 					{
 						id: "UI/HScrollBar",
 						label: translator.getText("UI/HScrollBar"),
+					},
+					{
+						id: "UI/VScrollBar",
+						label: translator.getText("UI/VScrollBar"),
 					}
 				]
 			}

@@ -10,3 +10,4 @@ export * from "./Slider";
 export * from "./Panel";
 export * from "./ScrollView";
 export * from "./HScrollBar";
+export * from "./VScrollBar";
