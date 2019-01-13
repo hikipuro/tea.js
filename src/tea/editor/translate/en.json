@@ -131,7 +131,8 @@
 				"Text": "Text",
 				"Slider": "Slider",
 				"Panel": "Panel",
-				"ScrollView": "Scroll View"
+				"ScrollView": "Scroll View",
+				"HScrollBar": "HScroll Bar"
 			}
 		}
 	},
@@ -197,7 +198,8 @@
 				"Text": "Text",
 				"Slider": "Slider",
 				"Panel": "Panel",
-				"ScrollView": "Scroll View"
+				"ScrollView": "Scroll View",
+				"HScrollBar": "HScroll Bar"
 			}
 		}
 	},
@@ -365,6 +367,13 @@
 			"Title": "Scroll View",
 			"Size": "Size",
 			"Scroll": "Scroll"
+		},
+		"HScrollBar": {
+			"Title": "HScroll Bar",
+			"Size": "Size",
+			"Value": "Value",
+			"Max": "Max",
+			"ThumbRatio": "Thumb Ratio"
 		}
 	}
 }

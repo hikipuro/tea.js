@@ -51,6 +51,8 @@ export module UI {
 	export type Panel = UIComponents.Panel;
 	export var  ScrollView = UIComponents.ScrollView;
 	export type ScrollView = UIComponents.ScrollView;
+	export var  HScrollBar = UIComponents.HScrollBar;
+	export type HScrollBar = UIComponents.HScrollBar;
 }
 
 export * from "./enums/CameraClearFlags";

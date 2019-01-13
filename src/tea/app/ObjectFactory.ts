@@ -255,4 +255,11 @@ export class ObjectFactory {
 		object3d.name = "Scroll View";
 		return object3d;
 	}
+
+	static createUIHScrollBar(app: Tea.App): Tea.Object3D {
+		var object3d = new Tea.Object3D(app);
+		object3d.addComponent(Tea.UI.HScrollBar);
+		object3d.name = "HScroll Bar";
+		return object3d;
+	}
 }

@@ -20,6 +20,7 @@ import { UIText } from "./UIText";
 import { UISlider } from "./UISlider";
 import { UIPanel } from "./UIPanel";
 import { UIScrollView } from "./UIScrollView";
+import { UIHScrollBar } from "./UIHScrollBar";
 
 export {
 	AudioSource,
@@ -44,6 +45,7 @@ export {
 	UISlider,
 	UIPanel,
 	UIScrollView,
+	UIHScrollBar,
 }
 
 export function getComponents(): Object {
@@ -70,5 +72,6 @@ export function getComponents(): Object {
 		UISlider: UISlider,
 		UIPanel: UIPanel,
 		UIScrollView: UIScrollView,
+		UIHScrollBar: UIHScrollBar,
 	}
 }

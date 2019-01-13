@@ -270,6 +270,9 @@ export class ObjectInspectorCommand {
 			case "UI/Panel":
 				component = new Tea.UI.Panel(app);
 				break;
+			case "UI/HScrollBar":
+				component = new Tea.UI.HScrollBar(app);
+				break;
 		}
 		if (component != null) {
 			object3d.addComponentInstance(component);

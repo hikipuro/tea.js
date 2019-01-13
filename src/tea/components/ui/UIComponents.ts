@@ -9,3 +9,4 @@ export * from "./Text";
 export * from "./Slider";
 export * from "./Panel";
 export * from "./ScrollView";
+export * from "./HScrollBar";
