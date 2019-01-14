@@ -12,6 +12,32 @@ import { Translator } from "../translate/Translator";
 				:y="size[1]"
 				:step="1"
 				@update="onUpdateSize">{{ translator.size }}</Vector2>
+			<ColorPicker
+				ref="background"
+				:value="background"
+				@update="onUpdateBackground">{{ translator.background }}</ColorPicker>
+			<InputNumber
+				ref="borderRadius"
+				:value="borderRadius"
+				:step="0.25"
+				:min="0.0"
+				:max="1000.0"
+				@update="onUpdateBorderRadius">{{ translator.borderRadius }}</InputNumber>
+			<CheckBox
+				ref="border"
+				:value="border"
+				@update="onUpdateBorder">{{ translator.border }}</CheckBox>
+			<InputNumber
+				ref="borderWidth"
+				:value="borderWidth"
+				:step="0.25"
+				:min="0.0"
+				:max="1000.0"
+				@update="onUpdateBorderWidth">{{ translator.borderWidth }}</InputNumber>
+			<ColorPicker
+				ref="borderColor"
+				:value="borderColor"
+				@update="onUpdateBorderColor">{{ translator.borderColor }}</ColorPicker>
 		</div>
 	`,
 	data: () => {
@@ -19,7 +45,12 @@ import { Translator } from "../translate/Translator";
 			translator: {},
 			name: "Panel",
 			enabled: false,
-			size: [0, 0]
+			size: [0, 0],
+			background: "",
+			border: false,
+			borderWidth: 0,
+			borderRadius: 0,
+			borderColor: ""
 		}
 	},
 	watch: {
@@ -35,12 +66,22 @@ export class UIPanel extends Vue {
 	name: string;
 	enabled: boolean;
 	size: Array<number>;
+	background: string;
+	border: boolean;
+	borderWidth: number;
+	borderRadius: number;
+	borderColor: string;
 
 	protected created(): void {
 		var translator = Translator.getInstance();
 		translator.basePath = "Components/Panel";
 		this.name = translator.getText("Title");
 		this.translator.size = translator.getText("Size");
+		this.translator.background = translator.getText("Background");
+		this.translator.border = translator.getText("Border");
+		this.translator.borderWidth = translator.getText("BorderWidth");
+		this.translator.borderRadius = translator.getText("BorderRadius");
+		this.translator.borderColor = translator.getText("BorderColor");
 	}
 
 	protected mounted(): void {
@@ -51,6 +92,11 @@ export class UIPanel extends Vue {
 		this.enabled = component.enabled;
 		this.$set(this.size, 0, component.width);
 		this.$set(this.size, 1, component.height);
+		this.background = component.background.toCssColor();
+		this.border = component.border;
+		this.borderWidth = component.borderWidth;
+		this.borderRadius = component.borderRadius;
+		this.borderColor = component.borderColor.toCssColor();
 	}
 
 	protected onUpdateSize(x: number, y: number): void {
@@ -61,6 +107,46 @@ export class UIPanel extends Vue {
 			this._component.height = y;
 		}
 		this.$emit("update", "size");
+	}
+
+	protected onUpdateBackground(value: Tea.Color): void {
+		this.background = value.toCssColor();
+		if (this._component) {
+			this._component.background = value;
+		}
+		this.$emit("update", "background");
+	}
+
+	protected onUpdateBorder(value: boolean): void {
+		this.border = value;
+		if (this._component) {
+			this._component.border = value;
+		}
+		this.$emit("update", "border");
+	}
+
+	protected onUpdateBorderWidth(value: number): void {
+		this.borderWidth = value;
+		if (this._component) {
+			this._component.borderWidth = value;
+		}
+		this.$emit("update", "borderWidth");
+	}
+
+	protected onUpdateBorderRadius(value: number): void {
+		this.borderRadius = value;
+		if (this._component) {
+			this._component.borderRadius = value;
+		}
+		this.$emit("update", "borderRadius");
+	}
+
+	protected onUpdateBorderColor(value: Tea.Color): void {
+		this.borderColor = value.toCssColor();
+		if (this._component) {
+			this._component.borderColor = value;
+		}
+		this.$emit("update", "borderColor");
 	}
 }
 

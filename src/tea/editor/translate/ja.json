@@ -363,7 +363,12 @@
 		},
 		"Panel": {
 			"Title": "パネル",
-			"Size": "サイズ"
+			"Size": "サイズ",
+			"Background": "背景色",
+			"Border": "枠線",
+			"BorderWidth": "枠線の太さ",
+			"BorderRadius": "枠の丸さ",
+			"BorderColor": "枠線の色"
 		},
 		"ScrollView": {
 			"Title": "スクロールビュー",

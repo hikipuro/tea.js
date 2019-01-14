@@ -363,7 +363,12 @@
 		},
 		"Panel": {
 			"Title": "Panel",
-			"Size": "Size"
+			"Size": "Size",
+			"Background": "Background",
+			"Border": "Border",
+			"BorderWidth": "Border Width",
+			"BorderRadius": "Border Radius",
+			"BorderColor": "Border Color"
 		},
 		"ScrollView": {
 			"Title": "Scroll View",
