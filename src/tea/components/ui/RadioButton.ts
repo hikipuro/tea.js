@@ -13,6 +13,8 @@ export class RadioButton extends UIComponent {
 	protected _text: string;
 	protected _font: string;
 	protected _fontSize: number;
+	protected _fontColor: Tea.Color;
+	protected _buttonSize: number;
 	
 	constructor(app: Tea.App) {
 		super(app);
@@ -26,6 +28,8 @@ export class RadioButton extends UIComponent {
 		this._text = RadioButton.DefaultText;
 		this._font = RadioButton.DefaultFont;
 		this._fontSize = RadioButton.DefaultFontSize;
+		this._fontColor = new Tea.Color(0.2, 0.2, 0.2, 1.0);
+		this._buttonSize = RadioButton.DefaultButtonSize;
 	}
 
 	get width(): number {
@@ -58,9 +62,10 @@ export class RadioButton extends UIComponent {
 		return this._checked;
 	}
 	set checked(value: boolean) {
-		if (this._checked === value) {
+		if (value == null || value === this._checked) {
 			return;
 		}
+		this.uncheckSiblings();
 		this._checked = value;
 		this._isChanged = true;
 	}
@@ -69,7 +74,7 @@ export class RadioButton extends UIComponent {
 		return this._text;
 	}
 	set text(value: string) {
-		if (this._text === value) {
+		if (value == null || value === this._text) {
 			return;
 		}
 		this._text = value;
@@ -80,7 +85,7 @@ export class RadioButton extends UIComponent {
 		return this._font;
 	}
 	set font(value: string) {
-		if (this._font === value) {
+		if (value == null || value === this._font) {
 			return;
 		}
 		if (value === "") {
@@ -94,10 +99,32 @@ export class RadioButton extends UIComponent {
 		return this._fontSize;
 	}
 	set fontSize(value: number) {
-		if (this._fontSize === value) {
+		if (value == null || value === this._fontSize) {
 			return;
 		}
 		this._fontSize = value;
+		this._isChanged = true;
+	}
+
+	get fontColor(): Tea.Color {
+		return this._fontColor;
+	}
+	set fontColor(value: Tea.Color) {
+		if (value == null || value.equals(this._fontColor)) {
+			return;
+		}
+		this._fontColor = value;
+		this._isChanged = true;
+	}
+
+	get buttonSize(): number {
+		return this._buttonSize;
+	}
+	set buttonSize(value: number) {
+		if (value == null || value === this._buttonSize) {
+			return;
+		}
+		this._buttonSize = value;
 		this._isChanged = true;
 	}
 
@@ -110,10 +137,12 @@ export class RadioButton extends UIComponent {
 		radio._width = json.width;
 		radio._height = json.height;
 		radio._graphics.resize(json.width, json.height);
-		radio._checked = json.checked;
-		radio._text = json.text;
-		radio._fontSize = json.fontSize;
-		radio._font = json.font;
+		radio.checked = json.checked;
+		radio.text = json.text;
+		radio.fontSize = json.fontSize;
+		radio.font = json.font;
+		radio.fontColor = Tea.Color.fromArray(json.fontColor);
+		radio.buttonSize = json.buttonSize;
 		callback(radio);
 	}
 
@@ -127,6 +156,8 @@ export class RadioButton extends UIComponent {
 		this._text = undefined;
 		this._font = undefined;
 		this._fontSize = undefined;
+		this._fontColor = undefined;
+		this._buttonSize = undefined;
 		super.destroy();
 	}
 
@@ -137,6 +168,8 @@ export class RadioButton extends UIComponent {
 		json.text = this._text;
 		json.fontSize = this._fontSize;
 		json.font = this._font;
+		json.fontColor = this._fontColor;
+		json.buttonSize = this._buttonSize;
 		return json;
 	}
 
@@ -146,11 +179,11 @@ export class RadioButton extends UIComponent {
 			return;
 		}
 		this._graphics.clear();
-		this.drawButtonFace();
+		this.drawButton();
 		if (this._checked) {
 			this.drawCheck();
 		}
-		this.drawButtonText();
+		this.drawText();
 		this.texture.image = this._graphics.canvas;
 		this._isChanged = false;
 	}
@@ -197,7 +230,6 @@ export class RadioButton extends UIComponent {
 		if (checked) {
 			return;
 		}
-		this.uncheckSiblings();
 		this.checked = true;
 	}
 
@@ -213,61 +245,73 @@ export class RadioButton extends UIComponent {
 		var length = children.length;
 		for (var i = 0; i < length; i++) {
 			var child = children[i];
+			if (child === object3d) {
+				continue;
+			}
 			var items = child.getComponents(Tea.UI.RadioButton);
 			if (items == null || items.length <= 0) {
 				continue;;
 			}
 			for (var n = 0; n < items.length; n++) {
-				items[n].checked = false;
+				var item = items[n];
+				if (item._checked === false) {
+					continue;
+				}
+				item._checked = false;
+				item._isChanged = true;
 			}
 		}
 	}
 
-	protected drawButtonFace(): void {
+	protected drawButton(): void {
 		var g = this._graphics;
-		var size = RadioButton.DefaultButtonSize;
+		var buttonSize = this._buttonSize;
 		var lineWidth = 1;
-		var paddingX = lineWidth / 2;
-		var paddingY = lineWidth / 2 + (this._height - size) / 2;
-		size -= lineWidth;
+		var paddingX = buttonSize / 2;
+		var paddingY = this._height / 2;
+		buttonSize -= lineWidth;
+		buttonSize /= 2;
+		g.save();
+		g.translate(paddingX, paddingY);
+		g.fillStyle = "#DDD";
+		/*
 		var gradient = g.createLinearGradient(
-			0, 0, 0, size
+			0, 0, 0, buttonSize
 		);
 		gradient.addColorStop(0, "#FFF");
 		gradient.addColorStop(1, "#AAA");
-		g.save();
 		g.fillStyle = gradient;
+		//*/
+		g.fillCircle(0, 0, buttonSize);
 		g.strokeStyle = "#888";
 		g.lineWidth = lineWidth;
-		g.translate(paddingX, paddingY);
-		size /= 2;
-		g.fillCircle(size, size, size);
-		g.strokeCircle(size, size, size);
+		g.strokeCircle(0, 0, buttonSize);
 		g.restore();
 	}
 
 	protected drawCheck(): void {
 		var g = this._graphics;
-		var size = RadioButton.DefaultButtonSize;
-		var paddingY = (this._height - size) / 2;
+		var buttonSize = this._buttonSize;
+		var paddingX = buttonSize / 2;
+		var paddingY = this._height / 2;
+		var radius = buttonSize / 5;
+		buttonSize /= 2;
 		g.save();
+		g.translate(paddingX, paddingY);
 		g.fillStyle = "#333";
-		g.translate(0, paddingY);
-		var radius = size / 5;
-		size /= 2;
-		g.fillCircle(size, size, radius);
+		g.fillCircle(0, 0, radius);
 		g.restore();
 	}
 
-	protected drawButtonText(): void {
+	protected drawText(): void {
 		var g = this._graphics;
-		var x = RadioButton.DefaultButtonSize + 4;
+		var x = this._buttonSize + 4;
 		var y = this._height / 2;
 		g.save();
 		g.textAlign = "left";
 		g.textBaseline = "middle";
 		g.font = this.getFont();
-		g.fillStyle = "#333";
+		g.fillStyle = this._fontColor.toCssColor();
 		//g.strokeStyle = "#FFF";
 		//g.lineWidth = 4;
 		//g.lineJoin = "round";
