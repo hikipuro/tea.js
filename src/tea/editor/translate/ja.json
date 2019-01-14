@@ -345,9 +345,12 @@
 		"Checkbox": {
 			"Title": "チェックボックス",
 			"Size": "サイズ",
+			"Checked": "チェック",
 			"Text": "テキスト",
 			"FontSize": "フォントサイズ",
-			"Font": "フォント"
+			"Font": "フォント",
+			"FontColor": "文字色",
+			"ButtonSize": "ボタンサイズ"
 		},
 		"Image": {
 			"Title": "画像"

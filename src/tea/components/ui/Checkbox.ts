@@ -13,6 +13,8 @@ export class Checkbox extends UIComponent {
 	protected _text: string;
 	protected _font: string;
 	protected _fontSize: number;
+	protected _fontColor: Tea.Color;
+	protected _buttonSize: number;
 	
 	constructor(app: Tea.App) {
 		super(app);
@@ -26,6 +28,8 @@ export class Checkbox extends UIComponent {
 		this._text = Checkbox.DefaultText;
 		this._font = Checkbox.DefaultFont;
 		this._fontSize = Checkbox.DefaultFontSize;
+		this._fontColor = new Tea.Color(0.2, 0.2, 0.2, 1.0);
+		this._buttonSize = Checkbox.DefaultButtonSize;
 	}
 
 	get width(): number {
@@ -58,7 +62,7 @@ export class Checkbox extends UIComponent {
 		return this._checked;
 	}
 	set checked(value: boolean) {
-		if (this._checked === value) {
+		if (value == null || value === this._checked) {
 			return;
 		}
 		this._checked = value;
@@ -69,7 +73,7 @@ export class Checkbox extends UIComponent {
 		return this._text;
 	}
 	set text(value: string) {
-		if (this._text === value) {
+		if (value == null || value === this._text) {
 			return;
 		}
 		this._text = value;
@@ -80,7 +84,7 @@ export class Checkbox extends UIComponent {
 		return this._font;
 	}
 	set font(value: string) {
-		if (this._font === value) {
+		if (value == null || value === this._font) {
 			return;
 		}
 		if (value === "") {
@@ -94,10 +98,32 @@ export class Checkbox extends UIComponent {
 		return this._fontSize;
 	}
 	set fontSize(value: number) {
-		if (this._fontSize === value) {
+		if (value == null || value === this._fontSize) {
 			return;
 		}
 		this._fontSize = value;
+		this._isChanged = true;
+	}
+
+	get fontColor(): Tea.Color {
+		return this._fontColor;
+	}
+	set fontColor(value: Tea.Color) {
+		if (value == null || value.equals(this._fontColor)) {
+			return;
+		}
+		this._fontColor = value;
+		this._isChanged = true;
+	}
+
+	get buttonSize(): number {
+		return this._buttonSize;
+	}
+	set buttonSize(value: number) {
+		if (value == null || value === this._buttonSize) {
+			return;
+		}
+		this._buttonSize = value;
 		this._isChanged = true;
 	}
 
@@ -110,10 +136,12 @@ export class Checkbox extends UIComponent {
 		checkbox._width = json.width;
 		checkbox._height = json.height;
 		checkbox._graphics.resize(json.width, json.height);
-		checkbox._checked = json.checked;
-		checkbox._text = json.text;
-		checkbox._fontSize = json.fontSize;
-		checkbox._font = json.font;
+		checkbox.checked = json.checked;
+		checkbox.text = json.text;
+		checkbox.fontSize = json.fontSize;
+		checkbox.font = json.font;
+		checkbox.fontColor = Tea.Color.fromArray(json.fontColor);
+		checkbox.buttonSize = json.buttonSize;
 		callback(checkbox);
 	}
 
@@ -127,6 +155,8 @@ export class Checkbox extends UIComponent {
 		this._text = undefined;
 		this._font = undefined;
 		this._fontSize = undefined;
+		this._fontColor = undefined;
+		this._buttonSize = undefined;
 		super.destroy();
 	}
 
@@ -137,6 +167,8 @@ export class Checkbox extends UIComponent {
 		json.text = this._text;
 		json.fontSize = this._fontSize;
 		json.font = this._font;
+		json.fontColor = this._fontColor;
+		json.buttonSize = this._buttonSize;
 		return json;
 	}
 
@@ -146,11 +178,11 @@ export class Checkbox extends UIComponent {
 			return;
 		}
 		this._graphics.clear();
-		this.drawButtonFace();
+		this.drawButton();
 		if (this._checked) {
 			this.drawCheck();
 		}
-		this.drawButtonText();
+		this.drawText();
 		this.texture.image = this._graphics.canvas;
 		this._isChanged = false;
 	}
@@ -196,56 +228,59 @@ export class Checkbox extends UIComponent {
 		this.checked = !this._checked;
 	}
 
-	protected drawButtonFace(): void {
+	protected drawButton(): void {
 		var g = this._graphics;
-		var size = Checkbox.DefaultButtonSize;
+		var buttonSize = this._buttonSize;
 		var lineWidth = 1;
 		var paddingX = lineWidth / 2;
-		var paddingY = lineWidth / 2 + (this._height - size) / 2;
-		var w = size - lineWidth;
-		var h = size - lineWidth;
+		var paddingY = lineWidth / 2 + (this._height - buttonSize) / 2;
+		var w = buttonSize - lineWidth;
+		var h = buttonSize - lineWidth;
+		g.save();
+		g.translate(paddingX, paddingY);
+		g.fillStyle = "#DDD";
+		/*
 		var gradient = g.createLinearGradient(
 			0, 0, 0, h
 		);
 		gradient.addColorStop(0, "#FFF");
 		gradient.addColorStop(1, "#AAA");
-		g.save();
 		g.fillStyle = gradient;
+		//*/
+		g.fillRoundRect(0, 0, w, h, 5);
 		g.strokeStyle = "#888";
 		g.lineWidth = lineWidth;
-		g.translate(paddingX, paddingY);
-		g.fillRoundRect(0, 0, w, h, 5);
 		g.storokeRoundRect(0, 0, w, h, 5);
 		g.restore();
 	}
 
 	protected drawCheck(): void {
 		var g = this._graphics;
-		var size = Checkbox.DefaultButtonSize;
-		var paddingY = (this._height - size) / 2;
+		var buttonSize = this._buttonSize;
+		var paddingY = (this._height - buttonSize) / 2;
 		g.save();
 		g.strokeStyle = "#333";
-		g.lineWidth = size / 6;
+		g.lineWidth = buttonSize / 6;
 		g.lineJoin = "round";
 		g.lineCap = "round";
 		g.translate(0, paddingY);
 		g.beginPath();
-		g.moveTo(size / 4, size / 1.7);
-		g.lineTo(size / 2.3, size * 3 / 4);
-		g.lineTo(size * 3 / 4, size / 4);
+		g.moveTo(buttonSize / 4, buttonSize / 1.7);
+		g.lineTo(buttonSize / 2.3, buttonSize * 3 / 4);
+		g.lineTo(buttonSize * 3 / 4, buttonSize / 4);
 		g.stroke();
 		g.restore();
 	}
 
-	protected drawButtonText(): void {
+	protected drawText(): void {
 		var g = this._graphics;
-		var x = Checkbox.DefaultButtonSize + 4;
+		var x = this._buttonSize + 4;
 		var y = this._height / 2;
 		g.save();
 		g.textAlign = "left";
 		g.textBaseline = "middle";
 		g.font = this.getFont();
-		g.fillStyle = "#333";
+		g.fillStyle = this._fontColor.toCssColor();
 		//g.strokeStyle = "#FFF";
 		//g.lineWidth = 4;
 		//g.lineJoin = "round";

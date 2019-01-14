@@ -345,9 +345,12 @@
 		"Checkbox": {
 			"Title": "Checkbox",
 			"Size": "Size",
+			"Checked": "Checked",
 			"Text": "Text",
 			"FontSize": "Font Size",
-			"Font": "Font"
+			"Font": "Font",
+			"FontColor": "Font Color",
+			"ButtonSize": "Button Size"
 		},
 		"Image": {
 			"Title": "Image"
