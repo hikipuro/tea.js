@@ -136,6 +136,10 @@ export class Panel extends ScrollView {
 		}
 		this._isChanged = undefined;
 		this._background = undefined;
+		this._border = undefined;
+		this._borderWidth = undefined;
+		this._borderRadius = undefined;
+		this._borderColor = undefined;
 		super.destroy();
 	}
 

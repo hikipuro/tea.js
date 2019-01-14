@@ -327,7 +327,13 @@
 			"Size": "Size",
 			"Text": "Text",
 			"FontSize": "Font Size",
-			"Font": "Font"
+			"Font": "Font",
+			"FontColor": "Font Color",
+			"Background": "Background",
+			"Border": "Border",
+			"BorderWidth": "Border Width",
+			"BorderRadius": "Border Radius",
+			"BorderColor": "Border Color"
 		},
 		"RadioButton": {
 			"Title": "Radio Button",

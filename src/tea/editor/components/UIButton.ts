@@ -26,6 +26,36 @@ import { Translator } from "../translate/Translator";
 				ref="font"
 				:value="font"
 				@update="onUpdateFont">{{ translator.font }}</InputText>
+			<ColorPicker
+				ref="fontColor"
+				:value="fontColor"
+				@update="onUpdateFontColor">{{ translator.fontColor }}</ColorPicker>
+			<ColorPicker
+				ref="background"
+				:value="background"
+				@update="onUpdateBackground">{{ translator.background }}</ColorPicker>
+			<InputNumber
+				ref="borderRadius"
+				:value="borderRadius"
+				:step="0.25"
+				:min="0.0"
+				:max="1000.0"
+				@update="onUpdateBorderRadius">{{ translator.borderRadius }}</InputNumber>
+			<CheckBox
+				ref="border"
+				:value="border"
+				@update="onUpdateBorder">{{ translator.border }}</CheckBox>
+			<InputNumber
+				ref="borderWidth"
+				:value="borderWidth"
+				:step="0.25"
+				:min="0.0"
+				:max="1000.0"
+				@update="onUpdateBorderWidth">{{ translator.borderWidth }}</InputNumber>
+			<ColorPicker
+				ref="borderColor"
+				:value="borderColor"
+				@update="onUpdateBorderColor">{{ translator.borderColor }}</ColorPicker>
 		</div>
 	`,
 	data: () => {
@@ -36,7 +66,13 @@ import { Translator } from "../translate/Translator";
 			size: [0, 0],
 			text: "",
 			fontSize: 0,
-			font: ""
+			font: "",
+			fontColor: "",
+			background: "",
+			border: false,
+			borderWidth: 0,
+			borderRadius: 0,
+			borderColor: ""
 		}
 	},
 	watch: {
@@ -55,6 +91,12 @@ export class UIButton extends Vue {
 	text: string;
 	fontSize: number;
 	font: string;
+	fontColor: string;
+	background: string;
+	border: boolean;
+	borderWidth: number;
+	borderRadius: number;
+	borderColor: string;
 
 	protected created(): void {
 		var translator = Translator.getInstance();
@@ -64,6 +106,12 @@ export class UIButton extends Vue {
 		this.translator.text = translator.getText("Text");
 		this.translator.fontSize = translator.getText("FontSize");
 		this.translator.font = translator.getText("Font");
+		this.translator.fontColor = translator.getText("FontColor");
+		this.translator.background = translator.getText("Background");
+		this.translator.border = translator.getText("Border");
+		this.translator.borderWidth = translator.getText("BorderWidth");
+		this.translator.borderRadius = translator.getText("BorderRadius");
+		this.translator.borderColor = translator.getText("BorderColor");
 	}
 
 	protected mounted(): void {
@@ -77,6 +125,12 @@ export class UIButton extends Vue {
 		this.text = component.text;
 		this.fontSize = component.fontSize;
 		this.font = component.font;
+		this.fontColor = component.fontColor.toCssColor();
+		this.background = component.background.toCssColor();
+		this.border = component.border;
+		this.borderWidth = component.borderWidth;
+		this.borderRadius = component.borderRadius;
+		this.borderColor = component.borderColor.toCssColor();
 	}
 
 	protected onUpdateSize(x: number, y: number): void {
@@ -111,6 +165,54 @@ export class UIButton extends Vue {
 			this._component.font = value;
 		}
 		this.$emit("update", "font");
+	}
+
+	protected onUpdateFontColor(value: Tea.Color): void {
+		this.fontColor = value.toCssColor();
+		if (this._component) {
+			this._component.fontColor = value;
+		}
+		this.$emit("update", "fontColor");
+	}
+
+	protected onUpdateBackground(value: Tea.Color): void {
+		this.background = value.toCssColor();
+		if (this._component) {
+			this._component.background = value;
+		}
+		this.$emit("update", "background");
+	}
+
+	protected onUpdateBorder(value: boolean): void {
+		this.border = value;
+		if (this._component) {
+			this._component.border = value;
+		}
+		this.$emit("update", "border");
+	}
+
+	protected onUpdateBorderWidth(value: number): void {
+		this.borderWidth = value;
+		if (this._component) {
+			this._component.borderWidth = value;
+		}
+		this.$emit("update", "borderWidth");
+	}
+
+	protected onUpdateBorderRadius(value: number): void {
+		this.borderRadius = value;
+		if (this._component) {
+			this._component.borderRadius = value;
+		}
+		this.$emit("update", "borderRadius");
+	}
+
+	protected onUpdateBorderColor(value: Tea.Color): void {
+		this.borderColor = value.toCssColor();
+		if (this._component) {
+			this._component.borderColor = value;
+		}
+		this.$emit("update", "borderColor");
 	}
 }
 

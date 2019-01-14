@@ -10,6 +10,12 @@ export class Button extends UIComponent {
 	protected _text: string;
 	protected _font: string;
 	protected _fontSize: number;
+	protected _fontColor: Tea.Color;
+	protected _background: Tea.Color;
+	protected _border: boolean;
+	protected _borderWidth: number;
+	protected _borderRadius: number;
+	protected _borderColor: Tea.Color;
 	
 	constructor(app: Tea.App) {
 		super(app);
@@ -20,6 +26,12 @@ export class Button extends UIComponent {
 		this._text = "Button";
 		this._font = Button.DefaultFont;
 		this._fontSize = Button.DefaultFontSize;
+		this._fontColor = new Tea.Color(0.2, 0.2, 0.2, 1.0);
+		this._background = new Tea.Color(0.8, 0.8, 0.8, 1.0);
+		this._border = true;
+		this._borderWidth = 1.0;
+		this._borderRadius = 5.0;
+		this._borderColor = new Tea.Color(0.5, 0.5, 0.5, 1.0);
 	}
 
 	get width(): number {
@@ -84,6 +96,72 @@ export class Button extends UIComponent {
 		this._isChanged = true;
 	}
 
+	get fontColor(): Tea.Color {
+		return this._fontColor;
+	}
+	set fontColor(value: Tea.Color) {
+		if (value == null || value.equals(this._fontColor)) {
+			return;
+		}
+		this._fontColor = value;
+		this._isChanged = true;
+	}
+
+	get background(): Tea.Color {
+		return this._background;
+	}
+	set background(value: Tea.Color) {
+		if (value == null || value.equals(this._background)) {
+			return;
+		}
+		this._background = value;
+		this._isChanged = true;
+	}
+
+	get border(): boolean {
+		return this._border;
+	}
+	set border(value: boolean) {
+		if (value == null || value === this._border) {
+			return;
+		}
+		this._border = value;
+		this._isChanged = true;
+	}
+
+	get borderWidth(): number {
+		return this._borderWidth;
+	}
+	set borderWidth(value: number) {
+		if (value == null || value === this._borderWidth) {
+			return;
+		}
+		this._borderWidth = value;
+		this._isChanged = true;
+	}
+
+	get borderRadius(): number {
+		return this._borderRadius;
+	}
+	set borderRadius(value: number) {
+		if (value == null || value === this._borderRadius) {
+			return;
+		}
+		this._borderRadius = value;
+		this._isChanged = true;
+	}
+
+	get borderColor(): Tea.Color {
+		return this._borderColor;
+	}
+	set borderColor(value: Tea.Color) {
+		if (value == null || value.equals(this._borderColor)) {
+			return;
+		}
+		this._borderColor = value;
+		this._isChanged = true;
+	}
+
 	static fromJSON(app: Tea.App, json: any, callback: (component: Tea.Component) => void): void {
 		if (Tea.JSONUtil.isValidSceneJSON(json, Button.className) === false) {
 			callback(null);
@@ -93,9 +171,15 @@ export class Button extends UIComponent {
 		button._width = json.width;
 		button._height = json.height;
 		button._graphics.resize(json.width, json.height);
-		button._text = json.text;
-		button._fontSize = json.fontSize;
-		button._font = json.font;
+		button.text = json.text;
+		button.fontSize = json.fontSize;
+		button.font = json.font;
+		button.fontColor = Tea.Color.fromArray(json.fontColor);
+		button.background = Tea.Color.fromArray(json.background);
+		button.border = json.border;
+		button.borderWidth = json.borderWidth;
+		button.borderRadius = json.borderRadius;
+		button.borderColor = Tea.Color.fromArray(json.borderColor);
 		callback(button);
 	}
 
@@ -108,6 +192,12 @@ export class Button extends UIComponent {
 		this._text = undefined;
 		this._font = undefined;
 		this._fontSize = undefined;
+		this._fontColor = undefined;
+		this._background = undefined;
+		this._border = undefined;
+		this._borderWidth = undefined;
+		this._borderRadius = undefined;
+		this._borderColor = undefined;
 		super.destroy();
 	}
 
@@ -117,6 +207,12 @@ export class Button extends UIComponent {
 		json.text = this._text;
 		json.fontSize = this._fontSize;
 		json.font = this._font;
+		json.fontColor = this._fontColor;
+		json.background = this._background;
+		json.border = this._border;
+		json.borderWidth = this._borderWidth;
+		json.borderRadius = this._borderRadius;
+		json.borderColor = this._borderColor;
 		return json;
 	}
 
@@ -126,8 +222,8 @@ export class Button extends UIComponent {
 			return;
 		}
 		this._graphics.clear();
-		this.drawButtonFace();
-		this.drawButtonText();
+		this.drawButton();
+		this.drawText();
 		this.texture.image = this._graphics.canvas;
 		this._isChanged = false;
 	}
@@ -169,33 +265,51 @@ export class Button extends UIComponent {
 		color[2] = 1.1;
 	}
 
-	protected drawButtonFace(): void {
+	protected drawButton(): void {
 		var g = this._graphics;
-		var lineWidth = 1;
-		var padding = lineWidth / 2;
-		var w = this._width - lineWidth;
-		var h = this._height - lineWidth;
+		var width = this._width;
+		var height = this._height;
+		var borderRadius = this._borderRadius;
+		if (!this._border) {
+			g.save();
+			g.fillStyle = this._background.toCssColor();
+			g.fillRoundRect(0, 0, width, height, borderRadius);
+			g.restore();
+			return;
+		}
+		var borderWidth = this._borderWidth;
+		var padding = borderWidth / 2;
+		width -= borderWidth;
+		height -= borderWidth;
+		g.save();
+		g.translate(padding, padding);
+		g.fillStyle = this._background.toCssColor();
+		/*
 		var gradient = g.createLinearGradient(
 			0, padding, 0, h
 		);
 		gradient.addColorStop(0, "#FFF");
 		gradient.addColorStop(1, "#AAA");
 		g.fillStyle = gradient;
-		g.strokeStyle = "#888";
-		g.lineWidth = lineWidth;
-		g.fillRoundRect(padding, padding, w, h, 5);
-		g.storokeRoundRect(padding, padding, w, h, 5);
+		//*/
+		g.fillRoundRect(0, 0, width, height, borderRadius);
+		g.strokeStyle = this._borderColor.toCssColor();
+		g.lineWidth = borderWidth;
+		g.storokeRoundRect(0, 0, width, height, borderRadius);
+		g.restore();
 	}
 
-	protected drawButtonText(): void {
+	protected drawText(): void {
 		var g = this._graphics;
 		var w = this._width;
 		var h = this._height;
+		g.save();
 		g.textAlign = "center";
 		g.textBaseline = "middle";
 		g.font = this.getFont();
-		g.fillStyle = "#333";
+		g.fillStyle = this._fontColor.toCssColor();
 		g.fillTextMultiLine(this._text, w / 2, h / 2);
+		g.restore();
 	}
 
 	protected getFont(): string {

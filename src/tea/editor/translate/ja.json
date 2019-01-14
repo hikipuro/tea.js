@@ -327,7 +327,13 @@
 			"Size": "サイズ",
 			"Text": "テキスト",
 			"FontSize": "フォントサイズ",
-			"Font": "フォント"
+			"Font": "フォント",
+			"FontColor": "文字色",
+			"Background": "背景色",
+			"Border": "枠線",
+			"BorderWidth": "枠線の太さ",
+			"BorderRadius": "枠の丸さ",
+			"BorderColor": "枠線の色"
 		},
 		"RadioButton": {
 			"Title": "ラジオボタン",
