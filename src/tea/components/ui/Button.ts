@@ -305,6 +305,7 @@ export class Button extends UIComponent {
 		var h = this._height;
 		g.save();
 		g.textAlign = "center";
+		g.textVerticalAlign = "middle";
 		g.textBaseline = "middle";
 		g.font = this.getFont();
 		g.fillStyle = this._fontColor.toCssColor();

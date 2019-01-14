@@ -360,13 +360,14 @@
 		},
 		"Text": {
 			"Title": "テキスト",
+			"Size": "サイズ",
 			"Text": "テキスト",
 			"LineSpacing": "行間隔",
 			"Alignment": "行揃え",
 			"FontSize": "フォントサイズ",
 			"FontStyle": "フォントスタイル",
 			"Font": "フォント",
-			"Color": "色"
+			"FontColor": "文字色"
 		},
 		"Slider": {
 			"Title": "スライダ",

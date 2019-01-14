@@ -360,13 +360,14 @@
 		},
 		"Text": {
 			"Title": "Text",
+			"Size": "Size",
 			"Text": "Text",
 			"LineSpacing": "Line Spacing",
 			"Alignment": "Alignment",
 			"FontSize": "Font Size",
 			"FontStyle": "Font Style",
 			"Font": "Font",
-			"Color": "Color"
+			"FontColor": "Font Color"
 		},
 		"Slider": {
 			"Title": "Slider",

@@ -309,6 +309,7 @@ export class RadioButton extends UIComponent {
 		var y = this._height / 2;
 		g.save();
 		g.textAlign = "left";
+		g.textVerticalAlign = "middle";
 		g.textBaseline = "middle";
 		g.font = this.getFont();
 		g.fillStyle = this._fontColor.toCssColor();

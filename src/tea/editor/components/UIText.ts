@@ -6,6 +6,12 @@ import { Translator } from "../translate/Translator";
 @Component({
 	template: `
 		<div class="Text">
+			<Vector2
+				ref="size"
+				:x="size[0]"
+				:y="size[1]"
+				:step="1"
+				@update="onUpdateSize">{{ translator.size }}</Vector2>
 			<TextArea
 				ref="text"
 				:value="text"
@@ -37,9 +43,9 @@ import { Translator } from "../translate/Translator";
 				:value="font"
 				@update="onUpdateFont">{{ translator.font }}</InputText>
 			<ColorPicker
-				ref="color"
-				:value="color"
-				@update="onUpdateColor">{{ translator.color }}</ColorPicker>
+				ref="fontColor"
+				:value="fontColor"
+				@update="onUpdateFontColor">{{ translator.fontColor }}</ColorPicker>
 		</div>
 	`,
 	data: () => {
@@ -47,6 +53,7 @@ import { Translator } from "../translate/Translator";
 			translator: {},
 			name: "Text",
 			enabled: false,
+			size: [0, 0],
 			text: "",
 			lineSpacing: 0,
 			alignmentKeys: [],
@@ -55,7 +62,7 @@ import { Translator } from "../translate/Translator";
 			fontStyleKeys: [],
 			fontStyle: "",
 			font: "",
-			color: "",
+			fontColor: "",
 		}
 	},
 	watch: {
@@ -70,6 +77,7 @@ export class UIText extends Vue {
 	translator: any;
 	name: string;
 	enabled: boolean;
+	size: Array<number>;
 	text: string;
 	lineSpacing: number;
 	alignmentKeys: Array<string>;
@@ -78,19 +86,20 @@ export class UIText extends Vue {
 	fontStyleKeys: Array<string>;
 	fontStyle: string;
 	font: string;
-	color: string;
+	fontColor: string;
 
 	protected created(): void {
 		var translator = Translator.getInstance();
 		translator.basePath = "Components/Text";
 		this.name = translator.getText("Title");
+		this.translator.size = translator.getText("Size");
 		this.translator.text = translator.getText("Text");
 		this.translator.lineSpacing = translator.getText("LineSpacing");
 		this.translator.alignment = translator.getText("Alignment");
 		this.translator.fontSize = translator.getText("FontSize");
 		this.translator.fontStyle = translator.getText("FontStyle");
 		this.translator.font = translator.getText("Font");
-		this.translator.color = translator.getText("Color");
+		this.translator.fontColor = translator.getText("FontColor");
 	}
 
 	protected mounted(): void {
@@ -107,6 +116,8 @@ export class UIText extends Vue {
 			return;
 		}
 		this.enabled = component.enabled;
+		this.$set(this.size, 0, component.width);
+		this.$set(this.size, 1, component.height);
 		this.text = component.text;
 		this.lineSpacing = component.lineSpacing;
 		this.alignmentKeys = Tea.TextAlignment.getKeys();
@@ -115,7 +126,17 @@ export class UIText extends Vue {
 		this.fontStyleKeys = Tea.FontStyle.getKeys();
 		this.fontStyle = Tea.FontStyle[component.fontStyle];
 		this.font = component.font;
-		this.color = component.color.toCssColor();
+		this.fontColor = component.fontColor.toCssColor();
+	}
+
+	protected onUpdateSize(x: number, y: number): void {
+		this.$set(this.size, 0, x);
+		this.$set(this.size, 1, y);
+		if (this._component != null) {
+			this._component.width = x;
+			this._component.height = y;
+		}
+		this.$emit("update", "size");
 	}
 
 	protected onUpdateText(value: string): void {
@@ -166,10 +187,10 @@ export class UIText extends Vue {
 		this.$emit("update", "font");
 	}
 
-	protected onUpdateColor(value: Tea.Color): void {
-		this.color = value.toCssColor();
+	protected onUpdateFontColor(value: Tea.Color): void {
+		this.fontColor = value.toCssColor();
 		if (this._component) {
-			this._component.color = value.clone();
+			this._component.fontColor = value.clone();
 		}
 		this.$emit("update", "color");
 	}

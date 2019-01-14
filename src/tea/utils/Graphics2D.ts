@@ -22,6 +22,7 @@ export class Graphics2D {
 	protected _alpha: boolean;
 	protected _lineSpacing: number;
 	protected _fontSize: number;
+	protected _textVerticalAlign: string;
 
 	constructor(width: number = 1, height: number = 1, alpha: boolean = true) {
 		if (width <= 0) {
@@ -38,6 +39,7 @@ export class Graphics2D {
 		this._alpha = alpha;
 		this._lineSpacing = 1.0;
 		this._fontSize = 12;
+		this._textVerticalAlign = "top";
 		this.canvas = canvas;
 		this.context = this.getContext();
 	}
@@ -100,6 +102,8 @@ export class Graphics2D {
 	get fontSize(): number { return this._fontSize; }
 	get textAlign(): string { return this.context.textAlign; }
 	set textAlign(value: string) { this.context.textAlign = value as any; }
+	get textVerticalAlign(): string { return this._textVerticalAlign; }
+	set textVerticalAlign(value: string) { this._textVerticalAlign = value; }
 	get textBaseline(): string { return this.context.textBaseline; }
 	set textBaseline(value: string) { this.context.textBaseline = value as any; }
 	get direction(): string { return this.context.direction; }
@@ -240,6 +244,14 @@ export class Graphics2D {
 		if (text == null || text === "") {
 			return;
 		}
+		/*
+		var textBaseline = this.textBaseline.toLowerCase();
+		switch (textBaseline) {
+			case "middle":
+				//y += fontSize / 2;
+				break;
+		}
+		//*/
 		var lines = text.split(/\r\n|\r|\n/);
 		var lineCount = lines.length;
 		if (lineCount <= 1) {
@@ -249,11 +261,11 @@ export class Graphics2D {
 		var fontSize = this._fontSize;
 		var lineSpacing = this._lineSpacing * 1.2;
 		var lineHeight = fontSize * lineSpacing;
-		var textBaseline = this.textBaseline.toLowerCase();
+		var textVerticalAlign = this._textVerticalAlign.toLowerCase();
 		for (var i = 0; i < lineCount; i++) {
 			var line = lines[i];
 			var ty = y;
-			switch (textBaseline) {
+			switch (textVerticalAlign) {
 				case "middle":
 					var ratio = (i / (lineCount - 1) - 0.5) * 2.0;
 					ty += lineHeight * ratio * (lineCount / 2.0 - 0.5);
