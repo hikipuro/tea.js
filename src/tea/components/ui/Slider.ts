@@ -7,6 +7,12 @@ export class Slider extends UIComponent {
 	protected _graphics: Tea.Graphics2D;
 	protected _isChanged: boolean;
 	protected _value: number;
+	protected _buttonColor: Tea.Color;
+	protected _railColor: Tea.Color;
+	protected _borderColor: Tea.Color;
+	protected _border: boolean;
+	protected _borderWidth: number;
+	protected _buttonSize: number;
 	protected _mouseDownValue: number;
 	protected _grabbed: boolean;
 	
@@ -19,6 +25,12 @@ export class Slider extends UIComponent {
 		);
 		this._isChanged = true;
 		this._value = 0.0;
+		this._buttonColor = new Tea.Color(0.9, 0.9, 0.9, 1.0);
+		this._railColor = new Tea.Color(0.8, 0.8, 0.8, 1.0);
+		this._borderColor = new Tea.Color(0.5, 0.5, 0.5, 1.0);
+		this._border = true;
+		this._borderWidth = 1.0;
+		this._buttonSize = Slider.DefaultButtonSize;
 		this._mouseDownValue = 0.0;
 		this._grabbed = false;
 	}
@@ -53,10 +65,76 @@ export class Slider extends UIComponent {
 		return this._value;
 	}
 	set value(v: number) {
-		if (v == null || this._value === v) {
+		if (v == null || v === this._value) {
 			return;
 		}
 		this._value = v;
+		this._isChanged = true;
+	}
+
+	get buttonColor(): Tea.Color {
+		return this._buttonColor;
+	}
+	set buttonColor(value: Tea.Color) {
+		if (value == null || value.equals(this._buttonColor)) {
+			return;
+		}
+		this._buttonColor = value;
+		this._isChanged = true;
+	}
+
+	get railColor(): Tea.Color {
+		return this._railColor;
+	}
+	set railColor(value: Tea.Color) {
+		if (value == null || value.equals(this._railColor)) {
+			return;
+		}
+		this._railColor = value;
+		this._isChanged = true;
+	}
+
+	get borderColor(): Tea.Color {
+		return this._borderColor;
+	}
+	set borderColor(value: Tea.Color) {
+		if (value == null || value.equals(this._borderColor)) {
+			return;
+		}
+		this._borderColor = value;
+		this._isChanged = true;
+	}
+
+	get border(): boolean {
+		return this._border;
+	}
+	set border(value: boolean) {
+		if (value == null || value === this._border) {
+			return;
+		}
+		this._border = value;
+		this._isChanged = true;
+	}
+
+	get borderWidth(): number {
+		return this._borderWidth;
+	}
+	set borderWidth(value: number) {
+		if (value == null || value === this._borderWidth) {
+			return;
+		}
+		this._borderWidth = value;
+		this._isChanged = true;
+	}
+
+	get buttonSize(): number {
+		return this._buttonSize;
+	}
+	set buttonSize(value: number) {
+		if (value == null || value === this._buttonSize) {
+			return;
+		}
+		this._buttonSize = value;
 		this._isChanged = true;
 	}
 
@@ -69,7 +147,13 @@ export class Slider extends UIComponent {
 		slider._width = json.width;
 		slider._height = json.height;
 		slider._graphics.resize(json.width, json.height);
-		slider._value = json.value;
+		slider.value = json.value;
+		slider.buttonColor = Tea.Color.fromArray(json.buttonColor);
+		slider.railColor = Tea.Color.fromArray(json.railColor);
+		slider.borderColor = Tea.Color.fromArray(json.borderColor);
+		slider.border = json.border;
+		slider.borderWidth = json.borderWidth;
+		slider.buttonSize = json.buttonSize;
 		callback(slider);
 	}
 
@@ -80,6 +164,12 @@ export class Slider extends UIComponent {
 		}
 		this._isChanged = undefined;
 		this._value = undefined;
+		this._buttonColor = undefined;
+		this._railColor = undefined;
+		this._borderColor = undefined;
+		this._border = undefined;
+		this._borderWidth = undefined;
+		this._buttonSize = undefined;
 		this._mouseDownValue = undefined;
 		this._grabbed = undefined;
 		super.destroy();
@@ -89,6 +179,12 @@ export class Slider extends UIComponent {
 		var json: any = super.toJSON();
 		json[Tea.JSONUtil.TypeName] = Slider.className;
 		json.value = this._value;
+		json.buttonColor = this._buttonColor;
+		json.railColor = this._railColor;
+		json.borderColor = this._borderColor;
+		json.border = this._border;
+		json.borderWidth = this._borderWidth;
+		json.buttonSize = this._buttonSize;
 		return json;
 	}
 
@@ -132,7 +228,7 @@ export class Slider extends UIComponent {
 		var position = this._status.mouseDownPosition;
 		var x = position[0], y = position[1];
 		var ratio = this._value;
-		var buttonSize = Slider.DefaultButtonSize;
+		var buttonSize = this._buttonSize;
 		var width = this._width - buttonSize;
 		var left = ratio * width;
 		var right = left + buttonSize;
@@ -167,7 +263,7 @@ export class Slider extends UIComponent {
 		}
 		var downPosition = this._status.mouseDownPosition;
 		var position = this._status.mouseMovePosition;
-		var buttonSize = Slider.DefaultButtonSize;
+		var buttonSize = this._buttonSize;
 		var width = this._width - buttonSize;
 		var x = position[0] - downPosition[0];
 		var value = this._mouseDownValue + x / width;
@@ -176,44 +272,72 @@ export class Slider extends UIComponent {
 
 	protected drawSliderBase(): void {
 		var g = this._graphics;
-		var buttonSize = Slider.DefaultButtonSize;
+		var buttonSize = this._buttonSize;
 		var baseHeight = buttonSize / 5;
-		var lineWidth = 1;
 		var radius = baseHeight / 2;
-		var paddingX = lineWidth / 2;
+		var paddingX = 0;
 		var paddingY = (this._height - baseHeight) / 2;
-		var w = this._width - lineWidth;
+		var width = this._width;
+		if (!this._border) {
+			g.save();
+			g.translate(paddingX, paddingY);
+			g.fillStyle = this._railColor.toCssColor();
+			g.fillRoundRect(0, 0, width, baseHeight, radius);
+			g.restore();
+			return;
+		}
+		var lineWidth = this._borderWidth;
+		paddingX = lineWidth / 2;
+		width -= lineWidth;
 		g.save();
-		g.fillStyle = "#FFF";
-		g.strokeStyle = "#888";
-		g.lineWidth = lineWidth;
 		g.translate(paddingX, paddingY);
-		g.fillRoundRect(0, 0, w, baseHeight, radius);
-		g.storokeRoundRect(0, 0, w, baseHeight, radius);
+		g.fillStyle = this._railColor.toCssColor();
+		g.fillRoundRect(0, 0, width, baseHeight, radius);
+		g.strokeStyle = this._borderColor.toCssColor();
+		g.lineWidth = lineWidth;
+		g.storokeRoundRect(0, 0, width, baseHeight, radius);
 		g.restore();
 	}
 
 	protected drawButton(): void {
 		var g = this._graphics;
-		var size = Slider.DefaultButtonSize;
-		var lineWidth = 1;
-		var paddingX = lineWidth / 2;
-		var paddingY = lineWidth / 2 + (this._height - size) / 2;
-		paddingX += this._value * (this._width - size);
-		size -= lineWidth;
+		var buttonSize = this._buttonSize;
+		var paddingX = this._value * (this._width - buttonSize);
+		var paddingY = this._height / 2;
+		if (!this._border) {
+			g.save();
+			g.translate(paddingX, paddingY);
+			g.fillStyle = this._buttonColor.toCssColor();
+			buttonSize /= 2;
+			if (buttonSize < 0) {
+				buttonSize = 0;
+			}
+			g.fillCircle(buttonSize, 0, buttonSize);
+			g.restore();
+			return;
+		}
+		var lineWidth = this._borderWidth;
+		buttonSize -= lineWidth;
+		paddingX += lineWidth / 2;
+		g.save();
+		g.translate(paddingX, paddingY);
+		/*
 		var gradient = g.createLinearGradient(
-			0, 0, 0, size
+			0, 0, 0, buttonSize
 		);
 		gradient.addColorStop(0, "#FFF");
 		gradient.addColorStop(1, "#AAA");
-		g.save();
 		g.fillStyle = gradient;
-		g.strokeStyle = "#888";
+		//*/
+		g.fillStyle = this._buttonColor.toCssColor();
+		buttonSize /= 2;
+		if (buttonSize < 0) {
+			buttonSize = 0;
+		}
+		g.fillCircle(buttonSize, 0, buttonSize);
+		g.strokeStyle = this._borderColor.toCssColor();
 		g.lineWidth = lineWidth;
-		g.translate(paddingX, paddingY);
-		size /= 2;
-		g.fillCircle(size, size, size);
-		g.strokeCircle(size, size, size);
+		g.strokeCircle(buttonSize, 0, buttonSize);
 		g.restore();
 	}
 }

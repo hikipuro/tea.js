@@ -372,7 +372,13 @@
 		"Slider": {
 			"Title": "Slider",
 			"Size": "Size",
-			"Value": "Value"
+			"Value": "Value",
+			"ButtonColor": "Button Color",
+			"RailColor": "Rail Color",
+			"BorderColor": "Border Color",
+			"BorderWidth": "Border Width",
+			"Border": "Border",
+			"ButtonSize": "Button Size"
 		},
 		"Panel": {
 			"Title": "Panel",

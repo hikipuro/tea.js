@@ -192,7 +192,7 @@ export class UIText extends Vue {
 		if (this._component) {
 			this._component.fontColor = value.clone();
 		}
-		this.$emit("update", "color");
+		this.$emit("update", "fontColor");
 	}
 }
 

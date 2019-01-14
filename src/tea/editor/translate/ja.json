@@ -372,7 +372,13 @@
 		"Slider": {
 			"Title": "スライダ",
 			"Size": "サイズ",
-			"Value": "値"
+			"Value": "値",
+			"ButtonColor": "ボタンの色",
+			"RailColor": "レールの色",
+			"BorderColor": "枠線の色",
+			"BorderWidth": "枠線の太さ",
+			"Border": "枠線",
+			"ButtonSize": "ボタンの大きさ"
 		},
 		"Panel": {
 			"Title": "パネル",
