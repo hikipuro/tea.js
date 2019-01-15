@@ -340,20 +340,33 @@
 			"Size": "サイズ",
 			"Checked": "チェック",
 			"Text": "テキスト",
+			"Indent": "インデント",
 			"FontSize": "フォントサイズ",
 			"Font": "フォント",
 			"FontColor": "文字色",
-			"ButtonSize": "ボタンサイズ"
+			"ButtonSize": "ボタンサイズ",
+			"ButtonColor": "ボタンの色",
+			"CheckColor": "チェックの色",
+			"Border": "枠線",
+			"BorderWidth": "枠線の太さ",
+			"BorderColor": "枠線の色"
 		},
 		"Checkbox": {
 			"Title": "チェックボックス",
 			"Size": "サイズ",
 			"Checked": "チェック",
 			"Text": "テキスト",
+			"Indent": "インデント",
 			"FontSize": "フォントサイズ",
 			"Font": "フォント",
 			"FontColor": "文字色",
-			"ButtonSize": "ボタンサイズ"
+			"ButtonSize": "ボタンサイズ",
+			"ButtonColor": "ボタンの色",
+			"CheckColor": "チェックの色",
+			"Border": "枠線",
+			"BorderWidth": "枠線の太さ",
+			"BorderRadius": "枠の丸さ",
+			"BorderColor": "枠線の色"
 		},
 		"Image": {
 			"Title": "画像"

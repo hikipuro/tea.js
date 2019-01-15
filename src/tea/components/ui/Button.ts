@@ -26,7 +26,7 @@ export class Button extends UIComponent {
 		this._text = "Button";
 		this._font = Button.DefaultFont;
 		this._fontSize = Button.DefaultFontSize;
-		this._fontColor = new Tea.Color(0.2, 0.2, 0.2, 1.0);
+		this._fontColor = new Tea.Color(0.1, 0.1, 0.1, 1.0);
 		this._background = new Tea.Color(0.8, 0.8, 0.8, 1.0);
 		this._border = true;
 		this._borderWidth = 1.0;

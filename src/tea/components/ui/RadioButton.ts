@@ -7,14 +7,21 @@ export class RadioButton extends UIComponent {
 	protected static readonly DefaultButtonSize: number = 20;
 	protected static readonly DefaultFont: string = "sans-serif";
 	protected static readonly DefaultText: string = "Radio";
+	protected static readonly DefaultIndent: number = 4;
 	protected _graphics: Tea.Graphics2D;
 	protected _isChanged: boolean;
 	protected _checked: boolean;
 	protected _text: string;
+	protected _indent: number;
 	protected _font: string;
 	protected _fontSize: number;
 	protected _fontColor: Tea.Color;
 	protected _buttonSize: number;
+	protected _buttonColor: Tea.Color;
+	protected _checkColor: Tea.Color;
+	protected _border: boolean;
+	protected _borderWidth: number;
+	protected _borderColor: Tea.Color;
 	
 	constructor(app: Tea.App) {
 		super(app);
@@ -26,10 +33,16 @@ export class RadioButton extends UIComponent {
 		this._isChanged = true;
 		this._checked = false;
 		this._text = RadioButton.DefaultText;
+		this._indent = RadioButton.DefaultIndent;
 		this._font = RadioButton.DefaultFont;
 		this._fontSize = RadioButton.DefaultFontSize;
-		this._fontColor = new Tea.Color(0.2, 0.2, 0.2, 1.0);
+		this._fontColor = new Tea.Color(0.1, 0.1, 0.1, 1.0);
 		this._buttonSize = RadioButton.DefaultButtonSize;
+		this._buttonColor = new Tea.Color(0.8, 0.8, 0.8, 1.0);
+		this._checkColor = new Tea.Color(0.2, 0.2, 0.2, 1.0);
+		this._border = true;
+		this._borderWidth = 1.0;
+		this._borderColor = new Tea.Color(0.5, 0.5, 0.5, 1.0);
 	}
 
 	get width(): number {
@@ -81,6 +94,17 @@ export class RadioButton extends UIComponent {
 		this._isChanged = true;
 	}
 
+	get indent(): number {
+		return this._indent;
+	}
+	set indent(value: number) {
+		if (value == null || value === this._indent) {
+			return;
+		}
+		this._indent = value;
+		this._isChanged = true;
+	}
+
 	get font(): string {
 		return this._font;
 	}
@@ -128,6 +152,61 @@ export class RadioButton extends UIComponent {
 		this._isChanged = true;
 	}
 
+	get buttonColor(): Tea.Color {
+		return this._buttonColor;
+	}
+	set buttonColor(value: Tea.Color) {
+		if (value == null || value.equals(this._buttonColor)) {
+			return;
+		}
+		this._buttonColor = value;
+		this._isChanged = true;
+	}
+
+	get checkColor(): Tea.Color {
+		return this._checkColor;
+	}
+	set checkColor(value: Tea.Color) {
+		if (value == null || value.equals(this._checkColor)) {
+			return;
+		}
+		this._checkColor = value;
+		this._isChanged = true;
+	}
+
+	get border(): boolean {
+		return this._border;
+	}
+	set border(value: boolean) {
+		if (value == null || value === this._border) {
+			return;
+		}
+		this._border = value;
+		this._isChanged = true;
+	}
+
+	get borderWidth(): number {
+		return this._borderWidth;
+	}
+	set borderWidth(value: number) {
+		if (value == null || value === this._borderWidth) {
+			return;
+		}
+		this._borderWidth = value;
+		this._isChanged = true;
+	}
+
+	get borderColor(): Tea.Color {
+		return this._borderColor;
+	}
+	set borderColor(value: Tea.Color) {
+		if (value == null || value.equals(this._borderColor)) {
+			return;
+		}
+		this._borderColor = value;
+		this._isChanged = true;
+	}
+
 	static fromJSON(app: Tea.App, json: any, callback: (component: Tea.Component) => void): void {
 		if (Tea.JSONUtil.isValidSceneJSON(json, RadioButton.className) === false) {
 			callback(null);
@@ -139,10 +218,16 @@ export class RadioButton extends UIComponent {
 		radio._graphics.resize(json.width, json.height);
 		radio.checked = json.checked;
 		radio.text = json.text;
+		radio.indent = json.indent;
 		radio.fontSize = json.fontSize;
 		radio.font = json.font;
 		radio.fontColor = Tea.Color.fromArray(json.fontColor);
 		radio.buttonSize = json.buttonSize;
+		radio.buttonColor = Tea.Color.fromArray(json.buttonColor);
+		radio.checkColor = Tea.Color.fromArray(json.checkColor);
+		radio.border = json.border;
+		radio.borderWidth = json.borderWidth;
+		radio.borderColor = Tea.Color.fromArray(json.borderColor);
 		callback(radio);
 	}
 
@@ -154,10 +239,16 @@ export class RadioButton extends UIComponent {
 		this._isChanged = undefined;
 		this._checked = undefined;
 		this._text = undefined;
+		this._indent = undefined;
 		this._font = undefined;
 		this._fontSize = undefined;
 		this._fontColor = undefined;
 		this._buttonSize = undefined;
+		this._buttonColor = undefined;
+		this._checkColor = undefined;
+		this._border = undefined;
+		this._borderWidth = undefined;
+		this._borderColor = undefined;
 		super.destroy();
 	}
 
@@ -166,10 +257,16 @@ export class RadioButton extends UIComponent {
 		json[Tea.JSONUtil.TypeName] = RadioButton.className;
 		json.checked = this._checked;
 		json.text = this._text;
+		json.indent = this._indent;
 		json.fontSize = this._fontSize;
 		json.font = this._font;
 		json.fontColor = this._fontColor;
 		json.buttonSize = this._buttonSize;
+		json.buttonColor = this._buttonColor;
+		json.checkColor = this._checkColor;
+		json.border = this._border;
+		json.borderWidth = this._borderWidth;
+		json.borderColor = this._borderColor;
 		return json;
 	}
 
@@ -266,14 +363,23 @@ export class RadioButton extends UIComponent {
 	protected drawButton(): void {
 		var g = this._graphics;
 		var buttonSize = this._buttonSize;
-		var lineWidth = 1;
 		var paddingX = buttonSize / 2;
 		var paddingY = this._height / 2;
-		buttonSize -= lineWidth;
+		if (!this._border) {
+			buttonSize /= 2;
+			g.save();
+			g.translate(paddingX, paddingY);
+			g.fillStyle = this._buttonColor.toCssColor();
+			g.fillCircle(0, 0, buttonSize);
+			g.restore();
+			return;
+		}
+		var borderWidth = this._borderWidth;
+		buttonSize -= borderWidth;
 		buttonSize /= 2;
 		g.save();
 		g.translate(paddingX, paddingY);
-		g.fillStyle = "#DDD";
+		g.fillStyle = this._buttonColor.toCssColor();
 		/*
 		var gradient = g.createLinearGradient(
 			0, 0, 0, buttonSize
@@ -283,8 +389,8 @@ export class RadioButton extends UIComponent {
 		g.fillStyle = gradient;
 		//*/
 		g.fillCircle(0, 0, buttonSize);
-		g.strokeStyle = "#888";
-		g.lineWidth = lineWidth;
+		g.strokeStyle = this._borderColor.toCssColor();
+		g.lineWidth = borderWidth;
 		g.strokeCircle(0, 0, buttonSize);
 		g.restore();
 	}
@@ -294,18 +400,22 @@ export class RadioButton extends UIComponent {
 		var buttonSize = this._buttonSize;
 		var paddingX = buttonSize / 2;
 		var paddingY = this._height / 2;
-		var radius = buttonSize / 5;
+		buttonSize -= this._borderWidth * 2;
+		var radius = buttonSize / 4;
+		if (radius < 0) {
+			radius = 0;
+		}
 		buttonSize /= 2;
 		g.save();
 		g.translate(paddingX, paddingY);
-		g.fillStyle = "#333";
+		g.fillStyle = this._checkColor.toCssColor();
 		g.fillCircle(0, 0, radius);
 		g.restore();
 	}
 
 	protected drawText(): void {
 		var g = this._graphics;
-		var x = this._buttonSize + 4;
+		var x = this._buttonSize + this._indent;
 		var y = this._height / 2;
 		g.save();
 		g.textAlign = "left";

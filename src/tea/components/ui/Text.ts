@@ -38,7 +38,7 @@ export class Text extends UIComponent {
 		this._font = Text.DefaultFont;
 		this._fontSize = Text.DefaultFontSize;
 		this._fontStyle = Tea.FontStyle.Normal;
-		this._fontColor = Tea.Color.white.clone();
+		this._fontColor = new Tea.Color(0.1, 0.1, 0.1, 1.0);
 		this._text = "Text";
 		this._padding = 0;
 		//this.texture.image = graphics.canvas;

@@ -340,20 +340,33 @@
 			"Size": "Size",
 			"Checked": "Checked",
 			"Text": "Text",
+			"Indent": "Indent",
 			"FontSize": "Font Size",
 			"Font": "Font",
 			"FontColor": "Font Color",
-			"ButtonSize": "Button Size"
+			"ButtonSize": "Button Size",
+			"ButtonColor": "Button Color",
+			"CheckColor": "Check Color",
+			"Border": "Border",
+			"BorderWidth": "Border Width",
+			"BorderColor": "Border Color"
 		},
 		"Checkbox": {
 			"Title": "Checkbox",
 			"Size": "Size",
 			"Checked": "Checked",
 			"Text": "Text",
+			"Indent": "Indent",
 			"FontSize": "Font Size",
 			"Font": "Font",
 			"FontColor": "Font Color",
-			"ButtonSize": "Button Size"
+			"ButtonSize": "Button Size",
+			"ButtonColor": "Button Color",
+			"CheckColor": "Check Color",
+			"Border": "Border",
+			"BorderWidth": "Border Width",
+			"BorderRadius": "Border Radius",
+			"BorderColor": "Border Color"
 		},
 		"Image": {
 			"Title": "Image"
