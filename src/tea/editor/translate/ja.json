@@ -387,11 +387,12 @@
 			"Size": "サイズ",
 			"Value": "値",
 			"ButtonColor": "ボタンの色",
-			"RailColor": "レールの色",
 			"BorderColor": "枠線の色",
 			"BorderWidth": "枠線の太さ",
 			"Border": "枠線",
-			"ButtonSize": "ボタンの大きさ"
+			"ButtonSize": "ボタンの大きさ",
+			"RailColor": "レールの色",
+			"RailSize": "レールの大きさ"
 		},
 		"Panel": {
 			"Title": "パネル",
@@ -412,14 +413,26 @@
 			"Size": "サイズ",
 			"Value": "値",
 			"Max": "最大値",
-			"ThumbRatio": "つまみの割合"
+			"ThumbRatio": "つまみの割合",
+			"ThumbColor": "つまみの色",
+			"RailColor": "レールの色",
+			"Border": "枠線",
+			"BorderWidth": "枠線の太さ",
+			"BorderRadius": "枠の丸さ",
+			"BorderColor": "枠線の色"
 		},
 		"VScrollBar": {
 			"Title": "垂直スクロールバー",
 			"Size": "サイズ",
 			"Value": "値",
 			"Max": "最大値",
-			"ThumbRatio": "つまみの割合"
+			"ThumbRatio": "つまみの割合",
+			"ThumbColor": "つまみの色",
+			"RailColor": "レールの色",
+			"Border": "枠線",
+			"BorderWidth": "枠線の太さ",
+			"BorderRadius": "枠の丸さ",
+			"BorderColor": "枠線の色"
 		}
 	}
 }

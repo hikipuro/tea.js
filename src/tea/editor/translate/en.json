@@ -387,11 +387,12 @@
 			"Size": "Size",
 			"Value": "Value",
 			"ButtonColor": "Button Color",
-			"RailColor": "Rail Color",
 			"BorderColor": "Border Color",
 			"BorderWidth": "Border Width",
 			"Border": "Border",
-			"ButtonSize": "Button Size"
+			"ButtonSize": "Button Size",
+			"RailColor": "Rail Color",
+			"RailSize": "Rail Size"
 		},
 		"Panel": {
 			"Title": "Panel",
@@ -412,14 +413,26 @@
 			"Size": "Size",
 			"Value": "Value",
 			"Max": "Max",
-			"ThumbRatio": "Thumb Ratio"
+			"ThumbRatio": "Thumb Ratio",
+			"ThumbColor": "Thumb Color",
+			"RailColor": "Rail Color",
+			"Border": "Border",
+			"BorderWidth": "Border Width",
+			"BorderRadius": "Border Radius",
+			"BorderColor": "Border Color"
 		},
 		"VScrollBar": {
 			"Title": "VScroll Bar",
 			"Size": "Size",
 			"Value": "Value",
 			"Max": "Max",
-			"ThumbRatio": "Thumb Ratio"
+			"ThumbRatio": "Thumb Ratio",
+			"ThumbColor": "Thumb Color",
+			"RailColor": "Rail Color",
+			"Border": "Border",
+			"BorderWidth": "Border Width",
+			"BorderRadius": "Border Radius",
+			"BorderColor": "Border Color"
 		}
 	}
 }

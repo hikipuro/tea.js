@@ -23,25 +23,6 @@ import { Translator } from "../translate/Translator";
 				ref="buttonColor"
 				:value="buttonColor"
 				@update="onUpdateButtonColor">{{ translator.buttonColor }}</ColorPicker>
-			<ColorPicker
-				ref="railColor"
-				:value="railColor"
-				@update="onUpdateRailColor">{{ translator.railColor }}</ColorPicker>
-			<ColorPicker
-				ref="borderColor"
-				:value="borderColor"
-				@update="onUpdateBorderColor">{{ translator.borderColor }}</ColorPicker>
-			<CheckBox
-				ref="border"
-				:value="border"
-				@update="onUpdateBorder">{{ translator.border }}</CheckBox>
-			<InputNumber
-				ref="borderWidth"
-				:value="borderWidth"
-				:step="0.25"
-				:min="0.0"
-				:max="1000.0"
-				@update="onUpdateBorderWidth">{{ translator.borderWidth }}</InputNumber>
 			<InputNumber
 				ref="buttonSize"
 				class="number"
@@ -49,6 +30,32 @@ import { Translator } from "../translate/Translator";
 				:step="0.25"
 				:min="1"
 				@update="onUpdateButtonSize">{{ translator.buttonSize }}</InputNumber>
+			<CheckBox
+				ref="border"
+				:value="border"
+				@update="onUpdateBorder">{{ translator.border }}</CheckBox>
+			<ColorPicker
+				ref="borderColor"
+				:value="borderColor"
+				@update="onUpdateBorderColor">{{ translator.borderColor }}</ColorPicker>
+			<InputNumber
+				ref="borderWidth"
+				:value="borderWidth"
+				:step="0.25"
+				:min="0.0"
+				:max="1000.0"
+				@update="onUpdateBorderWidth">{{ translator.borderWidth }}</InputNumber>
+			<ColorPicker
+				ref="railColor"
+				:value="railColor"
+				@update="onUpdateRailColor">{{ translator.railColor }}</ColorPicker>
+			<InputNumber
+				ref="railSize"
+				class="number"
+				:value="railSize"
+				:step="0.25"
+				:min="0"
+				@update="onUpdateRailSize">{{ translator.railSize }}</InputNumber>
 		</div>
 	`,
 	data: () => {
@@ -63,7 +70,8 @@ import { Translator } from "../translate/Translator";
 			borderColor: "",
 			border: false,
 			borderWidth: 0,
-			buttonSize: 0
+			buttonSize: 0,
+			railSize: 0
 		}
 	},
 	watch: {
@@ -86,6 +94,7 @@ export class UISlider extends Vue {
 	border: boolean;
 	borderWidth: number;
 	buttonSize: number;
+	railSize: number;
 
 	protected created(): void {
 		var translator = Translator.getInstance();
@@ -99,6 +108,7 @@ export class UISlider extends Vue {
 		this.translator.border = translator.getText("Border");
 		this.translator.borderWidth = translator.getText("BorderWidth");
 		this.translator.buttonSize = translator.getText("ButtonSize");
+		this.translator.railSize = translator.getText("RailSize");
 	}
 
 	protected mounted(): void {
@@ -116,6 +126,7 @@ export class UISlider extends Vue {
 		this.border = component.border;
 		this.borderWidth = component.borderWidth;
 		this.buttonSize = component.buttonSize;
+		this.railSize = component.railSize;
 	}
 
 	protected onUpdateSize(x: number, y: number): void {
@@ -167,7 +178,7 @@ export class UISlider extends Vue {
 		}
 		this.$emit("update", "border");
 	}
-	
+
 	protected onUpdateBorderWidth(value: number): void {
 		this.borderWidth = value;
 		if (this._component) {
@@ -182,6 +193,14 @@ export class UISlider extends Vue {
 			this._component.buttonSize = value;
 		}
 		this.$emit("update", "buttonSize");
+	}
+
+	protected onUpdateRailSize(value: number): void {
+		this.railSize = value;
+		if (this._component) {
+			this._component.railSize = value;
+		}
+		this.$emit("update", "railSize");
 	}
 }
 

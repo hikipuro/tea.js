@@ -4,6 +4,7 @@ import { UIComponent } from "./UIComponent";
 export class Slider extends UIComponent {
 	static readonly className: string = "Slider";
 	protected static readonly DefaultButtonSize: number = 16;
+	protected static readonly DefaultRailSize: number = 4;
 	protected _graphics: Tea.Graphics2D;
 	protected _isChanged: boolean;
 	protected _value: number;
@@ -13,6 +14,7 @@ export class Slider extends UIComponent {
 	protected _border: boolean;
 	protected _borderWidth: number;
 	protected _buttonSize: number;
+	protected _railSize: number;
 	protected _mouseDownValue: number;
 	protected _grabbed: boolean;
 	
@@ -31,6 +33,7 @@ export class Slider extends UIComponent {
 		this._border = true;
 		this._borderWidth = 1.0;
 		this._buttonSize = Slider.DefaultButtonSize;
+		this._railSize = Slider.DefaultRailSize;
 		this._mouseDownValue = 0.0;
 		this._grabbed = false;
 	}
@@ -138,6 +141,17 @@ export class Slider extends UIComponent {
 		this._isChanged = true;
 	}
 
+	get railSize(): number {
+		return this._railSize;
+	}
+	set railSize(value: number) {
+		if (value == null || value === this._railSize) {
+			return;
+		}
+		this._railSize = value;
+		this._isChanged = true;
+	}
+
 	static fromJSON(app: Tea.App, json: any, callback: (component: Tea.Component) => void): void {
 		if (Tea.JSONUtil.isValidSceneJSON(json, Slider.className) === false) {
 			callback(null);
@@ -154,6 +168,7 @@ export class Slider extends UIComponent {
 		slider.border = json.border;
 		slider.borderWidth = json.borderWidth;
 		slider.buttonSize = json.buttonSize;
+		slider.railSize = json.railSize;
 		callback(slider);
 	}
 
@@ -170,6 +185,7 @@ export class Slider extends UIComponent {
 		this._border = undefined;
 		this._borderWidth = undefined;
 		this._buttonSize = undefined;
+		this._railSize = undefined;
 		this._mouseDownValue = undefined;
 		this._grabbed = undefined;
 		super.destroy();
@@ -185,6 +201,7 @@ export class Slider extends UIComponent {
 		json.border = this._border;
 		json.borderWidth = this._borderWidth;
 		json.buttonSize = this._buttonSize;
+		json.railSize = this._railSize;
 		return json;
 	}
 
@@ -194,7 +211,7 @@ export class Slider extends UIComponent {
 			return;
 		}
 		this._graphics.clear();
-		this.drawSliderBase();
+		this.drawRail();
 		this.drawButton();
 		this.texture.image = this._graphics.canvas;
 		this._isChanged = false;
@@ -270,19 +287,18 @@ export class Slider extends UIComponent {
 		this.value = Math.max(0, Math.min(1, value));
 	}
 
-	protected drawSliderBase(): void {
+	protected drawRail(): void {
 		var g = this._graphics;
-		var buttonSize = this._buttonSize;
-		var baseHeight = buttonSize / 5;
-		var radius = baseHeight / 2;
+		var railSize = this._railSize;
+		var radius = railSize / 2;
 		var paddingX = 0;
-		var paddingY = (this._height - baseHeight) / 2;
+		var paddingY = (this._height - railSize) / 2;
 		var width = this._width;
 		if (!this._border) {
 			g.save();
 			g.translate(paddingX, paddingY);
 			g.fillStyle = this._railColor.toCssColor();
-			g.fillRoundRect(0, 0, width, baseHeight, radius);
+			g.fillRoundRect(0, 0, width, railSize, radius);
 			g.restore();
 			return;
 		}
@@ -292,10 +308,10 @@ export class Slider extends UIComponent {
 		g.save();
 		g.translate(paddingX, paddingY);
 		g.fillStyle = this._railColor.toCssColor();
-		g.fillRoundRect(0, 0, width, baseHeight, radius);
+		g.fillRoundRect(0, 0, width, railSize, radius);
 		g.strokeStyle = this._borderColor.toCssColor();
 		g.lineWidth = lineWidth;
-		g.storokeRoundRect(0, 0, width, baseHeight, radius);
+		g.storokeRoundRect(0, 0, width, railSize, radius);
 		g.restore();
 	}
 
