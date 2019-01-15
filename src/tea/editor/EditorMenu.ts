@@ -380,6 +380,10 @@ export class EditorMenu {
 					{
 						id: "UI/VScrollBar",
 						label: translator.getText("UI/VScrollBar"),
+					},
+					{
+						id: "UI/Switch",
+						label: translator.getText("UI/Switch"),
 					}
 				]
 			}
@@ -550,6 +554,10 @@ export class EditorMenu {
 					{
 						id: "UI/VScrollBar",
 						label: translator.getText("UI/VScrollBar"),
+					},
+					{
+						id: "UI/Switch",
+						label: translator.getText("UI/Switch"),
 					}
 				]
 			}

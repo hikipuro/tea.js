@@ -133,7 +133,8 @@
 				"Panel": "パネル",
 				"ScrollView": "スクロールビュー",
 				"HScrollBar": "水平スクロールバー",
-				"VScrollBar": "垂直スクロールバー"
+				"VScrollBar": "垂直スクロールバー",
+				"Switch": "スイッチ"
 			}
 		}
 	},
@@ -201,7 +202,8 @@
 				"Panel": "パネル",
 				"ScrollView": "スクロールビュー",
 				"HScrollBar": "水平スクロールバー",
-				"VScrollBar": "垂直スクロールバー"
+				"VScrollBar": "垂直スクロールバー",
+				"Switch": "スイッチ"
 			}
 		}
 	},
@@ -432,6 +434,18 @@
 			"Border": "枠線",
 			"BorderWidth": "枠線の太さ",
 			"BorderRadius": "枠の丸さ",
+			"BorderColor": "枠線の色"
+		},
+		"Switch": {
+			"Title": "スイッチ",
+			"Size": "サイズ",
+			"Checked": "チェック",
+			"BaseColorOff": "ベースの色 (OFF)",
+			"BaseColorOn": "ベースの色 (ON)",
+			"ThumbColor": "つまみの色",
+			"ThumbMargin": "つまみの隙間",
+			"Border": "枠線",
+			"BorderWidth": "枠線の太さ",
 			"BorderColor": "枠線の色"
 		}
 	}

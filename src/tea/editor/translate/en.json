@@ -133,7 +133,8 @@
 				"Panel": "Panel",
 				"ScrollView": "Scroll View",
 				"HScrollBar": "HScroll Bar",
-				"VScrollBar": "VScroll Bar"
+				"VScrollBar": "VScroll Bar",
+				"Switch": "Switch"
 			}
 		}
 	},
@@ -201,7 +202,8 @@
 				"Panel": "Panel",
 				"ScrollView": "Scroll View",
 				"HScrollBar": "HScroll Bar",
-				"VScrollBar": "VScroll Bar"
+				"VScrollBar": "VScroll Bar",
+				"Switch": "Switch"
 			}
 		}
 	},
@@ -432,6 +434,18 @@
 			"Border": "Border",
 			"BorderWidth": "Border Width",
 			"BorderRadius": "Border Radius",
+			"BorderColor": "Border Color"
+		},
+		"Switch": {
+			"Title": "Switch",
+			"Size": "Size",
+			"Checked": "Checked",
+			"BaseColorOff": "Base Color Off",
+			"BaseColorOn": "Base Color On",
+			"ThumbColor": "Thumb Color",
+			"ThumbMargin": "Thumb Margin",
+			"Border": "Border",
+			"BorderWidth": "Border Width",
 			"BorderColor": "Border Color"
 		}
 	}

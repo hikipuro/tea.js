@@ -55,6 +55,8 @@ export module UI {
 	export type HScrollBar = UIComponents.HScrollBar;
 	export var  VScrollBar = UIComponents.VScrollBar;
 	export type VScrollBar = UIComponents.VScrollBar;
+	export var  Switch = UIComponents.Switch;
+	export type Switch = UIComponents.Switch;
 }
 
 export * from "./enums/CameraClearFlags";

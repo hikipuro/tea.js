@@ -362,6 +362,10 @@ export class App {
 		return ObjectFactory.createUIVScrollBar(this);
 	}
 
+	createUISwitch(): Tea.Object3D {
+		return ObjectFactory.createUISwitch(this);
+	}
+
 	readObjFile(url: string, callback: (object3d: Tea.Object3D) => void): void {
 		if (callback == null) {
 			return;

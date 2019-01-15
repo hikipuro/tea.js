@@ -276,6 +276,9 @@ export class ObjectInspectorCommand {
 			case "UI/VScrollBar":
 				component = new Tea.UI.VScrollBar(app);
 				break;
+			case "UI/Switch":
+				component = new Tea.UI.Switch(app);
+				break;
 		}
 		if (component != null) {
 			object3d.addComponentInstance(component);

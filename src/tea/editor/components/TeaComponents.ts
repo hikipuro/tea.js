@@ -22,6 +22,7 @@ import { UIPanel } from "./UIPanel";
 import { UIScrollView } from "./UIScrollView";
 import { UIHScrollBar } from "./UIHScrollBar";
 import { UIVScrollBar } from "./UIVScrollBar";
+import { UISwitch } from "./UISwitch";
 
 export {
 	AudioSource,
@@ -48,6 +49,7 @@ export {
 	UIScrollView,
 	UIHScrollBar,
 	UIVScrollBar,
+	UISwitch,
 }
 
 export function getComponents(): Object {
@@ -76,5 +78,6 @@ export function getComponents(): Object {
 		UIScrollView: UIScrollView,
 		UIHScrollBar: UIHScrollBar,
 		UIVScrollBar: UIVScrollBar,
+		UISwitch: UISwitch,
 	}
 }

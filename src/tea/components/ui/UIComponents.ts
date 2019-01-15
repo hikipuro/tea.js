@@ -11,3 +11,4 @@ export * from "./Panel";
 export * from "./ScrollView";
 export * from "./HScrollBar";
 export * from "./VScrollBar";
+export * from "./Switch";
