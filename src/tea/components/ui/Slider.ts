@@ -290,12 +290,12 @@ export class Slider extends UIComponent {
 
 	protected drawRail(): void {
 		var g = this._graphics;
-		var railSize = this._railSize;
+		var borderWidth = this._borderWidth;
+		var railSize = this._railSize - borderWidth;
 		var radius = railSize / 2;
 		var paddingX = 0;
 		var paddingY = (this._height - railSize) / 2;
 		var width = this._width;
-		var borderWidth = this._borderWidth;
 		if (!this._border || borderWidth <= 0) {
 			g.save();
 			g.translate(paddingX, paddingY);
