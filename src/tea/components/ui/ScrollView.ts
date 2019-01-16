@@ -3,7 +3,7 @@ import { UIComponent } from "./UIComponent";
 
 export class ScrollView extends UIComponent {
 	static readonly className: string = "ScrollView";
-	static readonly ClipMargin: number = 1;
+	static readonly ClipMargin: number = 0;
 	localScroll: Tea.Vector2;
 	protected _clippingRect: Tea.Rect;
 	

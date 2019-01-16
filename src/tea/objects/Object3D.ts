@@ -305,6 +305,9 @@ export class Object3D {
 	}
 
 	get childCount(): number {
+		if (this._children == null) {
+			return 0;
+		}
 		return this._children.length;
 	}
 

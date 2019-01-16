@@ -558,6 +558,10 @@ export class EditorMenu {
 					{
 						id: "UI/Switch",
 						label: translator.getText("UI/Switch"),
+					},
+					{
+						id: "UI/VLayout",
+						label: translator.getText("UI/VLayout"),
 					}
 				]
 			}

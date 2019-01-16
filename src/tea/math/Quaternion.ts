@@ -19,6 +19,9 @@ export class Quaternion extends Array<number> {
 	}
 
 	static fromArray(array: Array<number>): Quaternion {
+		if (array == null) {
+			return null;
+		}
 		var x = array[0], y = array[1], z = array[2], w = array[3];
 		x = x != null ? x : 0.0;
 		y = y != null ? y : 0.0;

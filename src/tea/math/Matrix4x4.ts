@@ -60,10 +60,10 @@ export class Matrix4x4 extends Array<number> {
 	}
 
 	static fromArray(array: Array<number>, offset: number = 0): Matrix4x4 {
-		var m = new Matrix4x4();
 		if (array == null) {
-			return m;
+			return null;
 		}
+		var m = new Matrix4x4();
 		var length = array.length;
 		for (var i = 0; i < length; i++) {
 			var item = array[i + offset];

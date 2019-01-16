@@ -41,6 +41,7 @@ import { Translator } from "../translate/Translator";
 					:x="position[0]"
 					:y="position[1]"
 					:step="1"
+					:disabled="hasLayout"
 					@update="onUpdatePosition2D"
 					@change="onChangePosition2D">{{ translator.position }}</Vector2>
 				<Vector2
@@ -72,6 +73,7 @@ import { Translator } from "../translate/Translator";
 			translator: {},
 			name: "",
 			is3DObject: true,
+			hasLayout: false,
 			isActive: false,
 			position: [0, 0, 0],
 			rotation: [0, 0, 0],
@@ -88,6 +90,7 @@ export class ObjectInspector extends Vue {
 	translator: any;
 	name: string;
 	is3DObject: boolean;
+	hasLayout: boolean;
 	isActive: boolean;
 	position: Array<number>;
 	rotation: Array<number>;
@@ -108,6 +111,7 @@ export class ObjectInspector extends Vue {
 		var canvas = object3d.getComponentInParent(Tea.UI.Canvas);
 		if (canvas != null) {
 			this.is3DObject = false;
+			this.hasLayout = this.hasUILayoutComponent(object3d);
 		}
 		this.clearComponents();
 		var components = object3d.getComponents(Tea.Component);
@@ -203,6 +207,18 @@ export class ObjectInspector extends Vue {
 
 	protected created(): void {
 		this.translate();
+	}
+
+	protected hasUILayoutComponent(object3d: Tea.Object3D): boolean {
+		if (object3d == null) {
+			return false;
+		}
+		var parent = object3d.parent;
+		if (parent == null) {
+			return false;
+		}
+		var layout = parent.getComponent(Tea.UI.Layout);
+		return layout != null;
 	}
 
 	protected onUpdateTitle(type: string, value: string | boolean): void {

@@ -14,6 +14,7 @@ import { Label } from "./Label";
 import { ListView } from "./ListView";
 import { NativeContextMenu } from "./NativeContextMenu";
 import { ObjectTitle } from "./ObjectTitle";
+import { Padding } from "./Padding";
 import { Rectangle } from "./Rectangle";
 import { SelectAspect } from "./SelectAspect";
 import { SelectEnum } from "./SelectEnum";
@@ -41,6 +42,7 @@ export {
 	ListView,
 	NativeContextMenu,
 	ObjectTitle,
+	Padding,
 	Rectangle,
 	SelectAspect,
 	SelectEnum,
@@ -68,6 +70,7 @@ export function getComponents(): Object {
 		Label: Label,
 		ListView: ListView,
 		ObjectTitle: ObjectTitle,
+		Padding: Padding,
 		Rectangle: Rectangle,
 		SelectAspect: SelectAspect,
 		SelectEnum: SelectEnum,

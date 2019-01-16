@@ -1,0 +1,39 @@
+#{$parent} {
+	div.Padding {
+		display: inline-flex;
+		box-sizing: border-box;
+		align-items: center;
+		padding: 1px;
+		width: 100%;
+		//line-height: 1.5;
+		//overflow: hidden;
+
+		> .title {
+			display: inline-block;
+			width: 40%;
+			white-space: nowrap;
+			overflow: hidden;
+		}
+
+		> .value {
+			display: inline-flex;
+			width: 60%;
+			justify-content: space-evenly;
+
+			.Panel {
+				display: flex;
+				overflow: hidden;
+
+				.title {
+					flex: 0;
+					min-width: 1em;
+					text-align: center;
+				}
+
+				input {
+					flex: 1;
+				}
+			}
+		}
+	}
+}

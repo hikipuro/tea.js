@@ -72,6 +72,13 @@ export class InputNumber extends Vue {
 	protected _mouseDownX: number;
 	protected _mouseDownY: number;
 
+	protected mounted(): void {
+		if (this.disabled) {
+			var title = this.$refs.title as HTMLElement;
+			title.style.cursor = "auto";
+		}
+	}
+
 	protected update(): void {
 		var el = this.$refs.text as HTMLInputElement;
 		var text = el.value;

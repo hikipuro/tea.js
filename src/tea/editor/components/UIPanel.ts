@@ -50,7 +50,7 @@ import { Translator } from "../translate/Translator";
 			border: false,
 			borderWidth: 0,
 			borderRadius: 0,
-			borderColor: ""
+			borderColor: "",
 		}
 	},
 	watch: {

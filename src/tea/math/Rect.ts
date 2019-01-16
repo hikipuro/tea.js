@@ -17,6 +17,9 @@ export class Rect extends Array<number> {
 	}
 
 	static fromArray(array: Array<number>): Rect {
+		if (array == null) {
+			return null;
+		}
 		var x = array[0], y = array[1];
 		var width = array[2], height = array[3];
 		x = x != null ? x : 0.0;
