@@ -271,14 +271,14 @@ export class Button extends UIComponent {
 		var width = this._width;
 		var height = this._height;
 		var borderRadius = this._borderRadius;
-		if (!this._border) {
+		var borderWidth = this._borderWidth;
+		if (!this._border || borderWidth <= 0) {
 			g.save();
 			g.fillStyle = this._background.toCssColor();
 			g.fillRoundRect(0, 0, width, height, borderRadius);
 			g.restore();
 			return;
 		}
-		var borderWidth = this._borderWidth;
 		var padding = borderWidth / 2;
 		width -= borderWidth;
 		height -= borderWidth;
@@ -296,7 +296,8 @@ export class Button extends UIComponent {
 		g.fillRoundRect(0, 0, width, height, borderRadius);
 		g.strokeStyle = this._borderColor.toCssColor();
 		g.lineWidth = borderWidth;
-		g.storokeRoundRect(0, 0, width, height, borderRadius);
+		g.stroke();
+		//g.storokeRoundRect(0, 0, width, height, borderRadius);
 		g.restore();
 	}
 

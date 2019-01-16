@@ -295,7 +295,8 @@ export class Slider extends UIComponent {
 		var paddingX = 0;
 		var paddingY = (this._height - railSize) / 2;
 		var width = this._width;
-		if (!this._border) {
+		var borderWidth = this._borderWidth;
+		if (!this._border || borderWidth <= 0) {
 			g.save();
 			g.translate(paddingX, paddingY);
 			g.fillStyle = this._railColor.toCssColor();
@@ -303,16 +304,16 @@ export class Slider extends UIComponent {
 			g.restore();
 			return;
 		}
-		var lineWidth = this._borderWidth;
-		paddingX = lineWidth / 2;
-		width -= lineWidth;
+		paddingX = borderWidth / 2;
+		width -= borderWidth;
 		g.save();
 		g.translate(paddingX, paddingY);
 		g.fillStyle = this._railColor.toCssColor();
 		g.fillRoundRect(0, 0, width, railSize, radius);
 		g.strokeStyle = this._borderColor.toCssColor();
-		g.lineWidth = lineWidth;
-		g.storokeRoundRect(0, 0, width, railSize, radius);
+		g.lineWidth = borderWidth;
+		g.stroke();
+		//g.storokeRoundRect(0, 0, width, railSize, radius);
 		g.restore();
 	}
 
@@ -321,7 +322,8 @@ export class Slider extends UIComponent {
 		var buttonSize = this._buttonSize;
 		var paddingX = this._value * (this._width - buttonSize);
 		var paddingY = this._height / 2;
-		if (!this._border) {
+		var borderWidth = this._borderWidth;
+		if (!this._border || borderWidth <= 0) {
 			g.save();
 			g.translate(paddingX, paddingY);
 			g.fillStyle = this._buttonColor.toCssColor();
@@ -333,9 +335,8 @@ export class Slider extends UIComponent {
 			g.restore();
 			return;
 		}
-		var lineWidth = this._borderWidth;
-		buttonSize -= lineWidth;
-		paddingX += lineWidth / 2;
+		buttonSize -= borderWidth;
+		paddingX += borderWidth / 2;
 		g.save();
 		g.translate(paddingX, paddingY);
 		/*
@@ -353,8 +354,9 @@ export class Slider extends UIComponent {
 		}
 		g.fillCircle(buttonSize, 0, buttonSize);
 		g.strokeStyle = this._borderColor.toCssColor();
-		g.lineWidth = lineWidth;
-		g.strokeCircle(buttonSize, 0, buttonSize);
+		g.lineWidth = borderWidth;
+		g.stroke();
+		//g.strokeCircle(buttonSize, 0, buttonSize);
 		g.restore();
 	}
 }

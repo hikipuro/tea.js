@@ -286,7 +286,7 @@ export class Switch extends UIComponent {
 			g.fillStyle = this._baseColorOff.toCssColor();
 		}
 		g.fill();
-		if (this._border) {
+		if (this._border && borderWidth > 0) {
 			g.strokeStyle = this._borderColor.toCssColor();
 			g.lineWidth = borderWidth;
 			g.stroke();
@@ -323,7 +323,7 @@ export class Switch extends UIComponent {
 			g.fillStyle = this._baseColorOff.toCssColor();
 		}
 		g.fill();
-		if (this._border) {
+		if (this._border && borderWidth > 0) {
 			g.strokeStyle = this._borderColor.toCssColor();
 			g.lineWidth = borderWidth;
 			g.stroke();
@@ -352,10 +352,11 @@ export class Switch extends UIComponent {
 		g.translate(paddingX, paddingY);
 		g.fillStyle = this._thumbColor.toCssColor();
 		g.fillCircle(0, 0, buttonSize);
-		if (this._border) {
+		if (this._border && borderWidth > 0) {
 			g.strokeStyle = this._borderColor.toCssColor();
 			g.lineWidth = borderWidth;
-			g.strokeCircle(0, 0, buttonSize);
+			g.stroke();
+			//g.strokeCircle(0, 0, buttonSize);
 		}
 		g.restore();
 	}
@@ -381,10 +382,11 @@ export class Switch extends UIComponent {
 		g.translate(paddingX, paddingY);
 		g.fillStyle = this._thumbColor.toCssColor();
 		g.fillCircle(0, 0, buttonSize);
-		if (this._border) {
+		if (this._border && borderWidth > 0) {
 			g.strokeStyle = this._borderColor.toCssColor();
 			g.lineWidth = borderWidth;
-			g.strokeCircle(0, 0, buttonSize);
+			g.stroke();
+			//g.strokeCircle(0, 0, buttonSize);
 		}
 		g.restore();
 	}

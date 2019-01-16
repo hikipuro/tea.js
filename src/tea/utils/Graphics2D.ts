@@ -196,12 +196,16 @@ export class Graphics2D {
 		context.moveTo(x + radius, y);
 		context.lineTo(right - radius, y);
 		context.quadraticCurveTo(right, y, right, y + radius);
+		//context.arcTo(right, y, right, y + radius, radius);
 		context.lineTo(right, bottom - radius);
 		context.quadraticCurveTo(right, bottom, right - radius, bottom);
+		//context.arcTo(right, bottom, right - radius, bottom, radius);
 		context.lineTo(x + radius, bottom);
 		context.quadraticCurveTo(x, bottom, x, bottom - radius);
+		//context.arcTo(x, bottom, x, bottom - radius, radius);
 		context.lineTo(x, y + radius);
 		context.quadraticCurveTo(x, y, x + radius, y);
+		//context.arcTo(x, y, x + radius, y, radius);
 		context.closePath();
 	}
 
@@ -375,8 +379,8 @@ export class Graphics2D {
 		this.context.stroke(path);
 	}
 
-    drawFocusIfNeeded(element: Element): void;
-    drawFocusIfNeeded(path: Path2D, element: Element): void;
+	drawFocusIfNeeded(element: Element): void;
+	drawFocusIfNeeded(path: Path2D, element: Element): void;
 	drawFocusIfNeeded(arg0: Element | Path2D, element?: Element): void {
 		if (element == null) {
 			this.context.drawFocusIfNeeded(arg0 as any);
@@ -385,8 +389,8 @@ export class Graphics2D {
 		this.context.drawFocusIfNeeded(arg0 as any, element);
 	}
 
-    clip(fillRule?: CanvasFillRule): void;
-    clip(path: Path2D, fillRule?: CanvasFillRule): void;
+	clip(fillRule?: CanvasFillRule): void;
+	clip(path: Path2D, fillRule?: CanvasFillRule): void;
 	clip(arg0?: CanvasFillRule | Path2D, fillRule?: CanvasFillRule): void {
 		if (arg0 == null) {
 			this.context.clip();
@@ -399,8 +403,8 @@ export class Graphics2D {
 		this.context.clip(arg0 as any, fillRule);
 	}
 
-    isPointInPath(x: number, y: number, fillRule?: CanvasFillRule): boolean;
-    isPointInPath(path: Path2D, x: number, y: number, fillRule?: CanvasFillRule): boolean;
+	isPointInPath(x: number, y: number, fillRule?: CanvasFillRule): boolean;
+	isPointInPath(path: Path2D, x: number, y: number, fillRule?: CanvasFillRule): boolean;
 	isPointInPath(arg0: number | Path2D, arg1: number, arg2?: number | CanvasFillRule, fillRule?: CanvasFillRule): boolean {
 		if (fillRule == null) {
 			return this.context.isPointInPath(arg0 as any, arg1, arg2 as any);
@@ -408,9 +412,9 @@ export class Graphics2D {
 		return this.context.isPointInPath(arg0 as any, arg1, arg2 as any, fillRule);
 	}
 
-    isPointInStroke(x: number, y: number): boolean;
-    isPointInStroke(path: Path2D, x: number, y: number): boolean;
-    isPointInStroke(arg0: number | Path2D, arg1: number, arg2?: number): boolean {
+	isPointInStroke(x: number, y: number): boolean;
+	isPointInStroke(path: Path2D, x: number, y: number): boolean;
+	isPointInStroke(arg0: number | Path2D, arg1: number, arg2?: number): boolean {
 		if (arg2 == null) {
 			return this.context.isPointInStroke(arg0 as any, arg1);
 		}
@@ -441,10 +445,10 @@ export class Graphics2D {
 		this.context.resetTransform();
 	}
 
-    drawImage(image: any, dx: number, dy: number): void;
-    drawImage(image: any, dx: number, dy: number, dw: number, dh: number): void;
-    drawImage(image: any, sx: number, sy: number, sw: number, sh: number, dx: number, dy: number, dw: number, dh: number): void;
-    drawImage(image: any, sx: number, sy: number, sw?: number, sh?: number, dx?: number, dy?: number, dw?: number, dh?: number): void {
+	drawImage(image: any, dx: number, dy: number): void;
+	drawImage(image: any, dx: number, dy: number, dw: number, dh: number): void;
+	drawImage(image: any, sx: number, sy: number, sw: number, sh: number, dx: number, dy: number, dw: number, dh: number): void;
+	drawImage(image: any, sx: number, sy: number, sw?: number, sh?: number, dx?: number, dy?: number, dw?: number, dh?: number): void {
 		if (sw == null) {
 			this.context.drawImage(image, sx, sy);
 			return;
@@ -456,8 +460,8 @@ export class Graphics2D {
 		this.context.drawImage(image, sx, sy, sw, sh, dx, dy, dw, dh);
 	}
 
-    createImageData(sw: number, sh: number): ImageData;
-    createImageData(imagedata: ImageData): ImageData;
+	createImageData(sw: number, sh: number): ImageData;
+	createImageData(imagedata: ImageData): ImageData;
 	createImageData(arg0: number | ImageData, arg1?: number): ImageData {
 		if (arg1 == null) {
 			return this.context.createImageData(arg0 as ImageData);
@@ -465,7 +469,7 @@ export class Graphics2D {
 		return this.context.createImageData(arg0 as any, arg1);
 	}
 
-    getImageData(sx: number, sy: number, sw: number = null, sh: number = null): ImageData {
+	getImageData(sx: number, sy: number, sw: number = null, sh: number = null): ImageData {
 		if (sw == null) {
 			sw = this._width;
 		}
@@ -475,9 +479,9 @@ export class Graphics2D {
 		return this.context.getImageData(sx, sy, sw, sh);
 	}
 
-    putImageData(imagedata: ImageData, dx: number, dy: number): void;
-    putImageData(imagedata: ImageData, dx: number, dy: number, dirtyX: number, dirtyY: number, dirtyWidth: number, dirtyHeight: number): void;
-    putImageData(imagedata: ImageData, dx: number, dy: number, dirtyX?: number, dirtyY?: number, dirtyWidth?: number, dirtyHeight?: number): void {
+	putImageData(imagedata: ImageData, dx: number, dy: number): void;
+	putImageData(imagedata: ImageData, dx: number, dy: number, dirtyX: number, dirtyY: number, dirtyWidth: number, dirtyHeight: number): void;
+	putImageData(imagedata: ImageData, dx: number, dy: number, dirtyX?: number, dirtyY?: number, dirtyWidth?: number, dirtyHeight?: number): void {
 		if (dirtyX == null) {
 			this.context.putImageData(imagedata, dx, dy);
 			return;

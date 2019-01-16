@@ -286,14 +286,14 @@ export class VScrollBar extends UIComponent {
 		var width = this._width;
 		var height = this._height;
 		var borderRadius = this._borderRadius;
-		if (!this._border) {
+		var borderWidth = this._borderWidth;
+		if (!this._border || borderWidth <= 0) {
 			g.save();
 			g.fillStyle = this._railColor.toCssColor();
 			g.fillRoundRect(0, 0, width, height, borderRadius);
 			g.restore();
 			return;
 		}
-		var borderWidth = this._borderWidth;
 		var padding = borderWidth / 2;
 		width -= borderWidth;
 		height -= borderWidth;
@@ -303,7 +303,8 @@ export class VScrollBar extends UIComponent {
 		g.fillRoundRect(0, 0, width, height, borderRadius);
 		g.strokeStyle = this._borderColor.toCssColor();
 		g.lineWidth = borderWidth;
-		g.storokeRoundRect(0, 0, width, height, borderRadius);
+		g.stroke();
+		//g.storokeRoundRect(0, 0, width, height, borderRadius);
 		g.restore();
 	}
 
@@ -316,7 +317,8 @@ export class VScrollBar extends UIComponent {
 		var borderRadius = this._borderRadius;
 		var paddingX = 0;
 		var paddingY = ratio * (height - thumbSize);
-		if (!this._border) {
+		var borderWidth = this._borderWidth;
+		if (!this._border || borderWidth <= 0) {
 			g.save();
 			g.translate(paddingX, paddingY);
 			g.fillStyle = this._thumbColor.toCssColor();
@@ -324,7 +326,6 @@ export class VScrollBar extends UIComponent {
 			g.restore();
 			return;
 		}
-		var borderWidth = this._borderWidth;
 		width -= borderWidth;
 		height -= borderWidth;
 		paddingX = borderWidth / 2;
@@ -335,7 +336,8 @@ export class VScrollBar extends UIComponent {
 		g.fillRoundRect(0, 0, width, thumbSize, borderRadius);
 		g.strokeStyle = this._borderColor.toCssColor();
 		g.lineWidth = borderWidth;
-		g.storokeRoundRect(0, 0, width, thumbSize, borderRadius);
+		g.stroke();
+		//g.storokeRoundRect(0, 0, width, thumbSize, borderRadius);
 		g.restore();
 	}
 }

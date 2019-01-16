@@ -50,6 +50,20 @@ export class UIComponent extends Component {
 		this._isSizeChanged = true;
 	}
 
+	/*
+	get rect(): Tea.Rect {
+		var object3d = this.object3d;
+		if (object3d == null) {
+			return new Tea.Rect();
+		}
+		var position = object3d.position;
+		return new Tea.Rect(
+			position[0], position[1],
+			this._width, this._height
+		);
+	}
+	//*/
+
 	get colorOffset(): Tea.Color {
 		return this._colorOffset;
 	}

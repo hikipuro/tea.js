@@ -348,7 +348,8 @@ export class Checkbox extends UIComponent {
 		var borderRadius = this._borderRadius;
 		var paddingX = 0;
 		var paddingY = (this._height - buttonSize) / 2;
-		if (!this._border) {
+		var borderWidth = this._borderWidth;
+		if (!this._border || borderWidth <= 0) {
 			g.save();
 			g.translate(paddingX, paddingY);
 			g.fillStyle = this._buttonColor.toCssColor();
@@ -356,7 +357,6 @@ export class Checkbox extends UIComponent {
 			g.restore();
 			return;
 		}
-		var borderWidth = this._borderWidth;
 		paddingX = borderWidth / 2;
 		paddingY += borderWidth / 2;
 		buttonSize -= borderWidth;
@@ -374,7 +374,8 @@ export class Checkbox extends UIComponent {
 		g.fillRoundRect(0, 0, buttonSize, buttonSize, borderRadius);
 		g.strokeStyle = this._borderColor.toCssColor();
 		g.lineWidth = borderWidth;
-		g.storokeRoundRect(0, 0, buttonSize, buttonSize, borderRadius);
+		g.stroke();
+		//g.storokeRoundRect(0, 0, buttonSize, buttonSize, borderRadius);
 		g.restore();
 	}
 

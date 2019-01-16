@@ -366,7 +366,8 @@ export class RadioButton extends UIComponent {
 		var buttonSize = this._buttonSize;
 		var paddingX = buttonSize / 2;
 		var paddingY = this._height / 2;
-		if (!this._border) {
+		var borderWidth = this._borderWidth;
+		if (!this._border || borderWidth <= 0) {
 			buttonSize /= 2;
 			g.save();
 			g.translate(paddingX, paddingY);
@@ -375,7 +376,6 @@ export class RadioButton extends UIComponent {
 			g.restore();
 			return;
 		}
-		var borderWidth = this._borderWidth;
 		buttonSize -= borderWidth;
 		buttonSize /= 2;
 		g.save();

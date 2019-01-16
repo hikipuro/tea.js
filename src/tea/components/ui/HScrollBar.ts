@@ -287,14 +287,14 @@ export class HScrollBar extends UIComponent {
 		var width = this._width;
 		var height = this._height;
 		var borderRadius = this._borderRadius;
-		if (!this._border) {
+		var borderWidth = this._borderWidth;
+		if (!this._border || borderWidth <= 0) {
 			g.save();
 			g.fillStyle = this._railColor.toCssColor();
 			g.fillRoundRect(0, 0, width, height, borderRadius);
 			g.restore();
 			return;
 		}
-		var borderWidth = this._borderWidth;
 		var padding = borderWidth / 2;
 		width -= borderWidth;
 		height -= borderWidth;
@@ -304,7 +304,8 @@ export class HScrollBar extends UIComponent {
 		g.fillRoundRect(0, 0, width, height, borderRadius);
 		g.strokeStyle = this._borderColor.toCssColor();
 		g.lineWidth = borderWidth;
-		g.storokeRoundRect(0, 0, width, height, borderRadius);
+		g.stroke();
+		//g.storokeRoundRect(0, 0, width, height, borderRadius);
 		g.restore();
 	}
 
@@ -317,7 +318,8 @@ export class HScrollBar extends UIComponent {
 		var borderRadius = this._borderRadius;
 		var paddingX = ratio * (width - thumbSize);
 		var paddingY = 0;
-		if (!this._border) {
+		var borderWidth = this._borderWidth;
+		if (!this._border || borderWidth <= 0) {
 			g.save();
 			g.translate(paddingX, paddingY);
 			g.fillStyle = this._thumbColor.toCssColor();
@@ -325,7 +327,6 @@ export class HScrollBar extends UIComponent {
 			g.restore();
 			return;
 		}
-		var borderWidth = this._borderWidth;
 		width -= borderWidth;
 		height -= borderWidth;
 		paddingX = borderWidth / 2 + ratio * (width - thumbSize);
@@ -336,7 +337,8 @@ export class HScrollBar extends UIComponent {
 		g.fillRoundRect(0, 0, thumbSize, height, borderRadius);
 		g.strokeStyle = this._borderColor.toCssColor();
 		g.lineWidth = borderWidth;
-		g.storokeRoundRect(0, 0, thumbSize, height, borderRadius);
+		g.stroke();
+		//g.storokeRoundRect(0, 0, thumbSize, height, borderRadius);
 		g.restore();
 	}
 }
