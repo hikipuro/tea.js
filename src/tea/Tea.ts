@@ -59,6 +59,8 @@ export module UI {
 	export type Switch = UIComponents.Switch;
 	export var  Layout = UIComponents.Layout;
 	export type Layout = UIComponents.Layout;
+	export var  HLayout = UIComponents.HLayout;
+	export type HLayout = UIComponents.HLayout;
 	export var  VLayout = UIComponents.VLayout;
 	export type VLayout = UIComponents.VLayout;
 	export var  Padding = UIComponents.Padding;

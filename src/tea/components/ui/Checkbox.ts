@@ -225,6 +225,7 @@ export class Checkbox extends UIComponent {
 			return;
 		}
 		var checkbox = new Checkbox(app);
+		checkbox.enabled = json.enabled;
 		checkbox._width = json.width;
 		checkbox._height = json.height;
 		checkbox._graphics.resize(json.width, json.height);

@@ -213,6 +213,7 @@ export class RadioButton extends UIComponent {
 			return;
 		}
 		var radio = new RadioButton(app);
+		radio.enabled = json.enabled;
 		radio._width = json.width;
 		radio._height = json.height;
 		radio._graphics.resize(json.width, json.height);

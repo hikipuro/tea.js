@@ -279,6 +279,9 @@ export class ObjectInspectorCommand {
 			case "UI/Switch":
 				component = new Tea.UI.Switch(app);
 				break;
+			case "UI/HLayout":
+				component = new Tea.UI.HLayout(app);
+				break;
 			case "UI/VLayout":
 				component = new Tea.UI.VLayout(app);
 				break;

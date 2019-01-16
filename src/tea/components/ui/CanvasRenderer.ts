@@ -46,6 +46,7 @@ export class CanvasRenderer extends Renderer {
 			return;
 		}
 		var renderer = new CanvasRenderer(app);
+		renderer.enabled = json.enabled;
 		var shader = new Tea.Shader(app);
 		shader.attach(
 			Tea.ShaderSources.uiComponentVS,

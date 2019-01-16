@@ -115,6 +115,7 @@ export class Panel extends ScrollView {
 			return;
 		}
 		var panel = new Panel(app);
+		panel.enabled = json.enabled;
 		panel._width = json.width;
 		panel._height = json.height;
 		panel._graphics.resize(json.width, json.height);

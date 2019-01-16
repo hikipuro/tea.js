@@ -158,6 +158,7 @@ export class Slider extends UIComponent {
 			return;
 		}
 		var slider = new Slider(app);
+		slider.enabled = json.enabled;
 		slider._width = json.width;
 		slider._height = json.height;
 		slider._graphics.resize(json.width, json.height);

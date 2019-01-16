@@ -168,6 +168,7 @@ export class Button extends UIComponent {
 			return;
 		}
 		var button = new Button(app);
+		button.enabled = json.enabled;
 		button._width = json.width;
 		button._height = json.height;
 		button._graphics.resize(json.width, json.height);

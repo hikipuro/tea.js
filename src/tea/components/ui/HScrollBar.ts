@@ -184,6 +184,7 @@ export class HScrollBar extends UIComponent {
 			return;
 		}
 		var scrollBar = new HScrollBar(app);
+		scrollBar.enabled = json.enabled;
 		scrollBar._width = json.width;
 		scrollBar._height = json.height;
 		scrollBar._graphics.resize(json.width, json.height);

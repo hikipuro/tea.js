@@ -204,6 +204,7 @@
 				"HScrollBar": "水平スクロールバー",
 				"VScrollBar": "垂直スクロールバー",
 				"Switch": "スイッチ",
+				"HLayout": "水平レイアウト",
 				"VLayout": "垂直レイアウト"
 			}
 		}
@@ -448,6 +449,10 @@
 			"Border": "枠線",
 			"BorderWidth": "枠線の太さ",
 			"BorderColor": "枠線の色"
+		},
+		"HLayout": {
+			"Title": "水平レイアウト",
+			"Padding": "パディング"
 		},
 		"VLayout": {
 			"Title": "垂直レイアウト",

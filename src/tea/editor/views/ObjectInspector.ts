@@ -218,7 +218,7 @@ export class ObjectInspector extends Vue {
 			return false;
 		}
 		var layout = parent.getComponent(Tea.UI.Layout);
-		return layout != null;
+		return layout != null && layout.enabled;
 	}
 
 	protected onUpdateTitle(type: string, value: string | boolean): void {

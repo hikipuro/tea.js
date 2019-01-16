@@ -163,6 +163,7 @@ export class Text extends UIComponent {
 			return;
 		}
 		var text = new Text(app);
+		text.enabled = json.enabled;
 		text._width = json.width;
 		text._height = json.height;
 		text._graphics.resize(json.width, json.height);

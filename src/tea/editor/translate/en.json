@@ -204,6 +204,7 @@
 				"HScrollBar": "HScroll Bar",
 				"VScrollBar": "VScroll Bar",
 				"Switch": "Switch",
+				"HLayout": "HLayout",
 				"VLayout": "VLayout"
 			}
 		}
@@ -448,6 +449,10 @@
 			"Border": "Border",
 			"BorderWidth": "Border Width",
 			"BorderColor": "Border Color"
+		},
+		"HLayout": {
+			"Title": "HLayout",
+			"Padding": "Padding"
 		},
 		"VLayout": {
 			"Title": "VLayout",

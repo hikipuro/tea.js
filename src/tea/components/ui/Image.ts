@@ -23,6 +23,7 @@ export class Image extends UIComponent {
 			return;
 		}
 		var image = new Image(app);
+		image.enabled = json.enabled;
 		if (json.url == null || json.url === "") {
 			callback(image);
 			return;

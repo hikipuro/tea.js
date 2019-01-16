@@ -14,6 +14,7 @@ export class Canvas extends Component {
 			return;
 		}
 		var canvas = new Canvas(app);
+		canvas.enabled = json.enabled;
 		callback(canvas);
 	}
 

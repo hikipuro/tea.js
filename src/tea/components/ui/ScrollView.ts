@@ -114,6 +114,7 @@ export class ScrollView extends UIComponent {
 			return;
 		}
 		var view = new ScrollView(app);
+		view.enabled = json.enabled;
 		view._width = json.width;
 		view._height = json.height;
 		var margin = ScrollView.ClipMargin * 2;

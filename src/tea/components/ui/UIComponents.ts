@@ -13,5 +13,6 @@ export * from "./HScrollBar";
 export * from "./VScrollBar";
 export * from "./Switch";
 export * from "./Layout";
+export * from "./HLayout";
 export * from "./VLayout";
 export * from "./Padding";

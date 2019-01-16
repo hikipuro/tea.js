@@ -153,6 +153,7 @@ export class Switch extends UIComponent {
 			return;
 		}
 		var sw = new Switch(app);
+		sw.enabled = json.enabled;
 		sw._width = json.width;
 		sw._height = json.height;
 		sw._graphics.resize(json.width, json.height);

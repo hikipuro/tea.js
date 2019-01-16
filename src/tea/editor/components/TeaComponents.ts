@@ -23,6 +23,7 @@ import { UIScrollView } from "./UIScrollView";
 import { UIHScrollBar } from "./UIHScrollBar";
 import { UIVScrollBar } from "./UIVScrollBar";
 import { UISwitch } from "./UISwitch";
+import { UIHLayout } from "./UIHLayout";
 import { UIVLayout } from "./UIVLayout";
 
 export {
@@ -51,6 +52,7 @@ export {
 	UIHScrollBar,
 	UIVScrollBar,
 	UISwitch,
+	UIHLayout,
 	UIVLayout,
 }
 
@@ -81,6 +83,7 @@ export function getComponents(): Object {
 		UIHScrollBar: UIHScrollBar,
 		UIVScrollBar: UIVScrollBar,
 		UISwitch: UISwitch,
+		UIHLayout: UIHLayout,
 		UIVLayout: UIVLayout,
 	}
 }
