@@ -12,6 +12,20 @@ import { Translator } from "../translate/Translator";
 				:y="size[1]"
 				:step="1"
 				@update="onUpdateSize">{{ translator.size }}</Vector2>
+			<Vector2
+				ref="scroll"
+				:x="scroll[0]"
+				:y="scroll[1]"
+				:min="0"
+				:step="1"
+				@update="onUpdateScroll">{{ translator.scroll }}</Vector2>
+			<Vector2
+				ref="maxScroll"
+				:x="maxScroll[0]"
+				:y="maxScroll[1]"
+				:min="0"
+				:step="1"
+				@update="onUpdateMaxScroll">{{ translator.maxScroll }}</Vector2>
 			<ColorPicker
 				ref="background"
 				:value="background"
@@ -46,6 +60,8 @@ import { Translator } from "../translate/Translator";
 			name: "Panel",
 			enabled: false,
 			size: [0, 0],
+			scroll: [0, 0],
+			maxScroll: [0, 0],
 			background: "",
 			border: false,
 			borderWidth: 0,
@@ -66,6 +82,8 @@ export class UIPanel extends Vue {
 	name: string;
 	enabled: boolean;
 	size: Array<number>;
+	scroll: Array<number>;
+	maxScroll: Array<number>;
 	background: string;
 	border: boolean;
 	borderWidth: number;
@@ -77,6 +95,8 @@ export class UIPanel extends Vue {
 		translator.basePath = "Components/Panel";
 		this.name = translator.getText("Title");
 		this.translator.size = translator.getText("Size");
+		this.translator.scroll = translator.getText("Scroll");
+		this.translator.maxScroll = translator.getText("MaxScroll");
 		this.translator.background = translator.getText("Background");
 		this.translator.border = translator.getText("Border");
 		this.translator.borderWidth = translator.getText("BorderWidth");
@@ -92,6 +112,10 @@ export class UIPanel extends Vue {
 		this.enabled = component.enabled;
 		this.$set(this.size, 0, component.width);
 		this.$set(this.size, 1, component.height);
+		this.$set(this.scroll, 0, component.localScroll[0]);
+		this.$set(this.scroll, 1, component.localScroll[1]);
+		this.$set(this.maxScroll, 0, component.maxLocalScroll[0]);
+		this.$set(this.maxScroll, 1, component.maxLocalScroll[1]);
 		this.background = component.background.toCssColor();
 		this.border = component.border;
 		this.borderWidth = component.borderWidth;
@@ -107,6 +131,40 @@ export class UIPanel extends Vue {
 			this._component.height = y;
 		}
 		this.$emit("update", "size");
+	}
+
+	protected onUpdateScroll(x: number, y: number): void {
+		x = Math.min(this.maxScroll[0], x);
+		y = Math.min(this.maxScroll[1], y);
+		this.$set(this.scroll, 0, x);
+		this.$set(this.scroll, 1, y);
+		if (this._component != null) {
+			this._component.localScroll[0] = x;
+			this._component.localScroll[1] = y;
+		}
+		this.$emit("update", "scroll");
+	}
+
+	protected onUpdateMaxScroll(x: number, y: number): void {
+		this.$set(this.maxScroll, 0, x);
+		this.$set(this.maxScroll, 1, y);
+		if (this.scroll[0] > x) {
+			this.$set(this.scroll, 0, x);
+			if (this._component != null) {
+				this._component.localScroll[0] = x;
+			}
+		}
+		if (this.scroll[1] > y) {
+			this.$set(this.scroll, 1, y);
+			if (this._component != null) {
+				this._component.localScroll[1] = y;
+			}
+		}
+		if (this._component != null) {
+			this._component.maxLocalScroll[0] = x;
+			this._component.maxLocalScroll[1] = y;
+		}
+		this.$emit("update", "maxScroll");
 	}
 
 	protected onUpdateBackground(value: Tea.Color): void {

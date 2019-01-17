@@ -82,6 +82,7 @@ export * from "./enums/TextAlignment";
 export * from "./enums/TextAnchor";
 export * from "./enums/TextureDimension";
 export * from "./enums/TextureWrapMode";
+export * from "./enums/TextVerticalAlignment";
 export * from "./enums/WeightedMode";
 export * from "./enums/WrapMode";
 

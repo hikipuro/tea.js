@@ -21,7 +21,9 @@ export class Button extends UIComponent {
 		super(app);
 		this._width = 100;
 		this._height = 30;
-		this._graphics = new Tea.Graphics2D(100, 30);
+		this._graphics = new Tea.Graphics2D(
+			this._width, this._height
+		);
 		this._isChanged = true;
 		this._text = "Button";
 		this._font = Button.DefaultFont;

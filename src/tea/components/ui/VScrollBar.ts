@@ -170,10 +170,11 @@ export class VScrollBar extends UIComponent {
 
 	protected get thumbSize(): number {
 		var borderWidth = this._borderWidth;
-		var width = this._width - borderWidth;
+		var borderRadius = this._borderRadius;
 		var height = this._height - borderWidth;
+		var minHeight = borderRadius * 2;
 		var size = height * this._thumbRatio;
-		size = Math.max(size, width);
+		size = Math.max(size, minHeight);
 		size = Math.min(size, height);
 		return size;
 	}
@@ -247,6 +248,9 @@ export class VScrollBar extends UIComponent {
 	}
 
 	onMouseDown(): void {
+		if (this._thumbRatio >= 1) {
+			return;
+		}
 		var position = this._status.mouseDownPosition;
 		var y = position[1];
 		var ratio = this._value / this._max;

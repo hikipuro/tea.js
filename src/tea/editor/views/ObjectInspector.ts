@@ -25,6 +25,7 @@ import { Translator } from "../translate/Translator";
 					:x="rotation[0]"
 					:y="rotation[1]"
 					:z="rotation[2]"
+					:step="0.5"
 					@update="onUpdateRotation"
 					@change="onChangeRotation">{{ translator.rotation }}</Vector3>
 				<Vector3

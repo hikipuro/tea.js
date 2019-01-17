@@ -178,6 +178,24 @@ export class UIComponent extends Component {
 				}
 				object3d.sendMessage("onMouseUp");
 			}
+			if (this instanceof Tea.UI.ScrollView) {
+				var wheelX = mouse.wheelX;
+				var wheelY = mouse.wheelY;
+				var scroll = this.localScroll;
+				var maxScroll = this.maxLocalScroll;
+				if (wheelX !== 0) {
+					var scrollX = scroll[0] + wheelX;
+					scrollX = Math.max(0, scrollX);
+					scrollX = Math.min(maxScroll[0], scrollX);
+					scroll[0] = scrollX;
+				}
+				if (wheelY !== 0) {
+					var scrollY = scroll[1] + wheelY;
+					scrollY = Math.max(0, scrollY);
+					scrollY = Math.min(maxScroll[1], scrollY);
+					scroll[1] = scrollY;
+				}
+			}
 		} else {
 			if (isMouseUp) {
 				if (status.isMouseDown === true) {

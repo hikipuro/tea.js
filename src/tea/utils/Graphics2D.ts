@@ -195,17 +195,17 @@ export class Graphics2D {
 		context.beginPath();
 		context.moveTo(x + radius, y);
 		context.lineTo(right - radius, y);
-		context.quadraticCurveTo(right, y, right, y + radius);
-		//context.arcTo(right, y, right, y + radius, radius);
+		//context.quadraticCurveTo(right, y, right, y + radius);
+		context.arcTo(right, y, right, y + radius, radius);
 		context.lineTo(right, bottom - radius);
-		context.quadraticCurveTo(right, bottom, right - radius, bottom);
-		//context.arcTo(right, bottom, right - radius, bottom, radius);
+		//context.quadraticCurveTo(right, bottom, right - radius, bottom);
+		context.arcTo(right, bottom, right - radius, bottom, radius);
 		context.lineTo(x + radius, bottom);
-		context.quadraticCurveTo(x, bottom, x, bottom - radius);
-		//context.arcTo(x, bottom, x, bottom - radius, radius);
+		//context.quadraticCurveTo(x, bottom, x, bottom - radius);
+		context.arcTo(x, bottom, x, bottom - radius, radius);
 		context.lineTo(x, y + radius);
-		context.quadraticCurveTo(x, y, x + radius, y);
-		//context.arcTo(x, y, x + radius, y, radius);
+		//context.quadraticCurveTo(x, y, x + radius, y);
+		context.arcTo(x, y, x + radius, y, radius);
 		context.closePath();
 	}
 
@@ -273,6 +273,10 @@ export class Graphics2D {
 				case "middle":
 					var ratio = (i / (lineCount - 1) - 0.5) * 2.0;
 					ty += lineHeight * ratio * (lineCount / 2.0 - 0.5);
+					break;
+				case "bottom":
+					var ratio = 1.0 - (i / (lineCount - 1));
+					ty -= lineHeight * ratio * (lineCount - 1);
 					break;
 				default:
 					ty += lineHeight * i;

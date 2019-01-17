@@ -381,6 +381,7 @@
 			"Text": "テキスト",
 			"LineSpacing": "行間隔",
 			"Alignment": "行揃え",
+			"VerticalAlignment": "縦揃え",
 			"FontSize": "フォントサイズ",
 			"FontStyle": "フォントスタイル",
 			"Font": "フォント",
@@ -401,6 +402,8 @@
 		"Panel": {
 			"Title": "パネル",
 			"Size": "サイズ",
+			"Scroll": "スクロール",
+			"MaxScroll": "最大スクロール",
 			"Background": "背景色",
 			"Border": "枠線",
 			"BorderWidth": "枠線の太さ",

@@ -13,18 +13,24 @@ import Component from "vue-class-component";
 				<InputNumber
 					:value="x"
 					:step="step"
+					:min="min"
+					:max="max"
 					:disabled="disabled"
 					@update="onUpdateX"
 					@change="onChangeX">X</InputNumber>
 				<InputNumber
 					:value="y"
 					:step="step"
+					:min="min"
+					:max="max"
 					:disabled="disabled"
 					@update="onUpdateY"
 					@change="onChangeY">Y</InputNumber>
 				<InputNumber
 					:value="z"
 					:step="step"
+					:min="min"
+					:max="max"
 					:disabled="disabled"
 					@update="onUpdateZ"
 					@change="onChangeZ">Z</InputNumber>
@@ -47,6 +53,14 @@ import Component from "vue-class-component";
 		step: {
 			type: Number,
 			default: 0.03
+		},
+		min: {
+			type: Number,
+			default: -Infinity
+		},
+		max: {
+			type: Number,
+			default: Infinity
 		},
 		disabled: {
 			type: Boolean,

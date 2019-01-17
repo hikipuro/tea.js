@@ -5,6 +5,7 @@ export class ScrollView extends UIComponent {
 	static readonly className: string = "ScrollView";
 	static readonly ClipMargin: number = 0;
 	localScroll: Tea.Vector2;
+	maxLocalScroll: Tea.Vector2;
 	protected _clippingRect: Tea.Rect;
 	
 	constructor(app: Tea.App) {
@@ -15,6 +16,7 @@ export class ScrollView extends UIComponent {
 			0, 0, this._width, this._height
 		);
 		this.localScroll = new Tea.Vector2();
+		this.maxLocalScroll = new Tea.Vector2();
 	}
 
 	get width(): number {
@@ -123,12 +125,16 @@ export class ScrollView extends UIComponent {
 		if (json.scroll) {
 			view.localScroll = Tea.Vector2.fromArray(json.scroll);
 		}
+		if (json.maxScroll) {
+			view.maxLocalScroll = Tea.Vector2.fromArray(json.maxScroll);
+		}
 		callback(view);
 	}
 
 	destroy(): void {
-		this._clippingRect = undefined;
 		this.localScroll = undefined;
+		this.maxLocalScroll = undefined;
+		this._clippingRect = undefined;
 		super.destroy();
 	}
 
@@ -136,6 +142,7 @@ export class ScrollView extends UIComponent {
 		var json: any = super.toJSON();
 		json[Tea.JSONUtil.TypeName] = ScrollView.className;
 		json.localScroll = this.localScroll;
+		json.maxLocalScroll = this.maxLocalScroll;
 		return json;
 	}
 

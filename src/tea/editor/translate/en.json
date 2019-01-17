@@ -381,6 +381,7 @@
 			"Text": "Text",
 			"LineSpacing": "Line Spacing",
 			"Alignment": "Alignment",
+			"VerticalAlignment": "Vertical Alignment",
 			"FontSize": "Font Size",
 			"FontStyle": "Font Style",
 			"Font": "Font",
@@ -401,6 +402,8 @@
 		"Panel": {
 			"Title": "Panel",
 			"Size": "Size",
+			"Scroll": "Scroll",
+			"MaxScroll": "Max Scroll",
 			"Background": "Background",
 			"Border": "Border",
 			"BorderWidth": "Border Width",

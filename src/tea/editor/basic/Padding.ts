@@ -15,12 +15,14 @@ import Component from "vue-class-component";
 						<InputNumber
 							:value="top"
 							:step="step"
+							:min="min"
 							:disabled="disabled"
 							@update="onUpdateTop"
 							@change="onChangeTop">T</InputNumber>
 						<InputNumber
 							:value="right"
 							:step="step"
+							:min="min"
 							:disabled="disabled"
 							@update="onUpdateRight"
 							@change="onChangeRight">R</InputNumber>
@@ -30,12 +32,14 @@ import Component from "vue-class-component";
 						<InputNumber
 							:value="bottom"
 							:step="step"
+							:min="min"
 							:disabled="disabled"
 							@update="onUpdateBottom"
 							@change="onChangeBottom">B</InputNumber>
 						<InputNumber
 							:value="left"
 							:step="step"
+							:min="min"
 							:disabled="disabled"
 							@update="onUpdateLeft"
 							@change="onChangeLeft">L</InputNumber>
@@ -64,6 +68,10 @@ import Component from "vue-class-component";
 		step: {
 			type: Number,
 			default: 1
+		},
+		min: {
+			type: Number,
+			default: -Infinity
 		},
 		disabled: {
 			type: Boolean,

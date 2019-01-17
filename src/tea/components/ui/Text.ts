@@ -9,6 +9,7 @@ export class Text extends UIComponent {
 	protected _graphics: Tea.Graphics2D;
 	protected _lineSpacing: number;
 	protected _alignment: Tea.TextAlignment;
+	protected _verticalAlignment: Tea.TextVerticalAlignment;
 	protected _font: string;
 	protected _fontSize: number;
 	protected _fontStyle: Tea.FontStyle;
@@ -35,6 +36,7 @@ export class Text extends UIComponent {
 		this._graphics = graphics;
 		this._lineSpacing = 1;
 		this._alignment = Tea.TextAlignment.Left;
+		this._verticalAlignment = Tea.TextVerticalAlignment.Middle;
 		this._font = Text.DefaultFont;
 		this._fontSize = Text.DefaultFontSize;
 		this._fontStyle = Tea.FontStyle.Normal;
@@ -78,7 +80,7 @@ export class Text extends UIComponent {
 		return this._lineSpacing;
 	}
 	set lineSpacing(value: number) {
-		if (this._lineSpacing === value) {
+		if (value == null || value === this._lineSpacing) {
 			return;
 		}
 		this._lineSpacing = value;
@@ -89,10 +91,21 @@ export class Text extends UIComponent {
 		return this._alignment;
 	}
 	set alignment(value: Tea.TextAlignment) {
-		if (this._alignment === value) {
+		if (value == null || value === this._alignment) {
 			return;
 		}
 		this._alignment = value;
+		this._isChanged = true;
+	}
+
+	get verticalAlignment(): Tea.TextVerticalAlignment {
+		return this._verticalAlignment;
+	}
+	set verticalAlignment(value: Tea.TextVerticalAlignment) {
+		if (value == null || value === this._verticalAlignment) {
+			return;
+		}
+		this._verticalAlignment = value;
 		this._isChanged = true;
 	}
 
@@ -100,7 +113,7 @@ export class Text extends UIComponent {
 		return this._font;
 	}
 	set font(value: string) {
-		if (this._font === value) {
+		if (value == null || value === this._font) {
 			return;
 		}
 		if (value === "") {
@@ -114,7 +127,7 @@ export class Text extends UIComponent {
 		return this._fontSize;
 	}
 	set fontSize(value: number) {
-		if (this._fontSize === value) {
+		if (value == null || value === this._fontSize) {
 			return;
 		}
 		this._fontSize = value;
@@ -125,7 +138,7 @@ export class Text extends UIComponent {
 		return this._fontStyle;
 	}
 	set fontStyle(value: Tea.FontStyle) {
-		if (this._fontStyle === value) {
+		if (value == null || value === this._fontStyle) {
 			return;
 		}
 		this._fontStyle = value;
@@ -150,7 +163,7 @@ export class Text extends UIComponent {
 		return this._text;
 	}
 	set text(value: string) {
-		if (this._text === value) {
+		if (value == null || value === this._text) {
 			return;
 		}
 		this._text = value;
@@ -169,6 +182,7 @@ export class Text extends UIComponent {
 		text._graphics.resize(json.width, json.height);
 		text.lineSpacing = json.lineSpacing;
 		text.alignment = Tea.TextAlignment.fromString(json.alignment);
+		text.verticalAlignment = Tea.TextVerticalAlignment.fromString(json.verticalAlignment);
 		text.font = json.font;
 		text.fontSize = json.fontSize;
 		text.fontStyle = Tea.FontStyle.fromString(json.fontStyle);
@@ -185,6 +199,7 @@ export class Text extends UIComponent {
 		}
 		this._isChanged = undefined;
 		this._alignment = undefined;
+		this._verticalAlignment = undefined;
 		this._lineSpacing = undefined;
 		this._font = undefined;
 		this._fontSize = undefined;
@@ -211,6 +226,7 @@ export class Text extends UIComponent {
 		json[Tea.JSONUtil.TypeName] = Text.className;
 		json.lineSpacing = this._lineSpacing;
 		json.alignment = Tea.TextAlignment.toString(this._alignment);
+		json.verticalAlignment = Tea.TextVerticalAlignment.toString(this._verticalAlignment);
 		json.color = this._fontColor;
 		json.font = this._font;
 		json.fontSize = this._fontSize;
@@ -292,9 +308,10 @@ export class Text extends UIComponent {
 
 	protected drawText(): void {
 		var x = 0;
+		var y = this._fontSize / 2;
 		var g = this._graphics;
 		g.save();
-		g.textAlign = "left"
+		g.textAlign = "left";
 		switch (this._alignment) {
 			case Tea.TextAlignment.Center:
 				x = this._width / 2;
@@ -305,11 +322,22 @@ export class Text extends UIComponent {
 				g.textAlign = "right";
 				break;
 		}
+		g.textVerticalAlign = "top";
+		switch (this._verticalAlignment) {
+			case Tea.TextVerticalAlignment.Middle:
+				y = this._height / 2;
+				g.textVerticalAlign = "middle";
+				break;
+			case Tea.TextVerticalAlignment.Bottom:
+				y = this._height - y;
+				g.textVerticalAlign = "bottom";
+				break;
+		}
 		g.textBaseline = "middle";
 		g.lineSpacing = this._lineSpacing;
 		g.font = this.getFont();
 		g.fillStyle = this._fontColor.toCssColor();
-		g.fillTextMultiLine(this._text, x, this._fontSize / 2);
+		g.fillTextMultiLine(this._text, x, y);
 		g.restore();
 		/*
 		//this.resizeCanvas();

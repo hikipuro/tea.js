@@ -293,6 +293,9 @@ export class Slider extends UIComponent {
 		var borderWidth = this._borderWidth;
 		var railSize = this._railSize - borderWidth;
 		var radius = railSize / 2;
+		if (radius < 0) {
+			radius = 0;
+		}
 		var paddingX = 0;
 		var paddingY = (this._height - railSize) / 2;
 		var width = this._width;

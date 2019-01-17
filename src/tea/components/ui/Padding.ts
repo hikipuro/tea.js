@@ -1,10 +1,10 @@
 export class Padding extends Array<number> {
-	constructor() {
+	constructor(top: number = 0, right: number = 0, bottom: number = 0, left: number = 0) {
 		super(4);
-		this[0] = 0;
-		this[1] = 0;
-		this[2] = 0;
-		this[3] = 0;
+		this[0] = top;
+		this[1] = right;
+		this[2] = bottom;
+		this[3] = left;
 	}
 
 	get top(): number {

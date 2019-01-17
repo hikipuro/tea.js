@@ -170,11 +170,12 @@ export class HScrollBar extends UIComponent {
 
 	protected get thumbSize(): number {
 		var borderWidth = this._borderWidth;
+		var borderRadius = this._borderRadius;
 		var width = this._width - borderWidth;
-		var height = this._height - borderWidth;
+		var minWidth = borderRadius * 2;
 		var size = width * this._thumbRatio;
+		size = Math.max(size, minWidth);
 		size = Math.min(size, width);
-		size = Math.max(size, height);
 		return size;
 	}
 
@@ -248,6 +249,9 @@ export class HScrollBar extends UIComponent {
 	}
 
 	onMouseDown(): void {
+		if (this._thumbRatio >= 1) {
+			return;
+		}
 		var position = this._status.mouseDownPosition;
 		var x = position[0];
 		var ratio = this._value / this._max;

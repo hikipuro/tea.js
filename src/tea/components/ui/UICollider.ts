@@ -57,14 +57,30 @@ export class UICollider {
 		if (point == null) {
 			return false;
 		}
-		var center = this.worldCenter;
-		var extents = this.extents;
+		//var center = this.worldCenter;
+		//var extents = this.extents;
+		var object3d = this.object3d;
+		var centerX = this.center[0];
+		var centerY = this.center[1];
+		var extentsX = this.size[0] * 0.5;
+		var extentsY = this.size[1] * 0.5;
+		if (object3d != null) {
+			var p = object3d.position;
+			var s = object3d.scale;
+			centerX *= s[0];
+			centerY *= s[1];
+			//center.applyQuaternion(object3d.rotation);
+			centerX += p[0];
+			centerY += p[1];
+			extentsX *= s[0];
+			extentsY *= s[1];
+		}
 
 		var x = point[0], y = point[1];
-		var minX = center[0] - extents[0];
-		var maxX = center[0] + extents[0];
-		var minY = center[1] - extents[1];
-		var maxY = center[1] + extents[1];
+		var minX = centerX - extentsX;
+		var maxX = centerX + extentsX;
+		var minY = centerY - extentsY;
+		var maxY = centerY + extentsY;
 
 		return (
 			minX <= x

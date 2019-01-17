@@ -122,6 +122,12 @@ export class Panel extends ScrollView {
 		var margin = ScrollView.ClipMargin * 2;
 		panel._clippingRect[2] = json.width - margin;
 		panel._clippingRect[3] = json.height - margin;
+		if (json.localScroll) {
+			panel.localScroll = Tea.Vector2.fromArray(json.localScroll);
+		}
+		if (json.maxLocalScroll) {
+			panel.maxLocalScroll = Tea.Vector2.fromArray(json.maxLocalScroll);
+		}
 		panel.background = Tea.Color.fromArray(json.background);
 		panel.border = json.border;
 		panel.borderWidth = json.borderWidth;

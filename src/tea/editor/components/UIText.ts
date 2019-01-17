@@ -27,6 +27,11 @@ import { Translator } from "../translate/Translator";
 				:keys="alignmentKeys"
 				:value="alignment"
 				@update="onUpdateAlignment">{{ translator.alignment }}</SelectEnum>
+			<SelectEnum
+				ref="verticalAlignment"
+				:keys="verticalAlignmentKeys"
+				:value="verticalAlignment"
+				@update="onUpdateVerticalAlignment">{{ translator.verticalAlignment }}</SelectEnum>
 			<InputNumber
 				ref="fontSize"
 				class="number"
@@ -58,6 +63,8 @@ import { Translator } from "../translate/Translator";
 			lineSpacing: 0,
 			alignmentKeys: [],
 			alignment: "",
+			verticalAlignmentKeys: [],
+			verticalAlignment: "",
 			fontSize: 0,
 			fontStyleKeys: [],
 			fontStyle: "",
@@ -82,6 +89,8 @@ export class UIText extends Vue {
 	lineSpacing: number;
 	alignmentKeys: Array<string>;
 	alignment: string;
+	verticalAlignmentKeys: Array<string>;
+	verticalAlignment: string;
 	fontSize: number;
 	fontStyleKeys: Array<string>;
 	fontStyle: string;
@@ -96,6 +105,7 @@ export class UIText extends Vue {
 		this.translator.text = translator.getText("Text");
 		this.translator.lineSpacing = translator.getText("LineSpacing");
 		this.translator.alignment = translator.getText("Alignment");
+		this.translator.verticalAlignment = translator.getText("VerticalAlignment");
 		this.translator.fontSize = translator.getText("FontSize");
 		this.translator.fontStyle = translator.getText("FontStyle");
 		this.translator.font = translator.getText("Font");
@@ -122,6 +132,8 @@ export class UIText extends Vue {
 		this.lineSpacing = component.lineSpacing;
 		this.alignmentKeys = Tea.TextAlignment.getKeys();
 		this.alignment = Tea.TextAlignment[component.alignment];
+		this.verticalAlignmentKeys = Tea.TextVerticalAlignment.getKeys();
+		this.verticalAlignment = Tea.TextVerticalAlignment[component.verticalAlignment];
 		this.fontSize = component.fontSize;
 		this.fontStyleKeys = Tea.FontStyle.getKeys();
 		this.fontStyle = Tea.FontStyle[component.fontStyle];
@@ -161,6 +173,14 @@ export class UIText extends Vue {
 			this._component.alignment = Tea.TextAlignment[value];
 		}
 		this.$emit("update", "alignment");
+	}
+
+	protected onUpdateVerticalAlignment(value: string): void {
+		this.verticalAlignment = value;
+		if (this._component) {
+			this._component.verticalAlignment = Tea.TextVerticalAlignment[value];
+		}
+		this.$emit("update", "verticalAlignment");
 	}
 
 	protected onUpdateFontSize(value: number): void {
