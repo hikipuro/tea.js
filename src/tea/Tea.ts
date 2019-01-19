@@ -271,6 +271,15 @@ export function debounce(func: Function, interval: number): () => any {
 	};
 }
 
+function uuidGenerator(c: string): string {
+	var r = Math.random() * 16 | 0;
+	var v = c == "x" ? r : (r & 0x3 | 0x8);
+	return v.toString(16);
+}
+export function uuid(): string {
+	var template = "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx";
+	return template.replace(/[xy]/g, uuidGenerator);
+}
 
 import { Vector2 } from "./math/Vector2";
 import { Vector3 } from "./math/Vector3";
