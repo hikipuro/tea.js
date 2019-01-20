@@ -158,6 +158,11 @@ export class UIComponent extends Component {
 					status.isMouseOver = false;
 					object3d.sendMessage("onMouseLeave");
 				}
+				if (status.isMouseDown) {
+					var downPosition = status.toLocalPosition(mousePosition);
+					status.mouseMovePosition.copy(downPosition);
+					object3d.sendMessage("onMouseMove");
+				}
 			}
 		}
 		if (status.isMouseOver) {
