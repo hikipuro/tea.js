@@ -19,6 +19,9 @@ export class Object3D {
 	protected _id: string;
 	protected _children: Array<Object3D>;
 	protected _components: Array<Tea.Component>;
+	protected _position: Tea.Vector3;
+	protected _rotation: Tea.Quaternion;
+	protected _scale: Tea.Vector3;
 	protected _toDestroy: boolean;
 
 	constructor(app: Tea.App, id: string = null) {
@@ -40,8 +43,11 @@ export class Object3D {
 		this._id = id;
 		this._children = [];
 		this._components = [];
+		this._position = new Tea.Vector3();
+		this._rotation = new Tea.Quaternion();
+		this._scale = new Tea.Vector3();
 		this._toDestroy = false;
-		this._status.update(this);
+		//this._status.update(this, null);
 	}
 
 	static createPrimitive(app: Tea.App, type: Tea.PrimitiveType): Object3D {
@@ -143,161 +149,106 @@ export class Object3D {
 	}
 
 	get position(): Tea.Vector3 {
-		var parent = this._parent;
-		var localPosition = this.localPosition;
-		var position = new Tea.Vector3(
-			localPosition[0],
-			localPosition[1],
-			localPosition[2]
-		);
-		if (parent == null) {
-			return position;
-		}
-		var status = parent._status;
-		position[0] *= status.scale[0];
-		position[1] *= status.scale[1];
-		position[2] *= status.scale[2];
-		position.applyQuaternion(status.rotation);
-		position[0] += status.position[0];
-		position[1] += status.position[1];
-		position[2] += status.position[2];
-		/*
-		while (parent != null) {
-			position.scaleSelf(parent.localScale);
-			position.applyQuaternion(parent.localRotation);
-			position.addSelf(parent.localPosition);
-			parent = parent.parent;
-		}
-		*/
-		return position;
+		return this._position;
 	}
 
 	set position(value: Tea.Vector3) {
 		if (value == null) {
-			this.localPosition.set(0.0, 0.0, 0.0);
+			//this.localPosition.set(0.0, 0.0, 0.0);
 			return;
 		}
 		var parent = this._parent;
 		if (parent == null) {
-			this.localPosition.copy(value);
+			var localPosition = this.localPosition;
+			localPosition[0] = value[0];
+			localPosition[1] = value[1];
+			localPosition[2] = value[2];
 			return;
 		}
-		var p = parent.position;
+		var p = this.localPosition;
+		var pp = parent._position;
+		p[0] = value[0] - pp[0];
+		p[1] = value[1] - pp[1];
+		p[2] = value[2] - pp[2];
 		var r = parent.rotation.inversed;
-		var s = parent.scale.clone();
-		p = value.sub(p);
+		var s = parent.scale;
 		p.applyQuaternion(r);
-		s[0] = s[0] !== 0.0 ? 1.0 / s[0] : 0.0;
-		s[1] = s[1] !== 0.0 ? 1.0 / s[1] : 0.0;
-		s[2] = s[2] !== 0.0 ? 1.0 / s[2] : 0.0;
-		p.scaleSelf(s);
-		this.localPosition = p;
+		p[0] *= s[0] !== 0.0 ? 1.0 / s[0] : 0.0;
+		p[1] *= s[1] !== 0.0 ? 1.0 / s[1] : 0.0;
+		p[2] *= s[2] !== 0.0 ? 1.0 / s[2] : 0.0;
 	}
 
 	get rotation(): Tea.Quaternion {
-		var parent = this._parent;
-		var localRotation = this.localRotation;
-		var rotation = new Tea.Quaternion(
-			localRotation[0],
-			localRotation[1],
-			localRotation[2],
-			localRotation[3]
-		);
-		if (parent == null) {
-			return rotation;
-		}
-		var status = parent._status;
-		//var r = Tea.Quaternion._tmp;
-		var pr = status.rotation;
-		//r[0] = pr[0];
-		//r[1] = pr[1];
-		//r[2] = pr[2];
-		//r[3] = pr[3];
-		//r.mulSelf(rotation);
-		var ax = pr[0], ay = pr[1], az = pr[2], aw = pr[3];
-		var bx = rotation[0], by = rotation[1], bz = rotation[2], bw = rotation[3];
-		rotation[0] = aw * bx + bw * ax + ay * bz - by * az;
-		rotation[1] = aw * by + bw * ay + az * bx - bz * ax;
-		rotation[2] = aw * bz + bw * az + ax * by - bx * ay;
-		rotation[3] = aw * bw - ax * bx - ay * by - az * bz;
-		//rotation[0] = r[0];
-		//rotation[1] = r[1];
-		//rotation[2] = r[2];
-		//rotation[3] = r[3];
-		/*
-		var r = Tea.Quaternion._tmp;
-		while (parent != null) {
-			r.copy(parent.localRotation);
-			r.mulSelf(rotation);
-			rotation.copy(r);
-			//rotation = parent.localRotation.mul(rotation);
-			parent = parent.parent;
-		}
-		*/
-		return rotation;
+		return this._rotation;
 	}
 
 	set rotation(value: Tea.Quaternion) {
 		if (value == null) {
-			this.localRotation.set(0.0, 0.0, 0.0, 1.0);
+			//this.localRotation.set(0.0, 0.0, 0.0, 1.0);
 			return;
 		}
 		var parent = this._parent;
 		if (parent == null) {
-			this.localRotation.copy(value);
+			var localRotation = this.localRotation;
+			localRotation[0] = value[0];
+			localRotation[1] = value[1];
+			localRotation[2] = value[2];
+			localRotation[3] = value[3];
 			return;
 		}
-		var r = parent.rotation.inversed;
+		var r = this.localRotation;
+		var pr = parent._rotation;
+		r[0] = pr[0];
+		r[1] = pr[1];
+		r[2] = pr[2];
+		r[3] = pr[3];
+		var x = r[0], y = r[1], z = r[2], w = r[3];
+		var m = x * x + y * y + z * z + w * w;
+		if (m === 0.0) {
+			r[0] = 0.0;
+			r[1] = 0.0;
+			r[2] = 0.0;
+			r[3] = 0.0;
+		} else {
+			m = 1.0 / m;
+			r[0] = -x * m;
+			r[1] = -y * m;
+			r[2] = -z * m;
+			r[3] = w * m;
+		}
 		r.mulSelf(value);
-		this.localRotation = r;
 	}
 
 	get scale(): Tea.Vector3 {
-		var parent = this._parent;
-		var localScale = this.localScale;
-		var scale = new Tea.Vector3(
-			localScale[0],
-			localScale[1],
-			localScale[2]
-		);
-		if (parent == null) {
-			return scale;
-		}
-		var status = parent._status;
-		scale[0] *= status.scale[0];
-		scale[1] *= status.scale[1];
-		scale[2] *= status.scale[2];
-		/*
-		while (parent != null) {
-			scale.scaleSelf(parent.localScale);
-			parent = parent.parent;
-		}
-		*/
-		return scale;
+		return this._scale;
 	}
 
 	set scale(value: Tea.Vector3) {
 		if (value == null) {
-			this.localScale.set(0.0, 0.0, 0.0);
+			//this.localScale.set(0.0, 0.0, 0.0);
 			return;
 		}
 		var parent = this._parent;
 		if (parent == null) {
-			this.localScale.copy(value);
+			var localScale = this.localScale;
+			localScale[0] = value[0];
+			localScale[1] = value[1];
+			localScale[2] = value[2];
 			return;
 		}
-		var s = parent.scale.clone();
-		s[0] = s[0] !== 0.0 ? 1.0 / s[0] : 0.0;
-		s[1] = s[1] !== 0.0 ? 1.0 / s[1] : 0.0;
-		s[2] = s[2] !== 0.0 ? 1.0 / s[2] : 0.0;
-		s.scaleSelf(value);
-		this.localScale = s;
+		var s = this.localScale;
+		var ps = parent._scale;
+		s[0] = ps[0] !== 0.0 ? 1.0 / ps[0] : 0.0;
+		s[1] = ps[1] !== 0.0 ? 1.0 / ps[1] : 0.0;
+		s[2] = ps[2] !== 0.0 ? 1.0 / ps[2] : 0.0;
+		s[0] *= value[0];
+		s[1] *= value[1];
+		s[2] *= value[2];
 	}
 
 	get localEulerAngles(): Tea.Vector3 {
 		return this.localRotation.eulerAngles;
 	}
-
 	set localEulerAngles(value: Tea.Vector3) {
 		this.localRotation.setEuler(value);
 	}
@@ -305,10 +256,9 @@ export class Object3D {
 	get eulerAngles(): Tea.Vector3 {
 		return this.rotation.eulerAngles;
 	}
-
-	set eulerAngles(value: Tea.Vector3) {
-		this.rotation.setEuler(value);
-	}
+	//set eulerAngles(value: Tea.Vector3) {
+	//	this.rotation.setEuler(value);
+	//}
 
 	get childCount(): number {
 		if (this._children == null) {
@@ -323,33 +273,24 @@ export class Object3D {
 
 	get forward(): Tea.Vector3 {
 		var vec3 = new Tea.Vector3(0.0, 0.0, 1.0);
-		vec3.applyQuaternion(this.rotation);
+		vec3.applyQuaternion(this._rotation);
 		return vec3;
 	}
 
 	get up(): Tea.Vector3 {
 		var vec3 = new Tea.Vector3(0.0, 1.0, 0.0);
-		vec3.applyQuaternion(this.rotation);
+		vec3.applyQuaternion(this._rotation);
 		return vec3;
 	}
 
 	get right(): Tea.Vector3 {
 		var vec3 = new Tea.Vector3(1.0, 0.0, 0.0);
-		vec3.applyQuaternion(this.rotation);
+		vec3.applyQuaternion(this._rotation);
 		return vec3;
 	}
 
 	get localToWorldMatrix(): Tea.Matrix4x4 {
 		return this._status.localToWorldMatrix;
-		/*
-		var m = Tea.Matrix4x4.trs(
-			this.position,
-			this.rotation,
-			this.scale
-		);
-		m.toggleHand();
-		return m;
-		//*/
 	}
 
 	get worldToLocalMatrix(): Tea.Matrix4x4 {
@@ -425,6 +366,9 @@ export class Object3D {
 		this._status.destroy();
 		this._status = undefined;
 		this._components = [];
+		this._position = undefined;
+		this._rotation = undefined;
+		this._scale = undefined;
 		this._toDestroy = undefined;
 		this._id = undefined;
 	}
@@ -1022,7 +966,30 @@ export class Object3D {
 		} else {
 			this.updateComponents();
 		}
-		this._status.update(this);
+
+		if (this._parent != null) {
+			this._status.update(this, this._parent._status);
+		} else {
+			this._status.update(this, null);
+		}
+		if (this._status.isMoved) {
+			var p = this._position;
+			var r = this._rotation;
+			var s = this._scale;
+			var sp = this._status.position;
+			var sr = this._status.rotation;
+			var ss = this._status.scale;
+			p[0] = sp[0];
+			p[1] = sp[1];
+			p[2] = sp[2];
+			r[0] = sr[0];
+			r[1] = sr[1];
+			r[2] = sr[2];
+			r[3] = sr[3];
+			s[0] = ss[0];
+			s[1] = ss[1];
+			s[2] = ss[2];
+		}
 
 		if (this._toDestroy) {
 			this._destroy();

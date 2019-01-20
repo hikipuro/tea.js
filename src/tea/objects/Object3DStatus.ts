@@ -9,6 +9,9 @@ export class Object3DStatus {
 	protected _isDirty: boolean;
 	protected _localToWorldMatrix: Tea.Matrix4x4;
 	protected _worldToLocalMatrix: Tea.Matrix4x4;
+	protected static _tmpPosition: Tea.Vector3 = new Tea.Vector3();
+	protected static _tmpRotation: Tea.Quaternion = new Tea.Quaternion();
+	protected static _tmpScale: Tea.Vector3 = new Tea.Vector3();
 
 	constructor() {
 		this.position = new Tea.Vector3(Infinity);
@@ -52,21 +55,61 @@ export class Object3DStatus {
 		this._worldToLocalMatrix = undefined;
 	}
 
-	update(object3d: Object3D): void {
+	update(object3d: Object3D, parentStatus: Object3DStatus): void {
 		var p = null, r = null, s = null;
-		if (object3d.parent == null) {
+		var parent = object3d.parent;
+		var isMoved = true;
+		if (parent == null) {
 			p = object3d.localPosition;
 			r = object3d.localRotation;
 			s = object3d.localScale;
-		} else {
-			p = object3d.position;
-			r = object3d.rotation;
-			s = object3d.scale;
+			isMoved = false;
+		} else if (!parent.isMoved) {
+			if (this.isMovedLocal(object3d) === false) {
+				return;
+			}
+		} 
+		if (isMoved) {
+			var status = parentStatus;
+			var pp = status.position;
+			var pr = status.rotation;
+			var ps = status.scale;
+			var localPosition = object3d.localPosition;
+			var localRotation = object3d.localRotation;
+			var localScale = object3d.localScale;
+			p = Object3DStatus._tmpPosition;
+			p[0] = localPosition[0];
+			p[1] = localPosition[1];
+			p[2] = localPosition[2];
+			p[0] *= ps[0];
+			p[1] *= ps[1];
+			p[2] *= ps[2];
+			p.applyQuaternion(pr);
+			p[0] += pp[0];
+			p[1] += pp[1];
+			p[2] += pp[2];
+			r = Object3DStatus._tmpRotation;
+			r[0] = localRotation[0];
+			r[1] = localRotation[1];
+			r[2] = localRotation[2];
+			r[3] = localRotation[3];
+			var ax = pr[0], ay = pr[1], az = pr[2], aw = pr[3];
+			var bx = r[0], by = r[1], bz = r[2], bw = r[3];
+			r[0] = aw * bx + bw * ax + ay * bz - by * az;
+			r[1] = aw * by + bw * ay + az * bx - bz * ax;
+			r[2] = aw * bz + bw * az + ax * by - bx * ay;
+			r[3] = aw * bw - ax * bx - ay * by - az * bz;
+			s = Object3DStatus._tmpScale;
+			s[0] = localScale[0] * ps[0];
+			s[1] = localScale[1] * ps[1];
+			s[2] = localScale[2] * ps[2];
+			//p = object3d.position;
+			//r = object3d.rotation;
+			//s = object3d.scale;
 		}
 		var tp = this.position;
 		var tr = this.rotation;
 		var ts = this.scale;
-		var isMoved = false;
 		if (tp[0] !== p[0]
 		||  tp[1] !== p[1]
 		||  tp[2] !== p[2]) {
@@ -110,5 +153,31 @@ export class Object3DStatus {
 		m[11] *= -1.0;
 		*/
 		this._worldToLocalMatrix = null;
+	}
+
+	protected isMovedLocal(object3d: Tea.Object3D): boolean {
+		var p = object3d.localPosition;
+		var tp = this.position;
+		if (tp[0] !== p[0]
+		||  tp[1] !== p[1]
+		||  tp[2] !== p[2]) {
+			return true;
+		}
+		var r = object3d.localRotation;
+		var tr = this.rotation;
+		if (tr[0] !== r[0]
+		||  tr[1] !== r[1]
+		||  tr[2] !== r[2]
+		||  tr[3] !== r[3]) {
+			return true;
+		}
+		var s = object3d.localScale;
+		var ts = this.scale;
+		if (ts[0] !== s[0]
+		||  ts[1] !== s[1]
+		||  ts[2] !== s[2]) {
+			return true;
+		}
+		return false;
 	}
 }

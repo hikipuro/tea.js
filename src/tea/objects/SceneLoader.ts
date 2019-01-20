@@ -51,6 +51,7 @@ export class SceneLoader {
 		if (json.localScale != null) {
 			object3d.localScale = Tea.Vector3.fromArray(json.localScale);
 		}
+		object3d.update();
 		this.loadComponents(app, json, object3d, () => {
 			this.loadChildren(app, json, object3d, () => {
 				callback(object3d);
