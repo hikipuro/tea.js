@@ -356,7 +356,7 @@ export class Scene extends EventDispatcher {
 		}
 
 		this._components.sortCameras();
-		this._components.sortRenderers();
+		//this._components.sortRenderers();
 		var cameras = this._components.availableCameras;
 		//var renderers = this._components.availableRenderers;
 		var renderers = this._renderers.sort(this.sortRenderers);

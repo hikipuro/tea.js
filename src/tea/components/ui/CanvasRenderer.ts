@@ -117,11 +117,9 @@ export class CanvasRenderer extends Renderer {
 		if (object3d == null || !object3d.enabled) {
 			return;
 		}
-		var component = object3d.getComponent(Tea.UI.UIComponent);
-		if (component == null
-		||  !component.enabled
-		||  component.texture == null
-		||  component.texture.image == null) {
+		var components = object3d.getComponents(Tea.UI.UIComponent);
+		if (components == null
+		||  components.length <= 0) {
 			this.drawChildren(object3d.children);
 			return;
 		}
@@ -150,64 +148,73 @@ export class CanvasRenderer extends Renderer {
 			this._isClipped  = false;
 		}
 
-		var width = component.width;
-		var height = component.height;
-		var texWidth = component.texture.width / width;
-		var texHeight = component.texture.height / height;
-		if (texWidth === 0.0 || texHeight === 0.0) {
-			this.drawChildren(object3d.children);
-			return;
+		var component = null;
+		var position = object3d.position;
+		var scale = object3d.scale;
+		var componentCount = components.length;
+		for (var i = 0; i < componentCount; i++) {
+			component = components[i];
+			if (!component.enabled
+			||  component.texture == null
+			||  component.texture.image == null) {
+				continue;
+			}
+			var width = component.width;
+			var height = component.height;
+			var texWidth = component.texture.width / width;
+			var texHeight = component.texture.height / height;
+			if (texWidth === 0.0 || texHeight === 0.0) {
+				this.drawChildren(object3d.children);
+				return;
+			}
+			gl.uniform2f(locations.textureST, texWidth, texHeight);
+			gl.uniform2f(locations.textureUV, 0.0, texHeight - 1.0);
+			//gl.uniform2f(locations.textureST, 1.0, 1.0);
+			//gl.uniform2f(locations.textureUV, 0.0, 0.0);
+	
+			var viewport = this._viewport;
+			var scroll = this._scroll;
+			gl.uniform2f(locations.anchor, -1.0, -1.0);
+			gl.uniform2f(
+				locations.position,
+				position[0] * viewport[0] - scroll[0],
+				position[1] * viewport[1] - scroll[1]
+			);
+			gl.uniform2f(
+				locations.size,
+				width * scale[0] * viewport[0],
+				height * scale[1] * viewport[1]
+			);
+	
+			gl.uniform4fv(locations.colorOffset, component.colorOffset);
+			gl.uniform4fv(locations.colorMultiplier, component.colorMultiplier);
+			gl.bindTexture(gl.TEXTURE_2D, component.texture.texture);
+	
+			var triangleCount = this._data.triangleCount * 3;
+			gl.drawElements(
+				gl.TRIANGLES, triangleCount,
+				gl.UNSIGNED_SHORT, 0
+			);
+			this._drawCallCount++;
 		}
-		gl.uniform2f(locations.textureST, texWidth, texHeight);
-		gl.uniform2f(locations.textureUV, 0.0, texHeight - 1.0);
-		//gl.uniform2f(locations.textureST, 1.0, 1.0);
-		//gl.uniform2f(locations.textureUV, 0.0, 0.0);
-
-		var viewport = this._viewport;
-		var scroll = this._scroll;
-		var object3d = component.object3d;
-		var p = object3d.position;
-		var s = object3d.scale;
-		gl.uniform2f(locations.anchor, -1.0, -1.0);
-		gl.uniform2f(
-			locations.position,
-			p[0] * viewport[0] - scroll[0],
-			p[1] * viewport[1] - scroll[1]
-		);
-		gl.uniform2f(
-			locations.size,
-			width * s[0] * viewport[0],
-			height * s[1] * viewport[1]
-		);
-
-		gl.uniform4fv(locations.colorOffset, component.colorOffset);
-		gl.uniform4fv(locations.colorMultiplier, component.colorMultiplier);
-		gl.bindTexture(gl.TEXTURE_2D, component.texture.texture);
-
-		var triangleCount = this._data.triangleCount * 3;
-		gl.drawElements(
-			gl.TRIANGLES, triangleCount,
-			gl.UNSIGNED_SHORT, 0
-		);
-		this._drawCallCount++;
 
 		var children = object3d.children;
 		if (children == null || children.length <= 0) {
 			return;
 		}
-		//var clippingRectOrg = this._clippingRect;
 		var scrollX = scroll[0];
 		var scrollY = scroll[1];
 		var isScrollView = false;
-		if (component instanceof Tea.UI.ScrollView) {
-			isScrollView = true;
-			//if (clippingRectOrg != null) {
-			//	clippingRectOrg = clippingRectOrg.clone();
-			//}
-			this._clippingRect = component.clippingRect;
-			var componentScroll = component.scroll;
-			this._scroll[0] = componentScroll[0];
-			this._scroll[1] = componentScroll[1];
+		for (var i = 0; i < componentCount; i++) {
+			component = components[i];
+			if (component instanceof Tea.UI.ScrollView) {
+				isScrollView = true;
+				this._clippingRect = component.clippingRect;
+				var componentScroll = component.scroll;
+				this._scroll[0] = componentScroll[0];
+				this._scroll[1] = componentScroll[1];
+				break;
+			}
 		}
 
 		var length = children.length;
