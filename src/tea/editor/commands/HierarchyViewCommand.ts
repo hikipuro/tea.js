@@ -57,7 +57,7 @@ export class HierarchyViewCommand {
 			children: items,
 			isFolder: true,
 			isOpen: null,
-			tag: "-1"
+			tag: ""
 		};
 		hierarchyView.items = [sceneItem];
 		hierarchyView.unselect();

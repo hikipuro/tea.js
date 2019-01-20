@@ -389,7 +389,7 @@ export class EditorMenu {
 			}
 		];
 		var item = hierarchyView.getSelectedItem();
-		if (item != null && item.tag >= 0) {
+		if (item != null && item.tag !== "") {
 			template.unshift(
 				{
 					id: "Rename",

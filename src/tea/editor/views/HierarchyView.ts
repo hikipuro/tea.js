@@ -137,7 +137,7 @@ export class HierarchyView extends Vue {
 			if (item == null) {
 				return;
 			}
-			if (item.tag == -1) {
+			if (item.tag === "") {
 				this.openSceneInspector();
 			} else {
 				var inspectorView = this.command.editor.inspectorView;
@@ -155,7 +155,7 @@ export class HierarchyView extends Vue {
 		}
 		//console.log("select", item.tag);
 
-		if (item.tag == -1) {
+		if (item.tag === "") {
 			this.openSceneInspector();
 		} else {
 			inspectorView.command.updateObjectInspector();
