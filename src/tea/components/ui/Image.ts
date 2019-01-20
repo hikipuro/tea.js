@@ -7,6 +7,11 @@ export class Image extends UIComponent {
 	protected _isChanged: boolean;
 	protected _image: HTMLImageElement;
 	protected _url: string;
+	protected _background: Tea.Color;
+	protected _border: boolean;
+	protected _borderWidth: number;
+	protected _borderRadius: number;
+	protected _borderColor: Tea.Color;
 	
 	constructor(app: Tea.App) {
 		super(app);
@@ -19,6 +24,11 @@ export class Image extends UIComponent {
 		this._image = document.createElement("img") as HTMLImageElement;
 		this._image.addEventListener("load", this.onLoadImage);
 		this._url = null;
+		this._background = new Tea.Color(1.0, 1.0, 1.0, 1.0);
+		this._border = false;
+		this._borderWidth = 1.0;
+		this._borderRadius = 0.0;
+		this._borderColor = new Tea.Color(0.5, 0.5, 0.5, 1.0);
 	}
 
 	get width(): number {
@@ -47,6 +57,77 @@ export class Image extends UIComponent {
 		this._isChanged = true;
 	}
 
+	get url(): string {
+		return this._url;
+	}
+	set url(value: string) {
+		if (this._url === value) {
+			return;
+		}
+		this._url = value;
+		if (value == null) {
+			this.texture.image = null;
+			return;
+		}
+		value = this.app.resolvePath(value);
+		this._image.src = value;
+	}
+
+	get background(): Tea.Color {
+		return this._background;
+	}
+	set background(value: Tea.Color) {
+		if (value == null || value.equals(this._background)) {
+			return;
+		}
+		this._background = value;
+		this._isChanged = true;
+	}
+
+	get border(): boolean {
+		return this._border;
+	}
+	set border(value: boolean) {
+		if (value == null || value === this._border) {
+			return;
+		}
+		this._border = value;
+		this._isChanged = true;
+	}
+
+	get borderWidth(): number {
+		return this._borderWidth;
+	}
+	set borderWidth(value: number) {
+		if (value == null || value === this._borderWidth) {
+			return;
+		}
+		this._borderWidth = value;
+		this._isChanged = true;
+	}
+
+	get borderRadius(): number {
+		return this._borderRadius;
+	}
+	set borderRadius(value: number) {
+		if (value == null || value === this._borderRadius) {
+			return;
+		}
+		this._borderRadius = value;
+		this._isChanged = true;
+	}
+
+	get borderColor(): Tea.Color {
+		return this._borderColor;
+	}
+	set borderColor(value: Tea.Color) {
+		if (value == null || value.equals(this._borderColor)) {
+			return;
+		}
+		this._borderColor = value;
+		this._isChanged = true;
+	}
+
 	static fromJSON(app: Tea.App, json: any, callback: (component: Tea.Component) => void): void {
 		if (Tea.JSONUtil.isValidSceneJSON(json, Image.className) === false) {
 			callback(null);
@@ -57,6 +138,11 @@ export class Image extends UIComponent {
 		image._width = json.width;
 		image._height = json.height;
 		image._graphics.resize(json.width, json.height);
+		image.background = Tea.Color.fromArray(json.background);
+		image.border = json.border;
+		image.borderWidth = json.borderWidth;
+		image.borderRadius = json.borderRadius;
+		image.borderColor = Tea.Color.fromArray(json.borderColor);
 		if (json.url == null || json.url === "") {
 			callback(image);
 			return;
@@ -76,22 +162,6 @@ export class Image extends UIComponent {
 		image.url = json.url;
 	}
 
-	get url(): string {
-		return this._url;
-	}
-	set url(value: string) {
-		if (this._url === value) {
-			return;
-		}
-		this._url = value;
-		if (value == null) {
-			this.texture.image = null;
-			return;
-		}
-		value = this.app.resolvePath(value);
-		this._image.src = value;
-	}
-
 	destroy(): void {
 		if (this._graphics != null) {
 			this._graphics.destroy();
@@ -102,6 +172,11 @@ export class Image extends UIComponent {
 			this._image = undefined;
 		}
 		this._url = undefined;
+		this._background = undefined;
+		this._border = undefined;
+		this._borderWidth = undefined;
+		this._borderRadius = undefined;
+		this._borderColor = undefined;
 		super.destroy();
 	}
 
@@ -109,6 +184,11 @@ export class Image extends UIComponent {
 		var json: any = super.toJSON();
 		json[Tea.JSONUtil.TypeName] = Image.className;
 		json.url = this.url;
+		json.background = this._background;
+		json.border = this._border;
+		json.borderWidth = this._borderWidth;
+		json.borderRadius = this._borderRadius;
+		json.borderColor = this._borderColor;
 		return json;
 	}
 
@@ -119,13 +199,65 @@ export class Image extends UIComponent {
 		}
 		this._graphics.clear();
 		this.drawImage();
+		this.drawBorder();
 		this.texture.image = this._graphics.canvas;
 		this._isChanged = false;
 	}
 
 	protected drawImage(): void {
+		var g = this._graphics;
 		var image = this._image;
-		this._graphics.drawImage(image, 0, 0);
+		var width = this._width;
+		var height = this._height;
+		var borderWidth = this._borderWidth;
+		if (!this._border || borderWidth <= 0) {
+			g.save();
+			g.fillStyle = this._background.toCssColor();
+			g.fillRect(0, 0, width, height);
+			g.drawImage(image, 0, 0);
+			g.restore();
+			return;
+		}
+		var padding = borderWidth / 2;
+		g.save();
+		g.fillStyle = this._background.toCssColor();
+		g.fillRect(0, 0, width, height);
+		g.drawImage(image, padding, padding);
+		g.restore();
+	}
+
+	protected drawBorder(): void {
+		var g = this._graphics;
+		var width = this._width;
+		var height = this._height;
+		var borderRadius = this._borderRadius;
+		var borderWidth = this._borderWidth;
+		if (!this._border || borderWidth <= 0) {
+			if (borderRadius !== 0) {
+				// mask
+				g.save();
+				g.globalCompositeOperation = "destination-in";
+				g.fillRoundRect(0, 0, width, height, borderRadius);
+				g.restore();
+			}
+			return;
+		}
+		var padding = borderWidth / 2;
+		width -= borderWidth;
+		height -= borderWidth;
+		// mask
+		g.save();
+		g.translate(padding, padding);
+		g.globalCompositeOperation = "destination-in";
+		g.fillRoundRect(0, 0, width, height, borderRadius);
+		g.restore();
+		// border
+		g.save();
+		g.translate(padding, padding);
+		g.strokeStyle = this._borderColor.toCssColor();
+		g.lineWidth = borderWidth;
+		g.storokeRoundRect(0, 0, width, height, borderRadius);
+		g.restore();
 	}
 
 	protected onLoadImage = (e: Event): void => {

@@ -374,7 +374,12 @@
 		},
 		"Image": {
 			"Title": "Image",
-			"Size": "Size"
+			"Size": "Size",
+			"Background": "Background",
+			"Border": "Border",
+			"BorderWidth": "Border Width",
+			"BorderRadius": "Border Radius",
+			"BorderColor": "Border Color"
 		},
 		"Text": {
 			"Title": "Text",

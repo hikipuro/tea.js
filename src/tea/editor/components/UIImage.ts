@@ -17,6 +17,32 @@ import { LocalFile } from "../LocalFile";
 			<ImageSelector
 				ref="image"
 				@update="onUpdateImage">{{ name }}</ImageSelector>
+			<ColorPicker
+				ref="background"
+				:value="background"
+				@update="onUpdateBackground">{{ translator.background }}</ColorPicker>
+			<InputNumber
+				ref="borderRadius"
+				:value="borderRadius"
+				:step="0.25"
+				:min="0.0"
+				:max="1000.0"
+				@update="onUpdateBorderRadius">{{ translator.borderRadius }}</InputNumber>
+			<CheckBox
+				ref="border"
+				:value="border"
+				@update="onUpdateBorder">{{ translator.border }}</CheckBox>
+			<InputNumber
+				ref="borderWidth"
+				:value="borderWidth"
+				:step="0.25"
+				:min="0.0"
+				:max="1000.0"
+				@update="onUpdateBorderWidth">{{ translator.borderWidth }}</InputNumber>
+			<ColorPicker
+				ref="borderColor"
+				:value="borderColor"
+				@update="onUpdateBorderColor">{{ translator.borderColor }}</ColorPicker>
 		</div>
 	`,
 	data: () => {
@@ -25,7 +51,12 @@ import { LocalFile } from "../LocalFile";
 			name: "Image",
 			enabled: false,
 			size: [0, 0],
-			src: null
+			src: null,
+			background: "",
+			border: false,
+			borderWidth: 0,
+			borderRadius: 0,
+			borderColor: ""
 		}
 	},
 	watch: {
@@ -42,12 +73,22 @@ export class UIImage extends Vue {
 	enabled: boolean;
 	size: Array<number>;
 	src: string;
+	background: string;
+	border: boolean;
+	borderWidth: number;
+	borderRadius: number;
+	borderColor: string;
 
 	protected created(): void {
 		var translator = Translator.getInstance();
 		translator.basePath = "Components/Image";
 		this.name = translator.getText("Title");
 		this.translator.size = translator.getText("Size");
+		this.translator.background = translator.getText("Background");
+		this.translator.border = translator.getText("Border");
+		this.translator.borderWidth = translator.getText("BorderWidth");
+		this.translator.borderRadius = translator.getText("BorderRadius");
+		this.translator.borderColor = translator.getText("BorderColor");
 	}
 
 	protected mounted(): void {
@@ -65,6 +106,11 @@ export class UIImage extends Vue {
 			image.url = url;
 			//image.url = LocalFile.resolve(url);
 		}
+		this.background = component.background.toCssColor();
+		this.border = component.border;
+		this.borderWidth = component.borderWidth;
+		this.borderRadius = component.borderRadius;
+		this.borderColor = component.borderColor.toCssColor();
 	}
 
 	protected onUpdateSize(x: number, y: number): void {
@@ -76,12 +122,52 @@ export class UIImage extends Vue {
 		}
 		this.$emit("update", "size");
 	}
-	
+
 	protected onUpdateImage(value: string): void {
 		if (this._component) {
 			this._component.url = value;
 		}
 		this.$emit("update", "src");
+	}
+
+	protected onUpdateBackground(value: Tea.Color): void {
+		this.background = value.toCssColor();
+		if (this._component) {
+			this._component.background = value;
+		}
+		this.$emit("update", "background");
+	}
+
+	protected onUpdateBorder(value: boolean): void {
+		this.border = value;
+		if (this._component) {
+			this._component.border = value;
+		}
+		this.$emit("update", "border");
+	}
+
+	protected onUpdateBorderWidth(value: number): void {
+		this.borderWidth = value;
+		if (this._component) {
+			this._component.borderWidth = value;
+		}
+		this.$emit("update", "borderWidth");
+	}
+
+	protected onUpdateBorderRadius(value: number): void {
+		this.borderRadius = value;
+		if (this._component) {
+			this._component.borderRadius = value;
+		}
+		this.$emit("update", "borderRadius");
+	}
+
+	protected onUpdateBorderColor(value: Tea.Color): void {
+		this.borderColor = value.toCssColor();
+		if (this._component) {
+			this._component.borderColor = value;
+		}
+		this.$emit("update", "borderColor");
 	}
 }
 
