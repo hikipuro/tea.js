@@ -6,7 +6,7 @@ export class Object3D {
 	static readonly MaxDepth: number = 1000;
 	name: string;
 	isDestroyed: boolean;
-	isActive: boolean;
+	enabled: boolean;
 	scene: Tea.Scene;
 	localPosition: Tea.Vector3;
 	localRotation: Tea.Quaternion;
@@ -28,7 +28,7 @@ export class Object3D {
 		this._app = app;
 		this.name = "";
 		this.isDestroyed = false;
-		this.isActive = true;
+		this.enabled = true;
 		this.scene = null;
 		this.localPosition = new Tea.Vector3();
 		this.localRotation = new Tea.Quaternion(0.0, 0.0, 0.0, 1.0);
@@ -63,15 +63,15 @@ export class Object3D {
 		return this._status.isMoved;
 	}
 
-	get isActiveInHierarchy(): boolean {
-		if (this.isActive === false) {
+	get enabledInHierarchy(): boolean {
+		if (!this.enabled) {
 			return false;
 		}
 		var parent = this._parent;
 		if (parent == null) {
 			return true;
 		}
-		return parent.isActiveInHierarchy;
+		return parent.enabledInHierarchy;
 	}
 
 	get parent(): Object3D {
@@ -417,7 +417,7 @@ export class Object3D {
 		this._children = [];
 		this._app = undefined;
 		this.name = undefined;
-		this.isActive = undefined;
+		this.enabled = undefined;
 		this.scene = undefined;
 		this.localPosition = undefined;
 		this.localRotation = undefined;
@@ -437,7 +437,7 @@ export class Object3D {
 		var json = Tea.JSONUtil.createSceneJSON(Object3D.className);
 		json.id = this._id;
 		json.name = this.name;
-		json.isActive = this.isActive;
+		json.enabled = this.enabled;
 		json.localPosition = this.localPosition;
 		json.localRotation = this.localRotation;
 		json.localScale = this.localScale;
@@ -632,14 +632,14 @@ export class Object3D {
 		component: {new (app: Tea.App): T},
 		includeInactive: boolean = false): T
 	{
-		if (includeInactive === false && this.isActive === false) {
+		if (includeInactive === false && this.enabled === false) {
 			return null;
 		}
 		var parent = this._parent;
 		if (parent == null) {
 			return this.getComponent(component);
 		}
-		if (includeInactive === false && parent.isActive === false) {
+		if (includeInactive === false && parent.enabled === false) {
 			return this.getComponent(component);
 		}
 		return parent.getComponentInParent(
@@ -651,14 +651,14 @@ export class Object3D {
 		component: {new (app: Tea.App): T},
 		includeInactive: boolean = false): Array<T>
 	{
-		if (includeInactive === false && this.isActive === false) {
+		if (includeInactive === false && this.enabled === false) {
 			return [];
 		}
 		var parent = this._parent;
 		if (parent == null) {
 			return this.getComponents(component);
 		}
-		if (includeInactive === false && parent.isActive === false) {
+		if (includeInactive === false && parent.enabled === false) {
 			return this.getComponents(component);
 		}
 		var components = parent.getComponentsInParent(
@@ -672,7 +672,7 @@ export class Object3D {
 		component: {new (app: Tea.App): T},
 		includeInactive: boolean = false): T
 	{
-		if (includeInactive === false && this.isActive === false) {
+		if (includeInactive === false && this.enabled === false) {
 			return null;
 		}
 		var children = this._children;
@@ -682,7 +682,7 @@ export class Object3D {
 			if (child == null) {
 				continue;
 			}
-			if (includeInactive === false && child.isActive === false) {
+			if (includeInactive === false && child.enabled === false) {
 				continue;
 			}
 			var c = child.getComponentInChildren(
@@ -699,7 +699,7 @@ export class Object3D {
 		component: {new (app: Tea.App): T},
 		includeInactive: boolean = false): Array<T>
 	{
-		if (includeInactive === false && this.isActive === false) {
+		if (includeInactive === false && this.enabled === false) {
 			return [];
 		}
 		var array = this.getComponents(component);
@@ -710,7 +710,7 @@ export class Object3D {
 			if (child == null) {
 				continue;
 			}
-			if (includeInactive === false && child.isActive === false) {
+			if (includeInactive === false && child.enabled === false) {
 				continue;
 			}
 			var components = child.getComponentsInChildren(
@@ -725,7 +725,7 @@ export class Object3D {
 		if (methodName == null || methodName === "") {
 			return;
 		}
-		if (this.isActive === false) {
+		if (this.enabled === false) {
 			return;
 		}
 		var components = this._components;
@@ -1010,7 +1010,7 @@ export class Object3D {
 	}
 
 	update(isEditing: boolean = false): void {
-		if (this.isActiveInHierarchy === false) {
+		if (this.enabledInHierarchy === false) {
 			if (this._toDestroy) {
 				this._destroy();
 			}

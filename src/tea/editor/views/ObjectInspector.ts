@@ -105,7 +105,7 @@ export class ObjectInspector extends Vue {
 		}
 		this._object3d = object3d;
 		this.name = object3d.name;
-		this.isActive = object3d.isActive;
+		this.isActive = object3d.enabled;
 		this.setPosition(object3d.localPosition);
 		this.setRotation(object3d.localRotation.eulerAngles);
 		this.setScale(object3d.localScale);
@@ -228,7 +228,7 @@ export class ObjectInspector extends Vue {
 				var bValue = value as boolean;
 				this.isActive = bValue;
 				if (this._object3d != null) {
-					this._object3d.isActive = bValue;
+					this._object3d.enabled = bValue;
 				}
 				this.$emit("update", "ObjectInspector", "isActive", bValue);
 				break;

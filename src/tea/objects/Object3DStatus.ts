@@ -11,9 +11,9 @@ export class Object3DStatus {
 	protected _worldToLocalMatrix: Tea.Matrix4x4;
 
 	constructor() {
-		this.position = new Tea.Vector3(0.001, 0.002, 0.003);
-		this.rotation = new Tea.Quaternion(0.001, 0.002, 0.003);
-		this.scale = new Tea.Vector3(0.001, 0.002, 0.003);
+		this.position = new Tea.Vector3(Infinity);
+		this.rotation = new Tea.Quaternion(Infinity);
+		this.scale = new Tea.Vector3(Infinity);
 		this._isDirty = true;
 		this._localToWorldMatrix = new Tea.Matrix4x4();
 		this._worldToLocalMatrix = null;

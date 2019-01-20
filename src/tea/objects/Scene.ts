@@ -524,7 +524,7 @@ export class Scene extends EventDispatcher {
 			return;
 		}
 		object3d.update(this._isEditing);
-		if (object3d.isActiveInHierarchy) {
+		if (object3d.enabledInHierarchy) {
 			var renderers = object3d.getComponents(Tea.Renderer);
 			if (renderers != null && renderers.length > 0) {
 				this._renderers.push(...renderers);
@@ -538,7 +538,7 @@ export class Scene extends EventDispatcher {
 	}
 
 	protected lateUpdateObject3D(object3d: Tea.Object3D): void {
-		if (object3d == null || object3d.isActive === false) {
+		if (object3d == null || object3d.enabled === false) {
 			return;
 		}
 		object3d.sendMessage("lateUpdate");

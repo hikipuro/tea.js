@@ -114,7 +114,7 @@ export class CanvasRenderer extends Renderer {
 	}
 
 	protected drawObject3D(object3d: Tea.Object3D): void {
-		if (object3d == null || !object3d.isActive) {
+		if (object3d == null || !object3d.enabled) {
 			return;
 		}
 		var component = object3d.getComponent(Tea.UI.UIComponent);

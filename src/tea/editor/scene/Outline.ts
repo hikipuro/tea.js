@@ -30,7 +30,7 @@ export class Outline {
 
 	setObject(object3d: Tea.Object3D, camera: Tea.Camera): void {
 		this.meshFilter.mesh = null;
-		if (object3d == null || object3d.isActive === false) {
+		if (object3d == null || object3d.enabled === false) {
 			this.object3d.update();
 			return;
 		}

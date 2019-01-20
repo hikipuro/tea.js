@@ -28,7 +28,7 @@ export class SceneComponents {
 			if (camera.enabled === false) {
 				continue;
 			}
-			if (camera.object3d.isActiveInHierarchy === false) {
+			if (camera.object3d.enabledInHierarchy === false) {
 				continue;
 			}
 			cameras.push(camera);
@@ -45,7 +45,7 @@ export class SceneComponents {
 			if (renderer.enabled === false) {
 				continue;
 			}
-			if (renderer.object3d.isActiveInHierarchy === false) {
+			if (renderer.object3d.enabledInHierarchy === false) {
 				continue;
 			}
 			renderers.push(renderer);
@@ -62,7 +62,7 @@ export class SceneComponents {
 			if (light.enabled === false) {
 				continue;
 			}
-			if (light.object3d.isActiveInHierarchy === false) {
+			if (light.object3d.enabledInHierarchy === false) {
 				continue;
 			}
 			lights.push(light);

@@ -142,7 +142,7 @@ export class EditorSceneRenderer extends SceneRenderer {
 	}
 
 	protected lateUpdateObject3D(object3d: Tea.Object3D): void {
-		if (object3d == null || object3d.isActive === false) {
+		if (object3d == null || object3d.enabled === false) {
 			return;
 		}
 		object3d.sendMessage("lateUpdate");

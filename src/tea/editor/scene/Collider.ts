@@ -13,7 +13,7 @@ export class Collider {
 	}
 
 	setObject(object3d: Tea.Object3D): void {
-		if (object3d == null || object3d.isActive === false) {
+		if (object3d == null || object3d.enabled === false) {
 			this.collider = null;
 			this.clearLines();
 			return;

@@ -36,11 +36,21 @@ export class SceneLoader {
 			return;
 		}
 		var object3d = new Tea.Object3D(app, json.id);
-		object3d.name = json.name;
-		object3d.isActive = json.isActive;
-		object3d.localPosition = Tea.Vector3.fromArray(json.localPosition);
-		object3d.localRotation = Tea.Quaternion.fromArray(json.localRotation);
-		object3d.localScale = Tea.Vector3.fromArray(json.localScale);
+		if (json.name != null) {
+			object3d.name = json.name;
+		}
+		if (json.enabled != null) {
+			object3d.enabled = json.enabled;
+		}
+		if (json.localPosition != null) {
+			object3d.localPosition = Tea.Vector3.fromArray(json.localPosition);
+		}
+		if (json.localRotation != null) {
+			object3d.localRotation = Tea.Quaternion.fromArray(json.localRotation);
+		}
+		if (json.localScale != null) {
+			object3d.localScale = Tea.Vector3.fromArray(json.localScale);
+		}
 		this.loadComponents(app, json, object3d, () => {
 			this.loadChildren(app, json, object3d, () => {
 				callback(object3d);
