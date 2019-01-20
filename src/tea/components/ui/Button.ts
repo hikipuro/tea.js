@@ -305,15 +305,15 @@ export class Button extends UIComponent {
 
 	protected drawText(): void {
 		var g = this._graphics;
-		var w = this._width;
-		var h = this._height;
+		var x = this._width / 2;
+		var y = this._height / 2;
 		g.save();
 		g.textAlign = "center";
 		g.textVerticalAlign = "middle";
 		g.textBaseline = "middle";
 		g.font = this.getFont();
 		g.fillStyle = this._fontColor.toCssColor();
-		g.fillTextMultiLine(this._text, w / 2, h / 2);
+		g.fillTextMultiLine(this._text, x, y);
 		g.restore();
 	}
 

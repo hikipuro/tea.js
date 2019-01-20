@@ -373,7 +373,8 @@
 			"BorderColor": "Border Color"
 		},
 		"Image": {
-			"Title": "Image"
+			"Title": "Image",
+			"Size": "Size"
 		},
 		"Text": {
 			"Title": "Text",

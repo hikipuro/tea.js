@@ -4,17 +4,47 @@ import { UIComponent } from "./UIComponent";
 export class Image extends UIComponent {
 	static readonly className: string = "Image";
 	protected _graphics: Tea.Graphics2D;
+	protected _isChanged: boolean;
 	protected _image: HTMLImageElement;
 	protected _url: string;
 	
 	constructor(app: Tea.App) {
 		super(app);
-		//this._width = 64;
-		//this._height = 64;
-		this._graphics = new Tea.Graphics2D(64, 64);
+		this._width = 64;
+		this._height = 64;
+		this._graphics = new Tea.Graphics2D(
+			this._width, this._height
+		);
+		this._isChanged = true;
 		this._image = document.createElement("img") as HTMLImageElement;
 		this._image.addEventListener("load", this.onLoadImage);
 		this._url = null;
+	}
+
+	get width(): number {
+		return this._width;
+	}
+	set width(value: number) {
+		if (value == null || value === this._width) {
+			return;
+		}
+		this._width = value;
+		this._graphics.resize(value, this._height);
+		this._isSizeChanged = true;
+		this._isChanged = true;
+	}
+
+	get height(): number {
+		return this._height;
+	}
+	set height(value: number) {
+		if (value == null || value === this._height) {
+			return;
+		}
+		this._height = value;
+		this._graphics.resize(this._width, value);
+		this._isSizeChanged = true;
+		this._isChanged = true;
 	}
 
 	static fromJSON(app: Tea.App, json: any, callback: (component: Tea.Component) => void): void {
@@ -24,6 +54,9 @@ export class Image extends UIComponent {
 		}
 		var image = new Image(app);
 		image.enabled = json.enabled;
+		image._width = json.width;
+		image._height = json.height;
+		image._graphics.resize(json.width, json.height);
 		if (json.url == null || json.url === "") {
 			callback(image);
 			return;
@@ -79,14 +112,23 @@ export class Image extends UIComponent {
 		return json;
 	}
 
-	protected onLoadImage = (e: Event): void => {
-		//console.log("onLoadImage");
-		var image = this._image;
-		this._width = image.width;
-		this._height = image.height;
-		this._graphics.resize(image.width, image.height);
-		this._graphics.drawImage(image, 0, 0);
-		//this._image.src = "";
+	update(): void {
+		super.update();
+		if (this._isChanged === false) {
+			return;
+		}
+		this._graphics.clear();
+		this.drawImage();
 		this.texture.image = this._graphics.canvas;
+		this._isChanged = false;
+	}
+
+	protected drawImage(): void {
+		var image = this._image;
+		this._graphics.drawImage(image, 0, 0);
+	}
+
+	protected onLoadImage = (e: Event): void => {
+		this._isChanged = true;
 	}
 }

@@ -373,7 +373,8 @@
 			"BorderColor": "枠線の色"
 		},
 		"Image": {
-			"Title": "画像"
+			"Title": "画像",
+			"Size": "サイズ"
 		},
 		"Text": {
 			"Title": "テキスト",
