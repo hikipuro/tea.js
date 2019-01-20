@@ -379,6 +379,7 @@
 		"Text": {
 			"Title": "Text",
 			"Size": "Size",
+			"Margin": "Margin",
 			"Text": "Text",
 			"LineSpacing": "Line Spacing",
 			"Alignment": "Alignment",

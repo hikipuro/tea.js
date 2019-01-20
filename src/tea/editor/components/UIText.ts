@@ -12,6 +12,12 @@ import { Translator } from "../translate/Translator";
 				:y="size[1]"
 				:step="1"
 				@update="onUpdateSize">{{ translator.size }}</Vector2>
+			<Vector2
+				ref="margin"
+				:x="margin[0]"
+				:y="margin[1]"
+				:step="1"
+				@update="onUpdateMargin">{{ translator.margin }}</Vector2>
 			<TextArea
 				ref="text"
 				:value="text"
@@ -59,6 +65,7 @@ import { Translator } from "../translate/Translator";
 			name: "Text",
 			enabled: false,
 			size: [0, 0],
+			margin: [0, 0],
 			text: "",
 			lineSpacing: 0,
 			alignmentKeys: [],
@@ -85,6 +92,7 @@ export class UIText extends Vue {
 	name: string;
 	enabled: boolean;
 	size: Array<number>;
+	margin: Array<number>;
 	text: string;
 	lineSpacing: number;
 	alignmentKeys: Array<string>;
@@ -102,6 +110,7 @@ export class UIText extends Vue {
 		translator.basePath = "Components/Text";
 		this.name = translator.getText("Title");
 		this.translator.size = translator.getText("Size");
+		this.translator.margin = translator.getText("Margin");
 		this.translator.text = translator.getText("Text");
 		this.translator.lineSpacing = translator.getText("LineSpacing");
 		this.translator.alignment = translator.getText("Alignment");
@@ -128,6 +137,8 @@ export class UIText extends Vue {
 		this.enabled = component.enabled;
 		this.$set(this.size, 0, component.width);
 		this.$set(this.size, 1, component.height);
+		this.$set(this.margin, 0, component.margin[0]);
+		this.$set(this.margin, 1, component.margin[1]);
 		this.text = component.text;
 		this.lineSpacing = component.lineSpacing;
 		this.alignmentKeys = Tea.TextAlignment.getKeys();
@@ -149,6 +160,16 @@ export class UIText extends Vue {
 			this._component.height = y;
 		}
 		this.$emit("update", "size");
+	}
+
+	protected onUpdateMargin(x: number, y: number): void {
+		this.$set(this.margin, 0, x);
+		this.$set(this.margin, 1, y);
+		if (this._component != null) {
+			var margin = new Tea.Vector2(x, y);
+			this._component.margin = margin;
+		}
+		this.$emit("update", "margin");
 	}
 
 	protected onUpdateText(value: string): void {

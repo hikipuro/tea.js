@@ -379,6 +379,7 @@
 		"Text": {
 			"Title": "テキスト",
 			"Size": "サイズ",
+			"Margin": "マージン",
 			"Text": "テキスト",
 			"LineSpacing": "行間隔",
 			"Alignment": "行揃え",

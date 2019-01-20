@@ -7,6 +7,7 @@ export class Text extends UIComponent {
 	protected static readonly DefaultFont: string = "sans-serif";
 	protected _isChanged: boolean;
 	protected _graphics: Tea.Graphics2D;
+	protected _margin: Tea.Vector2;
 	protected _lineSpacing: number;
 	protected _alignment: Tea.TextAlignment;
 	protected _verticalAlignment: Tea.TextVerticalAlignment;
@@ -15,7 +16,6 @@ export class Text extends UIComponent {
 	protected _fontStyle: Tea.FontStyle;
 	protected _fontColor: Tea.Color;
 	protected _text: string;
-	protected _padding: number;
 	
 	constructor(app: Tea.App) {
 		super(app);
@@ -34,6 +34,7 @@ export class Text extends UIComponent {
 		*/
 		this._isChanged = true;
 		this._graphics = graphics;
+		this._margin = new Tea.Vector2();
 		this._lineSpacing = 1;
 		this._alignment = Tea.TextAlignment.Left;
 		this._verticalAlignment = Tea.TextVerticalAlignment.Middle;
@@ -42,7 +43,6 @@ export class Text extends UIComponent {
 		this._fontStyle = Tea.FontStyle.Normal;
 		this._fontColor = new Tea.Color(0.1, 0.1, 0.1, 1.0);
 		this._text = "Text";
-		this._padding = 0;
 		//this.texture.image = graphics.canvas;
 	}
 
@@ -73,6 +73,17 @@ export class Text extends UIComponent {
 		this._height = value;
 		this._graphics.resize(this._width, value);
 		this._isSizeChanged = true;
+		this._isChanged = true;
+	}
+
+	get margin(): Tea.Vector2 {
+		return this._margin;
+	}
+	set margin(value: Tea.Vector2) {
+		if (value == null || value.equals(this._margin)) {
+			return;
+		}
+		this._margin = value;
 		this._isChanged = true;
 	}
 
@@ -180,6 +191,7 @@ export class Text extends UIComponent {
 		text._width = json.width;
 		text._height = json.height;
 		text._graphics.resize(json.width, json.height);
+		text.margin = Tea.Vector2.fromArray(json.margin);
 		text.lineSpacing = json.lineSpacing;
 		text.alignment = Tea.TextAlignment.fromString(json.alignment);
 		text.verticalAlignment = Tea.TextVerticalAlignment.fromString(json.verticalAlignment);
@@ -188,7 +200,6 @@ export class Text extends UIComponent {
 		text.fontStyle = Tea.FontStyle.fromString(json.fontStyle);
 		text.fontColor = Tea.Color.fromArray(json.color);
 		text.text = json.text;
-		text._padding = json.padding;
 		callback(text);
 	}
 
@@ -200,13 +211,13 @@ export class Text extends UIComponent {
 		this._isChanged = undefined;
 		this._alignment = undefined;
 		this._verticalAlignment = undefined;
+		this._margin = undefined;
 		this._lineSpacing = undefined;
 		this._font = undefined;
 		this._fontSize = undefined;
 		this._fontStyle = undefined;
 		this._fontColor = undefined;
 		this._text = undefined;
-		this._padding = undefined;
 		super.destroy();
 	}
 
@@ -224,6 +235,7 @@ export class Text extends UIComponent {
 	toJSON(): Object {
 		var json: any = super.toJSON();
 		json[Tea.JSONUtil.TypeName] = Text.className;
+		json.margin = this._margin;
 		json.lineSpacing = this._lineSpacing;
 		json.alignment = Tea.TextAlignment.toString(this._alignment);
 		json.verticalAlignment = Tea.TextVerticalAlignment.toString(this._verticalAlignment);
@@ -232,7 +244,6 @@ export class Text extends UIComponent {
 		json.fontSize = this._fontSize;
 		json.fontStyle = Tea.FontStyle.toString(this._fontStyle);
 		json.text = this._text;
-		json.padding = this._padding;
 		return json;
 	}
 
@@ -276,11 +287,10 @@ export class Text extends UIComponent {
 		var height = graphics.height;
 		var fontSize = this.getFontSize();
 		var lineSpacing = this._lineSpacing * 1.2;
-		var padding = this._padding * 2;
 
 		var textWidth = 0;
 		//var textHeight = (fontSize * (text.length - 1)) * lineSpacing + padding;
-		var textHeight = (fontSize * text.length) * lineSpacing + padding;
+		var textHeight = (fontSize * text.length) * lineSpacing;
 		if (textHeight < 0) {
 			textHeight = 0;
 		}
@@ -290,7 +300,7 @@ export class Text extends UIComponent {
 		for (var i = 0; i < length; i++) {
 			var line = text[i];
 			var metrics = graphics.measureText(line);
-			var lineWidth = metrics.width + padding;
+			var lineWidth = metrics.width;
 			if (textWidth < lineWidth) {
 				textWidth = lineWidth;
 			}
@@ -310,6 +320,7 @@ export class Text extends UIComponent {
 		var x = 0;
 		var y = this._fontSize / 2;
 		var g = this._graphics;
+		var margin = this._margin;
 		g.save();
 		g.textAlign = "left";
 		switch (this._alignment) {
@@ -337,6 +348,7 @@ export class Text extends UIComponent {
 		g.lineSpacing = this._lineSpacing;
 		g.font = this.getFont();
 		g.fillStyle = this._fontColor.toCssColor();
+		g.translate(margin[0], margin[1]);
 		g.fillTextMultiLine(this._text, x, y);
 		g.restore();
 		/*
