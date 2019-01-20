@@ -367,7 +367,7 @@ export class Scene extends EventDispatcher {
 			var renderer = renderers[i];
 			if (renderer instanceof Tea.UI.CanvasRenderer) {
 				renderers.splice(i, 1);
-				canvasRenderers.push(renderer);
+				canvasRenderers.unshift(renderer);
 			}
 		}
 
