@@ -82,7 +82,7 @@ export class HierarchyViewCommand {
 		if (item == null) {
 			return;
 		}
-		var id = item.tag as number;
+		var id = item.tag as string;
 		var scene = this.editor.status.scene;
 		var object3d = scene.findChildById(id);
 		//console.log(object3d);

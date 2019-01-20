@@ -225,25 +225,37 @@ export class Scene extends EventDispatcher {
 		}
 	}
 
-	findChildById(id: number): Tea.Object3D {
-		var find = (object3d: Tea.Object3D) => {
-			if (object3d.id === id) {
-				return object3d;
-			}
-			var length = object3d.children.length;
-			for (var i = 0; i < length; i++) {
-				var child = object3d.children[i];
-				var found = find(child);
-				if (found) {
-					return found;
-				}
-			}
+	findChildById(id: string): Tea.Object3D {
+		var children = this.children;
+		if (children == null || children.length <= 0) {
 			return null;
-		};
-		var length = this.children.length;
+		}
+		var length = children.length;
 		for (var i = 0; i < length; i++) {
-			var child = this.children[i];
-			var found = find(child);
+			var child = children[i];
+			var found = this._findChildById(child, id);
+			if (found) {
+				return found;
+			}
+		}
+		return null;
+	}
+
+	protected _findChildById(object3d: Tea.Object3D, id: string): Tea.Object3D {
+		if (object3d == null) {
+			return null;
+		}
+		if (object3d.id === id) {
+			return object3d;
+		}
+		var children = object3d.children;
+		if (children == null || children.length <= 0) {
+			return null;
+		}
+		var length = children.length;
+		for (var i = 0; i < length; i++) {
+			var child = children[i];
+			var found = this._findChildById(child, id);
 			if (found) {
 				return found;
 			}

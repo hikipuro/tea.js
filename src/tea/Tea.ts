@@ -271,15 +271,31 @@ export function debounce(func: Function, interval: number): () => any {
 	};
 }
 
-function uuidGenerator(c: string): string {
+function uuidGeneratorR(c: string): string {
 	var r = Math.random() * 16 | 0;
 	var v = c == "x" ? r : (r & 0x3 | 0x8);
 	return v.toString(16);
 }
-export function uuid(): string {
+function uuidR(): string {
 	var template = "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx";
-	return template.replace(/[xy]/g, uuidGenerator);
+	return template.replace(/[xy]/g, uuidGeneratorR);
 }
+
+function uuidGeneratorC(c: string): string {
+	var r = crypto.getRandomValues(new Uint8Array(1))[0] & 0xF;
+	var v = c == "x" ? r : (r & 0x3 | 0x8);
+	return v.toString(16);
+}
+function uuidC(): string {
+	var template = "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx";
+	return template.replace(/[xy]/g, uuidGeneratorC);
+}
+
+var uuid = uuidR;
+if (window.crypto && window.crypto.getRandomValues) {
+	uuid = uuidC;
+}
+export { uuid };
 
 import { Vector2 } from "./math/Vector2";
 import { Vector3 } from "./math/Vector3";

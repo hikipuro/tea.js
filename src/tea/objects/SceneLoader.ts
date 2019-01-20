@@ -35,7 +35,7 @@ export class SceneLoader {
 			callback(null);
 			return;
 		}
-		var object3d = new Tea.Object3D(app);
+		var object3d = new Tea.Object3D(app, json.id);
 		object3d.name = json.name;
 		object3d.isActive = json.isActive;
 		object3d.localPosition = Tea.Vector3.fromArray(json.localPosition);

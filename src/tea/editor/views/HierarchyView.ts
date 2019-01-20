@@ -33,18 +33,20 @@ export class HierarchyView extends Vue {
 		return this._command;
 	}
 
-	get items(): any {
+	get treeView(): Editor.TreeView {
 		var treeView = this.$refs.hierarchy as TreeView;
-		return treeView.items;
+		return treeView;
+	}
+
+	get items(): any {
+		return this.treeView.items;
 	}
 	set items(value: any) {
-		var treeView = this.$refs.hierarchy as TreeView;
-		treeView.items = value;
+		this.treeView.items = value;
 	}
 
 	getSelectedItem(): TreeViewItem {
-		var treeView = this.$refs.hierarchy as TreeView;
-		return treeView.selectedItem;
+		return this.treeView.selectedItem;
 	}
 
 	getSelectedObject(): Tea.Object3D {
@@ -53,7 +55,7 @@ export class HierarchyView extends Vue {
 			return null;
 		}
 		var editor = this.$root as Editor;
-		var id = item.tag as number;
+		var id = item.tag as string;
 		var scene = editor.status.scene;
 		if (scene == null) {
 			return null;
@@ -62,37 +64,31 @@ export class HierarchyView extends Vue {
 	}
 
 	focus(): void {
-		var treeView = this.$refs.hierarchy as TreeView;
-		(treeView.$el as HTMLElement).focus();
+		(this.treeView.$el as HTMLElement).focus();
 	}
 
 	expandAll(): void {
-		var treeView = this.$refs.hierarchy as TreeView;
-		treeView.expandAll();
+		this.treeView.expandAll();
 	}
 
 	select(item: TreeViewItem): void {
-		var treeView = this.$refs.hierarchy as TreeView;
-		treeView.select(item);
+		this.treeView.select(item);
 	}
 
 	selectObject(object3d: Tea.Object3D): void {
 		if (object3d == null) {
 			return;
 		}
-		var treeView = this.$refs.hierarchy as TreeView;
 		var item = this.findItemByTag(object3d.id);
-		treeView.select(item);
+		this.treeView.select(item);
 	}
 
 	unselect(): void {
-		var treeView = this.$refs.hierarchy as TreeView;
-		treeView.unselect();
+		this.treeView.unselect();
 	}
 
-	findItemByTag(tag: number): TreeViewItem {
-		var treeView = this.$refs.hierarchy as TreeView;
-		return treeView.findItemByTag(tag);
+	findItemByTag(tag: string): TreeViewItem {
+		return this.treeView.findItemByTag(tag);
 	}
 
 	protected created(): void {
@@ -101,7 +97,7 @@ export class HierarchyView extends Vue {
 	}
 
 	protected mounted(): void {
-		var treeView = this.$refs.hierarchy as TreeView;
+		var treeView = this.treeView;
 		treeView.openIcon = "<img src='" + EditorAssets.Images.FolderOpen + "' />"; 
 		treeView.closeIcon = "<img src='" + EditorAssets.Images.FolderClose + "' />"; 
 		treeView.draggable = true;
@@ -130,7 +126,7 @@ export class HierarchyView extends Vue {
 	}
 
 	protected onFocus(): void {
-		var treeView = this.$refs.hierarchy as TreeView;
+		var treeView = this.treeView;
 		var item = treeView.selectedItem;
 		if (item == null) {
 			return;
@@ -196,7 +192,7 @@ export class HierarchyView extends Vue {
 	}
 
 	protected onRename(item: Editor.TreeViewItem, value: string): void {
-		var treeView = this.$refs.hierarchy as TreeView;
+		var treeView = this.treeView;
 		if (value == null || value === "") {
 			treeView.focus();
 			return;
@@ -285,8 +281,8 @@ export class HierarchyView extends Vue {
 			this.onDropFromProjectView(item);
 			return;
 		}
-		var idSrc = this._dragSource.model.tag as number;
-		var idDst = item.model.tag as number;
+		var idSrc = this._dragSource.model.tag as string;
+		var idDst = item.model.tag as string;
 		this._dragSource = null;
 		if (idSrc == null || idDst == null) {
 			return;
@@ -297,7 +293,7 @@ export class HierarchyView extends Vue {
 		this.onDropFromHierarchyView(mode, idSrc, idDst);
 	}
 
-	protected onDropFromHierarchyView(mode: number, idSrc: number, idDst: number): void {
+	protected onDropFromHierarchyView(mode: number, idSrc: string, idDst: string): void {
 		//console.log("drop", idSrc, idDst, item.model.text);
 		var editor = this.$root as Editor;
 		var scene = editor.status.scene;
@@ -353,7 +349,7 @@ export class HierarchyView extends Vue {
 		var projectView = editor.projectView;
 		var dragSource = projectView.getDragSource();
 		//console.log("onDropFromProjectView", item, dragSource.tag);
-		var id = item.tag as number;
+		var id = item.tag as string;
 		var scene = editor.status.scene;
 		var object3d = scene.findChildById(id);
 		if (object3d == null) {

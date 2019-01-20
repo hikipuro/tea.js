@@ -4,8 +4,6 @@ import { Object3DStatus } from "./Object3DStatus";
 export class Object3D {
 	static readonly className: string = "Object3D";
 	static readonly MaxDepth: number = 1000;
-	protected static _nextId: number = 0;
-	id: number;
 	name: string;
 	isDestroyed: boolean;
 	isActive: boolean;
@@ -18,13 +16,16 @@ export class Object3D {
 	protected _app: Tea.App;
 	protected _status: Object3DStatus;
 	protected _parent: Object3D;
+	protected _id: string;
 	protected _children: Array<Object3D>;
 	protected _components: Array<Tea.Component>;
 	protected _toDestroy: boolean;
 
-	constructor(app: Tea.App) {
+	constructor(app: Tea.App, id: string = null) {
+		if (id == null) {
+			id = Tea.uuid();
+		}
 		this._app = app;
-		this.id = Object3D._nextId++;
 		this.name = "";
 		this.isDestroyed = false;
 		this.isActive = true;
@@ -36,6 +37,7 @@ export class Object3D {
 		this.layer = 0;
 		this._status = new Object3DStatus();
 		this._parent = null;
+		this._id = id;
 		this._children = [];
 		this._components = [];
 		this._toDestroy = false;
@@ -134,6 +136,10 @@ export class Object3D {
 				scene.addComponents(child);
 			}
 		}
+	}
+
+	get id(): string {
+		return this._id;
 	}
 
 	get position(): Tea.Vector3 {
@@ -420,7 +426,7 @@ export class Object3D {
 		this._status = undefined;
 		this._components = [];
 		this._toDestroy = undefined;
-		this.id = undefined;
+		this._id = undefined;
 	}
 
 	toString(): string {
@@ -429,6 +435,7 @@ export class Object3D {
 
 	toJSON(): Object {
 		var json = Tea.JSONUtil.createSceneJSON(Object3D.className);
+		json.id = this._id;
 		json.name = this.name;
 		json.isActive = this.isActive;
 		json.localPosition = this.localPosition;

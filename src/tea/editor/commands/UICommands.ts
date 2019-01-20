@@ -28,7 +28,7 @@ export class UICommands {
 		if (item == null) {
 			return null;
 		}
-		var id = item.tag as number;
+		var id = item.tag as string;
 		return this.scene.findChildById(id);
 	}
 

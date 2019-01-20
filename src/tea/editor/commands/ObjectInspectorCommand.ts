@@ -125,7 +125,7 @@ export class ObjectInspectorCommand {
 		if (item == null) {
 			return null;
 		}
-		var id = item.tag as number;
+		var id = item.tag as string;
 		var scene = this.editor.status.scene;
 		return scene.findChildById(id);
 	}
