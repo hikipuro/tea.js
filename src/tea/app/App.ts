@@ -366,6 +366,10 @@ export class App {
 		return ObjectFactory.createUISwitch(this);
 	}
 
+	createUIProgressBar(): Tea.Object3D {
+		return ObjectFactory.createUIProgressBar(this);
+	}
+
 	readObjFile(url: string, callback: (object3d: Tea.Object3D) => void): void {
 		if (callback == null) {
 			return;

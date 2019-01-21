@@ -16,3 +16,4 @@ export * from "./Layout";
 export * from "./HLayout";
 export * from "./VLayout";
 export * from "./Padding";
+export * from "./ProgressBar";

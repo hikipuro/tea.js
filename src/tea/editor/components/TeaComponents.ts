@@ -25,6 +25,7 @@ import { UIVScrollBar } from "./UIVScrollBar";
 import { UISwitch } from "./UISwitch";
 import { UIHLayout } from "./UIHLayout";
 import { UIVLayout } from "./UIVLayout";
+import { UIProgressBar } from "./UIProgressBar";
 
 export {
 	AudioSource,
@@ -54,6 +55,7 @@ export {
 	UISwitch,
 	UIHLayout,
 	UIVLayout,
+	UIProgressBar,
 }
 
 export function getComponents(): Object {
@@ -85,5 +87,6 @@ export function getComponents(): Object {
 		UISwitch: UISwitch,
 		UIHLayout: UIHLayout,
 		UIVLayout: UIVLayout,
+		UIProgressBar: UIProgressBar,
 	}
 }

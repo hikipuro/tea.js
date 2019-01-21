@@ -65,6 +65,8 @@ export module UI {
 	export type VLayout = UIComponents.VLayout;
 	export var  Padding = UIComponents.Padding;
 	export type Padding = UIComponents.Padding;
+	export var  ProgressBar = UIComponents.ProgressBar;
+	export type ProgressBar = UIComponents.ProgressBar;
 }
 
 export * from "./enums/CameraClearFlags";

@@ -226,6 +226,9 @@ export class HierarchyViewCommand {
 			case "UI/Switch":
 				object3d = app.createUISwitch();
 				break;
+			case "UI/ProgressBar":
+				object3d = app.createUIProgressBar();
+				break;
 			case "Rename":
 				var i = hierarchyView.getSelectedItem();
 				if (i) {

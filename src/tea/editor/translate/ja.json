@@ -134,7 +134,8 @@
 				"ScrollView": "スクロールビュー",
 				"HScrollBar": "水平スクロールバー",
 				"VScrollBar": "垂直スクロールバー",
-				"Switch": "スイッチ"
+				"Switch": "スイッチ",
+				"ProgressBar": "プログレスバー"
 			}
 		}
 	},
@@ -205,7 +206,8 @@
 				"VScrollBar": "垂直スクロールバー",
 				"Switch": "スイッチ",
 				"HLayout": "水平レイアウト",
-				"VLayout": "垂直レイアウト"
+				"VLayout": "垂直レイアウト",
+				"ProgressBar": "プログレスバー"
 			}
 		}
 	},
@@ -374,7 +376,12 @@
 		},
 		"Image": {
 			"Title": "画像",
-			"Size": "サイズ"
+			"Size": "サイズ",
+			"Background": "背景色",
+			"Border": "枠線",
+			"BorderWidth": "枠線の太さ",
+			"BorderRadius": "枠の丸さ",
+			"BorderColor": "枠線の色"
 		},
 		"Text": {
 			"Title": "テキスト",
@@ -462,6 +469,17 @@
 		"VLayout": {
 			"Title": "垂直レイアウト",
 			"Padding": "パディング"
+		},
+		"ProgressBar": {
+			"Title": "プログレスバー",
+			"Size": "サイズ",
+			"Value": "値",
+			"BarColor": "バーの色",
+			"RailColor": "レールの色",
+			"Border": "枠線",
+			"BorderWidth": "枠線の太さ",
+			"BorderRadius": "枠の丸さ",
+			"BorderColor": "枠線の色"
 		}
 	}
 }

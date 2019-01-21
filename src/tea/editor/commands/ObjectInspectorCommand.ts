@@ -285,6 +285,9 @@ export class ObjectInspectorCommand {
 			case "UI/VLayout":
 				component = new Tea.UI.VLayout(app);
 				break;
+			case "UI/ProgressBar":
+				component = new Tea.UI.ProgressBar(app);
+				break;
 		}
 		if (component != null) {
 			object3d.addComponentInstance(component);

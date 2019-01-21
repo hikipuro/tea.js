@@ -276,4 +276,11 @@ export class ObjectFactory {
 		object3d.name = "Switch";
 		return object3d;
 	}
+
+	static createUIProgressBar(app: Tea.App): Tea.Object3D {
+		var object3d = new Tea.Object3D(app);
+		object3d.addComponent(Tea.UI.ProgressBar);
+		object3d.name = "Progress Bar";
+		return object3d;
+	}
 }

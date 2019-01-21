@@ -134,7 +134,8 @@
 				"ScrollView": "Scroll View",
 				"HScrollBar": "HScroll Bar",
 				"VScrollBar": "VScroll Bar",
-				"Switch": "Switch"
+				"Switch": "Switch",
+				"ProgressBar": "Progress Bar"
 			}
 		}
 	},
@@ -205,7 +206,8 @@
 				"VScrollBar": "VScroll Bar",
 				"Switch": "Switch",
 				"HLayout": "HLayout",
-				"VLayout": "VLayout"
+				"VLayout": "VLayout",
+				"ProgressBar": "Progress Bar"
 			}
 		}
 	},
@@ -467,6 +469,17 @@
 		"VLayout": {
 			"Title": "VLayout",
 			"Padding": "Padding"
+		},
+		"ProgressBar": {
+			"Title": "Progress Bar",
+			"Size": "Size",
+			"Value": "Value",
+			"BarColor": "Bar Color",
+			"RailColor": "Rail Color",
+			"Border": "Border",
+			"BorderWidth": "Border Width",
+			"BorderRadius": "Border Radius",
+			"BorderColor": "Border Color"
 		}
 	}
 }

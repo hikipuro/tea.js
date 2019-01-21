@@ -384,6 +384,10 @@ export class EditorMenu {
 					{
 						id: "UI/Switch",
 						label: translator.getText("UI/Switch"),
+					},
+					{
+						id: "UI/ProgressBar",
+						label: translator.getText("UI/ProgressBar"),
 					}
 				]
 			}
@@ -566,6 +570,10 @@ export class EditorMenu {
 					{
 						id: "UI/VLayout",
 						label: translator.getText("UI/VLayout"),
+					},
+					{
+						id: "UI/ProgressBar",
+						label: translator.getText("UI/ProgressBar"),
 					}
 				]
 			}
