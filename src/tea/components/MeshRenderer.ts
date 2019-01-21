@@ -14,25 +14,38 @@ export class MeshRenderer extends Renderer {
 		var gl = this.gl;
 		this.receiveShadows = true;
 		this._meshFilter = null;
-		this._bounds = new Tea.Bounds();
+		this._bounds = null;
 		this._wireframe = false;
 		this._frontFace = gl.CCW;
 	}
 
 	get bounds(): Tea.Bounds {
 		var object3d = this.object3d;
-		if (object3d == null
-		||  !object3d.isMoved
-		||  this._meshFilter == null) {
+		if (object3d == null) {
+			return null;
+		}
+		if (this._bounds != null) {
 			return this._bounds;
 		}
 		var position = object3d.position;
 		var rotation = object3d.rotation;
 		var scale = object3d.scale;
 
-		var bounds = this._bounds;
+		//var bounds = this._bounds;
+		var bounds = new Tea.Bounds();
 		if (this._meshFilter.mesh != null) {
-			bounds.copy(this._meshFilter.mesh.bounds);
+			//bounds.copy(this._meshFilter.mesh.bounds);
+			var meshBounds = this._meshFilter.mesh.bounds;
+			var c = bounds.center;
+			var e = bounds.extents;
+			var vc = meshBounds.center;
+			var ve = meshBounds.extents;
+			c[0] = vc[0];
+			c[1] = vc[1];
+			c[2] = vc[2];
+			e[0] = ve[0];
+			e[1] = ve[1];
+			e[2] = ve[2];
 		}
 		var center = bounds.center;
 		var extents = bounds.extents;
@@ -71,7 +84,7 @@ export class MeshRenderer extends Renderer {
 		extents[0] = (max[0] - min[0]) * 0.5;
 		extents[1] = (max[1] - min[1]) * 0.5;
 		extents[2] = (max[2] - min[2]) * 0.5;
-		//this._bounds = bounds;
+		this._bounds = bounds;
 		return bounds;
 	}
 
@@ -101,6 +114,9 @@ export class MeshRenderer extends Renderer {
 		var object3d = this.object3d;
 		if (object3d == null) {
 			return;
+		}
+		if (object3d.isMoved) {
+			this._bounds = null;
 		}
 		var component = object3d.getComponent(Tea.MeshFilter);
 		if (component == null) {

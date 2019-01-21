@@ -2,6 +2,7 @@ import * as Tea from "../Tea";
 
 export class GeometryUtil {
 	protected static _positivePoint: Tea.Vector3 = new Tea.Vector3();
+	protected static _negativePoint: Tea.Vector3 = new Tea.Vector3();
 	protected static _tmpVec3: Tea.Vector3 = new Tea.Vector3();
 
 	static calculateFrustumPlanes(camera: Tea.Camera): Array<Tea.Plane> {
@@ -130,6 +131,7 @@ export class GeometryUtil {
 		if (bounds == null) {
 			return false;
 		}
+		/*
 		//var inCount = 0;
 		if (GeometryUtil.pointInFrustum(planes, bounds.center)) {
 			return true;
@@ -141,7 +143,44 @@ export class GeometryUtil {
 				return true;
 			}
 		}
-		return false;
+		//*/
+
+		var point = this._positivePoint;
+		var center = bounds.center;
+		var extents = bounds.extents;
+		var minX = center[0] - extents[0];
+		var minY = center[1] - extents[1];
+		var minZ = center[2] - extents[2];
+		var maxX = center[0] + extents[0];
+		var maxY = center[1] + extents[1];
+		var maxZ = center[2] + extents[2];
+		for (var i = 0; i < 6; i++) {
+			var plane = planes[i];
+			var normal = plane.normal;
+			point[0] = minX;
+			point[1] = minY;
+			point[2] = minZ;
+			if (normal[0] >= 0.0) {
+				point[0] = maxX;
+			}
+			if (normal[1] >= 0.0) {
+				point[1] = maxY;
+			}
+			if (normal[2] >= 0.0) {
+				point[2] = maxZ;
+			}
+			var d = plane.distance;
+			var x = normal[0] * d + point[0];
+			var y = normal[1] * d + point[1];
+			var z = normal[2] * d + point[2];
+			var distance = x * normal[0] + y * normal[1] + z * normal[2];
+			//var distance = plane.getDistanceToPoint(point);
+			//console.log(i, plane.point, plane.normal, distance)
+			if (distance < 0.0) {
+				return false;
+			}
+		}
+		return true;
 		//console.log(inCount);
 		//return inCount > 0;
 		/*
@@ -171,35 +210,40 @@ export class GeometryUtil {
 	}
 
 	protected static getPositivePoint(bounds: Tea.Bounds, normal: Tea.Vector3): Tea.Vector3 {
-		var result = this._positivePoint;
-		result.copy(bounds.center);
-		result.subSelf(bounds.extents);
-		var size = this._tmpVec3;
-		size.copy(bounds.extents);
-		size.mulSelf(2);
-		if (normal[0] > 0.0) {
-			result[0] += size[0];
+		var point = this._positivePoint;
+		var center = bounds.center;
+		var extents = bounds.extents;
+		point[0] = center[0] - extents[0];
+		point[1] = center[1] - extents[1];
+		point[2] = center[2] - extents[2];
+		if (normal[0] >= 0.0) {
+			point[0] += extents[0] * 2.0;
 		}
-		if (normal[1] > 0.0) {
-			result[1] += size[1];
+		if (normal[1] >= 0.0) {
+			point[1] += extents[1] * 2.0;
 		}
-		if (normal[2] > 0.0) {
-			result[2] += size[2];
+		if (normal[2] >= 0.0) {
+			point[2] += extents[2] * 2.0;
 		}
-		return result;
+		return point;
 	}
 
 	protected static getNegativePoint(bounds: Tea.Bounds, normal: Tea.Vector3): Tea.Vector3 {
-		var result = bounds.min;
-		if (normal[0] < 0.0) {
-			result[0] += bounds.size[0];
+		var point = this._negativePoint;
+		var center = bounds.center;
+		var extents = bounds.extents;
+		point[0] = center[0] + extents[0];
+		point[1] = center[1] + extents[1];
+		point[2] = center[2] + extents[2];
+		if (normal[0] >= 0.0) {
+			point[0] -= extents[0] * 2.0;
 		}
-		if (normal[1] < 0.0) {
-			result[1] += bounds.size[1];
+		if (normal[1] >= 0.0) {
+			point[1] -= extents[1] * 2.0;
 		}
-		if (normal[2] < 0.0) {
-			result[2] += bounds.size[2];
+		if (normal[2] >= 0.0) {
+			point[2] -= extents[2] * 2.0;
 		}
-		return result;
+		return point;
 	}
 }

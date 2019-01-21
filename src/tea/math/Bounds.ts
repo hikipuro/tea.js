@@ -27,6 +27,11 @@ export class Bounds {
 		return this.extents.mul(2.0);
 	}
 
+	get isEmpty(): boolean {
+		var e = this.extents;
+		return e[0] === 0 && e[1] === 0 && e[2] === 0;
+	}
+
 	clone(): Bounds {
 		return new Bounds(
 			this.center.clone(),
