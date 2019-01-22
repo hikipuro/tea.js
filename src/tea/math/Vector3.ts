@@ -11,7 +11,7 @@ export class Vector3 extends Array<number> {
 	static readonly one = new Vector3(1.0, 1.0, 1.0);
 	static readonly positiveInfinity = new Vector3(Infinity, Infinity, Infinity);
 	static readonly negativeInfinity = new Vector3(-Infinity, -Infinity, -Infinity);
-	protected static _tmp: Vector3 = new Vector3();
+	static _tmp: Vector3 = new Vector3();
 	//static newCount: number = 0;
 
 	constructor(x: number = 0.0, y: number = 0.0, z: number = 0.0) {

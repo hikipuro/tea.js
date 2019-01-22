@@ -142,13 +142,13 @@ export class SceneMovement extends Script {
 		if (x !== 0) {
 			x *= this.rotateSpeed;
 			object3d.rotateAround(
-				object3d.position, Tea.Vector3.up, x
+				object3d.localPosition, Tea.Vector3.up, x
 			);
 		}
 		if (y !== 0) {
 			y *= this.rotateSpeed;
 			object3d.rotateAround(
-				object3d.position, object3d.right, y
+				object3d.localPosition, object3d.right, y
 			);
 		}
 	}
