@@ -114,11 +114,14 @@ export class Object3DStatus {
 			r = object3d.localRotation;
 			s = object3d.localScale;
 			isMoved = false;
-		} else if (!parent.isMoved) {
+		}
+		/*
+		 else if (!parent.isMoved) {
 			if (this.isMovedLocal(object3d) === false) {
 				return;
 			}
 		} 
+		*/
 		if (isMoved) {
 			var status = parentStatus;
 			var pp = status.position;
@@ -206,14 +209,14 @@ export class Object3DStatus {
 	}
 
 	protected isMovedLocal(object3d: Tea.Object3D): boolean {
-		var p = object3d.localPosition;
+		var p = object3d.position;
 		var tp = this.position;
 		if (tp[0] !== p[0]
 		||  tp[1] !== p[1]
 		||  tp[2] !== p[2]) {
 			return true;
 		}
-		var r = object3d.localRotation;
+		var r = object3d.rotation;
 		var tr = this.rotation;
 		if (tr[0] !== r[0]
 		||  tr[1] !== r[1]
@@ -221,7 +224,7 @@ export class Object3DStatus {
 		||  tr[3] !== r[3]) {
 			return true;
 		}
-		var s = object3d.localScale;
+		var s = object3d.scale;
 		var ts = this.scale;
 		if (ts[0] !== s[0]
 		||  ts[1] !== s[1]

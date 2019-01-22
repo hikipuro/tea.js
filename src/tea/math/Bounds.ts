@@ -120,6 +120,59 @@ export class Bounds {
 		return null;
 	}
 
+	getPointTo(index: number, value: Tea.Vector3): void {
+		if (value == null) {
+			return;
+		}
+		var c = this.center;
+		var e = this.extents;
+		value[0] = c[0];
+		value[1] = c[1];
+		value[2] = c[2];
+		switch (index) {
+			case 0:
+				value[0] -= e[0];
+				value[1] += e[1];
+				value[2] -= e[2];
+				return;
+			case 1:
+				value[0] += e[0];
+				value[1] += e[1];
+				value[2] -= e[2];
+				return;
+			case 2:
+				value[0] -= e[0];
+				value[1] -= e[1];
+				value[2] -= e[2];
+				return;
+			case 3:
+				value[0] += e[0];
+				value[1] -= e[1];
+				value[2] -= e[2];
+				return;
+			case 4:
+				value[0] -= e[0];
+				value[1] += e[1];
+				value[2] += e[2];
+				return;
+			case 5:
+				value[0] += e[0];
+				value[1] += e[1];
+				value[2] += e[2];
+				return;
+			case 6:
+				value[0] -= e[0];
+				value[1] -= e[1];
+				value[2] += e[2];
+				return;
+			case 7:
+				value[0] += e[0];
+				value[1] -= e[1];
+				value[2] += e[2];
+				return;
+		}
+	}
+
 	contains(point: Tea.Vector3): boolean {
 		if (point == null) {
 			return false;

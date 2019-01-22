@@ -14,7 +14,7 @@ export class MeshRenderer extends Renderer {
 		var gl = this.gl;
 		this.receiveShadows = true;
 		this._meshFilter = null;
-		this._bounds = null;
+		this._bounds = new Tea.Bounds();
 		this._wireframe = false;
 		this._frontFace = gl.CCW;
 	}
@@ -24,18 +24,20 @@ export class MeshRenderer extends Renderer {
 		if (object3d == null) {
 			return null;
 		}
-		if (this._bounds != null) {
-			return this._bounds;
+		var bounds = this._bounds;
+		if (!bounds.isEmpty) {
+			return bounds;
 		}
 		var position = object3d.position;
 		var rotation = object3d.rotation;
 		var scale = object3d.scale;
 
 		//var bounds = this._bounds;
-		var bounds = new Tea.Bounds();
-		if (this._meshFilter.mesh != null) {
+		//var bounds = new Tea.Bounds();
+		var meshFilter = this._meshFilter;
+		if (meshFilter != null && meshFilter.mesh != null) {
 			//bounds.copy(this._meshFilter.mesh.bounds);
-			var meshBounds = this._meshFilter.mesh.bounds;
+			var meshBounds = meshFilter.mesh.bounds;
 			var c = bounds.center;
 			var e = bounds.extents;
 			var vc = meshBounds.center;
@@ -57,34 +59,38 @@ export class MeshRenderer extends Renderer {
 		center[1] += position[1];
 		center[2] += position[2];
 		
-		var min = Tea.Vector3.positiveInfinity.clone();
-		var max = Tea.Vector3.negativeInfinity.clone();
+		var minX = Infinity, minY = Infinity, minZ = Infinity;
+		var maxX = -Infinity, maxY = -Infinity, maxZ = -Infinity;
+		var point = Tea.Vector3._tmp;
 		for (var i = 0; i < 8; i++) {
-			var point = bounds.getPoint(i);
+			bounds.getPointTo(i, point);
 			point[0] = point[0] * scale[0] - center[0];
 			point[1] = point[1] * scale[1] - center[1];
 			point[2] = point[2] * scale[2] - center[2];
 			point.applyQuaternion(rotation);
-			if (min[0] > point[0]) {
-				min[0] = point[0];
-			} else if (max[0] < point[0]) {
-				max[0] = point[0];
+			if (minX > point[0]) {
+				minX = point[0];
 			}
-			if (min[1] > point[1]) {
-				min[1] = point[1];
-			} else if (max[1] < point[1]) {
-				max[1] = point[1];
+			if (maxX < point[0]) {
+				maxX = point[0];
 			}
-			if (min[2] > point[2]) {
-				min[2] = point[2];
-			} else if (max[2] < point[2]) {
-				max[2] = point[2];
+			if (minY > point[1]) {
+				minY = point[1];
+			}
+			if (maxY < point[1]) {
+				maxY = point[1];
+			}
+			if (minZ > point[2]) {
+				minZ = point[2];
+			}
+			if (maxZ < point[2]) {
+				maxZ = point[2];
 			}
 		}
-		extents[0] = (max[0] - min[0]) * 0.5;
-		extents[1] = (max[1] - min[1]) * 0.5;
-		extents[2] = (max[2] - min[2]) * 0.5;
-		this._bounds = bounds;
+		extents[0] = (maxX - minX) * 0.5;
+		extents[1] = (maxY - minY) * 0.5;
+		extents[2] = (maxZ - minZ) * 0.5;
+		//this._bounds = bounds;
 		return bounds;
 	}
 
@@ -116,7 +122,8 @@ export class MeshRenderer extends Renderer {
 			return;
 		}
 		if (object3d.isMoved) {
-			this._bounds = null;
+			//console.log("moved", this.object3d.name);
+			this._bounds.extents.set(0, 0, 0);
 		}
 		var component = object3d.getComponent(Tea.MeshFilter);
 		if (component == null) {

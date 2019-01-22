@@ -52,6 +52,9 @@ export class EditorSceneRenderer extends SceneRenderer {
 			if (renderer instanceof Tea.UI.CanvasRenderer) {
 				continue;
 			}
+			if (this.frustumCulling(renderer, camera.frustumPlanes)) {
+				continue;
+			}
 			if (renderer.material != null) {
 				renderer.material.setTexture("_ShadowTex", null);
 			}
@@ -96,7 +99,11 @@ export class EditorSceneRenderer extends SceneRenderer {
 		for (var i = childCount - 1; i >= 0 ; i--) {
 			this.lateUpdateObject3D(children[i]);
 		}
+		for (var i = childCount - 1; i >= 0; i--) {
+			this.updateObject3DStatus(children[i]);
+		}
 		this.cameraObject.update();
+		this.cameraObject.updateStatus();
 		this.camera.update();
 		var position = this.cameraObject.localPosition.clone();
 		position[0] = Math.round(position[0]);
@@ -109,6 +116,7 @@ export class EditorSceneRenderer extends SceneRenderer {
 			position[2]
 		);
 		this.grid.object3d.update();
+		this.grid.object3d.updateStatus();
 
 		var object3d = this.editor.hierarchyView.getSelectedObject();
 		if (object3d) {
@@ -120,6 +128,11 @@ export class EditorSceneRenderer extends SceneRenderer {
 			this.lightRange.setLight(object3d);
 			this.objectBounds.object3d.update();
 			this.objectBounds.setObject(object3d);
+
+			this.collider.object3d.updateStatus();
+			this.frustumPlanes.object3d.updateStatus();
+			this.lightRange.object3d.updateStatus();
+			this.objectBounds.object3d.updateStatus();
 		} else {
 			this.collider.clearLines();
 			this.frustumPlanes.clearLines();
@@ -127,6 +140,16 @@ export class EditorSceneRenderer extends SceneRenderer {
 			this.objectBounds.clearLines();
 		}
 		this.outline.setObject(object3d, this.camera);
+	}
+
+	protected frustumCulling(renderer: Tea.Renderer, planes: Array<Tea.Plane>): boolean {
+		if (planes == null) {
+			return false;
+		}
+		if (renderer instanceof Tea.MeshRenderer) {
+			return !Tea.GeometryUtil.testPlanesAABB(planes, renderer.bounds);
+		}
+		return false;
 	}
 
 	protected updateObject3D(object3d: Tea.Object3D): void {
@@ -150,6 +173,18 @@ export class EditorSceneRenderer extends SceneRenderer {
 		var length = children.length;
 		for (var i = 0; i < length; i++) {
 			this.lateUpdateObject3D(children[i]);
+		}
+	}
+
+	protected updateObject3DStatus(object3d: Tea.Object3D): void {
+		if (object3d == null || object3d.enabled === false) {
+			return;
+		}
+		object3d.updateStatus();
+		var children = object3d.children;
+		var length = children.length;
+		for (var i = 0; i < length; i++) {
+			this.updateObject3DStatus(children[i]);
 		}
 	}
 }

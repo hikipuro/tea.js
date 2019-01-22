@@ -354,6 +354,9 @@ export class Scene extends EventDispatcher {
 		for (var i = childCount - 1; i >= 0; i--) {
 			this.lateUpdateObject3D(children[i]);
 		}
+		for (var i = childCount - 1; i >= 0; i--) {
+			this.updateObject3DStatus(children[i]);
+		}
 
 		this._components.sortCameras();
 		//this._components.sortRenderers();
@@ -523,6 +526,7 @@ export class Scene extends EventDispatcher {
 		if (object3d == null || object3d.id == null) {
 			return;
 		}
+		/*
 		object3d.update(this._isEditing);
 		if (object3d.enabledInHierarchy) {
 			var renderers = object3d.getComponents(Tea.Renderer);
@@ -535,17 +539,118 @@ export class Scene extends EventDispatcher {
 		for (var i = 0; i < length; i++) {
 			this.updateObject3D(children[i]);
 		}
+		return;
+		//*/
+		var root = object3d;
+		var isEditing = this._isEditing;
+		var r = this._renderers;
+		var stack: Array<Tea.Object3D> = [ object3d ];
+		while (stack.length > 0) {
+			object3d = stack.pop();
+			if (object3d == null || object3d.id == null) {
+				continue;
+			}
+			object3d.update(isEditing);
+			if (object3d.enabledInHierarchy) {
+				var renderers = object3d.getComponents(Tea.Renderer);
+				if (renderers != null && renderers.length > 0) {
+					r.push(...renderers);
+				}
+			}
+			var child = object3d.firstChild;
+			var next = null;
+			if (root !== object3d) {
+				next = object3d.nextSibling;
+			}
+			if (child != null) {
+				if (next != null) {
+					stack.push(next);
+				}
+				stack.push(child);
+				continue;
+			}
+			if (next != null) {
+				stack.push(next);
+				continue;
+			}
+		}
 	}
 
 	protected lateUpdateObject3D(object3d: Tea.Object3D): void {
 		if (object3d == null || object3d.enabled === false) {
 			return;
 		}
+		/*
 		object3d.sendMessage("lateUpdate");
 		var children = object3d.children;
 		var length = children.length;
 		for (var i = 0; i < length; i++) {
 			this.lateUpdateObject3D(children[i]);
+		}
+		//*/
+		var root = object3d;
+		var stack: Array<Tea.Object3D> = [ object3d ];
+		while (stack.length > 0) {
+			object3d = stack.pop();
+			if (object3d == null || object3d.enabled == false) {
+				continue;
+			}
+			object3d.sendMessage("lateUpdate");
+			var child = object3d.firstChild;
+			var next = null;
+			if (root !== object3d) {
+				next = object3d.nextSibling;
+			}
+			if (child != null) {
+				if (next != null) {
+					stack.push(next);
+				}
+				stack.push(child);
+				continue;
+			}
+			if (next != null) {
+				stack.push(next);
+				continue;
+			}
+		}
+	}
+
+	protected updateObject3DStatus(object3d: Tea.Object3D): void {
+		if (object3d == null || object3d.enabled === false) {
+			return;
+		}
+		/*
+		object3d.updateStatus();
+		var children = object3d.children;
+		var length = children.length;
+		for (var i = 0; i < length; i++) {
+			this.updateObject3DStatus(children[i]);
+		}
+		//*/
+		var root = object3d;
+		var stack: Array<Tea.Object3D> = [ object3d ];
+		while (stack.length > 0) {
+			object3d = stack.pop();
+			if (object3d == null || object3d.enabled == false) {
+				continue;
+			}
+			object3d.updateStatus();
+			var child = object3d.firstChild;
+			var next = null;
+			if (root !== object3d) {
+				next = object3d.nextSibling;
+			}
+			if (child != null) {
+				if (next != null) {
+					stack.push(next);
+				}
+				stack.push(child);
+				continue;
+			}
+			if (next != null) {
+				stack.push(next);
+				continue;
+			}
 		}
 	}
 
