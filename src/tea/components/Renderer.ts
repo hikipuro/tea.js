@@ -82,7 +82,7 @@ export class Renderer extends Component {
 		if (shader == null) {
 			return;
 		}
-		this.gl.useProgram(this.material.shader.program);
+		this.gl.useProgram(shader.program);
 		this.setShaderSettings();
 		this.setIntrinsicUniforms(camera);
 		this.setMaterialUniforms();
@@ -125,44 +125,57 @@ export class Renderer extends Component {
 	}
 
 	protected setShaderSettings(): void {
+		var status = this.app.status;
 		var gl = this.gl;
 		var settings = this.material.shader.settings;
 		if (settings.enableBlend) {
-			gl.enable(gl.BLEND);
+			status.enable(gl.BLEND);
+			//gl.enable(gl.BLEND);
 			this.setShaderBlend(settings);
 		} else {
-			gl.disable(gl.BLEND);
+			status.disable(gl.BLEND);
+			//gl.disable(gl.BLEND);
 		}
 		if (settings.enableCullFace) {
-			gl.enable(gl.CULL_FACE);
+			status.enable(gl.CULL_FACE);
+			//gl.enable(gl.CULL_FACE);
 			var mode = Tea.Shader.getFaceValue(
 				gl, settings.cullFaceMode
 			);
 			gl.cullFace(mode);
 		} else {
-			gl.disable(gl.CULL_FACE);
+			status.disable(gl.CULL_FACE);
+			//gl.disable(gl.CULL_FACE);
 		}
 		if (settings.enableDither) {
-			gl.enable(gl.DITHER);
+			status.enable(gl.DITHER);
+			//gl.enable(gl.DITHER);
 		} else {
-			gl.disable(gl.DITHER);
+			status.disable(gl.DITHER);
+			//gl.disable(gl.DITHER);
 		}
 		if (settings.enableDepthTest) {
-			gl.enable(gl.DEPTH_TEST);
+			status.enable(gl.DEPTH_TEST);
+			//gl.enable(gl.DEPTH_TEST);
 			var func = Tea.Shader.getTestFuncValue(
 				gl, settings.depthFunc
 			);
 			gl.depthFunc(func);
 		} else {
-			gl.disable(gl.DEPTH_TEST);
+			status.disable(gl.DEPTH_TEST);
+			//gl.disable(gl.DEPTH_TEST);
 		}
 		if (settings.depthWriteMask) {
-			gl.depthMask(true);
+			status.depthMask(true);
+			//gl.depthMask(true);
 		} else {
-			gl.depthMask(false);
+			status.depthMask(false);
+			//gl.depthMask(false);
 		}
-		if (settings.colorWriteMask != null) {
-			var colorWriteMask = settings.colorWriteMask;
+		status.colorMask(settings.colorWriteMask);
+		/*
+		var colorWriteMask = settings.colorWriteMask;
+		if (colorWriteMask != null) {
 			gl.colorMask(
 				colorWriteMask.red,
 				colorWriteMask.green,
@@ -170,6 +183,7 @@ export class Renderer extends Component {
 				colorWriteMask.alpha
 			);
 		}
+		*/
 		//if (settings.enablePolygonOffsetFill) {
 		//	gl.enable(gl.POLYGON_OFFSET_FILL);
 		//} else {
@@ -186,10 +200,12 @@ export class Renderer extends Component {
 		//	gl.disable(gl.SCISSOR_TEST);
 		//}
 		if (settings.enableStencilTest) {
-			gl.enable(gl.STENCIL_TEST);
+			status.enable(gl.STENCIL_TEST);
+			//gl.enable(gl.STENCIL_TEST);
 			this.setShaderStencil(settings);
 		} else {
-			gl.disable(gl.STENCIL_TEST);
+			status.disable(gl.STENCIL_TEST);
+			//gl.disable(gl.STENCIL_TEST);
 		}
 	}
 

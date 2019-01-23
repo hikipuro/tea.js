@@ -10,6 +10,9 @@ export class AppStatus {
 	OES_element_index_uint: OES_element_index_uint;
 	ANGLE_instanced_arrays: ANGLE_instanced_arrays;
 	protected _gl: WebGLRenderingContext;
+	protected _enabled: any;
+	protected _depthMask: boolean;
+	protected _colorMask: Tea.ShaderColorMask;
 
 	constructor(gl: WebGLRenderingContext) {
 		this._gl = gl;
@@ -21,6 +24,52 @@ export class AppStatus {
 		this.clearColor = Tea.Color.black.clone();
 		this.OES_element_index_uint = null;
 		this.ANGLE_instanced_arrays = null;
+		this._enabled = {};
+		this._depthMask = true;
+		this._colorMask = new Tea.ShaderColorMask();
+	}
+
+	enable(cap: number): void {
+		if (this._enabled[cap] === true) {
+			return;
+		}
+		this._enabled[cap] = true;
+		this._gl.enable(cap);
+	}
+
+	disable(cap: number): void {
+		if (this._enabled[cap] === false) {
+			return;
+		}
+		this._enabled[cap] = false;
+		this._gl.disable(cap);
+	}
+
+	depthMask(flag: boolean): void {
+		if (this._depthMask === flag) {
+			return;
+		}
+		this._depthMask = flag;
+		this._gl.depthMask(flag);
+	}
+
+	colorMask(mask: Tea.ShaderColorMask): void {
+		if (mask == null) {
+			return;
+		}
+		var colorMask = this._colorMask;
+		if (colorMask[0] === mask[0]
+		&&  colorMask[1] === mask[1]
+		&&  colorMask[2] === mask[2]
+		&&  colorMask[3] === mask[3]) {
+			return;
+		}
+		this._gl.colorMask(
+			mask[0],
+			mask[1],
+			mask[2],
+			mask[3]
+		);
 	}
 
 	enableUint32Index(): void {

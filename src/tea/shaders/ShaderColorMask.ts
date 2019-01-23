@@ -1,17 +1,54 @@
 import * as Tea from "../Tea";
 
-export class ShaderColorMask {
+export class ShaderColorMask extends Array<boolean> {
 	static readonly className: string = "ShaderColorMask";
-	red: boolean;
-	green: boolean;
-	blue: boolean;
-	alpha: boolean;
 
 	constructor() {
-		this.red = true;
-		this.green = true;
-		this.blue = true;
-		this.alpha = true;
+		super(4);
+		this[0] = true;
+		this[1] = true;
+		this[2] = true;
+		this[3] = true;
+	}
+
+	get red(): boolean {
+		return this[0];
+	}
+	set red(value: boolean) {
+		if (value == null) {
+			return;
+		}
+		this[0] = value;
+	}
+
+	get green(): boolean {
+		return this[1];
+	}
+	set green(value: boolean) {
+		if (value == null) {
+			return;
+		}
+		this[1] = value;
+	}
+
+	get blue(): boolean {
+		return this[2];
+	}
+	set blue(value: boolean) {
+		if (value == null) {
+			return;
+		}
+		this[2] = value;
+	}
+
+	get alpha(): boolean {
+		return this[3];
+	}
+	set alpha(value: boolean) {
+		if (value == null) {
+			return;
+		}
+		this[3] = value;
 	}
 
 	static fromJSON(json: any): ShaderColorMask {

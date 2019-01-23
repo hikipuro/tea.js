@@ -175,10 +175,6 @@ export class Object3D {
 		if (value == null) {
 			return;
 		}
-		var p = this._position;
-		p[0] = value[0];
-		p[1] = value[1];
-		p[2] = value[2];
 		var parent = this._parent;
 		var lp = this.localPosition;
 		if (parent == null) {
@@ -187,9 +183,9 @@ export class Object3D {
 			lp[2] = value[2];
 			return;
 		}
-		var pp = parent._position;
-		var pr = parent._rotation;
-		var ps = parent._scale;
+		var pp = parent.position;
+		var pr = parent.rotation;
+		var ps = parent.scale;
 		lp[0] = value[0] - pp[0];
 		lp[1] = value[1] - pp[1];
 		lp[2] = value[2] - pp[2];
@@ -248,7 +244,7 @@ export class Object3D {
 			lr[3] = value[3];
 			return;
 		}
-		var pr = parent._rotation;
+		var pr = parent.rotation;
 		lr[0] = pr[0];
 		lr[1] = pr[1];
 		lr[2] = pr[2];
@@ -308,7 +304,7 @@ export class Object3D {
 			ls[2] = value[2];
 			return;
 		}
-		var ps = parent._scale;
+		var ps = parent.scale;
 		ls[0] = ps[0] !== 0.0 ? 1.0 / ps[0] : 0.0;
 		ls[1] = ps[1] !== 0.0 ? 1.0 / ps[1] : 0.0;
 		ls[2] = ps[2] !== 0.0 ? 1.0 / ps[2] : 0.0;
@@ -322,11 +318,10 @@ export class Object3D {
 	}
 	set localEulerAngles(value: Tea.Vector3) {
 		this.localRotation.setEuler(value);
-		this.updateRotation();
 	}
 
 	get eulerAngles(): Tea.Vector3 {
-		return this._rotation.eulerAngles;
+		return this.rotation.eulerAngles;
 	}
 	set eulerAngles(value: Tea.Vector3) {
 		var r = Tea.Quaternion._tmp;
@@ -391,19 +386,19 @@ export class Object3D {
 
 	get forward(): Tea.Vector3 {
 		var vec3 = new Tea.Vector3(0.0, 0.0, 1.0);
-		vec3.applyQuaternion(this._rotation);
+		vec3.applyQuaternion(this.rotation);
 		return vec3;
 	}
 
 	get up(): Tea.Vector3 {
 		var vec3 = new Tea.Vector3(0.0, 1.0, 0.0);
-		vec3.applyQuaternion(this._rotation);
+		vec3.applyQuaternion(this.rotation);
 		return vec3;
 	}
 
 	get right(): Tea.Vector3 {
 		var vec3 = new Tea.Vector3(1.0, 0.0, 0.0);
-		vec3.applyQuaternion(this._rotation);
+		vec3.applyQuaternion(this.rotation);
 		return vec3;
 	}
 
@@ -935,12 +930,11 @@ export class Object3D {
 			var d = target.sub(this.position);
 			var q = Tea.Quaternion.lookRotation(d, worldUp);
 			this.localRotation = q;
-		} else {
-			var d = target.position.sub(this.position);
-			var q = Tea.Quaternion.lookRotation(d, worldUp);
-			this.localRotation = q;
+			return;
 		}
-		this.updateRotation();
+		var d = target.position.sub(this.position);
+		var q = Tea.Quaternion.lookRotation(d, worldUp);
+		this.localRotation = q;
 	}
 
 	rotate(eulerAngles: Tea.Vector3): void;
@@ -951,10 +945,9 @@ export class Object3D {
 		}
 		if (a instanceof Tea.Vector3) {
 			this.localRotation.rotateEuler(a);
-		} else {
-			this.localRotation.rotateEuler(a, b, c);
+			return;
 		}
-		this.updateRotation();
+		this.localRotation.rotateEuler(a, b, c);
 	}
 
 	rotateAround(point: Tea.Vector3, axis: Tea.Vector3, angle: number): void {
@@ -984,7 +977,7 @@ export class Object3D {
 		}
 		var r = Tea.Quaternion._tmp;
 		r.setEuler(x, y, z);
-		var tp = this._position;
+		var tp = this.position;
 		var p = Tea.Vector3._tmp;
 		p[0] = tp[0] - point[0];
 		p[1] = tp[1] - point[1];
@@ -993,7 +986,7 @@ export class Object3D {
 		p[0] += point[0];
 		p[1] += point[1];
 		p[2] += point[2];
-		r.mulSelf(this._rotation);
+		r.mulSelf(this.rotation);
 		var lp = this.localPosition;
 		var lr = this.localRotation;
 		lp[0] = p[0];
@@ -1003,8 +996,6 @@ export class Object3D {
 		lr[1] = r[1];
 		lr[2] = r[2];
 		lr[3] = r[3];
-		this.updatePosition();
-		this.updateRotation();
 	}
 
 	setAsFirstSibling(): void {
@@ -1123,16 +1114,14 @@ export class Object3D {
 			lp[0] += a[0];
 			lp[1] += a[1];
 			lp[2] += a[2];
-		} else {
-			lp[0] += a;
-			lp[1] += b;
-			lp[2] += c;
+			return;
 		}
-		this.updatePosition();
+		lp[0] += a;
+		lp[1] += b;
+		lp[2] += c;
 	}
 
 	update(isEditing: boolean = false): void {
-		var status = this._status;
 		if (this.enabledInHierarchy === false) {
 			if (this._toDestroy) {
 				this._destroy();
@@ -1146,7 +1135,7 @@ export class Object3D {
 			this.updateComponents();
 		}
 
-		status.update(this);
+		this._status.update(this);
 
 		if (this._toDestroy) {
 			this._destroy();
@@ -1206,68 +1195,6 @@ export class Object3D {
 				console.error(err);
 			}
 		}
-	}
-
-	protected updatePosition(): void {
-		var parent = this._parent;
-		var p = this._position;
-		var lp = this.localPosition;
-		if (parent == null) {
-			p[0] = lp[0];
-			p[1] = lp[1];
-			p[2] = lp[2];
-			return;
-		}
-		var pp = parent._position;
-		var pr = parent._rotation;
-		var ps = parent._scale;
-		p[0] = lp[0] * ps[0];
-		p[1] = lp[1] * ps[1];
-		p[2] = lp[2] * ps[2];
-		p.applyQuaternion(pr);
-		p[0] += pp[0];
-		p[1] += pp[1];
-		p[2] += pp[2];
-	}
-
-	protected updateRotation(): void {
-		var parent = this._parent;
-		var r = this._rotation;
-		var lr = this.localRotation;
-		if (parent == null) {
-			r[0] = lr[0];
-			r[1] = lr[1];
-			r[2] = lr[2];
-			r[3] = lr[3];
-			return;
-		}
-		r[0] = lr[0];
-		r[1] = lr[1];
-		r[2] = lr[2];
-		r[3] = lr[3];
-		var pr = parent._rotation;
-		var ax = pr[0], ay = pr[1], az = pr[2], aw = pr[3];
-		var bx = r[0], by = r[1], bz = r[2], bw = r[3];
-		r[0] = aw * bx + bw * ax + ay * bz - by * az;
-		r[1] = aw * by + bw * ay + az * bx - bz * ax;
-		r[2] = aw * bz + bw * az + ax * by - bx * ay;
-		r[3] = aw * bw - ax * bx - ay * by - az * bz;
-	}
-
-	protected updateScale(): void {
-		var parent = this._parent;
-		var s = this._scale;
-		var ls = this.localScale;
-		if (parent == null) {
-			s[0] = ls[0];
-			s[1] = ls[1];
-			s[2] = ls[2];
-			return;
-		}
-		var ps = parent._scale;
-		s[0] = ls[0] * ps[0];
-		s[1] = ls[1] * ps[1];
-		s[2] = ls[2] * ps[2];
 	}
 
 	protected adjustChildPosition(child: Tea.Object3D, isAppend: boolean, worldPositionStays: boolean = true): void {
