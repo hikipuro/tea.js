@@ -149,12 +149,30 @@ export class Object3D {
 	}
 
 	get position(): Tea.Vector3 {
-		return this._position;
+		var parent = this._parent;
+		var p = this._position;
+		var lp = this.localPosition;
+		if (parent == null) {
+			p[0] = lp[0];
+			p[1] = lp[1];
+			p[2] = lp[2];
+			return p;
+		}
+		var pp = parent.position;
+		var pr = parent.rotation;
+		var ps = parent.scale;
+		p[0] = lp[0] * ps[0];
+		p[1] = lp[1] * ps[1];
+		p[2] = lp[2] * ps[2];
+		p.applyQuaternion(pr);
+		p[0] += pp[0];
+		p[1] += pp[1];
+		p[2] += pp[2];
+		return p;
 	}
 
 	set position(value: Tea.Vector3) {
 		if (value == null) {
-			//this.localPosition.set(0.0, 0.0, 0.0);
 			return;
 		}
 		var p = this._position;
@@ -188,12 +206,32 @@ export class Object3D {
 	}
 
 	get rotation(): Tea.Quaternion {
-		return this._rotation;
+		var parent = this._parent;
+		var r = this._rotation;
+		var lr = this.localRotation;
+		if (parent == null) {
+			r[0] = lr[0];
+			r[1] = lr[1];
+			r[2] = lr[2];
+			r[3] = lr[3];
+			return r;
+		}
+		r[0] = lr[0];
+		r[1] = lr[1];
+		r[2] = lr[2];
+		r[3] = lr[3];
+		var pr = parent.rotation;
+		var ax = pr[0], ay = pr[1], az = pr[2], aw = pr[3];
+		var bx = r[0], by = r[1], bz = r[2], bw = r[3];
+		r[0] = aw * bx + bw * ax + ay * bz - by * az;
+		r[1] = aw * by + bw * ay + az * bx - bz * ax;
+		r[2] = aw * bz + bw * az + ax * by - bx * ay;
+		r[3] = aw * bw - ax * bx - ay * by - az * bz;
+		return r;
 	}
 
 	set rotation(value: Tea.Quaternion) {
 		if (value == null) {
-			//this.localRotation.set(0.0, 0.0, 0.0, 1.0);
 			return;
 		}
 		var r = this._rotation;
@@ -238,12 +276,24 @@ export class Object3D {
 	}
 
 	get scale(): Tea.Vector3 {
-		return this._scale;
+		var parent = this._parent;
+		var s = this._scale;
+		var ls = this.localScale;
+		if (parent == null) {
+			s[0] = ls[0];
+			s[1] = ls[1];
+			s[2] = ls[2];
+			return s;
+		}
+		var ps = parent.scale;
+		s[0] = ls[0] * ps[0];
+		s[1] = ls[1] * ps[1];
+		s[2] = ls[2] * ps[2];
+		return s;
 	}
 
 	set scale(value: Tea.Vector3) {
 		if (value == null) {
-			//this.localScale.set(0.0, 0.0, 0.0);
 			return;
 		}
 		var s = this._scale;
@@ -635,9 +685,24 @@ export class Object3D {
 	}
 
 	getComponents<T extends Tea.Component>(component: {new (app: Tea.App): T}): Array<T> {
+		var components = this._components;
+		if (components == null || components.length <= 0) {
+			return null;
+		}
+		var list = [];
+		var length = components.length;
+		for (var i = 0; i < length; i++) {
+			var c = components[i];
+			if (c instanceof component) {
+				list.push(c);
+			}
+		}
+		return list;
+		/*
 		return this._components.filter((c: Tea.Component): boolean => {
 			return c instanceof component;
 		}) as Array<T>;
+		*/
 	}
 
 	getComponentInParent<T extends Tea.Component>(
@@ -1067,6 +1132,7 @@ export class Object3D {
 	}
 
 	update(isEditing: boolean = false): void {
+		var status = this._status;
 		if (this.enabledInHierarchy === false) {
 			if (this._toDestroy) {
 				this._destroy();
@@ -1080,35 +1146,11 @@ export class Object3D {
 			this.updateComponents();
 		}
 
+		status.update(this);
+
 		if (this._toDestroy) {
 			this._destroy();
 			return;
-		}
-	}
-
-	updateStatus(): void {
-		if (this._parent != null) {
-			this._status.update(this, this._parent._status);
-		} else {
-			this._status.update(this, null);
-		}
-		if (this._status.isMoved) {
-			var p = this._position;
-			var r = this._rotation;
-			var s = this._scale;
-			var sp = this._status.position;
-			var sr = this._status.rotation;
-			var ss = this._status.scale;
-			p[0] = sp[0];
-			p[1] = sp[1];
-			p[2] = sp[2];
-			r[0] = sr[0];
-			r[1] = sr[1];
-			r[2] = sr[2];
-			r[3] = sr[3];
-			s[0] = ss[0];
-			s[1] = ss[1];
-			s[2] = ss[2];
 		}
 	}
 

@@ -21,6 +21,7 @@ export class EditorSceneRenderer extends SceneRenderer {
 	outline: Outline;
 	collider: Collider;
 	objectBounds: ObjectBounds;
+	renderers: Array<Tea.Renderer>;
 
 	constructor(scene: Tea.Scene) {
 		super(scene);
@@ -33,20 +34,26 @@ export class EditorSceneRenderer extends SceneRenderer {
 		this.outline = new Outline(app);
 		this.collider = new Collider(app);
 		this.objectBounds = new ObjectBounds(app);
+		this.renderers = [];
+		this.renderers.unshift(this.grid.renderer);
+		this.renderers.unshift(this.objectBounds.renderer);
+		this.renderers.unshift(this.collider.renderer);
+		this.renderers.unshift(this.outline.renderer);
+		this.renderers.unshift(this.frustumPlanes.renderer);
+		this.renderers.unshift(this.lightRange.renderer);
 	}
 
 	render(renderers: Array<Tea.Renderer>, lights: Array<Tea.Light>): void {
 		this.update();
 		Tea.Renderer.drawCallCount = 0;
 		var camera = this.camera;
-		renderers.unshift(this.grid.renderer);
-		renderers.unshift(this.objectBounds.renderer);
-		renderers.unshift(this.collider.renderer);
-		renderers.unshift(this.outline.renderer);
-		renderers.unshift(this.frustumPlanes.renderer);
-		renderers.unshift(this.lightRange.renderer);
 		var renderSettings = this.scene.renderSettings;
-		var rendererCount = renderers.length;
+		var rendererCount = this.renderers.length;
+		for (var i = 0; i < rendererCount; i++) {
+			var renderer = this.renderers[i];
+			renderer.render(camera, lights, renderSettings);
+		}
+		rendererCount = renderers.length;
 		for (var i = 0; i < rendererCount; i++) {
 			var renderer = renderers[i];
 			if (renderer instanceof Tea.UI.CanvasRenderer) {
@@ -99,11 +106,7 @@ export class EditorSceneRenderer extends SceneRenderer {
 		for (var i = childCount - 1; i >= 0 ; i--) {
 			this.lateUpdateObject3D(children[i]);
 		}
-		for (var i = childCount - 1; i >= 0; i--) {
-			this.updateObject3DStatus(children[i]);
-		}
 		this.cameraObject.update();
-		this.cameraObject.updateStatus();
 		this.camera.update();
 		var position = this.cameraObject.localPosition.clone();
 		position[0] = Math.round(position[0]);
@@ -116,7 +119,6 @@ export class EditorSceneRenderer extends SceneRenderer {
 			position[2]
 		);
 		this.grid.object3d.update();
-		this.grid.object3d.updateStatus();
 
 		var object3d = this.editor.hierarchyView.getSelectedObject();
 		if (object3d) {
@@ -128,11 +130,6 @@ export class EditorSceneRenderer extends SceneRenderer {
 			this.lightRange.setLight(object3d);
 			this.objectBounds.object3d.update();
 			this.objectBounds.setObject(object3d);
-
-			this.collider.object3d.updateStatus();
-			this.frustumPlanes.object3d.updateStatus();
-			this.lightRange.object3d.updateStatus();
-			this.objectBounds.object3d.updateStatus();
 		} else {
 			this.collider.clearLines();
 			this.frustumPlanes.clearLines();
@@ -173,18 +170,6 @@ export class EditorSceneRenderer extends SceneRenderer {
 		var length = children.length;
 		for (var i = 0; i < length; i++) {
 			this.lateUpdateObject3D(children[i]);
-		}
-	}
-
-	protected updateObject3DStatus(object3d: Tea.Object3D): void {
-		if (object3d == null || object3d.enabled === false) {
-			return;
-		}
-		object3d.updateStatus();
-		var children = object3d.children;
-		var length = children.length;
-		for (var i = 0; i < length; i++) {
-			this.updateObject3DStatus(children[i]);
 		}
 	}
 }

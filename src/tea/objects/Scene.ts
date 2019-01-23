@@ -18,6 +18,7 @@ export class Scene extends EventDispatcher {
 	protected _children: Array<Tea.Object3D>;
 	protected _components: SceneComponents;
 	protected _renderers: Array<Tea.Renderer>;
+	protected _canvasRenderers: Array<Tea.UI.CanvasRenderer>;
 
 	constructor(app: Tea.App) {
 		super();
@@ -32,6 +33,7 @@ export class Scene extends EventDispatcher {
 		this._children = [];
 		this._components = new SceneComponents();
 		this._renderers = [];
+		this._canvasRenderers = [];
 		var shader = this.app.createShader(
 			Tea.ShaderSources.antialiasPostProcessingVS,
 			Tea.ShaderSources.antialiasPostProcessingFS
@@ -89,6 +91,7 @@ export class Scene extends EventDispatcher {
 		this._components.destroy();
 		this._components = undefined;
 		this._renderers = undefined;
+		this._canvasRenderers = undefined;
 	}
 
 	childIndex(object3d: Tea.Object3D): number {
@@ -354,17 +357,16 @@ export class Scene extends EventDispatcher {
 		for (var i = childCount - 1; i >= 0; i--) {
 			this.lateUpdateObject3D(children[i]);
 		}
-		for (var i = childCount - 1; i >= 0; i--) {
-			this.updateObject3DStatus(children[i]);
-		}
 
 		this._components.sortCameras();
 		//this._components.sortRenderers();
 		var cameras = this._components.availableCameras;
 		//var renderers = this._components.availableRenderers;
 		var renderers = this._renderers.sort(this.sortRenderers);
+		var canvasRenderers = this._canvasRenderers;
 		var lights = this._components.availableLights;
 
+		/*
 		var canvasRenderers = [];
 		for (var i = renderers.length - 1; i >= 0; i--) {
 			var renderer = renderers[i];
@@ -373,6 +375,7 @@ export class Scene extends EventDispatcher {
 				canvasRenderers.unshift(renderer);
 			}
 		}
+		*/
 
 		if (this.enablePostProcessing) {
 			var texture = this.renderTexture;
@@ -460,6 +463,7 @@ export class Scene extends EventDispatcher {
 			}
 		}
 		this._renderers.splice(0, this._renderers.length);
+		this._canvasRenderers.splice(0, this._canvasRenderers.length);
 		//this._renderers.length = 0;
 		//console.log("drawCallCount", Tea.Renderer.drawCallCount);
 	}
@@ -523,24 +527,32 @@ export class Scene extends EventDispatcher {
 	}
 
 	protected updateObject3D(object3d: Tea.Object3D): void {
-		if (object3d == null || object3d.id == null) {
+		if (object3d == null
+		||  object3d.id == null
+		||  !object3d.enabled) {
 			return;
 		}
-		/*
 		object3d.update(this._isEditing);
-		if (object3d.enabledInHierarchy) {
-			var renderers = object3d.getComponents(Tea.Renderer);
-			if (renderers != null && renderers.length > 0) {
-				this._renderers.push(...renderers);
+		var renderers = object3d.getComponents(Tea.Renderer);
+		if (renderers != null) {
+			var length = renderers.length;
+			for (var i = 0; i < length; i++) {
+				var r = renderers[i];
+				if (r instanceof Tea.UI.CanvasRenderer) {
+					this._canvasRenderers.push(r);
+				} else {
+					this._renderers.push(r);
+				}
 			}
+			//this._renderers.push(...renderers);
 		}
 		var children = object3d.children;
 		var length = children.length;
 		for (var i = 0; i < length; i++) {
 			this.updateObject3D(children[i]);
 		}
+		/*
 		return;
-		//*/
 		var root = object3d;
 		var isEditing = this._isEditing;
 		var r = this._renderers;
@@ -574,83 +586,18 @@ export class Scene extends EventDispatcher {
 				continue;
 			}
 		}
+		//*/
 	}
 
 	protected lateUpdateObject3D(object3d: Tea.Object3D): void {
 		if (object3d == null || object3d.enabled === false) {
 			return;
 		}
-		/*
 		object3d.sendMessage("lateUpdate");
 		var children = object3d.children;
 		var length = children.length;
 		for (var i = 0; i < length; i++) {
 			this.lateUpdateObject3D(children[i]);
-		}
-		//*/
-		var root = object3d;
-		var stack: Array<Tea.Object3D> = [ object3d ];
-		while (stack.length > 0) {
-			object3d = stack.pop();
-			if (object3d == null || object3d.enabled == false) {
-				continue;
-			}
-			object3d.sendMessage("lateUpdate");
-			var child = object3d.firstChild;
-			var next = null;
-			if (root !== object3d) {
-				next = object3d.nextSibling;
-			}
-			if (child != null) {
-				if (next != null) {
-					stack.push(next);
-				}
-				stack.push(child);
-				continue;
-			}
-			if (next != null) {
-				stack.push(next);
-				continue;
-			}
-		}
-	}
-
-	protected updateObject3DStatus(object3d: Tea.Object3D): void {
-		if (object3d == null || object3d.enabled === false) {
-			return;
-		}
-		/*
-		object3d.updateStatus();
-		var children = object3d.children;
-		var length = children.length;
-		for (var i = 0; i < length; i++) {
-			this.updateObject3DStatus(children[i]);
-		}
-		//*/
-		var root = object3d;
-		var stack: Array<Tea.Object3D> = [ object3d ];
-		while (stack.length > 0) {
-			object3d = stack.pop();
-			if (object3d == null || object3d.enabled == false) {
-				continue;
-			}
-			object3d.updateStatus();
-			var child = object3d.firstChild;
-			var next = null;
-			if (root !== object3d) {
-				next = object3d.nextSibling;
-			}
-			if (child != null) {
-				if (next != null) {
-					stack.push(next);
-				}
-				stack.push(child);
-				continue;
-			}
-			if (next != null) {
-				stack.push(next);
-				continue;
-			}
 		}
 	}
 

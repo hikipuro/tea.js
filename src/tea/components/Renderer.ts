@@ -291,16 +291,9 @@ export class Renderer extends Component {
 	protected setIntrinsicUniforms(camera: Tea.Camera): void {
 		var gl = this.gl;
 		var shader = this.material.shader;
-
-		//var u = this._uniforms;
 		var model = this.object3d.localToWorldMatrix;
 		var view = camera.worldToCameraMatrix;
 		var projection = camera.projectionMatrix;
-		var vpMatrix = camera.viewProjectionMatrix;
-
-		var inverseModel = this.object3d.worldToLocalMatrix;
-		var inverseView = camera.cameraToWorldMatrix;
-
 		var location: WebGLUniformLocation = null;
 
 		location = shader.getUniformLocation("TEA_MATRIX_V");
@@ -309,6 +302,7 @@ export class Renderer extends Component {
 		}
 		location = shader.getUniformLocation("TEA_MATRIX_I_V");
 		if (location != null) {
+			var inverseView = camera.cameraToWorldMatrix;
 			gl.uniformMatrix4fv(location, false, inverseView);
 		}
 		location = shader.getUniformLocation("TEA_MATRIX_P");
@@ -321,10 +315,12 @@ export class Renderer extends Component {
 		}
 		location = shader.getUniformLocation("TEA_WORLD_TO_OBJECT");
 		if (location != null) {
+			var inverseModel = this.object3d.worldToLocalMatrix;
 			gl.uniformMatrix4fv(location, false, inverseModel);
 		}
 		location = shader.getUniformLocation("TEA_MATRIX_VP");
 		if (location != null) {
+			var vpMatrix = camera.viewProjectionMatrix;
 			gl.uniformMatrix4fv(location, false, vpMatrix);
 		}
 
