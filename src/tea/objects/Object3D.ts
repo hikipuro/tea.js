@@ -8,9 +8,6 @@ export class Object3D {
 	isDestroyed: boolean;
 	enabled: boolean;
 	scene: Tea.Scene;
-	localPosition: Tea.Vector3;
-	localRotation: Tea.Quaternion;
-	localScale: Tea.Vector3;
 	tag: string;
 	layer: number;
 	protected _app: Tea.App;
@@ -19,6 +16,9 @@ export class Object3D {
 	protected _id: string;
 	protected _children: Array<Object3D>;
 	protected _components: Array<Tea.Component>;
+	protected _localPosition: Tea.Vector3;
+	protected _localRotation: Tea.Quaternion;
+	protected _localScale: Tea.Vector3;
 	protected _position: Tea.Vector3;
 	protected _rotation: Tea.Quaternion;
 	protected _scale: Tea.Vector3;
@@ -33,16 +33,16 @@ export class Object3D {
 		this.isDestroyed = false;
 		this.enabled = true;
 		this.scene = null;
-		this.localPosition = new Tea.Vector3();
-		this.localRotation = new Tea.Quaternion(0.0, 0.0, 0.0, 1.0);
-		this.localScale = new Tea.Vector3(1.0, 1.0, 1.0);
 		this.tag = "";
 		this.layer = 0;
-		this._status = new Object3DStatus();
+		this._status = new Object3DStatus(this);
 		this._parent = null;
 		this._id = id;
 		this._children = [];
 		this._components = [];
+		this._localPosition = new Tea.Vector3();
+		this._localRotation = new Tea.Quaternion(0.0, 0.0, 0.0, 1.0);
+		this._localScale = new Tea.Vector3(1.0, 1.0, 1.0);
 		this._position = new Tea.Vector3();
 		this._rotation = new Tea.Quaternion();
 		this._scale = new Tea.Vector3();
@@ -148,10 +148,50 @@ export class Object3D {
 		return this._id;
 	}
 
+	get localPosition(): Tea.Vector3 {
+		return this._localPosition;
+	}
+	set localPosition(value: Tea.Vector3) {
+		if (value == null) {
+			return;
+		}
+		var lp = this._localPosition;
+		lp[0] = value[0];
+		lp[1] = value[1];
+		lp[2] = value[2];
+	}
+
+	get localRotation(): Tea.Quaternion {
+		return this._localRotation;
+	}
+	set localRotation(value: Tea.Quaternion) {
+		if (value == null) {
+			return;
+		}
+		var lr = this._localRotation;
+		lr[0] = value[0];
+		lr[1] = value[1];
+		lr[2] = value[2];
+		lr[3] = value[3];
+	}
+
+	get localScale(): Tea.Vector3 {
+		return this._localScale;
+	}
+	set localScale(value: Tea.Vector3) {
+		if (value == null) {
+			return;
+		}
+		var ls = this._localScale;
+		ls[0] = value[0];
+		ls[1] = value[1];
+		ls[2] = value[2];
+	}
+
 	get position(): Tea.Vector3 {
 		var parent = this._parent;
 		var p = this._position;
-		var lp = this.localPosition;
+		var lp = this._localPosition;
 		if (parent == null) {
 			p[0] = lp[0];
 			p[1] = lp[1];
@@ -176,7 +216,7 @@ export class Object3D {
 			return;
 		}
 		var parent = this._parent;
-		var lp = this.localPosition;
+		var lp = this._localPosition;
 		if (parent == null) {
 			lp[0] = value[0];
 			lp[1] = value[1];
@@ -204,7 +244,7 @@ export class Object3D {
 	get rotation(): Tea.Quaternion {
 		var parent = this._parent;
 		var r = this._rotation;
-		var lr = this.localRotation;
+		var lr = this._localRotation;
 		if (parent == null) {
 			r[0] = lr[0];
 			r[1] = lr[1];
@@ -230,13 +270,8 @@ export class Object3D {
 		if (value == null) {
 			return;
 		}
-		var r = this._rotation;
-		r[0] = value[0];
-		r[1] = value[1];
-		r[2] = value[2];
-		r[3] = value[3];
 		var parent = this._parent;
-		var lr = this.localRotation;
+		var lr = this._localRotation;
 		if (parent == null) {
 			lr[0] = value[0];
 			lr[1] = value[1];
@@ -274,7 +309,7 @@ export class Object3D {
 	get scale(): Tea.Vector3 {
 		var parent = this._parent;
 		var s = this._scale;
-		var ls = this.localScale;
+		var ls = this._localScale;
 		if (parent == null) {
 			s[0] = ls[0];
 			s[1] = ls[1];
@@ -292,12 +327,8 @@ export class Object3D {
 		if (value == null) {
 			return;
 		}
-		var s = this._scale;
-		s[0] = value[0];
-		s[1] = value[1];
-		s[2] = value[2];
 		var parent = this._parent;
-		var ls = this.localScale;
+		var ls = this._localScale;
 		if (parent == null) {
 			ls[0] = value[0];
 			ls[1] = value[1];
@@ -314,10 +345,10 @@ export class Object3D {
 	}
 
 	get localEulerAngles(): Tea.Vector3 {
-		return this.localRotation.eulerAngles;
+		return this._localRotation.eulerAngles;
 	}
 	set localEulerAngles(value: Tea.Vector3) {
-		this.localRotation.setEuler(value);
+		this._localRotation.setEuler(value);
 	}
 
 	get eulerAngles(): Tea.Vector3 {
@@ -473,12 +504,12 @@ export class Object3D {
 		this.name = undefined;
 		this.enabled = undefined;
 		this.scene = undefined;
-		this.localPosition = undefined;
-		this.localRotation = undefined;
-		this.localScale = undefined;
 		this._status.destroy();
 		this._status = undefined;
 		this._components = [];
+		this._localPosition = undefined;
+		this._localRotation = undefined;
+		this._localScale = undefined;
 		this._position = undefined;
 		this._rotation = undefined;
 		this._scale = undefined;
@@ -987,8 +1018,8 @@ export class Object3D {
 		p[1] += point[1];
 		p[2] += point[2];
 		r.mulSelf(this.rotation);
-		var lp = this.localPosition;
-		var lr = this.localRotation;
+		var lp = this._localPosition;
+		var lr = this._localRotation;
 		lp[0] = p[0];
 		lp[1] = p[1];
 		lp[2] = p[2];
@@ -1109,7 +1140,7 @@ export class Object3D {
 		if (a == null) {
 			return;
 		}
-		var lp = this.localPosition;
+		var lp = this._localPosition;
 		if (a instanceof Tea.Vector3) {
 			lp[0] += a[0];
 			lp[1] += a[1];
@@ -1135,7 +1166,7 @@ export class Object3D {
 			this.updateComponents();
 		}
 
-		this._status.update(this);
+		this._status.update();
 
 		if (this._toDestroy) {
 			this._destroy();
@@ -1202,25 +1233,41 @@ export class Object3D {
 			return;
 		}
 		if (isAppend) {
-			var scale = this.scale.clone();
-			scale[0] = scale[0] !== 0.0 ? 1.0 / scale[0] : 0.0;
-			scale[1] = scale[1] !== 0.0 ? 1.0 / scale[1] : 0.0;
-			scale[2] = scale[2] !== 0.0 ? 1.0 / scale[2] : 0.0;
-			var rotation = this.rotation.inversed;
-			var position = child.localPosition;
-			position.subSelf(this.position);
-			position.applyQuaternion(rotation);
-			position.scaleSelf(scale);
-			rotation.mulSelf(child.localRotation);
-			child.localRotation = rotation;
-			child.localScale.scaleSelf(scale);
+			var lp = child._localPosition;
+			var lr = child._localRotation;
+			var ls = child._localScale;
+			var pp = this.position;
+			var pr = this.rotation;
+			var ps = this.scale;
+			lp[0] -= pp[0];
+			lp[1] -= pp[1];
+			lp[2] -= pp[2];
+			var r = Tea.Quaternion._tmp;
+			r[0] = pr[0];
+			r[1] = pr[1];
+			r[2] = pr[2];
+			r[3] = pr[3];
+			r.inverseSelf();
+			lp.applyQuaternion(r);
+			lp[0] *= ps[0] !== 0.0 ? 1.0 / ps[0] : 0.0;
+			lp[1] *= ps[1] !== 0.0 ? 1.0 / ps[1] : 0.0;
+			lp[2] *= ps[2] !== 0.0 ? 1.0 / ps[2] : 0.0;
+			var ax = r[0], ay = r[1], az = r[2], aw = r[3];
+			var bx = lr[0], by = lr[1], bz = lr[2], bw = lr[3];
+			lr[0] = aw * bx + bw * ax + ay * bz - by * az;
+			lr[1] = aw * by + bw * ay + az * bx - bz * ax;
+			lr[2] = aw * bz + bw * az + ax * by - bx * ay;
+			lr[3] = aw * bw - ax * bx - ay * by - az * bz;
+			ls[0] *= ps[0] !== 0.0 ? 1.0 / ps[0] : 0.0;
+			ls[1] *= ps[1] !== 0.0 ? 1.0 / ps[1] : 0.0;
+			ls[2] *= ps[2] !== 0.0 ? 1.0 / ps[2] : 0.0;
 			return;
 		}
 		// remove
-		var position = child.localPosition;
-		position.scaleSelf(this.scale);
-		position.applyQuaternion(this.rotation);
-		position.addSelf(this.position);
+		var lp = child._localPosition;
+		lp.scaleSelf(this.scale);
+		lp.applyQuaternion(this.rotation);
+		lp.addSelf(this.position);
 		child.localRotation = this.rotation.mul(child.localRotation);
 		child.localScale.scaleSelf(this.scale);
 	}

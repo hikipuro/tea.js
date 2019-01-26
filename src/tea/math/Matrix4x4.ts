@@ -533,9 +533,22 @@ export class Matrix4x4 extends Array<number> {
 
 	clone(): Matrix4x4 {
 		var m = new Matrix4x4();
-		for (var i = 0; i < 16; i++) {
-			m[i] = this[i];
-		}
+		m[0]  = this[0];
+		m[1]  = this[1];
+		m[2]  = this[2];
+		m[3]  = this[3];
+		m[4]  = this[4];
+		m[5]  = this[5];
+		m[6]  = this[6];
+		m[7]  = this[7];
+		m[8]  = this[8];
+		m[9]  = this[9];
+		m[10] = this[10];
+		m[11] = this[11];
+		m[12] = this[12];
+		m[13] = this[13];
+		m[14] = this[14];
+		m[15] = this[15];
 		return m;
 	}
 
@@ -792,6 +805,37 @@ export class Matrix4x4 extends Array<number> {
 		var r01 = value[4],  r11 = value[5],  r21 = value[6],  r31 = value[7];
 		var r02 = value[8],  r12 = value[9],  r22 = value[10], r32 = value[11];
 		var r03 = value[12], r13 = value[13], r23 = value[14], r33 = value[15];
+		this[0]  = l00 * r00 + l01 * r10 + l02 * r20 + l03 * r30;
+		this[1]  = l10 * r00 + l11 * r10 + l12 * r20 + l13 * r30;
+		this[2]  = l20 * r00 + l21 * r10 + l22 * r20 + l23 * r30;
+		this[3]  = l30 * r00 + l31 * r10 + l32 * r20 + l33 * r30;
+		this[4]  = l00 * r01 + l01 * r11 + l02 * r21 + l03 * r31;
+		this[5]  = l10 * r01 + l11 * r11 + l12 * r21 + l13 * r31;
+		this[6]  = l20 * r01 + l21 * r11 + l22 * r21 + l23 * r31;
+		this[7]  = l30 * r01 + l31 * r11 + l32 * r21 + l33 * r31;
+		this[8]  = l00 * r02 + l01 * r12 + l02 * r22 + l03 * r32;
+		this[9]  = l10 * r02 + l11 * r12 + l12 * r22 + l13 * r32;
+		this[10] = l20 * r02 + l21 * r12 + l22 * r22 + l23 * r32;
+		this[11] = l30 * r02 + l31 * r12 + l32 * r22 + l33 * r32;
+		this[12] = l00 * r03 + l01 * r13 + l02 * r23 + l03 * r33;
+		this[13] = l10 * r03 + l11 * r13 + l12 * r23 + l13 * r33;
+		this[14] = l20 * r03 + l21 * r13 + l22 * r23 + l23 * r33;
+		this[15] = l30 * r03 + l31 * r13 + l32 * r23 + l33 * r33;
+		return this;
+	}
+
+	premulSelf(value: Matrix4x4): Matrix4x4 {
+		if (value == null) {
+			return this;
+		}
+		var l00 = value[0],  l10 = value[1],  l20 = value[2],  l30 = value[3];
+		var l01 = value[4],  l11 = value[5],  l21 = value[6],  l31 = value[7];
+		var l02 = value[8],  l12 = value[9],  l22 = value[10], l32 = value[11];
+		var l03 = value[12], l13 = value[13], l23 = value[14], l33 = value[15];
+		var r00 = this[0],   r10 = this[1],   r20 = this[2],   r30 = this[3];
+		var r01 = this[4],   r11 = this[5],   r21 = this[6],   r31 = this[7];
+		var r02 = this[8],   r12 = this[9],   r22 = this[10],  r32 = this[11];
+		var r03 = this[12],  r13 = this[13],  r23 = this[14],  r33 = this[15];
 		this[0]  = l00 * r00 + l01 * r10 + l02 * r20 + l03 * r30;
 		this[1]  = l10 * r00 + l11 * r10 + l12 * r20 + l13 * r30;
 		this[2]  = l20 * r00 + l21 * r10 + l22 * r20 + l23 * r30;

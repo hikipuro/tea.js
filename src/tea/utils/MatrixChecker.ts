@@ -62,6 +62,20 @@ export class MatrixChecker extends Array<any> {
 		return m;
 	}
 
+	static rotateQuaternion(name: string = "z"): MatrixChecker {
+		var m = MatrixChecker.identity;
+		m[0] = `qx1(${name})`;
+		m[1] = `qx2(${name})`;
+		m[2] = `qx3(${name})`;
+		m[4] = `qy1(${name})`;
+		m[5] = `qy2(${name})`;
+		m[6] = `qy3(${name})`;
+		m[8] = `qz1(${name})`;
+		m[9] = `qz2(${name})`;
+		m[10] = `qz3(${name})`;
+		return m;
+	}
+
 	mul(value: MatrixChecker): MatrixChecker {
 		var m = new MatrixChecker();
 		var l00 = this[0],   l10 = this[1],   l20 = this[2],   l30 = this[3];

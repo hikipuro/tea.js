@@ -116,6 +116,9 @@ export class ObjectInspector extends Vue {
 		}
 		this.clearComponents();
 		var components = object3d.getComponents(Tea.Component);
+		if (components == null || components.length <= 0) {
+			return;
+		}
 		components.forEach((component: Tea.Component) => {
 			//console.log(component.editorView);
 			var componentClass = component.constructor as any;

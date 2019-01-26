@@ -2,6 +2,7 @@ import * as Tea from "../Tea";
 import { Object3D } from "./Object3D";
 
 export class Object3DStatus {
+	object3d: Tea.Object3D;
 	position: Tea.Vector3;
 	rotation: Tea.Quaternion;
 	scale: Tea.Vector3;
@@ -10,7 +11,8 @@ export class Object3DStatus {
 	protected _localToWorldMatrix: Tea.Matrix4x4;
 	protected _worldToLocalMatrix: Tea.Matrix4x4;
 
-	constructor() {
+	constructor(object3d: Tea.Object3D) {
+		this.object3d = object3d;
 		this.position = new Tea.Vector3(Infinity);
 		this.rotation = new Tea.Quaternion(Infinity);
 		this.scale = new Tea.Vector3(Infinity);
@@ -22,12 +24,25 @@ export class Object3DStatus {
 
 	get localToWorldMatrix(): Tea.Matrix4x4 {
 		if (this._isDirty) {
-			this._localToWorldMatrix.setTRS(
+			var m = this._localToWorldMatrix;
+			m.setTRS(
 				this.position,
 				this.rotation,
 				this.scale
 			);
-			var m = this._localToWorldMatrix;
+			var parent = this.object3d.parent;
+			if (parent != null) {
+				var pm = parent.localToWorldMatrix;
+				pm[8]  *= -1.0;
+				pm[9]  *= -1.0;
+				pm[10] *= -1.0;
+				pm[11] *= -1.0;
+				m.premulSelf(pm);
+				pm[8]  *= -1.0;
+				pm[9]  *= -1.0;
+				pm[10] *= -1.0;
+				pm[11] *= -1.0;
+			}
 			m[8]  *= -1.0;
 			m[9]  *= -1.0;
 			m[10] *= -1.0;
@@ -54,18 +69,17 @@ export class Object3DStatus {
 		this._worldToLocalMatrix = undefined;
 	}
 
-	update(object3d: Object3D): void {
+	update(): void {
 		var p = null, r = null, s = null;
-		var parent = object3d.parent;
+		var parent = this.object3d.parent;
 		var isMoved = false;
-		if (parent == null) {
-			p = object3d.localPosition;
-			r = object3d.localRotation;
-			s = object3d.localScale;
-		} else {
-			p = object3d.position;
-			r = object3d.rotation;
-			s = object3d.scale;
+		p = this.object3d.localPosition;
+		r = this.object3d.localRotation;
+		s = this.object3d.localScale;
+		if (parent != null) {
+			if (parent.isMoved) {
+				isMoved = true;
+			}
 		}
 		var tp = this.position;
 		var tr = this.rotation;
