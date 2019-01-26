@@ -51,9 +51,12 @@ export class Outline {
 		this.renderer.material.setFloat("Scale", 1);
 		//console.log(distance, scale);
 		//this.renderer.update();
-		this.object3d.localPosition.copy(object3d.position);
-		this.object3d.localRotation.copy(object3d.rotation);
-		this.object3d.localScale.copy(object3d.scale);
+		//this.object3d.localPosition.copy(object3d.position);
+		//this.object3d.localRotation.copy(object3d.rotation);
+		//this.object3d.localScale.copy(object3d.scale);
+		this.object3d.position = object3d.position;
+		this.object3d.rotation = object3d.rotation;
+		this.object3d.scale = object3d.scale;
 		this.object3d.update();
 	}
 }

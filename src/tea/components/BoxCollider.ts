@@ -5,11 +5,13 @@ export class BoxCollider extends Collider {
 	static readonly className: string = "BoxCollider";
 	center: Tea.Vector3;
 	size: Tea.Vector3;
+	protected _extents: Tea.Vector3;
 
 	constructor(app: Tea.App) {
 		super(app);
 		this.center = new Tea.Vector3();
-		this.size = Tea.Vector3.one.clone();
+		this.size = new Tea.Vector3(1.0, 1.0, 1.0);
+		this._extents = new Tea.Vector3();
 	}
 
 	//get bounds(): Tea.Bounds {
@@ -21,18 +23,27 @@ export class BoxCollider extends Collider {
 		if (object3d == null) {
 			return center;
 		}
-		center.applyQuaternion(object3d.rotation);
-		return center.addSelf(object3d.position);
+		var m = object3d.localToWorldMatrix;
+		center.applyMatrix4(m);
+		return center;
+		//center.applyQuaternion(object3d.rotation);
+		//return center.addSelf(object3d.position);
 	}
 
 	get extents(): Tea.Vector3 {
-		var object3d = this.object3d;
-		var extents = this.size.clone();
-		extents.mulSelf(0.5);
+		//var object3d = this.object3d;
+		var size = this.size;
+		var e = this._extents;
+		e[0] = size[0] * 0.5;
+		e[1] = size[1] * 0.5;
+		e[2] = size[2] * 0.5;
+		return e;
+		/*
 		if (object3d == null) {
 			return extents;
 		}
 		return extents.scaleSelf(object3d.scale);
+		*/
 	}
 
 	containsPoint(point: Tea.Vector3): boolean {

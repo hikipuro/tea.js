@@ -75,6 +75,25 @@ export class Matrix4x4 extends Array<number> {
 		return m;
 	}
 
+	static fromQuaternion(q: Tea.Quaternion): Matrix4x4 {
+		var m = new Matrix4x4();
+		var x = q[0], y = q[1], z = q[2], w = q[3];
+		var xx = x * x, yy = y * y, zz = z * z;
+		var xy = x * y, xz = x * z, xw = x * w;
+		var yz = y * z, yw = y * w, zw = z * w;
+		m[0] = 1.0 - 2.0 * (yy + zz);
+		m[1] = 2.0 * (xy + zw);
+		m[2] = 2.0 * (xz - yw);
+		m[4] = 2.0 * (xy - zw);
+		m[5] = 1.0 - 2.0 * (xx + zz);
+		m[6] = 2.0 * (yz + xw);
+		m[8] = 2.0 * (xz + yw);
+		m[9] = 2.0 * (yz - xw);
+		m[10] = 1.0 - 2.0 * (xx + yy);
+		m[15] = 1.0;
+		return m;
+	}
+
 	static translate(vector: Vector3): Matrix4x4;
 	static translate(x: number, y: number, z: number): Matrix4x4;
 	static translate(x: Vector3 | number, y: number = 0, z: number = 0): Matrix4x4 {

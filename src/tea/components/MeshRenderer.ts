@@ -28,9 +28,9 @@ export class MeshRenderer extends Renderer {
 		if (!bounds.isEmpty) {
 			return bounds;
 		}
-		var position = object3d.position;
-		var rotation = object3d.rotation;
-		var scale = object3d.scale;
+		//var position = object3d.position;
+		//var rotation = object3d.rotation;
+		//var scale = object3d.scale;
 
 		//var bounds = this._bounds;
 		//var bounds = new Tea.Bounds();
@@ -49,8 +49,12 @@ export class MeshRenderer extends Renderer {
 			e[1] = ve[1];
 			e[2] = ve[2];
 		}
+		var matrix = object3d.localToWorldMatrix;
 		var center = bounds.center;
 		var extents = bounds.extents;
+		center.applyMatrix4(matrix);
+		//extents.applyMatrix4(model);
+		/*
 		center[0] *= scale[0];
 		center[1] *= scale[1];
 		center[2] *= scale[2];
@@ -58,16 +62,20 @@ export class MeshRenderer extends Renderer {
 		center[0] += position[0];
 		center[1] += position[1];
 		center[2] += position[2];
+		*/
 		
 		var minX = Infinity, minY = Infinity, minZ = Infinity;
 		var maxX = -Infinity, maxY = -Infinity, maxZ = -Infinity;
 		var point = Tea.Vector3._tmp;
 		for (var i = 0; i < 8; i++) {
 			bounds.getPointTo(i, point);
+			/*
 			point[0] = point[0] * scale[0] - center[0];
 			point[1] = point[1] * scale[1] - center[1];
 			point[2] = point[2] * scale[2] - center[2];
 			point.applyQuaternion(rotation);
+			*/
+			point.applyMatrix4(matrix);
 			if (minX > point[0]) {
 				minX = point[0];
 			}

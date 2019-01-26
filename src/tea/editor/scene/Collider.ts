@@ -56,9 +56,10 @@ export class Collider {
 	drawBoxCollider(): void {
 		var renderer = this.renderer;
 		var collider = this.collider as Tea.BoxCollider;
-		var rotation = collider.object3d.rotation;
+		//var rotation = collider.object3d.rotation;
 
-		var center = collider.worldCenter;
+		var m = collider.object3d.localToWorldMatrix;
+		var center = collider.center;
 		var extents = collider.extents;
 		var x = extents[0];
 		var y = extents[1];
@@ -90,8 +91,10 @@ export class Collider {
 			var point2 = new Tea.Vector3(
 				x * p2[0], y * p2[1], z * p2[2]
 			);
-			point1.applyQuaternion(rotation);
-			point2.applyQuaternion(rotation);
+			point1.applyMatrix4(m);
+			point2.applyMatrix4(m);
+			//point1.applyQuaternion(rotation);
+			//point2.applyQuaternion(rotation);
 			this.drawLine(
 				center.add(point1),
 				center.add(point2)
